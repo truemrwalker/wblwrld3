@@ -521,7 +521,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
       // Make sure the Surrounding Holder has the proper height depending on the height of the content area
         $scope.$watch(function(){return $scope.gimme('tabsContent:height');}, function(newVal, oldVal) {
-            var h = parseInt(newVal);
+            h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
             if(!isNaN(h)){
                 setTNPHolderHeight(h);
                 var p1 = parseInt(tnpHolder.css('padding-top')) * 2;
@@ -540,7 +540,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
       // Make sure the Surrounding Holder has the proper width depending on the width of the content area
         $scope.$watch(function(){return $scope.gimme('tabsContent:width');}, function(newVal, oldVal) {
-          var w = parseInt(newVal);
+          var w = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
           if(!isNaN(w)){
             var p = parseInt(tnpHolder.css('padding-left')) * 2;
             tnpHolder.css('width', (w + p) + 'px');
@@ -588,9 +588,11 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                       }
                       else{
                           if($scope.gimme('tabDisplayStyle') == 0){
-                              if(parseInt(newVal.slotvalue) > (parseInt($scope.gimme('tabsContent:width')) - 20)){
+                              var tcWidth = $scope.gimme('tabsContent:width');
+                              tcWidth = tcWidth.search('%') != -1 ? (parseInt(tcWidth)/ 100) * $(window).width() : parseInt(tcWidth);
+                              if(parseInt(newVal.slotvalue) > (tcWidth - 20)){
                                   var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                  thisWbl.scope().set('root:left', parseInt($scope.gimme('tabsContent:width')) - 30);
+                                  thisWbl.scope().set('root:left', tcWidth - 30);
                               }
                           }
                           else{
@@ -612,9 +614,11 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                       }
                       else{
                           if($scope.gimme('tabDisplayStyle') == 0){
-                              if(parseInt(newVal.slotvalue) > (parseInt($scope.gimme('tabsContent:height')) - 20)){
+                              var tcHeight = $scope.gimme('tabsContent:height');
+                              tcHeight = tcHeight.search('%') != -1 ? (parseInt(tcHeight)/ 100) * $(window).height() : parseInt(tcHeight);
+                              if(parseInt(newVal.slotvalue) > (tcHeight - 20)){
                                   var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                  thisWbl.scope().set('root:top', parseInt($scope.gimme('tabsContent:height')) - 30);
+                                  thisWbl.scope().set('root:top', tcHeight - 30);
                               }
                           }
                           else{
@@ -710,7 +714,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                     $scope.theView.parent().draggable('option', 'cancel', '#tnpTabs li');
                     configureTabNames();
                     configureTabColors();
-                    setTNPHolderHeight(parseInt($scope.gimme('tabsContent:height')));
+                    setTNPHolderHeight($scope.gimme('tabsContent:height').search('%') != -1 ? (parseInt($scope.gimme('tabsContent:height'))/ 100) * $(window).height() : parseInt($scope.gimme('tabsContent:height')));
                     var cst = parseInt($scope.gimme('currentSelectedTab'));
                     if(cst > 0 && cst <= tnpTabs_a.length){ activateTabAndContent(cst); }
                     else{ $scope.set('currentSelectedTab', 1); }
@@ -734,8 +738,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
                 var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
                 var pagesToMake = noOfTabs;
-                bookWidth = parseInt($scope.gimme('tabsContent:width'));
-                bookHeight = parseInt($scope.gimme('tabsContent:height'));
+                bookWidth = $scope.gimme('tabsContent:width');
+                bookWidth = bookWidth.search('%') != -1 ? (parseInt(bookWidth)/ 100) * $(window).width() : parseInt(bookWidth);
+                bookHeight = $scope.gimme('tabsContent:height');
+                bookHeight = bookHeight.search('%') != -1 ? (parseInt(bookHeight)/ 100) * $(window).height() : parseInt(bookHeight);
                 bookPadding = parseInt($scope.gimme('bookPadding'));
                 bookBorderWidth = parseInt($scope.gimme('bookBorderWidth'));
                 var bookBorderColor = $scope.gimme('book:border-color');
@@ -871,7 +877,8 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                     $scope.theView.parent().find('#classicTabsContainer').show();
                 }
 
-                $scope.set('tabsContent:height', parseFloat($scope.gimme('tabsContent:height'))+0.001);
+                var currUnit = $scope.gimme('tabsContent:height').search('%') != -1 ? '%' : 'px';
+                $scope.set('tabsContent:height', (parseFloat($scope.gimme('tabsContent:height'))+0.001) + currUnit);
             }
         }
     };
@@ -884,8 +891,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
     // change is made correctly all over
     //===================================================================================
     var adjustBookProportions = function() {
-        bookWidth = parseInt($scope.gimme('tabsContent:width'));
-        bookHeight = parseInt($scope.gimme('tabsContent:height'));
+        bookWidth = $scope.gimme('tabsContent:width');
+        bookWidth = bookWidth.search('%') != -1 ? (parseInt(bookWidth)/ 100) * $(window).width() : parseInt(bookWidth);
+        bookHeight = $scope.gimme('tabsContent:height');
+        bookHeight = bookHeight.search('%') != -1 ? (parseInt(bookHeight)/ 100) * $(window).height() : parseInt(bookHeight);
         bookPadding = parseInt($scope.gimme('bookPadding'));
         bookBorderWidth = parseInt($scope.gimme('bookBorderWidth'));
         binderWidth = bookWidth * binderWidthMultiplier;
@@ -916,6 +925,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
         });
 
         tnpHolder.css('height', (bookHeight + (parseInt(tnpHolder.css('padding')) * 2)) + 'px');
+        tnpHolder.css('width', (bookWidth + (parseInt(tnpHolder.css('padding')) * 2)) + 'px');
     }
     //===================================================================================
 
