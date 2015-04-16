@@ -30,15 +30,12 @@ var Q = require('q');
 
 // Express & Friends
 var express = require('express');
-//var responseTime = require('response-time');
 var session = require('express-session');
 var multipartFormParser = require('multer');
 var bodyParser = require('body-parser');
-//var methodOverride = require('method-override');
 var cookieParser = require('cookie-parser');
 var serveStatic = require('serve-static');
 var serveStaticFavicon = require('serve-favicon');
-//var errorHandler = require('error-handler');
 
 var http = require('http');
 var https = require('https');
@@ -117,59 +114,9 @@ mongoose.connection.on('open', function() {
 });
 
 ////////////////////////////////////////////////////////////////////////
-// Logging support
-//
-/*
-var winston = require('winston');
-
-var logger = new (winston.Logger)({
-    transports: [
-        new (winston.transports.Console)(),
-        new (winston.transports.File)({ filename: __dirname + '/logs/messages.log' })
-    ],
-    exceptionHandlers: [
-        new (winston.transports.Console)({ json: false, timestamp: true }),
-        new winston.transports.File({ filename: __dirname + '/logs/exceptions.log', json: false })
-    ],
-    exitOnError: false
-});
-
-require('winston-mongodb').MongoDB;
-winston.add(winston.transports.MongoDB, {
-    db: config.LOG_DB_NAME,
-    host: config.LOG_DB_HOST,
-    port: config.LOG_DB_PORT,
-    username: config.LOG_DB_USERNAME,
-    password: config.LOG_DB_PASSWORD,
-
-    safe: false,
-    level: 'warn'
-});
-
-require('winston-mail').Mail;
-winston.add(winston.transports.Mail, {
-    to: config.LOG_EMAIL_TO,
-    from: config.LOG_EMAIL_FROM,
-    host: config.LOG_EMAIL_SMTP_HOST,
-    port: config.LOG_EMAIL_SMTP_PORT,
-    username: config.LOG_EMAIL_SMTP_USERNAME,
-    password: config.LOG_EMAIL_SMTP_PASSWORD,
-
-    ssl: true,
-    level: 'error'
-});
-*/
-
-////////////////////////////////////////////////////////////////////////
 // Configure the server
 //
 (function(){
-
-	// Basic Benchmarking...
-	//
-//	app.use(responseTime());
-
-	//app.use(compress());
 
 	// Serve static stuff quickly and get it out of the way
 	//
@@ -177,8 +124,6 @@ winston.add(winston.transports.Mail, {
 	app.use(serveStatic(config.APP_ROOT_DIR));
 
 	app.use(multipartFormParser());
-
-	// Instead of deprecated: app.use(bodyParser({ limit: '10mb' }));
 	app.use(bodyParser.json({ limit: '10mb' }));
 	//app.use(bodyParser.urlencoded({ extended: true })); // Turn off for now, we don't really need it
 
@@ -208,7 +153,7 @@ winston.add(winston.transports.Mail, {
 	setupRoutes();      // Oh yeah! -- no need to use(app.routes) anymore
 
     // Development only, comment-out otherwise
-	//
+	  //
 //    app.use(express.logger('dev'));
 //    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 })();
