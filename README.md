@@ -10,6 +10,9 @@ Webble System Lead Architect & Developer: Micke Nicander Kuwahara
 Server Side Development: Giannis Georgalis
 Additional Support: Jonas Sjöbergh
 
+Visit Webble World 3 Online at:
+https://wws.meme.hokudai.ac.jp
+
 Webbles are interactive digital objects that resides inside
 Webble World which is a new web-based knowledge media
 architecture, available through an Internet browser, that
