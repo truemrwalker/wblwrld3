@@ -1,0 +1,11 @@
+<!--====================================================================================================================
+// View for Color Picker for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="cpContainer" class="cpContainer" ng-controller="cpCtrl">
+    <input class="colorbox" type="color" ng-model="cpParams.color" ng-disabled="gimme('isDisabled') == true"  />
+    <input class="formitem" type="text" ng-show="(gimme('colorTxtVisble') == true)" ng-model="cpParams.color" ng-disabled="gimme('isDisabled') == true" style="width: 100px; min-width: 80px; margin-left: 3px;" />
+</div>
+
+<!--=================================================================================================================-->

@@ -1,0 +1,24 @@
+<!--====================================================================================================================
+// View for Window Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="windowContainer" class="windowContainer" ng-controller="windowContainerCtrl">
+    <div id="winTitleBar" class="winTitleBar" ng-style="{'display': winStyles.titlebarDisplay}" >
+        <span id="winTitleBarTxt" class="winTitleBarTxt">{{gimme('titleBarTxt')}}</span>
+        <div style="display: inline-flex; float: right;">
+            <button class="winTitleBarBtn" ng-style="{'display': winStyles.minimizeBtnDisplay}" ng-click="minimizeWin()">-</button>
+            <button class="winTitleBarBtn" ng-style="{'display': winStyles.maximizeBtnDisplay}" ng-click="maximizeWin()">[]</button>
+            <button class="winTitleBarBtn" style="color: #ff0000;" ng-style="{'display': winStyles.closeBtnDisplay}" ng-click="closeWin()">x</button>
+        </div>
+    </div>
+    <div id="winBorder" class="winBorder">
+        <div id="winArea" class="winArea" child-grabbing>
+            <img ng-show="gimme('bkgImgSrc') != ''" class="winBkgImg" style="width: 100%; height: 100%;" ng-src="{{gimme('bkgImgSrc')}}" />
+
+        </div>
+    </div>
+    <div id="reSizer"  class="reSizer" ng-style="{'margin-left': winStyles.resizingXPos}" win-wbl-re-sizing></div>
+</div>
+
+<!--=================================================================================================================-->

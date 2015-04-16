@@ -1,0 +1,23 @@
+/*/=====================================================================================================================
+// Styles for Rotating Needle Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Rotating Needle Classes === /*/
+
+.needleContainer{
+    background-color: transparent;
+    border: 1px solid transparent;
+    transform:rotate(0deg);
+    -ms-transform:rotate(0deg); /* IE 9 */
+    -webkit-transform:rotate(0deg); /* Opera, Chrome, and Safari */
+}
+
+.theNeedle{
+    stroke: rgb(255,0,0);
+    stroke-width: 2;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

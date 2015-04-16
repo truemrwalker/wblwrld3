@@ -1,0 +1,7 @@
+{
+    "name": "Basic Table",
+    "description": "This is a basic table Webble for displaying table data. To edit cell content click the cell with ctrl key pressed.",
+    "keywords": "table data",
+    "author": "truemrwalker",
+    "image": "images/wbls/tableWbl.png"
+}

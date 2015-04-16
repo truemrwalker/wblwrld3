@@ -1,0 +1,8 @@
+{
+    "libs": [
+        "three.min.js",
+        "Detector.js",
+        "TrackballControls.js",
+        "Cloth.js"
+    ]
+}

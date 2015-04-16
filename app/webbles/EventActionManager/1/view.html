@@ -1,0 +1,290 @@
+<!--====================================================================================================================
+// View for Event Action Manager for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<!--************** Webble **************-->
+<!--==============================================================-->
+
+<div id="EAMRoot" class="EAMRoot" ng-controller="EAM_Ctrl">
+    <span id="EAMTitle" class="EAMTitle">{{theWblMetadata['displayname']}}</span>
+</div>
+<!--==============================================================-->
+
+
+
+<!--************** Primary Main Event-Action Form **************-->
+<!--==============================================================-->
+
+<script type="text/ng-template" id="event-action-manager-form.html">
+    <div id="event-action-manager-main-form" class="container-fluid padcontent"  data-formclass="eamform-main">
+
+        <div class="row">
+            <div class="col-xs-3">
+                <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+                <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+            </div>
+            <div class="col-xs-9"><h4 class="formTitle" translate>Event Action Manager</h4></div>
+        </div>
+
+        <div class="dividerLineAbove">
+            <div class="row" style="padding-left: 14px; padding-right: 14px;">
+
+                <table id="tableroot" class="tableroot">
+                    <thead>
+                        <tr id="tableheader" class="tableheader">
+                            <th><span>Event</span></th>
+                            <th><span>Action</span></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in formProps.EAData">
+                            <td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
+                                <ul style="padding-left: 20px;">
+                                    <li ng-click="openEdit('Event', $parent.$index, $index);" ng-repeat="event in row.eventGroup"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(event.strVal)}}</span></li>
+                                    <li ng-click="openEdit('Event', $index, -1);"><span class="addNew">+</span></li>
+                                </ul>
+                            </td>
+                            <td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
+                                <ul style="padding-left: 20px;">
+                                    <li ng-click="openEdit('Action', $parent.$index, $index);" ng-repeat="action in row.actionGroup"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(action.strVal)}}</span></li>
+                                    <li ng-click="openEdit('Action', $index, -1);"><span class="addNew">+</span></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="dividerLineAbove">
+            <div class="row">
+                <div class="col-xs-12" style="height: 30px;">
+                    <span style="color: #95c2ff; font-weight: normal; padding-left: 20px;">{{propMsgs.info | translate}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--==============================================================-->
+
+
+
+<!--************** Secondary Detailed Event or Action Editor Form **************-->
+<!--============================================================================-->
+
+<script type="text/ng-template" id="event-action-manager-form-part2.html">
+    <div class="container-fluid padcontent">
+        <div class="row">
+            <div class="col-xs-4">
+                <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+                <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+                <button ng-click="close('delete')" class="btn btn-danger" style="margin-bottom: 3px;" translate>Delete</button>
+            </div>
+            <div class="col-xs-8"><h4 class="formTitle" translate>{{formProps.type}} Editor</h4></div>
+        </div>
+
+        <div class="keepTheDistanceBelow dividerLineAbove">
+            <div class="row" style="padding-left: 14px; padding-right: 14px; min-height: 20px;">
+                <!--KEEPING TRACK OF ROW AND COL--><!--<div class="col-xs-8"><span class="formitem">Editing {{formProps.type}} for item {{formProps.itemIndex}} in row {{formProps.rowIndex}}</span></div>-->
+
+                <!--AND/OR-->
+                <div ng-show="formProps.itemIndex > 0 || (formProps.noOfItems > 0 && formProps.itemIndex == -1)" class="boxing" ng-click="toggleBooleanBinding();"><span class="boxingTxt disable-select">{{formProps.booleanBinding}}</span></div>
+
+                <!--TARGET-->
+                <div class="boxing" ng-click="openSubSelect('Target', formProps.targetParams);"><span class="boxingTxt disable-select">{{formProps.targetParams.currentSelected}} {{formProps.targetParams.currDepSel}} {{formProps.targetParams.detailSelected}} {{formProps.targetParams.itemValue}}</span></div>
+
+                <!--TARGETS FOCUS ITEM-->
+                <div class="boxing" ng-click="openSubSelect('Targets Focus Item', formProps.targetItemParams);"><span class="boxingTxt disable-select">{{formProps.targetItemParams.currentSelected}} {{formProps.targetItemParams.detailSelected}} {{formProps.targetItemParams.furtherDetailSelected}} </span><span ng-show="isThisVisible();">(</span><span ng-show="formProps.targetItemParams.currDepSel.itemId != 'openws' && formProps.targetItemParams.currDepSel.itemId != 'savewsas'">{{formProps.targetItemParams.itemValue}}</span><span ng-show="isThisVisible();">)</span><span ng-show="formProps.targetItemParams.currentSelected == 'Mouse Event' && formProps.targetParams.currentSelected == 'Platform'">[{{formProps.targetItemParams.currDepSelGr.left}}, {{formProps.targetItemParams.currDepSelGr.top}}; {{formProps.targetItemParams.currDepSelGr.right}}, {{formProps.targetItemParams.currDepSelGr.bottom}}]</span><span ng-show="formProps.targetItemParams.currentSelected.toString().search('Menu Item') != -1">{{formProps.targetItemParams.currDepSel.itemName}}</span><span ng-show="formProps.targetItemParams.currentSelected == 'Mouse Event' && formProps.targetParams.currentSelected != 'Platform'">[{{formProps.targetItemParams.currDepSel}}]</span><span ng-show="formProps.targetItemParams.currDepSel.itemId == 'openws' || formProps.targetItemParams.currDepSel.itemId == 'savewsas'">  {{formProps.targetItemParams.itemValue}}</span></div>
+            </div>
+        </div>
+
+
+        <div class="dividerLineAbove">
+            <div class="row">
+                <div class="col-xs-12">
+                    <span style="color: red; font-weight: bold;">{{formProps.infoMsg | translate}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--============================================================================-->
+
+
+
+<!--************** Third final Detailed Option Selector Form **************-->
+<!--=======================================================================-->
+
+<script type="text/ng-template" id="event-action-manager-form-part3.html">
+    <div class="container-fluid padcontent">
+        <div class="row">
+            <div class="col-xs-4">
+                <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+                <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+            </div>
+            <div class="col-xs-8"><h4 class="formTitle" translate>Select {{formProps.selectWhat}}</h4></div>
+        </div>
+
+        <div class="keepTheDistanceBelow dividerLineAbove">
+            <div class="row" style="padding-left: 14px; padding-right: 14px; min-height: 20px;" ng-switch on="item.inputType">
+                <!--MAIN SELECT-->
+                <div class="stayTogether"><select ng-change="mainOptionChanged();" ng-model="formProps.currentSelected" ng-options="opt for opt in formProps.possibleOpts"></select></div>
+                <!--------------------------->
+
+                <!--SELECT TARGET: ADDITIONAL PICKS-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(1)"><input class="formitem" type="text" ng-model="formProps.currDepSel" placeholder="{{getPlaceHolder(1);}}" style="width: 200px; min-width: 80px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(2)"><select ng-model="formProps.detailSelected" ng-options="cmp for cmp in lists.comparing"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(2)"><input class="formitem" type="text" ng-model="formProps.itemValue" placeholder="Value" style="width: 100px; min-width: 80px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(3)"><select ng-model="formProps.itemValue" ng-options="prot for prot in lists.wblPrtct"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(3)"><select ng-model="formProps.detailSelected" ng-options="onoff for onoff in lists.onoff"></select></div>
+                <!--------------------------->
+
+                <!--SELECT FOCUS ITEM: ADDITIONAL PICKS-->
+                <!-------------PLATFORM AND SHARED EVENTS------------------>
+                <!--MOUSE EVENTS-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(4)"><select ng-model="formProps.detailSelected" ng-options="type for type in lists.mouseEvs"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(14)"><select ng-model="formProps.furtherDetailSelected" ng-options="dir for dir in lists.updown"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(5)"><input class="formitem" type="text" ng-model="formProps.currDepSelGr.left" placeholder="{{getPlaceHolder(2);}}" style="width: 70px; min-width: 40px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(5)"><input class="formitem" type="text" ng-model="formProps.currDepSelGr.top" placeholder="{{getPlaceHolder(3);}}" style="width: 70px; min-width: 40px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(5)"><input class="formitem" type="text" ng-model="formProps.currDepSelGr.right" placeholder="{{getPlaceHolder(4);}}" style="width: 70px; min-width: 40px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(5)"><input class="formitem" type="text" ng-model="formProps.currDepSelGr.bottom" placeholder="{{getPlaceHolder(5);}}" style="width: 80px; min-width: 40px;" /></div>
+                <!--WBL_ONLY--><div class="stayTogether" ng-if="isInputBoxVisible(6)"><input class="formitem" type="text" ng-model="formProps.currDepSel" placeholder="{{getPlaceHolder(6);}}" style="width: 270px; min-width: 80px;" /></div>
+
+                <!--PLATFORM PROPS CHANGED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(7)"><select ng-model="formProps.detailSelected" ng-options="pprop for pprop in lists.platformProps"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(7)"><select ng-model="formProps.furtherDetailSelected" ng-options="cmp for cmp in lists.comparingMini"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(8)"><select ng-model="formProps.itemValue" ng-options="em for em in lists.execModeOpts"></select></div>
+                <div class="stayTogether" ng-if="formProps.browser == 'Chrome' && isInputBoxVisible(9)"><input type="color" ng-model="formProps.itemValue" /></div>
+                <div class="stayTogether" ng-if="formProps.browser == 'Firefox' && isInputBoxVisible(9)">
+                    <div class="stayTogether" style="width: 20px; height: 20px; border: 1px solid #000000; margin-left: 5px;" ng-style="{'background-color': formProps.itemValue}"></div>
+                    <input class="stayTogether formitem" type="text" ng-model="formProps.itemValue" style="width: 100px; min-width: 80px;" placeholder="{{getPlaceHolder(7);}}" />
+                </div>
+
+                <!--MAIN MENU ITEM SELECTED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(10)"><select ng-model="formProps.currDepSel" ng-options="mmi.itemName for mmi in lists.mainMenuItems track by mmi.itemId"></select></div>
+
+                <!--NEW WEBBLE LOADED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(11)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(8);}}" style="width: 300px; min-width: 240px;" /></div>
+
+                <!--WEBBLE DELETED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(24)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(8);}}" style="width: 300px; min-width: 240px;" /></div>
+
+                <!--TIMER REACHED VALUE-->
+                <!--<div class="stayTogether" ng-if="isInputBoxVisible(12)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(9);}}" style="width: 80px; min-width: 80px;" /></div>-->
+
+              <div class="stayTogether" ng-if="isInputBoxVisible(12)"><select ng-model="formProps.currDepSelGr.wbl" ng-options="wbl for wbl in relatives" ng-change="secondaryWblTargetChanged();" ></select></div>
+              <div class="stayTogether" ng-if="isInputBoxVisible(12)"><select ng-model="formProps.currDepSelGr.slot" ng-options="wblSlot for wblSlot in lists.secondaryWblSlots" ng-change="secondaryWblSlotChanged(true);"></select></div>
+              <div class="stayTogether" ng-if="isInputBoxVisible(12)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(9);}}" style="width: 450px; min-width: 240px;" /></div>
+
+                <!--KEY WAS PRESSED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(13)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(10);}}" style="width: 200px; min-width: 180px;" /></div>
+
+                <!--------------WEBBLE EVENTS ONLY----------------->
+                <!--WEBBLE RELATION CHANGED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(15)"><select ng-model="formProps.detailSelected" ng-options="relEv for relEv in lists.relationEvs"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(15)"><input class="formitem" type="text" ng-model="formProps.furtherDetailSelected" placeholder="{{getPlaceHolder(11);}}" style="width: 300px; min-width: 240px;" /></div>
+
+                <!--SLOT VALUE CHANGED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(17)"><select ng-model="formProps.detailSelected" ng-options="slot for slot in lists.wblSlots"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(18)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(12);}}" style="width: 200px; min-width: 140px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(19)"><select ng-model="formProps.furtherDetailSelected" ng-options="cmp for cmp in lists.comparingMaxi"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(19)"><select ng-model="formProps.currDepSelGr.wbl" ng-options="wbl for wbl in relatives" ng-change="secondaryWblTargetChanged();" ></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(19)"><select ng-model="formProps.currDepSelGr.slot" ng-options="wblSlot for wblSlot in lists.secondaryWblSlots" ng-change="secondaryWblSlotChanged();"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(19)"><textarea class="formitem" ng-model="formProps.itemValue" placeholder="{{getPlaceHolder(13);}}" rows="3" style="width: 500px; min-width: 240px"></textarea></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(19)" style="margin-left: 10px;"><span>Repeat: </span><input type="checkbox" ng-model="formProps.currDepSelGr.repeat"></div>
+
+                <!--PROTECTION STATE CHANGED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(20)"><select ng-model="formProps.detailSelected" ng-options="prot for prot in lists.wblPrtct"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(20)"><select ng-model="formProps.furtherDetailSelected" ng-options="onoff for onoff in lists.onoff"></select></div>
+
+                <!--CUSTOM SLOT ADDED OR REMOVED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(21)"><select ng-model="formProps.detailSelected" ng-options="evt for evt in lists.addremove"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(21)"><input class="formitem" type="text" ng-model="formProps.furtherDetailSelected" placeholder="{{getPlaceHolder(14);}}" style="width: 200px; min-width: 140px;" /></div>
+
+                <!--WEBBLE MENU SELECTED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(22)"><select ng-model="formProps.currDepSel" ng-options="menuItem.itemName for menuItem in lists.wblMenuItems track by menuItem.itemId"></select></div>
+
+                <!--WEBBLE DELETED-->
+                <!--No Extra Info Needed-->
+
+                <!--WEBBLE DUPLICATED-->
+                <!--No Extra Info Needed-->
+
+                <!--COLLISION-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(23)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(15);}}" style="width: 300px; min-width: 140px;" /></div>
+
+                <!--------------------------->
+
+                <!-------------PLATFORM ACTIONS------------------>
+
+                <!--CHANGE PLATFORM PROPS-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(25)"><select ng-model="formProps.detailSelected" ng-options="pprop for pprop in lists.platformProps"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(26)"><select ng-model="formProps.itemValue" ng-options="em for em in lists.execModeOpts"></select></div>
+                <div class="stayTogether" ng-if="formProps.browser == 'Chrome' && isInputBoxVisible(27)"><input type="color" ng-model="formProps.itemValue" /></div>
+                <div class="stayTogether" ng-if="formProps.browser == 'Firefox' && isInputBoxVisible(27)">
+                    <div class="stayTogether" style="width: 20px; height: 20px; border: 1px solid #000000; margin-left: 5px;" ng-style="{'background-color': formProps.itemValue}"></div>
+                    <input class="stayTogether formitem" type="text" ng-model="formProps.itemValue" style="width: 100px; min-width: 80px;" placeholder="{{getPlaceHolder(7);}}" />
+                </div>
+
+                <!--EXECUTE MAIN MENU ITEM-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(28)"><select ng-model="formProps.currDepSel" ng-options="mmi.itemName for mmi in lists.mainMenuItems track by mmi.itemId"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(29)"><input class="formitem" type="text" ng-model="formProps.itemValue" placeholder="{{getPlaceHolder(16);}}" style="width: 300px; min-width: 240px;" /></div>
+
+                <!--LOAD NEW WEBBLE-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(30)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(17);}}" style="width: 300px; min-width: 240px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(30)"><input class="formitem" type="text" ng-model="formProps.itemValue" placeholder="{{getPlaceHolder(18);}}" style="width: 100px; min-width: 82px;" /></div>
+
+                <!--EXECUTE LINK-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(31)"><select ng-model="formProps.currDepSelGr.wbl" ng-options="wbl for wbl in relatives" ng-change="secondaryWblTargetChanged();" ></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(31)"><select ng-model="formProps.currDepSelGr.slot" ng-options="wblSlot for wblSlot in lists.secondaryWblSlots" ng-change="secondaryWblSlotChanged(true);"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(31)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(19);}}" style="width: 450px; min-width: 240px;" /></div>
+
+
+                <!-------------WEBBLE ACTIONS------------------>
+                <!--CHANGE WEBBLE RELATION-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(32)"><select ng-model="formProps.detailSelected" ng-options="relAc for relAc in lists.relationAct"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(33)"><input class="formitem" type="text" ng-model="formProps.furtherDetailSelected" placeholder="{{getPlaceHolder(20);}}" style="width: 400px; min-width: 370px;" /></div>
+
+                <!--DELETE WEBBLE-->
+                <!--No Extra Info Needed-->
+
+                <!--WEBBLE DUPLICATED-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(34)"><select ng-model="formProps.detailSelected" ng-options="defsh for defsh in lists.defaultshared"></select></div>
+
+                <!--CHANGE SLOT VALUE-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(35)"><select ng-model="formProps.detailSelected" ng-options="slot for slot in lists.wblSlots"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(36)"><input class="formitem" type="text" ng-model="formProps.detailSelected" placeholder="{{getPlaceHolder(12);}}" style="width: 200px; min-width: 140px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(37)"><span style="font-size: 18px; font-weight: bold;">=</span><select ng-model="formProps.currDepSelGr.wbl" ng-options="wbl for wbl in relatives" ng-change="secondaryWblTargetChanged();" ></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(37)"><select ng-model="formProps.currDepSelGr.slot" ng-options="wblSlot for wblSlot in lists.secondaryWblSlots" ng-change="secondaryWblSlotChanged();"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(37)"><textarea class="formitem" ng-model="formProps.itemValue" placeholder="{{getPlaceHolder(13);}}" rows="3" style="width: 500px; min-width: 240px"></textarea></div>
+
+                <!--CHANGE PROTECTION STATE-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(38)"><select ng-model="formProps.detailSelected" ng-options="prot for prot in lists.wblPrtct"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(38)"><select ng-model="formProps.furtherDetailSelected" ng-options="onoff for onoff in lists.onoffTogg"></select></div>
+
+                <!--SELECT WEBBLE MENU ITEM-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(39)"><select ng-model="formProps.currDepSel" ng-options="menuItem.itemName for menuItem in lists.wblMenuItems track by menuItem.itemId"></select></div>
+
+                <!--ADD OR REMOVE CUSTOM SLOT-->
+                <div class="stayTogether" ng-if="isInputBoxVisible(40)"><select ng-model="formProps.detailSelected" ng-options="evt for evt in lists.addremoveAction"></select></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(40)"><input class="formitem" type="text" ng-model="formProps.furtherDetailSelected" placeholder="{{getPlaceHolder(21);}}" style="width: 200px; min-width: 140px;" /></div>
+                <div class="stayTogether" ng-if="isInputBoxVisible(41)"><input class="formitem" type="text" ng-model="formProps.itemValue" placeholder="{{getPlaceHolder(22);}}" style="width: 200px; min-width: 140px;" /></div>
+            </div>
+        </div>
+
+        <div class="dividerLineAbove">
+            <div class="row">
+                <div class="col-xs-12">
+                    <span style="color: red; font-weight: bold;">{{formProps.infoMsg | translate}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--=======================================================================-->
+
+<!--=================================================================================================================-->

@@ -1,0 +1,38 @@
+/*/=====================================================================================================================
+// Styles for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+@font-face {
+    font-family: 'digital_dreamregular';
+    src: url('fonts/DIGITALDREAM-webfont.eot');
+    src: url('fonts/DIGITALDREAM-webfont.eot?#iefix') format('embedded-opentype'),
+    url('fonts/DIGITALDREAM-webfont.woff') format('woff'),
+    url('fonts/DIGITALDREAM-webfont.ttf') format('truetype'),
+    url('fonts/DIGITALDREAM-webfont.svg#digital_dreamregular') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+.timeBox{
+    width: 110px;
+    height: 30px;
+    background-color: #000000;
+    border: 1px solid lightskyblue;
+    opacity: 1;
+    padding: 4px;
+}
+
+.timeTxt{
+    font-family: 'digital_dreamregular', Arial, sans-serif;
+    font-size: 15px;
+    color: lawngreen;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

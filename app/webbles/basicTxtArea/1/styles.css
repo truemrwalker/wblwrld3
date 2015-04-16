@@ -1,0 +1,32 @@
+/*/=====================================================================================================================
+// Styles for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.txtInputGrabber{
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius:5px;
+}
+
+.txtInput{
+    z-index: 10000;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 15px;
+    color: #000000;
+    height: 100px;
+    width: 300px;
+    border: 1px solid black;
+    background-color: #ffffff;
+    margin: 10px;
+    padding-left: 7px;
+    text-align: left;
+    resize: none;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

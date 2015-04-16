@@ -1,0 +1,50 @@
+<!--====================================================================================================================
+// View for List Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="listGrabber" class="listGrabber" ng-controller="listCtrl">
+    <div id="listContainer" class="listContainer" class="row">
+
+        <div ng-if="gimme('theListType') == 0" ng-style="{'background-color': gimme('theListBackgroundColor'), 'width': gimme('theListContainerWidth'), 'padding': gimme('itemPadding')}">
+            <span>List Style Undefined</span>
+        </div>
+
+        <div class="form-group" ng-if="gimme('theListType') == 1" ng-style="{'width': gimme('theListContainerWidth')}">
+            <select class="form-control input-ms" id="selOne" ng-style="{'background-color': gimme('theListBackgroundColor'), 'font-size': gimme('listContainer:font-size'), 'color': gimme('listContainer:color')}" ng-model="theList.currentSelected" ng-options="listItem for listItem in theList.items" style="width: auto;">
+            </select>
+        </div>
+
+        <div ng-if="gimme('theListType') == 2" ng-style="{'height': formProps.listHeight, 'width': gimme('theListContainerWidth'), 'overflow-y': formProps.listOverflow, 'background-color': gimme('theListBackgroundColor')}" style="padding-left: 5px; padding-right: 10px; overflow-x: hidden;">
+            <div ng-class="formProps.RBDisplayClass" ng-repeat="listItem in theList.items track by $index">
+                <label><input type="radio" ng-value="listItem" ng-model="theList.currentSelected" name="rbList">{{listItem}}</label>
+            </div>
+        </div>
+
+        <div class="form-group" ng-if="gimme('theListType') == 3">
+            <select class="form-control input-ms" id="selMult" ng-style="{'background-color': gimme('theListBackgroundColor')}" ng-size="{{gimme('multiSelectListSize')}}" multiple ng-multiple="true" ng-model="theList.currentSelected" ng-options="listItem for listItem in theList.items" style="width: auto;">
+            </select>
+        </div>
+
+        <div ng-if="gimme('theListType') == 4" ng-style="{'height': formProps.listHeight, 'width': gimme('theListContainerWidth'), 'overflow-y': formProps.listOverflow, 'background-color': gimme('theListBackgroundColor')}" style="padding-left: 5px; padding-right: 10px; overflow-x: hidden;">
+            <div ng-class="formProps.CBDisplayClass" ng-repeat="listItem in theList.items track by $index">
+                <label><input type="checkbox" value="{{listItem}}" ng-checked="theList.currentSelected.indexOf(listItem) > -1" name="cbList" ng-click="toggleMultiCheckBoxSelection(listItem)">{{listItem}}</label>
+            </div>
+        </div>
+
+        <div ng-if="gimme('theListType') == 5" ng-style="{'height': formProps.listHeight, 'width': gimme('theListContainerWidth'), 'overflow-y': formProps.listOverflow, 'background-color': gimme('theListBackgroundColor')}" style="padding-left: 5px; padding-right: 15px; white-space: nowrap; overflow-x: hidden;">
+            <ul id="classicList" ng-style="{'list-style-type': gimme('theListItemMarkerStyle'), 'list-style-image': formProps.listItemMarkerImage}" style="list-style-position: inside;">
+                <li ng-repeat="listItem in theList.items track by $index" ng-style="{'background-color': getItemBkgColor($index), 'padding': gimme('itemPadding')}" ng-click="selectAnItem($index)">{{listItem}}</li>
+            </ul>
+        </div>
+
+        <div id="fxList" ng-if="gimme('theListType') == 6" class="fxList" ng-style="{'background-color': gimme('theListBackgroundColor')}">
+            <ul ng-class="gimme('fxListEffect')" ng-style="{'height': formProps.listHeight, 'width': gimme('theListContainerWidth'), 'overflow-y': formProps.listOverflow}" style="overflow-x: hidden;">
+                <li ng-style="{'background-color': getItemBkgColor($index), 'padding': gimme('itemPadding')}" ng-click="selectAnItem($index)" ng-repeat="listItem in theList.items track by $index">{{listItem}}</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<!--=================================================================================================================-->

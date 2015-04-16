@@ -1,0 +1,3275 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wblwrld3 1.0\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Micke Kuwahara <micke.kuwahara@gmail.com>\n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: app/views/workSpaces.html
+msgid "(Double-click input-box for large text editing)"
+msgstr "(Dubbelklicka inmatningsboxen för lång text editering)"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "- The Number of Available Webbles Right Now:"
+msgstr "- Antalet Tillgängliga Webblar Just Nu:"
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"A Webble Bundle can only be made with complete Webble families, and not just "
+"with parts. Please select only single Webbles and/or super parents (Webbles "
+"with children and grandchildren but no parents of their own)."
+msgstr ""
+"En Webble bunt kan enbart göras med en komplett Webble familj, inte med "
+"delar av den. Var god och selektera bara ensamma Webblar och/eller "
+"superföräldrar (Webblar med en kedja av barn och barnbarn men utan nån egen "
+"förälder)."
+
+#: app/scripts/directives/directives.js
+msgid ""
+"A decimal value between 0 and 1 which describes the opacity of the element, "
+"1 is opaque."
+msgstr ""
+"Ett decimal värde mellan 0 och 1 som beskriver opaciteten på elementet, 1 är "
+"opakt."
+
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid "A list of users that you currently share this workspace with."
+msgstr "En lista av användare som för stunden delar denna arbetsyta med dig."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "A variety of Webbles that might be of interest."
+msgstr "En varitè av Webblar som kan vara av intresse."
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "A webble with that name already exist, please come up with a new name."
+msgstr ""
+"En Webble med det namnet existerar redan, var god kom upp med ett nytt namn."
+
+#: app/scripts/directives/directives.js app/scripts/services/services.js
+msgid "About"
+msgstr "Om"
+
+#: app/views/modalForms/wblAbout.html
+msgid "About This Webble"
+msgstr "Om Denna Webble"
+
+#: app/views/modalForms/about.html
+msgid "About Webble World"
+msgstr "Om Webble World"
+
+#: app/views/profile.html
+msgid "Account Information"
+msgstr "Konto information"
+
+#: app/views/profile.html
+msgid "Account not connected"
+msgstr "Konto ej anslutet"
+
+#: app/scripts/services/services.js
+msgid "Active Workspace Info"
+msgstr "Aktiv Arbetsyte-Information"
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "Add"
+msgstr "Addera"
+
+#: app/views/modalForms/addCustSlotSheet.html
+#: app/scripts/directives/directives.js
+msgid "Add Custom Slots"
+msgstr "Skapa Egen Slot"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Add Publishing Groups:"
+msgstr "Lägg till ansvarig utgivar-grupp"
+
+#: app/views/groups.html
+msgid "Add Users"
+msgstr "Lägg till användare"
+
+#: app/views/profile.html
+msgid "Additional Accounts"
+msgstr "Ytterligare konton"
+
+#: app/views/modalForms/about.html
+msgid "Additional System Design:"
+msgstr "Ytterligare System Design:"
+
+#: app/views/groups.html
+msgid "Address"
+msgstr "Adress"
+
+#: app/views/groups.html app/views/profile.html
+msgid "Address:"
+msgstr "Adress:"
+
+#: app/scripts/services/services.js
+msgid "Admin"
+msgstr "Admin"
+
+#: app/scripts/controllers/groups.js
+msgid ""
+"All new publications and updates (by members) under this group require the "
+"owner's approval"
+msgstr ""
+"All nya publikationer och uppdateringar (av medlemmar) i denna grupp kräver "
+"ägarens godkännande"
+
+#: app/scripts/controllers/groups.js
+msgid "All publications and updates under this group are suspended"
+msgstr "Alla publikationer och uppdateringar i denna grupp är suspenderad"
+
+#: app/scripts/controllers/templates.js
+msgid "All your controller are belong to us"
+msgstr "All dina kontroller är tillhör oss"
+
+#: app/scripts/controllers/templates.js
+msgid "All your directive are belong to us"
+msgstr "Alla dina direktiver är tillhör oss"
+
+#: app/scripts/controllers/templates.js
+msgid "All your filter are belong to us"
+msgstr "Alla dina filter är tillhör oss"
+
+#: app/scripts/controllers/templates.js
+msgid "All your service are belong to us"
+msgstr "Alla dina service är tillhör oss"
+
+#: app/views/profile.html
+msgid "Allow"
+msgstr "Tillåt"
+
+#: app/scripts/controllers/login.js
+msgid "Already logged in"
+msgstr "Redan Inloggad"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Amazing!"
+msgstr "Otrolig!"
+
+#: app/index.html
+msgid ""
+"And this is because of one reason only... one tiny but yet so important "
+"reason..."
+msgstr ""
+"Och detta är på grund av endast en orsak... en liten men ack så viktig "
+"anledning..."
+
+#: app/scripts/directives/directives.js
+msgid "Angle"
+msgstr "Vinkel"
+
+#: app/scripts/controllers/chat.js
+msgid "Anonymous Coward"
+msgstr "Anonym Fegis"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Answer"
+msgstr "Svar"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Answered"
+msgstr "Besvarad"
+
+#: app/views/groups.html
+msgid "Apply"
+msgstr "Applicera"
+
+#: app/scripts/controllers/templates.js
+msgid ""
+"Are you sure you want to permanently delete the selected template and all "
+"its files?"
+msgstr ""
+"Är du säker på att du vill permanent radera den selekterade Webble-mallen "
+"och alla dess filer?"
+
+#: app/scripts/controllers/templates.js
+msgid "Are you sure you want to permanently delete the template file:"
+msgstr "Är du säker på att du vill permanent radera Webble-mall filen:"
+
+#: app/scripts/controllers/profile.js
+msgid "Are you sure you want to revoke your membership to the following group:"
+msgstr ""
+"Är du säker på att du vill dra tillbaka dit medlemskap i följande grupp:"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Ask"
+msgstr "Fråga"
+
+#: app/scripts/controllers/modalForms/faq.js
+msgid "Asked by you"
+msgstr "Frågad av dig"
+
+#: app/scripts/directives/directives.js app/scripts/services/services.js
+msgid "Assign Parent"
+msgstr "Tilldela Förälder"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Assign Parent Failed"
+msgstr "Tilldela Förälder Misslyckades"
+
+#: app/views/groups.html
+msgid "Assign User To Group"
+msgstr "Tilldela användare till grupp"
+
+#: app/views/profile.html
+msgid ""
+"Associating your account with other providers enables authenticating and "
+"logging in to your account via those."
+msgstr ""
+"Associering av ditt konto med andra konton möjliggör autentisering och "
+"inloggning till ditt Webble konto via dessa."
+
+#: app/views/profile.html
+msgid "Authentication"
+msgstr "Verifiering"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Auto Generated"
+msgstr "Autogenererad"
+
+#: app/scripts/directives/directives.js
+msgid "Auto Slot-Conn Enabled"
+msgstr "Automatisk Slot-koppling Aktiverad"
+
+#: app/views/modalForms/openWSSheet.html
+msgid "Available Workspaces:"
+msgstr "Tillgängliga Arbetsytor:"
+
+#: app/scripts/controllers/modalForms/platformLangPick.js
+msgid ""
+"Avialable languages for Webble World 3.0. Currently selected is the language "
+"you picked or your prefered language in your user profile or the language of "
+"your browser, or English."
+msgstr ""
+"Detta är de tillgängliga språken för Webble World 3.0 plattform. Nuvarande "
+"valt språk är det du valt eller det som du föredragit i din användarprofil "
+"eller det språk som din browser är satt till, eller om inga av de valen "
+"existerar, Engelska."
+
+#: app/scripts/services/services.js
+msgid "Background"
+msgstr "Bakgrund"
+
+#: app/scripts/services/services.js
+msgid "Background Color"
+msgstr "Bakgrundsfärg"
+
+#: app/scripts/services/services.js
+msgid "Background Image."
+msgstr "Bakgrundsbild"
+
+#: app/scripts/services/services.js
+msgid "Background Repeat"
+msgstr "Bakgrund Repetera"
+
+#: app/scripts/services/services.js
+msgid "Background Repeat."
+msgstr "Bakgrund Repetera."
+
+#: app/scripts/services/services.js
+msgid "Background Size"
+msgstr "Bakgrundsstorlek"
+
+#: app/scripts/services/services.js
+msgid "Background Size."
+msgstr "Bakgrundsstorlek."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Bad"
+msgstr "Dålig"
+
+#: app/index.html
+msgid "Best Regards/"
+msgstr "Med Vänliga Hälsningar/"
+
+#: app/views/profile.html
+msgid "Birthday"
+msgstr "Födelsedag"
+
+#: app/scripts/services/services.js
+msgid "Border"
+msgstr "Kant"
+
+#: app/scripts/services/services.js
+msgid "Border Color"
+msgstr "Kantfärg"
+
+#: app/scripts/services/services.js
+msgid "Border Radius"
+msgstr "Kantradie"
+
+#: app/scripts/services/services.js
+msgid "Border Style"
+msgstr "Kantstil"
+
+#: app/scripts/services/services.js
+msgid "Border Width"
+msgstr "Kantvidd"
+
+#: app/scripts/directives/directives.js
+msgid "Bring to Front"
+msgstr "Flytta Framåt"
+
+#: app/scripts/services/services.js
+msgid "Browser"
+msgstr "Sökmotor"
+
+#: app/scripts/directives/directives.js app/scripts/services/services.js
+msgid "Bundle"
+msgstr "Bunta"
+
+#: app/scripts/controllers/platform.js app/scripts/controllers/wblCore.js
+msgid "Bundle Failed"
+msgstr "Buntning Misslyckades"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Bundle Not Allowed:"
+msgstr "Buntning Inte Tillåten:"
+
+#: app/scripts/controllers/platform.js
+msgid "Bundle Selection Broken"
+msgstr "Buntnings Selektion Trasig"
+
+#: app/scripts/directives/directives.js
+msgid ""
+"By default all webbles will try to auto establish a default slot connection "
+"when creating child parent relationship, if this is unchecked no such "
+"connection is made."
+msgstr ""
+"Standardinställningen kommer försöka automatiskt skapa en standard slot-"
+"koppling när man skapar en barn förälder relation, om denna box är omarkerad "
+"kommer ingen sådan koppling göras."
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "CSS Related"
+msgstr "CSS Relaterad"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "CSS Related Slots"
+msgstr "CSS Relaterade Slots"
+
+#: app/views/login.html app/views/modalForms/addCustSlotSheet.html
+#: app/views/modalForms/bundleSheet.html
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/openWSSheet.html
+#: app/views/modalForms/platformLangSheet.html
+#: app/views/modalForms/platformPropsSheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/rateWblSheet.html
+#: app/views/modalForms/saveWSAsSheet.html
+#: app/views/modalForms/slotConnSheet.html
+#: app/views/modalForms/wblProtectionSheet.html
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: app/scripts/controllers/platform.js
+msgid "Cannot do that..."
+msgstr "Kan inte göra det..."
+
+#: app/scripts/controllers/draw.js
+msgid "Chaotic Multi-User Draw Surface"
+msgstr "Kaotiskt Rityta för Multianvändare"
+
+#: app/scripts/controllers/login.js
+msgid "Checking Data for Signing Up..."
+msgstr "Kontrollerar data för registrering..."
+
+#: app/views/modalForms/about.html
+msgid "Chief System Developer:"
+msgstr "Ledande Systemutvecklare:"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Child Slot:"
+msgstr "Barn Slot:"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Child \\ Parent"
+msgstr "Barn \\ Förälder"
+
+#: app/views/modalForms/clearSomething.html
+msgid "Clear?"
+msgstr "Rensa?"
+
+#: app/views/workSpaces.html app/views/modalForms/faqSheet.html
+#: app/views/modalForms/propertySheet.html
+#: app/views/modalForms/searchWblSheet.html
+#: app/views/modalForms/shareWSSheet.html
+msgid "Close"
+msgstr "Stäng"
+
+#: app/scripts/controllers/groups.js
+msgid "Closed for publications"
+msgstr "Stängd för publicering"
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Comment:"
+msgstr "Kommentar:"
+
+#: app/views/modalForms/bundleSheet.html
+msgid "Configure New Webble Bundle"
+msgstr "Konfigurera Ny Webble Bunt"
+
+#: app/views/login.html app/views/profile.html
+msgid "Confirm Password"
+msgstr "Bekräfta lösenord"
+
+#: app/views/login.html app/views/profile.html
+msgid "Confirm your password"
+msgstr "Bekräfta ditt lösenord"
+
+#: app/scripts/directives/directives.js
+msgid "Connect Slots"
+msgstr "Anslut slots"
+
+#: app/views/profile.html
+msgid "Connected"
+msgstr "Ansluten"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Connection Directions:"
+msgstr "Sammankopplingsriktningar:"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Contextmenu Not Allowed:"
+msgstr "Pop-up Meny Inte Tillåten:"
+
+#: app/views/templates.html
+msgid "Copy"
+msgstr "Kopiera"
+
+#: app/scripts/services/services.js
+msgid "Corner Radius of the element border."
+msgstr "Hörn radie på elementets kant"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Could be better"
+msgstr "Kunde vara bättre"
+
+#: app/views/templates.html
+msgid "Create"
+msgstr "Skapa"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Create Sandbox Copy"
+msgstr "Skapa Sandlåde-kopia"
+
+#: app/views/groups.html
+msgid "Create as a subgroup of"
+msgstr "Skapa en undergrupp till"
+
+#: app/scripts/controllers/groups.js
+msgid "Created Group"
+msgstr "Skapad Undergrupp"
+
+#: app/views/data.html
+msgid "Created:"
+msgstr "Skapad:"
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "Current Collaborators:"
+msgstr "Nuvarande Medarbetare:"
+
+#: app/views/modalForms/platformLangSheet.html
+msgid "Current Language:"
+msgstr "Nuvarande Språk"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Current Webble Definition ID:"
+msgstr "Nuvarande Webble Definitions ID:"
+
+#: app/scripts/controllers/platform.js
+msgid "Current workspace quick saved"
+msgstr "Nuvarande arbetsyta snabbsparad"
+
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/scripts/controllers/platform.js app/scripts/controllers/wblCore.js
+#: app/scripts/controllers/modalForms/addCustSlot.js
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "Custom"
+msgstr "Egen"
+
+#: app/index.html
+msgid "Dear Visitor,"
+msgstr "Kära Besökare,"
+
+#: app/scripts/controllers/groups.js
+msgid "Deauthorize"
+msgstr "Avautentisera"
+
+#: app/views/groups.html
+msgid "Deauthorize Object"
+msgstr "Avautentisera Objekt"
+
+#: app/scripts/controllers/groups.js
+msgid "Deauthorize Object:"
+msgstr "Avautentisera Objekt:"
+
+#: app/scripts/controllers/platform.js
+msgid "Debug Logging On"
+msgstr "Felsöknings logg Påslagen"
+
+#: app/scripts/directives/directives.js
+msgid "Default Menu Disabled"
+msgstr "Grund Meny Bortkopplad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Default Menu Not Visible:"
+msgstr "Grund-menyn Inte Synlig:"
+
+#: app/scripts/controllers/templates.js
+msgid "Define external dependencies"
+msgstr "Definiera externa beroenden"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Author:"
+msgstr "Definitions Upphovsman:"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Description:"
+msgstr "Definitions Beskrivning:"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Id:"
+msgstr "Definitions-Id:"
+
+#: app/views/modalForms/wblAbout.html
+#, fuzzy
+msgid "Definition Keywords:"
+msgstr "Definitionsnyckelord:"
+
+#: app/views/templates.html app/views/modalForms/faqSheet.html
+#: app/views/modalForms/searchWblSheet.html
+#: app/scripts/controllers/templates.js app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "Delete"
+msgstr "Radera"
+
+#: app/scripts/controllers/templates.js
+msgid "Delete File Confirmation"
+msgstr "Radera Fil Confirmation"
+
+#: app/views/groups.html app/scripts/controllers/groups.js
+msgid "Delete Group"
+msgstr "Radera Grupp"
+
+#: app/scripts/controllers/groups.js
+msgid "Delete Group:"
+msgstr "Radera Grupp"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Delete Not Allowed:"
+msgstr "Radering Inte Tillåten:"
+
+#: app/scripts/controllers/templates.js
+msgid "Delete Template Confirmation"
+msgstr "Radera Mall Konfirmation"
+
+#: app/views/modalForms/deleteSomething.html
+msgid "Delete?"
+msgstr "Radera?"
+
+#: app/scripts/controllers/groups.js
+msgid "Deleted Group"
+msgstr "Radera Grupp"
+
+#: app/scripts/controllers/platform.js
+msgid "Deletion Failed"
+msgstr "Radering Misslyckades"
+
+#: app/views/profile.html
+msgid "Deny"
+msgstr "Neka"
+
+#: app/views/groups.html app/views/profile.html app/views/templates.html
+msgid "Description"
+msgstr "Beskrivning"
+
+#: app/views/data.html app/views/groups.html app/views/profile.html
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Description:"
+msgstr "Beskrivning:"
+
+#: app/scripts/services/services.js
+msgid "Deselect All"
+msgstr "Radera Allt"
+
+#: app/views/modalForms/searchWblSheet.html app/scripts/services/services.js
+msgid "Developer"
+msgstr "Utvecklare"
+
+#: app/views/templates.html
+msgid "Discard"
+msgstr "Kasta"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Disconnect Children Not Allowed:"
+msgstr "Koppla Ifrån Barn Inte Tillåtet:"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Display Name"
+msgstr "Visningsnamn"
+
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/wblAbout.html
+msgid "Display Name:"
+msgstr "Visningsnamn:"
+
+#: app/scripts/controllers/groups.js
+msgid "Do Not Deauthorize"
+msgstr "Avautentisera Inte"
+
+#: app/scripts/controllers/templates.js
+msgid "Do Not Delete"
+msgstr "Radera Inte"
+
+#: app/scripts/controllers/groups.js
+msgid "Do Not Delete Group"
+msgstr "Radera Inte Grupp"
+
+#: app/scripts/controllers/profile.js
+msgid "Do Not Revoke Membership"
+msgstr "Dra Inte Tillbaka Medlemskap"
+
+#: app/views/modalForms/clearSomething.html
+msgid ""
+"Do you really want to clear away this and lose all unsaved work? This cannot "
+"be undone!"
+msgstr ""
+"Vill du verkligen rensa bort detta och förlora allt osparat arbete? Detta "
+"kan inte göras ogjort!"
+
+#: app/views/modalForms/deleteSomething.html
+msgid ""
+"Do you really want to delete this and lose it forever? This cannot be undone!"
+msgstr ""
+"Vill du verkligen radera detta och förlora det för evigt? Detta kan inte "
+"göras ogjort!"
+
+#: app/scripts/services/services.js
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: app/scripts/services/services.js
+msgid "Download Developers Package"
+msgstr "Ladda Ner Utvecklingspaket"
+
+#: app/views/templates.html
+msgid "Drop Files Here"
+msgstr "Släpp Filer Här"
+
+#: app/scripts/directives/directives.js app/scripts/services/services.js
+msgid "Duplicate"
+msgstr "Duplicera"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Duplicate Not Allowed:"
+msgstr "Duplicering Inte Tillåten"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Duplication Failed"
+msgstr "Duplicering Misslyckades"
+
+#: app/scripts/services/services.js
+msgid "Edit"
+msgstr "Editera"
+
+#: app/views/groups.html
+msgid "Edit Group"
+msgstr "Editera Grupp"
+
+#: app/views/templates.html
+msgid "Edit Template Files"
+msgstr "Editera Webble-Mall Filer"
+
+#: app/views/groups.html app/views/login.html app/views/profile.html
+msgid "Email"
+msgstr "E-post"
+
+#: app/views/login.html
+msgid "Email is not valid"
+msgstr "E-post är felformaterad"
+
+#: app/views/login.html
+msgid "Email is required"
+msgstr "E-post krävs"
+
+#: app/views/groups.html
+msgid "Email:"
+msgstr "E-post:"
+
+#: app/views/modalForms/propertySheet.html
+msgid "Example Text (size 20px)"
+msgstr "Exempel Text (storlek 20 px)"
+
+#: app/scripts/services/services.js
+msgid "FAQ"
+msgstr "FAQ"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Fairly Ok"
+msgstr "Ganska Ok"
+
+#: app/views/profile.html
+msgid "Female"
+msgstr "Kvinna"
+
+#: app/views/groups.html
+msgid "Fetch Objects"
+msgstr "Hämta Objekt"
+
+#: app/views/templates.html
+msgid "File Name"
+msgstr "Filnamn"
+
+#: app/views/profile.html
+msgid "Find Group..."
+msgstr "Hitta Grupp..."
+
+#: app/views/groups.html
+msgid "Find User"
+msgstr "Hitta Användare"
+
+#: app/views/groups.html
+msgid "Find User..."
+msgstr "Hitta Användare..."
+
+#: app/scripts/controllers/login.js
+msgid "Follow the link to login and change your password:"
+msgstr "Följ länken  för att logga in och ändra ditt lösenord"
+
+#: app/scripts/services/services.js
+msgid "Font Family"
+msgstr "Typsnitt"
+
+#: app/scripts/services/services.js
+msgid "Font Size"
+msgstr "Typsnittsstorlek"
+
+#: app/scripts/services/services.js
+msgid "Font Style"
+msgstr "Typsnittsstil"
+
+#: app/scripts/services/services.js
+msgid "Font Weight"
+msgstr "Typsnittstjocklek"
+
+#: app/scripts/services/services.js
+msgid "Foreground Color"
+msgstr "Förgrundsfärg"
+
+#: app/views/login.html
+msgid "Forgot your Password?"
+msgstr "Glömt ditt lösenord?"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Frequently Asked Questions (FAQ)"
+msgstr "Vanliga Frågor Och Svar"
+
+#: app/views/login.html
+msgid "Full Name"
+msgstr "Fullt namn"
+
+#: app/views/profile.html
+msgid "Gender"
+msgstr "Kön"
+
+#: app/views/profile.html
+msgid ""
+"Get an email every time someone else publishes a new version of a webble of "
+"which you are coauthor"
+msgstr ""
+"Få ett e-mail varje gång någon publicerar en ny version av en Webble som du "
+"är med-skapare av"
+
+#: app/views/profile.html
+msgid "Get an email every time someone shares a workspace or a webble with you"
+msgstr ""
+"Få ett e-mail varje gång någon delar en arbetsyta eller en Webble med dig"
+
+#: app/views/profile.html
+msgid "Get an email every time the platform has major updates"
+msgstr ""
+"Få ett e-mail varje gång Webble World plattformen har en större uppdatering"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Good"
+msgstr "Bra"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Great!"
+msgstr "Jättebra!"
+
+#: app/views/groups.html
+msgid "Group Email"
+msgstr "Grupp E-post"
+
+#: app/views/profile.html
+msgid "Group Information"
+msgstr "Grupp Information"
+
+#: app/views/groups.html
+msgid "Group Name"
+msgstr "Gruppnamn"
+
+#: app/views/profile.html
+msgid "Group information will appear here - currently no group found"
+msgstr ""
+"Grupp information kommer synas här - För tillfället är ingen grupp hittad"
+
+#: app/index.html app/views/groups.html
+msgid "Groups"
+msgstr "Grupper"
+
+#: app/views/modalForms/about.html
+msgid "Hardcore System Testing:"
+msgstr "Allvarlig System Testning:"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Having Children Not Allowed:"
+msgstr "Att Ha Barn Inte Tillåtet:"
+
+#: app/scripts/services/services.js
+msgid "Height"
+msgstr "Höjd"
+
+#: app/views/modalForms/propertySheet.html
+msgid "Height:"
+msgstr "Höjd:"
+
+#: app/scripts/services/services.js
+msgid "Help"
+msgstr "Hjälp"
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid ""
+"Here you decide weather to load the Webble with an URL from an online server "
+"or by file from your local computer"
+msgstr ""
+"Här beslutar du ifall du vill ladda en Webble med en URL från en online "
+"server eller från din lokala dator"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"Here you decide weather to publish this Webble online to the public server "
+"or only locally to your computer"
+msgstr ""
+"Här beslutar du ifall du vill publicera denna Webble online på en publik "
+"server eller bara lokalt på din dator"
+
+#: app/scripts/services/services.js
+msgid "High Clearance User"
+msgstr "Högnivå Användare"
+
+#: app/views/modalForms/about.html
+msgid "Hokkaido University"
+msgstr "Hokkaido Universitet"
+
+#: app/scripts/directives/directives.js
+msgid "Horizontal Position"
+msgstr "Horizontal Position"
+
+#: app/scripts/controllers/templates.js
+msgid "How the Webble looks"
+msgstr "Hur Webbeln ser ut"
+
+#: app/scripts/controllers/templates.js
+msgid "How the Webble view is structured"
+msgstr "Hur Webble Vyn är strukturerad"
+
+#: app/views/templates.html
+msgid "Hurray! You don't have any unpublished templates."
+msgstr "Hurra! Du har inga opublicerade Webble-mallar."
+
+#: app/views/templates.html
+msgid "ID"
+msgstr "ID"
+
+#: app/views/templates.html
+msgid "Id"
+msgstr "Id"
+
+#: app/scripts/controllers/modalForms/platformProps.js
+msgid ""
+"If this is unchecked, some of the more tutorial-like and repetetive "
+"informative Message popups will be disabled."
+msgstr ""
+"Om denna är avmarkerad, så kommer mer undervisande och informativa "
+"meddelanden och popups visas."
+
+#: app/scripts/controllers/groups.js
+msgid ""
+"If you confirm, any subgroups will be transfered to the parent group and the "
+"group's reference will be revoked from all its published objects"
+msgstr ""
+"Om du bekräftar, alla eventuella undergrupper kommer flyttas till en "
+"föräldragrupp och gruppens referenser kommer dras tillbaka från alla sina "
+"publicerade objekt."
+
+#: app/scripts/controllers/groups.js
+msgid ""
+"If you confirm, the selected object will no longer be member of the group."
+msgstr ""
+"Om du bekräftar, så kommer det valda objektet inte längre vara  medlem av "
+"gruppen."
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "If you want to delete this custom slot, click here."
+msgstr "Om du vill radera denna egenskapade slot, klicka här."
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Image Selection:"
+msgstr "Bildselection:"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Image View:"
+msgstr "Bildvy:"
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"In order to publish a Webble, you need a proper username which you have not "
+"yet. Please visit your user-profile page and rectify that."
+msgstr ""
+"För att kunna publicera en Webble, så måste du ha ett godkänt användarnamn, "
+"vilket du inte har ännu. Var god och besök din användarprofilsida och "
+"åtgärda detta."
+
+#: app/views/groups.html
+msgid "Information"
+msgstr "Information"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Initiation Value:"
+msgstr "Initieringsvärde:"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Instance Id:"
+msgstr "Instans-Id:"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Interaction Objects Not Visible:"
+msgstr "Interaktionsobjekt Ej Synliga:"
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "Internal"
+msgstr "Interna"
+
+#: app/views/data.html app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/searchWblSheet.html
+msgid "Keywords:"
+msgstr "Nyckelord:"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Last Updated"
+msgstr "Senast Uppdaterad"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Last Updated:"
+msgstr "Senaste Uppdaterad:"
+
+#: app/scripts/directives/directives.js
+msgid "Layer Order Index"
+msgstr "Lagerordningsindex "
+
+#: app/views/modalForms/about.html
+msgid "Licence"
+msgstr "Licens"
+
+#: app/views/groups.html
+msgid "Licenses"
+msgstr "Licenser"
+
+#: app/views/profile.html
+msgid "Licenses and API keys"
+msgstr "Licenser och API-nycklar"
+
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/searchWblSheet.html app/scripts/services/services.js
+msgid "Load"
+msgstr "Ladda"
+
+#: app/scripts/controllers/platform.js
+msgid "Load Sandbox Webble"
+msgstr "Ladda Sandlåde-Webble"
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Load Target:"
+msgstr "Laddningsmål:"
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Load Webble"
+msgstr "Ladda Webble"
+
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Local Computer"
+msgstr "Lokal Dator"
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Local File:"
+msgstr "Lokal Fil:"
+
+#: app/views/login.html
+msgid "Log in"
+msgstr "Logga in"
+
+#: app/scripts/controllers/login.js
+msgid "Logged in successfully"
+msgstr "Framgångsrikt Inloggad"
+
+#: app/index.html app/views/login.html
+msgid "Login"
+msgstr "Logga in"
+
+#: app/index.html
+msgid "Logout"
+msgstr "Logga Ut"
+
+#: app/scripts/services/services.js
+msgid "Low Clearance User"
+msgstr "Lågnivå Användare"
+
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "Make Template Webble Public?"
+msgstr "Göra Webble-mallen publik?"
+
+#: app/views/profile.html
+msgid "Male"
+msgstr "Man"
+
+#: app/scripts/services/services.js
+msgid "Margin"
+msgstr "Marginal"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Masterpiece!"
+msgstr "Mästerverk!"
+
+#: app/scripts/services/services.js
+msgid "Max Height"
+msgstr "Maxhöjd"
+
+#: app/scripts/services/services.js
+msgid "Max Width"
+msgstr "Maxvidd"
+
+#: app/scripts/services/services.js
+msgid "Medium Clearance User"
+msgstr "Medelnivå Användare"
+
+#: app/scripts/controllers/groups.js
+msgid "Members can publish and update freely under this group"
+msgstr "Medlemmar kan publicera och uppdatera fritt i denna grupp"
+
+#: app/scripts/controllers/groups.js
+msgid ""
+"Members can update freely but new publications require the group owner's "
+"approval"
+msgstr ""
+"Medlemmar kan uppdatera fritt, men nya publikationer kräver gruppens ägares "
+"godkännande."
+
+#: app/index.html
+msgid "Meme Media Lab YouTube Page."
+msgstr "Meme Media Laboratoriums YouTube Sida."
+
+#: app/views/modalForms/about.html
+msgid "Meme Media Laboratory"
+msgstr "Meme Media Laboratorium"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Merged Combo Slot channels:"
+msgstr "Sammanfogad Kombo Slots-kanal:"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Merged Combo Slots"
+msgstr "Sammanslagen Kombo Slot"
+
+#: app/scripts/services/services.js
+msgid "Min Height"
+msgstr "Minimumhöjd"
+
+#: app/scripts/services/services.js
+msgid "Min Width"
+msgstr "Minimumvidd"
+
+#: app/scripts/controllers/groups.js
+msgid "Moderate all updates"
+msgstr "Moderera alla uppdateringar"
+
+#: app/scripts/controllers/groups.js
+msgid "Moderate new publications"
+msgstr "Moderera nya publikationer"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Move Not Allowed:"
+msgstr "Flytta Inte Tillåtet:"
+
+#: app/views/workSpaces.html
+msgid "Multi Webble Propertes"
+msgstr "Multi-Webble Egenskaper"
+
+#: app/scripts/services/services.js
+msgid "Multi Webble Properties"
+msgstr "Multi-Webble Egenskaper"
+
+#: app/views/groups.html app/views/login.html app/views/profile.html
+#: app/views/templates.html app/views/modalForms/searchWblSheet.html
+msgid "Name"
+msgstr "Namn"
+
+#: app/views/groups.html app/views/profile.html
+msgid "Name:"
+msgstr "Namn:"
+
+#: app/scripts/controllers/platform.js
+msgid "Need a username..."
+msgstr "Behöver ett användarnamn..."
+
+#: app/scripts/services/services.js
+msgid "New"
+msgstr "Ny"
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "New Collaborator:"
+msgstr "Ny Medarbetare"
+
+#: app/views/templates.html
+msgid "New File"
+msgstr "Ny Fil"
+
+#: app/views/groups.html
+msgid "New Group"
+msgstr "Ny Grupp"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "New Merge-Combo Slot Name:"
+msgstr "Ny Sammanfogad Slots Namn:"
+
+#: app/views/modalForms/faqSheet.html
+msgid "New Question"
+msgstr "Ny Fråga"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "New Slot Name:"
+msgstr "Ny Slots Namn:"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "New Webble Definition ID:"
+msgstr "Nytt Webble Definitions ID:"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Next"
+msgstr "Nästa"
+
+#: app/views/modalForms/clearSomething.html
+#: app/views/modalForms/deleteSomething.html
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "No"
+msgstr "Nej"
+
+#: app/scripts/controllers/platform.js
+msgid "No Quick-Save Workspace in Storage"
+msgstr "Ingen Snabbsparad Arbetsyta i Lager"
+
+#: app/views/workSpaces.html
+msgid "No Webble is selected"
+msgstr "Ingen Webble är selekterad"
+
+#: app/scripts/controllers/workSpaces.js
+msgid "No Webbles are connected with eachother or share their model"
+msgstr "Inga Webblar är sammankopplade med varann eller delar sin modell"
+
+#: app/scripts/controllers/platform.js
+msgid "No Webbles to bundle are selected."
+msgstr "Ingen Webblar att bunta ihop är selekterade."
+
+#: app/scripts/controllers/platform.js
+msgid "No Workspace to share."
+msgstr "Ingen Arbetsyta att dela."
+
+#: app/scripts/controllers/platform.js
+msgid "No Workspaces Available"
+msgstr "Ingen Arbetsyta Tillgänglig"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Non-Developers Mode Not Visible:"
+msgstr "Ej synlig utanför Utvecklarläge:"
+
+#: app/scripts/controllers/platform.js
+msgid "Non-Menu Shortcut Keys"
+msgstr "Kortkommandon Utanför Menyn"
+
+#: app/scripts/controllers/wblCore.js
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "None"
+msgstr "Inga"
+
+#: app/views/profile.html
+msgid "Notification"
+msgstr "Notifikation"
+
+#: app/views/profile.html
+msgid "Notifications"
+msgstr "Notifikationer"
+
+#: app/views/profile.html
+msgid "OK"
+msgstr "OK"
+
+#: app/views/modalForms/about.html app/views/modalForms/infoMsg.html
+#: app/views/modalForms/wblAbout.html
+msgid "Ok"
+msgstr "Ok"
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"One Webble is protected from Bundling and therefore this operation is "
+"canceled."
+msgstr ""
+"En Webble är skyddad från buntning och därför är denna operation avbruten."
+
+#: app/scripts/controllers/workSpaces.js
+msgid ""
+"One or more Webbles in this workspace are from a source outside your circle "
+"of trust."
+msgstr ""
+"En eller flera Webblar i denna arbetsyta är från en källa utanför din cirkel "
+"av tillit. "
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"One or more of the Webbles included in the deletion attempt is protected "
+"from deletion and therefore this operation is canceled."
+msgstr ""
+"En eller flera av Webblarna inkluderad i raderingsförsöket är skyddad mot "
+"radering och därför är denna operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"One or more of the Webbles included in the duplication attempt is protected "
+"from duplication and therefore this operation is canceled."
+msgstr ""
+"En eller flera av Webblarna inkluderad i dupliceringsförsöket är skyddad mot "
+"duplicering och därför är denna operation avbruten."
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"One or more of the Webbles included in the publish attempt is protected from "
+"publishing and therefore this operation is canceled."
+msgstr ""
+"En eller flera av Webblarna inkluderad i publiceringsförsöket är skyddad mot "
+"publicering och därför är denna operation avbruten."
+
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Online Public Server"
+msgstr "Online Publik Server"
+
+#: app/scripts/directives/directives.js
+msgid "Opacity"
+msgstr "Opacitet"
+
+#: app/views/templates.html app/views/modalForms/openWSSheet.html
+#: app/scripts/services/services.js
+msgid "Open"
+msgstr "Öppna"
+
+#: app/scripts/services/services.js
+msgid "Open Chat"
+msgstr "Öppna Chat"
+
+#: app/scripts/services/services.js
+msgid "Open Menu"
+msgstr "Öppna Meny"
+
+#: app/views/modalForms/openWSSheet.html
+msgid "Open Workspace"
+msgstr "Öppna Arbetsyta"
+
+#: app/scripts/controllers/groups.js
+msgid "Open for publications"
+msgstr "Öppen för publicering"
+
+#: app/scripts/controllers/login.js app/scripts/controllers/profile.js
+msgid "Operation cancelled"
+msgstr "Operationen avbruten "
+
+#: app/views/login.html
+msgid "Or login using one of your social accounts:"
+msgstr "Eller logga in med ett av dina sociala konton"
+
+#: app/views/groups.html
+msgid "Owner User"
+msgstr "Ägar-Användare"
+
+#: app/scripts/services/services.js
+msgid "Padding"
+msgstr "Utfyllnad"
+
+#: app/scripts/services/services.js
+msgid "Padding of the inside element from the surrounding borders."
+msgstr "Utfyllnad mellan element på insdan och dess omgärdande kant."
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Parent Assignment Not Allowed:"
+msgstr "Föräldratilldelning Ej Tillåten:"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Parent Revoking Not Allowed:"
+msgstr "Föräldrafrånkoppling Ej Tillåten:"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Parent Slot:"
+msgstr "Föräldra Slot:"
+
+#: app/views/login.html app/views/profile.html
+msgid "Password"
+msgstr "Lösenord"
+
+#: app/views/login.html
+msgid "Password is required"
+msgstr "Lösenord krävs"
+
+#: app/views/login.html
+msgid "Password must be at least 5 characters long"
+msgstr "Lösenord måste vara minst 5 tecken långt"
+
+#: app/views/login.html
+msgid "Password must be at most 60 characters long"
+msgstr "Lösenord måste vara högst 60 tecken långt"
+
+#: app/views/login.html
+msgid "Passwords do not match"
+msgstr "Lösenorden matchar inte"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Pending Answers you need to give"
+msgstr "Svar som väntas från dig"
+
+#: app/scripts/controllers/platform.js
+msgid "Pending Questions in the FAQ"
+msgstr "Väntande Frågor i FAQ"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Pick Custom Image:"
+msgstr "Välj Egen Bild:"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "Pick a local image to use to represent your Webble. [Max Size: 300kb]"
+msgstr ""
+"Välj en lokal bild att använda för att representera din Webble. [Maxstorlek: "
+"300kb]"
+
+#: app/views/modalForms/bundleSheet.html
+msgid "Pick which slots should be accessable in the bundle"
+msgstr "Välj vilka slottar som skall vara tillgängliga i Bunten"
+
+#: app/views/modalForms/platformPropsSheet.html
+msgid "Platform Execution Mode:"
+msgstr "Plattformsexekveringsläge:"
+
+#: app/views/modalForms/platformLangSheet.html
+msgid "Platform Language"
+msgstr "Plattformsspråk"
+
+#: app/views/modalForms/platformPropsSheet.html
+#: app/scripts/services/services.js
+msgid "Platform Properties"
+msgstr "Plattformsegenskaper"
+
+#: app/views/login.html app/views/templates.html
+msgid "Please correct the following errors:"
+msgstr "Var snäll och åtgärda följande fel"
+
+#: app/views/login.html
+msgid "Please provide a (decent) name"
+msgstr "Var snäll och ge oss ett (anständig) namn"
+
+#: app/views/templates.html
+msgid "Please provide a valid description for the template"
+msgstr "Var snäll och ange en godkänd beskrivning för mallen"
+
+#: app/views/templates.html
+msgid "Please provide a valid id for the template"
+msgstr "Var snäll och ange ett godkänt id för mallen"
+
+#: app/views/templates.html
+msgid "Please provide a valid name for the template"
+msgstr "Var snäll och ange ett godkänt namn för mallen"
+
+#: app/views/profile.html
+msgid "Please review and respond to the notifications below."
+msgstr "Var snäll och se över samt svara på notifikationerna nedan."
+
+#: app/views/profile.html
+msgid "Preferred Language"
+msgstr "Önskat språk"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Previous"
+msgstr "Föregående"
+
+#: app/scripts/services/services.js
+msgid "Print"
+msgstr "Skriv Ut"
+
+#: app/index.html
+msgid "Profile Settings"
+msgstr "Profil Inställningar"
+
+#: app/views/modalForms/about.html
+msgid "Project Lead & Chief Architect:"
+msgstr "Projektledare och Ledande Systemarkitekt:"
+
+#: app/views/modalForms/propertySheet.html
+#: app/scripts/directives/directives.js
+msgid "Properties"
+msgstr "Egenskaper"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Property Change Not Allowed:"
+msgstr "Egenskapsförändring Ej Tillåten"
+
+#: app/views/modalForms/wblProtectionSheet.html
+msgid "Protection"
+msgstr "Skydd"
+
+#: app/views/groups.html
+msgid "Publication Policy"
+msgstr "Publicerings Policy"
+
+#: app/scripts/directives/directives.js app/scripts/services/services.js
+msgid "Publish"
+msgstr "Publicera"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Publish Not Allowed:"
+msgstr "Publicering Ej Tillåtet:"
+
+#: app/scripts/controllers/platform.js
+msgid "Publish Not Available"
+msgstr "Publicera Ej Tillgängligt"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Publish Webble"
+msgstr "Publicera Webble"
+
+#: app/scripts/controllers/platform.js app/scripts/controllers/wblCore.js
+msgid "Publish Webble Attempt Failed"
+msgstr "Publiceringsförsök av Webble Misslyckades"
+
+#: app/views/groups.html
+msgid "Published Objects"
+msgstr "Publicerade Objekt"
+
+#: app/views/workSpaces.html
+msgid "Push Changes"
+msgstr "Knuffa Ändringar"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Rate"
+msgstr "Betygsätt"
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Rate This Webble"
+msgstr "Betygsätt Denna Webble"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Rated"
+msgstr "Betygsatt"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Rating"
+msgstr "Betyg"
+
+#: app/views/data.html
+msgid "Rating:"
+msgstr "Betyg:"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Receive"
+msgstr "Mottaga"
+
+#: app/scripts/services/services.js
+msgid "Recent"
+msgstr "Senaste"
+
+#: app/scripts/controllers/platform.js
+msgid "Recent Quick saved workspace has been restored"
+msgstr "Tidigare Snabbsparad Arbetsyta Har Återställts"
+
+#: app/scripts/services/services.js
+msgid "Redo"
+msgstr "Gör Om"
+
+#: app/views/login.html
+msgid "Remember me"
+msgstr "Kom ihåg mig"
+
+#: app/views/templates.html app/views/modalForms/shareWSSheet.html
+msgid "Remove"
+msgstr "Ta Bort"
+
+#: app/scripts/services/services.js
+msgid "Report Bug"
+msgstr "Rapportera Fel"
+
+#: app/scripts/services/services.js
+msgid "Rescale"
+msgstr "Skala om"
+
+#: app/views/login.html app/views/profile.html
+msgid "Reset"
+msgstr "Återställ"
+
+#: app/scripts/controllers/login.js
+msgid "Reset Account Password Request"
+msgstr "Återställ kontolösenord förfrågan"
+
+#: app/views/login.html
+msgid "Reset Password"
+msgstr "Återställ Lösenord"
+
+#: app/scripts/services/services.js
+msgid "Resize"
+msgstr "Storleksändra"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Resize Not Allowed:"
+msgstr "Storleksförändra Ej Tillåtet:"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Result:"
+msgstr "Resultat:"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Reversed"
+msgstr "Omvänd"
+
+#: app/views/profile.html
+msgid "Revoke Group Membership"
+msgstr "Dra Tillbaka Gruppmedlemskap"
+
+#: app/scripts/controllers/profile.js
+msgid "Revoke Membership"
+msgstr "Dra Tillbaka Medlemskap"
+
+#: app/scripts/directives/directives.js
+msgid "Revoke Parent"
+msgstr "Annulera Förälder"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Revoke Parent Failed"
+msgstr "Annulering av Förälder Misslyckades"
+
+#: app/views/profile.html
+msgid "Revoke Trust"
+msgstr "Dra tillbaka Tillit"
+
+#: app/scripts/services/services.js
+msgid "Rotate"
+msgstr "Rotera"
+
+#: app/views/profile.html app/views/templates.html
+#: app/scripts/services/services.js
+msgid "Save"
+msgstr "Spara"
+
+#: app/scripts/services/services.js
+msgid "Save As"
+msgstr "Spara Som"
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Save Target:"
+msgstr "Sparningsmål:"
+
+#: app/views/modalForms/saveWSAsSheet.html
+msgid "Save Workspace As..."
+msgstr "Spara Arbetsyta Som..."
+
+#: app/scripts/controllers/platform.js
+msgid "Save Workspace Not Available"
+msgstr "Spara Arbetsyta Inte Tillgängligt"
+
+#: app/scripts/directives/directives.js
+msgid "Scale"
+msgstr "Skala"
+
+#: app/views/modalForms/searchWblSheet.html
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Search"
+msgstr "Sök"
+
+#: app/scripts/services/services.js
+msgid "Select All"
+msgstr "Selektera Allt"
+
+#: app/views/groups.html
+msgid "Select a group to get more information"
+msgstr "Välj en grupp för att få mer information"
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "Select the slots you also want combined into a combo slot."
+msgstr "Välj de slottar som du vill också skall ingå i en kombo slot."
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"Select which groups this Webble should be associated with and trusted by. No "
+"group means the Webble will always be considered untrusted."
+msgstr ""
+"Välj vilken grupp denna Webble skall vara associerad med och betrodd av. "
+"Ingen grupp betyder att Webbeln alltid kommer anses ej betrodd."
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Selection Not Allowed:"
+msgstr "Selektering Ej Tillåten:"
+
+#: app/views/chat.html app/views/modalForms/rateWblSheet.html
+#: app/views/modalForms/slotConnSheet.html
+msgid "Send"
+msgstr "Skicka"
+
+#: app/views/modalForms/about.html
+msgid "Server Side Developers:"
+msgstr "Serverkodutvecklare:"
+
+#: app/views/profile.html
+msgid "Set Password"
+msgstr "Sött lösenord"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Set Property Failed"
+msgstr "Sätta Egenskap Misslyckades"
+
+#: app/scripts/directives/directives.js
+msgid "Set Protection"
+msgstr "Sätt Skydd"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Set Size Slot Failed"
+msgstr "Sätt Storleks-Slot Misslyckades"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Set Slot Failed"
+msgstr "Sätta Slot Misslyckades"
+
+#: app/scripts/services/services.js
+msgid "Share"
+msgstr "Dela"
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "Share Workspace"
+msgstr "Dela Arbetsyta"
+
+#: app/scripts/services/services.js
+msgid "Shared Duplicate"
+msgstr "Delad Duplicering"
+
+#: app/scripts/directives/directives.js
+msgid "Shared Model Duplicate"
+msgstr "Delad Modell Duplicering"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Shared Model Duplicate Not Allowed:"
+msgstr "Delad Modell Duplicering Inte Tillåten:"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Shared Model Duplication Failed"
+msgstr "Delad Modell Duplicering Misslyckades"
+
+#: app/views/data.html
+msgid "Shared:"
+msgstr "Delade:"
+
+#: app/index.html app/views/login.html
+msgid "Sign Up"
+msgstr "Registrera dig"
+
+#: app/scripts/controllers/login.js
+msgid "Signed up and logged in successfully"
+msgstr "Inskriven och inloggad framgångsrikt"
+
+#: app/views/templates.html
+msgid "Size"
+msgstr "Storlek"
+
+#: app/views/mediaplayer.html
+msgid "Skip Intro"
+msgstr "Hoppa Över Intro"
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Slot Connection"
+msgstr "Slot-Sammankoppling"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Slot Full Name:"
+msgstr "Slots Fullständiga Namn:"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Slots to pick:"
+msgstr "Slots att välja:"
+
+#: app/views/modalForms/propertySheet.html
+msgid "Slots:"
+msgstr "Slottar:"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Sorted By:"
+msgstr "Sorterad Efter:"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Stand-alone Slots"
+msgstr "Ensamstående Slot"
+
+#: app/views/groups.html app/scripts/controllers/modalForms/shareWS.js
+msgid "Start typing a username"
+msgstr "Börja skriva ett användarnamn"
+
+#: app/views/login.html app/views/modalForms/addCustSlotSheet.html
+#: app/views/modalForms/bundleSheet.html
+#: app/views/modalForms/platformLangSheet.html
+#: app/views/modalForms/platformPropsSheet.html
+#: app/views/modalForms/propertySheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/saveWSAsSheet.html
+#: app/views/modalForms/slotConnSheet.html
+#: app/views/modalForms/wblProtectionSheet.html
+msgid "Submit"
+msgstr "Skicka"
+
+#: app/scripts/services/services.js
+msgid "Super High Clearance User"
+msgstr "Superhögnivå Användare"
+
+#: app/scripts/services/services.js
+msgid "Support"
+msgstr "Support"
+
+#: app/views/templates.html
+msgid "Template Description"
+msgstr "Mall Beskrivning"
+
+#: app/views/templates.html app/scripts/services/services.js
+msgid "Template Editor"
+msgstr "Webble-Mall Editor"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Template ID:"
+msgstr "Mall-ID:"
+
+#: app/views/templates.html
+msgid "Template Id"
+msgstr "Mall-Id"
+
+#: app/views/templates.html
+msgid "Template Name"
+msgstr "Mallnamn"
+
+#: app/views/modalForms/wblAbout.html
+msgid "Template Revision:"
+msgstr "Mall Revision:"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "Template code copied to your Template Editor"
+msgstr "Webble-mall kod kopierad till din Webble-mall Editor"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Terrible"
+msgstr "Fruktansvärd"
+
+#: app/scripts/services/services.js
+msgid "Text Alignment"
+msgstr "Textplacering"
+
+#: app/scripts/directives/directives.js
+msgid ""
+"The Horizontal position (left right) of the element either on the screen or "
+"in relation to its parent element (% sign is allowed)"
+msgstr ""
+"Den horizontala positionen (vänster höger) hos elementet antingen på "
+"arbetsytan eller i relation till sin förälder (% tecken är tillåtet)"
+
+#: app/scripts/directives/directives.js
+msgid ""
+"The Vertical position (up down) of the element either on the screen or in "
+"relation to its parent element (% sign is allowed)"
+msgstr ""
+"Den vertikala positionen (upp ner) hos elementet antingen på arbetsytan "
+"eller i relation till sin förälder (% tecken är tillåtet)"
+
+#: app/scripts/controllers/workSpaces.js
+msgid ""
+"The Webble Definition file was somehow not formatted correctly so therefore "
+"Webble loading was canceled."
+msgstr ""
+"Webble Definitions-filen var på nåt sätt inte formaterad korrekt så därmed "
+"var Webble laddningen avbruten."
+
+#: app/scripts/controllers/modalForms/saveWSAs.js
+msgid "The Workspace name cannot be blank"
+msgstr "Arbetsytans namn kan inte vara tomt"
+
+#: app/scripts/services/services.js
+msgid "The alignment of the text inside its borders."
+msgstr "Positioneringen av texten inuti sina gränser."
+
+#: app/scripts/services/services.js
+msgid "The background color of this container."
+msgstr "Bakgrundsfärgen på detta element."
+
+#: app/scripts/services/services.js
+msgid "The border attribute collection of this element."
+msgstr "Kantattribut-kollektion för detta element."
+
+#: app/scripts/services/services.js
+msgid "The border color of this element."
+msgstr "Kantfärgen för detta element"
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid ""
+"The chosen file was somehow not formatted correctly so therefore it will not "
+"load any Webble."
+msgstr ""
+"Den valda filen var på nåt sätt inte formaterad korrekt så den kan därmed "
+"inte ladda någon Webble."
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid "The directions which change of slot values will be communicated"
+msgstr "De riktningar som förändringar i slotvärde skall bli kommunicerade"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"The file selected is not an image file and will therefore not be used as "
+"such. Auto generated image will be used instead."
+msgstr ""
+"Filen vald är ingen bildfil och kommer därför inte användas som en sådan. "
+"Autogenererad bild kommer användas istället."
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "The file selected is not an image file."
+msgstr "Filen vald är ingen bildfil."
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"The file selected is too large. Max size allowed is 300kb. Please resize "
+"image or choose a smaller one."
+msgstr ""
+"Filen vald är för stor. Maxstorlek tillåten är 300 kb. Var god och förminska "
+"bilden eller välj en mindre."
+
+#: app/views/groups.html
+msgid "The following objects are members of the group"
+msgstr "Följande objekt är medlemmar av gruppen"
+
+#: app/scripts/services/services.js
+msgid "The font family of the text."
+msgstr "Textens Typsnitt."
+
+#: app/scripts/services/services.js
+msgid "The foreground color of this element."
+msgstr "Förgrundsfärgen för detta element."
+
+#: app/scripts/services/services.js
+msgid "The height of the element (% sign is allowed)."
+msgstr "Höjden på detta element (% tecken är tillåtet)."
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "The initiation value of the slot, may be left empty"
+msgstr "Initierngsvärdet på slotten, kan lämnas tom"
+
+#: app/scripts/directives/directives.js
+msgid ""
+"The layer order index value (integer) which decides who's on top of who."
+msgstr "Lagerordningsindexvärde (heltal) som bestämmer vem som är ovanpå vem."
+
+#: app/scripts/services/services.js
+msgid "The margins of the element."
+msgstr "Elementets marginaler."
+
+#: app/scripts/services/services.js
+msgid "The max height of the element."
+msgstr "Maxhöjden på elementet"
+
+#: app/scripts/services/services.js
+msgid "The max width of the element."
+msgstr "Maxvidden på elementet"
+
+#: app/scripts/services/services.js
+msgid "The min height of the element."
+msgstr "Minimihöjden på elementet"
+
+#: app/scripts/services/services.js
+msgid "The min width of the element."
+msgstr "Minimividden på elementet"
+
+#: app/scripts/directives/directives.js
+msgid ""
+"The multiplier (decimal value) for the elements width and height to increase "
+"or decrease the scale of that attribute."
+msgstr ""
+"Multiplikatorn (decimal värde) för elementets vidd och höjd för att öka "
+"eller minska skalan på de attributen."
+
+#: app/scripts/controllers/modalForms/saveWSAs.js
+msgid "The name that will help you identify this workspace"
+msgstr "Det namn som hjälper dig identifiera denna arbetsyta"
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "The name that will identify the new custom slot"
+msgstr "Det namn som identifierar den nya egenskapade slotten"
+
+#: app/scripts/controllers/wblCore.js
+msgid "The name the Webble is user friendly shown as."
+msgstr "Det användarvänliga namnet på Webblen."
+
+#: app/scripts/controllers/workSpaces.js
+msgid "The provided file is not of json type, and will therefore be ignored."
+msgstr "Den givna filen är inte av json-typ, och kommer därför ignoreras."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"The selected parent is protected from having children and therefore this "
+"operation is canceled."
+msgstr ""
+"Den selekterade föräldern är skyddad från att ha barn och därför är denna "
+"operation avbruten."
+
+#: app/scripts/services/services.js
+msgid "The size of the font in pixels."
+msgstr "Storleken på typsnittet i pixlar."
+
+#: app/scripts/services/services.js
+msgid "The style of the font."
+msgstr "Stilen på typsnittet."
+
+#: app/scripts/directives/directives.js
+msgid "The tilt rotate angle in degrees for the element in question."
+msgstr "Roteringsvinkel i grader för elementet i fråga."
+
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid ""
+"The user-name or e-mail for a Webble user you want to share this Workspace "
+"with"
+msgstr ""
+"Användarnamnet eller e-mail för den Webbleanvändare du vill dela denna "
+"arbetsyta med."
+
+#: app/scripts/services/services.js
+msgid "The visibility of the element (and its sub element)."
+msgstr "Synlighet på elementet (och alla dess under-element)"
+
+#: app/scripts/services/services.js
+msgid "The weight, boldness, of the text."
+msgstr "Tjockleken på texten"
+
+#: app/scripts/services/services.js
+msgid "The width in pixels of the border (0 = no border)."
+msgstr "Vidden i pixlar på kanten (0 = ingen kant)."
+
+#: app/scripts/services/services.js
+msgid "The width of the element (% sign is allowed)."
+msgstr "Vidden på detta element (% tecken är tillåtet)."
+
+#: app/views/groups.html
+msgid "There are no objects published under the group"
+msgstr "Det finns inga objekt publicerade av denna grupp"
+
+#: app/views/profile.html
+msgid "There are not any unhandled notifications :-P"
+msgstr "Det finns inga obehandlade notifikationer :-P"
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"There are pending questions in the FAQ waiting for your attention. Please "
+"visit there and give some good answers."
+msgstr ""
+"Det finns väntande frågor i FAQ sektionen som pockar på din uppmärksamhet. "
+"Var snäll och besök denna och ge några bra svar."
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "There is nothing to submit, so what are you trying to do?"
+msgstr "Det finns inget att skicka, så vad försöker du göra?"
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "These are the available CSS attributes for the selected visual element"
+msgstr ""
+"Detta är de tillgängliga CSS attributen för det selekterade visuella "
+"elementet"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"These are the descriptive keywords this Webble will be more easly searched "
+"and found by"
+msgstr ""
+"Detta är de beskrivande nyckelorden denna Webble blir mer lätt att söka och "
+"hitta ifrån"
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid ""
+"These are the visual elements found within this Webble and whose css "
+"attributes can be turned into slots"
+msgstr ""
+"Detta är de visuella element som hittats inuti denna Webble och vars css "
+"attribut kan göras om till slottar"
+
+#: app/views/modalForms/about.html
+msgid ""
+"This Software and all the Webbles which are linked to it and used within it "
+"are licencenced under the"
+msgstr ""
+"Denna Mjukvara och alla Webblar som är länkade till den och använda i den är "
+"licenserade under "
+
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid ""
+"This Webble (in itself or one of the including Webbles in a possible "
+"cluster) is an unpublished webble from your develepment sandbox. If you "
+"continue with the publish the Webble in question will be become publically "
+"available. Is this what you want?"
+msgstr ""
+"Denna Webble (i sig själv eller en av de inkluderade Webblarna i ett möjligt "
+"kluster) är en opublicerad Webble från din utvecklings-sandlåda. Om du "
+"fortsätter med publiceringen så kommer Webbeln i fråga bli publikt åtkomlig. "
+"Är det vad du vill skall ske? "
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid ""
+"This Webble has shared model duplicates which it shares selected slots with"
+msgstr ""
+"Denna Webbla har delad-modell duplikeringar som den delar utvalda slottar med"
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble included is protected from publishing and therefore this "
+"operation is canceled."
+msgstr ""
+"Denna Webble är skyddad från publicering och därför är denna operation "
+"avbruten."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "This Webble is developed by a group inside your circle of trust."
+msgstr "Denna Webble är skapad av en grupp inom din cirkel av tillit."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid ""
+"This Webble is developed by a group or individual ouside your circle of "
+"trust."
+msgstr ""
+"Denna Webble är skapad av en grupp eller individ utanför din cirkel av "
+"tillit."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from Bundling and therefore this operation is "
+"canceled."
+msgstr ""
+"Denna Webble är skyddad från buntning och därför är denna operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from Shared Model Duplication and therefore this "
+"operation is canceled."
+msgstr ""
+"Denna Webble är skyddad från delad modell duplicering och därför är denna "
+"operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from Unbundling and therefore this operation is "
+"canceled."
+msgstr ""
+"Denna Webble är skyddad från avbuntning och därför är denna operation "
+"avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from duplication and therefore this operation is "
+"canceled."
+msgstr ""
+"Denna Webble är skyddad från duplicering och därför är denna operation "
+"avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from getting a parent and therefore this operation "
+"is canceled."
+msgstr ""
+"Denna Webble är skyddad från att få en förälder och därför är denna "
+"operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from resizing and therefore this operation is "
+"canceled."
+msgstr ""
+"Denna Webble är skyddad från att storleksförändra och därför är denna "
+"operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from revoking its parent and therefore this "
+"operation is canceled."
+msgstr ""
+"Denna Webble är skyddad från att förlora sin förälder och därför är denna "
+"operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from shared model duplication and therefore this "
+"operation is canceled."
+msgstr ""
+"Denna Webble är skyddad från delad modell duplicering och därför är denna "
+"operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble is protected from slot and property change and therefore this "
+"operation is canceled."
+msgstr ""
+"Denna Webble är skyddad från slot- och egenskapsförändring och därför är "
+"denna operation avbruten."
+
+#: app/scripts/controllers/wblCore.js
+msgid ""
+"This Webble's parent is protected from removing any of its children and "
+"therefore this operation is canceled."
+msgstr ""
+"Denna Webble's förälder är skyddad från att förlora sina barn och därför är "
+"denna operation avbruten."
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"This is a user friendly display name used by this Webble instance, your new "
+"Webble will use this value as its default display name"
+msgstr ""
+"Detta är ett användarvänligt visningsnamn som används av denna Webble-"
+"instans, din nya Webble kommer använda detta värde som sitt bas-visningnamn"
+
+#: app/scripts/controllers/modalForms/platformProps.js
+msgid "This is the background color of you workspace"
+msgstr "Detta är bakgrundsfärgen på din arbetsyta"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid ""
+"This is the currently chosen display name for this Webble Instance, may be "
+"changed in properties"
+msgstr ""
+"Detta är det nuvarande valda visningsnamnet för denna Webble Instans, kan "
+"ändras i egenskaper"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the description of this Webble Definition"
+msgstr "Detta är beskrivningen av denna Webble definition"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is the description of this Webble as will be shown after publish"
+msgstr ""
+"Detta är beskrivningen av denna Webble som kommer visas efter publicering"
+
+#: app/scripts/controllers/modalForms/platformProps.js
+msgid ""
+"This is the execution mode the system is currently in. Developer opens up "
+"all locks, Admin is for working Webble maintanance and user modes are for "
+"basic usage."
+msgstr ""
+"Detta är det exekveringsläge systemet körs i just nu. Utvecklare öppnar upp "
+"alla lås, Admin är för Webble-underhåll och användarlägen är för "
+"grundläggande användning."
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "This is the full name for the new slot"
+msgstr "Detta är det fulla namnet för den nya slotten"
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid ""
+"This is the id of this visual element, which is also the first name of the "
+"new slot"
+msgstr ""
+"Detta är id:t för det visuella elementet, vilket också är det första namnet "
+"på den nya slotten"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is the image that is representing this Webble in search engines"
+msgstr "Detta är den bild som representerar denna Webble i sökmotorn"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the keywords selected for this Webble Definition"
+msgstr "Detta är de nyckelord som valts för denna Webble definition"
+
+#: app/scripts/controllers/modalForms/openWS.js
+msgid ""
+"This is the list of available Workspaces you have previously saved or have "
+"been invited to share."
+msgstr ""
+"Detta är en lista av tillgängliga arbetsytor du har tidigare sparat eller "
+"blivit inbjuden att dela."
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the name of the Webble definition this Webble was created from"
+msgstr "Detta är namnet på den Webble definition denna nya Webble kommer ifrån"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid ""
+"This is the name of the template this Webble is created from. If you click "
+"the 'Create Sandbox Copy' button you create an identical copy of this Webble "
+"template (HTML5 code) and place it in your sandbox template editor for "
+"developing your own version based on this."
+msgstr ""
+"Detta är namnet på den Webble-mall denna Webble är skapad från. Om du du "
+"klickar 'Skapa Sandlåde-kopia' knappen så skapar du en identisk kopia av "
+"denna Webble-mall (HTML5 kod) och placerar den i din utvecklings-sandlåda i "
+"Webble-mall editorn, för utvecklandet av din egen version baserad på denna."
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"This is the name which this top Webble was published as previously (if "
+"reused, the Webble will overwrite and replace the current one found by that "
+"name.)"
+msgstr ""
+"Detta är namnet som denna topp-Webble var publicerad som tidigare (om det "
+"återanvänds så kommer det skriva över den nuvarande som hittades med det "
+"namnet)."
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"This is the name you want your Webble to be identified by (unless you will "
+"use the current name and replace that Webble with this new one)"
+msgstr ""
+"Detta är det namn du vill din Webble skall identifieras genom (ifall du inte "
+"använder det nuvarande namnet och ersätter den Webbeln med denna nya)"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the revision number of the template being used"
+msgstr "Detta är revisionsnummret på den Webble-mall som används"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the session instance id for this particular Webble"
+msgstr "Detta är sessionsinstans-id för denna specifika Webble"
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid ""
+"This is the slot of the parent which will exchange values and communicate "
+"with this child"
+msgstr ""
+"Detta är slotten i föräldern som kommer byta värden och kommunicera med "
+"detta barn"
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid ""
+"This is the slot of this Webble which will exchange values and communicate "
+"with its parent slot"
+msgstr ""
+"Detta är slotten i denna Webble som kommer byta värden och kommunicera med "
+"sin förälders slot"
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the user name of the author for this Webble definition"
+msgstr "Detta är användarnamet på upphovsmannen för denna Webble definition"
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"This operation only works with one selected Webble at a time, and you have"
+msgstr ""
+"Denna operation fungerar bara med endast en selekterad Webble åt gången, och "
+"du har "
+
+#: app/scripts/controllers/wblCore.js
+msgid "This slot is a custom slot added by a user or the Webble itself."
+msgstr "Denna slot är en egen slot skapad av en användare eller Webbeln själv."
+
+#: app/scripts/controllers/platform.js
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "This slot is a custom slot added by a user."
+msgstr "Denna slot är en egen slot skapad av en användare."
+
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid "This user is already added"
+msgstr "Denna användare är redan tillagd"
+
+#: app/views/profile.html
+msgid ""
+"To apply for group membership, please contact the group's manager directly "
+"or send an email to the group's address. You can find a group's address via "
+"the group information interface."
+msgstr ""
+"För att ansöka om grupp medlemskap, var snäll och kontakta gruppens ledare "
+"direkt eller skicka ett e-mail till gruppens adress. Du kan hitta gruppens "
+"adress genom gruppens informations interface."
+
+#: app/views/profile.html
+msgid ""
+"To trust a group, locate it via the group information interface and then "
+"click on the trust button below."
+msgstr ""
+"För att lita på en grupp, lokalisera den via grupp informations interfacet "
+"och klicka sedan på Tillits knappen nedan."
+
+#: app/scripts/services/services.js
+msgid "Toggle Connection View"
+msgstr "Växla Anslutningsvy"
+
+#: app/scripts/services/services.js
+msgid "Toggle Fullscreen"
+msgstr "Växla Helskärmsläge"
+
+#: app/views/profile.html
+msgid "Trust"
+msgstr "Tillit"
+
+#: app/views/profile.html
+msgid "Trust and Group Memberships"
+msgstr "Tillit och Grupp Medlemskap"
+
+#: app/views/data.html
+msgid "Trusted:"
+msgstr "Litad på:"
+
+#: app/scripts/controllers/login.js
+msgid "Trying to recover password and send email..."
+msgstr "Försöker återfinna lösenord och skicka e-post..."
+
+#: app/views/chat.html
+msgid "Type your message"
+msgstr "Skriv ditt meddelande"
+
+#: app/scripts/services/templates.js
+msgid "Unable to retrieve templates"
+msgstr "Kan inte hämta mall"
+
+#: app/scripts/services/workspaces.js
+msgid "Unable to retrieve workspaces"
+msgstr "Kan inte hämta arbetsyta"
+
+#: app/scripts/directives/directives.js
+msgid "Unbundle"
+msgstr "Avbunta"
+
+#: app/scripts/controllers/wblCore.js
+msgid "Unbundle Failed"
+msgstr "Avbuntning Misslyckades"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Unbundle Not Allowed:"
+msgstr "Avbunta Inte Tillåtet:"
+
+#: app/scripts/services/services.js
+msgid "Undo"
+msgstr "Ångra"
+
+#: app/views/profile.html
+msgid "Unhandled Notifications"
+msgstr "Ej Hanterade Notifikationer"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Unposted"
+msgstr "Opostad"
+
+#: app/views/templates.html
+msgid "Unpublished Templates"
+msgstr "Opublicerade Webble-mallar"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Unrated"
+msgstr "Ej Betygsatt"
+
+#: app/views/templates.html
+msgid "Update"
+msgstr "Uppdatera"
+
+#: app/views/workSpaces.html
+msgid "Update from Work surface"
+msgstr "Uppdatera från Arbetsyta"
+
+#: app/scripts/controllers/profile.js
+msgid "Updated Account Information"
+msgstr "Uppdaterad Konto information"
+
+#: app/views/data.html
+msgid "Updated:"
+msgstr "Uppdaterad:"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "User Ratings:"
+msgstr "Användarbetyg:"
+
+#: app/scripts/controllers/groups.js
+msgid "User added to group"
+msgstr "Använder tillagd till grupp"
+
+#: app/scripts/controllers/profile.js
+msgid "User logged out"
+msgstr "Användare utloggad"
+
+#: app/scripts/controllers/profile.js
+msgid "User not logged in"
+msgstr "Användare ej inloggad"
+
+#: app/views/login.html app/views/profile.html
+msgid "Username"
+msgstr "Användarnamn"
+
+#: app/views/groups.html
+msgid "Username or Email..."
+msgstr "Användarnamn eller E-mejl..."
+
+#: app/views/groups.html
+msgid "Username:"
+msgstr "Användarnamn:"
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid ""
+"Using the auto generated image is recomended but if you prefer a custom "
+"image that is possible."
+msgstr ""
+"Att använda den autogenererade bilen rekommenderas men om du föredrar en "
+"egen bild så är det möjligt."
+
+#: app/views/data.html
+msgid "Verified:"
+msgstr "Verifierad:"
+
+#: app/scripts/directives/directives.js
+msgid "Vertical Position"
+msgstr "Vertikal Position"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Very Bad"
+msgstr "Väldigt Dålig"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Very Good"
+msgstr "Väldigt Bra"
+
+#: app/scripts/services/services.js
+msgid "View"
+msgstr "Vy"
+
+#: app/scripts/services/services.js
+msgid "Visibility"
+msgstr "Synlighet"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Visual Element CSS Attribute:"
+msgstr "Viuellt Elements CSS Attribut:"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Visual Element Name:"
+msgstr "Visuellt Elements Namn:"
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Visual Element:"
+msgstr "Visuellt Element:"
+
+#: app/scripts/controllers/login.js
+msgid "Waiting User to Authenticate..."
+msgstr "Väntar på att användaren verifieras..."
+
+#: app/index.html
+msgid ""
+"We, the Webble World development team, strongly urge you to do everything in "
+"your power to change that,"
+msgstr ""
+"Vi, Webble World's utvecklingsgrupp, å det bestämdaste ber dig att göra allt "
+"som står i din makt för ändra på det,"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Webble Browser"
+msgstr "Webble Sökmotor"
+
+#: app/views/chat.html
+msgid "Webble Chat"
+msgstr "Webble Chat"
+
+#: app/views/data.html
+msgid "Webble Data View"
+msgstr "Webble Data Vy"
+
+#: app/scripts/controllers/platform.js
+msgid "Webble Successfully Published"
+msgstr "Webble Framgångsrikt Publicerad"
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Webble URL:"
+msgstr "Webble URL:"
+
+#: app/index.html
+msgid "Webble World - development team"
+msgstr "Webble World - Utvecklingsgrupp"
+
+#: app/scripts/app.js app/scripts/controllers/platform.js
+msgid "Webble World 3.0 - Where memes comes alive"
+msgstr "Webble World 3.0 - Där memer får liv"
+
+#: app/scripts/controllers/platform.js
+msgid "Webble World Platform Information"
+msgstr "Webble World Plattformsinformation"
+
+#: app/scripts/services/services.js
+msgid "Webbles"
+msgstr "Webblar"
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid ""
+"Webbles are saved as json files, that was not a json file and will therefore "
+"not load any Webble obviously"
+msgstr ""
+"Webblar är sparade som json filer, och det var ingen jsonfil och därmed "
+"kommer ingen Webble uppenbarligen laddas"
+
+#: app/scripts/controllers/platform.js
+msgid "Webbles selected."
+msgstr "Webblar selekterade."
+
+#: app/views/groups.html app/views/profile.html
+msgid "Website"
+msgstr "Websida"
+
+#: app/index.html
+msgid ""
+"What was supposed to be your greatest day on the Internet where you would "
+"make acquaintance with something called Webble World,"
+msgstr ""
+"Vad som skulle bli den underbaraste dagen på Internet där du skulle bli "
+"bekant med något som kallas Webble World,"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot Resize"
+msgstr "När denna är markerad så kan inte Webblar storleksändras"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be assigmed any parent"
+msgstr "När denna är markerad så kan Webbeln inte få någon förälder"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be bundled"
+msgstr "När denna är markerad så kan Webbeln inte bli buntad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be deleted"
+msgstr "När denna är markerad så kan Webbeln inte bli buntad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be duplicated"
+msgstr "När denna är markerad så kan Webbeln inte bli duplicerad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be moved"
+msgstr "När denna är markerad så kan Webbeln inte bli flyttad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be peeled from its parent"
+msgstr ""
+"När denna är markerad så kan Webbeln inte bli frånkopplad från sin förälder"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be published"
+msgstr "När denna är markerad så kan Webbeln inte publicerad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be selected"
+msgstr "När denna är markerad så kan Webbeln inte bli selekterad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be shared model duplicated"
+msgstr "När denna är markerad så kan Webbeln inte bli delad-modell duplicerad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be unbundled"
+msgstr "När denna är markerad så kan Webbeln inte bli avbuntad"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot change any slots or properties"
+msgstr ""
+"När denna är markerad så kan Webbeln inte ändra några slottar eller "
+"egenskaper"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot have any children"
+msgstr "När denna är markerad så kan Webbeln inte ha några barn"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot remove any children"
+msgstr "När denna är markerad så kan Webbeln inte bli av med några barn"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid ""
+"When this is checked the Webble will be invisible in all execution modes "
+"except Developers mode"
+msgstr ""
+"När denna är markerad så kan Webbeln inte synas i något annan "
+"exekveringsläge än utvecklingsläge"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid ""
+"When this is checked the Webble will never display its default menu items"
+msgstr ""
+"När denna är markerad så kan Webbeln inte visa sina grundläggande menyval"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid ""
+"When this is checked the Webble will never display its interaction objects"
+msgstr "När denna är markerad så kan Webbeln inte visa sina interaktionsobjekt"
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble will never display its menu"
+msgstr "När denna är markerad så kan Webbeln inte visa någon som helst meny"
+
+#: app/scripts/services/services.js
+msgid "Width"
+msgstr "Vidd"
+
+#: app/views/modalForms/propertySheet.html
+msgid "Width:"
+msgstr "Vidd:"
+
+#: app/views/modalForms/platformPropsSheet.html
+msgid "Work surface background color:"
+msgstr "Arbetsytans bakgrundsfärg:"
+
+#: app/scripts/controllers/modalForms/shareWS.js
+#: app/scripts/services/services.js
+msgid "Workspace"
+msgstr "Arbetsyta"
+
+#: app/views/modalForms/saveWSAsSheet.html
+msgid "Workspace Name:"
+msgstr "Arbetsytans Namn:"
+
+#: app/scripts/controllers/platform.js
+msgid "Workspace Saved"
+msgstr "Arbetsytan Sparad"
+
+#: app/scripts/controllers/platform.js
+msgid "Workspace successfully deleted from server"
+msgstr "Arbetsyta framgångsrikt raderad från servern"
+
+#: app/scripts/controllers/templates.js
+msgid "Write something that nobody will read, MD-style!"
+msgstr "Skriv något som ingen kommer läsa, MD-stil!"
+
+#: app/views/modalForms/clearSomething.html
+#: app/views/modalForms/deleteSomething.html
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "Yes"
+msgstr "Ja"
+
+#: app/scripts/controllers/platform.js
+msgid "You Do not own this Workspace, and can therefore not delete it."
+msgstr "Du äger inte denna arbetsyta och kan därför inte radera den."
+
+#: app/scripts/controllers/platform.js
+msgid "You Do not own this Workspace, and can therefore not share it."
+msgstr "Du äger inte denna arbetsyta och kan därför inte dela den."
+
+#: app/views/profile.html
+msgid "You Trust the Following Groups"
+msgstr "Du Litar på Följande Grupper"
+
+#: app/views/profile.html
+msgid "You are Member of the Following Groups"
+msgstr "Du är Medlem i Följande Grupper"
+
+#: app/views/groups.html
+msgid "You are managing the following groups"
+msgstr "Du är ansvarig för följande grupper"
+
+#: app/views/profile.html
+msgid "You are not member of any group :-("
+msgstr "Du är inte medlem i någon grupp :-("
+
+#: app/index.html
+msgid ""
+"You are now experiencing the total lack of an interactive Meme media, "
+"technology enhanced, user interactive web site."
+msgstr ""
+"Du upplever just nu den totala avsaknade av interaktivt Meme media, "
+"teknologiskt förbättrad, användar interaktiv webbsajt."
+
+#: app/views/profile.html
+msgid ""
+"You can change your password and provide additional authentication methods "
+"for your account and for third parties."
+msgstr ""
+"Du kan ändra lösenord och tillhandahålla ytterligare autentiseringsmetoder "
+"för ditt konto och för tredje parter. "
+
+#: app/views/templates.html
+msgid ""
+"You can create a copy of this, already published template or create a new one"
+msgstr ""
+"Du kan skapa en kopia av denna, redan publicerad Webble-mall, eller skapa en "
+"ny"
+
+#: app/views/profile.html
+msgid ""
+"You can manage your personal licenses and API keys via the interface below."
+msgstr ""
+"Du kan sköta dina personliga Licenser och API-nycklar via interfacet nedan."
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"You do not have any saved workspaces available to open. You must create some "
+"first."
+msgstr ""
+"Du har inga sparade arbetsytor tillgängängliga att öppna. Du måste skapa "
+"några först."
+
+#: app/views/profile.html
+msgid "You don't trust any group :-("
+msgstr "Du litar inte på någon grupp :-("
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "You have to provide a Webble Definition Id"
+msgstr "Du måste ange ett Webble Definitions Id"
+
+#: app/views/login.html app/views/profile.html
+msgid "You have to set a username to be able to publish webbles"
+msgstr "Du måsta välja ett användarnamn för att kunna publicera webblar."
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"You must be logged in to Webble World in order to save Workspaces and "
+"publish Webbles and you need a valid username. Please sign in and/or make "
+"sure you have a proper username in your profile and try again."
+msgstr ""
+"Du måste vara inloggad i Webble World för att kunna spara arbetsyta och "
+"publicera Webblar, och du behöver ett godkänt användarnamn. Var snäll och "
+"logga in och försäkra dig om att du har ett korrekt användarnamn i din "
+"profil och försök igen."
+
+#: app/scripts/controllers/platform.js
+msgid ""
+"You must be logged in to Webble World in order to save Workspaces and "
+"publish Webbles. Please sign in and try again."
+msgstr ""
+"Du måste vara inloggad i Webble World för att kunna spara arbetsyta och "
+"publicera Webblar. Var snäll och logga in och försök igen."
+
+#: app/scripts/controllers/workSpaces.js
+msgid ""
+"You tried to load a linked workspace that you do not have access to, "
+"therefore ignored."
+msgstr ""
+"Du försökte ladda en länkad arbetsyta du inte har rättighet till, så därför "
+"ignorerades laddningen."
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Your Earlier Rating:"
+msgstr "Ditt Tidigare Betyg:"
+
+#: app/views/modalForms/faqSheet.html
+msgid "Your Questions Pending Answers"
+msgstr "Dina Frågor som Väntar Svar"
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Your Rating:"
+msgstr "Ditt Betyg:"
+
+#: app/views/profile.html
+msgid "Your Response"
+msgstr "Ditt Svar"
+
+#: app/views/mediaplayer.html
+msgid "Your browser does not support the video tag."
+msgstr "Din webbläsare stödjer inte video taggen"
+
+#: app/views/login.html
+msgid "Your name is required - how should I call you?"
+msgstr "Ditt namn krävs - vad skall vi kalla dig?"
+
+#: app/views/modalForms/about.html
+msgid "['IntelligentPad' system for the web]"
+msgstr "['IntelligentPad' system för webben]"
+
+#: app/index.html
+msgid ""
+"architecture of IntelligentPads, has now turned into something completely "
+"different; a time of remorse and sadness."
+msgstr ""
+"akitektur av IntelligentPads, har nu blivit något helt annat; en tid av "
+"ånger och sorg."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "basic"
+msgstr "Grundläggande"
+
+#: app/scripts/controllers/platform.js
+msgid "bundled a bunch of webbles"
+msgstr "Buntade en bunt med Webblar"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "chart"
+msgstr "diagram"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "color"
+msgstr "färg"
+
+#: app/scripts/controllers/platform.js
+msgid "connected child slot"
+msgstr "sammankopplade barn slottar"
+
+#: app/index.html
+msgid ""
+"created by Meme Media Lab on Hokkaido University in Japan, by the "
+"supervision and inspiration of Professor Yuzuru Tanaka, based on the"
+msgstr ""
+"skapad av Meme Media Laboratorium på Hokkaido Universitet i Japan, under "
+"tillsyn och inspiration av professor Yuzuru Tanaka, baserad på den"
+
+#: app/scripts/controllers/platform.js
+msgid "created custom slot"
+msgstr "egenskapad slot"
+
+#: app/scripts/controllers/platform.js
+msgid "deleted custom slot"
+msgstr "raderad egen slot"
+
+#: app/index.html
+msgid "for more information about Webbles and Intelligent Pad, please visit"
+msgstr "För mer information om Webblar och IntelligentPad, var god besök"
+
+#: app/scripts/controllers/platform.js
+msgid "for webble"
+msgstr "för webble"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "found by free text search of all fields containing search string"
+msgstr "hittades med fri text sök av alla fält som innehöll söksträngen"
+
+#: app/scripts/controllers/platform.js
+msgid "from its parent"
+msgstr "Från sin förälder"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "game"
+msgstr "spel"
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "if your Webble is on your local computer, select the file from here."
+msgstr "Om din Webble är lokalt på din dator, så välj dess fil härifrån."
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "if your Webble is online, write the URL for it here."
+msgstr "Om din Webble är online, så skriv dess URL här."
+
+#: app/scripts/controllers/platform.js
+msgid "in Webble World 3.0"
+msgstr "i Webble World 3.0"
+
+#: app/views/login.html
+msgid "john@example.com"
+msgstr "john@example.com"
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid ""
+"mark the cells of the merged combo in the child and parent to correspond "
+"with eachother the way you want."
+msgstr ""
+"Markera cellerna i den sammanfogade kombon i både barnet och föräldern så "
+"att de korresponderar med varandra på det sätt du önskar."
+
+#: app/scripts/controllers/chat.js
+msgid "me"
+msgstr "mig"
+
+#: app/scripts/controllers/platform.js
+msgid "moved webble"
+msgstr "flyttad Webble"
+
+#: app/scripts/controllers/platform.js
+msgid "peeled webble"
+msgstr "skalad webble"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "search webbles"
+msgstr "sök webblar"
+
+#: app/scripts/controllers/platform.js
+msgid "set slot"
+msgstr "sätt slot"
+
+#: app/index.html
+msgid ""
+"so that you can enjoy Webbles and their powers together with the rest of us."
+msgstr ""
+"så att du kan njuta av Webblar och deras krafter tillsammans med resten av "
+"oss."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "text"
+msgstr "text"
+
+#: app/scripts/services/services.js
+msgid "the style of the border line, eg. solid or dashed."
+msgstr "Stilen på kantlinjen, t.ex. solid eller streckad."
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "time"
+msgstr "tid"
+
+#: app/scripts/controllers/platform.js
+msgid "to"
+msgstr "till"
+
+#: app/scripts/controllers/platform.js
+msgid "unbundled the bundle with id"
+msgstr "avbuntade bunten med id"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "votes"
+msgstr "röster"
+
+#: app/scripts/controllers/platform.js
+msgid "with parent slot"
+msgstr "med föräldraslot"
+
+#: app/scripts/controllers/platform.js
+msgid "with value"
+msgstr "med värde"
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "xml"
+msgstr "xml"
+
+#: app/index.html
+msgid "your web browser is not fully equipped or preset correctly"
+msgstr "din webbläsare är inte fullt utrustad eller konfigurerad korrekt"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{formItems.searchCriteria | translate}} {{formItems.searchStrResult}}"
+msgstr "{{formItems.searchCriteria | translate}} {{formItems.searchStrResult}}"
+
+#: app/index.html
+msgid "{{getCurrentLanguage() | nativeName}}"
+msgstr "{{getCurrentLanguage() | nativeName}}"
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "{{msgTexts.headlineWS | translate}}: {{formItems.theWS.name}}"
+msgstr "{{msgTexts.headlineWS | translate}}: {{formItems.theWS.name}}"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{textParts.noOfWebblesTxt | translate}} {{formItems.noOfExistingWbls}}"
+msgstr ""
+"{{textParts.noOfWebblesTxt | translate}} {{formItems.noOfExistingWbls}}"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{textParts.resultTitle | translate}}"
+msgstr "{{textParts.resultTitle | translate}}"
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{textParts.searchBoxTitle | translate}}"
+msgstr "{{textParts.searchBoxTitle | translate}}"
+
+#: app/views/modalForms/infoMsg.html
+msgid "{{title | translate}}"
+msgstr "{{title | translate}}"
+
+#: app/views/modalForms/bundleSheet.html
+msgid "{{wbl.fullName}}"
+msgstr "{{wbl.fullName}}"
+
+#~ msgid "Actions"
+#~ msgstr "Handlingar"
+
+#~ msgid "Association with other accounts:"
+#~ msgstr "Association med andra konton:"
+
+#~ msgid "Author"
+#~ msgstr "Författare"
+
+#~ msgid "Bring Forward"
+#~ msgstr "Lyft Framåt"
+
+#~ msgid "Delete Workspace"
+#~ msgstr "Radera Arbetsyta"
+
+#~ msgid "I really wish to receive spam from you at least twice a day"
+#~ msgstr "Jag vill verkligen få spam av er minst två gånger om dagen"
+
+#~ msgid "New Workspace"
+#~ msgstr "Ny Arbetsyta"
+
+#~ msgid "Number of Files:"
+#~ msgstr "Antalet Filer:"
+
+#~ msgid "Preferences"
+#~ msgstr "Preferenser"
+
+#~ msgid "Print Workspace"
+#~ msgstr "Skriv ut Arbetsyta"
+
+#~ msgid "Rated by you"
+#~ msgstr "Betygsatt av dig"
+
+#~ msgid "Receive notifications through email"
+#~ msgstr "Få meddelanden via e-post"
+
+#~ msgid "Remove all"
+#~ msgstr "Ta Bort Allt"
+
+#~ msgid "Save Workspace"
+#~ msgstr "Spara Arbetsyta"
+
+#~ msgid "Save Workspace As"
+#~ msgstr "Spara Arbetsyta Som"
+
+#~ msgid "Successfully saved profile changes"
+#~ msgstr "Framgångsrikt sparat profiländringar"
+
+#~ msgid "Successfully updated template"
+#~ msgstr "Framgångsrikt uppdaterat mall"
+
+#~ msgid "This is the name of the template this Webble is created from"
+#~ msgstr "Detta är namnet på den Webble-mall denna Webble är skapad från"
+
+#~ msgid "Unable to load template with id:"
+#~ msgstr "Kan inte ladda mall med id:"
+
+#~ msgid "Upload Webble Template"
+#~ msgstr "Ladda upp Webble-mall"
+
+#~ msgid "Version"
+#~ msgstr "Version"
+
+#~ msgid "View Profile"
+#~ msgstr "Visa Profil"
+
+#~ msgid ""
+#~ "You must click 'Submit' before you leave to finalize the slot deletion"
+#~ msgstr ""
+#~ "Du måste klicka 'Skicka' innan du går för att slutföra slot-raderingen"
+
+#~ msgid "About This Definition"
+#~ msgstr "Om Denna Definition"
+
+#~ msgid "About This Instance"
+#~ msgstr "Om Denna Instans"
+
+#~ msgid "About This Template"
+#~ msgstr "Om Denna Mall"
+
+#~ msgid "Child"
+#~ msgstr "Barn"
+
+#~ msgid "Debug Info"
+#~ msgstr "Debug Info"
+
+#~ msgid "Do you really want to exit, and loose all unsaved work?"
+#~ msgstr "Vill du verkligen avsluta,  och förlora allt osparat arbete?"
+
+#~ msgid "Exit"
+#~ msgstr "Lämna"
+
+#~ msgid "Forgot to add?"
+#~ msgstr "Glömt att lägga till?"
+
+#~ msgid "Local Image:"
+#~ msgstr "Lokal Bild:"
+
+#~ msgid ""
+#~ "Maybe you forgot to press 'Add' before you submitted and left? Shall we "
+#~ "add the item for you?"
+#~ msgstr ""
+#~ "Kanske glömde du att klicka 'Add' innan du skickade och lämnade? Skall vi "
+#~ "addera objektet åt dig?"
+
+#~ msgid "No of containing Webbles:"
+#~ msgstr "Antal innehållande Webblar:"
+
+#~ msgid "No of containing templates:"
+#~ msgstr "Antalet innehållande Webble-Mallar:"
+
+#~ msgid "No of times loaded:"
+#~ msgstr "Antalet gånger laddade:"
+
+#~ msgid "Online Image:"
+#~ msgstr "Online Bild:"
+
+#~ msgid "Password should be confirmed (for your own good)"
+#~ msgstr "Lösenordet måste konfirmeras (för ditt eget bästa)"
+
+#~ msgid "Popup Info Enabled:"
+#~ msgstr "Popup Information Påslagen:"
+
+#~ msgid "Template Developer:"
+#~ msgstr "Mall-utvecklare:"
+
+#~ msgid "Template Revision Creation Date:"
+#~ msgstr "Mall-Revisions Skapelsedatum:"
+
+#~ msgid ""
+#~ "That URL does not seem to point at any json Webble definition file. "
+#~ "Please Correct it before you attempt to load."
+#~ msgstr ""
+#~ "Den URL:en verkar inte peka på någon json Webble definitions fil. Var "
+#~ "snäll och korrigera detta innan du försöker ladda."
+
+#~ msgid ""
+#~ "The Webbles that by name, author, keywords or description contains the "
+#~ "search string"
+#~ msgstr ""
+#~ "De Webblar som genom namn, upphovsman, nyckelord eller beskrivning "
+#~ "inkluderas i sök-strängen"
+
+#~ msgid ""
+#~ "This is the date when this template of the specified revision was created"
+#~ msgstr ""
+#~ "Detta är det datum när denna Webble-mall av den spcificerade verisionen "
+#~ "skapades"
+
+#~ msgid ""
+#~ "This is the user name of the developer who created this Webble Template"
+#~ msgstr ""
+#~ "Detta är användarnamnet på den utvecklare som skapade denna Webble-mall"
+
+#~ msgid "Total progress:"
+#~ msgstr "Totalt framsteg:"
+
+#~ msgid "You are doing it all wrong!"
+#~ msgstr "Du gör allt helt fel!"
+
+#~ msgid ""
+#~ "if your Webble image is locally on your computer, select the file from "
+#~ "here."
+#~ msgstr ""
+#~ "om din Webble bild är lokalt på din dator, så välj den filen härifrån."
+
+#~ msgid "if your Webble image is online, write the URL for it here."
+#~ msgstr "Om din Webble bild är online, så skriv dess URL här."
+
+#~ msgid "most recent used Webbles world wide"
+#~ msgstr "senaste använda Webblarna världen runt"
+
+#~ msgid "System Arguments Communicating Not Allowed:"
+#~ msgstr "Systemargumentskommunikation Inte Tillåten:"
+
+#~ msgid ""
+#~ "When this is checked the Webble will not communicate any system argument "
+#~ "values"
+#~ msgstr "När denna är markerad så kan Webbeln inte bli"
+
+#~ msgid "Add New System Argument"
+#~ msgstr "Lägg till Nya Systemargument"
+
+#~ msgid "Current Existing System Arguments"
+#~ msgstr "Nuvarande Existerande Systemargument"
+
+#~ msgid "Every System Argument needs a name before they can be added"
+#~ msgstr "Varje Systemargument behöver ett namn innan det kan läggas till"
+
+#~ msgid ""
+#~ "If you want to add a new System argument, write the unique name of it here"
+#~ msgstr ""
+#~ "Om du vill lägga till ett nytt Systemargument, skriv dess unika namn här"
+
+#~ msgid ""
+#~ "If you want to add a new System argument, write the value of it here or "
+#~ "leave it blank"
+#~ msgstr ""
+#~ "Om du vill lägga till ett nytt Systemargument, skriv dess värde här eller "
+#~ "lämna blankt"
+
+#~ msgid "If you want to delete this system argument, click here."
+#~ msgstr "Om du vill radera detta Systemargument, klicka här."
+
+#~ msgid "New SysArg Name:"
+#~ msgstr "Nytt SysArgs Namn:"
+
+#~ msgid "New SysArg Value:"
+#~ msgstr "Nytt SysArgs Värde:"
+
+#~ msgid "Push Slot Value to System Argument Failed"
+#~ msgstr "Knuffa Slotvärde till Systemargument Misslyckades"
+
+#~ msgid "System Arguments"
+#~ msgstr "Systemargument"
+
+#~ msgid ""
+#~ "System Arguments are system held values that can be listened to and "
+#~ "communicated with by any Webble if they share name with any of that "
+#~ "Webbles slots."
+#~ msgstr ""
+#~ "System Argument är systemägda värden som kan bli lyssnade på och "
+#~ "kommunicerade med av alla Webblar om de delar namn med någon av Webbelns "
+#~ "slottar."
+
+#~ msgid ""
+#~ "The suggested SysArg name is not unique, and is therefore not accepted. "
+#~ "Come up with a new name, or edit the value of the already existing SysArg."
+#~ msgstr ""
+#~ "Det föreslagna SysArgs namnet är inte unikt, och därför inte accepterat. "
+#~ "Kom upp med ett nytt namn, eller editera värdet på det redan existerande "
+#~ "Systemargumentet."
+
+#~ msgid ""
+#~ "This Webble is protected from System Argument Communication and therefore "
+#~ "this operation is canceled."
+#~ msgstr ""
+#~ "Denna Webble är skyddad från systemargumentskommunikation och därför är "
+#~ "denna operation avbruten."
+
+#~ msgid ""
+#~ "This is one of the existing System Arguments that has been created during "
+#~ "this Webble World Session, either by the user or Webbles"
+#~ msgstr ""
+#~ "Detta är ett av de existerande System Argument som skapats under denna "
+#~ "Webble World Session, antingen av användaren eller av en Webble."
+
+#~ msgid ""
+#~ "We appologize for the inconvenience, but at the moment there is no dev "
+#~ "pack available, but please come back at a later date and check again, and "
+#~ "hopefully we have been able to put something together to help you build "
+#~ "your own Webble Templates."
+#~ msgstr ""
+#~ "Vi ber om ursäkt för olägenheten, men för tillfället så finns inget "
+#~ "utvecklingspaket tillgängligt, men var god kom tillbaka ett senare datum "
+#~ "och kolla igen, då förhoppningsvis vi har fått ihop något som kan hjälpa "
+#~ "dig att bygga dina egna Webble-mallar."
+
+#~ msgid "Incorrect username"
+#~ msgstr "Felaktigt användarnamn"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Felaktigt lösenord"
+
+#~ msgid "Some kind of database-y error occurred, try again later"
+#~ msgstr "Något form av databas fel uppstod, var god försök senare"
+
+#~ msgid "User account already taken, use a different email"
+#~ msgstr "Användar konto redan taget, använd en annan e-post adress"
+
+#~ msgid "The email you provided seems bogus"
+#~ msgstr "E-post adressen du angav verkar påhittad"
+
+#~ msgid "Passwords don't match"
+#~ msgstr "Lösenorden matchar inte"
+
+#~ msgid "Passwords have to be at least 5 and at most 60 characters long"
+#~ msgstr "Lösenorden måste minst vara 5 och mest 60 tecken långt"
+
+#~ msgid "Could not set the password"
+#~ msgstr "Kunde inte sätta lösenordet"
+
+#~ msgid "Could not save the user in the database"
+#~ msgstr "Kunde inte spara användaren i databasen"
+
+#~ msgid "Could not login user, try logging in manually"
+#~ msgstr "Kunde inte logga in användaren, försök logga in manuellt"

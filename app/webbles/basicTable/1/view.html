@@ -1,0 +1,34 @@
+<!--====================================================================================================================
+// View for Basic Table for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="tableContainer" class="tableContainer" ng-controller="tableCtrl">
+    <table id="tableroot" class="tableroot">
+        <thead>
+            <tr id="tableheader" class="tableheader">
+                <th ng-repeat="header in headersOrder" ng-click="changeSorting(header, $index)" ng-style="{'border': gimme('tableborder')}" ng-mousedown="rememberClick(-1, $index);">
+                    <span ng-show="cellEdit.cellName != ($index + '_-1')">{{ header }}</span>
+                    <span ng-show="gimme('rowOrderBy') == header && gimme('rowOrderIsReversed')" style="padding-left: 3px;">&uarr;</span>
+                    <span ng-show="gimme('rowOrderBy') == header && !gimme('rowOrderIsReversed')" style="padding-left: 3px;">&darr;</span>
+                    <span ng-show="gimme('rowOrderBy') != header" style="padding-left: 3px;" ng-style="{'color': gimme('tableheader:background-color')}">&darr;</span>
+                    <input ng-show="cellEdit.cellName == ($index + '_-1')" type="text" ng-model="cellEdit.newVal" ng-enter="closeEdit();" style="color: black;"/>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in gimme('tableData').tabledata | orderBy:gimme('rowOrderBy'):gimme('rowOrderIsReversed')">
+                <td ng-repeat="header in headersOrder" ng-style="{'border': gimme('tableBorder'), 'font-size': gimme('cellFontSize'), 'padding': gimme('cellPadding')}" ng-mousedown="rememberClick($parent.$index, header);">
+                    <span ng-show="cellEdit.cellName != (header + '_' + $parent.$index)">{{row[header]}}</span>
+                    <input ng-show="cellEdit.cellName == (header + '_' + $parent.$index)" type="text" ng-model="row[header]" ng-enter="closeEdit();"/>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+<!--=================================================================================================================-->

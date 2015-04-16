@@ -1,0 +1,7 @@
+{
+    "name": "SOAP And RESTful Service Client Webble",
+    "description": "This is a Webble that can make calls to SOAP and RESTful services online and retrieve the response for the user",
+    "keywords": "rest soap client web service xml json",
+    "author": "truemrwalker",
+    "image": "images/wbls/soaprestclient.png"
+}

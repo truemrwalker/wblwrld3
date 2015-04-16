@@ -1,0 +1,7 @@
+{
+    "name": "Basic Window",
+    "description": "This is a window webble that can work as container for other webbles.",
+    "keywords": "window",
+    "author": "truemrwalker",
+    "image": "images/wbls/windowWbl.png"
+}

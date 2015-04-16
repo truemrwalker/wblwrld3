@@ -1,0 +1,37 @@
+<!--====================================================================================================================
+// View for Tabs & Pages Webble for Webble World v3.0 (2013)
+// Created By: TrueMrWalker
+//===================================================================================================================-->
+
+<!--IMPORTANT NOTE: Only have one div (or other containing element) in the outer area as the one and only main container
+                    for all elements that might follow (or not)
+                    <div>[Other Content]</div>-->
+
+<!--IMPORTANT NOTE 2: If you wish to include your own libraries and files, either from CDN or uploaded to the template
+                       do NOT include them in this HTML file (as one might think) but instead list them in the manifest
+                       file included in the Webble Dev Pack-->
+
+<!--For AngularJS power the outer element must include 'ng-controller' which point to the controller function as it is
+named in the controllers file-->
+
+<!--EXAMPLE VIEW - With controller pointer, custom directive, Slot usage, translate filter and directive, plus custom Filter... for your reference-->
+<div id="tnpHolder" class="tnpHolder" ng-controller="TNPCtrl">
+  <div id="classicTabsContainer" ng-show="shouldItShow(whatElementIsAsking.classicTabsContainer)" style="background-color: transparent;">
+      <ul id="tnpTabs" class="tnpTabs">
+      </ul>
+
+      <div ng-show="shouldItShow(whatElementIsAsking.tabsContent);" id="tabsContent" class="tabsContent">
+      </div>
+  </div>
+
+  <div id="bookPagesContainer" ng-show="shouldItShow(whatElementIsAsking.bookPagesContainer)" style="background-color: transparent;">
+
+
+  </div>
+
+  <span ng-hide="shouldItShow(whatElementIsAsking.tabsContent)" class="tnpInfoText" ng-style="{'width': gimme('tabsContent:width'), 'height': gimme('tabsContent:height')}">No Tabs/Pages = No Children Allowed</span>
+
+</div>
+
+<!--=================================================================================================================-->
+

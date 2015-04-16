@@ -1,0 +1,10 @@
+<!--====================================================================================================================
+// View for RSS Feed Webble for Webble World v3.0 (2013)
+// Created By: TrueMrWalker
+//===================================================================================================================-->
+
+<div id="rssContainer" class="rssContainer" ng-controller="rssFeedCtrl">
+    <select id="rssFeed" class="rssFeed" ng-size="{{gimme('selectListHeight')}}"  ng-model="formProps.listSelectionIndex" ng-options="listItem for listItem in formProps.thePickableItemList"></select>
+</div>
+
+<!--=================================================================================================================-->

@@ -1,0 +1,27 @@
+/*/=====================================================================================================================
+// Styles for LABEL Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker (Micke Kuwahara)
+//====================================================================================================================*/
+
+/*/ === BEGIN: LABEL Classes === /*/
+
+.labelContainer {
+    background-color: #ffff00;
+    border: 1px solid #d3d3d3;
+    width: 140px;
+    height: 50px;
+    text-align: left;
+}
+
+.labelTxt{
+    font-family: Courier New;
+    font-size: 38px;
+    font-weight: bold;
+    margin: 10px;
+    color: #396ffc;
+    text-shadow: 2px 2px #240000;
+}
+
+/*/ === END: BTN Classes === /*/
+
+/*====================================================================================================================*/

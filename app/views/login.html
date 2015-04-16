@@ -1,0 +1,243 @@
+<!--
+//
+// Webble World 3.0 (IntelligentPad system for the web)
+//
+// Copyright (c) 2010-2015 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka
+//     in Meme Media R&D Group of Hokkaido University, Japan. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Additional restrictions may apply. See the LICENSE file for more information.
+//
+
+-->
+
+<!--
+    - Implements the User Interface structure for the login, signup and reset password forms
+    - Has tab-based structure that contains the following tabs: Login, Signup
+    - Depending on how it was invoked either the Login or Signup tab is selected by default
+    - The Reset password tab appears only if the user clicks on the appropriate link
+    - The whole dialog is not visible during the process of authenticating against the appropriate provider
+
+@author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+-->
+<div class="padcontent" ng-hide="busyMessage">
+    <tabset>
+
+        <!-- Login Tab -->
+        <!------------------------------------------------------------->
+
+        <tab>
+            <tab-heading><i class="fa fa-unlock"></i> <span translate>Login</span></tab-heading>
+
+            <h1 translate>Login</h1>
+
+            <form name="loginForm" novalidate ng-submit="formLogin('local')" class="form-horizontal" autocomplete="off">
+                <div class="form-group">
+                    <label for="email" class="control-label col-xs-3" translate>Email</label>
+                    <div class="col-xs-8">
+                        <input type="email" class="form-control" ng-model="loginData.email" placeholder="{{'john@example.com'}}" id="email" name="email" required autofocus="autofocus"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" class="control-label col-xs-3" translate>Password</label>
+                    <div class="col-xs-8">
+                        <input type="password" id="loginPassword" name="password" class="form-control" ng-model="loginData.password" placeholder="{{'Password'|translate}}" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-xs-8">
+                        <div class="checkbox">
+                            <label for="rememberMe">
+                                <input type="checkbox" ng-model="loginData.rememberMe" id="rememberMe" name="rememberMe"/>
+                                <span translate>Remember me</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-xs-8">
+                        <a class="btn btn-default" ng-disabled="false" ng-click="formCancel()" translate>Cancel</a>
+                        <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-primary" translate>Log in</button>
+                    </div>
+                </div>
+            </form>
+
+            <alert type="danger"  ng-show="serverErrorMessage || (loginForm.$invalid && loginForm.email.$dirty && loginForm.password.$dirty)">
+                <strong translate>Please correct the following errors:</strong>
+                <ul style="margin-left:20px; margin-top:5px;">
+                    <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+
+                    <li ng-show="loginForm.email.$error.required" translate>Email is required</li>
+                    <li ng-show="loginForm.email.$error.email" translate>Email is not valid</li>
+                    <li ng-show="loginForm.password.$error.required" translate>Password is required</li>
+                </ul>
+            </alert>
+
+            <hr/>
+            <p translate>Or login using one of your social accounts:</p>
+            <div class="btn-group">
+                <a href="" ng-click="formLogin('facebook')" class="btn btn-default"><i class="fa fa-facebook-square"></i> Facebook</a>
+                <a href="" ng-click="formLogin('twitter')" class="btn btn-default"><i class="fa fa-twitter-square"></i> Twitter</a>
+                <a href="" ng-click="formLogin('google')" class="btn btn-default"><i class="fa fa-google-plus-square"></i> Google</a>
+            </div>
+            <a href="" ng-click="showPasswordResetTab=true" class="btn-link btn-small" translate>Forgot your Password?</a>
+        </tab>
+
+        <!-- Register (Signup) Tab -->
+        <!------------------------------------------------------------->
+
+        <tab active="activateRegisterTab">
+            <tab-heading><i class="fa fa-plus"></i> <span translate>Sign Up</span></tab-heading>
+
+            <h1 translate>Sign Up</h1>
+
+            <form name="registerForm" novalidate ng-submit="formRegister()" class="form-horizontal" autocomplete="off">
+
+                <div class="form-group">
+                    <label for="name" class="control-label col-xs-3" translate>Name</label>
+                    <div class="col-xs-8">
+                        <input type="text" class="form-control formitem" ng-model="registerData.name" placeholder="{{'Full Name'|translate}}" id="name" name="name" required  ng-minlength="5" autofocus="autofocus"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username" class="control-label col-xs-3" translate>Username</label>
+                    <div class="col-xs-8">
+                        <input type="text" class="form-control formitem" ng-model="registerData.username" placeholder="theo1821" id="username" name="username" ng-required="false"/>
+                        <span class="help-block hint" translate>You have to set a username to be able to publish webbles</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="control-label col-xs-3" translate>Email</label>
+                    <div class="col-xs-8">
+                        <input type="email" class="form-control" ng-model="registerData.email" placeholder="{{'john@example.com'|translate}}" name="email" required/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="control-label col-xs-3" translate>Password</label>
+                    <div class="col-xs-8">
+                        <input type="password" id="password" name="password" class="form-control" ng-model="registerData.password" placeholder="{{'Password'|translate}}" required ng-minlength="5" ng-maxlength="60"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="control-label col-xs-3" translate>Confirm your password</label>
+                    <div class="col-xs-8">
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="registerData.confirmPassword" placeholder="{{'Confirm Password'|translate}}" confirm-value="registerData.password"/>
+                    </div>
+                </div>
+
+<!--
+                <div class="form-group">
+                    <div class="col-xs-8">
+                        <label for="promotions" class="checkbox">
+                            <input class="formitem" type="checkbox" ng-model="registerData.promotions" id="promotions" name="promotions"/>
+                            <a translate>I read and agree to the usage terms of the platform</a>
+                        </label>
+                    </div>
+                </div>
+-->
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-xs-8">
+                        <a class="btn btn-default" ng-click="formCancel()" translate>Cancel</a>
+                        <button type="submit" ng-disabled="registerForm.$invalid" class="btn btn-primary" translate>Submit</button>
+                    </div>
+                </div>
+
+                <alert type="danger" ng-show="serverErrorMessage || (registerForm.$invalid && registerForm.name.$dirty && registerForm.email.$dirty && registerForm.password.$dirty && registerForm.confirmPassword.$dirty)">
+                    <strong translate>Please correct the following errors:</strong>
+                    <ul style="margin-left:20px; margin-top:5px;">
+                        <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+
+                        <li ng-show="registerForm.name.$error.required" translate>Your name is required - how should I call you?</li>
+                        <li ng-show="registerForm.name.$error.minlength" translate>Please provide a (decent) name</li>
+
+                        <li ng-show="registerForm.email.$error.required" translate>Email is required</li>
+                        <li ng-show="registerForm.email.$error.email" translate>Email is not valid</li>
+
+                        <li ng-show="registerForm.password.$error.required" translate>Password is required</li>
+                        <li ng-show="registerForm.password.$error.minlength" translate>Password must be at least 5 characters long</li>
+                        <li ng-show="registerForm.password.$error.maxlength" translate>Password must be at most 60 characters long</li>
+
+                        <li ng-show="registerForm.confirmPassword.$error.confirmValue" translate>Passwords do not match</li>
+                    </ul>
+                </alert>
+
+            </form>
+        </tab>
+
+        <!-- Password Reset Tab -->
+        <!------------------------------------------------------------->
+
+        <tab ng-show="showPasswordResetTab" active="showPasswordResetTab">
+            <tab-heading><i class="fa fa-key"></i> <span translate>Reset Password</span></tab-heading>
+
+            <h2 translate>Reset Password</h2>
+
+            <form name="resetPasswordForm" novalidate ng-submit="formResetPassword()" class="form-horizontal" autocomplete="off">
+
+                <div class="form-group">
+                    <label for="resetEmail" class="control-label col-xs-3" translate>Email</label>
+                    <div class="col-xs-8">
+                        <input type="email" class="form-control" ng-model="resetPasswordData.email" placeholder="{{'john@example.com'|translate}}" id="resetEmail" name="email" required/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-xs-8">
+                        <a class="btn btn-default" ng-click="formCancel()" translate>Cancel</a>
+                        <button type="submit" ng-disabled="resetPasswordForm.$invalid" class="btn btn-primary" translate>Reset</button>
+                    </div>
+                </div>
+
+                <alert type="danger" ng-show="serverErrorMessage || (resetPasswordForm.$invalid && resetPasswordForm.email.$dirty)">
+                    <strong translate>Please correct the following errors:</strong>
+                    <ul style="margin-left:20px; margin-top:5px;">
+                        <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+
+                        <li ng-show="resetPasswordForm.email.$error.required" translate>Email is required</li>
+                        <li ng-show="resetPasswordForm.email.$error.email" translate>Email is not valid</li>
+                    </ul>
+                </alert>
+
+                <alert type="success"  ng-show="serverSuccessMessage">
+                    {{serverSuccessMessage|translate}}
+                </alert>
+
+            </form>
+        </tab>
+
+    </tabset>
+</div>
+
+<!--------------------------------------------------------------------->
+
+<!--
+    - During the login / signup process an animation is displayed INSTEAD of the above form
+-->
+<div class="loading-frame" ng-if="busyMessage">
+    <div  class="loading-image">
+        <div id="bowlG">
+            <div id="bowl_ringG">
+                <div class="ball_holderG">
+                    <div class="ballG"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h3 class="loading-text">{{busyMessage|translate}}</h3>
+</div>

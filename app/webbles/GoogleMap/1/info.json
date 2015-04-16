@@ -1,0 +1,8 @@
+{
+    "name": "Basic Google Map Webble",
+    "description": "This is a Webble that uses the most basic and simple parts of the google map API in order to create custom maps and map applications.",
+    "keywords": "map google api satelite street view",
+    "author": "truemrwalker",
+    "image": "images/wbls/googlemap.png",
+    "noautogen": false
+}

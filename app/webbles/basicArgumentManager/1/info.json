@@ -1,0 +1,7 @@
+{
+    "name": "Basic Argument Manager",
+    "description": "This is a Webble where the user can combine arguments and do basic mathimatical operations on them and get a result.",
+    "keywords": "arguments math operations plus minus division multiply strings",
+    "author": "truemrwalker",
+    "image": "images/wbls/basicArgs.png"
+}

@@ -1,0 +1,92 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for share Workspace Form
+//===================================================================================================================-->
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main">
+
+    <div class="row">
+        <div class="col-xs-12"><h4 class="formTitle" translate>Share Workspace</h4></div>
+    </div>
+
+    <div class="keepTheDistanceBelow dividerLineAbove">
+
+        <div class="row keepTheDistanceBelow">
+            <div class="col-xs-12">
+                <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{msgTexts.headlineWS | translate}}: {{formItems.theWS.name}}</span>
+                <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-4"><span class="formTitle" translate>Current Collaborators:</span></div>
+            <div class="col-xs-7"><select class="formitem" ng-model="formItems.selectedCollaborators" multiple ng-options="collaborator for collaborator in formItems.wsCollaborators" style="padding-left: 3px; padding-top: 1px; width: 100%"></select></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{msgTexts.collaborators | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+        </div>
+
+        <div class="row keepTheDistanceBelow" style="padding: 0 0 10px 0; border-bottom: 1px dashed #d3d3d3;">
+            <div class="col-xs-4"></div>
+            <div class="col-xs-7"><button class="btn btn-danger btn-xs" style="margin-top: 5px; margin-bottom: 5px;" ng-click="removeCollaborators()" translate>Remove</button></div>
+            <div class="col-xs-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-4"><span class="formTitle" translate>New Collaborator:</span></div>
+            <div class="col-xs-7">
+                <input class="formitem" type="text" class="form-control" ng-model="formItems.newCollaborator" placeholder="{{msgTexts.newCollaboratorPlaceHolder | translate}}" ng-enter="addCollaborator();"
+                    typeahead="u as u.username for u in getUsers($viewValue) | filter:$viewValue | limitTo:15" typeahead-min-length="1" typeahead-wait-ms="200" ng-change="nameChangeEventHandler($event);"/>
+            </div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{msgTexts.newCollaborator | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+        </div>
+
+        <div class="row keepTheDistanceBelow" style="padding: 0 0 10px 0; border-bottom: 1px dashed #d3d3d3;">
+            <div class="col-xs-4"></div>
+            <div class="col-xs-7"><button class="btn btn-primary btn-xs" style="margin-bottom: 5px; margin-top: 5px;" ng-click="addCollaborator()" translate>Add</button></div>
+            <div class="col-xs-1"></div>
+        </div>
+    </div>
+
+    <div class="dividerLineAbove">
+        <div class="row">
+            <div class="col-xs-9">
+                <span style="color: red; font-weight: bold;">{{msgTexts.errorMsg | translate}}</span>
+            </div>
+            <div class="col-xs-3">
+                <button ng-click="close('cancel')" class="btn btn-default" translate>Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--=================================================================================================================-->

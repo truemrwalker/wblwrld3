@@ -1,0 +1,375 @@
+<!--
+//
+// Webble World 3.0 (IntelligentPad system for the web)
+//
+// Copyright (c) 2010-2015 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka
+//     in Meme Media R&D Group of Hokkaido University, Japan. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Additional restrictions may apply. See the LICENSE file for more information.
+//
+
+-->
+
+<!--
+    - Implements the User Interface structure of the "Profile Settings" menu option
+    - Tab-based structure that contains the following tabs: Notifications, Account Information,
+        Trust, and Authentication
+
+@author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+-->
+<div class="container-fluid padcontent closeable">
+
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg|translate}}</alert>
+
+    <tabset>
+
+    <!-- Notifications -->
+    <!----------------------------------------------------------------->
+
+    <tab active="tabs.notif" select="selectTab('notif')">
+        <tab-heading><i class="fa fa-info-circle"></i> <span translate>Notifications</span> <span class="badge" ng-show="user.notif.pending.length">{{user.notif.pending.length}}</span></tab-heading>
+
+        <form novalidate class="form-horizontal padcontent" autocomplete="off">
+            <h1 translate>Notifications</h1>
+
+            <div class="form-group">
+                <div class="checkbox col-xs-offset-1 col-xs-6">
+                    <label for="notif_platform">
+                        <input type="checkbox" ng-checked="user.notif.platform" ng-model="profileData.notif.platform" id="notif_platform" name="notif_platform" ng-required="false"/>
+                        <span translate>Get an email every time the platform has major updates</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox col-xs-offset-1 col-xs-6">
+                    <label for="notif_modify">
+                        <input type="checkbox" ng-checked="user.notif.modify" ng-model="profileData.notif.modify" id="notif_modify" name="notif_modify" ng-required="false"/>
+                        <span translate>Get an email every time someone else publishes a new version of a webble of which you are coauthor</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox col-xs-offset-1 col-xs-6">
+                    <label for="notif_share">
+                        <input type="checkbox" ng-checked="user.notif.share" ng-model="profileData.notif.share" id="notif_share" name="notif_share" ng-required="false"/>
+                        <span translate>Get an email every time someone shares a workspace or a webble with you</span>
+                    </label>
+                </div>
+            </div>
+
+            <h3 translate>Unhandled Notifications</h3>
+
+            <p translate>Please review and respond to the notifications below.</p>
+
+            <table class="table well" ng-show="user.notif.pending.length">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th width="70%" translate>Notification</th>
+                    <th translate>Your Response</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="n in user.notif.pending">
+                    <td><span class="badge">{{$index + 1}}</span></td>
+                    <td>{{n.text}}</td>
+                    <td ng-switch="n.kind" nowrap>
+
+                        <div ng-switch-when="confirm">
+                            <button type="button" class="btn btn-success btn-xs" ng-click="handleNotification(n, $index, true)">
+                                <span translate>Allow</span>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="handleNotification(n, $index, false)">
+                                <span translate>Deny</span>
+                            </button>
+                        </div>
+
+                        <button ng-switch-default type="button" class="btn btn-info btn-xs" ng-click="handleNotification(n, $index)">
+                            <span translate>OK</span>
+                        </button>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p ng-hide="user.notif.pending && user.notif.pending.length" class="well"><span translate>There are not any unhandled notifications :-P</span></p>
+        </form>
+    </tab>
+
+    <!-- Account Information -->
+    <!----------------------------------------------------------------->
+
+    <tab active="tabs.info" select="selectTab('info')">
+        <tab-heading><i class="fa fa-edit"></i> <span translate>Account Information</span></tab-heading>
+
+        <form name="profileForm" novalidate class="form-horizontal padcontent" ng-submit="submitAccountChanges(profileData)" autocomplete="off">
+
+            <h1 translate>Account Information</h1>
+
+            <div class="form-group">
+                <label for="name" class="control-label col-xs-2" translate>Name</label>
+                <div class="col-xs-6">
+                    <input type="text" class="form-control formitem" ng-model="profileData.name" placeholder="{{user.name.full}}" id="name" name="name" ng-minlength="5" ng-required="false"/>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="user && !user.username">
+                <label for="username" class="control-label col-xs-2" translate>Username</label>
+                <div class="col-xs-6">
+                    <input type="text" class="form-control formitem" ng-model="profileData.username" placeholder="e.g., {{user.name.first.toLowerCase()}}1821" id="username" name="username" ng-required="false"/>
+                    <span class="help-block hint" translate>You have to set a username to be able to publish webbles</span>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label for="email" class="control-label col-xs-2" translate>Email</label>
+                <div class="col-xs-6">
+                    <input type="email" class="form-control" ng-model="profileData.email" placeholder="{{user.email}}" id="email" name="email" ng-required="false"/>
+                </div>
+
+                <!--Display Pictchah-->
+                <div class="col-md-push-0 col-xs-3" style="margin-left: 20px; margin-top: -90px;">
+                    <img width="128" src="" ng-src="{{user.image_urls[0] || 'images/generic_avatar.png'}}"/>
+                </div>
+
+            </div>
+
+            <hr/>
+
+            <div class="form-group">
+                <label for="website" class="control-label col-xs-2" translate>Website</label>
+                <div class="col-xs-6">
+                    <input type="url" class="form-control" ng-model="profileData.website_urls" placeholder="{{user.website_urls[0]}}" id="website" name="website" ng-required="false"/>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="form-group">
+                <label for="language" class="control-label col-xs-2" translate>Preferred Language</label>
+                <div class="col-xs-6">
+                    <select id="language" class="form-control formitem" ng-model="profileData.language" ng-options="l.code as l.nativeName for l in allLanguages" ng-required="false">
+                        <option value="" disabled ng-selected="true" style="display:none;">{{currentlySelectedLanguageName}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="form-group">
+                <label for="date_born" class="control-label col-xs-2" translate>Birthday</label>
+                <div class="col-xs-6">
+                    <p class="input-group">
+                        <input id="date_born" name="date_born" type="text" class="form-control" ng-model="profileData.date_born" is-open="pickerOpened" ng-required="false"
+                               datepicker-popup="MMMM dd, yyyy" show-button-bar="false"
+                               min-date="'1930-1-1'" max-date="'2010-1-1'" show-weeks="false" init-date="{{user.date_born}}"
+                               placeholder="{{ (user.date_born|date:'MMMM dd, yyyy') || '???? ??, ????' }}"/>
+
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="pickerOpened=true" stop-event="click"><i class="fa fa-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="gender" class="control-label col-xs-2" translate>Gender</label>
+                <div class="col-xs-6">
+                    <div class="btn-group" id="gender" name="gender" ng-init="profileData.gender=user.gender">
+                        <label class="btn btn-default" ng-model="profileData.gender" btn-radio="'male'" uncheckable><span class="fa fa-male"></span> <span translate>Male</span></label>
+                        <label class="btn btn-default" ng-model="profileData.gender" btn-radio="'female'" uncheckable><span class="fa fa-female"></span> <span translate>Female</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="control-label col-xs-2" translate>Description</label>
+                <div class="col-xs-6">
+                    <textarea id="description" class="form-control formitem" ng-model="profileData.description" placeholder="{{user.description}}" name="description" ng-required="false">
+                        {{user.description}}
+                    </textarea>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-6">
+                    <button type="submit" ng-disabled="!profileForm.$dirty || profileForm.$invalid" class="btn btn-primary"><i class="fa fa-check"></i> <span translate>Save</span></button>
+                </div>
+            </div>
+        </form>
+    </tab>
+
+    <!-- Trust and Group Membership -->
+    <!----------------------------------------------------------------->
+
+    <tab active="tabs.trust" select="selectTab('trust')">
+        <tab-heading><i class="fa fa-lock"></i> <span translate>Trust</span></tab-heading>
+
+        <form novalidate class="form-horizontal padcontent" autocomplete="off">
+
+            <h1 translate>Trust and Group Memberships</h1>
+    <!--
+            <h3 translate>Group Membership</h3>
+    -->
+
+            <p translate>To apply for group membership, please contact the group's manager directly or send an email to the group's address. You can find a group's address via the group information interface.</p>
+
+            <div class="form-group">
+                <div class="well">
+                    <div ng-if="groups">
+                        <strong translate>You are Member of the Following Groups</strong>
+                        <hr style="margin:3px;">
+                        <ul ng-repeat="g in groups">
+                            <li><a class="btn btn-xs btn-danger" tooltip="{{'Revoke Group Membership'|translate}}" tooltip-placement="right" ng-click="revokeGroupMembership(g)"><span class="fa fa-sign-out"></span></a> <span class="fa fa-group"></span> <span class="label label-info">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}</li>
+                        </ul>
+
+                        <!--
+                                                <span class="fa fa-group"></span> {{group.name}}<br>
+                                                <span class="fa fa-comment"></span> {{group.description}}<br>
+                                                <span class="fa fa-building"></span> {{group.address}}<br>
+                                                <span class="fa fa-envelope"></span> {{group.email}}<br>
+                                                <span class="fa fa-link"></span> {{group.website}}
+                        -->
+                    </div>
+                    <div ng-if="!groups || groups.length === 0">
+                        <span translate>You are not member of any group :-(</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 translate>Group Information</h3>
+
+            <div class="form-group">
+                <div class="col-xs-6">
+                    <input type="search" id="group" name="group" class="form-control formitem" ng-model="selectedGroup" placeholder="{{'Find Group...'|translate}}"
+                           typeahead="g as g.name for g in getGroups($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="col-xs-2 optional">
+                    <img width="128" src="" ng-src="{{selectedGroup.image_urls[0] || 'images/generic_group.png'}}"/>
+                </div>
+
+                <div ng-show="selectedGroup.id" class="col-xs-8">
+                    <b translate>Name:</b> <i>{{selectedGroup.name}}</i><br>
+                    <b translate>Address:</b> <i>{{selectedGroup.address}}</i><br>
+                    <b translate>Description:</b> <i>{{selectedGroup.description}}</i><br>
+                    <b translte>Email:</b> <i>{{selectedGroup.email}}</i><br>
+                    <b translte>Website:</b> <a target="_blank" ng-href="{{selectedGroup.website}}">{{selectedGroup.website}}</a>
+                </div>
+
+                <div ng-hide="selectedGroup.id" class="col-xs-8">
+                    <span class="text-hint" translate>Group information will appear here - currently no group found</span>
+                </div>
+            </div>
+
+            <h3 translate>Trust</h3>
+
+            <p translate>To trust a group, locate it via the group information interface and then click on the trust button below.</p>
+
+            <div class="form-group">
+                <div class="col-xs-offset-1 col-xs-2">
+                    <a ng-disabled="!selectedGroup.id" class="btn btn-success" ng-click="trustGroup(selectedGroup)"><i class="fa fa-check-circle"></i> <span translate>Trust</span> {{selectedGroup.name}}</a>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="well">
+                    <div ng-show="trustGroups.length > 0">
+                        <strong translate>You Trust the Following Groups</strong>
+                        <hr style="margin:3px;">
+                        <ul ng-repeat="g in trustGroups">
+                            <li><a class="btn btn-xs btn-danger" tooltip="{{'Revoke Trust'|translate}}" tooltip-placement="right" ng-click="untrustGroup(g)"><span class="fa fa-ban"></span></a> <span class="fa fa-group"></span> <span class="label label-success">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}</li>
+                        </ul>
+                    </div>
+                    <div ng-show="!trustGroups || trustGroups.length == 0">
+                        <span translate>You don't trust any group :-(</span>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </tab>
+
+    <!-- Authentication -->
+    <!----------------------------------------------------------------->
+
+    <tab active="tabs.auth" select="selectTab('auth')">
+        <tab-heading><i class="fa fa-key"></i> <span translate>Authentication</span></tab-heading>
+
+        <form name="passwordForm" novalidate class="form-horizontal padcontent" ng-submit="submitAccountChanges(passwordData)" autocomplete="off">
+
+            <h1 translate>Authentication</h1>
+
+            <p translate>You can change your password and provide additional authentication methods for your account and for third parties.</p>
+
+            <div class="form-group">
+                <label for="password" class="control-label col-xs-2" translate>Set Password</label>
+                <div class="col-xs-6">
+                    <input type="password" class="form-control" ng-model="passwordData.password" placeholder="{{'Password'|translate}}" id="password" name="password" ng-minlength="5" ng-maxlength="60" ng-required="true"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="control-label col-xs-2" translate>Confirm your password</label>
+                <div class="col-xs-6">
+                    <input type="password" class="form-control" ng-model="passwordData.confirmPassword" placeholder="{{'Confirm Password'|translate}}" id="confirmPassword" name="confirmPassword" ng-minlength="5" ng-maxlength="60" confirm-value="passwordData.password" ng-required="true"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-6">
+                    <button type="submit" ng-disabled="!passwordForm.$dirty || passwordForm.$invalid" class="btn btn-primary"><i class="fa fa-rocket"></i> <span translate>Reset</span></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="padcontent">
+
+            <hr/>
+
+            <h3 translate>Additional Accounts</h3>
+
+            <p translate>Associating your account with other providers enables authenticating and logging in to your account via those.</p>
+
+            <div ng-repeat="provider in providers">
+                <div style="font-size: 1.5em; margin-bottom: 5px;"> <!--class="col-xs-9"-->
+                    <a href="" ng-click="associateAccount(provider)" class="control-label btn {{provider.isConnected ? 'btn-success' : 'btn-danger'}}"><i class="fa fa-2x fa-{{provider.icon}}-square"></i></a>
+                    <div ng-click="associateAccount(provider)" class="label label-default" ng-hide="provider.isConnected"><span translate>Account not connected</span>: {{provider.name}}</div>
+                    <div ng-hide="!provider.isConnected" class="label label-success"><span translate>Connected</span>: {{provider.name}} <i class="fa fa-check"></i></div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <h3 translate>Licenses and API keys</h3>
+
+            <p translate>You can manage your personal licenses and API keys via the interface below.</p>
+            <license-key-editor key-holder="user"></license-key-editor>
+        </div>
+    </tab>
+
+    </tabset>
+
+</div>

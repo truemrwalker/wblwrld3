@@ -1,0 +1,7 @@
+{
+    "name": "Event Action Manager",
+    "description": "This is a webble that allows you to track events in the system and other realetd Webbles and based on the outcome of these events execute some specific action.",
+    "keywords": "Event Action Manager",
+    "author": "truemrwalker",
+    "image": "images/wbls/EAMWbl.png"
+}

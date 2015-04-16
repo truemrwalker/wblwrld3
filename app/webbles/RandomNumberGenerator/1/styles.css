@@ -1,0 +1,19 @@
+/*/=====================================================================================================================
+// Styles for RANDOMIZER WEBBLE for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: RANDOMIZER WEBBLE Classes === /*/
+
+.randContainer{
+    width: 100px;
+    height: 70px;
+    background-color: #d3d3d3;
+    border: 2px solid black;
+    border-radius:5px;
+    text-align: center;
+}
+
+/*/ === END: RANDOMIZER Classes === /*/
+
+/*====================================================================================================================*/

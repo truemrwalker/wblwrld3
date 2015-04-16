@@ -1,0 +1,125 @@
+/*/=====================================================================================================================
+// Styles for Event Action Manager for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Classes === /*/
+
+.EAMRoot{
+    background-color: darkmagenta;
+    border-radius: 4px;
+    padding: 5px 7px;
+    height: 30px;
+    font-family: "Comic Sans MS", "Times New Roman", Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid darkorange;
+}
+
+.EAMTitle{
+    color: floralwhite;
+    font-family: "Comic Sans MS", "Times New Roman", Arial, sans-serif;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.eamform-main {
+    /* GRADIENT COLOR */
+    /* fallback */
+    background-color: lightgoldenrodyellow;
+    /* Safari 5.1+, Chrome 10+ */
+    /*background: -webkit-linear-gradient(left top, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+    /* Firefox 3.6+ */
+    /*background: -moz-linear-gradient(left top, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+    /* IE 10 */
+    /*background: -ms-linear-gradient(left, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+    /* Opera 11.10+ */
+    /*background: -o-linear-gradient(left, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+
+    border: 2px solid darkkhaki;
+    overflow: hidden;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+
+
+.tableroot
+{
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+    width: 100%;
+
+}
+
+.tableheader{
+    background-color: #ffdc74;
+    color:#000000;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size:1.1em;
+}
+
+.tableroot th
+{
+    text-align:left;
+    padding:5px 30px 4px 7px;
+    border: 1px solid #bf7417;
+    /*color: #fffe9b;*/
+}
+
+
+.tableroot td
+{
+    border: 1px solid #bf7417;
+    font-size: 1em;
+    padding: 3px 15px 2px 7px;
+    word-break: break-all;
+}
+
+.content{
+    width: 100%
+}
+
+.addNew{
+    background: lightskyblue;
+    border: 1px solid darkblue;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    color: darkblue;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1.1em;
+    text-align: center;
+    width: 1.1em;
+    font-size: 17px;
+}
+
+.boxing{
+    background: #d3d3d3;
+    color: #000000;
+    border: 1px solid black;
+    margin: 2px 3px 2px 3px;
+    text-align: center;
+    float: left;
+    /*white-space: nowrap;*/
+}
+
+.boxingTxt{
+    padding: 2px 3px 2px 3px;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.stayTogether{
+    float: left;
+    padding-right: 4px;
+}
+
+
+
+
+
+/*/ === END: Classes === /*/
+
+/*====================================================================================================================*/

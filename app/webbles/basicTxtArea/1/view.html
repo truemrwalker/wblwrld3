@@ -1,0 +1,11 @@
+<!--====================================================================================================================
+// View for Text Area for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="txtInputGrabber" class="txtInputGrabber" ng-controller="txtAreaWblCtrl">
+    <textarea id="txtInput" ng-model="theTxt" ng-keypress="keyPressEventHandler($event);" ng-disabled="isDisabled" ng-style="{'margin': defaultMargin}" class="txtInput" ng-click="forceSelect($event)"></textarea>
+    <div id="reSizer" style="width: 15px; height: 10px; background-color: transparent; margin-top: -10px; cursor: nwse-resize;" ng-style="{'margin-left': resizingPos.x}" re-sizing></div>
+</div>
+
+<!--=================================================================================================================-->

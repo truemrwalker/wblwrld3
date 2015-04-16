@@ -1,0 +1,11 @@
+<!--====================================================================================================================
+// View for Text Input for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="txtInputGrabber" class="txtInputGrabber" ng-controller="txtInputWblCtrl">
+    <input id="txtInput" ng-model="theTxt" ng-keypress="keyPressEventHandler($event);" ng-disabled="isDisabled" ng-style="{'margin': defaultMargin}" type="text" class="txtInput" ng-click="forceSelect($event)" />
+    <div id="reWider" style="width: 10px; height: 10px; background-color: transparent; margin-top: -10px; cursor: ew-resize;" ng-style="{'margin-left': rewiderPos}" re-widen></div>
+</div>
+
+<!--=================================================================================================================-->

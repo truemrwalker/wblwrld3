@@ -1,0 +1,29 @@
+/*/=====================================================================================================================
+// Styles for String Master Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.stringContainer{
+    background-color: #fffe9b;
+    border: 2px solid #bf7417;
+    border-radius:5px;
+    padding: 5px;
+    width: 400px;
+    height: auto;
+}
+
+.valueDisplay{
+    font-family: georgia;
+    font-size: 12px;
+    font-weight: normal;
+    color: #003147;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

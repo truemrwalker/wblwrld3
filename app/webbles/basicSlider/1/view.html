@@ -1,0 +1,21 @@
+<!--====================================================================================================================
+// View for SLIDER Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="sliderGrabber" class="sliderGrabber container-fluid" ng-controller="sliderWebbleCtrl">
+    <div class="row">
+        <div class="col-xs-2" style="text-align: right;">
+            <span>{{gimme('minValue')}}</span>
+        </div>
+        <div class="col-xs-8">
+            <input id="rangeSlider" class="rangeSlider" type="range" min="{{gimme('minValue')}}" max="{{gimme('maxValue')}}" step="{{gimme('stepValue')}}" ng-model="data.currVal">
+        </div>
+        <div class="col-xs-2">
+            <span>{{gimme('maxValue')}}</span>
+        </div>
+    </div>
+
+</div>
+
+<!--=================================================================================================================-->

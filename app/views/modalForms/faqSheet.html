@@ -1,0 +1,120 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for FAQ Form
+//===================================================================================================================-->
+
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main">
+
+    <div class="row dividerLineBelow keepTheDistanceBelow">
+        <div class="col-xs-2">
+            <button ng-click="close('close')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
+        </div>
+        <div class="col-xs-10"><h4 class="formTitle" translate>Frequently Asked Questions (FAQ)</h4></div>
+    </div>
+
+    <div class="keepTheDistanceBelow" ng-show="(faq.a != '' && faq.a != 'Unanswered') || formItems.thisUser.isAdmin" style="border-bottom: 2px dashed #808080; padding-bottom: 10px;" ng-repeat="faq in formItems.faqList">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="font-weight: bold;">{{faq.q | translate}}</span><span ng-show="faq.qu == formItems.thisUser.userEmail" style="color: darkgreen; font-weight: normal;"> [{{textParts.fromYou | translate}}]</span>
+            </div>
+        </div>
+
+        <div class="row" ng-hide="formItems.thisUser.isAdmin">
+            <div class="col-xs-12"><span style="font-weight: normal;">{{faq.a | translate}}</span></div>
+        </div>
+
+        <div class="row" ng-show="formItems.thisUser.isAdmin">
+            <div class="col-xs-6"><textarea class="formitem" rows="3" ng-model="faq.a" ng-change="clearAnswered(faq)">{{faq.a}}</textarea></div>
+            <div class="col-xs-2" style="text-align: center;">
+                <span ng-show="faq.answered" style="font-weight: bolder; color: green;" translate>Answered</span>
+                <span ng-hide="faq.answered" style="font-weight: bolder; color: red;" translate>Unposted</span>
+            </div>
+            <div class="col-xs-4">
+                <button ng-click="answerQ(faq)" class="btn btn-success btn-sm" style="margin: 0 3px 3px 0;" translate>Answer</button>
+                <button ng-click="deleteQ(faq)" class="btn btn-danger btn-sm" style="margin-bottom: 3px;" translate>Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="keepTheDistanceAbove keepTheDistanceBelow" ng-show="hasPendingAnswers()">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Pending Answers you need to give</span>
+                <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+            </div>
+        </div>
+    </div>
+
+    <div class="keepTheBiggerDistanceAbove keepTheDistanceBelow" ng-show="formItems.thisUser.userEmail != 'guest'">
+        <div class="row keepTheDistanceBelow">
+            <div class="col-xs-12">
+                <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>New Question</span>
+                <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+            </div>
+        </div>
+
+        <div class="row keepTheDistanceBelow">
+            <div class="col-xs-10"><input class="formitem" type="text" ng-model="formItems.newQ"></div>
+            <div class="col-xs-2"><button ng-click="askNewQ()" class="btn btn-primary" translate>Ask</button></div>
+        </div>
+    </div>
+
+    <div class="keepTheBiggerDistanceAbove" ng-show="hasPendingQuestions()">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Your Questions Pending Answers</span>
+                <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+            </div>
+        </div>
+    </div>
+
+    <div class="keepTheDistanceBelow" ng-show="(pq.a == '' || pq.a == 'Unanswered') && pq.qu == formItems.thisUser.userEmail" ng-repeat="pq in formItems.faqList" style="border-bottom: 1px dashed steelblue;">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="font-weight: lighter; color: lightslategray;">{{pq.q | translate}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dividerLineAbove">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: red; font-weight: bold;">{{formItems.errorMsg | translate}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!--=================================================================================================================-->

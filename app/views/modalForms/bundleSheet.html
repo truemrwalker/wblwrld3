@@ -1,0 +1,82 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for Bundling Form
+//===================================================================================================================-->
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main">
+
+    <div class="row">
+        <div class="col-xs-4">
+            <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+            <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+        </div>
+        <div class="col-xs-8"><h4 class="formTitle" translate>Configure New Webble Bundle</h4></div>
+    </div>
+
+    <div class="keepTheDistanceBelow dividerLineAbove">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Pick which slots should be accessable in the bundle</span>
+                <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+            </div>
+        </div>
+    </div>
+
+    <div class="keepTheBiggerDistanceBelow" ng-repeat="wbl in formItems.theWblsSlots">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: #808080; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" translate>{{wbl.fullName}}</span>
+                <hr style="border: dotted #808080; height: 1px; margin: 0 0 10px 0; padding: 0;">
+            </div>
+        </div>
+
+        <div class="row keepTheDistanceBelow" ng-repeat="slot in wbl.slots" style="border-bottom: 1px dashed #d3d3d3;">
+            <div class="col-xs-1"><input class="formitem" type="checkbox" ng-model="slot.isSelected" style="margin-left: 10px;" /></div>
+            <div class="col-xs-11">
+                <span style="margin-left: 10px; font-weight: bold;">{{slot.name | translate}} [{{slot.id}}]</span>
+                <span style="margin-left: 10px; color: darkgray; font-weight: normal;">({{slot.value.toString().substring(0,250)}})</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dividerLineAbove">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: red; font-weight: bold;">{{formTexts.errorMsg | translate}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!--=================================================================================================================-->

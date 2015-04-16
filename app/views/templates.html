@@ -1,0 +1,238 @@
+<!--
+//
+// Webble World 3.0 (IntelligentPad system for the web)
+//
+// Copyright (c) 2010-2015 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka
+//     in Meme Media R&D Group of Hokkaido University, Japan. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Additional restrictions may apply. See the LICENSE file for more information.
+//
+
+-->
+
+<!--
+    - Rudimentary webble template IDE
+    - Uses different editors for different filetypes
+    - Utilizes the ACE.js editor for editing and syntax highlighting facilities
+    - Enables uploading of arbitrary files via ng-fileupload component
+
+@author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+-->
+<div class="container-fluid closeable">
+
+    <!-- Template creation/modification form with file upload -->
+    <!----------------------------------------------------------------->
+
+    <form ng-submit="formDefaultAction()" name="templateForm" class="form-horizontal" enctype="multipart/form-data">
+
+        <h1 translate>Template Editor</h1>
+
+<!--
+        <tabset>
+            <tab>
+                <tab-heading><i class="fa fa-info-circle"></i> <span translate>Information</span></tab-heading>
+            </tab>
+        </tabset>
+-->
+
+        <div class="form-group">
+
+            <div class="col-xs-4">
+                <input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
+                <p></p> <!-- Just for the margins -->
+                <div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt" translate>
+                    Drop Files Here
+                </div>
+            </div>
+
+            <p></p> <!-- Just for the margins -->
+            <div class="col-xs-8">
+
+                <table class="table">
+
+                    <thead>
+                    <tr>
+                        <th width="70%" translate>File Name</th>
+                        <th translate>Size</th>
+                        <th></th> <!-- For action buttons -->
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="file in filesToUpload">
+                        <td>{{file.name}}</td>
+                        <td nowrap>{{file.size/1024/1024|number:2}} MB</td>
+                        <td nowrap>
+                            <button type="button" class="btn btn-info btn-xs" ng-click="onFileRemoved($index)">
+                                <span class="fa fa-trash-o"></span> <span translate>Remove</span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+
+                <!--
+                                <button type="button" class="btn btn-danger btn-s" ng-click="onFilesCleared()" ng-disabled="!filesToUpload.length">
+                                    <span class="fa fa-trash-o"></span> <span translate>Remove all</span>
+                                </button>
+                -->
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id" class="control-label col-xs-2" translate>Id</label>
+            <div class="col-xs-6">
+                <input type="text" id="id" name="id" class="form-control formitem" ng-model="templateData.id" placeholder="{{'Template Id'|translate}}" ng-required="true" ng-minlength="5"
+                       typeahead="t.id for t in queryTemplates($viewValue) | filter:$viewValue | limitTo:20"
+                       typeahead-on-select="onSelectQueriedTemplate($item)" typeahead-editable="true" typeahead-min-length="3" typeahead-wait-ms="700"/>
+                <p class="help-block" ng-if="enableCopyTemplate"><span translate>You can create a copy of this, already published template or create a new one</span></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="name" class="control-label col-xs-2" translate>Name</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control formitem" ng-model="templateData.name" placeholder="{{'Template Name'|translate}}" id="name" name="name" required  ng-minlength="5"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="control-label col-xs-2" translate>Description</label>
+            <div class="col-xs-6">
+                <textarea class="form-control formitem" ng-model="templateData.description" placeholder="{{'Template Description'|translate}}" id="description" name="description">
+                </textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <alert type="danger" ng-show="serverErrorMessage || (templateForm.$invalid && templateForm.id.$dirty && templateForm.name.$dirty && templateForm.description.$dirty)">
+                <strong translate>Please correct the following errors:</strong>
+                <ul style="margin-left:20px; margin-top:5px;">
+                    <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+
+                    <li ng-show="templateForm.id.$invalid" translate>Please provide a valid id for the template</li>
+                    <li ng-show="templateForm.name.$invalid" translate>Please provide a valid name for the template</li>
+                    <li ng-show="templateForm.description.$invalid" translate>Please provide a valid description for the template</li>
+                </ul>
+            </alert>
+        </div>
+
+        <div class="form-group">
+            <div class="col-xs-offset-2 col-xs-5">
+
+                <a ng-show="!currTemplateId" ng-disabled="templateForm.$invalid" class="btn btn-primary" ng-click="formCreateTemplate()" translate>Create</a>
+                <a ng-hide="!currTemplateId" ng-disabled="templateForm.$invalid" class="btn btn-primary" ng-click="formUpdateTemplate()" translate>Update</a>
+
+                <a ng-show="enableCopyTemplate" ng-disabled="!templateData.id" class="btn btn-info" ng-click="formCopyTemplate(templateData.id)"><span class="fa fa-copy"></span> <span translate>Copy</span></a>
+
+                <a ng-if="false" ng-disabled="!currTemplateId" class="btn btn-danger" ng-click="formDeleteTemplate(true)">Publish</a>
+
+                <!--<button type="submit" ng-disabled="templateForm.$invalid" class="btn btn-primary" translate>Update</button>-->
+            </div>
+        </div>
+
+    </form>
+
+    <hr/>
+
+    <!-- List with the user's unpublished templates -->
+    <!----------------------------------------------------------------->
+
+    <h3 translate>Unpublished Templates</h3>
+
+    <p ng-hide="templates.length > 0">
+        <span class="fa fa-comment"></span> <span translate>Hurray! You don't have any unpublished templates.</span>
+    </p>
+
+    <div ng-show="templates.length > 0" class="table-responsive">
+        <table class="table table-striped table-condensed table-hover">
+
+            <thead>
+            <tr>
+                <th>#</th>
+
+                <th translate>ID</th>
+                <th translate>Name</th>
+                <th translate>Description</th>
+
+                <th></th> <!-- Actions -->
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="t in templates track by t.id" ng-click="selectTemplate(t)" ng-class="{info:t.id===currTemplateId}">
+                <td>{{$index + 1}}</td>
+                <td>{{t.webble.templateid}}</td>
+                <td>{{t.webble.displayname}}</td>
+                <td>{{t.webble.description}}</td>
+
+                <td>
+                    <div ng-if="t.id===currTemplateId" stop-event="click" class="btn-group btn-group-xs btn-group-vertical">
+                        <a class="btn btn-danger" ng-click="deleteTemplate(t)"><span translate>Delete</span> <span class="fa fa-trash-o"></span></a>
+                    </div>
+                </td>
+
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+    <!-- Rudimentary IDE that displays & can edit the selected template's files -->
+    <!----------------------------------------------------------------->
+
+    <h3 ng-show="currTemplateId"><span class="fa fa-edit"></span> <span translate>Edit Template Files</span></h3>
+
+    <div class="container-fluid" ng-show="currTemplateId">
+
+        <div class="table-responsive table-hover col-md-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>
+                            <div ng-show="!currFileDirty"  class="btn-group" dropdown is-open="isNewFileDropDownOpen">
+                                <button class="btn btn-success btn-xs dropdown-toggle"><span translate>New File</span> <span class="caret"></span></button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="f in newTemplateFiles | filter:missingFile" tooltip="{{f.help}}" tooltip-placement="right">
+                                        <a ng-click="isNewFileDropDownOpen = false || createFile(f.name)">{{f.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <a ng-show="!currFileDirty && currFile" class="btn btn-danger btn-xs" ng-click="deleteFile()"><span translate>Delete</span> <i class="fa fa-trash-o"></i></a>
+
+                            <a ng-show="currFileDirty" class="btn btn-primary btn-xs" ng-click="saveFile()"><span translate>Save</span> <i class="fa fa-save"></i></a>
+                            <a ng-show="currFileDirty" class="btn btn-warning btn-xs" ng-click="discardFileChanges()"><span translate>Discard</span> <i class="fa fa-ban"></i></a>
+                        </td>
+                    </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="file in filesUploaded" ng-class="{info: file===currFile}" ng-click="selectFile(file)">
+                    <td>{{file}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-9 slide-container" ng-switch="currFileHandler">
+            <div ng-switch-when="editor" class="slide-content slide-animate" ui-ace="{onLoad: editorLoaded, theme: 'chrome'}"></div>
+            <div ng-switch-when="imageViewer" class="slide-content slide-animate"><img ng-src="{{currFileContent}}" style="max-width:100%;"></div>
+            <div ng-switch-when="external" class="slide-content slide-animate"><div class="well well-lg" style="margin: 0 auto;"><a target="_blank" ng-href="{{currFileContent}}"><span translate>Open</span> <span class="fa fa-download"></span></a></div></div>
+            <div ng-switch-default class="slide-content slide-animate"></div>
+        </div>
+    </div>
+
+</div>

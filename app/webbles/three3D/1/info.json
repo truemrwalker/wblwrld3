@@ -1,0 +1,8 @@
+{
+    "name": "Basic three.js 3D Webble",
+    "description": "This is a webble that can draw 3D objects",
+    "keywords": "3D",
+    "author": "truemrwalker",
+    "image": "images/wbls/3dwbl.png",
+    "noautogen": false
+}

@@ -1,0 +1,135 @@
+/*/=====================================================================================================================
+// Styles for Tabs & Pages Webble for Webble World v3.0 (2013)
+// Created By: TrueMrWalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: TNP Classes === /*/
+
+.tnpHolder{
+    background-color: #e9e9e9;
+    padding: 15px;
+    border: 1px solid #b2b2b2;
+    border-radius:5px;
+    min-width: 150px;
+    min-height: 90px;
+}
+
+.tnpInfoText {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 130px;
+  min-height: 100px;
+}
+
+
+.tnpTabs {
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tnpTabs li {
+  float: left;
+  margin: 0 .5em 0 0;
+}
+
+.tnpTabs a {
+    position: relative;
+    float: left;
+    text-decoration: none;
+    border-radius: 5px 0 0 0;
+    border-top: 1px solid #b2b2b2;
+    border-left: 1px solid #b2b2b2;
+    border-right: 1px solid #b2b2b2;
+    box-shadow: 0 2px 2px rgba(0,0,0,.4);
+}
+
+.tnpTabs a:focus {
+    outline: 0;
+}
+
+.tnpTabsAfterA {
+content:'';
+position:absolute;
+z-index: 1;
+top: 0;
+right: -.5em;
+bottom: 0;
+width: 1em;
+box-shadow: 3px 2px 2px rgba(0,0,0,.4);
+transform: skew(10deg);
+border-radius: 0 5px 0 0;
+}
+
+.tnpTabs .tnpCurrent a,
+.tnpTabs .tnpCurrentAfterA {
+  z-index: 3;
+}
+
+.tabsContent {
+  background: #f9ffd7;
+  width: 600px;
+  height: 400px;
+  position: absolute;
+  z-index: 2;
+  border-radius: 0 5px 5px 5px;
+  border-bottom: 1px solid #b2b2b2;
+  border-left: 1px solid #b2b2b2;
+  border-right: 1px solid #b2b2b2;
+  box-shadow: 0 -2px 3px -2px rgba(0, 0, 0, .5);
+  overflow: hidden;
+}
+
+
+.bookCover{
+    position: relative;
+    z-index: 0;
+    background-size: 100% 100%;
+    border-radius: 5px;
+}
+
+.bookBinder{
+    position: absolute;
+    background-size: 100%;
+    background-repeat: repeat-y;
+    z-index: 200;
+}
+
+.bookPage{
+    overflow: hidden;
+    position: absolute;
+}
+
+.oddPageShadow{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background: -webkit-linear-gradient(left, rgba(0,0,0,0.3), rgba(0,0,0,0));
+  background: -o-linear-gradient(right, rgba(0,0,0,0.3), rgba(0,0,0,0));
+  background: -moz-linear-gradient(right, rgba(0,0,0,0.3), rgba(0,0,0,0));
+  background: linear-gradient(to right, rgba(0,0,0,0.3), rgba(0,0,0,0));
+}
+
+.evenPageShadow{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3));
+  background: -o-linear-gradient(right, rgba(0,0,0,0), rgba(0,0,0,0.3));
+  background: -moz-linear-gradient(right, rgba(0,0,0,0), rgba(0,0,0,0.3));
+  background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.3));
+}
+
+
+/*/ === END: TNP Classes === /*/
+
+/*====================================================================================================================*/
+

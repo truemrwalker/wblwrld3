@@ -1,0 +1,7 @@
+{
+    "name":"Random Number Generator",
+    "description":"This Webble can generate a random number within a max and a min value.",
+    "keywords": "random number generator",
+    "author": "truemrwalker",
+    "image": "images/wbls/randomizer.png"
+}

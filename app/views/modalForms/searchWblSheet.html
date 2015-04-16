@@ -1,0 +1,173 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for Browse and Search for Webbles (online) Form
+//===================================================================================================================-->
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main" ng-enter="loadSelected();" ng-arrow-keys="arrowKeyPressed">
+
+    <div class="row keepTheDistanceBelow">
+        <div class="col-xs-2">
+            <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
+        </div>
+        <div class="col-xs-10"><h4 class="formTitle" translate>Webble Browser</h4></div>
+    </div>
+
+    <div class="row keepTheDistanceBelow dividerLineAbove">
+        <div class="col-xs-12">
+            <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{textParts.searchBoxTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{textParts.noOfWebblesTxt | translate}} {{formItems.noOfExistingWbls}}</span>
+            <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+        </div>
+    </div>
+
+    <div class="row keepTheDistanceBelow">
+        <div class="col-xs-12">
+            <span style="margin-right: 5px; color: blue; text-decoration: underline; cursor: pointer;" ng-click="makeAutoSearch(sa);" ng-repeat="sa in formItems.searchSuggestions">{{sa | translate}}</span>
+        </div>
+    </div>
+
+    <div class="row keepTheDistanceBelow">
+        <div class="col-xs-12">
+            <input id="searchBox" class="formitem" style="max-width: 250px; vertical-align: top; height: 30px; font-size: 14px; width: 200px;" type="text" ng-model="formItems.searchStr" ng-enter="search();"
+                   placeholder="{{'search webbles' | translate}}" typeahead="w.webble.displayname for w in getWebbles($viewValue) | filter:$viewValue | limitTo:formItems.itemsPerPage" typeahead-min-length="1"
+                   typeahead-wait-ms="200" typeahead-on-select="clearTypeAheadList();">
+
+            <button ng-click="search()" class="btn btn-default btn-sm" translate>Search</button>
+        </div>
+    </div>
+
+    <div class="row keepTheDistanceBelow">
+        <div class="col-xs-2"><span style="font-size: 10px;" translate>Sorted By: </span></div>
+        <div class="col-xs-2">
+            <select class="formitem" ng-model="formItems.sortedBy" style="font-size: 10px;" ng-change="reSort()">
+                <option value="name" translate>Name</option>
+                <option value="rate" translate selected>Rating</option>
+                <option value="developer" translate>Developer</option>
+                <option value="date" translate>Last Updated</option>
+            </select>
+        </div>
+        <div class="col-xs-3">
+            <span style="margin-left: 10px; font-size: 10px;" translate>Reversed</span>
+            <input class="formitem" type="checkbox" ng-model="formItems.isReversed" ng-change="toggleReverse()" />
+        </div>
+        <div class="col-xs-5">
+            <pager class="pagination-sm" total-items="formItems.totalItems" ng-model="formItems.currentPage" items-per-page="formItems.itemsPerPage" style="margin-top: 0; margin-bottom: 0" ng-change="pageSelect();"
+                   num-pages="formItems.numPages" previous-text="&lsaquo;&lsaquo; {{textParts.prev | translate}}" next-text="{{textParts.next | translate}} &rsaquo;&rsaquo;"></pager>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{textParts.resultTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{formItems.searchCriteria | translate}} {{formItems.searchStrResult}}</span>
+            <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+        </div>
+    </div>
+
+    <div id="itemBox" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)" ng-click="selectWbl($index);"
+         ng-dblclick="close('submit');" ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">
+
+        <div class="row" style="padding-bottom: 5px;">
+            <div class="col-xs-5">
+                <img ng-show="wblMeta.is_trusted" src="images/icons/TrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.haveTrustIconInfo | translate}}">
+                <img ng-show="!wblMeta.is_trusted" src="images/icons/UntrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.noTrustIconInfo | translate}}">
+                <span style="font-size: 22px; font-weight: bold; margin-left: 5px;">{{wblMeta.webble.displayname}}</span>
+            </div>
+            <div class="col-xs-3">
+                <span style="font-size: 14px; font-weight: lighter; font-style: italic;">[{{wblMeta.webble.author}}]</span>
+            </div>
+            <div class="col-xs-1">
+                <button ng-click="close('submit');" class="btn btn-primary btn-xs" translate>Load</button>
+            </div>
+            <div class="col-xs-1">
+                <button ng-show="isOwned($index);" ng-click="close('delete')" class="btn btn-danger btn-xs" translate>Delete</button>
+            </div>
+            <div class="col-xs-1">
+                <button ng-show="wblMeta.rateShow" ng-click="rateThis(wblMeta)" class="btn btn-info btn-xs" translate>Rate</button>
+                <span ng-hide="wblMeta.rateShow" style="color: forestgreen;" translate>Rated</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-3" id="{{wblMeta.webble.defid}}" dragdrop-metadata="{{wblMeta.webble.image}}">
+                <img class="img-responsive" id="image_{{$index}}" ng-src="{{wblMeta.webble.image}}" style="border: 1px solid #000000;">
+            </div>
+            <div class="col-xs-3">
+                <span style="font-size: 12px; font-weight: bold;" translate>Last Updated:</span>
+            </div>
+            <div class="col-xs-6">
+                <span style="font-weight: normal;">{{wblMeta.updated | date:'yyyy-MM-dd'}}</span>
+            </div>
+
+            <div class="col-xs-3" style="padding-top: 10px;">
+                <span style="font-size: 12px; font-weight: bold;" translate>Keywords: </span>
+            </div>
+            <div class="col-xs-6" style="padding-top: 10px;">
+                <span style="font-weight: normal;">{{wblMeta.webble.keywords}}</span>
+            </div>
+
+            <div class="col-xs-3"  style="padding-top: 10px;">
+                <span style="font-size: 12px; font-weight: bold;" translate>User Ratings:</span>
+            </div>
+            <div class="col-xs-6" style="padding-top: 10px;">
+                <div>
+                    <img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(wblMeta.rating, $index)}}" title="{{star | translate}}" style="margin-left: -1px; width: 20px; height: 20px;">
+                </div>
+            </div>
+
+            <div class="col-xs-3"  style="padding-top: 4px;">
+
+            </div>
+            <div class="col-xs-6" style="padding-top: 4px;">
+                <div>
+                    <span style="font-weight: normal;">{{getRateText(wblMeta.rating)}} [{{wblMeta.rating_count}} {{textParts.rateTxtVoters | translate}}]</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="padding-top: 5px;">
+            <div class="col-xs-12">
+                <span style="font-size: 12px; font-weight: normal;">{{wblMeta.webble.description | translate}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dividerLineAbove">
+        <div class="row">
+            <div class="col-xs-12">
+                <span style="color: red; font-weight: bold;">{{errorMsg | translate}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!--=================================================================================================================-->

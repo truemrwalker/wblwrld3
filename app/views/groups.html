@@ -1,0 +1,316 @@
+<!--
+//
+// Webble World 3.0 (IntelligentPad system for the web)
+//
+// Copyright (c) 2010-2015 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka
+//     in Meme Media R&D Group of Hokkaido University, Japan. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Additional restrictions may apply. See the LICENSE file for more information.
+//
+
+-->
+
+<!--
+    - Implements the User Interface structure of the "Groups" menu option
+    - Contains a diagram with all the available groups
+    - Also has tab-based structure that contains the following tabs: Edit group, Add Users, Delete group
+
+@author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+-->
+<div class="container-fluid closeable">
+
+    <!-- Visualization of Groups -->
+    <!----------------------------------------------------------------->
+
+    <h1 translate>Groups</h1>
+
+    <orgchart chart-data="chartData" on-select="onGroupSelected(selectedItem)"></orgchart>
+
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg|translate}}</alert>
+
+    <!-- Group Actions tab -->
+    <!----------------------------------------------------------------->
+
+    <tabset class="padcontent">
+
+        <!-- Selected Group Information -->
+        <!------------------------------------------------------------->
+        <tab active="tabs.info">
+            <tab-heading><i class="fa fa-info-circle"></i> <span translate>Information</span></tab-heading>
+
+            <div class="container-fluid padcontent">
+
+                <div class="row">
+                    <div class="col-xs-2 optional">
+                        <img width="96" src="" ng-src="{{selectedGroup.image_urls[0] || 'images/generic_group.png'}}"/>
+                    </div>
+
+                    <div ng-show="selectedGroup" class="col-xs-10">
+                        <b translate>Name:</b> <i>{{selectedGroup.name}}</i><br>
+                        <b translate>Address:</b> <i>{{selectedGroup.address}}</i><br>
+                        <b translate>Description:</b> <i>{{selectedGroup.description}}</i><br>
+                        <b translte>Email:</b> <i>{{selectedGroup.email}}</i><br>
+                        <b translte>Website:</b> <a target="_blank" ng-href="{{selectedGroup.website}}">{{selectedGroup.website}}</a>
+                    </div>
+
+                    <div ng-hide="selectedGroup" class="col-xs-10" style="padding: 30px;">
+                        <span translate>Select a group to get more information</span>
+                    </div>
+                </div>
+
+                <hr ng-if="myGroups" />
+
+                <div ng-if="myGroups" class="row">
+                    <strong translate>You are managing the following groups</strong>
+                    <ul>
+                        <li ng-repeat="g in myGroups">
+                            <span class="fa fa-group"></span> <span class="label label-warning">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </tab>
+
+        <!-- Create New Group or Edit Current Group -->
+        <!------------------------------------------------------------->
+
+        <tab active="tabs.newedit" ng-show="editable" disabled="(myGroups && !selectedGroup) || selectedGroup.readonly">
+
+            <tab-heading>
+                <div ng-hide="selectedGroupEdit"><i class="fa fa-plus"></i> <span translate>New Group</span></div>
+                <div ng-show="selectedGroupEdit"><i class="fa fa-edit"></i> <span translate>Edit Group</span></div>
+            </tab-heading>
+
+            <form name="addGroupForm" novalidate ng-submit="createOrModifyGroup()" class="form-horizontal padcontent" autocomplete="off">
+                <div class="form-group">
+                    <label for="name" class="control-label col-xs-2" translate>Name</label>
+                    <div class="col-xs-6">
+                        <input type="text" class="form-control formitem" ng-model="groupData.name" placeholder="{{'Group Name'|translate}}" id="name" name="name" ng-minlength="2" ng-required="true"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="control-label col-xs-2" translate>Email</label>
+                    <div class="col-xs-6">
+                        <input type="email" class="form-control" ng-model="groupData.email" placeholder="{{'Group Email'|translate}}" id="email" name="email" ng-required="true"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="control-label col-xs-2" translate>Address</label>
+                    <div class="col-xs-6">
+                        <textarea id="address" class="form-control formitem" ng-model="groupData.address" placeholder="{{'Address'|translate}}" name="address" ng-required="false">
+                        </textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="website" class="control-label col-xs-2" translate>Website</label>
+                    <div class="col-xs-6">
+                        <input type="url" class="form-control" ng-model="groupData.website" placeholder="{{'Website'|translate}}" id="website" name="website" ng-required="false"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="control-label col-xs-2" translate>Description</label>
+                    <div class="col-xs-6">
+                        <textarea id="description" class="form-control formitem" ng-model="groupData.description" placeholder="{{'Description'|translate}}" name="description" ng-required="false">
+                            <!--{{user.description}}-->
+                        </textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pub_policy" class="control-label col-xs-2" translate>Publication Policy</label>
+                    <div class="col-xs-6">
+                        <select id="pub_policy" class="form-control formitem" ng-model="groupData.pub_policy" ng-options="p.enum as p.name for p in availablePolicies" ng-required="false">
+                            <option value="" disabled ng-selected="true" style="display:none;">{{(groupData.pub_policy ? availablePoliciesById[groupData.pub_policy].name : availablePoliciesById.open.name)|translate}}</option>
+                        </select>
+                        <p class="help-block">{{availablePoliciesById[groupData.pub_policy].help|translate}}</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="owner" class="control-label col-xs-2" translate>Owner User</label>
+
+                    <div class="col-xs-3">
+                        <input type="search" id="owner" name="owner" class="form-control formitem" ng-model="groupData.owner" placeholder="{{'Find User...'|translate}}" ng-required="false"
+                               typeahead="u as u.name.full for u in getUsers($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
+                    </div>
+
+                    <!--Selected user info-->
+                    <div class="col-xs-1 optional">
+                        <img width="64" src="" ng-src="{{groupData.owner.image_urls[0] || 'images/generic_avatar.png'}}"/>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <b translate>Name:</b> <i>{{(groupData.owner.name.full || 'Not defined')|translate}}</i><br>
+                        <b translate>Email:</b> <i>{{(groupData.owner.email || 'Not available')|translate}}</i><br>
+                        <b translate>Username:</b> <i>{{(groupData.owner.username || 'Not defined')|translate}}</i>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedGroup && !selectedGroupEdit">
+                    <div class="col-md-offset-2 col-xs-8">
+                        <div class="checkbox">
+                            <label for="subgroup" class="control-label" ng-init="groupData.subgroup=true">
+                                <input type="checkbox" ng-model="groupData.subgroup" id="subgroup" name="subgroup" ng-disabled="myGroups"/>
+                                <span translate>Create as a subgroup of</span> "{{selectedGroup.name}}"
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <!-- Apply buttons -->
+                <!----------------------------------------------------->
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-xs-6">
+                        <!--<a class="btn btn-default" ng-click="$dismiss()" translate>Cancel</a>-->
+                        <button type="submit" ng-disabled="addGroupForm.$invalid" class="btn btn-primary"><i class="fa fa-check"></i> <span translate>Apply</span></button>
+                    </div>
+                </div>
+
+            </form>
+        </tab>
+
+        <!-- Just toggle New/Edit -->
+        <!------------------------------------------------------------->
+
+        <tab ng-show="editable" ng-click="toggleSelectedGroupEdit() || (tabs.newedit=true)" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading>
+                <div ng-show="selectedGroupEdit"><i class="fa fa-plus"></i> <span translate>New Group</span></div>
+                <div ng-hide="selectedGroupEdit"><i class="fa fa-edit"></i> <span translate>Edit Group</span></div>
+            </tab-heading>
+        </tab>
+
+        <!-- Add Users -->
+        <!------------------------------------------------------------->
+
+        <tab active="tabs.users" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-users"></i> <span translate>Add Users</span></tab-heading>
+
+            <form name="addUserForm" novalidate class="form-horizontal padcontent" autocomplete="off">
+
+                <div class="form-group">
+                    <label for="user" class="control-label col-xs-2" translate>Find User</label>
+
+                    <div class="col-xs-5">
+                        <input type="search" id="user" name="user" class="form-control formitem" ng-model="userToAdd" placeholder="{{'Username or Email...'|translate}}" ng-required="false"
+                               typeahead="u as u.name.full for u in getUsers($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-show="userToAdd.email">
+                    <div class="col-md-offset-1 col-xs-1 optional">
+                        <img width="64" src="" ng-src="{{userToAdd.image_urls[0] || 'images/generic_avatar.png'}}"/>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <b translate>Name:</b> <i>{{userToAdd.name.full}}</i><br>
+                        <b translate>Email:</b> <i>{{userToAdd.email}}</i><br>
+                        <b translate>Username:</b> <i>{{userToAdd.username}}</i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-xs-6">
+                        <a ng-disabled="!userToAdd.email" class="btn btn-success" ng-click="addUserToGroup(userToAdd, selectedGroup) || (userToAdd=null)">
+                            <i class="fa fa-link"></i> <span translate>Assign User To Group</span>: {{selectedGroup.name}}</a>
+                    </div>
+                </div>
+
+            </form>
+        </tab>
+
+        <!-- Delete Group -->
+        <!------------------------------------------------------------->
+
+        <tab active="tabs.delete" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-trash-o"></i> <span translate>Delete Group</span></tab-heading>
+
+            <form name="deleteUserForm" novalidate class="form-horizontal padcontent" autocomplete="off">
+
+                <button type="button" class="btn btn-danger" ng-click="deleteGroup()">
+                    <span class="fa fa-trash-o"></span> <span translate>Delete Group</span>: {{selectedGroup.name}}
+                </button>
+
+            </form>
+        </tab>
+
+        <!-- Published Objects -->
+        <!------------------------------------------------------------->
+
+        <tab active="tabs.published" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-files-o"></i> <span translate>Published Objects</span></tab-heading>
+
+            <form name="updatePublishedObjectsForm" novalidate class="form-horizontal padcontent" autocomplete="off">
+
+                <button ng-if="publishedObjects === null" type="button" class="btn btn-info" ng-click="retrievePublishedObjects()">
+                    <span class="fa fa-search"></span> <span translate>Fetch Objects</span>: {{selectedGroup.name}}
+                </button>
+
+                <div ng-show="publishedObjects.length == 0" class="well">
+                    <p><strong translate>There are no objects published under the group</strong>: {{selectedGroup.name}}</p>
+                </div>
+
+                <div ng-show="publishedObjects" class="well">
+                    <p><strong translate>The following objects are members of the group</strong>: {{selectedGroup.name}}</p>
+                    <p ng-repeat="obj in publishedObjects" style="display: inline;">
+                        <a class="btn btn-xs btn-success" tooltip="{{'Deauthorize Object'|translate}}" tooltip-placement="right" ng-click="deauthorizePublishedObject(obj, $index)"><span class="fa fa-puzzle-piece"></span> {{obj.repr}}</a>
+                    </p>
+                </div>
+
+            </form>
+        </tab>
+
+        <!-- Licence (API) Keys -->
+        <!------------------------------------------------------------->
+
+        <tab active="tabs.licenses" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-key"></i> <span translate>Licenses</span></tab-heading>
+
+            <license-key-editor key-holder="selectedGroup" is-group="true"></license-key-editor>
+        </tab>
+
+    </tabset>
+
+    <!--
+
+        <form name="userForm" novalidate ng-submit="userSelected()" class="form-horizontal" autocomplete="off">
+
+            <input type="text" class="form-control formitem" ng-model="currUsername" placeholder="{{'Start typing a username' | translate}}"
+                   typeahead="u as u.username for u in getUsers($viewValue) | filter:$viewValue | limitTo:15" typeahead-min-length="1" typeahead-wait-ms="200"/>
+        </form>
+
+        <hr>
+
+        <h2>Users that have a username</h2>
+        <ul ng-repeat="u in users">
+            <li><span class="fa fa-share"></span> {{u.name.full}} • {{u.username}}</li>
+        </ul>
+
+        <hr>
+
+        <h2>All Users (only visible to admins)</h2>
+        <ul ng-repeat="u in userAccounts">
+            <li><span class="fa fa-user"></span> {{u.name.full}} • {{u.email}}</li>
+        </ul>
+    -->
+
+</div>

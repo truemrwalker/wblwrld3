@@ -1,0 +1,62 @@
+<!--
+//
+// Webble World 3.0 (IntelligentPad system for the web)
+//
+// Copyright (c) 2010-2015 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka
+//     in Meme Media R&D Group of Hokkaido University, Japan. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Additional restrictions may apply. See the LICENSE file for more information.
+//
+
+-->
+
+<!--
+    - Overall visualization of webbles via a force-chart graph (d3.js)
+    - The graph is realized by the force-chart directive
+
+@author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+-->
+<div class="container-fluid">
+
+    <h1>{{'Webble Data View'|translate}}</h1>
+
+    <!-- Information Pane for double-clicked components -->
+    <!----------------------------------------------------------------->
+
+    <div movable ng-show="w" class="well well-sm" style="background-color: rgba(0, 0, 0, 0.5); position: fixed; display: inline-block; top:13%; max-width: 30%">
+        <div class="pull-right"><span class="fa fa-times-circle" ng-click="closeInfo()"></span></div>
+        <div class="center-block"><b>{{w.webble.displayname}}</b></div>
+        <hr style="margin:5px 2px 15px 2px;">
+
+        <img ng-src="{{w.webble.image}}" style="max-width: 90%; max-height:30%; margin-bottom: 3px">
+        <p style="text-wrap: normal;">
+            <b translate>Keywords:</b> <i>{{w.webble.keywords}}</i><br>
+            <b translate>Description:</b> <i>{{w.webble.description}}</i><br>
+            <b translate>Created:</b> <i>{{w.created}}</i><br>
+            <b translate>Updated:</b> <i>{{w.updated}}</i><br>
+            <b translate>Rating:</b> <i>{{w.rating}} / {{w.rating_count}}</i><br>
+            <b translate>Shared:</b> <i>{{w.is_shared}}</i><br>
+            <b translate>Verified:</b> <i>{{w.is_verified}}</i><br>
+            <b translate>Trusted:</b> <i>{{w.is_trusted}}</i><br>
+        </p>
+    </div>
+
+    <!-- The force-chart based visualization -->
+    <!----------------------------------------------------------------->
+
+    <div style="border:solid; border-width:1px; border-color: #d0d8e5;">
+        <force-chart chart-data="graph" on-select="showInfo(selectedItem, index)"></force-chart>
+    </div>
+</div>

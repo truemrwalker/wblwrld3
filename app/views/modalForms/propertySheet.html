@@ -1,0 +1,202 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for Webble Slot/Property Form
+//===================================================================================================================-->
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main">
+
+    <div class="row dividerLineBelow keepTheDistanceBelow">
+        <div class="col-xs-4">
+            <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
+            <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+        </div>
+        <div class="col-xs-8"><h4 class="formTitle" translate>Properties</h4></div>
+    </div>
+
+    <div class="keepTheDistanceBelow" ng-repeat="cat in propsCats">
+    <div class="row">
+        <div class="col-xs-12">
+            <span style="color: darkred; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" ng-show="isDefCat(cat)">{{ defCatStrings[cat] | translate}}</span>
+            <span style="color: darkred; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" ng-hide="isDefCat(cat) && !defCatStrings[cat]"><span translate>Slots:</span> {{defCatStrings[cat]}}</span>
+            <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+        </div>
+    </div>
+
+    <div class="row keepTheDistanceBelow" ng-hide="item.deleteRequest == true || item.disabledSettings == 2" ng-repeat="item in props" ng-if="item.cat == cat" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
+        <div class="col-xs-3" tooltip-placement="right" tooltip="{{item.key;}}"><span class="formTitle">{{item.name | translate}}:</span></div>
+
+        <div class="col-xs-6" ng-switch on="item.inputType">
+            <!--CheckBox-->
+            <div ng-switch-when="1">
+                <input class="formitem" type="checkbox" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 16px; height: 16px;" />
+            </div>
+
+            <!--ColorPick-->
+            <div ng-switch-when="2" style="margin: 0; padding-top: 0; width: 70%; height: 25px; border: 1px solid transparent; display: inline;">
+                <input type="color" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 30px; height: 24px; float:left;" />
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 100px; min-width: 80px; margin-left: 3px; float:left;" />
+            </div>
+
+            <!--ComboBoxUseIndex-->
+            <div ng-switch-when="3">
+                <select class="formitem" ng-model="item.value" ng-options="item.comboBoxContent.indexOf(cbItem) as cbItem for cbItem in item.comboBoxContent" ng-disabled="item.disabledSettings == 1"></select>
+            </div>
+
+            <!--ComboBoxUseValue-->
+            <div ng-switch-when="4">
+                <select class="formitem" ng-model="item.value" ng-options="cbItem for cbItem in item.comboBoxContent" ng-disabled="item.disabledSettings == 1"></select>
+            </div>
+
+            <!--FontFamily-->
+            <div ng-switch-when="5">
+                <select class="formitem" ng-model="item.value" ng-options="fontItem for fontItem in item.comboBoxContent" ng-disabled="item.disabledSettings == 1" style="width: 160px; min-width: 120px"></select>
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 150px; min-width: 100px" />
+                <p style="font-size: 20px; margin-bottom: 0;" ng-style="{'font-family': item.value}" translate>Example Text (size 20px)</p>
+            </div>
+
+            <!--RadioButton-->
+            <div ng-switch-when="6">
+                <label ng-repeat="opt in item.comboBoxContent">
+                    <input type="radio" name="{{item.key}}" ng-model="item.value" ng-value="opt" />{{opt}}
+                </label>
+            </div>
+
+            <!--Slider-->
+            <div ng-switch-when="7">
+                {{item.sliderMinMax[0]}}<input type="range" ng-model="item.value" min="{{item.sliderMinMax[0]}}" max="{{item.sliderMinMax[1]}}" ng-disabled="item.disabledSettings == 1" style="margin: 0 4px 0 4px;">{{item.sliderMinMax[1]}}
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 60px; min-width: 40px; margin-left: 5px;" />
+            </div>
+
+            <!--Point-->
+            <div ng-switch-when="8" style="margin: 0; padding-top: 0; width: 70%; height: 25px; border: 1px solid transparent; display: inline;">
+                <label for="xval" style="float:left; margin-right: 5px; font-weight: bold; vertical-align: middle;">X:</label>
+                <input class="formitem" ng-model="item.value[0]" ng-disabled="item.disabledSettings == 1" type="text" id="xval" style="width: 50px; margin-right: 20px; float:left;">
+                <label for="yval" style="float:left; margin-right: 5px; font-weight: bold; vertical-align: middle;">Y:</label>
+                <input class="formitem" ng-model="item.value[1]" ng-disabled="item.disabledSettings == 1" type="text" id="yval" style="width: 50px; margin-right: 20px; float:left;">
+            </div>
+
+            <!--Numeral-->
+            <div ng-switch-when="9">
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 80px; min-width: 60px" />
+            </div>
+
+            <!--PasswordBox-->
+            <div ng-switch-when="10">
+                <input type="password" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 200px; min-width: 100px" />
+            </div>
+
+            <!--Size-->
+            <div ng-switch-when="11" style="margin: 0; padding-top: 0; width: 70%; height: 25px; border: 1px solid transparent; display: inline;">
+                <label for="wval" style="float:left; margin-right: 5px; font-weight: bold; vertical-align: middle;" translate>Width:</label>
+                <input class="formitem" ng-model="item.value[0]" ng-disabled="item.disabledSettings == 1" type="text" id="wval" style="width: 50px; margin-right: 20px; float:left;">
+                <label for="hval" style="float:left; margin-right: 5px; font-weight: bold; vertical-align: middle;" translate>Height:</label>
+                <input class="formitem" ng-model="item.value[1]" ng-disabled="item.disabledSettings == 1" type="text" id="hval" style="width: 50px; margin-right: 20px; float:left;">
+            </div>
+
+            <!--TextBox-->
+            <div ng-switch-when="12">
+                <input class="formitem" ng-show="item.value.toString().length <= 200;" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
+                <textarea class="formitem" ng-show="item.value.toString().length > 200;" ng-model="item.value" rows="4" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px"></textarea>
+            </div>
+
+            <!--TextArea-->
+            <div ng-switch-when="21">
+                <textarea class="formitem" ng-model="item.value" rows="4" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px"></textarea>
+            </div>
+
+            <!--MultiListBox-->
+            <div ng-switch-when="13">
+                <select class="formitem" size="5" multiple ng-multiple="true" ng-model="item.value" ng-options="mlbItem for mlbItem in item.comboBoxContent" ng-disabled="item.disabledSettings == 1"></select>
+            </div>
+
+            <!--MultiCheckBox-->
+            <div ng-switch-when="14">
+                <label ng-repeat="cb in item.comboBoxContent">
+                    <input class="formitem" type="checkbox" name="{{item.key}}" value="{{cb}}" ng-checked="item.value.indexOf(cb) > -1" ng-click="toggleMultiCheckBoxSelection(cb, item.value)"> {{cb}}
+                </label>
+            </div>
+
+            <!--RichText-->
+            <div ng-switch-when="15">
+                <div text-angular ng-model="item.value" name="{{item.key}}" ng-click="activateRichTextEditOnly($event);" style="background-color: #ffffff; border: 1px solid #000000;"></div>
+            </div>
+
+            <!--DatePick-->
+            <div ng-switch-when="16">
+                <input type="date" ng-model="item.value" ng-disabled="item.disabledSettings == 1" />
+            </div>
+
+            <!--ImagePick-->
+            <div ng-switch-when="17">
+                <img ng-src="{{item.value}}" style="max-height: 150px; height: auto; width: auto; vertical-align: top;" />
+                <input id="inputImage_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localImgFileChanged(this)"><br>
+                <textarea class="formitem" ng-model="item.value" rows="2" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px"></textarea>
+                <span style="width: 95%; min-width: 180px; color: red">{{item.notification | translate}}</span>
+            </div>
+
+            <!--AudioPick-->
+            <div ng-switch-when="18">
+                <audio controls src="{{item.value}}"></audio>
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
+            </div>
+
+            <!--VideoPick-->
+            <div ng-switch-when="19">
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
+                <video width="200" height="auto" controls src="{{item.value}}" style="vertical-align: top; width: 210px;"></video>
+            </div>
+
+            <!--WebPick-->
+            <div ng-switch-when="20">
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
+                <iframe style="width: 95%; height: 150px;" src="{{item.value}}"></iframe>
+            </div>
+        </div>
+        <div class="col-xs-1" ng-show="item.isShared != undefined" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{isSharedTooltipInfo | translate}}"><input class="formitem" type="checkbox" ng-model="item.isShared" /></div>
+        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{item.desc}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+        <!--<div class="col-xs-1" ng-show="item.cat.search('custom') != -1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>-->
+        <div class="col-xs-1" ng-show="item.isCustom" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
+    </div>
+</div>
+
+<div class="dividerLineAbove">
+    <div class="row">
+        <div class="col-xs-12">
+            <span style="color: red; font-weight: bold;">{{infoMsg | translate}}</span>
+        </div>
+    </div>
+</div>
+</div>
+<!--=================================================================================================================-->

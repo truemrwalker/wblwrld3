@@ -1,0 +1,456 @@
+/*
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+*/
+
+/*===========================================================================================
+// DESCRIPTION:
+// This is the main style sheet file for the Authentication Sections
+//===========================================================================================*/
+
+/* General, global styles */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+/* Styling for optional elements that dont appear on small screens */
+.optional {
+}
+
+@media(max-width:640px) {
+    .optional { display: none; }
+}
+
+/* Styling for groups */
+.group {
+    background-color: #d6e9f8;
+    padding: 3px;
+}
+.group-selected {
+    background-color: #ecf8a4;
+    padding: 3px;
+}
+
+/* Styling for editor */
+.ace_editor {
+    /*position: relative !important;*/
+    border: 1px solid lightgray;
+    /*margin: auto;*/
+}
+
+/* Styling for draw */
+#draw{
+    margin: 50px;
+
+    border: 1px solid rgba(0,0,0,0.3);
+    background-color: #FFF;
+    box-shadow: 0 9px 20px -5px rgba(0,0,0,0.8);
+}
+
+/* Styling for text */
+.hint {
+    font-size: 0.9rem;
+    color: #ccb53c;
+}
+
+.text-hint {
+    font-size: 0.9rem;
+    color: #ccb53c;
+}
+.text-ellipsis {
+    max-width:250px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+.text-notif {
+    max-width:250px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    font-size: 0.95rem;
+
+    padding: 5px;
+    background-color: #d2ff70;
+    border-radius: 8px;
+    margin-bottom: 0;
+}
+
+/* Styling for navigational elements */
+.navigate-elem {
+    overflow: hidden;
+    text-align: center;
+
+    visibility: hidden;
+    opacity: 1;
+
+    position: fixed;
+    z-index: 99999999;
+    background-color: #777777;
+    color: #eeeeee;
+
+    width: 45px;
+    height: 45px;
+    right: 20px;
+    bottom: 20px;
+    padding-top: 10px;
+    border-radius: 10px;
+    transition: all 0.5s ease-in-out;
+}
+.navigate-elem.show:hover {
+    background-color: #118884;
+    opacity: 0.9;
+}
+.navigate-elem.show {
+    visibility:visible;
+    opacity: 0.5;
+}
+
+/* Chat window Support */
+.chat-module {
+    width: 300px;
+    margin: 0 auto; /* was: 20px auto; */
+}
+
+.chat-toolbox {
+    background: #b4c6d6;
+    margin: 0 auto;
+}
+
+.chat-textbox {
+    width: 230px !important;
+    margin: 5px 5px 5px 5px;
+    padding: 5px;
+}
+
+@media(max-width:640px) {
+
+    .chat-textbox {
+        width: 100% !important;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.chat-button {
+}
+
+.chat-top-bar {
+    background: #124866;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+
+    height: 35px;
+}
+.chat-top-bar h1 {
+    display: inline-block;
+
+    /*font-size: 0.9rem;*/
+    margin-top:7px;
+    font-size: 12pt;
+    font-weight: bold;
+}
+.chat-top-bar .fa-comment {
+    display: inline-block;
+    margin: 0 10px 0 10px;
+}
+.chat-top-bar .fa-minus {
+    position: relative;
+    top: 3px;
+    margin: 5px 5px 0 5px;
+}
+.chat-top-bar .left {
+    float: left;
+}
+.chat-top-bar .right {
+    float: right;
+    margin: 0 10px 0 5px;
+}
+.chat-top-bar > * {
+    position: relative;
+}
+.chat-top-bar::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: 0;
+    right: 0;
+    bottom: -100%;
+    opacity: 0.25;
+    background: radial-gradient(#ffffff, #000000);
+}
+
+.chat-discussion {
+    list-style: none;
+    background: rgba(18, 72, 102, 0.13);
+    margin: 0;
+    padding: 0 0 50px 0;
+
+    max-height: 400px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+.chat-discussion li {
+    padding: 0.5rem;
+    overflow: hidden;
+    display: flex;
+}
+.chat-discussion .chat-avatar {
+    width: 40px;
+    min-width: 40px; /* Do I need those? */
+    max-width: 40px; /* Do I need those? */
+    position: relative;
+}
+.chat-discussion .chat-avatar img {
+    display: block;
+    width: 100%;
+}
+
+.chat-other .chat-avatar:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border: 5px solid white;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+}
+
+.chat-self {
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+.chat-self .chat-messages {
+    order: 1;
+    border-bottom-right-radius: 0;
+}
+.chat-self .chat-avatar {
+    order: 2;
+}
+.chat-self .chat-avatar:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border: 5px solid white;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.chat-messages {
+    background: white;
+    padding: 10px;
+    border-radius: 2px;
+    border-top-left-radius: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.chat-messages p {
+    font-size: 0.9rem;
+    margin: 0 0 0.2rem 0;
+}
+.chat-messages time {
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+/* File Upload Support */
+.upload-drop-zone { border: dotted 3px lightgray; }
+.upload-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+.upload-file-over-alt { border: dotted 3px green; }
+
+/* Generic styles for tweaking stuff */
+.padcontent { padding: 20px; }
+.center { float: none; margin-left: auto; margin-right: auto; }
+.bottom-right {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+}
+
+.loading-frame { display: table; width: 100%; height: 100%; }
+.loading-image { display: table-cell; padding: 30px 10px 30px 20px; }
+.loading-text { display: table-cell; text-align: center; vertical-align: middle; padding: 10px; }
+
+/* Appear/Disappear ANIMATIONS */
+
+.fade-if.ng-enter, .fade-if.ng-leave {
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+.fade-if.ng-enter, .fade-if.ng-leave.ng-leave-active {
+    opacity:0;
+}
+.fade-if.ng-leave, .fade-if.ng-enter.ng-enter-active {
+    opacity:1;
+}
+
+/**/
+
+.slide-container {
+    min-height: 800px;
+    overflow:hidden;
+}
+.slide-content {
+    position: absolute;
+    margin: 0 auto;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 800px;
+}
+.slide-animate.ng-enter, .slide-animate.ng-leave {
+    transition: 100ms cubic-bezier(0.000, 0.000, 0.580, 1.000) all;
+}
+.slide-animate.ng-enter {
+    left: 100%;
+}
+.slide-animate.ng-enter.ng-enter-active {
+    left: 0;
+}
+.slide-animate.ng-leave {
+    left: 0;
+}
+.slide-animate.ng-leave.ng-leave-active{
+    left: -100%;
+}
+
+/* LOGIN ANIMATION */
+#bowlG{
+    position:relative;
+    width:64px;
+    height:64px;
+}
+
+#bowl_ringG{
+    position:absolute;
+    width:64px;
+    height:64px;
+    border:6px solid #0A0A0A;
+    -moz-border-radius:64px;
+    -webkit-border-radius:64px;
+    -ms-border-radius:64px;
+    -o-border-radius:64px;
+    border-radius:64px;
+}
+
+.ball_holderG{
+    position:absolute;
+    width:17px;
+    height:64px;
+    left:23px;
+    top:0;
+    -moz-animation-name:ball_moveG;
+    -moz-animation-duration:1.1s;
+    -moz-animation-iteration-count:infinite;
+    -moz-animation-timing-function:linear;
+    -webkit-animation-name:ball_moveG;
+    -webkit-animation-duration:1.1s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:linear;
+    -ms-animation-name:ball_moveG;
+    -ms-animation-duration:1.1s;
+    -ms-animation-iteration-count:infinite;
+    -ms-animation-timing-function:linear;
+    -o-animation-name:ball_moveG;
+    -o-animation-duration:1.1s;
+    -o-animation-iteration-count:infinite;
+    -o-animation-timing-function:linear;
+    animation-name:ball_moveG;
+    animation-duration:1.1s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+
+.ballG{
+    position:absolute;
+    left:0;
+    top:-15px;
+    width:26px;
+    height:26px;
+    background:#74BF13;
+    -moz-border-radius:21px;
+    -webkit-border-radius:21px;
+    -ms-border-radius:21px;
+    -o-border-radius:21px;
+    border-radius:21px;
+}
+
+@-moz-keyframes ball_moveG{
+    0%{
+        -moz-transform:rotate(0deg)}
+
+    100%{
+        -moz-transform:rotate(360deg)}
+
+}
+
+@-webkit-keyframes ball_moveG{
+    0%{
+        -webkit-transform:rotate(0deg)}
+
+    100%{
+        -webkit-transform:rotate(360deg)}
+
+}
+
+@-ms-keyframes ball_moveG{
+    0%{
+        -ms-transform:rotate(0deg)}
+
+    100%{
+        -ms-transform:rotate(360deg)}
+
+}
+
+@-o-keyframes ball_moveG{
+    0%{
+        -o-transform:rotate(0deg)}
+
+    100%{
+        -o-transform:rotate(360deg)}
+
+}
+
+@keyframes ball_moveG{
+    0%{
+        transform:rotate(0deg)}
+
+    100%{
+        transform:rotate(360deg)}
+
+}
+
+/*====================================================================================================================*/

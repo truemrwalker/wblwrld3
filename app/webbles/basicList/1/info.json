@@ -1,0 +1,8 @@
+{
+    "name": "Basic List",
+    "description": "This is a basic list webble that allows to display a list in various ways and allow users to select items in that list",
+    "keywords": "list radio button checkbox dropdown select option",
+    "author": "truemrwalker",
+    "group": "Meme Media Lab",
+    "image": "images/wbls/listWbl.png"
+}

@@ -1,0 +1,74 @@
+/*/=====================================================================================================================
+// Styles for Window Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Classes === /*/
+
+.windowContainer{
+    width: 300px;
+    height: 200px;
+    min-height: 35px;
+    min-width: 75px;
+    box-shadow: 10px 15px 5px #888888;
+}
+
+.winTitleBar {
+    width: 300px;
+    height: 25px;
+    min-height: 25px;
+    min-width: 75px;
+    background-color: #696969;
+    padding-left: 5px;
+    font-family: 'Comic Sans MS';
+    font-size: 15px;
+}
+
+.winTitleBarTxt{
+    color: #ffffff;
+}
+
+.winTitleBarBtn{
+    width: 25px;
+    height: 25px;
+    vertical-align: top;
+}
+
+.winBorder {
+    width: 300px;
+    height: 180px;
+    min-height: 15px;
+    min-width: 75px;
+    background-color: #d3d3d3;
+    border: 1px solid #000000;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.winArea {
+    width: 100%;
+    height: 100%;
+    min-height: 3px;
+    min-width: 63px;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    position: relative;
+    overflow: auto;
+}
+
+.winBkgImg {
+    width: 100%;
+    height: 100%;
+}
+
+.reSizer{
+    width: 15px;
+    height: 15px;
+    background-color: transparent;
+    margin-top: -10px;
+    cursor: nwse-resize;
+}
+
+/*/ === END: Classes === /*/
+
+/*====================================================================================================================*/

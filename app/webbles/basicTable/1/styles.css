@@ -1,0 +1,37 @@
+/*/=====================================================================================================================
+// Styles for Basic Table for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Classes === /*/
+
+.tableContainer{
+    background-color: #d3d3d3;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 10px;
+}
+
+
+.tableroot
+{
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.tableroot th
+{
+    text-align:left;
+    padding:5px 30px 4px 7px;
+}
+
+.tableheader{
+    background-color:#A7C942;
+    color:#ffffff;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size:1.1em;
+}
+
+
+/*/ === END: Classes === /*/
+
+/*====================================================================================================================*/

@@ -1,0 +1,13 @@
+<!--====================================================================================================================
+// View for Web Site Wrapper for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+<div id="wcwGrabber" class="wcwGrabber" ng-controller="WebContentWrapperCtrl">
+    <iframe id="webContentContainer" class="webContentContainer" ng-show="gimme('theSrc') != ''" ng-src="{{gimme('theSrc')}}"></iframe>
+    <div id="HTMLTxtContainer" ng-show="gimme('htmlStr') != ''">
+
+    </div>
+</div>
+
+<!--=================================================================================================================-->

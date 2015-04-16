@@ -1,0 +1,58 @@
+/*/=====================================================================================================================
+// Styles for Soap Client Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.SoClHolder{
+    width: auto;
+    height: auto;
+    min-Width: 80px;
+    background-color: #b4ce4e;
+    border: 2px solid black;
+    border-radius:5px;
+    padding: 10px;
+}
+
+.SoClDisplay{
+    width: 400px;
+    font-family: Georgia;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.SoClDefault{
+    font-family: Georgia;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.soapWblform-main {
+  /* GRADIENT COLOR */
+  /* fallback */
+  background-color: #defae8;
+  /* Safari 5.1+, Chrome 10+ */
+  /*background: -webkit-linear-gradient(left top, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+  /* Firefox 3.6+ */
+  /*background: -moz-linear-gradient(left top, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+  /* IE 10 */
+  /*background: -ms-linear-gradient(left, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+  /* Opera 11.10+ */
+  /*background: -o-linear-gradient(left, white, mediumpurple 20%, khaki 70%, #cdc673);*/
+
+  border: 2px solid #72bd86;
+  overflow: hidden;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

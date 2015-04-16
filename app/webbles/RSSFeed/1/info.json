@@ -1,0 +1,7 @@
+{
+    "name": "RSS Feed",
+    "description": "This is a webble that allows you to pick up any RSS feed via an URL and display the separate posts individually",
+    "keywords": "RSS Feed",
+    "author": "truemrwalker",
+    "image": "images/wbls/rssfeed.png"
+}

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="wblwrld3App">
+    <head>
+        <!--
+        ===========================================================================================
+        // Webble World
+        // [IntelligentPad system for the web]
+        // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+        // v3.0 (2013)
+        //
+        // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+        // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+        // Server Side Developer: Giannis Georgalis
+        // Additional Support: Jonas Sjöbergh
+        //
+        // This file is part of Webble World (c).
+        // ******************************************************************************************
+        // Webble World is licensed under the Apache License, Version 2.0 (the "License");
+        // you may not use this file except in compliance with the License.
+        // You may obtain a copy of the License at
+        //
+        // http://www.apache.org/licenses/LICENSE-2.0
+        //
+        // Unless required by applicable law or agreed to in writing, software
+        // distributed under the License is distributed on an "AS IS" BASIS,
+        // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        // See the License for the specific language governing permissions and
+        // limitations under the License.
+        // ******************************************************************************************
+        // The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+        // only to objects that actually loads in this original Webble World Platform. Modifications
+        // of the meme media object code which leads to breaking of compatibility with the original
+        // Webble World platform, may no longer be refered to as a "Webble" or "webble".
+        // ******************************************************************************************
+        //===========================================================================================
+        -->
+        <title ng-bind="pageTitle | translate"></title>
+
+        <meta charset="utf-8"/>
+        <meta name="application-name" content="Webble World"/>
+        <meta name="version" content="3.0"/>
+        <meta name="description" content="Webble World, meme media object tool for building and using Webble applications"/>
+        <meta name="author" content="Micke Nicander Kuwahara"/>
+        <meta name="revised" content="M.N.K., March 2014"/>
+        <meta name="keywords" content="Webble World, Universe, Webbles, Webbling, Meme Media, IntelligentPad, IntelligentBox, Micke Nicander Kuwahara, Yuzuru Tanaka, configure, edit, attach, detach, object"/>
+        <meta name="generator" content="WebStorm 7.02"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <!--===========================================================================================
+        // Webbles are interactive digital objects that resides inside Webble World which is a new
+        // web-based knowledge media architecture, available through an Internet browser, that
+        // allows us, not only to publish compound documents with or without embedded services and
+        // tools into a world-wide shared repository like the Web, but also to reedit any compound
+        // documents available from such a shared repository, through direct manipulations, and
+        // through composition of new compound documents for local reuse and for publication to the
+        // shared repository. The reediting of compound documents denotes the extraction and
+        // recombination of their visual portions to compose a new compound document with a new
+        // layout and new interoperability of the extracted components. A huge variety of objects
+        // ranging from traditional web documents with text and images, to interactive tools,
+        // virtual labs, games and community corners can be created and recreated with these
+        // building blocks of "meme Lego™".
+        //===========================================================================================-->
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+        <!-- Stylesheets -->
+        <!--Resets HTML5 Tags-->
+        <link rel="stylesheet" type="text/css" href="styles/imported/reset.min.css">
+        <!--<link rel="stylesheet" type="text/css" href="http://reset5.googlecode.com/hg/reset.min.css" />-->
+
+        <!--JQuery UI styles-->
+        <link rel="stylesheet" href="styles/imported/jqueryui/1.10.0/jquery-ui.css" />
+        <link href="scripts/libs/jquery-contextmenu/jquery.contextMenu.css" rel="stylesheet">
+        <!--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/base/jquery-ui.css" />-->
+
+        <!-- CSS from installed libraries -->
+        <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.css">
+        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+        <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css">
+
+        <!--Main App styles-->
+        <!-- build:css styles/platform.css -->
+        <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/platform.css"/>
+        <!-- endbuild -->
+
+        <!-- Shims for backwards-compatibility and extra functionality (needs to be above other libs) -->
+        <script src="bower_components/ng-file-upload/angular-file-upload-shim.js"></script>
+
+        <!-- 3rd Party JavaScript Libraries, JQuery etc -->
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+        <script src="bower_components/jquery-ui-touch-punch/jquery.ui.touch-punch.js"></script>
+        <script src="scripts/libs/jquery-contextmenu/jquery.contextMenu.js"></script>
+        <script src="scripts/libs/jquery-contextmenu/jquery.ui.position.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+        <script src="scripts/libs/jquery.mobile.custom.min.js"></script>
+
+        <!-- Apparently, this needs to be loaded before angular js (jgeorgal)-->
+        <script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
+
+        <!-- AngularJS - MAIN -->
+        <script src="bower_components/angular/angular.js"></script>
+
+
+        <!-- build:js scripts/modules.js -->
+        <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <script src="bower_components/angular-animate/angular-animate.js"></script>
+        <script src="bower_components/angular-touch/angular-touch.js"></script>
+        <script src="bower_components/angular-gestures/gestures.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js scripts/plugins.js -->
+        <script src="bower_components/angular-gettext/dist/angular-gettext.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+        <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
+        <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
+
+        <script src="bower_components/textAngular/dist/textAngular.min.js"></script>
+        <!-- endbuild -->
+
+        <!-- AngularJS - External Modules -->
+        <!-- build:js scripts/externalModules.js -->
+        <script src="scripts/modules/localStorageModule.js"></script>
+        <!-- endbuild -->
+
+
+        <!-- Helper JavaScript Libraries -->
+
+        <script src="bower_components/html2canvas/build/html2canvas.js"></script> <!--For autogenerating screenshots of webbles-->
+
+        <!-- build:js scripts/helpLib.js -->
+        <script src="scripts/libs/hamster.js"></script> <!--For Mouse Wheel support-->
+        <script src="scripts/libs/SaveAs/Blob.js"></script> <!--For Save File Locally support-->
+        <script src="scripts/libs/SaveAs/FileSaver.js"></script> <!--For Save File Locally support-->
+        <!-- endbuild -->
+
+
+        <!-- Main App Internal JavaScript -->
+        <script src="scripts/libs/supportPlugins.js"></script>
+        <script src="scripts/libs/supportFunctions.js"></script>
+        <script src="overrideSettings.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+<!--
+        <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-XXXXX-X');
+        ga('send', 'pageview');
+        </script>
+-->
+
+        <script type="text/javascript">
+            // The body is hidden completely until the whole page is finished loading and then it is displayed, this is
+            // to make sure that any possible alert messages that might be displayed during loading will not break
+            // the rendering and show half done non-cloaked elements.
+            $(document).ready(function() {
+                $('body').show();
+            });
+        </script>
+
+    </head>
+
+    <!--===========================================================================================
+    // This is the Webble World index file, it is the starting point for everything to do about
+    // Webbles. Webbles Requires HTML5, CSS3, XML and JQuery (JavaScript) in order to run properly
+    // and can then run in most common browsers and devices.
+    // Webbles are independent Web based objects that can be manipulated and connected with
+    // other Webbles to form any type of imaginable web software or widgets.
+    // Webble World is the environment where the Webbles live and multiply. The content of a
+    // Webble can be anything the developer of a Webble can think of and a user can change and
+    // fill that after his/her own mind. In fact a webble can contain anything found online, and
+    // sometimes even offline, in order to re-shape and recreate the web as you know it.
+    // Webble World is a Power tool and Webbles are the building blocks.
+    //===========================================================================================-->
+    <body style="display:none;" class="webblePlatform" data-ng-controller="PlatformCtrl"
+          data-ng-style="{'cursor' : mouseCursor}"
+          data-ng-keydown="onEventHandler_KeyDown($event);" data-ng-keyup="onEventHandler_KeyUp($event);">
+
+
+    <!--=====================================================================================
+    // If the browser does not allow JavaScript or is just way to old and worthless the
+    // application can not be run at all, but we can still be nice about it and display a
+    // normal html page with some info which runs only if javascript is disabled or otherwise
+    // unavailable.
+    //=====================================================================================-->
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+    <!--[if lt IE 7]>
+    <p class="browsehappy"><span translate>You are using an </span><strong><span translate>outdated</span></strong><span translate> browser. Please </span><a href="http://browsehappy.com/"><span translate>upgrade your browser</span></a><span translate> to improve your experience.</span></p>
+    <![endif]-->
+
+    <noscript>
+        <p translate>
+            Dear Visitor,
+        </p>
+
+        <p> <span translate>You are now experiencing the total lack of an interactive Meme media, technology enhanced, user interactive web site.</span><br/>
+            <span translate>What was supposed to be your greatest day on the Internet where you would make acquaintance with something called Webble World,</span> <br/>
+            <span translate>created by Meme Media Lab on Hokkaido University in Japan, by the supervision and inspiration of Professor Yuzuru Tanaka, based on the</span> <br/>
+            <span translate>architecture of IntelligentPads, has now turned into something completely different; a time of remorse and sadness.</span><br/>
+            <span translate>And this is because of one reason only... one tiny but yet so important reason...</span><br/>
+            <b><span translate>your web browser is not fully equipped or preset correctly</span></b>.</p>
+
+        <p><span translate>We, the Webble World development team, strongly urge you to do everything in your power to change that,</span><br/>
+            <span translate>so that you can enjoy Webbles and their powers together with the rest of us.</span></p>
+
+        <p><span translate>for more information about Webbles and Intelligent Pad, please visit </span>
+            <a href="http://www.youtube.com/watch?v=zwoTThcr0yE">
+                <span translate>Meme Media Lab YouTube Page.</span>
+            </a>
+        </p>
+
+        <p><span translate>Best Regards/</span><br/>
+            <span translate>Webble World - development team</span></p>
+    </noscript>
+
+    <!--=====================================================================================
+    // Here starts the Webble World Fully Functioning Body Code
+    //=====================================================================================-->
+
+    <!--==== MENU SELECTOR =========================================================-->
+    <nav id="mainmenu" class="navbar navbar-default navbar-fixed-top" role="navigation" style="z-index: 1000;" ng-show="menuModeEnabled && getPlatformSettingsFlags() | bitwiseAnd : ExistingBitFlagsForPlatformConfigs.MainMenuVisibilityEnabled">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" type="button" class="navbar-toggle" data-toggle="collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand disable-select" href="#/">Webble World</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" collapse="navCollapsed">
+                <ul class="nav navbar-nav disable-select">
+                    <li class="dropdown" ng-repeat="item in menuItems" ng-show="item.visibility_enabled">
+                        <a ng-cloak href="#" class="dropdown-toggle menuHeaderText" data-hover="dropdown">{{item.title | translate | titleMod:item.itemName:getCurrWS()}}<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="sublink in item.sublinks" ng-show="sublink.visibility_enabled">
+                                <a ng-if="sublink.sublink_itemName != 'divider'" ng-cloak class="menuItemText" ng-click="executeMenuSelection(sublink.sublink_itemName, null);">{{sublink.title | translate}} {{sublink.shortcut}}</a>
+                                <a ng-if="sublink.sublink_itemName == 'divider'" ng-cloak class="menuItemText">------------------------------------</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav disable-select" data-ng-if="isLoggingEnabled">
+                    <li style="cursor: default; text-decoration: none; line-height: 2em;">
+                        <p class="navbar-text" style="font-size: 0.7em; font-weight: bold; margin: 7px 0 0;">{{stringCollection.logging | translate}}</p>
+                        <br>
+                        <p ng-cloak class="navbar-text" style="margin: -14px 0 0; font-size: 0.8em;">{{debugValue.txt}}</p>
+                    </li>
+                </ul>
+
+                <!--Right side info of current language and weather logging is enabled-->
+                <ul class="nav navbar-nav navbar-right disable-select">
+                    <li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}" translate>{{getCurrentLanguage() | nativeName}}</a></li>
+                </ul>
+
+                <!--User login-->
+                <ul class="nav navbar-nav navbar-right disable-select" data-ng-show="!user">
+                    <li><a href="" ng-click="signup()" translate>Sign Up</a></li>
+                    <li><a href="" ng-click="login()" translate>Login</a></li>
+                </ul>
+
+                <!--User info-->
+                <ul class="nav navbar-nav navbar-right disable-select" data-ng-show="user">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="fa fa-user"></span> {{user.username ? user.username : user.email }} <span class="badge" ng-show="user.notif.pending.length">{{user.notif.pending.length}}</span> <strong class="caret"></strong></a>
+                        <ul class="dropdown-menu">
+                            <li ng-show="user.notif.pending.length" ng-repeat="n in user.notif.pending"><a href="" ng-click="executeMenuSelection('notif')"><p class="text-notif"><span class="fa fa-info-circle"></span> {{n.text}}</p></a></li>
+                            <li ng-show="user.notif.pending.length" role="presentation" class="divider"></li>
+                            <li><a href="" ng-click="executeMenuSelection('profile')"><span translate>Profile Settings</span></a></li>
+                            <li><a href="" ng-click="executeMenuSelection('groups')"><span translate>Groups</span></a></li>
+                            <li role="presentation" class="divider" ng-if="user.role=='adm'"></li>
+                            <li><a href="" ng-if="user.role=='adm'" ng-click="executeMenuSelection('adm')"><span translate>Admin's Den</span></a></li>
+                            <li role="presentation" class="divider"></li>
+                            <li><a href="" ng-click="executeMenuSelection('logout');"><span class="fa fa-sign-out"></span> <span translate>Logout</span></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <!--=============================================================================-->
+
+
+    <!--=====================================================================================
+    // This is Quick Info timed popup message box, for information and confirmation the user
+    // might need while working
+    //=====================================================================================-->
+    <div class="quickInfoBox" ng-show="qimVisibility" ng-style="{'left': qimPos.x, 'top': qimPos.y, 'width': qimSize.w, 'height': qimSize.h}">{{qimTxt | translate}}</div>
+    <!--=============================================================================-->
+
+
+    <!--=====================================================================================
+    // This is Progress bar and progress indicator that can be displayed and used when needed
+    //=====================================================================================-->
+    <div class="centerCenter progressIndicator" data-ng-show="progressManager.isWorking" style="z-index: 200000">
+        <img style="width: 100px; height: 100px;" src="images/ajax-loader.gif">
+    </div>
+    <div class="span4 centerCenter progressBar" data-ng-show="progressManager.isLoading">
+      <progress percent="progressManager.soFarLevel" class="progress-warning progress-striped active" />
+    </div>
+    <!--=============================================================================-->
+
+    <!--=====================================================================================
+    // This is the Webble habitat surface area a.k.a. WorkSurface
+    //=====================================================================================-->
+    <div data-ng-view ng-style="{'margin-top': wsTopPos}">
+        <!-- Do not put anynthing here from within the html template file. Whatever is
+             supposed to be here must come from outside via views, directives and
+             controllers etc-->
+    </div>
+    <!--=============================================================================-->
+
+    <!--=====================================================================================
+    // LE CHAT COMPONENT
+    //====================================================================================-->
+    <div class="bottom-right" style="z-index: 999;" ng-include src="'views/chat.html'"></div>
+    <!--=============================================================================-->
+
+
+    <!-- Application specific AngularJS files -->
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/translations.js"></script>
+
+    <script src="scripts/services/services.js"></script>
+    <script src="scripts/filters/filters.js"></script>
+    <script src="scripts/directives/directives.js"></script>
+    <script src="scripts/directives/stop-event.js"></script>
+    <script src="scripts/controllers/platform.js"></script>
+    <script src="scripts/controllers/workSpaces.js"></script>
+    <script src="scripts/controllers/mediaPlayer.js"></script>
+    <script src="scripts/controllers/reroute.js"></script>
+    <script src="scripts/controllers/wblCore.js"></script>
+    <script src="scripts/controllers/interactionObject.js"></script>
+    <script src="scripts/controllers/multiWblPropsForm.js"></script>
+    <script src="scripts/controllers/connRelVisualization.js"></script>
+    <script src="scripts/controllers/modalForms/wblProperties.js"></script>
+    <script src="scripts/controllers/modalForms/wblSlotConn.js"></script>
+    <script src="scripts/controllers/modalForms/wblProtection.js"></script>
+    <script src="scripts/controllers/modalForms/addCustSlot.js"></script>
+    <script src="scripts/controllers/modalForms/infoMsg.js"></script>
+    <script src="scripts/controllers/modalForms/publishWebble.js"></script>
+    <script src="scripts/controllers/modalForms/loadWebble.js"></script>
+    <script src="scripts/controllers/modalForms/openWS.js"></script>
+    <script src="scripts/controllers/modalForms/saveWSAs.js"></script>
+    <script src="scripts/controllers/modalForms/shareWS.js"></script>
+    <script src="scripts/controllers/modalForms/platformProps.js"></script>
+    <script src="scripts/controllers/modalForms/platformLangPick.js"></script>
+    <script src="scripts/controllers/modalForms/searchWbl.js"></script>
+    <script src="scripts/controllers/modalForms/about.js"></script>
+    <script src="scripts/controllers/modalForms/faq.js"></script>
+    <script src="scripts/controllers/modalForms/wblAbout.js"></script>
+    <script src="scripts/controllers/modalForms/bundle.js"></script>
+    <script src="scripts/controllers/chat.js"></script>
+    <script src="scripts/controllers/modalForms/rateWbl.js"></script>
+    <script src="scripts/controllers/login.js"></script>
+    <script src="scripts/controllers/profile.js"></script>
+    <script src="scripts/services/auth.js"></script>
+    <script src="scripts/controllers/templates.js"></script>
+    <script src="scripts/services/templates.js"></script>
+    <script src="scripts/services/workspaces.js"></script>
+    <script src="scripts/services/socket.js"></script>
+    <script src="scripts/controllers/draw.js"></script>
+    <script src="scripts/directives/drawing.js"></script>
+    <script src="scripts/controllers/groups.js"></script>
+    <script src="scripts/controllers/data.js"></script>
+    <script src="scripts/controllers/adm.js"></script>
+    <script src="scripts/services/users.js"></script>
+    <script src="scripts/services/confirm.js"></script>
+    <script src="scripts/services/licenses.js"></script>
+    <script src="scripts/services/server.js"></script>
+    <script src="scripts/directives/confirm-value.js"></script>
+    <script src="scripts/directives/movable.js"></script>
+    <script src="scripts/directives/closeable.js"></script>
+    <script src="scripts/directives/visualization.js"></script>
+    <script src="scripts/directives/keep-on-top.js"></script>
+    <script src="scripts/directives/editors/license-key-editor.js"></script>
+    <!-- endbuild -->
+    <!-- END - AngularJS ------------------------>
+
+    <!-- Socket-io support -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    </body>
+</html>
+<!--=================================================================================================================-->

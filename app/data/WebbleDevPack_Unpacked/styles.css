@@ -1,0 +1,27 @@
+/*/=====================================================================================================================
+// Styles for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
+// Created By: [WEBBLE TEMPLATE AUTHOR]
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.fundamental_square{
+    width: 50px;
+    height: 50px;
+    background-color: #d3d3d3;
+    border: 2px solid black;
+    border-radius:5px;
+}
+
+.fundamental_txt{
+    font-family: Ewert, Courier New;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

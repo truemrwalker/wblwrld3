@@ -1,0 +1,526 @@
+/*
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+*/
+
+/*===========================================================================================
+// DESCRIPTION:
+// This is the main style sheet file for the Webble World platform application.
+//===========================================================================================*/
+
+
+/* ========== BASE STYLES FOR HTML TAGS ========== */
+
+/*==============================================================*/
+
+/* ========== BASE CLASSES ========== */
+
+/*/ === BEGIN: Platform and App Classes === /*/
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none!important;
+}
+
+div.noAutoAdjust{
+    /*position: absolute;*/
+}
+
+.disable-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.webblePlatform{
+    font-family: Arial, sans-serif;
+}
+
+.formitem {
+    font-size: 1em;
+    z-index: 10000;
+}
+
+input[type=checkbox].formitem  {
+    vertical-align: text-bottom;
+}
+
+input[type=checkbox].formitem  + label {
+    display: inline-block;
+}
+
+input[type=text].formitem  {
+    padding-left: 4px;
+    width: 100%;
+}
+
+input[type=file].formitem {
+    /*No styles at the moment*/
+}
+
+select.formitem  {
+    /*No styles at the moment*/
+}
+
+textarea.formitem  {
+    padding-left: 4px;
+    width: 100%;
+    z-index: 10000;
+}
+
+fieldset.formitem {
+    overflow:hidden
+}
+
+fieldset > label.formitem  {
+    float:left;
+    clear:none;
+    display:block;
+    padding: 2px 1em 0 0;
+}
+
+fieldset > input[type=radio].formitem , input.radio {
+    float:left;
+    clear:none;
+    margin: 2px 0 0 2px;
+}
+
+span.formitem {
+    font-weight: bold;
+}
+
+/*/ === END: Platform and App Classes === /*/
+
+
+
+/*/ === BEGIN: Top Menu Classes === /*/
+
+.menuHeaderText{
+    margin-top: 3px;
+    font-size: 1em;
+    font-weight: bold;
+    font-style: normal;
+    color: black;
+}
+
+.menuItemText{
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/*/ === Top Menu ANIMATION Classes === /*/
+.navbar.ng-hide-add, .navbar.ng-hide-remove {
+    -webkit-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -moz-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -ms-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -o-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    display:block!important;
+}
+
+.navbar.ng-hide-add.ng-hide-add-active,
+.navbar.ng-hide-remove {
+    opacity:0;
+    top: -60px;
+}
+
+.navbar.ng-hide-add,
+.navbar.ng-hide-remove.ng-hide-remove-active {
+    opacity:1;
+    top: 0;
+}
+/*/ === End Top Menu ANIMATION Classes === /*/
+
+/*/ === END: Top Menu Classes === /*/
+
+
+/*/ === BEGIN: Quick Info Message Box Classes === /*/
+.quickInfoBox {
+    /* GRADIENT COLOR */
+    /* fallback */
+    background-color: #fff68f;
+    /* Safari 4-5, Chrome 1-9 */
+    /*background: -webkit-gradient(linear, left top, from(white), color-stop(0.20, #fff68f), color-stop(0.7, khaki), to(#cdc673));*/
+    /* Safari 5.1+, Chrome 10+ */
+    background: -webkit-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* IE 10 */
+    background: -ms-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673);
+
+    border: 2px solid darkkhaki;
+    overflow: hidden;
+    border-radius: 5px;
+    z-index: 10000;
+    position: absolute;
+    color: #000000;
+    font-size: 1em;
+    font-family: "Comic Sans MS", "Times New Roman", Arial, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+}
+/*/ === END: Quick Info Message Box Classes === /*/
+
+
+/*/ === BEGIN: Star Rating Classes === /*/
+.rating{
+    color: #a9a9a9;
+    margin: 0;
+    padding: 0;
+}
+
+ul.rating {
+    display: inline-block;
+}
+
+.rating li {
+    list-style-type: none;
+    display: inline-block;
+    padding: 1px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.rating .filled {
+    color: #21568b;
+}
+/*/ === END: Star Rating Classes === /*/
+
+
+/*/ === BEGIN: Work Spaces Classes === /*/
+
+.logoBkg{
+    background: center / 150px 250px no-repeat fixed url("../images/combo_fade.png");
+}
+
+.noLogoBkg{
+    background: center / 150px 250px no-repeat fixed none;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover {
+    color: #8f40ff;
+    cursor: default;
+    background-color: #fff0cb;
+    font-weight: bolder;
+}
+
+/*/ === END: Work Spaces Classes === /*/
+
+
+/*/ === BEGIN: Work Surface Classes === /*/
+.workSurface {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border: 2px dotted #d3d3d3;
+}
+
+/*.selection-box {*/
+    /*position:    absolute;*/
+    /*background: transparent;*/
+    /*border:     1px dotted #000;*/
+    /*z-index: 40000;*/
+/*}*/
+/*/ === END: Work Surface Classes === /*/
+
+
+/*/ === BEGIN: Progress Indicator Classes === /*/
+.centerCenter{
+    width:200px;
+    height:30px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin:-15px 0 0 -100px;
+}
+
+.centerCenter.progressBar{
+    width:200px;
+    height:30px;
+    margin:-15px 0 0 -100px;
+}
+
+.centerCenter.progressIndicator{
+    width:100px;
+    height:100px;
+    margin:-50px 0 0 -50px;
+
+}
+/*/ === END: Progress Indicator Classes === /*/
+
+
+/*/ === BEGIN: Modal Form Window Classes === /*/
+
+.inlineWblFormWindow {
+    /* GRADIENT COLOR */
+    /* fallback */
+    background-color: #fff68f;
+    /* Safari 4-5, Chrome 1-9 */
+    /*background: -webkit-gradient(linear, left top, from(white), color-stop(0.20, #fff68f), color-stop(0.7, khaki), to(#cdc673));*/
+    /* Safari 5.1+, Chrome 10+ */
+    background: -webkit-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* IE 10 */
+    background: -ms-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673);
+
+    border: 2px solid darkkhaki;
+    overflow: hidden;
+    overflow-y: scroll;
+    z-index: 10000;
+}
+
+.wblwrldform-main {
+    /* GRADIENT COLOR */
+    /* fallback */
+    background-color: #fff68f;
+    /* Safari 4-5, Chrome 1-9 */
+    /*background: -webkit-gradient(linear, left top, from(white), color-stop(0.20, #fff68f), color-stop(0.7, khaki), to(#cdc673));*/
+    /* Safari 5.1+, Chrome 10+ */
+    background: -webkit-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* IE 10 */
+    background: -ms-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673);
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673);
+
+    border: 2px solid darkkhaki;
+    overflow: hidden;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.dividerLineAbove {
+    padding-top: 10px;
+    border-top: 1px solid darkkhaki;
+    -webkit-box-shadow: inset 0 1px 0 darkkhaki;
+    -moz-box-shadow: inset 0 1px 0 darkkhaki;
+    box-shadow: inset 0 1px 0 darkkhaki;
+}
+
+.dividerLineBelow {
+    padding-bottom: 10px;
+    border-bottom: 1px solid darkkhaki;
+    -webkit-box-shadow: 0 1px 0 darkkhaki;
+    -moz-box-shadow: 0 1px 0 darkkhaki;
+    box-shadow: 0 1px 0 darkkhaki;
+}
+
+.formTitle{
+    font-weight: bolder;
+}
+
+.keepTheDistanceBelow{
+    margin-bottom: 10px;
+}
+
+.keepTheBiggerDistanceBelow{
+    margin-bottom: 20px;
+}
+
+.keepTheDistanceAbove{
+    margin-top: 10px;
+}
+
+.keepTheBiggerDistanceAbove{
+    margin-top: 20px;
+}
+
+/*/ === END: Modal Form Window Classes === /*/
+
+
+/*/ === BEGIN: Webble Core Classes === /*/
+
+.webble {
+    font-family: "Times New Roman", Arial, sans-serif;
+    outline: 1px solid transparent;
+}
+
+.bubbleInfo {
+    position: absolute;
+    padding:2px 5px 2px 5px;
+    /*margin:1em 0 3em;*/
+    font-size: 10px;
+    color:#fff;
+    background:#075698; /* default background for browsers without gradient support */
+    /* css3 */
+    background:-webkit-gradient(linear, 0 0, 0 100%, from(#2e88c4), to(#075698));
+    background:-moz-linear-gradient(#2e88c4, #075698);
+    background:-o-linear-gradient(#2e88c4, #075698);
+    background:linear-gradient(#2e88c4, #075698);
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius:10px;
+}
+
+.bubbleInfo.top {
+    background:-webkit-gradient(linear, 0 0, 0 100%, from(#075698), to(#2e88c4));
+    background:-moz-linear-gradient(#075698, #2e88c4);
+    background:-o-linear-gradient(#075698, #2e88c4);
+    background:linear-gradient(#075698, #2e88c4);
+}
+
+.bubbleInfo:after {
+    content:"";
+    position:absolute;
+    bottom:-20px; /* value = - border-top-width - border-bottom-width */
+    left:20px; /* controls horizontal position */
+    border-width:20px 0 0 10px; /* vary these values to change the angle of the vertex */
+    border-style:solid;
+    border-color:#075698 transparent;
+    /* reduce the damage in FF3.0 */
+    display:block;
+    width:0;
+}
+
+.bubbleInfo.top:after {
+    top: -20px; /* value = - border-top-width - border-bottom-width */
+    bottom: auto;
+    left: 20px;
+    border-width: 20px 10px 0 0; /* vary these values to change the angle of the vertex */
+    border-color: transparent #075698;
+}
+
+.interactionBall {
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    border: 1px solid;
+}
+
+.interactionBall.yellow {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #fdff7a 50%, #ffd109 100%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #fdff7a, #ffd109);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #fdff7a 50%, #ffd109 100%);
+}
+
+.interactionBall.lightblue {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #92f7ff 100%, #1994ff 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #92f7ff, #1994ff);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #92f7ff 100%, #1994ff 95%);
+}
+
+.interactionBall.pink {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff95f5 100%, #ff1ae5 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #ff95f5, #ff1ae5);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff95f5 100%, #ff1ae5 95%);
+}
+
+.interactionBall.green {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #82ff7b 100%, #29e10e 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #82ff7b, #29e10e);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #82ff7b 100%, #29e10e 95%);
+}
+
+.interactionBall.brown {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #c68e65 100%, #a25142 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #c68e65, #a25142);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #c68e65 100%, #a25142 95%);
+}
+
+.interactionBall.purple {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #cd97ff 100%, #ae0ce1 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #cd97ff, #ae0ce1);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #cd97ff 100%, #ae0ce1 95%);
+}
+
+.interactionBall.khaki {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, khaki 100%, #e1b28e 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, khaki, #e1b28e);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, khaki 100%, #e1b28e 95%);
+}
+
+.interactionBall.orange {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ffd339 100%, #ff8a07 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #ffd339, #ff8a07);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ffd339 100%, #ff8a07 95%);
+}
+
+.interactionBall.red {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff7567 100%, #ff082d 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #ff7567, #ff082d);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff7567 100%, #ff082d 95%);
+}
+
+.interactionBall.cyanpink {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, cyan 100%, #ffaaf9 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, cyan, #ffaaf9);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, cyan 100%, #ffaaf9 95%);
+}
+
+.interactionBall.marineblue {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #5887ff 100%, #1a23b1 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #5887ff, #1a23b1);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #5887ff 100%, #1a23b1 95%);
+}
+
+.interactionBall.seagreen {
+    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #b4ce4e 100%, #48be87 95%);
+    background-image: -webkit-radial-gradient(45px 45px, circle cover, #b4ce4e, #48be87);
+    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #b4ce4e 100%, #48be87 95%);
+}
+
+.interactionBall:hover{
+    width: 20px;
+    height: 20px;
+}
+
+
+
+/*/ === END: Webble Core Classes === /*/
+
+/*==============================================================*/
+
+
+
+/*/ ========== PLUGIN CLASSES ========== /*/
+
+/*==============================================================*/
+
+
+
+/*/ ========== FONTS ========== /*/
+
+/*==============================================================*/
+
+/*====================================================================================================================*/

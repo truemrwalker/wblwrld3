@@ -1,0 +1,146 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for Workspace surface
+//===================================================================================================================-->
+
+<div id="workspaceSurface" ng-class="bkgLogoClass" class="workSurface disable-select" work-surface ng-style="{'backgroundColor': getPlatformBkgColor(), 'height': getSurfaceHeight(), 'top': wsTopPos}"
+     hm-swipe-down="executeMenuSelection('gestSwipeDown', null);" hm-swipe-up="executeMenuSelection('gestSwipeUp', null);">
+    <!--THIS IS THE BUBBLE INFO-->
+    <div class="bubbleInfo" ng-class="putBelow" ng-show="getBubbleTxtVisibility()" style="z-index: 10000;" ng-style="{'left': getBubbleTxtPos().x, 'top': getBubbleTxtPos().y}">{{getBubbleTxt() | translate}}</div>
+
+    <!--<div style="float: right; margin-top: 3px; margin-right: 3px;">-->
+    <div ng-show="getIsUntrustedWblsExisting()" style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
+        <img src="images/icons/untrusted.png" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
+    </div>
+
+    <!--THIS IS A CONTAINER FOR MULTI WEBBLE PROPERTY FORM (RESIZABLE DOES NOT WORK WITH INCLUDE, THEREFORE THE INLINE SOLUTION)-->
+    <div id="multiWblPropsForm" ng-controller="multiWblPropsFormCtrl" class="inlineWblFormWindow" style="position: absolute;" ng-style="{'left': wsFarRightPos, 'top': wsFarTopPos, 'height': wsHeight, 'width': mwpWidth, 'display': getMWPVisibility()}">
+        <button ng-click="close();" style="margin: 1px 5px 1px 2px; font-size: 9px; padding: 1px 3px;" translate>Close</button>
+        <span style="color: darkred; font-size: 14px; font-weight: bold; margin: 13px 13px; " translate>Multi Webble Propertes</span>
+        <hr style="border-color: darkred; display: block; height: 1px; margin: 0 0 3px 0; padding: 0; width: 100%">
+
+        <div ng-show="propList.length > 0" style=" text-align: center;">
+            <span style="font-weight: normal; font-size: 11px; margin: 0 2px; color: #0000ff;" translate>(Double-click input-box for large text editing)</span>
+        </div>
+
+        <div>
+            <button ng-click="pullChanges();" style="margin: 1px 5px 1px 2px; font-size: 9px; padding: 1px 3px;" translate>Update from Work surface</button>
+            <button ng-click="pushChanges();" style="margin: 1px 5px 1px 2px; font-size: 9px; padding: 1px 3px;" translate>Push Changes</button>
+        </div>
+        <div ng-show="propList.length > 0" ng-repeat="prop in propList">
+            <span style="font-weight: bold; font-size: 11px; margin: 0 4px;">{{prop.key}}</span>
+            <input ng-if="prop.value.toString().search('data:image') == -1 && !prop.wantLargeTxt" id="{{prop.key}}" type="{{getInputType(prop.key);}}" ng-model="prop.value" style="font-size: 11px; margin: 0 4px;"
+                   ng-style="{'width': inputWidth, 'height': inputHeight}" ng-dblclick="changeBox($event, prop);" hm-double-tap="changeBox($event, prop);">
+            <textarea ng-if="prop.value.toString().search('data:image') != -1 || prop.wantLargeTxt" id="{{prop.key}}" class="formitem" ng-model="prop.value" rows="2" style="font-size: 11px; margin: 0 4px; width: 90%;" ng-dblclick="changeBox($event, prop);"></textarea>
+        </div>
+        <div ng-hide="propList.length > 0">
+            <span style="font-weight: bold; font-size: 11px; margin: 0 4px; color: red;" translate>No Webble is selected</span>
+        </div>
+    </div>
+
+    <!--THIS IS A CONTAINER FOR VISUAL USER SUPPORT OF WEBBLE WORK, LIKE CONNECTIONS AND SLOT COM ETC-->
+    <svg id="connViz" ng-controller="VisualConnViewCtrl" style="position: absolute;" ng-style="{'z-index': '1000', 'display': getVCVVisibility()}" ng-click="hideVCV();">
+        <defs>
+            <marker id="markerChild" markerWidth="8" markerHeight="8" refx="5" refy="5">
+                <circle cx="5" cy="5" r="3" style="stroke: red; stroke-width: 1px; fill: pink;"/>
+            </marker>
+
+            <marker id="markerParent" markerWidth="8" markerHeight="8" refx="5" refy="5">
+                <circle cx="5" cy="5" r="3" style="stroke: red; stroke-width: 1px; fill: darkred;"/>
+            </marker>
+
+            <marker id="markerRArrow" markerWidth="13" markerHeight="13" refx="2" refy="6"
+                    orient="auto">
+                <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #ff0000; stroke: black; stroke-width: 1px;" />
+            </marker>
+
+            <marker id="markerLArrow" markerWidth="13" markerHeight="13" refx="2" refy="6"
+                    orient="auto">
+                <path d="M10,2 L10,11 L2,6 L10,2" style="fill: #ff0000; stroke: black; stroke-width: 1px;" />
+            </marker>
+
+            <marker id="markerDblArrow" markerWidth="23" markerHeight="13" refx="11" refy="6"
+                    orient="auto">
+                <path d="M10,2 L10,11 L2,6 L10,2 M12,2 L12,11 L20,6 L12,2" style="fill: #ff0000; stroke: black; stroke-width: 1px;" />
+            </marker>
+
+            <marker id="markerNoArrow" markerWidth="0" markerHeight="0" refx="2" refy="6"
+                    orient="auto">
+                <path d="M10,2 L10,11 L2,6 L10,2 M12,2 L12,11 L20,6 L12,2" style="fill: #ff0000; stroke: black; stroke-width: 1px;" />
+            </marker>
+        </defs>
+
+        <g ng-repeat="arrow in connArrows">
+            <path ng-attr-d="{{arrow.path}}"
+            style="stroke: #ff0000; stroke-width: 2px; fill: none;
+            marker-start: url({{arrow.startMarker}});
+            marker-end: url({{arrow.endMarker}});
+            marker-mid: url({{arrow.midMarker}});" />
+
+            <text ng-attr-x="{{arrow.cPos.x}}" ng-attr-y="{{arrow.cPos.y + arrow.txtYPosOffset}}" stroke="black" stroke-width="1" style="font-weight: bolder; font-size: 18px; font-family: Arial, sans-serif" fill="#ff0000">
+                {{arrow.cSlot}}
+            </text>
+
+            <text ng-attr-x="{{arrow.pPos.x}}" ng-attr-y="{{arrow.pPos.y - arrow.txtYPosOffset}}" stroke="black" stroke-width="1" style="font-weight: bolder; font-size: 18px; font-family: Arial, sans-serif;" fill="#ff0000">
+                {{arrow.pSlot}}
+            </text>
+         </g>
+
+        <g ng-repeat="marker in sharedModelMarkers">
+            <circle ng-attr-cx="{{marker.wPos.x}}" ng-attr-cy="{{marker.wPos.y}}" r="15" stroke="black" stroke-width="1" ng-attr-fill="{{marker.color}}" />
+
+            <text ng-attr-x="{{marker.wPos.x - 4}}" ng-attr-y="{{marker.wPos.y + 4}}" style="font-weight: normal; font-size: 15px; font-family: 'arial, sans-serif'" fill="#000000">
+                {{marker.numVal}}
+            </text>
+            <text ng-attr-x="{{marker.wPos.x - 3}}" ng-attr-y="{{marker.wPos.y + 5}}" style="font-weight: normal; font-size: 13px; font-family: 'arial, sans-serif'" fill="#ffffff">
+                {{marker.numVal}}
+            </text>
+        </g>
+
+        <text ng-show="connArrows.length == 0 && sharedModelMarkers.length == 0" x="10" y="30" style="stroke: #000000; stroke-width: 1px; font-weight: bolder; font-size: 15px; font-family: 'arial, sans-serif'" fill="#ff0000">
+            {{noConnExistMsg | translate}}
+        </text>
+     </svg>
+
+     <!--THIS IS THE WEBBLE TEMPLATE CONTAINER-->
+    <div id="w_{{$index}}" class="webble" templateid="{{wbl.wblDef.templateid}}"
+         ng-style="{'border-color': selectionBorder.color, 'border-width': selectionBorder.width, 'border-style': selectionBorder.style, '-webkit-box-shadow': selectionBorder.glow, '-moz-box-shadow': selectionBorder.glow, 'box-shadow': selectionBorder.glow}"
+         webble="{{wbl.wblDef}}" ng-repeat="wbl in getCurrWS().webbles" ng-include src="getTemplatePath(wbl.wblDef.templateid, wbl.wblDef.templaterevision) + '/view.html'" style="position: absolute;"
+         hm-double-tap="dblTapEventHandler($event)">
+    </div>
+</div>
+
+<!--=================================================================================================================-->

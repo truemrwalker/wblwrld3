@@ -1,0 +1,27 @@
+/*/=====================================================================================================================
+// Styles for RSS Feed Webble for Webble World v3.0 (2013)
+// Created By: TrueMrWalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.rssContainer{
+    background-color: #ffe672;
+    border: 2px solid black;
+    border-radius:5px;
+    padding: 10px;
+}
+
+.rssFeed{
+    font-family: Georgia;
+    font-size: 12px;
+    font-weight: 500;
+    color: #b00eff;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

@@ -1,0 +1,2667 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app/views/workSpaces.html
+msgid "(Double-click input-box for large text editing)"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "- The Number of Available Webbles Right Now:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "A Webble Bundle can only be made with complete Webble families, and not just with parts. Please select only single Webbles and/or super parents (Webbles with children and grandchildren but no parents of their own)."
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "A decimal value between 0 and 1 which describes the opacity of the element, 1 is opaque."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid "A list of users that you currently share this workspace with."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "A variety of Webbles that might be of interest."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "A webble with that name already exist, please come up with a new name."
+msgstr ""
+
+#: app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "About"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "About This Webble"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "About Webble World"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Account Information"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Account not connected"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Active Workspace Info"
+msgstr ""
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "Add"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+#: app/scripts/directives/directives.js
+msgid "Add Custom Slots"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Add Publishing Groups:"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Add Users"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Additional Accounts"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Additional System Design:"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Address"
+msgstr ""
+
+#: app/views/groups.html
+#: app/views/profile.html
+msgid "Address:"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Admin"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "All new publications and updates (by members) under this group require the owner's approval"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "All publications and updates under this group are suspended"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "All your controller are belong to us"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "All your directive are belong to us"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "All your filter are belong to us"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "All your service are belong to us"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Allow"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Already logged in"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Amazing!"
+msgstr ""
+
+#: app/index.html
+msgid "And this is because of one reason only... one tiny but yet so important reason..."
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Angle"
+msgstr ""
+
+#: app/scripts/controllers/chat.js
+msgid "Anonymous Coward"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Answer"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Answered"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Apply"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Are you sure you want to permanently delete the selected template and all its files?"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Are you sure you want to permanently delete the template file:"
+msgstr ""
+
+#: app/scripts/controllers/profile.js
+msgid "Are you sure you want to revoke your membership to the following group:"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Ask"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/faq.js
+msgid "Asked by you"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "Assign Parent"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Assign Parent Failed"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Assign User To Group"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Associating your account with other providers enables authenticating and logging in to your account via those."
+msgstr ""
+
+#: app/views/profile.html
+msgid "Authentication"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Auto Generated"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Auto Slot-Conn Enabled"
+msgstr ""
+
+#: app/views/modalForms/openWSSheet.html
+msgid "Available Workspaces:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/platformLangPick.js
+msgid "Avialable languages for Webble World 3.0. Currently selected is the language you picked or your prefered language in your user profile or the language of your browser, or English."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background Color"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background Image."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background Repeat"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background Repeat."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background Size"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Background Size."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Bad"
+msgstr ""
+
+#: app/index.html
+msgid "Best Regards/"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Birthday"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Border"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Border Color"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Border Radius"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Border Style"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Border Width"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Bring to Front"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Browser"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "Bundle"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+#: app/scripts/controllers/wblCore.js
+msgid "Bundle Failed"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Bundle Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Bundle Selection Broken"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "By default all webbles will try to auto establish a default slot connection when creating child parent relationship, if this is unchecked no such connection is made."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "CSS Related"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "CSS Related Slots"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/modalForms/addCustSlotSheet.html
+#: app/views/modalForms/bundleSheet.html
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/openWSSheet.html
+#: app/views/modalForms/platformLangSheet.html
+#: app/views/modalForms/platformPropsSheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/rateWblSheet.html
+#: app/views/modalForms/saveWSAsSheet.html
+#: app/views/modalForms/slotConnSheet.html
+#: app/views/modalForms/wblProtectionSheet.html
+msgid "Cancel"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Cannot do that..."
+msgstr ""
+
+#: app/scripts/controllers/draw.js
+msgid "Chaotic Multi-User Draw Surface"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Checking Data for Signing Up..."
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Chief System Developer:"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Child Slot:"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Child \\ Parent"
+msgstr ""
+
+#: app/views/modalForms/clearSomething.html
+msgid "Clear?"
+msgstr ""
+
+#: app/views/workSpaces.html
+#: app/views/modalForms/faqSheet.html
+#: app/views/modalForms/propertySheet.html
+#: app/views/modalForms/searchWblSheet.html
+#: app/views/modalForms/shareWSSheet.html
+msgid "Close"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Closed for publications"
+msgstr ""
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Comment:"
+msgstr ""
+
+#: app/views/modalForms/bundleSheet.html
+msgid "Configure New Webble Bundle"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/profile.html
+msgid "Confirm Password"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/profile.html
+msgid "Confirm your password"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Connect Slots"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Connected"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Connection Directions:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Contextmenu Not Allowed:"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Copy"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Corner Radius of the element border."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Could be better"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Create"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Create Sandbox Copy"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Create as a subgroup of"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Created Group"
+msgstr ""
+
+#: app/views/data.html
+msgid "Created:"
+msgstr ""
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "Current Collaborators:"
+msgstr ""
+
+#: app/views/modalForms/platformLangSheet.html
+msgid "Current Language:"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Current Webble Definition ID:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Current workspace quick saved"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/scripts/controllers/platform.js
+#: app/scripts/controllers/wblCore.js
+#: app/scripts/controllers/modalForms/addCustSlot.js
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "Custom"
+msgstr ""
+
+#: app/index.html
+msgid "Dear Visitor,"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Deauthorize"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Deauthorize Object"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Deauthorize Object:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Debug Logging On"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Default Menu Disabled"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Default Menu Not Visible:"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Define external dependencies"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Author:"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Description:"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Id:"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Definition Keywords:"
+msgstr ""
+
+#: app/views/templates.html
+#: app/views/modalForms/faqSheet.html
+#: app/views/modalForms/searchWblSheet.html
+#: app/scripts/controllers/templates.js
+#: app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "Delete"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Delete File Confirmation"
+msgstr ""
+
+#: app/views/groups.html
+#: app/scripts/controllers/groups.js
+msgid "Delete Group"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Delete Group:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Delete Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Delete Template Confirmation"
+msgstr ""
+
+#: app/views/modalForms/deleteSomething.html
+msgid "Delete?"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Deleted Group"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Deletion Failed"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Deny"
+msgstr ""
+
+#: app/views/groups.html
+#: app/views/profile.html
+#: app/views/templates.html
+msgid "Description"
+msgstr ""
+
+#: app/views/data.html
+#: app/views/groups.html
+#: app/views/profile.html
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Description:"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Deselect All"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+#: app/scripts/services/services.js
+msgid "Developer"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Discard"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Disconnect Children Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Display Name"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/wblAbout.html
+msgid "Display Name:"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Do Not Deauthorize"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Do Not Delete"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Do Not Delete Group"
+msgstr ""
+
+#: app/scripts/controllers/profile.js
+msgid "Do Not Revoke Membership"
+msgstr ""
+
+#: app/views/modalForms/clearSomething.html
+msgid "Do you really want to clear away this and lose all unsaved work? This cannot be undone!"
+msgstr ""
+
+#: app/views/modalForms/deleteSomething.html
+msgid "Do you really want to delete this and lose it forever? This cannot be undone!"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Documentation"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Download Developers Package"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Drop Files Here"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "Duplicate"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Duplicate Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Duplication Failed"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Edit"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Edit Group"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Edit Template Files"
+msgstr ""
+
+#: app/views/groups.html
+#: app/views/login.html
+#: app/views/profile.html
+msgid "Email"
+msgstr ""
+
+#: app/views/login.html
+msgid "Email is not valid"
+msgstr ""
+
+#: app/views/login.html
+msgid "Email is required"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Email:"
+msgstr ""
+
+#: app/views/modalForms/propertySheet.html
+msgid "Example Text (size 20px)"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "FAQ"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Fairly Ok"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Female"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Fetch Objects"
+msgstr ""
+
+#: app/views/templates.html
+msgid "File Name"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Find Group..."
+msgstr ""
+
+#: app/views/groups.html
+msgid "Find User"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Find User..."
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Follow the link to login and change your password:"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Font Family"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Font Size"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Font Style"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Font Weight"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Foreground Color"
+msgstr ""
+
+#: app/views/login.html
+msgid "Forgot your Password?"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Frequently Asked Questions (FAQ)"
+msgstr ""
+
+#: app/views/login.html
+msgid "Full Name"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Gender"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Get an email every time someone else publishes a new version of a webble of which you are coauthor"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Get an email every time someone shares a workspace or a webble with you"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Get an email every time the platform has major updates"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Good"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Great!"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Group Email"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Group Information"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Group Name"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Group information will appear here - currently no group found"
+msgstr ""
+
+#: app/index.html
+#: app/views/groups.html
+msgid "Groups"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Hardcore System Testing:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Having Children Not Allowed:"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Height"
+msgstr ""
+
+#: app/views/modalForms/propertySheet.html
+msgid "Height:"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Help"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "Here you decide weather to load the Webble with an URL from an online server or by file from your local computer"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "Here you decide weather to publish this Webble online to the public server or only locally to your computer"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "High Clearance User"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Hokkaido University"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Horizontal Position"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "How the Webble looks"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "How the Webble view is structured"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Hurray! You don't have any unpublished templates."
+msgstr ""
+
+#: app/views/templates.html
+msgid "ID"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Id"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/platformProps.js
+msgid "If this is unchecked, some of the more tutorial-like and repetetive informative Message popups will be disabled."
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "If you confirm, any subgroups will be transfered to the parent group and the group's reference will be revoked from all its published objects"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "If you confirm, the selected object will no longer be member of the group."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "If you want to delete this custom slot, click here."
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Image Selection:"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Image View:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "In order to publish a Webble, you need a proper username which you have not yet. Please visit your user-profile page and rectify that."
+msgstr ""
+
+#: app/views/groups.html
+msgid "Information"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Initiation Value:"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Instance Id:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Interaction Objects Not Visible:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "Internal"
+msgstr ""
+
+#: app/views/data.html
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/searchWblSheet.html
+msgid "Keywords:"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Last Updated"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Last Updated:"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Layer Order Index"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Licence"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Licenses"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Licenses and API keys"
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/searchWblSheet.html
+#: app/scripts/services/services.js
+msgid "Load"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Load Sandbox Webble"
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Load Target:"
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Load Webble"
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Local Computer"
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Local File:"
+msgstr ""
+
+#: app/views/login.html
+msgid "Log in"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Logged in successfully"
+msgstr ""
+
+#: app/index.html
+#: app/views/login.html
+msgid "Login"
+msgstr ""
+
+#: app/index.html
+msgid "Logout"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Low Clearance User"
+msgstr ""
+
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "Make Template Webble Public?"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Male"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Margin"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Masterpiece!"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Max Height"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Max Width"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Medium Clearance User"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Members can publish and update freely under this group"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Members can update freely but new publications require the group owner's approval"
+msgstr ""
+
+#: app/index.html
+msgid "Meme Media Lab YouTube Page."
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Meme Media Laboratory"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Merged Combo Slot channels:"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Merged Combo Slots"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Min Height"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Min Width"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Moderate all updates"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Moderate new publications"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Move Not Allowed:"
+msgstr ""
+
+#: app/views/workSpaces.html
+msgid "Multi Webble Propertes"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Multi Webble Properties"
+msgstr ""
+
+#: app/views/groups.html
+#: app/views/login.html
+#: app/views/profile.html
+#: app/views/templates.html
+#: app/views/modalForms/searchWblSheet.html
+msgid "Name"
+msgstr ""
+
+#: app/views/groups.html
+#: app/views/profile.html
+msgid "Name:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Need a username..."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "New"
+msgstr ""
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "New Collaborator:"
+msgstr ""
+
+#: app/views/templates.html
+msgid "New File"
+msgstr ""
+
+#: app/views/groups.html
+msgid "New Group"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "New Merge-Combo Slot Name:"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "New Question"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "New Slot Name:"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "New Webble Definition ID:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Next"
+msgstr ""
+
+#: app/views/modalForms/clearSomething.html
+#: app/views/modalForms/deleteSomething.html
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "No"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "No Quick-Save Workspace in Storage"
+msgstr ""
+
+#: app/views/workSpaces.html
+msgid "No Webble is selected"
+msgstr ""
+
+#: app/scripts/controllers/workSpaces.js
+msgid "No Webbles are connected with eachother or share their model"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "No Webbles to bundle are selected."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "No Workspace to share."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "No Workspaces Available"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Non-Developers Mode Not Visible:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Non-Menu Shortcut Keys"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "None"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Notification"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Notifications"
+msgstr ""
+
+#: app/views/profile.html
+msgid "OK"
+msgstr ""
+
+#: app/views/modalForms/about.html
+#: app/views/modalForms/infoMsg.html
+#: app/views/modalForms/wblAbout.html
+msgid "Ok"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "One Webble is protected from Bundling and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/workSpaces.js
+msgid "One or more Webbles in this workspace are from a source outside your circle of trust."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "One or more of the Webbles included in the deletion attempt is protected from deletion and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "One or more of the Webbles included in the duplication attempt is protected from duplication and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "One or more of the Webbles included in the publish attempt is protected from publishing and therefore this operation is canceled."
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Online Public Server"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Opacity"
+msgstr ""
+
+#: app/views/templates.html
+#: app/views/modalForms/openWSSheet.html
+#: app/scripts/services/services.js
+msgid "Open"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Open Chat"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Open Menu"
+msgstr ""
+
+#: app/views/modalForms/openWSSheet.html
+msgid "Open Workspace"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "Open for publications"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+#: app/scripts/controllers/profile.js
+msgid "Operation cancelled"
+msgstr ""
+
+#: app/views/login.html
+msgid "Or login using one of your social accounts:"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Owner User"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Padding"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Padding of the inside element from the surrounding borders."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Parent Assignment Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Parent Revoking Not Allowed:"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Parent Slot:"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/profile.html
+msgid "Password"
+msgstr ""
+
+#: app/views/login.html
+msgid "Password is required"
+msgstr ""
+
+#: app/views/login.html
+msgid "Password must be at least 5 characters long"
+msgstr ""
+
+#: app/views/login.html
+msgid "Password must be at most 60 characters long"
+msgstr ""
+
+#: app/views/login.html
+msgid "Passwords do not match"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Pending Answers you need to give"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Pending Questions in the FAQ"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Pick Custom Image:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "Pick a local image to use to represent your Webble. [Max Size: 300kb]"
+msgstr ""
+
+#: app/views/modalForms/bundleSheet.html
+msgid "Pick which slots should be accessable in the bundle"
+msgstr ""
+
+#: app/views/modalForms/platformPropsSheet.html
+msgid "Platform Execution Mode:"
+msgstr ""
+
+#: app/views/modalForms/platformLangSheet.html
+msgid "Platform Language"
+msgstr ""
+
+#: app/views/modalForms/platformPropsSheet.html
+#: app/scripts/services/services.js
+msgid "Platform Properties"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/templates.html
+msgid "Please correct the following errors:"
+msgstr ""
+
+#: app/views/login.html
+msgid "Please provide a (decent) name"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Please provide a valid description for the template"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Please provide a valid id for the template"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Please provide a valid name for the template"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Please review and respond to the notifications below."
+msgstr ""
+
+#: app/views/profile.html
+msgid "Preferred Language"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Previous"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Print"
+msgstr ""
+
+#: app/index.html
+msgid "Profile Settings"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Project Lead & Chief Architect:"
+msgstr ""
+
+#: app/views/modalForms/propertySheet.html
+#: app/scripts/directives/directives.js
+msgid "Properties"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Property Change Not Allowed:"
+msgstr ""
+
+#: app/views/modalForms/wblProtectionSheet.html
+msgid "Protection"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Publication Policy"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+#: app/scripts/services/services.js
+msgid "Publish"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Publish Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Publish Not Available"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Publish Webble"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+#: app/scripts/controllers/wblCore.js
+msgid "Publish Webble Attempt Failed"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Published Objects"
+msgstr ""
+
+#: app/views/workSpaces.html
+msgid "Push Changes"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Rate"
+msgstr ""
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Rate This Webble"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Rated"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Rating"
+msgstr ""
+
+#: app/views/data.html
+msgid "Rating:"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Receive"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Recent"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Recent Quick saved workspace has been restored"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Redo"
+msgstr ""
+
+#: app/views/login.html
+msgid "Remember me"
+msgstr ""
+
+#: app/views/templates.html
+#: app/views/modalForms/shareWSSheet.html
+msgid "Remove"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Report Bug"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Rescale"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/profile.html
+msgid "Reset"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Reset Account Password Request"
+msgstr ""
+
+#: app/views/login.html
+msgid "Reset Password"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Resize"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Resize Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Result:"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Reversed"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Revoke Group Membership"
+msgstr ""
+
+#: app/scripts/controllers/profile.js
+msgid "Revoke Membership"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Revoke Parent"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Revoke Parent Failed"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Revoke Trust"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Rotate"
+msgstr ""
+
+#: app/views/profile.html
+#: app/views/templates.html
+#: app/scripts/services/services.js
+msgid "Save"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Save As"
+msgstr ""
+
+#: app/views/modalForms/publishWebbleSheet.html
+msgid "Save Target:"
+msgstr ""
+
+#: app/views/modalForms/saveWSAsSheet.html
+msgid "Save Workspace As..."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Save Workspace Not Available"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Scale"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Search"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Select All"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Select a group to get more information"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "Select the slots you also want combined into a combo slot."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "Select which groups this Webble should be associated with and trusted by. No group means the Webble will always be considered untrusted."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Selection Not Allowed:"
+msgstr ""
+
+#: app/views/chat.html
+#: app/views/modalForms/rateWblSheet.html
+#: app/views/modalForms/slotConnSheet.html
+msgid "Send"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "Server Side Developers:"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Set Password"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Set Property Failed"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Set Protection"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Set Size Slot Failed"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Set Slot Failed"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Share"
+msgstr ""
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "Share Workspace"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Shared Duplicate"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Shared Model Duplicate"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Shared Model Duplicate Not Allowed:"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Shared Model Duplication Failed"
+msgstr ""
+
+#: app/views/data.html
+msgid "Shared:"
+msgstr ""
+
+#: app/index.html
+#: app/views/login.html
+msgid "Sign Up"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Signed up and logged in successfully"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Size"
+msgstr ""
+
+#: app/views/mediaplayer.html
+msgid "Skip Intro"
+msgstr ""
+
+#: app/views/modalForms/slotConnSheet.html
+msgid "Slot Connection"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Slot Full Name:"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Slots to pick:"
+msgstr ""
+
+#: app/views/modalForms/propertySheet.html
+msgid "Slots:"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Sorted By:"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Stand-alone Slots"
+msgstr ""
+
+#: app/views/groups.html
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid "Start typing a username"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/modalForms/addCustSlotSheet.html
+#: app/views/modalForms/bundleSheet.html
+#: app/views/modalForms/platformLangSheet.html
+#: app/views/modalForms/platformPropsSheet.html
+#: app/views/modalForms/propertySheet.html
+#: app/views/modalForms/publishWebbleSheet.html
+#: app/views/modalForms/saveWSAsSheet.html
+#: app/views/modalForms/slotConnSheet.html
+#: app/views/modalForms/wblProtectionSheet.html
+msgid "Submit"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Super High Clearance User"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Support"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Template Description"
+msgstr ""
+
+#: app/views/templates.html
+#: app/scripts/services/services.js
+msgid "Template Editor"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Template ID:"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Template Id"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Template Name"
+msgstr ""
+
+#: app/views/modalForms/wblAbout.html
+msgid "Template Revision:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "Template code copied to your Template Editor"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Terrible"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Text Alignment"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "The Horizontal position (left right) of the element either on the screen or in relation to its parent element (% sign is allowed)"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "The Vertical position (up down) of the element either on the screen or in relation to its parent element (% sign is allowed)"
+msgstr ""
+
+#: app/scripts/controllers/workSpaces.js
+msgid "The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/saveWSAs.js
+msgid "The Workspace name cannot be blank"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The alignment of the text inside its borders."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The background color of this container."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The border attribute collection of this element."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The border color of this element."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "The chosen file was somehow not formatted correctly so therefore it will not load any Webble."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid "The directions which change of slot values will be communicated"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "The file selected is not an image file and will therefore not be used as such. Auto generated image will be used instead."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "The file selected is not an image file."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "The file selected is too large. Max size allowed is 300kb. Please resize image or choose a smaller one."
+msgstr ""
+
+#: app/views/groups.html
+msgid "The following objects are members of the group"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The font family of the text."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The foreground color of this element."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The height of the element (% sign is allowed)."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "The initiation value of the slot, may be left empty"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "The layer order index value (integer) which decides who's on top of who."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The margins of the element."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The max height of the element."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The max width of the element."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The min height of the element."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The min width of the element."
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "The multiplier (decimal value) for the elements width and height to increase or decrease the scale of that attribute."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/saveWSAs.js
+msgid "The name that will help you identify this workspace"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "The name that will identify the new custom slot"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "The name the Webble is user friendly shown as."
+msgstr ""
+
+#: app/scripts/controllers/workSpaces.js
+msgid "The provided file is not of json type, and will therefore be ignored."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "The selected parent is protected from having children and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The size of the font in pixels."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The style of the font."
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "The tilt rotate angle in degrees for the element in question."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid "The user-name or e-mail for a Webble user you want to share this Workspace with"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The visibility of the element (and its sub element)."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The weight, boldness, of the text."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The width in pixels of the border (0 = no border)."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "The width of the element (% sign is allowed)."
+msgstr ""
+
+#: app/views/groups.html
+msgid "There are no objects published under the group"
+msgstr ""
+
+#: app/views/profile.html
+msgid "There are not any unhandled notifications :-P"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "There are pending questions in the FAQ waiting for your attention. Please visit there and give some good answers."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "There is nothing to submit, so what are you trying to do?"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "These are the available CSS attributes for the selected visual element"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "These are the descriptive keywords this Webble will be more easly searched and found by"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "These are the visual elements found within this Webble and whose css attributes can be turned into slots"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "This Software and all the Webbles which are linked to it and used within it are licencenced under the"
+msgstr ""
+
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "This Webble (in itself or one of the including Webbles in a possible cluster) is an unpublished webble from your develepment sandbox. If you continue with the publish the Webble in question will be become publically available. Is this what you want?"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProperties.js
+msgid "This Webble has shared model duplicates which it shares selected slots with"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble included is protected from publishing and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "This Webble is developed by a group inside your circle of trust."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "This Webble is developed by a group or individual ouside your circle of trust."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from Bundling and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from Shared Model Duplication and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from Unbundling and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from duplication and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from getting a parent and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from resizing and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from revoking its parent and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from shared model duplication and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble is protected from slot and property change and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This Webble's parent is protected from removing any of its children and therefore this operation is canceled."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is a user friendly display name used by this Webble instance, your new Webble will use this value as its default display name"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/platformProps.js
+msgid "This is the background color of you workspace"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the currently chosen display name for this Webble Instance, may be changed in properties"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the description of this Webble Definition"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is the description of this Webble as will be shown after publish"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/platformProps.js
+msgid "This is the execution mode the system is currently in. Developer opens up all locks, Admin is for working Webble maintanance and user modes are for basic usage."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "This is the full name for the new slot"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "This is the id of this visual element, which is also the first name of the new slot"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is the image that is representing this Webble in search engines"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the keywords selected for this Webble Definition"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/openWS.js
+msgid "This is the list of available Workspaces you have previously saved or have been invited to share."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the name of the Webble definition this Webble was created from"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the name of the template this Webble is created from. If you click the 'Create Sandbox Copy' button you create an identical copy of this Webble template (HTML5 code) and place it in your sandbox template editor for developing your own version based on this."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is the name which this top Webble was published as previously (if reused, the Webble will overwrite and replace the current one found by that name.)"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "This is the name you want your Webble to be identified by (unless you will use the current name and replace that Webble with this new one)"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the revision number of the template being used"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the session instance id for this particular Webble"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid "This is the slot of the parent which will exchange values and communicate with this child"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid "This is the slot of this Webble which will exchange values and communicate with its parent slot"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblAbout.js
+msgid "This is the user name of the author for this Webble definition"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "This operation only works with one selected Webble at a time, and you have"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "This slot is a custom slot added by a user or the Webble itself."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+#: app/scripts/controllers/modalForms/addCustSlot.js
+msgid "This slot is a custom slot added by a user."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/shareWS.js
+msgid "This user is already added"
+msgstr ""
+
+#: app/views/profile.html
+msgid "To apply for group membership, please contact the group's manager directly or send an email to the group's address. You can find a group's address via the group information interface."
+msgstr ""
+
+#: app/views/profile.html
+msgid "To trust a group, locate it via the group information interface and then click on the trust button below."
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Toggle Connection View"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Toggle Fullscreen"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Trust"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Trust and Group Memberships"
+msgstr ""
+
+#: app/views/data.html
+msgid "Trusted:"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Trying to recover password and send email..."
+msgstr ""
+
+#: app/views/chat.html
+msgid "Type your message"
+msgstr ""
+
+#: app/scripts/services/templates.js
+msgid "Unable to retrieve templates"
+msgstr ""
+
+#: app/scripts/services/workspaces.js
+msgid "Unable to retrieve workspaces"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Unbundle"
+msgstr ""
+
+#: app/scripts/controllers/wblCore.js
+msgid "Unbundle Failed"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "Unbundle Not Allowed:"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Undo"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Unhandled Notifications"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Unposted"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Unpublished Templates"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "Unrated"
+msgstr ""
+
+#: app/views/templates.html
+msgid "Update"
+msgstr ""
+
+#: app/views/workSpaces.html
+msgid "Update from Work surface"
+msgstr ""
+
+#: app/scripts/controllers/profile.js
+msgid "Updated Account Information"
+msgstr ""
+
+#: app/views/data.html
+msgid "Updated:"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "User Ratings:"
+msgstr ""
+
+#: app/scripts/controllers/groups.js
+msgid "User added to group"
+msgstr ""
+
+#: app/scripts/controllers/profile.js
+msgid "User logged out"
+msgstr ""
+
+#: app/scripts/controllers/profile.js
+msgid "User not logged in"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/profile.html
+msgid "Username"
+msgstr ""
+
+#: app/views/groups.html
+msgid "Username or Email..."
+msgstr ""
+
+#: app/views/groups.html
+msgid "Username:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "Using the auto generated image is recomended but if you prefer a custom image that is possible."
+msgstr ""
+
+#: app/views/data.html
+msgid "Verified:"
+msgstr ""
+
+#: app/scripts/directives/directives.js
+msgid "Vertical Position"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Very Bad"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+#: app/scripts/directives/directives.js
+msgid "Very Good"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "View"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Visibility"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Visual Element CSS Attribute:"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Visual Element Name:"
+msgstr ""
+
+#: app/views/modalForms/addCustSlotSheet.html
+msgid "Visual Element:"
+msgstr ""
+
+#: app/scripts/controllers/login.js
+msgid "Waiting User to Authenticate..."
+msgstr ""
+
+#: app/index.html
+msgid "We, the Webble World development team, strongly urge you to do everything in your power to change that,"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "Webble Browser"
+msgstr ""
+
+#: app/views/chat.html
+msgid "Webble Chat"
+msgstr ""
+
+#: app/views/data.html
+msgid "Webble Data View"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Webble Successfully Published"
+msgstr ""
+
+#: app/views/modalForms/loadWebbleSheet.html
+msgid "Webble URL:"
+msgstr ""
+
+#: app/index.html
+msgid "Webble World - development team"
+msgstr ""
+
+#: app/scripts/app.js
+#: app/scripts/controllers/platform.js
+msgid "Webble World 3.0 - Where memes comes alive"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Webble World Platform Information"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Webbles"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "Webbles are saved as json files, that was not a json file and will therefore not load any Webble obviously"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Webbles selected."
+msgstr ""
+
+#: app/views/groups.html
+#: app/views/profile.html
+msgid "Website"
+msgstr ""
+
+#: app/index.html
+msgid "What was supposed to be your greatest day on the Internet where you would make acquaintance with something called Webble World,"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot Resize"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be assigmed any parent"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be bundled"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be deleted"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be duplicated"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be moved"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be peeled from its parent"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be published"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be selected"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be shared model duplicated"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot be unbundled"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot change any slots or properties"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot have any children"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble cannot remove any children"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble will be invisible in all execution modes except Developers mode"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble will never display its default menu items"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble will never display its interaction objects"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblProtection.js
+msgid "When this is checked the Webble will never display its menu"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "Width"
+msgstr ""
+
+#: app/views/modalForms/propertySheet.html
+msgid "Width:"
+msgstr ""
+
+#: app/views/modalForms/platformPropsSheet.html
+msgid "Work surface background color:"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/shareWS.js
+#: app/scripts/services/services.js
+msgid "Workspace"
+msgstr ""
+
+#: app/views/modalForms/saveWSAsSheet.html
+msgid "Workspace Name:"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Workspace Saved"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "Workspace successfully deleted from server"
+msgstr ""
+
+#: app/scripts/controllers/templates.js
+msgid "Write something that nobody will read, MD-style!"
+msgstr ""
+
+#: app/views/modalForms/clearSomething.html
+#: app/views/modalForms/deleteSomething.html
+#: app/views/modalForms/publishSandboxWblsToo.html
+msgid "Yes"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "You Do not own this Workspace, and can therefore not delete it."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "You Do not own this Workspace, and can therefore not share it."
+msgstr ""
+
+#: app/views/profile.html
+msgid "You Trust the Following Groups"
+msgstr ""
+
+#: app/views/profile.html
+msgid "You are Member of the Following Groups"
+msgstr ""
+
+#: app/views/groups.html
+msgid "You are managing the following groups"
+msgstr ""
+
+#: app/views/profile.html
+msgid "You are not member of any group :-("
+msgstr ""
+
+#: app/index.html
+msgid "You are now experiencing the total lack of an interactive Meme media, technology enhanced, user interactive web site."
+msgstr ""
+
+#: app/views/profile.html
+msgid "You can change your password and provide additional authentication methods for your account and for third parties."
+msgstr ""
+
+#: app/views/templates.html
+msgid "You can create a copy of this, already published template or create a new one"
+msgstr ""
+
+#: app/views/profile.html
+msgid "You can manage your personal licenses and API keys via the interface below."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "You do not have any saved workspaces available to open. You must create some first."
+msgstr ""
+
+#: app/views/profile.html
+msgid "You don't trust any group :-("
+msgstr ""
+
+#: app/scripts/controllers/modalForms/publishWebble.js
+msgid "You have to provide a Webble Definition Id"
+msgstr ""
+
+#: app/views/login.html
+#: app/views/profile.html
+msgid "You have to set a username to be able to publish webbles"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "You must be logged in to Webble World in order to save Workspaces and publish Webbles and you need a valid username. Please sign in and/or make sure you have a proper username in your profile and try again."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "You must be logged in to Webble World in order to save Workspaces and publish Webbles. Please sign in and try again."
+msgstr ""
+
+#: app/scripts/controllers/workSpaces.js
+msgid "You tried to load a linked workspace that you do not have access to, therefore ignored."
+msgstr ""
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Your Earlier Rating:"
+msgstr ""
+
+#: app/views/modalForms/faqSheet.html
+msgid "Your Questions Pending Answers"
+msgstr ""
+
+#: app/views/modalForms/rateWblSheet.html
+msgid "Your Rating:"
+msgstr ""
+
+#: app/views/profile.html
+msgid "Your Response"
+msgstr ""
+
+#: app/views/mediaplayer.html
+msgid "Your browser does not support the video tag."
+msgstr ""
+
+#: app/views/login.html
+msgid "Your name is required - how should I call you?"
+msgstr ""
+
+#: app/views/modalForms/about.html
+msgid "['IntelligentPad' system for the web]"
+msgstr ""
+
+#: app/index.html
+msgid "architecture of IntelligentPads, has now turned into something completely different; a time of remorse and sadness."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "basic"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "bundled a bunch of webbles"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "chart"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "color"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "connected child slot"
+msgstr ""
+
+#: app/index.html
+msgid "created by Meme Media Lab on Hokkaido University in Japan, by the supervision and inspiration of Professor Yuzuru Tanaka, based on the"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "created custom slot"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "deleted custom slot"
+msgstr ""
+
+#: app/index.html
+msgid "for more information about Webbles and Intelligent Pad, please visit"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "for webble"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "found by free text search of all fields containing search string"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "from its parent"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "game"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "if your Webble is on your local computer, select the file from here."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/loadWebble.js
+msgid "if your Webble is online, write the URL for it here."
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "in Webble World 3.0"
+msgstr ""
+
+#: app/views/login.html
+msgid "john@example.com"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/wblSlotConn.js
+msgid "mark the cells of the merged combo in the child and parent to correspond with eachother the way you want."
+msgstr ""
+
+#: app/scripts/controllers/chat.js
+msgid "me"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "moved webble"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "peeled webble"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "search webbles"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "set slot"
+msgstr ""
+
+#: app/index.html
+msgid "so that you can enjoy Webbles and their powers together with the rest of us."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "text"
+msgstr ""
+
+#: app/scripts/services/services.js
+msgid "the style of the border line, eg. solid or dashed."
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "time"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "to"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "unbundled the bundle with id"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "votes"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "with parent slot"
+msgstr ""
+
+#: app/scripts/controllers/platform.js
+msgid "with value"
+msgstr ""
+
+#: app/scripts/controllers/modalForms/searchWbl.js
+msgid "xml"
+msgstr ""
+
+#: app/index.html
+msgid "your web browser is not fully equipped or preset correctly"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{formItems.searchCriteria | translate}} {{formItems.searchStrResult}}"
+msgstr ""
+
+#: app/index.html
+msgid "{{getCurrentLanguage() | nativeName}}"
+msgstr ""
+
+#: app/views/modalForms/shareWSSheet.html
+msgid "{{msgTexts.headlineWS | translate}}: {{formItems.theWS.name}}"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{textParts.noOfWebblesTxt | translate}} {{formItems.noOfExistingWbls}}"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{textParts.resultTitle | translate}}"
+msgstr ""
+
+#: app/views/modalForms/searchWblSheet.html
+msgid "{{textParts.searchBoxTitle | translate}}"
+msgstr ""
+
+#: app/views/modalForms/infoMsg.html
+msgid "{{title | translate}}"
+msgstr ""
+
+#: app/views/modalForms/bundleSheet.html
+msgid "{{wbl.fullName}}"
+msgstr ""
