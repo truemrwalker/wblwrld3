@@ -50,7 +50,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
     //Book and page variables
     var currentCCId;
     var flipSpeed = 10;
-    var flipLengthPerCall = 5;
+    var flipLengthPerCall = 10;
     var binderWidthMultiplier = 0.04;
     var bookWidth = 0, bookHeight = 0, bookPadding = 0, bookBorderWidth = 0, binderWidth = 0, pageBorderWidth = 0, pageMargin = 0, pageWidth = 0, pageHeight = 0;
     var flipSound;

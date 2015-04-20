@@ -152,11 +152,11 @@ function freeHandDrawingCtrl($scope, $log, $timeout, Slot, Enum, colorService) {
         drawSurface.bind('mousedown', onMouseDown);
 
         $scope.$watch(function(){return $scope.gimme('drawingContainer:width');}, function(newVal, oldVal) {
-            drawSurface[0].width = parseInt($scope.gimme('drawingContainer:width'));
+            drawSurface[0].width = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
         }, true);
 
         $scope.$watch(function(){return $scope.gimme('drawingContainer:height');}, function(newVal, oldVal) {
-            drawSurface[0].height = parseInt($scope.gimme('drawingContainer:height'));
+            drawSurface[0].height = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
         }, true);
 
         $scope.$watch(function(){return $scope.gimme('shadowEnabled');}, function(newVal, oldVal) {
@@ -174,7 +174,11 @@ function freeHandDrawingCtrl($scope, $log, $timeout, Slot, Enum, colorService) {
 
         $scope.$watch(function(){return $scope.gimme('clearCanvasRequest');}, function(newVal, oldVal) {
             if(newVal == true || newVal > 0 && newVal != oldVal){
-                ctx.clearRect(0,0,parseInt($scope.gimme('drawingContainer:width')),parseInt($scope.gimme('drawingContainer:height')));
+                var w = $scope.gimme('drawingContainer:width');
+                var h = $scope.gimme('drawingContainer:height');
+                w = w.search('%') != -1 ? (parseInt(w)/ 100) * $(window).width() : parseInt(w);
+                h = h.search('%') != -1 ? (parseInt(h)/ 100) * $(window).height() : parseInt(h);
+                ctx.clearRect(0,0,w,h);
                 imgData = [];
                 $scope.getSlot('clearCanvasRequest').setValue(false);
             }
@@ -196,7 +200,11 @@ function freeHandDrawingCtrl($scope, $log, $timeout, Slot, Enum, colorService) {
     //===================================================================================
     $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
         if(itemName == $scope.customMenu[0].itemId){  //clearDrawing
-            ctx.clearRect(0,0,parseInt($scope.gimme('drawingContainer:width')),parseInt($scope.gimme('drawingContainer:height')));
+            var w = $scope.gimme('drawingContainer:width');
+            var h = $scope.gimme('drawingContainer:height');
+            w = w.search('%') != -1 ? (parseInt(w)/ 100) * $(window).width() : parseInt(w);
+            h = h.search('%') != -1 ? (parseInt(h)/ 100) * $(window).height() : parseInt(h);
+            ctx.clearRect(0,0,w,h);
             imgData = [];
         }
     };
