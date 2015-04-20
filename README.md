@@ -5,9 +5,9 @@ In Colaboration with: G. Georgalis, J. Sjöbergh
 
 Meme Media R&D Group, Hokkaido University
 
-Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
-Webble System Lead Architect & Developer: Micke Nicander Kuwahara
-Server Side Developer: Giannis Georgalis
+Project Leader & Lead Meme Media Architect: Yuzuru Tanaka  
+Webble System Lead Architect & Developer: Micke Nicander Kuwahara  
+Server Side Developer: Giannis Georgalis  
 Additional Support: Jonas Sjöbergh
 
 Visit Webble World 3 Online at:
