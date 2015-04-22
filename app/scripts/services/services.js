@@ -1730,6 +1730,28 @@ ww3Services.factory('getKeyByValue', [function() {
 
 
 //=================================================================================
+// isExist
+// A service that checks if something exist somewhere. For example if a specific
+// value exists in a specific array.
+//=================================================================================
+ww3Services.factory('isExist', [function() {
+  return {
+      valueInArray: function(theArray, theValue) {
+          var doesExist = false;
+          for (var i = 0; i < theArray.length; i++) {
+              if(theArray[i] == theValue){
+                  doesExist = true;
+                  break;
+              }
+          }
+          return doesExist;
+      }
+  }
+}]);
+//=================================================================================
+
+
+//=================================================================================
 // Is Valid Enum Value
 // A service that test that a specified value is contained within the range of
 // values inside a specific Enum value collection.

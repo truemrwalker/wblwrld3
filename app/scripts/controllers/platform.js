@@ -38,7 +38,7 @@
 // This is the main controller for the Webble World platform
 //
 //====================================================================================================================
-ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $location, $modal, $log, $q, $http, $route, $filter, $window, $compile, $timeout, localStorageService, gettext, gettextCatalog, Enum, wwConsts, dbService, menuItemsFactoryService, appPaths, bitflags, getKeyByValue, getUrlVars, fromKeyCode, isValidEnumValue, isValidStyleValue, getCSSClassPropValue, jsonQuery, Slot, authService, valMod, socket, strCatcher) {    // DEBUG Mode announcement if logging is not commented out, and even with an alert if this is a non-localhost version
+ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $location, $modal, $log, $q, $http, $route, $filter, $window, $compile, $timeout, localStorageService, gettext, gettextCatalog, Enum, wwConsts, dbService, menuItemsFactoryService, appPaths, bitflags, getKeyByValue, getUrlVars, fromKeyCode, isValidEnumValue, isValidStyleValue, getCSSClassPropValue, jsonQuery, Slot, authService, valMod, socket, strCatcher, isExist) {    // DEBUG Mode announcement if logging is not commented out, and even with an alert if this is a non-localhost version
     $log.log('This application currently run in DEBUG mode.');
 
     //=== PLATFORM PROPERTIES =============================================
@@ -169,8 +169,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // A list of all at least once loaded webble templates since system startup. A webble template is a definition of a webble type which owns its own specific view.html file
     var webbleTemplates_ = [];
 
-    // if the webble template currently being loaded requires external libraries outside what Webble World already provides, then those are saved as text-links in this property while loading them
-    var wblManifest;
+    // if the webble template currently being loaded requires external libraries outside what Webble World already provides, then those are saved as an array of text-links in this property while loading them
+    var wblManifestLibs = [];
+    var prevLoadedManifestLibs = [];
 
     // Current Supported mode level
     var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.Developer;
@@ -996,10 +997,19 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             success: function(){
                 $.ajax({url: corePath + appPaths.webbleManifest,
                     success: function(data){
-                        wblManifest = data;
+                        if(data["libs"]){
+                            for(var i = 0; i < data["libs"].length;i++){
+                                if(!isExist.valueInArray(prevLoadedManifestLibs, data["libs"][i])){
+                                    var urlPath = corePath + "/" + data["libs"][i];
+                                    if(data["libs"][i].search('/') != -1){ urlPath = data["libs"][i]; }
+                                    wblManifestLibs.push(urlPath);
+                                    prevLoadedManifestLibs.push(urlPath);
+                                }
+                            }
+                        }
                     },
                     complete: function(){
-                        if(wblManifest){
+                        if(wblManifestLibs.length > 0 && !downloadingManifestLibs){
                             downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath);
                         }
                         else{
@@ -1033,40 +1043,38 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     };
     //========================================================================================
 
-
+    var downloadingManifestLibs = false;
     //========================================================================================
     // Download Webble Template Manifest File
     // This method loads all files (one by one) found in the webble templates manifest file.
     // When done it continues loading the rest of the template.
     //========================================================================================
     var downloadWblTemplateManifestFile = function(whatTemplateId, whatTemplateRevision, whatWblDef, corePath){
-        if(wblManifest && wblManifest["libs"] && wblManifest["libs"].length > 0){
-            var libItem = wblManifest["libs"].shift();
+        if(wblManifestLibs.length > 0 && !downloadingManifestLibs){
+            downloadingManifestLibs = true;
+            var libItem = wblManifestLibs.shift();
             var libItemExt = libItem.substr(libItem.lastIndexOf('.')+1);
-            var urlPath = corePath + "/" + libItem;
-            if(libItem.search('/') != -1){
-                urlPath = libItem;
-            }
 
             if(libItemExt == 'css'){
-                $.ajax({url: corePath + appPaths.webbleCSS,
+                $.ajax({url: libItem,
                     success: function(){
-                        $('<link rel="stylesheet" type="text/css" href="' + urlPath + '" >').appendTo("head");
+                        $('<link rel="stylesheet" type="text/css" href="' + libItem + '" >').appendTo("head");
                     },
                     complete: function(){
+                        downloadingManifestLibs = false;
                         downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath);
                     }
                 });
             }
             else{
-                $.getScript( urlPath )
+                $.getScript( libItem )
                     .always(function( jqxhr, settings, exception ) {
+                        downloadingManifestLibs = false;
                         downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath);
                     });
             }
         }
         else{
-            wblManifest = undefined;
             downloadWblTemplatePartTwo(whatTemplateId, whatTemplateRevision, whatWblDef, corePath);
         }
     };
@@ -2000,6 +2008,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     $scope.cleanActiveWS = function(){
         var wblsToKill = [];
+        $scope.waiting(true);
 
         $scope.globalByPassFlags.byPassDeletetionProtection = true;
 
@@ -2034,9 +2043,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if(locationPathChangeRequest != ''){
                 var thePathToGo = locationPathChangeRequest;
                 locationPathChangeRequest = '';
-                $scope.waiting(false);
                 $location.path(thePathToGo);
             }
+            $scope.waiting(false);
         }
 
         listOfUntrustedWbls_ = [];
@@ -2301,6 +2310,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.loadWebbleFromDef(wblFamiliesInLineForInsertion_.shift());
             }
             else{
+                $scope.waiting(true);
                 for(var i = 0, rch; rch = longtermrelationConnHistory_[i]; i++){
                     // Connect all modelsharees
                     if (rch.oldModelSharees.length > 0){
@@ -2374,6 +2384,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     });
                 }
                 trustedParameterWasUndefined = false;
+                $scope.waiting(false);
 
                 var pathQuery = $location.search();
                 if(pathQuery.webble && pathQuery.workspace){

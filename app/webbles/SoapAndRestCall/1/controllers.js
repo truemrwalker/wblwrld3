@@ -288,7 +288,6 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
 
       restClient.add(serviceMethod);
       var params = createServiceParametersObject();
-      $log.log(params);
       var methodType = $scope.gimme('serviceMethodType');
       if(methodType == 0){//GET
           restClient[serviceMethod].read.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
@@ -296,10 +295,10 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
       else if(methodType == 1){//POST
         restClient[serviceMethod].create.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
       }
-      else if(methodType == 1){//PUT
+      else if(methodType == 2){//PUT
         restClient[serviceMethod].update.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
       }
-      else if(methodType == 1){//DELETE
+      else if(methodType == 3){//DELETE
         restClient[serviceMethod].destroy.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
       }
       else{
