@@ -89,7 +89,6 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     // Makes a template copy for the selected Webble and puts in the users sandbox.
     //========================================================================================
     $scope.makeCopy = function (templateId) {
-        $log.log(templateId);
         dbService.copyPublishedTemplateAsMyUnpublishedTemplate(templateId).then(function(data){
             $scope.formData.wblPlatformScope.showQIM(gettext("Template code copied to your Template Editor"), undefined, undefined, undefined, '#c7fcff');
         },function(eMsg){

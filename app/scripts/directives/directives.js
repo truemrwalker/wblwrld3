@@ -964,7 +964,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                     build: function($trigger, e){
                         var xOffSet = 10;
                         var theActiveTrigger = $trigger;
-                        if(theActiveTrigger.scope().getIsBundled() == true){
+                        if(theActiveTrigger.scope().getIsBundled() == true && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                             theActiveTrigger = scope.getBundleMaster(theActiveTrigger);
                         }
                         var theWblCM = {};
@@ -1067,7 +1067,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                         return {
                             callback: function(key, opt){
                                 var theActiveTrigger = opt.$trigger;
-                                if(theActiveTrigger.scope().getIsBundled() == true){
+                                if(theActiveTrigger.scope().getIsBundled() == true && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                                     theActiveTrigger = scope.getBundleMaster(theActiveTrigger);
                                 }
                                 theActiveTrigger.scope().activateMenuItem(key);
