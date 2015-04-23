@@ -606,6 +606,10 @@ themselves inside the template are the following:
     // Is Valid Enum Value, tests that a specified value is contained within the range of values inside a specific Enum
     // value collection. Values is validated both by key name and/or by key value.
     isValidEnumValue(enumToTest, valueToTest);
+    
+    // isExist, A service that checks if something exist somewhere. For example if a specific value exists in a 
+    // specific array.
+    isExist.valueInArray(theArray, theValue);
 
     // Is Valid Style Value, tests that a specified style value within a specified style setting is a valid option.
     isValidStyleValue(styleToTest, possibleStyleValue);
