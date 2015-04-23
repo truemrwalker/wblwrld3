@@ -970,7 +970,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                         var theWblCM = {};
 
                         if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.POPUP_MENU, 10)) == 0 || (scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && scope.altKeyIsDown)){
-                            if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DEFAULT_MENU, 10)) == 0){
+                            if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DEFAULT_MENU, 10)) == 0 || (scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && scope.altKeyIsDown)){
                                 var dmi = {
                                     publish: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Publish),
                                     duplicate: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Duplicate),
