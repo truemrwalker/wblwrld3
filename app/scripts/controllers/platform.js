@@ -1632,6 +1632,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var publishWebbleReturned = function(returnData){
         $scope.getWSE().find('#autoGenImageFrame').remove();
         if(returnData){
+			$scope.waiting(true);
             var theWbl = $scope.getWebbleByInstanceId(returnData.instanceid);
             theWbl.scope().theWblMetadata['defid'] = returnData.defid;
             theWbl.scope().theWblMetadata['displayname'] = returnData.displayname;
@@ -1642,6 +1643,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 loadSandboxWblDefs();
             }
 
+			$scope.waiting(false);
             $scope.showQIM(gettext("Webble Successfully Published"));
         }
     };

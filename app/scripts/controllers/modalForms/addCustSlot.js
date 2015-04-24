@@ -463,7 +463,7 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
                 if (sltNm in thisWbl.scope().getSlots()){
                   $log.log(sltNm+"!!!");
                     $scope.formProps.errorMsgColor = 'red';
-                    $scope.formProps.errorMsg = gettext("A webble with that name already exist, please come up with a new name.");
+                    $scope.formProps.errorMsg = gettext("A slot with that name already exist, please come up with a new name.");
                     if(!$scope.$$phase){ $scope.$apply(); }
                     $timeout(function(){$scope.formProps.errorMsg = ''; if(!$scope.$$phase){ $scope.$apply(); }}, 5000);
                     return;

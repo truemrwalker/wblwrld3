@@ -344,10 +344,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
             undefined
         ));
 
-        $scope.addSlot(new Slot('book:background-color',
+        $scope.addSlot(new Slot('book:background',
             '#A52A2A',
-            'Book Background Color',
-            'The Background color of the Book cover',
+            'Book Background',
+            'The Background of the Book cover',
             $scope.theWblMetadata['templateid'],
             {inputType: Enum.aopInputTypes.ColorPick},
             undefined
@@ -745,7 +745,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                 bookPadding = parseInt($scope.gimme('bookPadding'));
                 bookBorderWidth = parseInt($scope.gimme('bookBorderWidth'));
                 var bookBorderColor = $scope.gimme('book:border-color');
-                var bookBkgColor = $scope.gimme('book:background-color');
+                var bookBkgColor = $scope.gimme('book:background');
                 var bookBkgImage = $scope.gimme('bookBkgImage');
                 var bookBinderEnabled = $scope.gimme('bookBinderEnabled');
                 binderWidth = bookWidth * binderWidthMultiplier;
@@ -765,7 +765,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                     theBook.css("border", bookBorderWidth + "px solid " + bookBorderColor);
                     theBook.css("background-color", bookBkgColor);
                     $scope.getSlot('book:border-color').setElementPntr(theBook);
-                    $scope.getSlot('book:background-color').setElementPntr(theBook);
+                    $scope.getSlot('book:background').setElementPntr(theBook);
                     theBook.css("background-image", bookBkgImage != "" ? "url(" + bookBkgImage + ")" : "");
                     $scope.theView.parent().find('#bookPagesContainer').append(theBook);
 
@@ -843,7 +843,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                     if(theBook.length > 0){
                         theBook.remove();
                         $scope.getSlot('book:border-color').setElementPntr(undefined);
-                        $scope.getSlot('book:background-color').setElementPntr(undefined);
+                        $scope.getSlot('book:background').setElementPntr(undefined);
                     }
                 }
                 if(theBook.length > 0 && pagesToMake > 0){
