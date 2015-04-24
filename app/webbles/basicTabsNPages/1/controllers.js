@@ -1243,7 +1243,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
     };
     //===================================================================================
 
-
+var sindex = 0;
     //===================================================================================
     // Flip To Left
     // Make the clicked page move from left side to right side in a visually pleasing
@@ -1261,21 +1261,22 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 		if(flipSound && playSound){flipSound.play();}
 
 		if(pLeftPos <= bookPadding){
-		  isMoving = false;
-		  var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
+            isMoving = false;
+            var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
 
-		  pageToShow.css("left", bookPadding + 'px');
-		  pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+            pageToShow.css("left", (bookPadding) + 'px');
+            pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+            pageToShow.css("width", (pageWidth) + 'px');
 
-		  pageToHide.css("z-index", currentNoOfPages - (parseInt(pageToHide.css("z-index")) - 1));
-		  pageToHide.css("left", bookPadding + 'px');
-		  pageToHide.css("width", pageWidth+'px');
+            pageToHide.css("z-index", currentNoOfPages - (parseInt(pageToHide.css("z-index")) - 1));
+            pageToHide.css("left", (bookPadding) + 'px');
+            pageToHide.css("width", (pageWidth) + 'px');
 
-		  $scope.setChildContainer(pageToShow);
-		  currentCCId = 'flipPage' + (pageNo + 1);
-		  $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
+            $scope.setChildContainer(pageToShow);
+            currentCCId = 'flipPage' + (pageNo + 1);
+            $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
 
-		  return;
+            return;
 		}
 
 		flipLengthPerCall = pageWidth / 40;
@@ -1316,6 +1317,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
             pageToShow.css("left", (pageWidth + bookPadding) + 'px');
             pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+            pageToShow.css("width", (pageWidth) + 'px');
 
             pageToShow2.css("z-index", (parseInt(pageToShow2.css("z-index")) - 500));
             pageToShow2.css("width", pageWidth+'px');
