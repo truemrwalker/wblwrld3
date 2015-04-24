@@ -78,14 +78,16 @@ module.exports.GFS = function (Q, mongoose) {
 		var deferred = Q.defer();
 
 		gfs.files.find({
-			filename: directory,
+			aliases: directory,
 			metadata: { _owner: ownerId }
 		}).toArray(function(err, files) {
 
 			if (err)
 				deferred.reject(err);
-			else
+			else {
+				console.log("ALLFILES:", util.transform(files, function(f) {return f.filename;}));
 				deferred.resolve(files);
+			}
 		});
 		return deferred.promise;
 	};
@@ -94,13 +96,9 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.moveFileEntry = function(fileEntry, toDirectory) {
 
-		var index = fileEntry.aliases.indexOf(fileEntry.metadata.directory);
-		if (index != -1)
-			fileEntry.aliases.splice(index, 1);
-
-		fileEntry.aliases.push(toDirectory);
-		fileEntry.metadata.directory = toDirectory;
 		fileEntry.filename = genFn(toDirectory, fileEntry.metadata.filename);
+		fileEntry.aliases = genAliases(toDirectory);
+		fileEntry.metadata.directory = toDirectory;
 
 		return Q.ninvoke(fileEntry, "save");
 	};

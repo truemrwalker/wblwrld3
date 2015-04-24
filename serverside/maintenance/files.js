@@ -59,14 +59,15 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		callback(baseDir, items.dirs, items.files);
 
 		items.dirs.forEach(function (d) {
-
-			var subdir = path.join(baseDir, d);
-			walkSync(subdir, callback);
+			walkSync(path.join(baseDir, d), callback);
 		});
 	}
 
 	function getWebbleId(id, ver) {
 		return null;
+	}
+	function getDevWebbleId(id, ver) {
+		return mongoose.Types.ObjectId(id);
 	}
 
 	function uploadWebbleFile(baseDir, filename, ownerIdGetter) {
@@ -96,6 +97,24 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		});
 	});
 
+	// Finished with webbles, now hanlde devWebbles
+	//
+	var thereAreSomeDevWebblesInTheLocalFS = false;
+	try {
+		thereAreSomeDevWebblesInTheLocalFS = fs.statSync(devWebbleDir).isDirectory();
+	}
+	catch(e) {}
+
+	if (thereAreSomeDevWebblesInTheLocalFS) {
+
+		walkSync(devWebbleDir, function(baseDir, dirs, files) {
+
+			files.forEach(function(f) {
+				promises.push(uploadWebbleFile(baseDir, f, getDevWebbleId));
+			});
+		});
+	}
+
 	////////////////////////////////////////////////////////////////////
 	// Push the webbles in the database
 	//
@@ -109,7 +128,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 				// I'm not sure why the value may be an array (investigate, but low priority)
 				var r = result.value instanceof Array ? result.value[0] : result.value;
-				console.log("OK: ", r);
+				//console.log("OK: ", r);
 			}
 			else {
 				console.error("Error: ", result.reason);
