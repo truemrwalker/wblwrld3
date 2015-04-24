@@ -19,6 +19,7 @@
       "mongoose": "latest",
       "mongoose-user": "latest",
 	  "gridfs-stream": "latest",
+	  "mime-types": "latest",
 
       "connect-mongo": "latest",
 

@@ -23,6 +23,7 @@
 // web-server.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+
 ////////////////////////////////////////////////////////////////////////
 // Load essential modules
 //
@@ -53,19 +54,17 @@ var config = require('./config');
 var gettext = function(str) { return str; };
 
 ////////////////////////////////////////////////////////////////////////
-// Extract and update startup data from config
+// Setup final configuration data
 //
 
 // Allow env variables to override config values
-//
 Object.keys(config).forEach(function(key) {
 
 	if (process.env[key] !== undefined)
 		config[key] = process.env[key]
 });
 
-// Allow commnand line options to override config and env values
-//
+// Allow command line arguments to override config and env values
 Object.keys(config).forEach(function(key) {
 
 	var optionKey = "--" + key.toLowerCase().replace('_', '-');
@@ -79,7 +78,6 @@ Object.keys(config).forEach(function(key) {
 });
 
 // Calculate, update and populate other config options
-//
 var portInsecure = process.env.PORT ? parseInt(process.env.PORT, 10) : config.SERVER_PORT;
 var port = portInsecure == 80 ? 443 : portInsecure + 443;
 
@@ -230,7 +228,7 @@ function serverEntryPoint() {
 			break;
 		case 'maintenance':
 			shouldExit = true; /*FALLTHROUGH*/
-		case 'deployment':
+		case 'development':
 		case 'testing':
 			promise = loader.executeAllScripts(path.join(__dirname, 'maintenance'),
 				Q, app, config, mongoose, gettext, ['templates.js', 'files.js']);

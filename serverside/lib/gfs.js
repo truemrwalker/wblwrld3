@@ -25,11 +25,32 @@
 //
 
 var util = require('./util');
+
+var mime = require('mime-types');
+var path = require('path');
+
 var GridFS = require('gridfs-stream');
 
 module.exports.GFS = function (Q, mongoose) {
 
 	var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
+
+	// Generate a GFS filename
+	//
+	function genFn(directory, filename) {
+		return path.join(directory, filename);
+	}
+
+	function genAliases(directory) {
+
+		var result = [];
+		var currPath = '';
+		directory.split(path.sep).forEach(function(component) {
+			currPath = path.join(currPath, component);
+			result.push(currPath);
+		});
+		return result;
+	}
 
 	// Get a file
 	//
@@ -38,9 +59,8 @@ module.exports.GFS = function (Q, mongoose) {
 		var deferred = Q.defer();
 
 		gfs.findOne({
-			directory: directory,
-			filename: filename,
-			_owner: ownerId
+			filename: genFn(directory, filename),
+			metadata: { _owner: ownerId }
 		}, function(err, file) {
 
 			if (err)
@@ -58,8 +78,8 @@ module.exports.GFS = function (Q, mongoose) {
 		var deferred = Q.defer();
 
 		gfs.files.find({
-			directory: directory,
-			_owner: ownerId
+			filename: directory,
+			metadata: { _owner: ownerId }
 		}).toArray(function(err, files) {
 
 			if (err)
@@ -74,7 +94,14 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.moveFileEntry = function(fileEntry, toDirectory) {
 
-		fileEntry.directory = toDirectory;
+		var index = fileEntry.aliases.indexOf(fileEntry.metadata.directory);
+		if (index != -1)
+			fileEntry.aliases.splice(index, 1);
+
+		fileEntry.aliases.push(toDirectory);
+		fileEntry.metadata.directory = toDirectory;
+		fileEntry.filename = genFn(toDirectory, fileEntry.metadata.filename);
+
 		return Q.ninvoke(fileEntry, "save");
 	};
 
@@ -147,7 +174,7 @@ module.exports.GFS = function (Q, mongoose) {
 	this.createWriteStream = function(directory, filename, ownerId) {
 
 		var self = this;
-		return self.getFile(directory.filename, ownerId).then(function(file) {
+		return self.getFile(directory, filename, ownerId).then(function(file) {
 
 			if (file)
 				return self.deleteFileEntry(file);
@@ -155,9 +182,15 @@ module.exports.GFS = function (Q, mongoose) {
 		}).then(function(){
 
 			return gfs.createWriteStream({
-				directory: directory,
-				filename: filename,
-				_owner: ownerId
+				filename: genFn(directory, filename),
+				aliases: genAliases(directory),
+				mode: 'w',
+				content_type: mime.lookup(filename) || 'application/octet-stream',
+				metadata: {
+					directory: directory,
+					filename: filename,
+					_owner: ownerId
+				}
 			});
 		});
 	};
@@ -167,7 +200,7 @@ module.exports.GFS = function (Q, mongoose) {
 	this.createReadStream = function(directory, filename, ownerId) {
 
 		var self = this;
-		return self.getFile(directory.filename, ownerId).then(function(file) {
+		return self.getFile(directory, filename, ownerId).then(function(file) {
 
 			if (!file)
 				throw new Error("File does not exist");
