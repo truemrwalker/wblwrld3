@@ -18,6 +18,7 @@
 
       "mongoose": "latest",
       "mongoose-user": "latest",
+	  "gridfs-stream": "latest",
 
       "connect-mongo": "latest",
 

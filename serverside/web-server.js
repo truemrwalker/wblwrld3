@@ -47,8 +47,9 @@ var appInsecure = express();
 var app = express();
 
 var util = require('./lib/util');
-
+var loader = require('./lib/loader');
 var config = require('./config');
+
 var gettext = function(str) { return str; };
 
 ////////////////////////////////////////////////////////////////////////
@@ -103,14 +104,8 @@ mongoose.connection.on('error', function(err){
 
 mongoose.connection.on('open', function() {
 
-	console.log("Sucessfully connected to the database");
-
-	if (config.DEPLOYMENT === 'bootstrap')
-		bootstrapServer();
-	else if (config.DEPLOYMENT === 'development' || config.DEPLOYMENT === 'testing')
-		checkAndSyncServer().then(startServer);
-	else
-        startServer();
+	console.log("Successfully connected to the database");
+	serverEntryPoint();
 });
 
 ////////////////////////////////////////////////////////////////////////
@@ -127,7 +122,6 @@ mongoose.connection.on('open', function() {
 	app.use(bodyParser.json({ limit: '10mb' }));
 	//app.use(bodyParser.urlencoded({ extended: true })); // Turn off for now, we don't really need it
 
-//	app.use(methodOverride());
     app.use(cookieParser(/*config.SESSION_SECRET*/));
 
 	// We want to save this in app
@@ -149,13 +143,7 @@ mongoose.connection.on('open', function() {
 
 	app.set('sessionStore', sessionStore);
 
-	compileModels();    // Compile all the necessary mongoose schema models
-	setupRoutes();      // Oh yeah! -- no need to use(app.routes) anymore
-
-    // Development only, comment-out otherwise
-	  //
-//    app.use(express.logger('dev'));
-//    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
+	setupRoutes();
 })();
 
 ////////////////////////////////////////////////////////////////////////
@@ -171,21 +159,14 @@ mongoose.connection.on('open', function() {
 })();
 
 ////////////////////////////////////////////////////////////////////////
-// Compile all models in one step here
-//
-function compileModels() {
-
-	require('./models/user')(Q, app, config, mongoose, gettext);         // User
-	require('./models/group')(Q, app, config, mongoose, gettext);        // Group
-	require('./models/webble')(Q, app, config, mongoose, gettext);       // Webble
-	require('./models/post')(Q, app, config, mongoose, gettext);         // Post
-	require('./models/workspace')(Q, app, config, mongoose, gettext);    // Workspace
-}
-
-////////////////////////////////////////////////////////////////////////
 // Setup all the required routes including authentication
 //
 function setupRoutes() {
+
+	// Compile all the necessary mongoose schema models
+	//
+	loader.executeAllScriptsSync(path.join(__dirname, 'models'),
+		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
 
     // Setup the authentication token
     //
@@ -193,27 +174,8 @@ function setupRoutes() {
 
     // Load all api modules
     //
-    var apiDir = path.join(__dirname, 'api');
-
-    fs.readdirSync(apiDir).forEach(function(apiModule) {
-        try {
-
-	        var filePath = path.join(apiDir, apiModule);
-	        var stats = fs.statSync(filePath);
-
-	        if (stats.isFile())
-                require(filePath)(Q, app, config, mongoose, gettext, auth);
-	        else if (stats.isDirectory()) {
-
-		        fs.readdirSync(filePath).forEach(function (apiSubModule) {
-			        require(path.join(filePath, apiSubModule))(Q, app, config, mongoose, gettext, auth);
-		        });
-	        }
-        }
-        catch (e) {
-            console.log("Could not load api module:", apiModule, "ERROR:", e);
-        }
-    });
+	loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
+		Q, app, config, mongoose, gettext, auth);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -228,59 +190,8 @@ function setupRtMsgDispatcher(server) {
 
     // Load all real-time modules
     //
-    var rtDir = path.join(__dirname, 'realtime');
-
-    fs.readdirSync(rtDir).forEach(function(rtModule) {
-        try {
-            require(path.join(rtDir, rtModule))(Q, app, config, mongoose, gettext, io, socketAuth);
-        }
-        catch (e) {
-            console.log("Could not load realtime module:", rtModule, "ERROR:", e);
-        }
-    });
-}
-
-////////////////////////////////////////////////////////////////////////
-// Bootstrap the server
-//
-function bootstrapServer() {
-
-	var bootstrapDir = path.join(__dirname, 'bootstrap');
-
-	var allModules = fs.readdirSync(bootstrapDir)
-        .filter(function(f) { return f.substr(-3) == '.js'; });
-
-	var promises = [];
-
-    allModules.forEach(function(bm) {
-        promises.push(require(path.join(bootstrapDir, bm))(Q, app, config, mongoose, gettext));
-    });
-
-	return Q.allSettled(promises).then(function (results) {
-
-		var seenError = false;
-
-		results.forEach(function (result) {
-
-			if (result.state === 'fulfilled') {
-				var value = result.value; // we don't need this ofcourse just added it here for reference
-			}
-			else {
-				seenError = true;
-				console.log("Error: ", result.reason);
-			}
-		});
-
-		process.exit(seenError ? 1 : 0);
-    });
-}
-
-////////////////////////////////////////////////////////////////////////
-// Check server's sanity and synchronize with database if needed
-//
-function checkAndSyncServer() {
-
-	return require('./bootstrap/templates')(Q, app, config, mongoose, gettext);
+	loader.executeAllSocketScriptsSync(path.join(__dirname, 'realtime'),
+		Q, app, config, mongoose, gettext, io, socketAuth);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -288,17 +199,42 @@ function checkAndSyncServer() {
 //
 function startServer() {
 
-    var options = {
-	    ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
-	    key: fs.readFileSync(config.SERVER_KEY),
-	    cert: fs.readFileSync(config.SERVER_CERT),
-	    passphrase: config.SERVER_PASSPHRASE || undefined
-    };
-    var httpsServer = https.createServer(options, app).listen(port);
+	var options = {
+		ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
+		key: fs.readFileSync(config.SERVER_KEY),
+		cert: fs.readFileSync(config.SERVER_CERT),
+		passphrase: config.SERVER_PASSPHRASE || undefined
+	};
+	var httpsServer = https.createServer(options, app).listen(port);
+	var httpServer = http.createServer(appInsecure).listen(portInsecure);
 
-    var httpServer = http.createServer(appInsecure).listen(portInsecure);
+	console.log("OK [ ", portInsecure, port, "]");
 
-    console.log("OK [ ", portInsecure, port, "]");
+	setupRtMsgDispatcher(httpsServer);
+}
 
-    setupRtMsgDispatcher(httpsServer);
+////////////////////////////////////////////////////////////////////////
+// The main function of this process
+//
+function serverEntryPoint() {
+
+	var promise = Q.resolve(0);
+	var shouldExit = false;
+
+	switch(config.DEPLOYMENT) {
+
+		case 'bootstrap':
+			promise = loader.executeAllScripts(path.join(__dirname, 'bootstrap'),
+				Q, app, config, mongoose, gettext);
+			shouldExit = true;
+			break;
+		case 'maintenance':
+			shouldExit = true; /*FALLTHROUGH*/
+		case 'deployment':
+		case 'testing':
+			promise = loader.executeAllScripts(path.join(__dirname, 'maintenance'),
+				Q, app, config, mongoose, gettext, ['templates.js', 'files.js']);
+			break;
+	}
+	Q.when(promise, shouldExit ? process.exit : startServer);
 }
