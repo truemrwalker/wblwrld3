@@ -59,8 +59,8 @@ module.exports.GFS = function (Q, mongoose) {
 		var deferred = Q.defer();
 
 		gfs.findOne({
-			filename: genFn(directory, filename),
-			metadata: { _owner: ownerId }
+			filename: genFn(directory, filename)//,
+			//metadata: { _owner: ownerId }
 		}, function(err, file) {
 
 			if (err)

@@ -162,17 +162,18 @@ mongoose.connection.on('open', function() {
 function setupRoutes() {
 
 	// Compile all the necessary mongoose schema models
-	//
 	loader.executeAllScriptsSync(path.join(__dirname, 'models'),
 		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
 
     // Setup the authentication token
-    //
     var auth = require('./auth/auth')(Q, app, config, mongoose, gettext);
 
     // Load all api modules
-    //
 	loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
+		Q, app, config, mongoose, gettext, auth);
+
+	// Load all file modules
+	loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
 		Q, app, config, mongoose, gettext, auth);
 }
 
