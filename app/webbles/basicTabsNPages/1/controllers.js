@@ -49,10 +49,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
     //Book and page variables
     var currentCCId;
-    var flipSpeed = 10;
-    var flipLengthPerCall = 10;
     var binderWidthMultiplier = 0.04;
     var bookWidth = 0, bookHeight = 0, bookPadding = 0, bookBorderWidth = 0, binderWidth = 0, pageBorderWidth = 0, pageMargin = 0, pageWidth = 0, pageHeight = 0;
+	var flipSpeed = 10;
+	var flipLengthPerCall = 10;
     var flipSound;
 
 
@@ -1250,44 +1250,45 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
     // matter.
     //===================================================================================
     var flipToLeft = function(pageNo, pLeftPos, pWidth, playSound){
-      var pageToHide = $scope.theView.parent().find('#flipPage' + pageNo);
-      var pageToShow = $scope.theView.parent().find('#flipPage' + (pageNo + 1));
+		var pageToHide = $scope.theView.parent().find('#flipPage' + pageNo);
+		var pageToShow = $scope.theView.parent().find('#flipPage' + (pageNo + 1));
 
-      if(pageToShow.length == 0){
-          isMoving = false;
-          return;
-      }
+		if(pageToShow.length == 0){
+		  isMoving = false;
+		  return;
+		}
 
-      if(flipSound && playSound){flipSound.play();}
+		if(flipSound && playSound){flipSound.play();}
 
-      if(pLeftPos <= bookPadding){
-          isMoving = false;
-          var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
+		if(pLeftPos <= bookPadding){
+		  isMoving = false;
+		  var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
 
-          pageToShow.css("left", bookPadding + 'px');
-          pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+		  pageToShow.css("left", bookPadding + 'px');
+		  pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
 
-          pageToHide.css("z-index", currentNoOfPages - (parseInt(pageToHide.css("z-index")) - 1));
-          pageToHide.css("left", bookPadding + 'px');
-          pageToHide.css("width", pageWidth+'px');
+		  pageToHide.css("z-index", currentNoOfPages - (parseInt(pageToHide.css("z-index")) - 1));
+		  pageToHide.css("left", bookPadding + 'px');
+		  pageToHide.css("width", pageWidth+'px');
 
-          $scope.setChildContainer(pageToShow);
-          currentCCId = 'flipPage' + (pageNo + 1);
-          $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
+		  $scope.setChildContainer(pageToShow);
+		  currentCCId = 'flipPage' + (pageNo + 1);
+		  $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
 
-          return;
-      }
+		  return;
+		}
 
-      var currLeft = pLeftPos - (flipLengthPerCall * 2);
-      var currWidth = pWidth + flipLengthPerCall;
-      var hideWidth = pageWidth - currWidth;
+		flipLengthPerCall = pageWidth / 40;
+		var currLeft = pLeftPos - (flipLengthPerCall * 2);
+		var currWidth = pWidth + flipLengthPerCall;
+		var hideWidth = pageWidth - currWidth;
 
-      pageToShow.css("left", currLeft+'px');
-      pageToShow.css("width", currWidth+'px');
+		pageToShow.css("left", currLeft+'px');
+		pageToShow.css("width", currWidth+'px');
 
-      pageToHide.css("width", hideWidth+'px');
+		pageToHide.css("width", hideWidth+'px');
 
-      $timeout(function(){flipToLeft(pageNo, currLeft, currWidth);}, flipSpeed, false);
+		$timeout(function(){flipToLeft(pageNo, currLeft, currWidth);}, flipSpeed, false);
     };
     //===================================================================================
 
@@ -1330,6 +1331,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
             return;
         }
 
+		flipLengthPerCall = pageWidth / 40;
         var currLeft = pLeftPos + (flipLengthPerCall);
         var currWidth = pWidth + (flipLengthPerCall);
         var hideWidth = pageWidth - currWidth;
