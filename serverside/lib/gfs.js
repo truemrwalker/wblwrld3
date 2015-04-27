@@ -26,7 +26,7 @@
 
 var util = require('./util');
 
-var mime = require('mime-types');
+var mime = require('mime');
 var path = require('path');
 
 var GridFS = require('gridfs-stream');

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
 
+	  "mime": "latest",
       "express": "latest",
 	  "response-time": "latest",
 	  "express-session": "latest",
@@ -19,7 +20,6 @@
       "mongoose": "latest",
       "mongoose-user": "latest",
 	  "gridfs-stream": "latest",
-	  "mime-types": "latest",
 
       "connect-mongo": "latest",
 
