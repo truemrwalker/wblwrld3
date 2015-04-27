@@ -407,6 +407,15 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
             undefined
         ));
 
+		$scope.addSlot(new Slot('pageBkgImageStretchEnabled',
+			false,
+			'Page Background Image Stretch Enabled',
+			'Default behavior is that a background image is displayed with its real size and if smaller than the surface repeats itself. But if checked the imnage does not repeat but instead stretch to fit the surface exactly',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
 
         // --- WATCHES ---
 
@@ -494,7 +503,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
         }, true);
 
         // listen to page design slots
-        $scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage')];}, function(newVal, oldVal) {
+        $scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage'), $scope.gimme('pageBkgImageStretchEnabled')];}, function(newVal, oldVal) {
             if(!isInit && newVal[0] != undefined){
                 if($scope.gimme('tabDisplayStyle') == 1){
                     tnpPages.each(function(index) {
@@ -503,6 +512,14 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                         $(this).css("background-color", $scope.gimme('pageBkgColor'));
                         var pageBkgImage = $scope.gimme('pageBkgImage');
                         $(this).css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+						if($scope.gimme('pageBkgImageStretchEnabled')){
+							$(this).css("background-size", '100% 100%');
+							$(this).css("background-repeat", 'no-repeat');
+						}
+						else{
+							$(this).css("background-size", 'auto auto');
+							$(this).css("background-repeat", 'repeat');
+						}
                     });
                 }
             }
@@ -789,6 +806,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                         thePage.css("height", pageHeight + "px");
                         thePage.css("border", pageBorderWidth + "px solid " + pageBorderColor);
                         thePage.css("background-color", pageBkgColor);
+						if($scope.gimme('pageBkgImageStretchEnabled')){
+							thePage.css("background-size", '100% 100%');
+							thePage.css("background-repeat", 'no-repeat');
+						}
                         thePage.css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
                         theBook.append(thePage);
 
