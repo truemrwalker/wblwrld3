@@ -197,6 +197,7 @@ Resource = (function() {
     } else {
       this.url = nameOrUrl || '';
       validateStr('url', this.url);
+
       this.constructRoot(options);
     }
   }
@@ -226,7 +227,8 @@ Resource = (function() {
     this.opts = inheritExtend(this.parent.opts, options);
     this.opts.isSingle = 'isSingle' in options && options.isSingle;
     this.root = this.parent.root;
-    this.urlNoId = this.parent.url + ("" + (this.opts.url || this.name) + "/");
+    //this.urlNoId = this.parent.url + ("" + (this.opts.url || this.name) + "/");
+	  this.urlNoId = this.parent.url + ("" + (this.opts.url || this.name));
     this.url = this.urlNoId;
     this.expectedIds = this.parent.expectedIds;
     if (!this.opts.isSingle) {
@@ -307,6 +309,9 @@ Resource = (function() {
     if (canUrlNoId && providedIds === this.expectedIds - 1) {
       url = this.urlNoId;
     }
+
+	  console.log('url: '+url);
+
     if (url === null) {
       if (canUrlNoId) {
         msg = this.expectedIds - 1;
