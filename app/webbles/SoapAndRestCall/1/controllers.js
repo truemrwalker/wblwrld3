@@ -314,7 +314,6 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
     // If the Rest call failed, this method is invoked
     //===================================================================================
     var restCallFailed = function(e){
-		$log.log(e);
         $scope.waiting(false);
         $scope.showQIM("Call Made, Waiting for reply...", 1);
         alert("An ERROR occured! Please check your slot values and web service server status");
