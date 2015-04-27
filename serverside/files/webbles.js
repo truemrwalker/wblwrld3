@@ -33,7 +33,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	// Test with:
 	// https://localhost:7443/files/webbles/LearningCube/1/images/grasslight-big.jpg
 	//
-	app.get('/files/webbles/*', function (req, res) {
+	app.get('/files/*', function (req, res) {
 
 		var fullPath = req.params[0];
 

@@ -67,8 +67,26 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	}
 	function getFiles(targetPath, ownerId) {
 
-		return gfs.getFiles(targetPath, ownerId)
-			.fail(function() { return [] });
+		return gfs.getFiles(targetPath, ownerId).then(function(files) {
+
+			//quick test
+			//
+			//var haveSeen = {};
+			//var result = [];
+			//files.forEach(function(f) {
+            //
+			//	if (!haveSeen[f.metadata.filename]) {
+			//		haveSeen[f.metadata.filename] = true;
+			//		result.push(f.metadata.filename);
+			//	}
+			//});
+			//return result;
+			//
+
+			return util.transform_(files, function(f) {
+				return f.metadata.filename;
+			});
+		}).fail(function() { return [] });
 	}
 	function removeFiles(targetPath, ownerId) {
 		return gfs.deleteFiles(targetPath, ownerId);
@@ -91,7 +109,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 				var targetVer = obj.getInfoObject().ver;
 				var targetPath = path.join(targetPathPrefix, targetVer.toString());
 
-				return op(targetPath, req.params.file, obj._id, req.body);
+				return op(targetPath, req.params.file || req.params[0], obj._id, req.body);
 			});
 	}
 

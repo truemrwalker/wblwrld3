@@ -23,7 +23,6 @@
 // gfs.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
 var util = require('./util');
 
 var mime = require('mime');
@@ -31,65 +30,67 @@ var path = require('path');
 
 var GridFS = require('gridfs-stream');
 
+////////////////////////////////////////////////////////////////////////
+// Private convenience functions
+//
+function gettext(msg) { return msg; }
+
+// Generate a GFS filename
+function genFn(directory, filename) {
+	return path.join(directory, filename);
+}
+
+// Generate Path aliases
+function genAliases(directory) {
+
+	var result = [];
+	var currPath = '';
+
+	directory.split(path.sep).forEach(function(component) {
+
+		currPath = path.join(currPath, component);
+		result.push(currPath);
+	});
+	return result;
+}
+
+// Generate a mongodb query
+function genQuery(directory, filename, ownerId) {
+
+	var query = {};
+
+	if (filename)
+		query.filename = genFn(directory, filename);
+	else
+		query.aliases = directory;
+
+	// Querying including onwnerId doesn't work...but anyway we don't need it for now
+	//
+	//if (ownerId)
+	//	query.metadata = { _owner: ownerId };
+
+	return query;
+}
+
+////////////////////////////////////////////////////////////////////////
+// GFS class thing
+//
 module.exports.GFS = function (Q, mongoose) {
 
 	var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
 
-	// Generate a GFS filename
-	//
-	function genFn(directory, filename) {
-		return path.join(directory, filename);
-	}
-
-	function genAliases(directory) {
-
-		var result = [];
-		var currPath = '';
-		directory.split(path.sep).forEach(function(component) {
-			currPath = path.join(currPath, component);
-			result.push(currPath);
-		});
-		return result;
-	}
-
 	// Get a file
 	//
 	this.getFile = function(directory, filename, ownerId) {
-
-		var deferred = Q.defer();
-
-		gfs.findOne({
-			filename: genFn(directory, filename)//,
-			//metadata: { _owner: ownerId }
-		}, function(err, file) {
-
-			if (err)
-				deferred.reject(err);
-			else
-				deferred.resolve(file);
-		});
-		return deferred.promise;
+		return Q.ninvoke(gfs, "findOne", genQuery(directory, filename, ownerId));
 	};
 
 	// Get multiple files
 	//
 	this.getFiles = function(directory, ownerId) {
 
-		var deferred = Q.defer();
-
-		gfs.files.find({
-			aliases: directory,
-			metadata: { _owner: ownerId }
-		}).toArray(function(err, files) {
-
-			if (err)
-				deferred.reject(err);
-			else {
-				console.log("ALLFILES:", util.transform(files, function(f) {return f.filename;}));
-				deferred.resolve(files);
-			}
-		});
-		return deferred.promise;
+		var q = gfs.files.find(genQuery(directory, null, ownerId));
+		return Q.ninvoke(q, "toArray");
 	};
 
 	// Move files
@@ -155,16 +156,20 @@ module.exports.GFS = function (Q, mongoose) {
 	};
 
 	this.deleteFileEntry = function(fileEntry) {
+		return Q.ninvoke(gfs, "remove", fileEntry);
+	};
 
-		var deferred = Q.defer();
+	// Just for the occasional spring-cleaning & testing
+	this._wipeOutEverythingForEverAndEverAndEver = function() {
 
-		gfs.remove(fileEntry, function(err) {
-			if (err)
-				deferred.reject(err);
-			else
-				deferred.resolve();
+		var self = this;
+		return Q.ninvoke(gfs.files.find({}), "toArray").then(function(files) {
+			return Q.all(util.transform_(files, function(f) {
+				return self.deleteFileEntry(f).then(function() {
+					console.log("WIPED OUT FILE:", f.filename);
+				});
+			}));
 		});
-		return deferred.promise;
 	};
 
 	// Create a write stream
@@ -197,14 +202,16 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.createReadStream = function(directory, filename, ownerId) {
 
-		var self = this;
-		return self.getFile(directory, filename, ownerId).then(function(file) {
+		return Q.resolve(gfs.createReadStream(genQuery(directory, filename, ownerId)));
 
-			if (!file)
-				throw new Error("File does not exist");
-
-			return gfs.createReadStream(file);
-		});
+		//var self = this;
+		//return self.getFile(directory, filename, ownerId).then(function(file) {
+        //
+		//	if (!file)
+		//		throw new Error(gettext("File does not exist"));
+        //
+		//	return gfs.createReadStream(file);
+		//});
 	};
 
 	// Upload
@@ -250,8 +257,8 @@ module.exports.GFS = function (Q, mongoose) {
 			return Q.Promise(function(resolve, reject, notify) {
 
 				readStream.pipe(writeStream);
-				writeStream.once('error', reject);
-				writeStream.once('close', resolve);
+				readStream.once('error', reject);
+				readStream.once('close', resolve);
 			});
 		});
 	};

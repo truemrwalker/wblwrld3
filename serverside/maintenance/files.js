@@ -33,8 +33,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	var Webble = mongoose.model('Webble');
 	var DevWebble = mongoose.model('DevWebble');
 
-	var webbleDir = path.join(config.APP_ROOT_DIR, 'webbles');
-	var devWebbleDir = path.join(config.APP_ROOT_DIR, 'devwebbles');
+	var rootWebbleDir = config.APP_ROOT_DIR;
+	var webbleDir = path.join(rootWebbleDir, 'webbles');
+	var devWebbleDir = path.join(rootWebbleDir, 'devwebbles');
 
 	var gfs = new libGfs.GFS(Q, mongoose);
 
@@ -63,62 +64,61 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		});
 	}
 
-	function getWebbleId(id, ver) {
+	function getWebbleId(cat, id, ver) {
 		return null;
 	}
-	function getDevWebbleId(id, ver) {
+	function getDevWebbleId(cat, id, ver) {
 		return mongoose.Types.ObjectId(id);
 	}
 
 	function uploadWebbleFile(baseDir, filename, ownerIdGetter) {
 
-		var directory = path.relative(webbleDir, baseDir);
+		var directory = path.relative(rootWebbleDir, baseDir);
 
 		var pathComponents = directory.split(path.sep);
-		var id = pathComponents.length > 0 ? pathComponents[0] : 'unknown';
-		var ver = pathComponents.length > 1 ? pathComponents[1] : "0";
-		var ownerId = ownerIdGetter(id, ver);
-
+		var category = pathComponents.length > 0 ? pathComponents[0] : 'webbles';
+		var id = pathComponents.length > 1 ? pathComponents[1] : 'unknown';
+		var ver = pathComponents.length > 2 ? pathComponents[2] : "0";
+		var ownerId = ownerIdGetter(category, id, ver);
 		//console.log("Id:", id, "Ver:", ver, "Dir:", directory, "Filename:", filename);
 
 		var localFilePath = path.join(baseDir, filename);
+		//console.log("Scheduling upload of file:", localFilePath);
 		return gfs.upload(fs.createReadStream(localFilePath), directory, filename, ownerId);
 	}
 
-	////////////////////////////////////////////////////////////////////
-	// Sync webble files
-	//
-	var promises = [];
+	//******************************************************************
 
-	walkSync(webbleDir, function(baseDir, dirs, files) {
+	function uploadWebbleFiles(webbleBaseDir, ownerIdGetter, resultPromises) {
 
-		files.forEach(function(f) {
-			promises.push(uploadWebbleFile(baseDir, f, getWebbleId));
-		});
-	});
+		try {
+			if (!fs.statSync(webbleBaseDir).isDirectory())
+				return Q.reject(new Error("Is not a directory"));
+		}
+		catch(e) {
+			return Q.reject(new Error("Directory does not exist"));
+		}
 
-	// Finished with webbles, now hanlde devWebbles
-	//
-	var thereAreSomeDevWebblesInTheLocalFS = false;
-	try {
-		thereAreSomeDevWebblesInTheLocalFS = fs.statSync(devWebbleDir).isDirectory();
-	}
-	catch(e) {}
-
-	if (thereAreSomeDevWebblesInTheLocalFS) {
-
-		walkSync(devWebbleDir, function(baseDir, dirs, files) {
+		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
-				promises.push(uploadWebbleFile(baseDir, f, getDevWebbleId));
+				resultPromises.push(uploadWebbleFile(baseDir, f, ownerIdGetter));
 			});
 		});
 	}
 
 	////////////////////////////////////////////////////////////////////
-	// Push the webbles in the database
+	// Sync webble files
 	//
-	// Wait to finish and report the templates that were updated
+
+	//return gfs._wipeOutEverythingForEverAndEverAndEver();
+
+	var promises = [];
+	uploadWebbleFiles(webbleDir, getWebbleId, promises);
+	uploadWebbleFiles(devWebbleDir, getDevWebbleId, promises);
+
+	////////////////////////////////////////////////////////////////////
+	// Wait to finish, print any errors
 	//
 	return Q.allSettled(promises).then(function (results) {
 
@@ -136,4 +136,5 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		});
 	});
 
+	////////////////////////////////////////////////////////////////////
 };
