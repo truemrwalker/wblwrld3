@@ -24,6 +24,7 @@
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
 var path = require('path');
+var mkdirp = require('mkdirp');
 var fs = require('fs');
 
 var libGfs = require('../lib/gfs');
@@ -71,7 +72,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		return mongoose.Types.ObjectId(id);
 	}
 
-	function uploadWebbleFile(baseDir, filename, ownerIdGetter) {
+	function syncWebbleFile(baseDir, filename, ownerIdGetter, fileActionLogger) {
 
 		var directory = path.relative(rootWebbleDir, baseDir);
 
@@ -83,13 +84,47 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		//console.log("Id:", id, "Ver:", ver, "Dir:", directory, "Filename:", filename);
 
 		var localFilePath = path.join(baseDir, filename);
-		//console.log("Scheduling upload of file:", localFilePath);
-		return gfs.upload(fs.createReadStream(localFilePath), directory, filename, ownerId);
+
+		return Q.all([ Q.nfcall(fs.stat, localFilePath).fail(function(err) { return null; }), gfs.getFile(directory, filename, ownerId) ])
+			.spread(function(localStat, remoteFile) {
+
+				var localTime = (localStat && localStat.mtime) || new Date(0);
+				var remoteTime = (remoteFile && remoteFile.metadata.mtime) || new Date(0);
+
+				//console.log("LOCAL: ", localStat.mtime, "REMOTE: ", remoteFile.metadata.mtime);
+
+				if (remoteTime.getTime() < localTime.getTime()) {
+
+					return gfs.upload(fs.createReadStream(localFilePath), directory, filename, ownerId, localTime)
+						.then(function() { fileActionLogger(localFilePath, remoteFile, true, true); });
+				}
+				else if (localTime.getTime() < remoteTime.getTime()) {
+
+					return Q.nfcall(fs.stat, baseDir)
+						.then(function(stat) { return stat.isDirectory(); }, function(err) { return false; })
+						.then(function(result) {
+
+							if (!result)
+								return Q.nfcall(mkdirp, baseDir);
+						})
+						.then(function() {
+							return gfs.download(fs.createWriteStream(localFilePath), directory, filename, ownerId);
+						})
+						.then(function() {
+
+							//console.log("Trying to change modification time of file:", localFilePath, "to:", remoteTime);
+							return Q.nfcall(fs.utimes, localFilePath, remoteTime, remoteTime);
+						})
+						.then(function() { fileActionLogger(localFilePath, remoteFile, true, false); });
+				}
+				else
+					fileActionLogger(localFilePath, remoteFile, false);
+			});
 	}
 
 	//******************************************************************
 
-	function uploadWebbleFiles(webbleBaseDir, ownerIdGetter, resultPromises) {
+	function uploadWebbleFiles(webbleBaseDir, ownerIdGetter, resultPromises, fileActionLogger) {
 
 		try {
 			if (!fs.statSync(webbleBaseDir).isDirectory())
@@ -102,9 +137,46 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
-				resultPromises.push(uploadWebbleFile(baseDir, f, ownerIdGetter));
+				resultPromises.push(syncWebbleFile(baseDir, f, ownerIdGetter, fileActionLogger));
 			});
 		});
+	}
+
+	//******************************************************************
+
+	function downloadWebbleFiles(excludeList, fileActionLogger) {
+
+		return gfs.listAllFiles(excludeList)
+			.then(function(files) {
+
+				var promises = [];
+				files.forEach(function(file) {
+
+					console.log("Non existant file:", file.filename);
+				});
+			});
+	}
+
+	//******************************************************************
+
+	var allConsideredRemoteFiles = [];
+	function trackSyncedFiles(localPath, remoteFileEntry, wasSynced, wasUploaded) {
+
+		if (wasSynced) {
+
+			if (wasUploaded) {
+
+				console.log("Uploaded local file:", localPath);
+				allConsideredRemoteFiles.push(path.relative(rootWebbleDir, localPath));
+			}
+			else {
+
+				console.log("Downloaded to local file:", localPath);
+				allConsideredRemoteFiles.push(remoteFileEntry.filename);
+			}
+		}
+		else
+			allConsideredRemoteFiles.push(remoteFileEntry.filename);
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -114,27 +186,16 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
 	var promises = [];
-	uploadWebbleFiles(webbleDir, getWebbleId, promises);
-	uploadWebbleFiles(devWebbleDir, getDevWebbleId, promises);
+	uploadWebbleFiles(webbleDir, getWebbleId, promises, trackSyncedFiles);
+	uploadWebbleFiles(devWebbleDir, getDevWebbleId, promises, trackSyncedFiles);
 
-	////////////////////////////////////////////////////////////////////
-	// Wait to finish, print any errors
-	//
-	return Q.allSettled(promises).then(function (results) {
-
-		results.forEach(function (result) {
-
-			if (result.state === 'fulfilled') {
-
-				// I'm not sure why the value may be an array (investigate, but low priority)
-				var r = result.value instanceof Array ? result.value[0] : result.value;
-				//console.log("OK: ", r);
-			}
-			else {
-				console.error("Error: ", result.reason);
-			}
+	return Q.all(promises)
+		.then(function() {
+			return downloadWebbleFiles(allConsideredRemoteFiles);
+		})
+		.fail(function(err) {
+			console.error("Error: ", err);
 		});
-	});
 
 	////////////////////////////////////////////////////////////////////
 };

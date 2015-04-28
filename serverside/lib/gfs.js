@@ -87,6 +87,10 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Get multiple files
 	//
+	this.listAllFiles = function(excludeFilesList, ownerId) {
+		return Q.ninvoke(gfs.files.find({ filename: { $nin: excludeFilesList } }), "toArray");
+	};
+
 	this.getFiles = function(directory, ownerId) {
 
 		var q = gfs.files.find(genQuery(directory, null, ownerId));
@@ -97,11 +101,13 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.moveFileEntry = function(fileEntry, toDirectory) {
 
-		fileEntry.filename = genFn(toDirectory, fileEntry.metadata.filename);
-		fileEntry.aliases = genAliases(toDirectory);
-		fileEntry.metadata.directory = toDirectory;
-
-		return Q.ninvoke(fileEntry, "save");
+		// For some reason this works... but can't we wait for it (?)
+		var q = gfs.files.update({ _id: fileEntry._id }, { '$set': {
+			filename: genFn(toDirectory, fileEntry.metadata.filename),
+			aliases: genAliases(toDirectory),
+			"metadata.directory": toDirectory
+		}});
+		return Q.resolve(q);
 	};
 
 	this.moveFiles = function(fromDirectory, toDirectory, ownerId) {
@@ -174,27 +180,34 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Create a write stream
 	//
-	this.createWriteStream = function(directory, filename, ownerId) {
+	this.createWriteStream = function(directory, filename, ownerId, overrideModifiedDate) {
 
 		var self = this;
 		return self.getFile(directory, filename, ownerId).then(function(file) {
 
-			if (file)
-				return self.deleteFileEntry(file);
+			var mtime = overrideModifiedDate || new Date();
 
-		}).then(function(){
+			if (file) {
 
-			return gfs.createWriteStream({
-				filename: genFn(directory, filename),
-				aliases: genAliases(directory),
-				mode: 'w',
-				content_type: mime.lookup(filename) || 'application/octet-stream',
-				metadata: {
-					directory: directory,
-					filename: filename,
-					_owner: ownerId
-				}
-			});
+				// For some reason this works... but can't we wait for it (?)
+				gfs.files.update({ _id: file._id }, { '$set': { "metadata.mtime": mtime }});
+				return gfs.createWriteStream({_id: file._id, mode: 'w'});
+			}
+			else {
+
+				return gfs.createWriteStream({
+					filename: genFn(directory, filename),
+					aliases: genAliases(directory),
+					mode: 'w',
+					content_type: mime.lookup(filename) || 'application/octet-stream',
+					metadata: {
+						directory: directory,
+						filename: filename,
+						mtime: mtime,
+						_owner: ownerId
+					}
+				});
+			}
 		});
 	};
 
@@ -216,10 +229,10 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Upload
 	//
-	this.upload = function(readStream, directory, filename, ownerId) {
+	this.upload = function(readStream, directory, filename, ownerId, overrideModifiedDate) {
 
 		var self = this;
-		return self.createWriteStream(directory, filename, ownerId).then(function(writeStream) {
+		return self.createWriteStream(directory, filename, ownerId, overrideModifiedDate).then(function(writeStream) {
 
 			return Q.Promise(function(resolve, reject, notify) {
 
@@ -240,7 +253,7 @@ module.exports.GFS = function (Q, mongoose) {
 				writeStream.once('error', reject);
 				writeStream.once('close', function() { resolve(data); });
 
-				writeStream.setEncoding(encoding);
+				//writeStream.setEncoding(encoding); // [TypeError: Object #<GridWriteStream> has no method 'setEncoding']
 				writeStream.write(data);
 				writeStream.end();
 			});
