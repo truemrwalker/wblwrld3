@@ -531,13 +531,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     else if(($.isArray(tmp['value']) && tmp['value'].length == 2 && !isNaN(tmp['value'][0]) && !isNaN(tmp['value'][1]))){
                         tmp['inputType'] = Enum.aopInputTypes.Point
                     }
-                    else if((!$.isArray(theValue) && tmp['value'][0] != '{') && (tmp['value'].toString().search('data:image') != -1 || tmp['value'].toString().toLowerCase().search('.png') != -1 || tmp['value'].toString().toLowerCase().search('.jpg') != -1 || tmp['value'].toString().toLowerCase().search('.gif') != -1)){
-                      tmp['inputType'] = Enum.aopInputTypes.ImagePick;
+                    else if((!$.isArray(theValue) && tmp['value'][0] != '{') && (tmp['value'].toString().toLowerCase().search('data:image') != -1 || tmp['value'].toString().toLowerCase().search('.png') != -1 || tmp['value'].toString().toLowerCase().search('.jpg') != -1 || tmp['value'].toString().toLowerCase().search('.gif') != -1) && (tmp['value'].toString().toLowerCase().search('data:audio') == -1) && (tmp['value'].toString().toLowerCase().search('data:video') == -1)){
+                      	tmp['inputType'] = Enum.aopInputTypes.ImagePick;
                     }
-                    else if((!$.isArray(theValue) && tmp['value'][0] != '{') && (tmp['value'].toString().toLowerCase().search('.mp3') != -1 || tmp['value'].toString().toLowerCase().search('.ogg') != -1 || tmp['value'].toString().toLowerCase().search('.wav') != -1)){
+                    else if((!$.isArray(theValue) && tmp['value'][0] != '{') && (tmp['value'].toString().toLowerCase().search('data:audio') != -1 || tmp['value'].toString().toLowerCase().search('.mp3') != -1 || tmp['value'].toString().toLowerCase().search('.ogg') != -1 || tmp['value'].toString().toLowerCase().search('.wav') != -1) && (tmp['value'].toString().toLowerCase().search('data:image') == -1) && (tmp['value'].toString().toLowerCase().search('data:video') == -1)){
                         tmp['inputType'] = Enum.aopInputTypes.AudioPick;
                     }
-                    else if((!$.isArray(theValue) && tmp['value'][0] != '{') && (tmp['value'].toString().toLowerCase().search('.mp4') != -1 || tmp['value'].toString().toLowerCase().search('.webm') != -1)){
+                    else if((!$.isArray(theValue) && tmp['value'][0] != '{') && (tmp['value'].toString().toLowerCase().search('data:video') != -1 || tmp['value'].toString().toLowerCase().search('.mp4') != -1 || tmp['value'].toString().toLowerCase().search('.webm') != -1) && (tmp['value'].toString().toLowerCase().search('data:audio') == -1) && (tmp['value'].toString().toLowerCase().search('data:image') == -1)){
                         tmp['inputType'] = Enum.aopInputTypes.VideoPick;
                     }
                 }
@@ -547,6 +547,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             }
         }, propsContent);
         content.push(propsContent);
+
         return content;
     };
     //========================================================================================

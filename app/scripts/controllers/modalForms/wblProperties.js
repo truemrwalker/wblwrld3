@@ -225,6 +225,74 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
     //========================================================================================
 
 
+	//========================================================================================
+	// Local Audio File Changed
+	// When an audio file is selected then use that value to load the sound file, if it is
+	// not an audio file, rescue the situation by setting it blank.
+	//========================================================================================
+	$scope.localAudioFileChanged = function(input){
+		if (input.files && input.files[0]) {
+			var theItemName = $(input).attr('id').replace('inputAudio_', ''), theItem;
+			for(var i = 0; i < $scope.props.length; i++){
+				if(theItemName == $scope.props[i].key){
+					theItem = $scope.props[i];
+					break;
+				}
+			}
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				if(e.target.result.toString().search('data:audio') != -1){
+					theItem.value = e.target.result;
+					theItem.notification = '';
+				}
+				else{
+					theItem.notification = gettext("The file selected is not an audio file.");
+					theItem.value = '';
+				}
+				if(!$scope.$$phase){ $scope.$apply(); }
+			};
+
+			reader.readAsDataURL(input.files[0]);
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Local Video File Changed
+	// When an audio file is selected then use that value to load the sound file, if it is
+	// not an audio file, rescue the situation by setting it blank.
+	//========================================================================================
+	$scope.localVideoFileChanged = function(input){
+		if (input.files && input.files[0]) {
+			var theItemName = $(input).attr('id').replace('inputVideo_', ''), theItem;
+			for(var i = 0; i < $scope.props.length; i++){
+				if(theItemName == $scope.props[i].key){
+					theItem = $scope.props[i];
+					break;
+				}
+			}
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				if(e.target.result.toString().search('data:video') != -1){
+					theItem.value = e.target.result;
+					theItem.notification = '';
+				}
+				else{
+					theItem.notification = gettext("The file selected is not an video file.");
+					theItem.value = '';
+				}
+				if(!$scope.$$phase){ $scope.$apply(); }
+			};
+
+			reader.readAsDataURL(input.files[0]);
+		}
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Delete Slot Request
     // deletes the custom slot which index is provided in the call.
