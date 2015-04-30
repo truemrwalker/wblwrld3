@@ -1,7 +1,7 @@
 {
     "name": "Basic Media Player",
     "description": "This is a simple media player Webble that can play sound and video files of the most common type",
-    "keywords": "media player music film video mp3 mp4 avi",
+    "keywords": "media player music film video mp3 mp4 avi audio sound wav",
     "author": "truemrwalker",
     "image": "images/wbls/mp.png"
 }
