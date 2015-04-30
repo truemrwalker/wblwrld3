@@ -161,9 +161,11 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			});
 	}
 
-	//******************************************************************
-
+	////////////////////////////////////////////////////////////////////
+	// Sync webble files
+	//
 	var allConsideredRemoteFiles = [];
+
 	function trackSyncedFiles(localPath, remoteFileEntry, wasSynced, wasUploaded) {
 
 		if (wasSynced) {
@@ -183,9 +185,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			allConsideredRemoteFiles.push(remoteFileEntry.filename);
 	}
 
-	////////////////////////////////////////////////////////////////////
-	// Sync webble files
-	//
+	//******************************************************************
 
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
