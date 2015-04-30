@@ -291,4 +291,16 @@ module.exports.GFS = function (Q, mongoose) {
 			});
 		});
 	};
+
+	this.downloadFromFileEntry = function(writeStream, fileEntry) {
+
+		return Q.Promise(function(resolve, reject, notify) {
+
+			var readStream = gfs.createReadStream(fileEntry);
+
+			readStream.pipe(writeStream);
+			readStream.once('error', reject);
+			readStream.once('close', resolve);
+		});
+	};
 };

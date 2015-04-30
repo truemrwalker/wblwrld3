@@ -28,6 +28,7 @@ var mkdirp = require('mkdirp');
 var fs = require('fs');
 
 var libGfs = require('../lib/gfs');
+var util = require('../lib/util');
 
 module.exports = function(Q, app, config, mongoose, gettext) {
 
@@ -124,7 +125,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	//******************************************************************
 
-	function uploadWebbleFiles(webbleBaseDir, ownerIdGetter, resultPromises, fileActionLogger) {
+	function syncWebbleFiles(webbleBaseDir, ownerIdGetter, fileActionLogger) {
 
 		try {
 			if (!fs.statSync(webbleBaseDir).isDirectory())
@@ -134,26 +135,29 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			return Q.reject(new Error("Directory does not exist"));
 		}
 
+		var promises = [];
 		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
-				resultPromises.push(syncWebbleFile(baseDir, f, ownerIdGetter, fileActionLogger));
+				promises.push(syncWebbleFile(baseDir, f, ownerIdGetter, fileActionLogger));
 			});
 		});
+		return Q.all(promises);
 	}
 
 	//******************************************************************
 
-	function downloadWebbleFiles(excludeList, fileActionLogger) {
+	function downloadRemainingWebbleFiles(excludeList, fileActionLogger) {
 
 		return gfs.listAllFiles(excludeList)
 			.then(function(files) {
 
-				var promises = [];
-				files.forEach(function(file) {
+				return Q.all(util.transform_(files, function(file) {
 
-					console.log("Non existant file:", file.filename);
-				});
+					var localFilePath = path.join(rootWebbleDir, file.filename);
+					return gfs.downloadFromFileEntry(fs.createWriteStream(localFilePath), file)
+						.then(function() { fileActionLogger(localFilePath, file, true, false); });
+				}));
 			});
 	}
 
@@ -185,13 +189,12 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
-	var promises = [];
-	uploadWebbleFiles(webbleDir, getWebbleId, promises, trackSyncedFiles);
-	uploadWebbleFiles(devWebbleDir, getDevWebbleId, promises, trackSyncedFiles);
-
-	return Q.all(promises)
+	return syncWebbleFiles(webbleDir, getWebbleId, trackSyncedFiles)
 		.then(function() {
-			return downloadWebbleFiles(allConsideredRemoteFiles);
+			return syncWebbleFiles(devWebbleDir, getDevWebbleId, trackSyncedFiles);
+		})
+		.then(function() {
+			return downloadRemainingWebbleFiles(allConsideredRemoteFiles, trackSyncedFiles);
 		})
 		.fail(function(err) {
 			console.error("Error: ", err);
