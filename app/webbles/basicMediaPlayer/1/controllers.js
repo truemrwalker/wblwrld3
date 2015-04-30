@@ -96,7 +96,7 @@ function mediaPlayerWebbleCtrl($scope, $log, Slot, Enum) {
 			'Media Link',
 			'The source link for the media file to be played',
 			$scope.theWblMetadata['templateid'],
-			undefined,
+			{inputType: Enum.aopInputTypes.VideoPick},
 			undefined
 		));
 
