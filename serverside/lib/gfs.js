@@ -243,6 +243,20 @@ module.exports.GFS = function (Q, mongoose) {
 		});
 	};
 
+	this.uploadToFileEntry = function(readStream, fileEntry, overrideModifiedDate) {
+
+		return Q.Promise(function(resolve, reject, notify) {
+
+			// For some reason this works... but can't we wait for it (?)
+			gfs.files.update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": overrideModifiedDate || new Date() }});
+			var writeStream = gfs.createWriteStream({_id: fileEntry._id, mode: 'w'});
+
+			readStream.pipe(writeStream);
+			writeStream.once('error', reject);
+			writeStream.once('close', resolve);
+		});
+	};
+
 	this.uploadData = function(data, encoding, directory, filename, ownerId) {
 
 		var self = this;

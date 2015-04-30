@@ -178,7 +178,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 							info.ver = targetVer;
 
 							obj.mergeWithInfoObject(info);
-							return Q.ninvoke(obj, "save");
+							return Q.ninvoke(obj, "save").then(function() { return obj; });
 						});
 				});
 		},
@@ -226,7 +226,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 								info.modified = Date.now();
 
 								obj.mergeWithInfoObject(info);
-								return Q.ninvoke(obj, "save");
+								return Q.ninvoke(obj, "save").then(function() { return obj; });
 							}
 						});
 				});

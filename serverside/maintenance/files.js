@@ -66,66 +66,116 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		});
 	}
 
-	function getWebbleId(cat, id, ver) {
-		return null;
+	function syncWebbleFileEntry(localFilePath, localStat, remoteFile, fileActionLogger) {
+
+		var localTime = (localStat && localStat.mtime) || new Date(0);
+		var remoteTime = (remoteFile && remoteFile.metadata.mtime) || new Date(0);
+
+		if (remoteTime.getTime() < localTime.getTime()) {
+
+			return gfs.uploadToFileEntry(fs.createReadStream(localFilePath), remoteFile, localTime)
+				.then(function() {
+					return fileActionLogger(localFilePath, remoteFile, true, true);
+				});
+		}
+		else if (localTime.getTime() < remoteTime.getTime()) {
+
+			var baseDir = path.dirname(localFilePath);
+
+			return Q.nfcall(fs.stat, baseDir)
+				.then(function(stat) { return stat.isDirectory(); }, function(err) { return false; })
+				.then(function(result) {
+
+					if (!result)
+						return Q.nfcall(mkdirp, baseDir);
+				})
+				.then(function() {
+					return gfs.downloadFromFileEntry(fs.createWriteStream(localFilePath), remoteFile);
+				})
+				.then(function() {
+					return Q.nfcall(fs.utimes, localFilePath, remoteTime, remoteTime);
+				})
+				.then(function() {
+					return fileActionLogger(localFilePath, remoteFile, true, false);
+				});
+		}
+		else
+			return Q.resolve(fileActionLogger(localFilePath, remoteFile, false));
 	}
-	function getDevWebbleId(cat, id, ver) {
-		return mongoose.Types.ObjectId(id);
-	}
 
-	function syncWebbleFile(baseDir, filename, ownerIdGetter, fileActionLogger) {
+	//******************************************************************
 
-		var directory = path.relative(rootWebbleDir, baseDir);
+	var getWebbleIdCache = {};
 
-		var pathComponents = directory.split(path.sep);
+	function getWebbleId(relativeDirectory) {
+
+		var currWebbleId = getWebbleIdCache[relativeDirectory];
+		if (currWebbleId)
+			return Q.resolve(currWebbleId);
+
+		var pathComponents = relativeDirectory.split(path.sep);
 		var category = pathComponents.length > 0 ? pathComponents[0] : 'webbles';
 		var id = pathComponents.length > 1 ? pathComponents[1] : 'unknown';
 		var ver = pathComponents.length > 2 ? pathComponents[2] : "0";
-		var ownerId = ownerIdGetter(category, id, ver);
-		//console.log("Id:", id, "Ver:", ver, "Dir:", directory, "Filename:", filename);
 
-		var localFilePath = path.join(baseDir, filename);
+		var query = null;
+		if (category == 'devwebbles')
+			query = DevWebble.findById(mongoose.Types.ObjectId(id));
+		else if (category == 'webbles')
+			query = Webble.findOne({ "webble.defid": id });
 
-		return Q.all([ Q.nfcall(fs.stat, localFilePath).fail(function(err) { return null; }), gfs.getFile(directory, filename, ownerId) ])
-			.spread(function(localStat, remoteFile) {
+		return !query ? Q.reject(new Error("Cannot recognize webble category")) :
+			Q(query.exec()).then(function(webble) {
 
-				var localTime = (localStat && localStat.mtime) || new Date(0);
-				var remoteTime = (remoteFile && remoteFile.metadata.mtime) || new Date(0);
-
-				//console.log("LOCAL: ", localStat.mtime, "REMOTE: ", remoteFile.metadata.mtime);
-
-				if (remoteTime.getTime() < localTime.getTime()) {
-
-					return gfs.upload(fs.createReadStream(localFilePath), directory, filename, ownerId, localTime)
-						.then(function() { fileActionLogger(localFilePath, remoteFile, true, true); });
-				}
-				else if (localTime.getTime() < remoteTime.getTime()) {
-
-					return Q.nfcall(fs.stat, baseDir)
-						.then(function(stat) { return stat.isDirectory(); }, function(err) { return false; })
-						.then(function(result) {
-
-							if (!result)
-								return Q.nfcall(mkdirp, baseDir);
-						})
-						.then(function() {
-							return gfs.download(fs.createWriteStream(localFilePath), directory, filename, ownerId);
-						})
-						.then(function() {
-
-							//console.log("Trying to change modification time of file:", localFilePath, "to:", remoteTime);
-							return Q.nfcall(fs.utimes, localFilePath, remoteTime, remoteTime);
-						})
-						.then(function() { fileActionLogger(localFilePath, remoteFile, true, false); });
-				}
-				else
-					fileActionLogger(localFilePath, remoteFile, false);
+				var currWebbleId = webble && webble._id;
+				getWebbleIdCache[relativeDirectory] = currWebbleId;
+				return currWebbleId;
 			});
 	}
 
 	//******************************************************************
 
-	function syncWebbleFiles(webbleBaseDir, ownerIdGetter, fileActionLogger) {
+	function syncLocalWebbleFile(baseDir, filename, fileActionLogger) {
+
+		var directory = path.relative(rootWebbleDir, baseDir);
+
+		return getWebbleId(directory)
+			.then(function(ownerId) {
+
+				var localFilePath = path.join(baseDir, filename);
+
+				if (!ownerId) // Sync only if the webble actually exists
+					return fileActionLogger(localFilePath, null, false);
+
+				return Q.all([ Q.nfcall(fs.stat, localFilePath).fail(function(err) { return null; }), gfs.getFile(directory, filename, ownerId) ])
+					.spread(function(localStat, remoteFile) {
+
+						return remoteFile ? syncWebbleFileEntry(localFilePath, localStat, remoteFile, fileActionLogger) :
+							gfs.upload(fs.createReadStream(localFilePath), directory, filename, ownerId, localStat && localStat.mtime)
+								.then(function() {
+									return fileActionLogger(localFilePath, remoteFile, true, true);
+								});
+					});
+			});
+	}
+
+	function syncRemoteWebbleFile(remoteFileEntry, fileActionLogger) {
+
+		return getWebbleId(remoteFileEntry.metadata.directory)
+			.then(function(ownerId) {
+
+				var localFilePath = path.join(rootWebbleDir, remoteFileEntry.filename);
+
+				if (!ownerId) // Sync only if the webble actually exists
+					return fileActionLogger(localFilePath, remoteFileEntry, false);
+
+				return syncWebbleFileEntry(localFilePath, null, remoteFileEntry, fileActionLogger);
+			});
+	}
+
+	//******************************************************************
+
+	function syncLocalWebbleFiles(webbleBaseDir, fileActionLogger) {
 
 		try {
 			if (!fs.statSync(webbleBaseDir).isDirectory())
@@ -139,7 +189,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
-				promises.push(syncWebbleFile(baseDir, f, ownerIdGetter, fileActionLogger));
+				promises.push(syncLocalWebbleFile(baseDir, f, fileActionLogger));
 			});
 		});
 		return Q.all(promises);
@@ -152,11 +202,8 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		return gfs.listAllFiles(excludeList)
 			.then(function(files) {
 
-				return Q.all(util.transform_(files, function(file) {
-
-					var localFilePath = path.join(rootWebbleDir, file.filename);
-					return gfs.downloadFromFileEntry(fs.createWriteStream(localFilePath), file)
-						.then(function() { fileActionLogger(localFilePath, file, true, false); });
+				return Q.all(util.transform_(files, function(f) {
+					return syncRemoteWebbleFile(f, fileActionLogger);
 				}));
 			});
 	}
@@ -181,7 +228,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 				allConsideredRemoteFiles.push(remoteFileEntry.filename);
 			}
 		}
-		else
+		else if (remoteFileEntry)
 			allConsideredRemoteFiles.push(remoteFileEntry.filename);
 	}
 
@@ -189,9 +236,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
-	return syncWebbleFiles(webbleDir, getWebbleId, trackSyncedFiles)
+	return syncLocalWebbleFiles(webbleDir, trackSyncedFiles)
 		.then(function() {
-			return syncWebbleFiles(devWebbleDir, getDevWebbleId, trackSyncedFiles);
+			return syncLocalWebbleFiles(devWebbleDir, trackSyncedFiles);
 		})
 		.then(function() {
 			return downloadRemainingWebbleFiles(allConsideredRemoteFiles, trackSyncedFiles);
