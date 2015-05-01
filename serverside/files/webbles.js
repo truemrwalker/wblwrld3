@@ -37,24 +37,35 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		var fullPath = req.params[0];
 
-		var directory = path.dirname(fullPath);
-		var filename = path.basename(fullPath);
+		//var directory = path.dirname(fullPath);
+		//var filename = path.basename(fullPath);
 
 		// YO, only for win
 		//
 		if (path.sep != '/')
-			directory = directory.replace(/\//g, path.sep);
+			fullPath = fullPath.replace(/\//g, path.sep);
 		//
 
-		console.log("dir:", directory, "file:", filename);
+		gfs.getFileWithFullPath(fullPath)
+			.then(function(fileEntry) {
 
-		gfs.download(res, directory, filename).then(function() {
 
-			console.log("OK SENT:", fullPath);
-		}).fail(function(err) {
+				if (!fileEntry)
+					res.status(404).end();
+				else {
 
-			console.log(err);
-			res.status(404).end();
-		});
+					res.set('Content-Type', fileEntry.contentType);
+					console.log(fileEntry.contentType);
+					gfs.downloadFromFileEntry(res, fileEntry).then(function() {
+						console.log("OK SENT:", fullPath);
+					});
+				}
+			})
+			.fail(function(err) {
+
+				console.log(err);
+				res.status(404).end();
+			})
+			.done();
 	});
 };

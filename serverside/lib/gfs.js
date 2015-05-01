@@ -81,6 +81,10 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Get a file
 	//
+	this.getFileWithFullPath = function(fullPath, ownerId) {
+		return Q.ninvoke(gfs, "findOne", { filename: fullPath });
+	};
+
 	this.getFile = function(directory, filename, ownerId) {
 		return Q.ninvoke(gfs, "findOne", genQuery(directory, filename, ownerId));
 	};
