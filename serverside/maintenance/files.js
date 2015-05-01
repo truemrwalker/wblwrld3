@@ -68,17 +68,17 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	function syncWebbleFileEntry(localFilePath, localStat, remoteFile, fileActionLogger) {
 
-		var localTime = (localStat && localStat.mtime) || new Date(0);
-		var remoteTime = (remoteFile && remoteFile.metadata.mtime) || new Date(0);
+		var localTime = util.toUnixTimestamp((localStat && localStat.mtime) || new Date(0));
+		var remoteTime = util.toUnixTimestamp((remoteFile && remoteFile.metadata.mtime) || new Date(0));
 
-		if (remoteTime.getTime() < localTime.getTime()) {
+		if (remoteTime < localTime) {
 
 			return gfs.uploadToFileEntry(fs.createReadStream(localFilePath), remoteFile, localTime)
 				.then(function() {
 					return fileActionLogger(localFilePath, remoteFile, true, true);
 				});
 		}
-		else if (localTime.getTime() < remoteTime.getTime()) {
+		else if (localTime < remoteTime) {
 
 			var baseDir = path.dirname(localFilePath);
 

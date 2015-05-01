@@ -126,7 +126,7 @@ module.exports.GFS = function (Q, mongoose) {
 	this.copyFileEntry = function(fileEntry, toDirectory, ownerId) {
 
 		var readStream = gfs.createReadStream(fileEntry);
-		return this.upload(readStream, toDirectory, fileEntry.filename, ownerId);
+		return this.upload(readStream, toDirectory, fileEntry.metadata.filename, ownerId);
 	};
 
 	this.copyFiles = function(fromDirectory, toDirectory, ownerId) {
@@ -180,12 +180,12 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Create a write stream
 	//
-	this.createWriteStream = function(directory, filename, ownerId, overrideModifiedDate) {
+	this.createWriteStream = function(directory, filename, ownerId, unixTimestamp) {
 
 		var self = this;
 		return self.getFile(directory, filename, ownerId).then(function(file) {
 
-			var mtime = overrideModifiedDate || new Date();
+			var mtime = util.toUnixTimestamp(unixTimestamp || new Date());
 
 			if (file) {
 
@@ -229,12 +229,12 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Upload
 	//
-	this.upload = function(readStream, directory, filename, ownerId, overrideModifiedDate) {
+	this.upload = function(readStream, directory, filename, ownerId, unixTimestamp) {
 
 		var self = this;
-		return self.createWriteStream(directory, filename, ownerId, overrideModifiedDate).then(function(writeStream) {
+		return self.createWriteStream(directory, filename, ownerId, unixTimestamp).then(function(writeStream) {
 
-			return Q.Promise(function(resolve, reject, notify) {
+			return Q.Promise(function(resolve, reject) {
 
 				readStream.pipe(writeStream);
 				writeStream.once('error', reject);
@@ -243,12 +243,14 @@ module.exports.GFS = function (Q, mongoose) {
 		});
 	};
 
-	this.uploadToFileEntry = function(readStream, fileEntry, overrideModifiedDate) {
+	this.uploadToFileEntry = function(readStream, fileEntry, unixTimestamp) {
 
-		return Q.Promise(function(resolve, reject, notify) {
+		return Q.Promise(function(resolve, reject) {
+
+			var mtime = util.toUnixTimestamp(unixTimestamp || new Date());
 
 			// For some reason this works... but can't we wait for it (?)
-			gfs.files.update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": overrideModifiedDate || new Date() }});
+			gfs.files.update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": mtime }});
 			var writeStream = gfs.createWriteStream({_id: fileEntry._id, mode: 'w'});
 
 			readStream.pipe(writeStream);
@@ -262,7 +264,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createWriteStream(directory, filename, ownerId).then(function(writeStream) {
 
-			return Q.Promise(function(resolve, reject, notify) {
+			return Q.Promise(function(resolve, reject) {
 
 				writeStream.once('error', reject);
 				writeStream.once('close', function() { resolve(data); });
@@ -281,11 +283,12 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createReadStream(directory, filename, ownerId).then(function(readStream) {
 
-			return Q.Promise(function(resolve, reject, notify) {
+			return Q.Promise(function(resolve, reject) {
 
 				readStream.pipe(writeStream);
-				readStream.once('error', reject);
-				readStream.once('close', resolve);
+
+				writeStream.once('error', reject);
+				writeStream.once('finish', resolve);
 			});
 		});
 	};
@@ -295,7 +298,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createReadStream(directory, filename, ownerId).then(function(readStream) {
 
-			return Q.Promise(function(resolve, reject, notify) {
+			return Q.Promise(function(resolve, reject) {
 
 				var data = '';
 				readStream.setEncoding(encoding);
@@ -308,13 +311,14 @@ module.exports.GFS = function (Q, mongoose) {
 
 	this.downloadFromFileEntry = function(writeStream, fileEntry) {
 
-		return Q.Promise(function(resolve, reject, notify) {
+		return Q.Promise(function(resolve, reject) {
 
 			var readStream = gfs.createReadStream(fileEntry);
 
 			readStream.pipe(writeStream);
-			readStream.once('error', reject);
-			readStream.once('close', resolve);
+
+			writeStream.once('error', reject);
+			writeStream.once('finish', resolve);
 		});
 	};
 };

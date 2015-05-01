@@ -30,7 +30,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	var Webble = mongoose.model('Webble');
 	var User = mongoose.model('User');
-  var Group = mongoose.model('Group');
+	var Group = mongoose.model('Group');
 
 	var webbleDir = path.join(config.APP_ROOT_DIR, 'webbles');
 	var webbleTemplates = {};
@@ -55,21 +55,21 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	function buildFromTemplate(w, info) {
 
 		w._owner = null;
-    w._sec.groups = [];
+		w._sec.groups = [];
 
 		w.mergeWithInfoObject(info);
 
 		var owner = info.author;
-    var pubgroup = info.group;
+		var pubgroup = info.group;
 
-		return Q.spread([ owner && Q.ninvoke(User, "findOne", {$or: [{ email: owner }, { username: owner }]}),
-      pubgroup && Q.ninvoke(Group, "findOne", {$or: [{ email: pubgroup }, { name: pubgroup }]}) ],
-      function(user, group) {
+		return Q.spread([owner && Q.ninvoke(User, "findOne", {$or: [{email: owner}, {username: owner}]}),
+				pubgroup && Q.ninvoke(Group, "findOne", {$or: [{email: pubgroup}, {name: pubgroup}]})],
+			function (user, group) {
 
-        if (user)
-          w._owner = user._id;
-        if (group)
-          w._sec.groups.push(group._id);
+				if (user)
+					w._owner = user._id;
+				if (group)
+					w._sec.groups.push(group._id);
 
 				return Q.ninvoke(w, "save");
 			});
