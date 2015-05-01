@@ -237,6 +237,8 @@ module.exports.GFS = function (Q, mongoose) {
 			return Q.Promise(function(resolve, reject) {
 
 				readStream.pipe(writeStream);
+				readStream.once('error', reject);
+
 				writeStream.once('error', reject);
 				writeStream.once('close', resolve);
 			});
@@ -254,6 +256,8 @@ module.exports.GFS = function (Q, mongoose) {
 			var writeStream = gfs.createWriteStream({_id: fileEntry._id, mode: 'w'});
 
 			readStream.pipe(writeStream);
+			readStream.once('error', reject);
+
 			writeStream.once('error', reject);
 			writeStream.once('close', resolve);
 		});
@@ -286,6 +290,7 @@ module.exports.GFS = function (Q, mongoose) {
 			return Q.Promise(function(resolve, reject) {
 
 				readStream.pipe(writeStream);
+				readStream.once('error', reject);
 
 				writeStream.once('error', reject);
 				writeStream.once('finish', resolve);
@@ -316,6 +321,7 @@ module.exports.GFS = function (Q, mongoose) {
 			var readStream = gfs.createReadStream(fileEntry);
 
 			readStream.pipe(writeStream);
+			readStream.once('error', reject);
 
 			writeStream.once('error', reject);
 			writeStream.once('finish', resolve);
