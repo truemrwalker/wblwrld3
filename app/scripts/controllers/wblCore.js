@@ -2111,7 +2111,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method removes a child from this webbles list of children
     //========================================================================================
     $scope.removeChild = function(oldChild){
-        if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10)) == 0){
+        if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10)) == 0 || $scope.globalByPassFlags.byPassBlockingProtection){
             for(var i = 0, c; c = theChildren_[i]; i++){
                 if(c.scope().getInstanceId() == oldChild.scope().getInstanceId()){
                     theChildren_.splice(i, 1);
@@ -2232,14 +2232,16 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         }
 
         if (theParent_ != undefined){
-            if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) !== 0){
-                $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Revoke Parent Failed"), content: gettext("This Webble is protected from revoking its parent and therefore this operation is canceled.")}, null);
-                return false;
-            }
-            if((parseInt(theParent_.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10)) !== 0){
-                $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Revoke Parent Failed"), content: gettext("This Webble's parent is protected from removing any of its children and therefore this operation is canceled.")}, null);
-                return false;
-            }
+			if(!$scope.globalByPassFlags.byPassBlockingProtection){
+				if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) !== 0){
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Revoke Parent Failed"), content: gettext("This Webble is protected from revoking its parent and therefore this operation is canceled.")}, null);
+					return null;
+				}
+				if((parseInt(theParent_.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10)) !== 0){
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Revoke Parent Failed"), content: gettext("This Webble's parent is protected from removing any of its children and therefore this operation is canceled.")}, null);
+					return null;
+				}
+			}
 
             $scope.getWSE().append($scope.theView.parent());
             var insideUndoRedo = true;

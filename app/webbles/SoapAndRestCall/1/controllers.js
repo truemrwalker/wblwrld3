@@ -335,7 +335,7 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
         }
         else{
           $scope.set('result', data);
-          if(data.toString() != '[object Object]'){
+          if(data.toString() != '[object Object]' && !$.isArray(data)){
               var jsonRes = (new Xml2Json()).xml_str2json( data );
               if(jsonRes != undefined && jsonRes != 1000){
                   $scope.set('resultAsJson', jsonRes);
