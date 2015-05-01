@@ -2111,7 +2111,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method removes a child from this webbles list of children
     //========================================================================================
     $scope.removeChild = function(oldChild){
-        if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10)) == 0 || $scope.globalByPassFlags.byPassBlockingProtection){
+        if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10)) == 0 || $scope.globalByPassFlags.byPassBlockingPeelProtection){
             for(var i = 0, c; c = theChildren_[i]; i++){
                 if(c.scope().getInstanceId() == oldChild.scope().getInstanceId()){
                     theChildren_.splice(i, 1);
@@ -2232,7 +2232,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         }
 
         if (theParent_ != undefined){
-			if(!$scope.globalByPassFlags.byPassBlockingProtection){
+			if(!$scope.globalByPassFlags.byPassBlockingPeelProtection){
 				if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) !== 0){
 					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Revoke Parent Failed"), content: gettext("This Webble is protected from revoking its parent and therefore this operation is canceled.")}, null);
 					return null;
