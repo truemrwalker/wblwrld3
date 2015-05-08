@@ -30,35 +30,38 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	var gfs = new libGfs.GFS(Q, mongoose);
 
+	// Just in case we are running on localhost on windows
+	//
+	var getFileWithPath = gfs.getFileWithPath;
+
+	if (path.sep != '/') {
+
+		getFileWithPath = function (fullPath) {
+			return gfs.getFileWithPath(fullPath.replace(/\//g, path.sep));
+		};
+	}
+
 	// Test with:
 	// https://localhost:7443/files/webbles/LearningCube/1/images/grasslight-big.jpg
 	//
 	app.get('/files/*', function (req, res) {
 
 		var fullPath = req.params[0];
-
 		//var directory = path.dirname(fullPath);
 		//var filename = path.basename(fullPath);
 
-		// YO, only for win
-		//
-		if (path.sep != '/')
-			fullPath = fullPath.replace(/\//g, path.sep);
-		//
-
-		gfs.getFileWithFullPath(fullPath)
+		getFileWithPath(fullPath)
 			.then(function(fileEntry) {
-
 
 				if (!fileEntry)
 					res.status(404).end();
 				else {
 
 					res.set('Content-Type', fileEntry.contentType);
-					console.log(fileEntry.contentType);
-					gfs.downloadFromFileEntry(res, fileEntry).then(function() {
-						console.log("OK SENT:", fullPath);
-					});
+					res.set('Content-Length', fileEntry.length);
+					res.set('Cache-Control', "max-age=3600");
+
+					return gfs.downloadFromFileEntry(res, fileEntry);
 				}
 			})
 			.fail(function(err) {
