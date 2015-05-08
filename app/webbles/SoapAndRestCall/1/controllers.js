@@ -282,14 +282,16 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
     var makeRestCall = function(serviceUrl, serviceMethod){
       var params = createServiceParametersObject();
       var methodType = RestCallMethods[parseInt($scope.gimme('serviceMethodType'))];
-
+$log.log(methodType);
       if(methodType != undefined){
 		  $.ajax({
 			  url: serviceUrl,
 			  type: methodType,
 			  data: params,
 			  beforeSend: function(xhr) {
-				  xhr.setRequestHeader("Authorization", "Basic " + btoa($scope.gimme('serviceUsername') + ":" + $scope.gimme('servicePassword')));
+				  if($scope.gimme('serviceUsername') != "" && $scope.gimme('servicePassword') != ""){
+					  xhr.setRequestHeader("Authorization", "Basic " + btoa($scope.gimme('serviceUsername') + ":" + $scope.gimme('servicePassword')));
+				  }
 			  }
 		  })
 			  .done(GetRestResponse_callback)
