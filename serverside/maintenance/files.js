@@ -188,7 +188,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
-				promises.push(syncLocalWebbleFile(baseDir, f, evenWithoutOwnerId, fileActionLogger));
+
+				if (f != 'info.json') // Skip info.json files
+					promises.push(syncLocalWebbleFile(baseDir, f, evenWithoutOwnerId, fileActionLogger));
 			});
 		});
 		return Q.all(promises);

@@ -48,7 +48,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			return info;
 		}
 		catch(err) {
-			return { name: id, description: id + " Template", id: id, ver: ver };
+			return { name: id, description: id + " Template", id: id, ver: ver, no_file_on_disk: true };
 		}
 	}
 
@@ -117,10 +117,22 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 				if (!t)
 					promises.push(Q.ninvoke(w, "remove"));
-				else if (w.webble.templaterevision !== t.ver)
-					promises.push(buildFromTemplate(w, t));
+				else {
 
-				delete webbleTemplates[w.webble.defid];
+					if (t.no_file_on_disk) {
+
+						var ver = t.ver; // Just in case we have a new version on the disk
+						t = w.getInfoObject();
+						t.ver = ver;
+
+						var infoPath = path.join(webbleDir, t.id, t.ver.toString(), 'info.json');
+						fs.writeFileSync(infoPath, JSON.stringify(t), {encoding: 'utf8'});
+					}
+
+					if (w.webble.templaterevision !== t.ver)
+						promises.push(buildFromTemplate(w, t));
+				}
+				delete webbleTemplates[w.webble.defid]; // Finished working with this template
 			});
 
 			// Add missing templates
