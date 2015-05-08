@@ -109,9 +109,8 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	function getWebbleId(relativeDirectory) {
 
-		var currWebbleId = getWebbleIdCache[relativeDirectory];
-		if (currWebbleId)
-			return Q.resolve(currWebbleId);
+		if (getWebbleIdCache.hasOwnProperty(relativeDirectory))
+			return Q.resolve(getWebbleIdCache[relativeDirectory]);
 
 		var pathComponents = relativeDirectory.split(path.sep);
 		var category = pathComponents.length > 0 ? pathComponents[0] : 'webbles';
@@ -135,7 +134,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	//******************************************************************
 
-	function syncLocalWebbleFile(baseDir, filename, fileActionLogger) {
+	function syncLocalWebbleFile(baseDir, filename, evenWithoutOwnerId, fileActionLogger) {
 
 		var directory = path.relative(rootWebbleDir, baseDir);
 
@@ -144,7 +143,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 				var localFilePath = path.join(baseDir, filename);
 
-				if (!ownerId) // Sync only if the webble actually exists
+				if (!ownerId && !evenWithoutOwnerId) // Sync only if the webble actually exists
 					return fileActionLogger(localFilePath, null, false);
 
 				return Q.all([ Q.nfcall(fs.stat, localFilePath).fail(function(err) { return null; }), gfs.getFile(directory, filename, ownerId) ])
@@ -159,14 +158,14 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			});
 	}
 
-	function syncRemoteWebbleFile(remoteFileEntry, fileActionLogger) {
+	function syncRemoteWebbleFile(remoteFileEntry, evenWithoutOwnerId, fileActionLogger) {
 
 		return getWebbleId(remoteFileEntry.metadata.directory)
 			.then(function(ownerId) {
 
 				var localFilePath = path.join(rootWebbleDir, remoteFileEntry.filename);
 
-				if (!ownerId) // Sync only if the webble actually exists
+				if (!ownerId && !evenWithoutOwnerId) // Sync only if the webble actually exists
 					return fileActionLogger(localFilePath, remoteFileEntry, false);
 
 				return syncWebbleFileEntry(localFilePath, null, remoteFileEntry, fileActionLogger);
@@ -175,7 +174,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	//******************************************************************
 
-	function syncLocalWebbleFiles(webbleBaseDir, fileActionLogger) {
+	function syncLocalWebbleFiles(webbleBaseDir, evenWithoutOwnerId, fileActionLogger) {
 
 		try {
 			if (!fs.statSync(webbleBaseDir).isDirectory())
@@ -189,7 +188,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
-				promises.push(syncLocalWebbleFile(baseDir, f, fileActionLogger));
+				promises.push(syncLocalWebbleFile(baseDir, f, evenWithoutOwnerId, fileActionLogger));
 			});
 		});
 		return Q.all(promises);
@@ -203,7 +202,31 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.then(function(files) {
 
 				return Q.all(util.transform_(files, function(f) {
-					return syncRemoteWebbleFile(f, fileActionLogger);
+					return syncRemoteWebbleFile(f, false, fileActionLogger);
+				}));
+			});
+	}
+
+	//******************************************************************
+
+	function handleOrphanFiles(excludeList) {
+
+		return gfs.listAllFiles(excludeList, null)
+			.then(function(files) {
+
+				return Q.all(util.transform_(files, function(f) {
+
+					return getWebbleId(f.metadata.directory)
+						.then(function(ownerId) {
+
+							if (ownerId) {
+
+								console.log("Chowned file:", f.filename);
+								return gfs.chownFileEntry(f, ownerId);
+							}
+							else
+								console.log("Orphaned file:", f.filename);
+						});
 				}));
 			});
 	}
@@ -213,9 +236,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	//
 	var allConsideredRemoteFiles = [];
 
-	function trackSyncedFiles(localPath, remoteFileEntry, wasSynced, wasUploaded) {
+	function trackSyncedFiles(localPath, remoteFileEntry, wasModified, wasUploaded) {
 
-		if (wasSynced) {
+		if (wasModified) {
 
 			if (wasUploaded) {
 
@@ -236,12 +259,15 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
-	return syncLocalWebbleFiles(webbleDir, trackSyncedFiles)
+	return syncLocalWebbleFiles(webbleDir, true, trackSyncedFiles)
 		.then(function() {
-			return syncLocalWebbleFiles(devWebbleDir, trackSyncedFiles);
+			return syncLocalWebbleFiles(devWebbleDir, false, trackSyncedFiles);
 		})
 		.then(function() {
 			return downloadRemainingWebbleFiles(allConsideredRemoteFiles, trackSyncedFiles);
+		})
+		.then(function() {
+			return handleOrphanFiles();
 		})
 		.fail(function(err) {
 			console.error("Error: ", err);

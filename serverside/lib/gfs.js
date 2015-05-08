@@ -64,10 +64,9 @@ function genQuery(directory, filename, ownerId) {
 	else
 		query.aliases = directory;
 
-	// Querying including onwnerId doesn't work...but anyway we don't need it for now
-	//
-	//if (ownerId)
-	//	query.metadata = { _owner: ownerId };
+	// Disabled for now
+	//if (ownerId !== undefined)
+	//	query["metadata._owner"] = ownerId;
 
 	return query;
 }
@@ -92,7 +91,15 @@ module.exports.GFS = function (Q, mongoose) {
 	// Get multiple files
 	//
 	this.listAllFiles = function(excludeFilesList, ownerId) {
-		return Q.ninvoke(gfs.files.find({ filename: { $nin: excludeFilesList } }), "toArray");
+
+		var options = {};
+
+		if (excludeFilesList)
+			options.filename = { $nin: excludeFilesList };
+		if (ownerId !== undefined)
+			options["metadata._owner"] = ownerId;
+
+		return Q.ninvoke(gfs.files.find(options), "toArray");
 	};
 
 	this.getFiles = function(directory, ownerId) {
@@ -180,6 +187,17 @@ module.exports.GFS = function (Q, mongoose) {
 				});
 			}));
 		});
+	};
+
+	// Modify metadata
+	//
+	this.chownFileEntry = function(fileEntry, ownerId) {
+
+		// For some reason this works... but can't we wait for it (?)
+		var q = gfs.files.update({ _id: fileEntry._id }, { '$set': {
+			"metadata._owner": ownerId
+		}});
+		return Q.resolve(q);
 	};
 
 	// Create a write stream
