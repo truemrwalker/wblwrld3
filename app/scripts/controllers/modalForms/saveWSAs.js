@@ -35,7 +35,7 @@
 // ADD CUSTOM SLOT FORM CONTROLLER
 // This controls the Webbles add custom slots form
 //====================================================================================================================
-ww3Controllers.controller('saveWSAsSheetCtrl', function ($scope, $modalInstance, $log, gettext) {
+ww3Controllers.controller('saveWSAsSheetCtrl', function ($scope, $modalInstance, $log, $timeout, gettext) {
 
     //=== PROPERTIES ================================================================
 
@@ -115,5 +115,6 @@ ww3Controllers.controller('saveWSAsSheetCtrl', function ($scope, $modalInstance,
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
+	$timeout(function(){$('#wsNameInput').focus();}, 300);
 });
 //======================================================================================================================

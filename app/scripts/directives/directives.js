@@ -1088,9 +1088,6 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
 
 
 //=================================================================================
-
-
-//=================================================================================
 // If enter key is pressed then fire the provided attribute method
 //=================================================================================
 ww3Directives.directive('ngEnter', function () {
@@ -1104,6 +1101,24 @@ ww3Directives.directive('ngEnter', function () {
             }
         });
     };
+});
+//=================================================================================
+
+
+//=================================================================================
+// If Escape key is pressed then fire the provided attribute method
+//=================================================================================
+ww3Directives.directive('ngEscape', function () {
+	return function (scope, element, attrs) {
+		element.bind("keydown", function (event) {
+			if(event.which === 27) {
+				scope.$apply(function (){
+					scope.$eval(attrs['ngEscape']);
+				});
+				event.preventDefault();
+			}
+		});
+	};
 });
 //=================================================================================
 

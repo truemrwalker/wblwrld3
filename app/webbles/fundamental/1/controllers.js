@@ -31,7 +31,7 @@ function fundamentalWebbleCtrl($scope, $log, $timeout, Enum, Slot, gettext, getK
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
         $scope.addSlot(new Slot('msg',
-            gettext("Webble"),
+            gettext("Hello Webble"),
             'Message',
             'Text displayed on the Webble',
             $scope.theWblMetadata['templateid'],
