@@ -1905,7 +1905,7 @@ function EAM_Ctrl($scope, $log, $location, Slot, Enum, gettext, bitflags, jsonQu
                     evGroupEvaluation += (n==0 ? (' ' + eventWasTriggered) : (' && ' + eventWasTriggered));
                 }
                 else{
-                    evGroupEvaluation += (' || ' + eventWasTriggered);
+					if(evGroupEvaluation != ""){ evGroupEvaluation += (' || ' + eventWasTriggered); }
                 }
 
                 if(n == eaPack.eventGroup.length - 1){

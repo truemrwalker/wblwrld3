@@ -964,13 +964,13 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                     build: function($trigger, e){
                         var xOffSet = 10;
                         var theActiveTrigger = $trigger;
-                        if(theActiveTrigger.scope().getIsBundled() == true){
+                        if(theActiveTrigger.scope().getIsBundled() == true && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                             theActiveTrigger = scope.getBundleMaster(theActiveTrigger);
                         }
                         var theWblCM = {};
 
                         if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.POPUP_MENU, 10)) == 0 || (scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && scope.altKeyIsDown)){
-                            if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DEFAULT_MENU, 10)) == 0){
+                            if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DEFAULT_MENU, 10)) == 0 || (scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && scope.altKeyIsDown)){
                                 var dmi = {
                                     publish: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Publish),
                                     duplicate: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Duplicate),
@@ -998,7 +998,8 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                     theWblCM[dmi.delete] = {name: gettext("Delete")};
                                 }
                                 if(theActiveTrigger.scope().getParent()){
-                                    if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.revokeParent)){
+									var parentDisconnectAllowed = (parseInt(theActiveTrigger.scope().getParent().scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10));
+                                    if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) == 0 && parentDisconnectAllowed == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.revokeParent)){
                                         theWblCM[dmi.revokeParent] = {name: gettext("Revoke Parent")};
                                     }
                                     if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.connectSlots)){
@@ -1067,7 +1068,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                         return {
                             callback: function(key, opt){
                                 var theActiveTrigger = opt.$trigger;
-                                if(theActiveTrigger.scope().getIsBundled() == true){
+                                if(theActiveTrigger.scope().getIsBundled() == true && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                                     theActiveTrigger = scope.getBundleMaster(theActiveTrigger);
                                 }
                                 theActiveTrigger.scope().activateMenuItem(key);

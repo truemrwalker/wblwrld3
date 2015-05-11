@@ -1,10 +1,12 @@
 {
 	"name": "wblwrld3",
 	"version": "0.0.0",
+
 	"dependencies": {
 
 		"bower": "latest",
 
+		"mime": "latest",
 		"express": "latest",
 		"response-time": "latest",
 		"express-session": "latest",
@@ -20,6 +22,7 @@
 
 		"mongoose": "latest",
 		"mongoose-user": "latest",
+		"gridfs-stream": "latest",
 
 		"connect-mongo": "latest",
 
@@ -40,7 +43,9 @@
 
 		"mkdirp": "latest"
 	},
+
 	"devDependencies": {
+
 		"grunt": "latest",
 		"grunt-angular-gettext" : "latest",
 
@@ -80,10 +85,14 @@
 		"karma": "latest",
 		"karma-ng-html2js-preprocessor": "latest"
 	},
+
 	"engines": {
+
 		"node": "latest"
 	},
+
 	"scripts": {
+
 		"test": "grunt test",
 		"start": "node serverside/web-server.js",
 		"bootstrap": "node serverside/web-server.js --deployment bootstrap",

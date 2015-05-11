@@ -23,7 +23,7 @@
 // util.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
+var util = require('util');
 
 ////////////////////////////////////////////////////////////////////////
 // Private convenience functions
@@ -251,3 +251,9 @@ module.exports.resSendError = function (res, error, message) {
 };
 
 //**********************************************************************
+
+module.exports.toUnixTimestamp = function(time) {
+
+	// convert to 123.456 UNIX timestamp
+	return util.isDate(time) ? Math.floor(time.getTime() / 1000) : time;
+};

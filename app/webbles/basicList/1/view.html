@@ -6,7 +6,7 @@
 <div id="listGrabber" class="listGrabber" ng-controller="listCtrl">
     <div id="listContainer" class="listContainer" class="row">
 
-        <div ng-if="gimme('theListType') == 0" ng-style="{'background-color': gimme('theListBackgroundColor'), 'width': gimme('theListContainerWidth'), 'padding': gimme('itemPadding')}">
+        <div ng-if="gimme('theListType') == 0" ng-style="{'background-color': gimme('theListBackgroundColor'), 'width': gimme('theListContainerWidth'), 'padding': gimme('itemPadding')}" style="pointer-events: none;">
             <span>List Style Undefined</span>
         </div>
 

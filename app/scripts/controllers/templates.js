@@ -149,6 +149,7 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 		editor.setFontSize(14);
 		editor.setHighlightActiveLine(true);
 		editor.setAutoScrollEditorIntoView(true);
+		editor.$blockScrolling = Infinity; // to disable ace warning
 /*
 		editor.setOption("minLines", 50);
 		editor.setOption("maxLines", 50);

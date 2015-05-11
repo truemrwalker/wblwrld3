@@ -169,13 +169,15 @@
             <!--AudioPick-->
             <div ng-switch-when="18">
                 <audio controls src="{{item.value}}"></audio>
-                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
+				<input id="inputAudio_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localAudioFileChanged(this)"><br>
+				<input class="formitem" maxlength="500" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
             </div>
 
             <!--VideoPick-->
             <div ng-switch-when="19">
-                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
+                <input class="formitem" maxlength="500" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
                 <video width="200" height="auto" controls src="{{item.value}}" style="vertical-align: top; width: 210px;"></video>
+				<input id="inputVideo_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localVideoFileChanged(this)"><br>
             </div>
 
             <!--WebPick-->

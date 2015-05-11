@@ -49,10 +49,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
     //Book and page variables
     var currentCCId;
-    var flipSpeed = 10;
-    var flipLengthPerCall = 10;
     var binderWidthMultiplier = 0.04;
     var bookWidth = 0, bookHeight = 0, bookPadding = 0, bookBorderWidth = 0, binderWidth = 0, pageBorderWidth = 0, pageMargin = 0, pageWidth = 0, pageHeight = 0;
+	var flipSpeed = 10;
+	var flipLengthPerCall = 10;
     var flipSound;
 
 
@@ -407,6 +407,15 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
             undefined
         ));
 
+		$scope.addSlot(new Slot('pageBkgImageStretchEnabled',
+			false,
+			'Page Background Image Stretch Enabled',
+			'Default behavior is that a background image is displayed with its real size and if smaller than the surface repeats itself. But if checked the imnage does not repeat but instead stretch to fit the surface exactly',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
 
         // --- WATCHES ---
 
@@ -494,7 +503,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
         }, true);
 
         // listen to page design slots
-        $scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage')];}, function(newVal, oldVal) {
+        $scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage'), $scope.gimme('pageBkgImageStretchEnabled')];}, function(newVal, oldVal) {
             if(!isInit && newVal[0] != undefined){
                 if($scope.gimme('tabDisplayStyle') == 1){
                     tnpPages.each(function(index) {
@@ -503,6 +512,14 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                         $(this).css("background-color", $scope.gimme('pageBkgColor'));
                         var pageBkgImage = $scope.gimme('pageBkgImage');
                         $(this).css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+						if($scope.gimme('pageBkgImageStretchEnabled')){
+							$(this).css("background-size", '100% 100%');
+							$(this).css("background-repeat", 'no-repeat');
+						}
+						else{
+							$(this).css("background-size", 'auto auto');
+							$(this).css("background-repeat", 'repeat');
+						}
                     });
                 }
             }
@@ -789,6 +806,10 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
                         thePage.css("height", pageHeight + "px");
                         thePage.css("border", pageBorderWidth + "px solid " + pageBorderColor);
                         thePage.css("background-color", pageBkgColor);
+						if($scope.gimme('pageBkgImageStretchEnabled')){
+							thePage.css("background-size", '100% 100%');
+							thePage.css("background-repeat", 'no-repeat');
+						}
                         thePage.css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
                         theBook.append(thePage);
 
@@ -1243,51 +1264,53 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
     };
     //===================================================================================
 
-
+var sindex = 0;
     //===================================================================================
     // Flip To Left
     // Make the clicked page move from left side to right side in a visually pleasing
     // matter.
     //===================================================================================
     var flipToLeft = function(pageNo, pLeftPos, pWidth, playSound){
-      var pageToHide = $scope.theView.parent().find('#flipPage' + pageNo);
-      var pageToShow = $scope.theView.parent().find('#flipPage' + (pageNo + 1));
+		var pageToHide = $scope.theView.parent().find('#flipPage' + pageNo);
+		var pageToShow = $scope.theView.parent().find('#flipPage' + (pageNo + 1));
 
-      if(pageToShow.length == 0){
-          isMoving = false;
-          return;
-      }
+		if(pageToShow.length == 0){
+		  isMoving = false;
+		  return;
+		}
 
-      if(flipSound && playSound){flipSound.play();}
+		if(flipSound && playSound){flipSound.play();}
 
-      if(pLeftPos <= bookPadding){
-          isMoving = false;
-          var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
+		if(pLeftPos <= bookPadding){
+            isMoving = false;
+            var currentNoOfPages = tnpPages != undefined ? tnpPages.length : 0;
 
-          pageToShow.css("left", bookPadding + 'px');
-          pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+            pageToShow.css("left", (bookPadding) + 'px');
+            pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+            pageToShow.css("width", (pageWidth) + 'px');
 
-          pageToHide.css("z-index", currentNoOfPages - (parseInt(pageToHide.css("z-index")) - 1));
-          pageToHide.css("left", bookPadding + 'px');
-          pageToHide.css("width", pageWidth+'px');
+            pageToHide.css("z-index", currentNoOfPages - (parseInt(pageToHide.css("z-index")) - 1));
+            pageToHide.css("left", (bookPadding) + 'px');
+            pageToHide.css("width", (pageWidth) + 'px');
 
-          $scope.setChildContainer(pageToShow);
-          currentCCId = 'flipPage' + (pageNo + 1);
-          $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
+            $scope.setChildContainer(pageToShow);
+            currentCCId = 'flipPage' + (pageNo + 1);
+            $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
 
-          return;
-      }
+            return;
+		}
 
-      var currLeft = pLeftPos - (flipLengthPerCall * 2);
-      var currWidth = pWidth + flipLengthPerCall;
-      var hideWidth = pageWidth - currWidth;
+		flipLengthPerCall = pageWidth / 40;
+		var currLeft = pLeftPos - (flipLengthPerCall * 2);
+		var currWidth = pWidth + flipLengthPerCall;
+		var hideWidth = pageWidth - currWidth;
 
-      pageToShow.css("left", currLeft+'px');
-      pageToShow.css("width", currWidth+'px');
+		pageToShow.css("left", currLeft+'px');
+		pageToShow.css("width", currWidth+'px');
 
-      pageToHide.css("width", hideWidth+'px');
+		pageToHide.css("width", hideWidth+'px');
 
-      $timeout(function(){flipToLeft(pageNo, currLeft, currWidth);}, flipSpeed, false);
+		$timeout(function(){flipToLeft(pageNo, currLeft, currWidth);}, flipSpeed, false);
     };
     //===================================================================================
 
@@ -1315,6 +1338,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
             pageToShow.css("left", (pageWidth + bookPadding) + 'px');
             pageToShow.css("z-index", currentNoOfPages - (parseInt(pageToShow.css("z-index")) - 601));
+            pageToShow.css("width", (pageWidth) + 'px');
 
             pageToShow2.css("z-index", (parseInt(pageToShow2.css("z-index")) - 500));
             pageToShow2.css("width", pageWidth+'px');
@@ -1330,6 +1354,7 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
             return;
         }
 
+		flipLengthPerCall = pageWidth / 40;
         var currLeft = pLeftPos + (flipLengthPerCall);
         var currWidth = pWidth + (flipLengthPerCall);
         var hideWidth = pageWidth - currWidth;

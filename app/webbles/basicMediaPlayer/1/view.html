@@ -1,0 +1,20 @@
+<!--====================================================================================================================
+// View for Media Player Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+
+<div id="mediaPlayerContainer" class="mediaPlayerContainer" ng-controller="mediaPlayerWebbleCtrl">
+	<video id="theVideoPlayer" ng-show="gimme('playerType') == 0" ng-style="{'width': gimme('mediaWidth')}">
+		<source src="{{gimme('mediaSrc')}}">
+		<track src="{{gimme('subSrc')}}" kind="subtitles">
+		Your browser does not support the video/audio tag.
+	</video>
+	<audio id="theAudioPlayer" ng-show="gimme('playerType') == 1" ng-style="{'width': gimme('mediaWidth')}">
+		<source src="{{gimme('mediaSrc')}}">
+		Your browser does not support the video/audio tag.
+	</audio>
+	<div id="reSizableMediaView" style="width: 15px; height: 15px; background-color: transparent; margin-top: -15px; cursor: ew-resize;" ng-style="{'margin-left': rewiderPos}" re-sizable-media-view></div>
+</div>
+
+<!--=================================================================================================================-->

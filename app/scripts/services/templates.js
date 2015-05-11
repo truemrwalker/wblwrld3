@@ -117,7 +117,7 @@ ww3Services.factory('templateService', ['$q', '$upload', '$http', function($q, $
 		//**************************************************************
 
 		toUrl: function(id, file) {
-			return '/devwebbles/' + id + '/0/' + encodeURIComponent(file);
+			return '/files/devwebbles/' + id + '/0/' + encodeURIComponent(file);
 		},
 
 		getFile: function(id, file) {

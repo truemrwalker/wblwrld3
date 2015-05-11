@@ -36,8 +36,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	var Webble = mongoose.model('Webble');
 	var DevWebble = mongoose.model('DevWebble');
 
-	var webbleDir = path.join(config.APP_ROOT_DIR, 'webbles');
-	var devWebbleDir = path.join(config.APP_ROOT_DIR, 'devwebbles');
+	var webbleDir = 'webbles';
+	var devWebbleDir = 'devwebbles';
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
@@ -63,7 +63,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
     // Basic routes for webbles
     //
-	var fsOps = require('../../lib/ops/fsing')(Q, app, config, mongoose, gettext, auth);
+	var fsOps = require('../../lib/ops/gfsing')(Q, app, config, mongoose, gettext, auth);
 
 	app.get('/api/dev/webbles', auth.dev, function (req, res) {
 
@@ -247,7 +247,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	//******************************************************************
 
-	app.get('/api/dev/webbles/:id/files/:file', auth.dev, function(req, res) {
+	app.get('/api/dev/webbles/:id/files/*', auth.dev, function(req, res) {
 
 		fsOps.getFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
 			path.join(devWebbleDir, req.params.id))
@@ -259,7 +259,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			}).done();
 	});
 
-	app.put('/api/dev/webbles/:id/files/:file', auth.dev, function(req, res) {
+	app.put('/api/dev/webbles/:id/files/*', auth.dev, function(req, res) {
 
 		fsOps.updateFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
 			path.join(devWebbleDir, req.params.id))
@@ -271,7 +271,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			}).done();
 	});
 
-	app.delete('/api/dev/webbles/:id/files/:file', auth.dev, function(req, res) {
+	app.delete('/api/dev/webbles/:id/files/*', auth.dev, function(req, res) {
 
 		fsOps.deleteFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
 			path.join(devWebbleDir, req.params.id))
@@ -300,7 +300,10 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 				return publishingOps.publish(req, Webble.findOne({ "webble.defid": defid }), function() {
 
-					return new Webble();
+					return new Webble({
+						webble: { templateid: defid },
+						_owner: req.user._id
+					});
 
 				}, function(toW) {
 

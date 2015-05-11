@@ -186,7 +186,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 				var targetVer = obj.getInfoObject().ver;
 				var targetPath = path.join(targetPathPrefix, targetVer.toString());
 
-				return op(path.join(targetPath, req.params.file), req.body);
+				return op(path.join(targetPath, req.params.file || req.params[0]), req.body);
 			});
 	}
 
