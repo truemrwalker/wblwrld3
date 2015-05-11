@@ -26,7 +26,7 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
     ];
 
     var SoClDisplay, initiationDone;
-    var restClient;
+	var RestCallMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 
     $scope.soapWblProps = {
       currentWsdl: '',
@@ -87,7 +87,7 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
         $scope.addSlot(new Slot('serviceMethod',
             '',
             'Web Service Method Name',
-            'This is the method/function name that will be invoked in the service call as found available from the service WSDL',
+            'APPLIES ONLY TO SOAP SERVICE. This is the method/function name that will be invoked in the service call as found available from the service WSDL',
             $scope.theWblMetadata['templateid'],
             {inputType: Enum.aopInputTypes.TextBox},
             undefined
@@ -98,7 +98,7 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
           'Web Service Method Type',
           'APPLIES ONLY TO REST SERVICE. This is method/function type that usually is GET, but sometimes POST. If you do not know which one to use and GET does not work, experiment with the others',
           $scope.theWblMetadata['templateid'],
-          {inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ['GET', 'POST', 'PUT', 'DELETE']},
+          {inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: RestCallMethods},
           undefined
         ));
 
@@ -201,10 +201,11 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
                 $scope.set('executeServiceCall', false);
                 var serviceUrl = $scope.gimme('serviceUrl');
                 var serviceMethod = $scope.gimme('serviceMethod');
-                if(serviceUrl != '' && serviceMethod != ''){
+				var serviceType = $scope.gimme('serviceType');
+                if(serviceUrl != '' && (serviceMethod != '' || serviceType == 1)){
                     $scope.waiting(true);
                     $scope.showQIM("Call Made, Waiting for reply...", 20000);
-                    if($scope.gimme('serviceType') == 0){ //SOAP
+                    if(serviceType == 0){ //SOAP
                         makeSoapCall(serviceUrl, serviceMethod);
                     }
                     else{ //REST
@@ -279,27 +280,22 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
     // Make a rest service call using the current slot settings
     //===================================================================================
     var makeRestCall = function(serviceUrl, serviceMethod){
-      if($scope.gimme('serviceUsername') != '' && $scope.gimme('servicePassword') != ''){
-          restClient = new $.RestClient(serviceUrl, {username: $scope.gimme('serviceUsername'), password: $scope.gimme('servicePassword')});
-      }
-      else{
-          restClient = new $.RestClient(serviceUrl);
-      }
-
-      restClient.add(serviceMethod);
       var params = createServiceParametersObject();
-      var methodType = $scope.gimme('serviceMethodType');
-      if(methodType == 0){//GET
-          restClient[serviceMethod].read.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
-      }
-      else if(methodType == 1){//POST
-        restClient[serviceMethod].create.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
-      }
-      else if(methodType == 2){//PUT
-        restClient[serviceMethod].update.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
-      }
-      else if(methodType == 3){//DELETE
-        restClient[serviceMethod].destroy.apply(null, params).done(GetRestResponse_callback).fail(restCallFailed);
+      var methodType = RestCallMethods[parseInt($scope.gimme('serviceMethodType'))];
+$log.log(methodType);
+      if(methodType != undefined){
+		  $.ajax({
+			  url: serviceUrl,
+			  type: methodType,
+			  data: params,
+			  beforeSend: function(xhr) {
+				  if($scope.gimme('serviceUsername') != "" && $scope.gimme('servicePassword') != ""){
+					  xhr.setRequestHeader("Authorization", "Basic " + btoa($scope.gimme('serviceUsername') + ":" + $scope.gimme('servicePassword')));
+				  }
+			  }
+		  })
+			  .done(GetRestResponse_callback)
+			  .fail(restCallFailed);
       }
       else{
         $scope.waiting(false);
@@ -335,7 +331,7 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
         }
         else{
           $scope.set('result', data);
-          if(data.toString() != '[object Object]'){
+          if(data.toString() != '[object Object]' && !$.isArray(data)){
               var jsonRes = (new Xml2Json()).xml_str2json( data );
               if(jsonRes != undefined && jsonRes != 1000){
                   $scope.set('resultAsJson', jsonRes);
@@ -396,23 +392,22 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
         var serviceType = $scope.gimme('serviceType');
         var pl;
 
-        if(serviceType == 0){
+        if(serviceType == 0){ //SOAP
             pl = new SOAPClientParameters();
         }
-        else{
-            pl = [];
+        else{  //REST
+            pl = "";
         }
 
         for(var slot in $scope.getSlots()){
             if(slot.search('wbSrvcParam_') != -1){
                 var pName = slot.replace('wbSrvcParam_', '');
-                if(serviceType == 0){
+                if(serviceType == 0){  //SOAP
                     pl.add(pName, $scope.gimme(slot));
                 }
-                else{
-                    var newObj = {}
-                    newObj[pName] = $scope.gimme(slot);
-                    pl.push(newObj);
+                else{  //REST
+					pl = pl != "" ? pl += "&" : pl;
+					pl += (pName + "=" + $scope.gimme(slot));
                 }
             }
         }
@@ -420,9 +415,8 @@ function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
         if(serviceType == 1){
             var APIKeyParameter = $scope.gimme('APIKeyParameterName');
             if(APIKeyParameter  != '' && myAccessKeyForSomething != undefined){
-                var newObj = {}
-                newObj[APIKeyParameter] = myAccessKeyForSomething;
-                pl.push(newObj);
+				pl = pl != "" ? pl += "&" : pl;
+				pl += (APIKeyParameter + "=" + myAccessKeyForSomething);
             }
         }
 

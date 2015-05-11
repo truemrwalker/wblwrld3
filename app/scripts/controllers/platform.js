@@ -278,7 +278,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     // A set of flags for situations when default behavior needs to be set aside
     $scope.globalByPassFlags = {
-        byPassDeletetionProtection: false
+		byPassBlockingDeleteProtection: false,
+		byPassBlockingPeelProtection: false
     };
 
     // This is a global info object that keeps track of what basic (non-value related) events that are firing in unrelated webbles and the platform
@@ -1036,7 +1037,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     alert($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist or was broken and therefore the loading of the the webble named {2} will be canceled.', [whatTemplateId, whatTemplateRevision, whatWblDef['webble']['defid']]));
                 }
                 else{
-                    alert($scope.strFormatFltr('The Webble currently loading did not exist or was broken and therefore the loading of this Webble and any Workspace which included it will be canceled.'));
+					alert($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist or was broken and therefore the loading of the the webble named {2} will be canceled including any Workspace which included it.', [whatTemplateId, whatTemplateRevision, whatWblDef['webble']['defid']]));
+                    //alert($scope.strFormatFltr('The Webble currently loading did not exist or was broken and therefore the loading of this Webble and any Workspace which included it will be canceled.'));
                 }
             }
         });
@@ -2012,7 +2014,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var wblsToKill = [];
         $scope.waiting(true);
 
-        $scope.globalByPassFlags.byPassDeletetionProtection = true;
+        $scope.globalByPassFlags.byPassBlockingDeleteProtection = true;
 
         for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
             if (aw.scope() && !aw.scope().getParent()){
@@ -2028,7 +2030,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             watchingForWebbleExtermination = $scope.$watch(function(){return $scope.getActiveWebbles().length;}, function(newVal, oldVal) {
                 if(newVal == 0){
                     watchingForWebbleExtermination();
-                    $scope.globalByPassFlags.byPassDeletetionProtection = false;
+                    $scope.globalByPassFlags.byPassBlockingDeleteProtection = false;
                     $scope.insertWS({id: undefined, name: '', creator: '', is_shared: false});
                     recentWS_ = undefined;
                     $scope.saveUserSettings(true);
@@ -2047,6 +2049,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 locationPathChangeRequest = '';
                 $location.path(thePathToGo);
             }
+			$scope.globalByPassFlags.byPassBlockingDeleteProtection = false;
+			$scope.insertWS({id: undefined, name: '', creator: '', is_shared: false});
+			recentWS_ = undefined;
+			$scope.saveUserSettings(true);
             $scope.waiting(false);
         }
 
@@ -2899,7 +2905,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var allFamily = $scope.getAllDescendants(target);
         allFamily = allFamily.concat($scope.getAllAncestors(target));
 
-        if(!$scope.globalByPassFlags.byPassDeletetionProtection){
+        if(!$scope.globalByPassFlags.byPassBlockingDeleteProtection){
           for(var i = 0, w; w = allFamily[i]; i++){
             if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DELETE, 10)) !== 0){
               $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Deletion Failed"), content: gettext("One or more of the Webbles included in the deletion attempt is protected from deletion and therefore this operation is canceled.")}, null);
@@ -2914,7 +2920,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         // If the webble to be deleted has a parent, disconnect that first
-        target.scope().peel();
+		$scope.globalByPassFlags.byPassBlockingPeelProtection = true;
+        if(target.scope().peel() == null){ return false; }
+		$scope.globalByPassFlags.byPassBlockingPeelProtection = false;
 
         // If the webble to be deleted has children, find them and delete them first
         var foundOne = true;
@@ -2923,6 +2931,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             foundOne = false;
             if(children.length > 0){
                 foundOne = $scope.requestDeleteWebble(children[0], true);
+				if(foundOne == null){
+					return false;
+				}
             }
         }
 

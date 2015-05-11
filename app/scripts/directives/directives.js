@@ -998,7 +998,8 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                     theWblCM[dmi.delete] = {name: gettext("Delete")};
                                 }
                                 if(theActiveTrigger.scope().getParent()){
-                                    if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.revokeParent)){
+									var parentDisconnectAllowed = (parseInt(theActiveTrigger.scope().getParent().scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10));
+                                    if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) == 0 && parentDisconnectAllowed == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.revokeParent)){
                                         theWblCM[dmi.revokeParent] = {name: gettext("Revoke Parent")};
                                     }
                                     if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.connectSlots)){

@@ -1,0 +1,20 @@
+/*/=====================================================================================================================
+// Styles for Media Player Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.mediaPlayerContainer{
+    background-color: rgba(211,41,198,0.5);
+    border: 2px solid black;
+    border-radius:5px;
+	padding: 15px;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/
