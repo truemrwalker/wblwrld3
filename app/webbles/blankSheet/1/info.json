@@ -3,6 +3,5 @@
     "description": "This is a Webble with no real HTML or CSS content that do not do much, but it allows you to add your own CSS, HTML and even JavaScript. It is as the name tells a blank sheet that you can fill with your own quick web design without having to build your own, slightly more complex, template.",
     "keywords": "empty customize html javascript css blank",
     "author": "truemrwalker",
-    "image": "images/wbls/blankPaper.png",
-    "noautogen": true
+    "image": "images/wbls/blankPaper.png"
 }
