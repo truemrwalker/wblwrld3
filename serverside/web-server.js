@@ -38,14 +38,8 @@ var cookieParser = require('cookie-parser');
 var serveStatic = require('serve-static');
 var serveStaticFavicon = require('serve-favicon');
 
-var http = require('http');
-var https = require('https');
-
 var path = require('path');
 var fs = require('fs');
-
-var appInsecure = express();
-var app = express();
 
 var util = require('./lib/util');
 var loader = require('./lib/loader');
@@ -54,41 +48,7 @@ var config = require('./config');
 var gettext = function(str) { return str; };
 
 ////////////////////////////////////////////////////////////////////////
-// Setup final configuration data
-//
-
-// Allow env variables to override config values
-Object.keys(config).forEach(function(key) {
-
-	if (process.env[key] !== undefined)
-		config[key] = process.env[key]
-});
-
-// Allow command line arguments to override config and env values
-Object.keys(config).forEach(function(key) {
-
-	var optionKey = "--" + key.toLowerCase().replace('_', '-');
-
-	var argIndex = process.argv.indexOf(optionKey);
-	if (argIndex != -1 && argIndex + 1 < process.argv.length) {
-
-		var value = process.argv[argIndex + 1];
-		config[key] = value[0] != '-' ? value : '';
-	}
-});
-
-// Calculate, update and populate other config options
-var portInsecure = process.env.PORT ? parseInt(process.env.PORT, 10) : config.SERVER_PORT;
-var port = portInsecure == 80 ? 443 : portInsecure + 443;
-
-config.SERVER_URL_INSECURE = portInsecure == 80 || config.DEPLOYMENT != 'development' ?
-    "http://" + config.SERVER_NAME : 'http://' + config.SERVER_NAME + ':' + portInsecure;
-
-config.SERVER_URL = port == 443  || config.DEPLOYMENT != 'development' ?
-    "https://" + config.SERVER_NAME : 'https://' + config.SERVER_NAME + ':' + port;
-
-////////////////////////////////////////////////////////////////////////
-// Database setup
+// Connect to database and invoke the process' entry-point
 //
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')({session: session});
@@ -97,7 +57,9 @@ mongoose.connect(config.MONGODB_URL);
 //mongoose.set('debug', true);
 
 mongoose.connection.on('error', function(err){
+
     console.log("DB ERROR:", err);
+	process.exit(1);
 });
 
 mongoose.connection.on('open', function() {
@@ -107,12 +69,14 @@ mongoose.connection.on('open', function() {
 });
 
 ////////////////////////////////////////////////////////////////////////
-// Configure the server
+// Configure the web server
 //
+var appInsecure = express();
+var app = express();
+
 (function(){
 
 	// Serve static stuff quickly and get it out of the way
-	//
 	app.use(serveStaticFavicon(path.join(config.APP_ROOT_DIR, 'favicon.ico')));
 	app.use(serveStatic(config.APP_ROOT_DIR));
 
@@ -123,7 +87,6 @@ mongoose.connection.on('open', function() {
     app.use(cookieParser(/*config.SESSION_SECRET*/));
 
 	// We want to save this in app
-	//
 	var sessionStore;
 
 	// Set up the session-specific parameters
@@ -140,63 +103,52 @@ mongoose.connection.on('open', function() {
     }));
 
 	app.set('sessionStore', sessionStore);
-
-	setupRoutes();
 })();
 
 ////////////////////////////////////////////////////////////////////////
-// Configure the insecure server
+// Configure the insecure web server
 //
 (function() {
 
     // For now the insecure server -- just redirects to https immediately
     //
-    appInsecure.use(function(req, res, next) {
+    appInsecure.use(function(req, res) { // we don't need to call next()
         res.redirect(301, config.SERVER_URL + req.path);
     });
 })();
 
 ////////////////////////////////////////////////////////////////////////
-// Setup all the required routes including authentication
+// Starts the socket server (for real-time message dispatching)
 //
-function setupRoutes() {
-
-	// Compile all the necessary mongoose schema models
-	loader.executeAllScriptsSync(path.join(__dirname, 'models'),
-		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
-
-    // Setup the authentication token
-    var auth = require('./auth/auth')(Q, app, config, mongoose, gettext);
-
-    // Load all api modules
-	loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
-		Q, app, config, mongoose, gettext, auth);
-
-	// Load all file modules
-	loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
-		Q, app, config, mongoose, gettext, auth);
-}
-
-////////////////////////////////////////////////////////////////////////
-// Setup the real-time server
-//
-function setupRtMsgDispatcher(server) {
+function startSocketServer(webServer) {
 
     // Start the socket (real-time) server
-    //
-    var io = require('socket.io').listen(server);
+    var io = require('socket.io').listen(webServer);
 	var socketAuth = require('./auth/auth-socket')(Q, app, config, mongoose, gettext, io);
 
     // Load all real-time modules
-    //
 	loader.executeAllSocketScriptsSync(path.join(__dirname, 'realtime'),
 		Q, app, config, mongoose, gettext, io, socketAuth);
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Start the server
+// Starts the http and https servers
 //
-function startServer() {
+function startWebServer() {
+
+	// Setup the authentication token
+	var auth = require('./auth/auth')(Q, app, config, mongoose, gettext);
+
+	// Load all modules that define the web server's routes
+	loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
+		Q, app, config, mongoose, gettext, auth);
+
+	loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
+		Q, app, config, mongoose, gettext, auth);
+
+	// Start the http and https servers on the appropriate endpoints
+	var http = require('http');
+	var https = require('https');
 
 	var options = {
 		ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
@@ -204,12 +156,13 @@ function startServer() {
 		cert: fs.readFileSync(config.SERVER_CERT),
 		passphrase: config.SERVER_PASSPHRASE || undefined
 	};
-	var httpsServer = https.createServer(options, app).listen(port);
-	var httpServer = http.createServer(appInsecure).listen(portInsecure);
+	var httpsServer = https.createServer(options, app).listen(config.SERVER_PORT);
+	var httpServer = http.createServer(appInsecure).listen(config.SERVER_PORT_INSECURE);
 
-	console.log("OK [ ", portInsecure, port, "]");
+	// Finally, start the socket server
+	startSocketServer(httpsServer, httpServer);
 
-	setupRtMsgDispatcher(httpsServer);
+	console.log("[OK] Server endpoint:", config.SERVER_URL, "\n\tInsecure endpoint:", config.SERVER_URL_INSECURE);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -217,6 +170,11 @@ function startServer() {
 //
 function serverEntryPoint() {
 
+	// Compile all the necessary mongoose schema models
+	loader.executeAllScriptsSync(path.join(__dirname, 'models'),
+		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
+
+	// Execute code based on the deployment mode
 	var promise = Q.resolve(0);
 	var shouldExit = false;
 
@@ -235,5 +193,5 @@ function serverEntryPoint() {
 				Q, app, config, mongoose, gettext, ['files.js', 'templates.js']);
 			break;
 	}
-	Q.when(promise, shouldExit ? process.exit : startServer);
+	return Q.when(promise, shouldExit ? process.exit : startWebServer);
 }

@@ -23,20 +23,14 @@
 		"mongoose": "latest",
 		"mongoose-user": "latest",
 		"gridfs-stream": "latest",
-
 		"connect-mongo": "latest",
 
 		"passport": "latest",
 		"passport-local": "latest",
-
 		"passport-twitter": "latest",
 		"passport-google": "latest",
 		"passport-google-oauth": "latest",
 		"passport-facebook": "latest",
-
-		"winston": "latest",
-		"winston-mongodb" : "latest",
-		"winston-mail" : "latest",
 
 		"nodemailer": "latest",
 		"nodemailer-mailgun-transport" : "latest",

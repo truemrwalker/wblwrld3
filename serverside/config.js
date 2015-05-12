@@ -27,72 +27,112 @@ var path = require('path');
 var fs = require('fs');
 var sec = require('./secrets');
 
-module.exports = {
+module.exports = (function() {
 
-    PROJECT_ROOT_DIR: path.join(__dirname, '..'),
-    PROJECT_MANAGEMENT_DIR: path.join(__dirname, '../..'),
+	////////////////////////////////////////////////////////////////////
+	// Preset, default configuration values
+	//
+	var config = {
 
-    // Server specific settings
-    SERVER_NAME: 'localhost',
-    SERVER_PORT: 7000,
-    SERVER_BEHIND_REVERSE_PROXY: false,
+		PROJECT_ROOT_DIR: path.join(__dirname, '..'),
+		PROJECT_MANAGEMENT_DIR: path.join(__dirname, '../..'),
 
-    SERVER_CA: '', // Certificate Authority Bundle
-    SERVER_KEY: path.join(__dirname, 'keys/key.pem'),
-    SERVER_CERT: path.join(__dirname, 'keys/cert.pem'),
-	  SERVER_PASSPHRASE: '',
-    SERVER_ROOT_DIR: __dirname,
+		// Server specific settings
+		SERVER_NAME: 'localhost',
+		SERVER_PORT: 7000,
+		SERVER_BEHIND_REVERSE_PROXY: false,
 
-    // Mail settings
-    MAIL_SERVICE: 'mailgun',
-    MAIL_KEY: sec.get('mailgun_key'),
-    MAIL_DOMAIN: sec.get('mailgun_domain'),
+		SERVER_CA: '', // Certificate Authority Bundle
+		SERVER_KEY: path.join(__dirname, 'keys/key.pem'),
+		SERVER_CERT: path.join(__dirname, 'keys/cert.pem'),
+		SERVER_PASSPHRASE: '',
+		SERVER_ROOT_DIR: __dirname,
 
-    // App settings
-    APP_NAME: 'wblwrld3',
-    APP_EMAIL_ADDRESS: 'wblwrld3 Bot <hello@webbleworld.com>',
-    APP_CRYPT_PASSWORD: sec.get('app_password'),
-    APP_ROOT_DIR: path.join(__dirname, '../app'),
+		// Mail settings
+		MAIL_SERVICE: 'mailgun',
+		MAIL_KEY: sec.get('mailgun_key'),
+		MAIL_DOMAIN: sec.get('mailgun_domain'),
 
-    // Settings for logging and notifications
-    LOG_EMAIL_TO: [ 'jgeorgal@meme.hokudai.ac.jp' ],
-    LOG_EMAIL_FROM: 'wblwrld3@meme.hokudai.ac.jp',
-    LOG_EMAIL_SMTP_HOST: sec.get('log_email_smtphost'),
-    LOG_EMAIL_SMTP_PORT: 995,
-    LOG_EMAIL_SMTP_USERNAME: sec.get('log_email_username'),
-    LOG_EMAIL_SMTP_PASSWORD: sec.get('log_email_password'),
+		// App settings
+		APP_NAME: 'wblwrld3',
+		APP_EMAIL_ADDRESS: 'wblwrld3 Bot <hello@webbleworld.com>',
+		APP_CRYPT_PASSWORD: sec.get('app_password'),
+		APP_ROOT_DIR: path.join(__dirname, '../app'),
 
-    LOG_DB_NAME: 'wblwrld3',
-    LOG_DB_HOST: 'localhost',
-    LOG_DB_PORT: 27017,
-    LOG_DB_USERNAME: sec.get('log_db_username'),
-    LOG_DB_PASSWORD: sec.get('log_db_password'),
+		// Application level settings
+		MONGODB_URL: sec.get('mongodb_url'),
 
-    // Application level settings
-    MONGODB_URL: sec.get('mongodb_url'),
-    SESSION_KEY: sec.get('session_key'),
-    SESSION_SECRET: sec.get('session_secret'),
+		SESSION_KEY: sec.get('session_key'),
+		SESSION_SECRET: sec.get('session_secret'),
 
-    // Third party auth tokens
-    TWITTER_CONSUMER_KEY: sec.get('twitter_consumer_key'),
-    TWITTER_CONSUMER_SECRET: sec.get('twitter_consumer_secret'),
+		// Third party auth tokens
+		TWITTER_CONSUMER_KEY: sec.get('twitter_consumer_key'),
+		TWITTER_CONSUMER_SECRET: sec.get('twitter_consumer_secret'),
 
-	  GOOGLE_CLIENT_ID: sec.get('google_client_id'),
-	  GOOGLE_CLIENT_SECRET: sec.get('google_client_secret'),
+		GOOGLE_CLIENT_ID: sec.get('google_client_id'),
+		GOOGLE_CLIENT_SECRET: sec.get('google_client_secret'),
 
-    FACEBOOK_APP_ID: sec.get('facebook_app_id'),
-    FACEBOOK_APP_SECRET: sec.get('facebook_app_secret'),
+		FACEBOOK_APP_ID: sec.get('facebook_app_id'),
+		FACEBOOK_APP_SECRET: sec.get('facebook_app_secret'),
 
-    LINKED_IN_KEY: sec.get('linkedin_key'),
-    LINKED_IN_SECRET: sec.get('linkedin_secret'),
+		LINKED_IN_KEY: sec.get('linkedin_key'),
+		LINKED_IN_SECRET: sec.get('linkedin_secret'),
 
-// Settings that are set automatically at startup
-    //
-    // SERVER_URL
-    // SERVER_URL_INSECURE
+		// Settings that are set automatically at startup
+		//
+		// SERVER_URL
+		// SERVER_PORT
+		// SERVER_URL_INSECURE
+		// SERVER_PORT_INSECURE
+		//
 
-// Finally, Settings that are set exclusively by environment variables
-    // DEPLOYMENT can be 'development', 'production', 'testing', 'bootstrap'
+		// Finally, Settings that are influenced by other environment variables
+		// DEPLOYMENT can be 'development', 'production', 'testing', 'maintenance', 'bootstrap'
+		//
+		DEPLOYMENT: !process.env.NODE_ENV ? 'development' : process.env.NODE_ENV
+	};
 
-    DEPLOYMENT: !process.env.NODE_ENV ? 'development' : process.env.NODE_ENV
-};
+
+	////////////////////////////////////////////////////////////////////
+	// Allow env variables to override config values
+	//
+	Object.keys(config).forEach(function(key) {
+
+		if (process.env[key] !== undefined)
+			config[key] = process.env[key]
+	});
+
+	////////////////////////////////////////////////////////////////////
+	// Allow command line arguments to override config and env values
+	//
+	Object.keys(config).forEach(function(key) {
+
+		var optionKey = "--" + key.toLowerCase().replace('_', '-');
+
+		var argIndex = process.argv.indexOf(optionKey);
+		if (argIndex != -1 && argIndex + 1 < process.argv.length) {
+
+			var value = process.argv[argIndex + 1];
+			config[key] = value[0] != '-' ? value : '';
+		}
+	});
+
+	////////////////////////////////////////////////////////////////////
+	// Calculate, update and populate other config options
+	//
+	var portInsecure = process.env.PORT ? parseInt(process.env.PORT, 10) : config.SERVER_PORT;
+	var port = portInsecure == 80 ? 443 : portInsecure + 443;
+
+	config.SERVER_PORT_INSECURE = portInsecure;
+	config.SERVER_URL_INSECURE = portInsecure == 80 || config.DEPLOYMENT != 'development' ?
+		"http://" + config.SERVER_NAME : 'http://' + config.SERVER_NAME + ':' + portInsecure;
+
+	config.SERVER_PORT = port;
+	config.SERVER_URL = port == 443  || config.DEPLOYMENT != 'development' ?
+		"https://" + config.SERVER_NAME : 'https://' + config.SERVER_NAME + ':' + port;
+
+	////////////////////////////////////////////////////////////////////
+	// Finally return the final configuration file
+	//
+	return config;
+})();

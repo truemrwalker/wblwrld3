@@ -24,6 +24,8 @@
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
 
+var os = require('os');
+
 ////////////////////////////////////////////////////////////////////////
 // Meta info stuff
 //
@@ -31,10 +33,27 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
     app.get('/api/info/availability', function (req, res) {
         res.json({
+
+			// Micke expects these two fields with these strings as they are
             dbStatus: 'Ready and responding',
-            webservicestatus: 'I am Fine stop asking'
+            webservicestatus: 'Ready and responding'
         });
     });
+
+	app.get('/api/info/os', auth.dev, function (req, res) {
+		res.json({
+
+			type: os.type(),
+			platform: os.platform(),
+			arch: os.arch(),
+			release: os.release(),
+			uptime: os.uptime(),
+			loadavg: os.loadavg(),
+			totalmem: os.totalmem(),
+			freemem: os.freemem(),
+			cpus: os.cpus()
+		});
+	});
 
 	app.put('/api/info/committed', function (req, res) {
 
