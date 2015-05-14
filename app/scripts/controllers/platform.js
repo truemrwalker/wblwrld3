@@ -307,7 +307,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN'];
     var eeFunc_ = [
         function(){
-            $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("http://www.mickekuwahara.com/images/me.jpg"); }</style>'));
+            $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("http://h50146.www5.hp.com/products/servers/proliant/casestudy/hokudai/images/face03.jpg"); }</style>'));
             $scope.bkgLogoClass = 'easterEgg';
             alert('Micke Nicander Kuwahara made this, how about that!!');
         },
@@ -1831,7 +1831,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         if(!isInSandbox || whatTemplateRevision > 0){
-            corePath = appPaths.webbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
+			if(location.hostname == 'localhost' && $scope.user.username == 'truemrwalker'){
+				corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
+			}
+			else{
+				corePath = appPaths.webbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
+			}
         }
 
         return corePath;
@@ -3058,6 +3063,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 wblView: function(){ return content; }
             };
         }
+		else if(whatForm == Enum.aopForms.editCustMenuItems){
+			modalOptions.templateUrl = 'views/modalForms/editCustMenuItemsSheet.html';
+			modalOptions.controller = 'editCustMenuItemsSheetCtrl';
+			modalOptions.resolve = {
+				wblView: function(){ return content; }
+			};
+			modalOptions.size = 'lg';
+		}
         else if(whatForm == Enum.aopForms.infoMsg){
             modalOptions.templateUrl = 'views/modalForms/infoMsg.html';
             modalOptions.controller = 'infoMsgCtrl';

@@ -11,10 +11,10 @@
     width: 140px;
     height: 50px;
     text-align: left;
-	padding: 10px;
 }
 
 .labelTxt{
+	padding: 10px;
     font-family: Courier New;
     font-size: 38px;
     font-weight: bold;

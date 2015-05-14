@@ -493,7 +493,18 @@ themselves inside the template are the following:
     // Default context menu choices that all webbles share
     Enum.availableOnePicks_DefaultWebbleMenuTargets
     { Publish: 1, Duplicate: 2, Delete: 3, AssignParent: 4, RevokeParent: 5, ConnectSlots: 6, Props: 7,
-      SharedDuplicate: 8, Bundle: 9, Unbundle: 10, BringFwd: 11, Protect: 12, AddCustomSlots: 13, About: 14 }
+      SharedDuplicate: 8, Bundle: 9, Unbundle: 10, BringFwd: 11, Protect: 12, AddCustomSlots: 13, 
+      EditCustomMenuItems: 14, EditCustomInteractionObjects: 15, About: 16}
+      
+    // Default menu choices Name Texts
+	Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt
+	{ Publish: gettext("Publish"), Duplicate: gettext("Duplicate"), Delete: gettext("Delete"), 
+	  AssignParent: gettext("Assign Parent"), RevokeParent: gettext("Revoke Parent"), 
+	  ConnectSlots: gettext("Connect Slots"), Props: gettext("Properties"), 
+	  SharedDuplicate: gettext("Shared Model Duplicate"), Bundle: gettext("Bundle"), Unbundle: gettext("Unbundle"),
+	  BringFwd: gettext("Bring to Front"), Protect: gettext("Set Protection"), 
+	  AddCustomSlots: gettext("Add Custom Slots"), EditCustomMenuItems: gettext("Custom Menu Items"), 
+	  EditCustomInteractionObjects: gettext("Custom Interaction Objects"), About: gettext("About")}
 
     // The different execution modes the webble world can be set to
     Enum.availableOnePicks_ExecutionModes
@@ -530,7 +541,7 @@ themselves inside the template are the following:
 
     //Used for keeping track if a slot is disabled in some way or another (higher values include all lower ones)
     Enum.SlotDisablingState
-    { None: 0, PropertyEditing: 1, PropertyVisibility: 2, ConnectionVisibility: 4 }
+    { None: 0, PropertyEditing: 1, PropertyVisibility: 2, ConnectionVisibility: 4, AllVisibility: 8 }
 
     //Slot manipulation result [Bitwise Flags]
     Enum.bitFlags_SlotManipulations

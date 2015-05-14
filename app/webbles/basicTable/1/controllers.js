@@ -81,13 +81,22 @@ function tableCtrl($scope, $log, Slot, Enum) {
             else{
                 $scope.cellEdit.cellName = newCellName;
             }
+			$scope.set('selectedCellContent', '');
         }
+		else{
+			if($scope.cellEdit.cellName == ""){
+				var thePrevCell = $scope.theView.parent().find("#" + latestClick.colName + "_" + latestClick.rowIndex);
+				var theCurrentCell = $scope.theView.parent().find("#" + colName + "_" + rowIndex);
+				thePrevCell.css('border', $scope.gimme('tableBorder'));
+				theCurrentCell.css('border', $scope.gimme('selectedCellBorder'));
+				$scope.set('selectedCellContent', theCurrentCell.find("span").text());
+			}
+		}
 
         latestClick.rowIndex = rowIndex;
         latestClick.colName = colName;
     };
     //========================================================================================
-
 
     //========================================================================================
     // Close Edit
@@ -186,6 +195,24 @@ function tableCtrl($scope, $log, Slot, Enum) {
             undefined,
             undefined
         ));
+
+		$scope.addSlot(new Slot('selectedCellBorder',
+			'2px solid orange',
+			'Selected Cell Border',
+			'The border for a selected cell (clicked on)',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
+		$scope.addSlot(new Slot('selectedCellContent',
+			'',
+			'Selected Cell Content',
+			'The content of the current selected cell',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
 
         $scope.$watch(function(){return $scope.gimme('headersOrder');}, function(newVal, oldVal) {
