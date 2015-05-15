@@ -29,13 +29,16 @@
  */
 ww3Services.factory('server', ['$http', '$q', function($http, $q) {
 
-  return {
+	return {
 
-    updateApplication: function() {
-      return $http.put('/api/adm/server/updateapp');
-    },
-    updateAndRebootServer: function() {
-      return $http.get('/api/adm/server/reboot');
-    }
-  };
+		updateApplication: function () {
+			return $http.put('/api/adm/server/updateapp');
+		},
+		restartServer: function () {
+			return $http.put('/api/adm/server/restart');
+		},
+		ping: function() {
+			return $http.get('/api/info/availability');
+		}
+	};
 }]);

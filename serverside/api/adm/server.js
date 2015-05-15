@@ -33,33 +33,38 @@ var path = require('path');
 
 module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
-  app.put('/api/adm/server/reboot', auth.adm, function (req, res) {
+	app.put('/api/adm/server/restart', auth.adm, function (req, res) {
 
-    cp.exec(path.join(config.PROJECT_MANAGEMENT_DIR, "update-and-run.sh"), {
-      encoding: 'utf8',
-      timeout: 0,
-      cwd: config.PROJECT_MANAGEMENT_DIR
-    }, function(err, stdout, stderr) {
+		setTimeout(function () {
 
-      if (err)
-        console.log(err);
-    });
-    res.status(200).send(gettext("OK"));
-  });
+			cp.exec(path.join(config.PROJECT_MANAGEMENT_DIR, "restartserver.sh"), {
+				encoding: 'utf8',
+				timeout: 0,
+				cwd: config.PROJECT_MANAGEMENT_DIR
+			}, function (err, stdout, stderr) {
 
-  app.put('/api/adm/server/updateapp', auth.adm, function (req, res) {
+				if (err)
+					console.log(err);
+			});
 
-    cp.exec(path.join(config.PROJECT_MANAGEMENT_DIR, "updateapp.sh"), {
-      encoding: 'utf8',
-      timeout: 0,
-      cwd: config.PROJECT_MANAGEMENT_DIR
-    }, function(err, stdout, stderr) {
+		}, 600);
 
-      if (err)
-        res.status(200).send(stderr);
-      else
-        res.status(200).send(stdout);
-    });
-  });
+		res.status(200).send(gettext("OK"));
+	});
+
+	app.put('/api/adm/server/updateapp', auth.adm, function (req, res) {
+
+		cp.exec(path.join(config.PROJECT_MANAGEMENT_DIR, "updateapp.sh"), {
+			encoding: 'utf8',
+			timeout: 0,
+			cwd: config.PROJECT_MANAGEMENT_DIR
+		}, function (err, stdout, stderr) {
+
+			if (err)
+				res.status(200).send(stderr);
+			else
+				res.status(200).send(stdout);
+		});
+	});
 
 };

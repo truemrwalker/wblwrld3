@@ -29,97 +29,98 @@
 -->
 <div class="container-fluid closeable">
 
-  <!-- Server management -->
-  <!----------------------------------------------------------------->
+	<!-- Server management -->
+	<!----------------------------------------------------------------->
 
-  <h1 translate>Administrator's Den</h1>
+	<h1 translate>Administrator's Den</h1>
 
-  <!-- The eternal spinning wheel of misfortune -->
-  <!----------------------------------------------------------------->
+	<!-- The eternal spinning wheel of misfortune -->
+	<!----------------------------------------------------------------->
 
-  <div class="loading-frame well well-lg" ng-if="updating">
-    <div  class="loading-image">
-      <div id="bowlG">
-        <div id="bowl_ringG">
-          <div class="ball_holderG">
-            <div class="ballG"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <h1 class="loading-text"><span translate>Waiting for the server to respond...</span></h1>
-  </div>
+	<div class="loading-frame well well-lg" ng-if="updating">
+		<div  class="loading-image">
+			<div id="bowlG">
+				<div id="bowl_ringG">
+					<div class="ball_holderG">
+						<div class="ballG"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<h1 class="loading-text"><span translate>Waiting for the server to respond...</span></h1>
+	</div>
 
-  <!-- Administrative Actions tab -->
-  <!----------------------------------------------------------------->
+	<!-- Administrative Actions tab -->
+	<!----------------------------------------------------------------->
 
-  <tabset class="padcontent" ng-hide="updating">
+	<tabset class="padcontent" ng-hide="updating">
 
-    <!-- Server management -->
-    <!------------------------------------------------------------->
+		<!-- Server management -->
+		<!------------------------------------------------------------->
 
-    <tab active="tabs.server">
-      <tab-heading><i class="fa fa-automobile"></i> <span translate>Server Management</span></tab-heading>
+		<tab active="tabs.server">
+			<tab-heading><i class="fa fa-automobile"></i> <span translate>Server Management</span></tab-heading>
 
-      <form nonvalidate class="padcontent">
+			<form nonvalidate class="padcontent">
 
-        <div class="form-group" ng-show="updateOutput">
-          <label for="updateOutput" class="control-label col-xs-1" translate>Output</label>
-          <div class="col-xs-12 col-md-10">
-            <textarea id="updateOutput" class="formitem" style="height:400px;" readonly>{{updateOutput}}</textarea>
-          </div>
-        </div>
+				<div class="form-group" ng-show="updateOutput">
+					<label for="updateOutput" class="control-label col-xs-1" translate>Output</label>
+					<div class="col-xs-12 col-md-10">
+						<textarea id="updateOutput" class="formitem" style="height:400px;" readonly>{{updateOutput}}</textarea>
+					</div>
+				</div>
 
-        <div class="form-group" ng-hide="updateOutput">
-          <div class="col-md-offset-2 col-xs-6">
-            <button ng-click="updateApp()" ng-disabled="updating" class="btn btn-primary"><i class="fa fa-refresh"></i> <span translate>Update Application</span></button>
-          </div>
-        </div>
+				<div class="form-group" ng-hide="updateOutput">
+					<div class="btn-group col-md-offset-1">
+						<button ng-click="updateApp()" ng-disabled="updating" class="btn btn-primary"><i class="fa fa-refresh"></i> <span translate>Update Application</span></button>
+						<button ng-click="restartServer()" ng-disabled="updating" class="btn btn-danger"><i class="fa fa-refresh"></i> <span translate>Restart Server</span></button>
+					</div>
+				</div>
 
-      </form>
-    </tab>
+			</form>
+		</tab>
 
-    <!-- User management -->
-    <!------------------------------------------------------------->
+		<!-- User management -->
+		<!------------------------------------------------------------->
 
-    <tab active="tabs.users">
-      <tab-heading><i class="fa fa-users"></i> <span translate>User Accounts</span></tab-heading>
+		<tab active="tabs.users">
+			<tab-heading><i class="fa fa-users"></i> <span translate>User Accounts</span></tab-heading>
 
-      <div class="container-fluid padcontent">
+			<div class="container-fluid padcontent">
 
-        <div class="row">
-          <h3 translate>All User Accounts</h3>
-          <ul ng-repeat="u in allUsers">
-            <li>
-              <span class="fa fa-user"></span> <b>{{u.name.full}}</b> • {{u.email}} • <i>{{u.username || 'n/a'}}</i> •
-                <div ng-repeat="p in u.auth_providers" class="label label-info">{{p}}</div>
-            </li>
-          </ul>
+				<div class="row">
+					<h3 translate>All User Accounts</h3>
+					<ul ng-repeat="u in allUsers">
+						<li>
+							<span class="fa fa-user"></span> <b>{{u.name.full}}</b> • {{u.email}} • <i>{{u.username || 'n/a'}}</i> •
+							<div ng-repeat="p in u.auth_providers" class="label label-info">{{p}}</div>
+						</li>
+					</ul>
 
-        </div>
+				</div>
 
-      </div>
-    </tab>
+			</div>
+		</tab>
 
-    <!-- Session management -->
-    <!------------------------------------------------------------->
+		<!-- Session management -->
+		<!------------------------------------------------------------->
 
-    <tab active="tabs.sessions">
-      <tab-heading><i class="fa fa-sign-in"></i> <span translate>Active Sessions</span></tab-heading>
+		<tab active="tabs.sessions">
+			<tab-heading><i class="fa fa-sign-in"></i> <span translate>Active Sessions</span></tab-heading>
 
-      <div class="container-fluid padcontent">
+			<div class="container-fluid padcontent">
 
-        <div class="row">
-          <h3 translate>Online Users</h3>
-          <ul ng-repeat="s in allSessions">
-            <li><span class="fa fa-envelope"></span> {{s.user || 'Unknown'}}</li>
-          </ul>
+				<div class="row">
+					<h3 translate>Online Users</h3>
+					<ul ng-repeat="s in allSessions">
+						<li><span class="fa fa-envelope"></span> {{s.user || 'Unknown'}}</li>
+					</ul>
 
-        </div>
+				</div>
 
-      </div>
-    </tab>
+			</div>
+		</tab>
 
-  </tabset>
+	</tabset>
 
 </div>
