@@ -27,26 +27,47 @@
  *
  * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
  */
-ww3Controllers.controller('AdmCtrl', [ '$scope', 'gettext', 'confirm', 'server', 'UserAccounts', 'ActiveSessions',
-  function ($scope, gettext, confirm, server, UserAccounts, ActiveSessions) {
+ww3Controllers.controller('AdmCtrl', [ '$scope', '$interval', 'gettext', 'confirm', 'server', 'UserAccounts', 'ActiveSessions',
+function ($scope, $interval, gettext, confirm, server, UserAccounts, ActiveSessions) {
 
-    $scope.restartServer = server.updateAndRebootServer;
+	$scope.restartServer = function () {
 
-    $scope.updateApp = function() {
+		confirm.show(gettext("Restart Server Warning"),
+			gettext("This operation will restart the Webble world and run all the diagnostic and maintenance scripts. During that time terrible things may happen and the server may not recover. Are you sure you want to restart the server anyway?"),
+			gettext("Restart"), gettext("Do NOT restart")).then(function () {
 
-      confirm.show(gettext("Update Application Warning"),
-        gettext("This operation will fetch the latest version of the Webble world application from the central git repository at BitBucket.org. It will not restart the server, HOWEVER, during the update, users may be affected by getting served incosistent versions of application components. Are you sure you want to proceed with the update?"),
-        gettext("Update"), gettext("Do not update")).then(function() {
+				$scope.updating = true;
+				server.restartServer().then(function (resp) {
 
-          $scope.updating = true;
-          server.updateApplication().then(function(resp) {
+					var intervalPromise  = $interval(function() {
 
-            $scope.updateOutput = resp.data;
-            $scope.updating = false;
-          });
-        });
-    };
+						server.ping().then(function() {
 
-    $scope.allUsers = UserAccounts.query();
-    $scope.allSessions = ActiveSessions.query();
-  }]);
+							$interval.cancel(intervalPromise);
+							$scope.updateOutput = "OK";
+							$scope.updating = false;
+						});
+
+					}, 2000, 40);
+				});
+			});
+	};
+
+	$scope.updateApp = function () {
+
+		confirm.show(gettext("Update Application Warning"),
+			gettext("This operation will pull the latest version of Webble World from the remote repository at github. However, it will not restart the server. during the update, users may be affected by getting served inconsistent versions of application components. Are you sure you want to proceed with the update?"),
+			gettext("Update"), gettext("Do not update")).then(function () {
+
+				$scope.updating = true;
+				server.updateApplication().then(function (resp) {
+
+					$scope.updateOutput = resp.data;
+					$scope.updating = false;
+				});
+			});
+	};
+
+	$scope.allUsers = UserAccounts.query();
+	$scope.allSessions = ActiveSessions.query();
+}]);

@@ -41,13 +41,13 @@ function fundamentalWebbleCtrl($scope, $log, Slot, Enum, cleanupService, gettext
     $scope.customMenu = [{itemId: 'eat', itemTxt: 'Have Lunch'}, {itemId: 'drink', itemTxt: 'Have refreshment'}];
 
     //TODO: If you want to hide (disable) any of the Webble's menu options one can do that easily using the itemId as an identifier.
-    //TODO: Default menu options are identified with the following id's 'Publish', 'Duplicate', 'Delete', 'AssignParent', 'RevokeParent',
-    //TODO: 'ConnectSlots', 'Props', 'SharedDuplicate', 'Bundle', 'Unbundle', 'BringFwd', 'Protect', 'AddCustomSlots', 'About'
+    //TODO: Default menu options are identified by Enum.availableOnePicks_DefaultWebbleMenuTargets found in README
     //$scope.addPopupMenuItemDisabled([ITEM-ID]);
     // EXAMPLE:
     $scope.addPopupMenuItemDisabled('BringFwd');
-    //TODO: Later, one can enable an option again
-    //$scope.removePopupMenuItemDisabled([ITEM-ID])
+    //TODO: Later, one can enable an option again or check status
+    //$scope.removePopupMenuItemDisabled([ITEM-ID]);
+	//$scope.isPopupMenuItemDisabled([ITEM-ID]);
 
     //TODO: Array of customized Interaction Balls
     //$scope.customInteractionBalls = [{index: [POSITION INDEX 0-11], name: '[IDENTIFIER]', tooltipTxt: '[DISPLAY TEXT]'}];

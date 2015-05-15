@@ -14,10 +14,10 @@
 }
 
 .labelTxt{
+	padding: 10px;
     font-family: Courier New;
     font-size: 38px;
     font-weight: bold;
-    margin: 10px;
     color: #396ffc;
     text-shadow: 2px 2px #240000;
 }

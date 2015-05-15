@@ -127,6 +127,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     //A list of Interaction objects that will give the user the power to interact with the webble more easy
     $scope.theInteractionObjects = [];
 
+	// internal user created custom menu items (non template)
+	$scope.internalCustomMenu = [];
+
     // A list of popup menu items that should be disabled and not displayed. Any item id string works to add.
     // For Default menu one should use the registered item names as found in the
     var disabledPopupMenuItems_ = [];
@@ -962,6 +965,29 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     //========================================================================================
 
 
+	//========================================================================================
+	// System Internal Slot Update
+	// If this Webble has purely internal system made slots that is used for internal
+	// configuration, then read thoise values are and update the Webble accordingly.
+	//========================================================================================
+	var systemInternalSlotUpdate = function(){
+		var ccm = $scope.gimme('customContextMenu');
+		if(ccm != null){
+			for(var j = 0, dmi; dmi = ccm.dmi[j]; j++){
+				$scope.addPopupMenuItemDisabled(dmi);
+			}
+
+			for(var i = 0, cmi; cmi = ccm.cmi[i]; i++){
+				$scope.internalCustomMenu.push({itemId: cmi.id, itemTxt: cmi.name});
+				if(cmi.enabled == false){
+					$scope.addPopupMenuItemDisabled(cmi.id);
+				}
+			}
+		}
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Get Model Sharees As Instance Ids
     // This method iterate the list of modelsharees and create a new list with their instance
@@ -997,6 +1023,67 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         }
     };
     //========================================================================================
+
+
+
+	//===================================================================================
+	// Internal Custom Menu Activity Reaction
+	// If this template has some internal user generated menu customizations than that
+	// is handled here with the use of the slot that carries its data.
+	//===================================================================================
+	var internalCustomMenuActivityReaction = function(itemName){
+		var ccm = $scope.gimme('customContextMenu');
+
+		if(ccm != null){
+			for(var i = 0, cmi; cmi = ccm.cmi[i]; i++){
+				if(cmi.id == itemName){
+					for(var j = 0, ap; ap = cmi.actionPack[j]; j++){
+						var slot = ap.slot
+						var toBeCalculated = ap.formula;
+						if(toBeCalculated[0] == '='){ toBeCalculated = toBeCalculated.substr(1); }
+
+						var workStr = toBeCalculated;
+						var slotStr;
+
+						do {
+							var testIndex1 = workStr.indexOf('[');
+							var testIndex2 = workStr.indexOf(']');
+							slotStr = '';
+
+							if(testIndex1 != -1 && testIndex2 != -1 && testIndex2 > testIndex1){
+								slotStr = workStr.substring(testIndex1 + 1, testIndex2);
+							}
+
+							var slotVal;
+							if(slotStr != ''){
+								slotVal = $scope.gimme(slotStr);
+							}
+
+							if(slotVal != undefined && !isNaN(parseFloat(slotVal))){
+								slotVal = parseFloat(slotVal);
+							}
+
+							if(slotVal != undefined){
+								if(slotVal.toString() != '[object Object]'){
+									toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), slotVal);
+								}
+								else{
+									toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), JSON.stringify(slotVal));
+								}
+							}
+
+							workStr = workStr.substring(testIndex2 + 1);
+						} while (slotStr.length > 0);
+
+						try{ toBeCalculated = eval(toBeCalculated); } catch(err){ }
+
+						$scope.set(slot, toBeCalculated);
+					}
+				}
+			}
+		}
+	};
+	//===================================================================================
 
 
     //*****************************************************************************************************************
@@ -1309,11 +1396,25 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         }
         //=======================================================================================
 
+		//=== EDIT CUSTOM MENU ITEMS ===========================================================================
+		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomMenuItems)){
+			$scope.openForm(Enum.aopForms.editCustMenuItems, $scope.theView, function(retVal){
+				// No need to do anything here (retval is either true or null and none is a bad thing)
+			});
+		}
+		//=======================================================================================
+
         //=== ABOUT ===========================================================================
         else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.About)){
             $scope.openForm(Enum.aopForms.wblAbout, getAboutWblContent(), null);
         }
         //=======================================================================================
+
+		//=== USER GENERATED ====================================================================
+		else{
+			internalCustomMenuActivityReaction(itemName);
+		}
+		//=======================================================================================
 
         if ($scope.theView.scope().coreCall_Event_WblMenuActivityReaction){
             $scope.theView.scope().coreCall_Event_WblMenuActivityReaction(itemName);
@@ -1424,6 +1525,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
             // reconnect custom slots connected to xaml attributes
             reconnectCustomVisualElementSlotsToCSSAttributes();
+
+			//If there are any slots created for internal webble system configuration, update the webble accordingly
+			systemInternalSlotUpdate();
 
             //protection flags
             $scope.setProtection(parseInt(theWblDef_['protectflags']));

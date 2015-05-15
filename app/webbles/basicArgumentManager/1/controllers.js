@@ -127,13 +127,14 @@ function argManagerCtrl($scope, $log, $timeout, Slot, Enum) {
             }
             template = template.replace(argSlots[i], argSlotVal);
         }
-        template = template.replace(/[\$']+/g, '');
-        template = template.replace(/[\"']+/g, '');
+
+        template = template.replace(/[\$]+/g, '');
+        template = template.replace(/[\"]+/g, '');
         if(allIsNum && templateStrings.length == 0){
             theRes = eval(template).toString();
         }
         else{
-            template = template.replace(/[\+']+/g, '');
+            template = template.replace(/[\+]+/g, '');
             theRes = template;
         }
         $scope.set('result', theRes);

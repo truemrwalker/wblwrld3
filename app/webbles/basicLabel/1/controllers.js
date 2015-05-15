@@ -17,7 +17,7 @@ function labelWebbleCtrl($scope, $log, Slot, Enum, gettext, wwConsts) {
 
     $scope.stylesToSlots = {
         labelContainer: ['background-color', 'border', 'width', 'height', 'text-align'],
-        labelTxt: ['font-size', 'font-weight', 'font-family', 'margin', 'color', 'text-shadow']
+        labelTxt: ['font-size', 'font-weight', 'font-family', 'padding', 'color', 'text-shadow']
     };
 
 

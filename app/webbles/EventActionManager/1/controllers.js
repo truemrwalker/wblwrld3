@@ -84,7 +84,7 @@ function EAM_Ctrl($scope, $log, $location, Slot, Enum, gettext, bitflags, jsonQu
 
     //Event timer
     var eventWatchTimer;
-    var timerInterval = 50;
+    var timerInterval = 150;
     var currTime = 0;
     var firedEventeeList = [];
 

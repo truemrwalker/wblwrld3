@@ -7,7 +7,7 @@
     <div id="listContainer" class="listContainer" class="row">
 
         <div ng-if="gimme('theListType') == 0" ng-style="{'background-color': gimme('theListBackgroundColor'), 'width': gimme('theListContainerWidth'), 'padding': gimme('itemPadding')}" style="pointer-events: none;">
-            <span>List Style Undefined</span>
+            <span ng-style="{'font-size': gimme('listContainer:font-size')}">List Style Undefined</span>
         </div>
 
         <div class="form-group" ng-if="gimme('theListType') == 1" ng-style="{'width': gimme('theListContainerWidth')}">

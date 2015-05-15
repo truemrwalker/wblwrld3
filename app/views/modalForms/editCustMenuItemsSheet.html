@@ -1,0 +1,145 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for adding customized slots form
+//===================================================================================================================-->
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main">
+
+	<div class="row">
+		<div class="col-xs-4">
+			<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+			<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+		</div>
+		<div class="col-xs-8"><h4 class="formTitle" translate>Edit Custom Menu Items</h4></div>
+	</div>
+
+	<div class="keepTheDistanceBelow dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-3">
+				<span style="color: #000000; font-size: 1.0em; font-weight: bold; padding-bottom: -20px;" translate>Item Id</span>
+			</div>
+			<div class="col-xs-3">
+				<span style="color: #000000; font-size: 1.0em; font-weight: bold; padding-bottom: -20px;" translate>Item Display Name</span>
+			</div>
+			<div class="col-xs-4">
+				<span style="color: #000000; font-size: 1.0em; font-weight: bold; padding-bottom: -20px;" translate>Item Action</span>
+			</div>
+			<div class="col-xs-2" style="text-align: center;">
+				<span style="color: #000000; font-size: 1.0em; font-weight: bold; padding-bottom: -20px;" translate>Item Enabled</span>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<hr style="border: 1px double black; height: 2px;  margin: 0 0 10px 0; padding: 0;">
+			</div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-12">
+				<img ng-src="{{formItems.defMenuItemsOpenBtnImg}}" style="width: 20px;" ng-click="toggleDefMenuOpen()">
+				<span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Default Menu Items</span>
+				<div tooltip-placement="left" tooltip="{{tooltip.dmi}}" style="float: right; margin-right: 10px;"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em; text-align: right;">?</span></div>
+				<hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0; clear: right;">
+			</div>
+		</div>
+
+		<div class="row" ng-repeat="dmi in formItems.defMenuItems" style="font-size: 12px;" ng-style="{'display': formItems.defMenuItemsOpen}">
+			<div class="col-xs-3">
+				<input class="formitem" type="text" ng-model="dmi.id"  disabled>
+			</div>
+			<div class="col-xs-3">
+				<input class="formitem" type="text" ng-model="dmi.name" disabled>
+			</div>
+			<div class="col-xs-4">
+				<select class="formitem" ng-model="dmi.action" ng-options="dmia.action as dmia.action for dmia in formItems.defMenuItems" disabled style="background-color: #e8e8e8;"></select>
+			</div>
+			<div class="col-xs-2" style="text-align: center;">
+				<input class="formitem" style="width: 18px; height: 18px;" type="checkbox" ng-model="dmi.enabled" >
+			</div>
+			<div class="col-xs-12">
+				<hr style="border: 1px dashed #d3d3d3; margin: 2px; padding: 0;">
+			</div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12">
+				<img ng-src="{{formItems.defMenuItemsOpenBtnImg}}" style="width: 20px;" ng-click="toggleCustMenuOpen()">
+				<span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Custom Menu Item</span>
+				<div tooltip-placement="left" tooltip="{{tooltip.cmi}}" style="float: right; margin-right: 10px;"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em; text-align: right;">?</span></div>
+				<hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+			</div>
+		</div>
+
+		<div class="row" ng-repeat="dmi in formItems.custMenuItems" style="font-size: 13px;" ng-style="{'display': formItems.custMenuItemsOpen}">
+			<div class="col-xs-3">
+				<input class="formitem" type="text" ng-model="dmi.id" ng-change="addMoreMaybe($index)">
+			</div>
+			<div class="col-xs-3">
+				<input class="formitem" type="text" ng-model="dmi.name">
+			</div>
+			<div class="col-xs-4">
+				<select class="formitem" ng-model="dmi.action" ng-options="ca for ca in formItems.customActions" ng-change="enableActionPack($index)"></select>
+				<div ng-show="dmi.action != 'None'">
+					<div style="margin-top: -15px;" ng-repeat="ap in formItems.custMenuItems[$index].actionPack" >
+						</br><select class="formitem" ng-model="ap.slot" ng-options="slot.id as slot.name for slot in formItems.thisWblSlots"></select>
+						<br ng-if="ap.slot != ''"><textarea id="formulaBox_{{$parent.$index}}_{{$index}}" ng-show="ap.slot != ''" class="formitem" ng-model="ap.formula" rows="2" style="width: 100%;"></textarea>
+						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="slotpick.id as slotpick.name for slotpick in formItems.thisWblSlots" ng-model="ap.selectedSlotForBox" ng-change="placeSlotInBox($parent.$index, $index)"></select>
+						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="sa for sa in formItems.multiActions" ng-model="ap.selectedMultiAction" ng-change="maybeWantMoreAction($parent.$index, $index)"></select>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-2" style="text-align: center;">
+				<input class="formitem" style="width: 18px; height: 18px;" type="checkbox" ng-model="dmi.enabled" >
+			</div>
+			<div class="col-xs-12">
+				<hr style="border: 1px dashed #d3d3d3; margin: 2px; padding: 0;">
+			</div>
+		</div>
+	</div>
+
+	<div class="dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-12">
+				<span ng-style="{'color': formProps.errorMsgColor}" style="font-weight: bold;">{{formProps.errorMsg | translate}}</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!--=================================================================================================================-->

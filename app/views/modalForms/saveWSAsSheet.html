@@ -48,7 +48,7 @@
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Workspace Name:</span></div>
-            <div class="col-xs-7"><input class="formitem" type="text" ng-model="formitem.wsName" ng-change="nameChangeEventHandler($event)"></div>
+            <div class="col-xs-7"><input id="wsNameInput" class="formitem" type="text" ng-model="formitem.wsName" ng-change="nameChangeEventHandler($event)" ng-enter="close('submit');" ng-escape="close('cancel');"></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{msgTexts.wsName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>

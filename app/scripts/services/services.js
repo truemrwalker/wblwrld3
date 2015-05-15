@@ -73,7 +73,8 @@ ww3Services.factory('Enum', function (gettext) {
             deleteWorkspace: 17,
             rateWbl: 18,
             saveWorkspaceAs: 19,
-            shareWorkspaces: 20
+            shareWorkspaces: 20,
+			editCustMenuItems: 21
         },
 
         //Available undo operations
@@ -116,7 +117,7 @@ ww3Services.factory('Enum', function (gettext) {
             Rescale: 5
         },
 
-        // Default Interaction objects that all webbles share
+        // Default Interaction objects' Tooltip text
         availableOnePicks_DefaultInteractionObjectsTooltipTxt: {
             Menu: gettext("Open Menu"),
             Rotate: gettext("Rotate"),
@@ -140,8 +141,30 @@ ww3Services.factory('Enum', function (gettext) {
             BringFwd: 11,
             Protect: 12,
             AddCustomSlots: 13,
-            About: 14
+			EditCustomMenuItems: 14,
+			EditCustomInteractionObjects: 15,
+            About: 16
         },
+
+		// Default menu choices Name Texts
+		availableOnePicks_DefaultWebbleMenuTargetsNameTxt: {
+			Publish: gettext("Publish"),
+			Duplicate: gettext("Duplicate"),
+			Delete: gettext("Delete"),
+			AssignParent: gettext("Assign Parent"),
+			RevokeParent: gettext("Revoke Parent"),
+			ConnectSlots: gettext("Connect Slots"),
+			Props: gettext("Properties"),
+			SharedDuplicate: gettext("Shared Model Duplicate"),
+			Bundle: gettext("Bundle"),
+			Unbundle: gettext("Unbundle"),
+			BringFwd: gettext("Bring to Front"),
+			Protect: gettext("Set Protection"),
+			AddCustomSlots: gettext("Add Custom Slots"),
+			EditCustomMenuItems: gettext("Custom Menu Items"),
+			EditCustomInteractionObjects: gettext("Custom Interaction Objects"),
+			About: gettext("About")
+		},
 
         // The different execution modes the webble world can be set to
         availableOnePicks_ExecutionModes: {
@@ -236,7 +259,8 @@ ww3Services.factory('Enum', function (gettext) {
             None: 0,
             PropertyEditing: 1,
             PropertyVisibility: 2,
-            ConnectionVisibility: 4
+            ConnectionVisibility: 4,
+			AllVisibility: 8
         },
 
         //Slot manipulation result
@@ -971,7 +995,7 @@ ww3Services.factory('strCatcher', function(gettext) {
 //=================================================================================
 // Service that returns currently used path locations for documents etc
 //=================================================================================
-ww3Services.factory('appPaths', [function () {
+ww3Services.factory('appPaths', [function() {
     return {
         currentAppUriCore: document.URL.replace('#/app', ''),
         webbleAccessPath: 'api/webbles/',
@@ -979,6 +1003,7 @@ ww3Services.factory('appPaths', [function () {
         webbleDevPackRelPath: 'data/WebbleWorldDevelopersPack.zip',
         webbleFMWS_ServiceAddress: '',
         webbleRepCore: '../files/webbles/',
+		localDevWebbleRepCore: '../webbles/',
         webbleSandboxCore: '../files/devwebbles/',
         webbleView: '/view.html',
         webbleCtrl: '/controllers.js',
