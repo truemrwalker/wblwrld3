@@ -1,6 +1,6 @@
 {
     "name": "Event Action Manager",
-    "description": "This is a webble that allows you to track events in the system and other realetd Webbles and based on the outcome of these events execute some specific action.",
+    "description": "This is a webble that allows you to track events in the system and other related Webbles and based on the outcome of these events execute some specific action. This is a very generic that works very well for smaller projects and for test development but it may drain too much resources in larger projects for commercial use, and then a more specialized Webble would probably be better",
     "keywords": "Event Action Manager",
     "author": "truemrwalker",
     "image": "images/wbls/EAMWbl.png"

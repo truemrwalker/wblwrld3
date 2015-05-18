@@ -35,29 +35,32 @@
 // ADD CUSTOM SLOT FORM CONTROLLER
 // This controls the Webbles add custom slots form
 //====================================================================================================================
-ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modalInstance, $log, $timeout, gettext, Slot, wblView, Enum) {
+ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $modalInstance, $log, $timeout, gettext, Slot, wblView, Enum) {
 
 	//=== PROPERTIES ================================================================
 	var thisWbl = wblView;
 	var isInit = true;
 
 	$scope.formItems = {
-		defMenuItems: [],
-		custMenuItems: [],
-		customActions: ['None', 'Change Slot'],
+		interactObjs: [],
 		thisWblSlots: [],
-		multiActions: ['Done', 'And'],
-		defMenuItemsOpen: 'none',
-		defMenuItemsOpenBtnImg: 'images/icons/pullDownArrow.png',
-		custMenuItemsOpen: 'block',
-		custMenuItemsOpenBtnImg: 'images/icons/pullUpArrow.png'
+		thisWblSlotsPlus: [],
+		mouseEventTypes: ['Default', 'Mouse Click', 'Mouse Move'],
+		customActions: ['None', 'Default', 'Change Slot'],
+		multiActions: ['Done', 'And']
 	};
 
 
 	//TODO: fix tooltips and error messages
 	$scope.tooltip = {
-		dmi: gettext("The default menu items cannot be changed, but it can be turned on or off"),
-		cmi: gettext("A custom menu item can only have the action to change a slot value. Such value change is made by selecting which slot and then create a formula in the text box by the use of slot names (found in the drop down box below the text box) and mathematical operators. You can create multiple slot changes for one Menu item. Delete an existing item by clearing its id field.")
+		color: gettext("The color value of the Interaction Object is static and cannot be changed"),
+		index: gettext("The index value of the Interaction Object is static and cannot be changed"),
+		position: gettext("The position of the Interaction Object in relation to its Webble and other Interaction Objects"),
+		name: gettext("A unique name of the interaction object (Default objects cannot be altered)"),
+		tooltip: gettext("The display text when one hover above the interaction object (Default objects cannot be altered)"),
+		action:  gettext("What will happen when the user interact with the object (Default objects cannot be altered)"),
+		mouseEvType: gettext("What type of mouse interaction is requested (Default objects cannot be altered)"),
+		enabled: gettext("Will the interaction object be visible or not?  (This is the only attribute one can change with Default objects (except Assign Parent))")
 	};
 
 	// Form validation error message
@@ -67,48 +70,21 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	};
 
 
+
 	//=== EVENT HANDLERS =====================================================================
 
-	//========================================================================================
-	// Toggle Default Menu Open
-	// hiding or showing the default menu items
-	//========================================================================================
-	$scope.toggleDefMenuOpen = function(){
-		if($scope.formItems.defMenuItemsOpen == 'none'){
-			$scope.formItems.defMenuItemsOpen = 'block';
-			$scope.formItems.defMenuItemsOpenBtnImg = 'images/icons/pullUpArrow.png';
-		}
-		else{
-			$scope.formItems.defMenuItemsOpen = 'none';
-			$scope.formItems.defMenuItemsOpenBtnImg = 'images/icons/pullDownArrow.png';
-		}
-	};
-	//========================================================================================
+
+
 
 	//========================================================================================
-	// Toggle Custom Menu Open
-	// hiding or showing the custom menu items
+	// Check If Option Is Allowed
+	// Make sure the user does not pick 'default', then scold him/her and set back to '' empty
 	//========================================================================================
-	$scope.toggleCustMenuOpen = function(){
-		if($scope.formItems.custMenuItemsOpen == 'none'){
-			$scope.formItems.custMenuItemsOpen = 'block';
-			$scope.formItems.custMenuItemsOpenBtnImg = 'images/icons/pullUpArrow.png';
-		}
-		else{
-			$scope.formItems.custMenuItemsOpen = 'none';
-			$scope.formItems.custMenuItemsOpenBtnImg = 'images/icons/pullDownArrow.png';
-		}
-	};
-	//========================================================================================
-
-	//========================================================================================
-	// Add More Maybe
-	// If the last available menu item is being used then another is added.
-	//========================================================================================
-	$scope.addMoreMaybe = function(index){
+	$scope.checkIfOptionIsAllowed = function(index){
 		if(!isInit){
-			if((index + 1) == $scope.formItems.custMenuItems.length){
-				$scope.formItems.custMenuItems.push({id: '', name: '', action: 'None', actionPack: [], enabled: true});
+			if($scope.formItems.interactObjs[index].mouseEvType == 'Default'){
+				$scope.formItems.interactObjs[index].mouseEvType = '';
+				thisWbl.scope().showQIM("Custom Interaction Objects cannot be set to Default!", 2500);
 			}
 		}
 	};
@@ -121,12 +97,16 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	//========================================================================================
 	$scope.enableActionPack = function(index){
 		if(!isInit){
-			if($scope.formItems.custMenuItems[index].action == 'None'){
-				$scope.formItems.custMenuItems[index].actionPack = [];
+			if($scope.formItems.interactObjs[index].action == 'Default'){
+				$scope.formItems.interactObjs[index].action = 'None';
+				thisWbl.scope().showQIM("Custom Interaction Objects cannot be set to Default!", 2500);
+			}
+			if($scope.formItems.interactObjs[index].action == 'None'){
+				$scope.formItems.interactObjs[index].actionPack = [];
 			}
 			else{
-				if($scope.formItems.custMenuItems[index].actionPack.length == 0){
-					$scope.formItems.custMenuItems[index].actionPack.push({
+				if($scope.formItems.interactObjs[index].actionPack.length == 0){
+					$scope.formItems.interactObjs[index].actionPack.push({
 						slot: '',
 						selectedSlotForBox: '',
 						selectedMultiAction: 'Done',
@@ -146,11 +126,11 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	//========================================================================================
 	$scope.placeSlotInBox = function(pIndex, index){
 		if(!isInit){
-			if($scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox != ''){
-				var slotName = '[' + $scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox + ']'
+			if($scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox != ''){
+				var slotName = '[' + $scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox + ']'
 				var fb = $("#formulaBox_" + pIndex + "_" + index);
 				fb.val(fb.val() + slotName);
-				$scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox = '';
+				$scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox = '';
 			}
 		}
 	};
@@ -163,8 +143,8 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	//========================================================================================
 	$scope.maybeWantMoreAction = function(pIndex, index){
 		if(!isInit){
-			if($scope.formItems.custMenuItems[pIndex].actionPack[index].selectedMultiAction != 'Done'){
-				$scope.formItems.custMenuItems[pIndex].actionPack.push({
+			if($scope.formItems.interactObjs[pIndex].actionPack[index].selectedMultiAction != 'Done'){
+				$scope.formItems.interactObjs[pIndex].actionPack.push({
 					slot: '',
 					selectedSlotForBox: '',
 					selectedMultiAction: 'Done',
@@ -172,8 +152,8 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 				});
 			}
 			else{
-				if((index + 1) < $scope.formItems.custMenuItems[pIndex].actionPack.length){
-					$scope.formItems.custMenuItems[pIndex].actionPack.splice((index + 1), ($scope.formItems.custMenuItems[pIndex].actionPack.length - (index + 1)));
+				if((index + 1) < $scope.formItems.interactObjs[pIndex].actionPack.length){
+					$scope.formItems.interactObjs[pIndex].actionPack.splice((index + 1), ($scope.formItems.interactObjs[pIndex].actionPack.length - (index + 1)));
 				}
 			}
 		}
@@ -199,72 +179,51 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	$scope.close = function (result) {
 		if (result == 'submit') {
 			// Store the customizations in a slot
-			if(thisWbl.scope().gimme('customContextMenu') == null){
-				thisWbl.scope().addSlot(new Slot('customContextMenu',
+			if(thisWbl.scope().gimme('customInteractionObjects') == null){
+				thisWbl.scope().addSlot(new Slot('customInteractionObjects',
 					{},
-					'Custom Context Menu',
-					'Data for customizing the Webble Context Menu',
+					'Custom Interaction Objects',
+					'Data for customizing the Webblw Interaction Objects',
 					'wblIntrnlCstm',
 					undefined,
 					undefined
 				));
 			}
-			thisWbl.scope().getSlot('customContextMenu').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 
-			var ccm = { dmi: [], cmi: [] };
-
-			for(var i = 0, fdmi; fdmi = $scope.formItems.defMenuItems[i]; i++){
-				if(!fdmi.enabled){
-					ccm.dmi.push(fdmi.id);
-				}
-			}
-
-			for(var i = 0, fcmi; fcmi = $scope.formItems.custMenuItems[i]; i++){
-				var storabelAP = [];
-				for(var j = 0, fap; fap = fcmi.actionPack[j]; j++){
-					storabelAP.push({
-						slot: fap.slot,
-						formula: fap.formula
+			var cio = [];
+			var isUnedited = true;
+			for(var i = 0, fio; fio = $scope.formItems.interactObjs[i]; i++){
+				if(fio.name != ''){
+					var storableAP = [];
+					for(var j = 0, fap; fap = fio.actionPack[j]; j++){
+						storableAP.push({
+							slot: fap.slot,
+							formula: fap.formula
+						});
+					}
+					cio.push({
+						index: fio.index,
+						name: fio.name,
+						tooltip: fio.tooltip,
+						action: fio.action,
+						actionPack: storableAP,
+						mouseEvType: fio.mouseEvType,
+						enabled: fio.enabled
 					});
 				}
-
-				if(fcmi.id != '' && fcmi.name != '' && storabelAP.length > 0){
-					ccm.cmi.push({
-						id: fcmi.id,
-						name: fcmi.name,
-						actionPack: storabelAP,
-						enabled: fcmi.enabled
-					});
-				}
-			}
-
-			if(ccm.dmi.length != 0 || ccm.cmi.length != 0){
-				thisWbl.scope().set('customContextMenu', ccm);
-			}
-			else{
-				thisWbl.scope().removeSlot('customContextMenu');
-			}
-
-			// Make the changes and enable all modifications and customizations
-			for(var i = 0, dmi; dmi = $scope.formItems.defMenuItems[i]; i++){
-				if(dmi.enabled){
-					thisWbl.scope().removePopupMenuItemDisabled(dmi.id)
-				}
 				else{
-					thisWbl.scope().addPopupMenuItemDisabled(dmi.id);
+					cio.push({ index: fio.index, name: '', tooltip: 'undefined', action: 'None', actionPack: [], mouseEvType: '', enabled: false });
 				}
 			}
 
-			thisWbl.scope().internalCustomMenu = [];
-			for(var i = 0, cmi; cmi = $scope.formItems.custMenuItems[i]; i++){
-				thisWbl.scope().internalCustomMenu.push({itemId: cmi.id, itemTxt: cmi.name});
-				if(cmi.enabled){
-					thisWbl.scope().removePopupMenuItemDisabled(cmi.id)
-				}
-				else{
-					thisWbl.scope().addPopupMenuItemDisabled(cmi.id);
-				}
+			thisWbl.scope().set('customInteractionObjects', cio);
+
+			for(var i = 0, io; io = cio[i]; i++) {
+				thisWbl.scope().theInteractionObjects[i].scope().setName(io.name);
+				thisWbl.scope().theInteractionObjects[i].scope().tooltip = io.tooltip;
+				thisWbl.scope().theInteractionObjects[i].scope().setIsEnabled(io.enabled);
 			}
+			thisWbl.scope().getSlot('customInteractionObjects').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 
 			$modalInstance.close(true);
 		}
@@ -275,51 +234,73 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	//========================================================================================
 
 
-
+	//$scope.formItems.interactObjs
+	//$scope.customInteractionBalls = [{index: 4, name: 'jump', tooltipTxt: 'Jump Home'}];
 	//******************************************************************************************************************
 	//=== CTRL MAIN CODE ===============================================================================================
 	//******************************************************************************************************************
 	$scope.formItems.thisWblSlots.push({id: '', name: "None"});
+	$scope.formItems.thisWblSlotsPlus.push({id: '', name: "None"});
 	for(var slot in thisWbl.scope().getSlots()) {
 		if(slot != 'customContextMenu' && slot != 'customInteractionObjects'){
 			var thisSlot = thisWbl.scope().getSlot(slot);
 			$scope.formItems.thisWblSlots.push({id: slot, name: thisSlot.getDisplayName() + " [" + slot + "]"});
+			$scope.formItems.thisWblSlotsPlus.push({id: slot, name: thisSlot.getDisplayName() + " [" + slot + "]"});
 		}
 	}
+	$scope.formItems.thisWblSlotsPlus.push({id: 'mouseDeltaX', name: 'Mouse Horizontal Movement Delta'});
+	$scope.formItems.thisWblSlotsPlus.push({id: 'mouseDeltaY', name: 'Mouse Vertical Movement Delta'});
 
-	for(var defItem in Enum.availableOnePicks_DefaultWebbleMenuTargets) {
-		$scope.formItems.defMenuItems.push({
-			id: defItem,
-			name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt[defItem],
-			action: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt[defItem],
-			enabled: !thisWbl.scope().isPopupMenuItemDisabled(defItem)
-		});
-	}
-
-	var ccm = thisWbl.scope().gimme('customContextMenu');
-	if(ccm != null){
-		for(var i = 0, fdmi; fdmi = $scope.formItems.defMenuItems[i]; i++){
-			for(var j = 0, dmi; dmi = ccm.dmi[j]; j++){
-				if(dmi == fdmi.id){
-					fdmi.enabled = false;
+	for(var i = 0, io; io = thisWbl.scope().theInteractionObjects[i]; i++) {
+		var actionType = 'None'
+		if(io.scope().getName() == 'Menu' || io.scope().getName() == 'AssignParent' || io.scope().getName() == 'Rotate' || io.scope().getName() == 'Resize' || io.scope().getName() == 'Rescale'){
+			actionType = 'Default';
+		}
+		if(actionType != 'Default' && thisWbl.scope().customInteractionBalls != undefined){
+			for(var t = 0; t < thisWbl.scope().customInteractionBalls.length; t++){
+				if(io.scope().getName() == thisWbl.scope().customInteractionBalls[t].name){
+					actionType = 'Default';
 					break;
 				}
 			}
 		}
 
-		for(var i = 0, cmi; cmi = ccm.cmi[i]; i++){
-			var newFCMI = {id: cmi.id, name: cmi.name, action: 'Change Slot', actionPack: [], enabled: cmi.enabled};
-			var newFCMIAP = [];
-			for(var j = 0, ap; ap = cmi.actionPack[j]; j++){
-				var sma = ((j + 1) == cmi.actionPack.length) ? 'Done' : 'And';
-				newFCMIAP.push({slot: ap.slot, selectedSlotForBox: '', selectedMultiAction: sma, formula: ap.formula })
+		$scope.formItems.interactObjs.push({
+			color: io.scope().color,
+			index: io.scope().getIndex(),
+			pos: '../../images/icons/ioPos/pos' + io.scope().getIndex() + '.jpg',
+			name: io.scope().getName(),
+			tooltip: ((io.scope().tooltip != 'undefined') ? io.scope().tooltip : ''),
+			action: actionType,
+			actionPack: [],
+			mouseEvType: ((io.scope().getName() != '') ? ((io.scope().getName() == 'Menu' || io.scope().getName() == 'AssignParent') ? 'Mouse Click' : ((io.scope().getName() == 'Rotate' || io.scope().getName() == 'Resize' || io.scope().getName() == 'Rescale') ? 'Mouse Move' : 'Default')) : ''),
+			enabled: io.scope().getIsEnabled()
+		})
+	}
+
+	var cio = thisWbl.scope().gimme('customInteractionObjects');
+
+	if(cio != null){
+		for(var i = 0, io; io = cio[i]; i++){
+			for(var k = 0, fio; fio = $scope.formItems.interactObjs[k]; k++) {
+				if(io.index == fio.index){
+					$scope.formItems.interactObjs[i].name = io.name;
+					$scope.formItems.interactObjs[i].tooltip = io.tooltip;
+					$scope.formItems.interactObjs[i].enabled = io.enabled;
+
+					var newFCIOAP = [];
+					for(var j = 0, ap; ap = io.actionPack[j]; j++){
+						var sma = ((j + 1) == io.actionPack.length) ? 'Done' : 'And';
+						newFCIOAP.push({slot: ap.slot, selectedSlotForBox: '', selectedMultiAction: sma, formula: ap.formula })
+					}
+					$scope.formItems.interactObjs[i].action = io.action;
+					$scope.formItems.interactObjs[i].actionPack = newFCIOAP;
+					$scope.formItems.interactObjs[i].mouseEvType = io.mouseEvType;
+				}
 			}
-			newFCMI.actionPack = newFCMIAP;
-			$scope.formItems.custMenuItems.push(newFCMI);
-			thisWbl.scope().removePopupMenuItemDisabled(cmi.id);
 		}
 	}
-	$scope.formItems.custMenuItems.push({id: '', name: '', action: 'None', actionPack: [], enabled: true});
 	$timeout(function(){ isInit = false; }, 500);
 });
 //======================================================================================================================
+

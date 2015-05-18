@@ -172,7 +172,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
     // A set of useful flags for finding special needs and regulations
     $scope.wblStateFlags = {
-        pasteByUser: false
+        pasteByUser: false,
+		customIOTarget: null
     };
 
     // A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
@@ -973,6 +974,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 	var systemInternalSlotUpdate = function(){
 		var ccm = $scope.gimme('customContextMenu');
 		if(ccm != null){
+			$scope.getSlot('customContextMenu').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 			for(var j = 0, dmi; dmi = ccm.dmi[j]; j++){
 				$scope.addPopupMenuItemDisabled(dmi);
 			}
@@ -982,6 +984,16 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 				if(cmi.enabled == false){
 					$scope.addPopupMenuItemDisabled(cmi.id);
 				}
+			}
+		}
+
+		var cio = $scope.gimme('customInteractionObjects');
+		if(cio != null){
+			$scope.getSlot('customInteractionObjects').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
+			for(var i = 0, io; io = cio[i]; i++) {
+				$scope.theInteractionObjects[i].scope().setName(io.name);
+				$scope.theInteractionObjects[i].scope().tooltip = io.tooltip;
+				$scope.theInteractionObjects[i].scope().setIsEnabled(io.enabled);
 			}
 		}
 	};
@@ -1025,65 +1037,127 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     //========================================================================================
 
 
+	//========================================================================================
+	// Get Calculated Value
+	// This method gets a formula string and replace slot names with slot values and other id
+	// names with its associated values before it evaluates the formula and return the result.
+	//========================================================================================
+	var getCalculatedValue = function(whatCalc, event){
+		var toBeCalculated = whatCalc;
+		if(toBeCalculated[0] == '='){ toBeCalculated = toBeCalculated.substr(1); }
+
+		var workStr = toBeCalculated;
+		var slotStr;
+
+		do {
+			var testIndex1 = workStr.indexOf('[');
+			var testIndex2 = workStr.indexOf(']');
+			slotStr = '';
+
+			if(testIndex1 != -1 && testIndex2 != -1 && testIndex2 > testIndex1){
+				slotStr = workStr.substring(testIndex1 + 1, testIndex2);
+			}
+
+			var slotVal;
+			if(slotStr != ''){
+				slotVal = $scope.gimme(slotStr);
+			}
+
+			if (slotVal == undefined && slotStr.search('mouseDelta') != -1 && event != undefined) {
+				if (slotStr == 'mouseDeltaX') {
+					slotVal = (event.clientX - theLastPos_.x);
+				}
+				else {
+					slotVal = (event.clientY - theLastPos_.y);
+				}
+			}
+
+			if(slotVal != undefined && !isNaN(parseFloat(slotVal))){
+				slotVal = parseFloat(slotVal);
+			}
+
+			if(slotVal != undefined){
+				if(slotVal.toString() != '[object Object]'){
+					toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), slotVal);
+				}
+				else{
+					toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), JSON.stringify(slotVal));
+				}
+			}
+
+			workStr = workStr.substring(testIndex2 + 1);
+		} while (slotStr.length > 0);
+
+		try{ toBeCalculated = eval(toBeCalculated); } catch(err){ }
+
+		return toBeCalculated;
+	}
+	//========================================================================================
+
 
 	//===================================================================================
 	// Internal Custom Menu Activity Reaction
-	// If this template has some internal user generated menu customizations than that
+	// If this template has some internal user generated menu customizations then that
 	// is handled here with the use of the slot that carries its data.
 	//===================================================================================
 	var internalCustomMenuActivityReaction = function(itemName){
 		var ccm = $scope.gimme('customContextMenu');
-
 		if(ccm != null){
 			for(var i = 0, cmi; cmi = ccm.cmi[i]; i++){
 				if(cmi.id == itemName){
 					for(var j = 0, ap; ap = cmi.actionPack[j]; j++){
-						var slot = ap.slot
-						var toBeCalculated = ap.formula;
-						if(toBeCalculated[0] == '='){ toBeCalculated = toBeCalculated.substr(1); }
-
-						var workStr = toBeCalculated;
-						var slotStr;
-
-						do {
-							var testIndex1 = workStr.indexOf('[');
-							var testIndex2 = workStr.indexOf(']');
-							slotStr = '';
-
-							if(testIndex1 != -1 && testIndex2 != -1 && testIndex2 > testIndex1){
-								slotStr = workStr.substring(testIndex1 + 1, testIndex2);
-							}
-
-							var slotVal;
-							if(slotStr != ''){
-								slotVal = $scope.gimme(slotStr);
-							}
-
-							if(slotVal != undefined && !isNaN(parseFloat(slotVal))){
-								slotVal = parseFloat(slotVal);
-							}
-
-							if(slotVal != undefined){
-								if(slotVal.toString() != '[object Object]'){
-									toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), slotVal);
-								}
-								else{
-									toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), JSON.stringify(slotVal));
-								}
-							}
-
-							workStr = workStr.substring(testIndex2 + 1);
-						} while (slotStr.length > 0);
-
-						try{ toBeCalculated = eval(toBeCalculated); } catch(err){ }
-
-						$scope.set(slot, toBeCalculated);
+						$scope.set(ap.slot, getCalculatedValue(ap.formula));
 					}
 				}
 			}
 		}
 	};
 	//===================================================================================
+
+
+	//===================================================================================
+	// Internal Custom Interaction Object Activity Reaction
+	// If this template has some internal user generated Interaction Object
+	// customizations then that is handled here with the use of the slot that carries
+	// its data.
+	//===================================================================================
+	var internalCustomInteractionObjectActivityReaction = function(targetName, event){
+		var cio = $scope.gimme('customInteractionObjects');
+		if(cio != null){
+			for(var i = 0, io; io = cio[i]; i++){
+				if(io.name == targetName){
+					if(io.mouseEvType == 'Mouse Click'){
+						for(var j = 0, ap; ap = io.actionPack[j]; j++){
+							$scope.set(ap.slot, getCalculatedValue(ap.formula));
+						}
+					}
+					else{
+						theLastPos_ = {x: event.clientX, y: event.clientY};
+						$scope.wblStateFlags.customIOTarget = io;
+
+						$scope.getPlatformElement().bind('vmouseup', function(event){
+							$scope.getPlatformElement().unbind('vmousemove');
+							$scope.getPlatformElement().unbind('vmouseup');
+							$scope.wblStateFlags.customIOTarget = null;
+							$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 200);
+						});
+
+						$scope.getPlatformElement().bind('vmousemove', function(event){
+							event.preventDefault();
+							$scope.setPlatformDoNotSaveUndoEnabled(true);
+							for (var j = 0, ap; ap = $scope.wblStateFlags.customIOTarget.actionPack[j]; j++) {
+								$scope.set(ap.slot, getCalculatedValue(ap.formula, event));
+							}
+
+							theLastPos_ = {x: event.clientX, y: event.clientY};
+						});
+					}
+				}
+			}
+		}
+	};
+	//===================================================================================
+
 
 
     //*****************************************************************************************************************
@@ -1226,6 +1300,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 }
             }
             //=============================================
+
+			//=== USER GENERATED ====================================================================
+			else{
+				internalCustomInteractionObjectActivityReaction(targetName, event);
+			}
+			//=======================================================================================
+
         }
 
         if ($scope.theView.scope().coreCall_Event_InteractionObjectActivityReaction){
@@ -1399,6 +1480,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 		//=== EDIT CUSTOM MENU ITEMS ===========================================================================
 		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomMenuItems)){
 			$scope.openForm(Enum.aopForms.editCustMenuItems, $scope.theView, function(retVal){
+				// No need to do anything here (retval is either true or null and none is a bad thing)
+			});
+		}
+		//=======================================================================================
+
+		//=== EDIT CUSTOM INTERACTION OBJECTS ===========================================================================
+		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomInteractionObjects)){
+			$scope.openForm(Enum.aopForms.editCustInteractObj, $scope.theView, function(retVal){
 				// No need to do anything here (retval is either true or null and none is a bad thing)
 			});
 		}
