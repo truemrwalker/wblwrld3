@@ -483,7 +483,6 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                         io.scope().pos.left = ioPos[i].left;
                         io.scope().pos.top = ioPos[i].top;
                         io.scope().thisIO = io;
-                        //io.mousedown(scope.activateInteractionObject);
                         io.bind('vmousedown', scope.activateInteractionObject);
                         scope.theInteractionObjects.push(io);
                         ioContainer.append(io);
