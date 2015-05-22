@@ -1,10 +1,14 @@
 {
 	"name": "wblwrld3",
+	"description": "Webble World 3",
 	"version": "0.0.0",
+	"homepage": "https://wws.meme.hokudai.ac.jp",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/truemrwalker/wblwrld3.git"
+	},
 
 	"dependencies": {
-
-		"bower": "latest",
 
 		"mime": "latest",
 		"express": "latest",
@@ -89,7 +93,6 @@
 
 		"test": "grunt test",
 		"start": "node serverside/web-server.js",
-		"bootstrap": "node serverside/web-server.js --deployment bootstrap",
-		"postinstall": "bower install"
+		"bootstrap": "node serverside/web-server.js --deployment bootstrap"
 	}
 }

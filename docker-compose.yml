@@ -1,0 +1,9 @@
+web:
+	build: .
+	links:
+	- db
+	ports:
+	- "27017:27017"
+
+db:
+	image: mongo:latest

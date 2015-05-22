@@ -1,0 +1,10 @@
+Dockerfile
+node_modules
+dist
+.tmp
+.sass-cache
+app/bower_components
+app/devwebbles
+.idea
+.DS_Store
+*.log

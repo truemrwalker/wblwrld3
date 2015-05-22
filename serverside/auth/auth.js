@@ -33,22 +33,22 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	////////////////////////////////////////////////////////////////////
 	// Inject the passport middleware
-    //
-    app.use(passport.initialize());
-    app.use(passport.session());
+	//
+	app.use(passport.initialize());
+	app.use(passport.session());
 
 	////////////////////////////////////////////////////////////////////
-    // User serialization/de-serialization
-    //
-    passport.serializeUser(function(user, done) {
-        done(null, user.email);
-    });
+	// User serialization/de-serialization
+	//
+	passport.serializeUser(function(user, done) {
+		done(null, user.email);
+	});
 
-    passport.deserializeUser(function(email, done) {
-        User.findOne({ email:email }, function(err, user) {
-            done(err, user);
-        });
-    });
+	passport.deserializeUser(function(email, done) {
+		User.findOne({ email:email }, function(err, user) {
+			done(err, user);
+		});
+	});
 
 	////////////////////////////////////////////////////////////////////
 	// Implement the final step of a successfull login/logout
@@ -60,8 +60,8 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 		if (err)
 			deferred.reject(err);
-    else if (!user._sec || !user._sec.account_status)
-      deferred.reject(new util.RestError(gettext("Account incomplete"), 403));
+		else if (!user._sec || !user._sec.account_status)
+			deferred.reject(new util.RestError(gettext("Account incomplete"), 403));
 		else if (user._sec.account_status === 'suspended')
 			deferred.reject(new util.RestError(gettext("Account suspended"), 403));
 		else if (user._sec.account_status === 'deleted')
@@ -116,51 +116,51 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	}
 
 	////////////////////////////////////////////////////////////////////
-    // Load the authorization plugins
-    //
-    function doneLocal (err, req, res, user) {
+	// Load the authorization plugins
+	//
+	function doneLocal (err, req, res, user) {
 
-	    doLogin(err, req, user)
-		    .then(function(userJson) {
-		        res.json(userJson);
-		    })
-		    .fail(function(err) {
-			    util.resSendError(res, err);
-		    }).done();
-    }
+		doLogin(err, req, user)
+			.then(function(userJson) {
+				res.json(userJson);
+			})
+			.fail(function(err) {
+				util.resSendError(res, err);
+			}).done();
+	}
 
-    function doneExternal(err, req, res, user) {
+	function doneExternal(err, req, res, user) {
 
-	    doLogin(err, req, user)
-		    .fail(function(e) {
+		doLogin(err, req, user)
+			.fail(function(e) {
 				console.log("AUTH ERROR:", e);
-		    })
-		    .finally(function() {
+			})
+			.finally(function() {
 
-			    // Close the window (still under consideration) --
-			    // This should be the standard negotiation protocol for the client-side reactions
-			    //
-			    res.send('<script>window.close();</script>');
-		    }).done();
-    }
+				// Close the window (still under consideration) --
+				// This should be the standard negotiation protocol for the client-side reactions
+				//
+				res.send('<script>window.close();</script>');
+			}).done();
+	}
 
-    // Specific 'Login' authentication methods
-    //
-    require('./providers/local')(Q, app, config, gettext, passport, User, doneLocal);
-    require('./providers/twitter')(Q, app, config, gettext, passport, User, doneExternal);
-    require('./providers/facebook')(Q, app, config, gettext, passport, User, doneExternal);
-    require('./providers/google')(Q, app, config, gettext, passport, User, doneExternal);
+	// Specific 'Login' authentication methods
+	//
+	require('./providers/local')(Q, app, config, gettext, passport, User, doneLocal);
+	require('./providers/twitter')(Q, app, config, gettext, passport, User, doneExternal);
+	require('./providers/facebook')(Q, app, config, gettext, passport, User, doneExternal);
+	require('./providers/google')(Q, app, config, gettext, passport, User, doneExternal);
 
 	////////////////////////////////////////////////////////////////////
-    // User-specific functions
-    //
-    app.get('/auth/user', function (req, res) {
+	// User-specific functions
+	//
+	app.get('/auth/user', function (req, res) {
 
-        if (req.isAuthenticated())
-	        res.status(200).send(req.user.getSafeProps());
-        else
-            res.status(404).end();
-    });
+		if (req.isAuthenticated())
+			res.status(200).send(req.user.getSafeProps());
+		else
+			res.status(404).end();
+	});
 
 	//******************************************************************
 
@@ -215,9 +215,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	});
 
 	////////////////////////////////////////////////////////////////////
-    // 'Logout' logic
-    //
-    app.all('/auth/logout', function(req, res){
+	// 'Logout' logic
+	//
+	app.all('/auth/logout', function(req, res){
 
 		doLogout(req)
 			.then(function() {
@@ -226,39 +226,39 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.fail(function(err) {
 				util.resSendError(res, err);
 			}).done();
-    });
+	});
 
-    // Define and return the auth directive whose fields conform to connect's middleware contract
-    //
-    return {
+	// Define and return the auth directive whose fields conform to connect's middleware contract
+	//
+	return {
 
-	    non: function(req, res, next) { // explicit no-auth policy
-		    next();
-	    },
+		non: function(req, res, next) { // explicit no-auth policy
+			next();
+		},
 		usr: function(req, res, next) {
 
-	        if (!req.isAuthenticated())
-	            res.status(401).end();
-	        else
-	            next();
-	    },
-	    dev: function(req, res, next) {
+			if (!req.isAuthenticated())
+				res.status(401).end();
+			else
+				next();
+		},
+		dev: function(req, res, next) {
 
-		    if (!req.isAuthenticated())
-			    res.status(401).end();
-		    else if (req.user._sec.role !== 'dev' && req.user._sec.role !== 'adm')
-		        res.status(403).end(); // Forbidden
-		    else
-			    next();
-	    },
-	    adm: function(req, res, next) {
+			if (!req.isAuthenticated())
+				res.status(401).end();
+			else if (req.user._sec.role !== 'dev' && req.user._sec.role !== 'adm')
+				res.status(403).end(); // Forbidden
+			else
+				next();
+		},
+		adm: function(req, res, next) {
 
-		    if (!req.isAuthenticated())
-			    res.status(401).end();
-		    else if (req.user._sec.role !== 'adm')
-			    res.status(403).end(); // Forbidden
-		    else
-			    next();
-	    }
-    };
+			if (!req.isAuthenticated())
+				res.status(401).end();
+			else if (req.user._sec.role !== 'adm')
+				res.status(403).end(); // Forbidden
+			else
+				next();
+		}
+	};
 };

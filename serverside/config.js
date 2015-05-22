@@ -60,9 +60,11 @@ module.exports = (function() {
 		APP_ROOT_DIR: path.join(__dirname, '../app'),
 
 		// Application level settings
-		MONGODB_URL: sec.get('mongodb_url'),
+		MONGODB_DB_NAME: "wblwrld3",
+		MONGODB_DB_USERNAME: sec.get('mongo_db_username'),
+		MONGODB_DB_PASSWORD: sec.get('mongo_db_password'),
 
-		SESSION_KEY: sec.get('session_key'),
+		SESSION_KEY: "connect.wblwrld3.sid",
 		SESSION_SECRET: sec.get('session_secret'),
 
 		// Third party auth tokens
@@ -85,20 +87,23 @@ module.exports = (function() {
 		// SERVER_URL_INSECURE
 		// SERVER_PORT_INSECURE
 		//
+		// MONGODB_URL
 
 		// Finally, Settings that are influenced by other environment variables
+		MONGODB_HOST: "localhost",
+		MONGODB_PORT: 27017,
+
 		// DEPLOYMENT can be 'development', 'production', 'testing', 'maintenance', 'bootstrap'
 		//
-		DEPLOYMENT: !process.env.NODE_ENV ? 'development' : process.env.NODE_ENV
+		DEPLOYMENT: 'development'
 	};
-
 
 	////////////////////////////////////////////////////////////////////
 	// Allow env variables to override config values
 	//
 	Object.keys(config).forEach(function(key) {
 
-		if (process.env[key] !== undefined)
+		if (process.env.hasOwnProperty(key))
 			config[key] = process.env[key]
 	});
 
@@ -118,7 +123,7 @@ module.exports = (function() {
 	});
 
 	////////////////////////////////////////////////////////////////////
-	// Calculate, update and populate other config options
+	// Calculate, update and populate other (specialized) config options
 	//
 	var portInsecure = process.env.PORT ? parseInt(process.env.PORT, 10) : config.SERVER_PORT;
 	var port = portInsecure == 80 ? 443 : portInsecure + 443;
@@ -130,6 +135,19 @@ module.exports = (function() {
 	config.SERVER_PORT = port;
 	config.SERVER_URL = port == 443  || config.DEPLOYMENT != 'development' ?
 		"https://" + config.SERVER_NAME : 'https://' + config.SERVER_NAME + ':' + port;
+
+	//******************************************************************
+
+	if (process.env.NODE_ENV)
+		config.DEPLOYMENT = process.env.NODE_ENV;
+
+	if (process.env.DB_NAME && process.env.DB_PORT) {
+
+		config.MONGODB_HOST = process.env.DB_PORT_27017_TCP_ADDR;
+		config.MONGODB_PORT = parseInt(process.env.DB_PORT_27017_TCP_PORT, 10);
+	}
+	config.MONGODB_URL = "mongodb://" + config.MONGODB_DB_USERNAME + ":" + config.MONGODB_DB_PASSWORD + "@" +
+		config.MONGODB_HOST + ":" + config.MONGODB_PORT.toString() + "/" + config.MONGODB_DB_NAME;
 
 	////////////////////////////////////////////////////////////////////
 	// Finally return the final configuration file

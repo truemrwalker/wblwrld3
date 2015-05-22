@@ -30,4 +30,4 @@ var conn = new Mongo();
 var db = conn.getDB('wblwrld3');
 //db = db.getSiblingDB('wblwrld3');
 
-db.addUser({ user: sec.get('main_db_username'), pwd: sec.get('main_db_password'), roles: [ "readWrite", "dbAdmin" ] });
+db.addUser({ user: sec.get('mongo_db_username'), pwd: sec.get('mongo_db_password'), roles: [ "readWrite", "dbAdmin" ] });
