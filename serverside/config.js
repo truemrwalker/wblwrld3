@@ -89,12 +89,12 @@ module.exports = (function() {
 		//
 		// MONGODB_URL
 
-		// Finally, Settings that are influenced by other environment variables
+		// Finally, Settings that are influenced by other, 3rd party, environment variables
+		//
 		MONGODB_HOST: "localhost",
 		MONGODB_PORT: 27017,
 
 		// DEPLOYMENT can be 'development', 'production', 'testing', 'maintenance', 'bootstrap'
-		//
 		DEPLOYMENT: 'development'
 	};
 

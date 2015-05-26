@@ -23,29 +23,35 @@
 // secrets.js
 // Created by Giannis Georgalis on 3/23/2015
 //
+var path = require('path');
+var crypt = require('./lib/crypt');
+var fs = require('fs');
+
 module.exports = (function() {
 
-  var path = require('path');
-  var crypt = require('./lib/crypt');
-  var fs = require('fs');
+	var homeDir = process.env.LOCALAPPDATA || process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
+	var secretsFile = path.join(homeDir, "wblwrld3", "secretsdb.ejson");
 
-  var homeDir = process.env.LOCALAPPDATA || process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-  var secretsFile = path.join(homeDir, "wblwrld3", "secretsdb.ejson");
+	var obj = {};
 
-  var obj;
+	try {
+		var hash = crypt.createHash(fs.readFileSync(path.join(__dirname, 'config.js'), {encoding: 'utf8'}).replace(/\r\n/g, '\n'));
+		obj = JSON.parse(crypt.decryptText(fs.readFileSync(secretsFile, {encoding: 'utf8'}), hash));
+	}
+	catch (err) {
 
-  try {
-    var hash = crypt.createHash(fs.readFileSync(path.join(__dirname, 'config.js'), {encoding: 'utf8'}).replace(/\r\n/g, '\n'));
-    obj = JSON.parse(crypt.decryptText(fs.readFileSync(secretsFile, {encoding: 'utf8'}), hash));
-  }
-  catch (err) {
-    obj = {};
-  }
+		try {
 
-  return {
-    get: function(key) {
-      return obj[key] || 'Could_Not_Retrieve_Secret_For_Key_' + key;
-    }
-  };
+			// Last resort - use the default file
+			obj = JSON.parse(fs.readFileSync(path.join(__dirname, "secretsdb.json"), {encoding: 'utf8'}));
+		}
+		catch (err2) {}
+	}
+
+	return {
+		get: function(key, defaultVal) {
+			return obj.hasOwnProperty(key) ? obj[key] : defaultVal;
+		}
+	};
 
 })();

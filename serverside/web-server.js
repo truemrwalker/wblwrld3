@@ -58,13 +58,13 @@ mongoose.connect(config.MONGODB_URL);
 
 mongoose.connection.on('error', function(err){
 
-    console.log("DB ERROR:", err);
+    console.error("Database Error:", err.message);
 	process.exit(1);
 });
 
 mongoose.connection.on('open', function() {
 
-	console.log("Successfully connected to the database");
+	console.log("Database: connected");
 	serverEntryPoint();
 });
 

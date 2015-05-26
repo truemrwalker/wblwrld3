@@ -20,19 +20,26 @@
 //
 
 //
-// mongoshell.js
+// mongoshellgen.js
 // Created by Giannis Georgalis on 12/19/13
 //
-var config = {"MONGODB_DB_NAME":"wblwrld3","MONGODB_DB_USERNAME":"webbler","MONGODB_DB_PASSWORD":"mySuperSecretMongoPass"};
+var config = require('../config');
+var path = require('path');
+var fs = require('fs');
 
-// See also:
-// http://docs.mongodb.org/manual/tutorial/write-scripts-for-the-mongo-shell/
-
-// equivalent to use wblwrld3;
-// Mongo() is provided by the mongodb shell
+// Build configStr
 //
-//var db = new Mongo().getDB(config.MONGODB_DB_NAME);
+var fields = [ "MONGODB_DB_NAME", "MONGODB_DB_USERNAME", "MONGODB_DB_PASSWORD" ];
+var configObj = {};
+var configStr = "var config = ";
 
-// equivalent to use wblwrld3;
-db = db.getSiblingDB(config.MONGODB_DB_NAME);
-db.createUser({ user: config.MONGODB_DB_USERNAME, pwd: config.MONGODB_DB_PASSWORD, roles: [ "readWrite", "dbAdmin" ] });
+fields.forEach(function(f) {
+	configObj[f] = config[f];
+});
+configStr += JSON.stringify(configObj) + ";";
+
+// Replace contents with configStr
+//
+var scriptContents = fs.readFileSync('mongoshell.js', {encoding: 'utf8'});
+var newContents = scriptContents.replace(/var config = \{[^}]*?};/, configStr);
+fs.writeFileSync('mongoshell.js', newContents, { encoding: 'utf8' });
