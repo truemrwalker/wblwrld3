@@ -23,9 +23,11 @@
 // webbles.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
-
 module.exports = function(Q, app, config, mongoose, gettext) {
+
+	// We don't need to generate fake webbles anymore
+	//
+	return console.log("Bootstrap: Skipped generation of fake webbles");
 
 	// Create entries in db
 	//

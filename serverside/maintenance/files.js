@@ -177,11 +177,16 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	function syncLocalWebbleFiles(webbleBaseDir, evenWithoutOwnerId, fileActionLogger) {
 
 		try {
+
 			if (!fs.statSync(webbleBaseDir).isDirectory())
 				return Q.reject(new Error("Is not a directory"));
 		}
 		catch(e) {
-			return Q.reject(new Error("Directory does not exist"));
+
+			console.log("Directory:", webbleBaseDir, "is not accessible");
+
+			// This is expected (esp. for devwebbles), so, report success - we've finished!
+			return Q.resolve(null);
 		}
 
 		var promises = [];
