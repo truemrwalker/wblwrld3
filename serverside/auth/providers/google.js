@@ -77,6 +77,12 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
 	    user._auth.google.refresh_token = refreshToken;
     }
 
+	////////////////////////////////////////////////////////////////////
+	// Sayonara, if not configured
+	//
+	if (!config.GOOGLE_CLIENT_ID || !config.GOOGLE_CLIENT_SECRET)
+		return console.log("Auth: Google+ login is not configured and so it will be disabled");
+
     ////////////////////////////////////////////////////////////////////
     // Setup strategy
     //

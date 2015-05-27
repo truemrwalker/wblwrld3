@@ -77,9 +77,6 @@ module.exports = (function() {
 		FACEBOOK_APP_ID: sec.get('facebook_app_id'),
 		FACEBOOK_APP_SECRET: sec.get('facebook_app_secret'),
 
-		LINKED_IN_KEY: sec.get('linkedin_key'),
-		LINKED_IN_SECRET: sec.get('linkedin_secret'),
-
 		// Settings that are set automatically at startup
 		//
 		// SERVER_URL

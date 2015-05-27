@@ -56,6 +56,12 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
         user._auth.facebook.refresh = refresh;
     }
 
+	////////////////////////////////////////////////////////////////////
+	// Sayonara, if not configured
+	//
+	if (!config.FACEBOOK_APP_ID || !config.FACEBOOK_APP_SECRET)
+		return console.log("Auth: Facebook login is not configured and so it will be disabled");
+
     ////////////////////////////////////////////////////////////////////
     // Setup strategy
     //

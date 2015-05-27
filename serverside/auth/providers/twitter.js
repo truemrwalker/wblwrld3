@@ -55,7 +55,13 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
         user._auth.twitter.secret = tokenSecret;
     }
 
-    ////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	// Sayonara, if not configured
+	//
+	if (!config.TWITTER_CONSUMER_KEY || !config.TWITTER_CONSUMER_SECRET)
+		return console.log("Auth: Twitter login is not configured and so it will be disabled");
+
+	////////////////////////////////////////////////////////////////////
     // Setup strategy
     //
     passport.use(new TwitterStrategy({
