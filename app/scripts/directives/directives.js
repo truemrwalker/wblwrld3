@@ -483,7 +483,6 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                         io.scope().pos.left = ioPos[i].left;
                         io.scope().pos.top = ioPos[i].top;
                         io.scope().thisIO = io;
-                        //io.mousedown(scope.activateInteractionObject);
                         io.bind('vmousedown', scope.activateInteractionObject);
                         scope.theInteractionObjects.push(io);
                         ioContainer.append(io);
@@ -986,6 +985,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                     protect: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Protect),
                                     addCustomSlots: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.AddCustomSlots),
 									EditCustomMenuItems: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomMenuItems),
+									EditCustomInteractionObjects: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomInteractionObjects),
                                     about: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.About)
                                 };
 
@@ -1038,8 +1038,11 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                 if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.addCustomSlots)){
                                     theWblCM[dmi.addCustomSlots] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.AddCustomSlots};
                                 }
-								if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.EditCustomMenuItems)){
+								if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.EditCustomMenuItems) || (scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && scope.altKeyIsDown)){
 									theWblCM[dmi.EditCustomMenuItems] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.EditCustomMenuItems};
+								}
+								if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.EditCustomInteractionObjects)){
+									theWblCM[dmi.EditCustomInteractionObjects] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.EditCustomInteractionObjects};
 								}
                                 if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.about)){
                                     theWblCM[dmi.about] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.About};
@@ -1061,7 +1064,6 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
 									}
 								}
 							}
-
 
                             if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DEFAULT_MENU, 10)) != 0 && !theActiveTrigger.scope().theView.scope().customMenu){
                                 theWblCM['none'] = {name: gettext("Default Menu Disabled")};

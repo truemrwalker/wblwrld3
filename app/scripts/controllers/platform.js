@@ -3071,6 +3071,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			};
 			modalOptions.size = 'lg';
 		}
+		else if(whatForm == Enum.aopForms.editCustInteractObj){
+			modalOptions.templateUrl = 'views/modalForms/editCustInteractObjSheet.html';
+			modalOptions.controller = 'editCustInteractObjSheetCtrl';
+			modalOptions.resolve = {
+				wblView: function(){ return content; }
+			};
+			modalOptions.size = 'lg';
+		}
         else if(whatForm == Enum.aopForms.infoMsg){
             modalOptions.templateUrl = 'views/modalForms/infoMsg.html';
             modalOptions.controller = 'infoMsgCtrl';

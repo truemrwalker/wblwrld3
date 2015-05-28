@@ -74,7 +74,8 @@ ww3Services.factory('Enum', function (gettext) {
             rateWbl: 18,
             saveWorkspaceAs: 19,
             shareWorkspaces: 20,
-			editCustMenuItems: 21
+			editCustMenuItems: 21,
+			editCustInteractObj: 22
         },
 
         //Available undo operations

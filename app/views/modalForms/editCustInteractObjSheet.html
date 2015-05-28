@@ -1,0 +1,147 @@
+<!--
+//====================================================================================================================
+// Webble World
+// [IntelligentPad system for the web]
+// Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+// v3.0 (2013)
+//
+// Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+// Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+// Server Side Developer: Giannis Georgalis
+// Additional Support: Jonas Sjöbergh
+//
+// This file is part of Webble World (c).
+// ******************************************************************************************
+// Webble World is licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ******************************************************************************************
+// The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+// only to objects that actually loads in this original Webble World Platform. Modifications
+// of the meme media object code which leads to breaking of compatibility with the original
+// Webble World platform, may no longer be referred to as a "Webble" or "webble".
+// ******************************************************************************************
+//====================================================================================================================
+-->
+
+<!--====================================================================================================================
+// HTML View for adding customized slots form
+//===================================================================================================================-->
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main">
+
+	<div class="row">
+		<div class="col-xs-4">
+			<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+			<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+		</div>
+		<div class="col-xs-8"><h4 class="formTitle" translate>Edit Custom Interaction Objects</h4></div>
+	</div>
+
+	<div class="keepTheDistanceBelow dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-1">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.color}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Color</span>
+				</div>
+			</div>
+			<div class="col-xs-1">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.index}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Index</span>
+				</div>
+			</div>
+			<div class="col-xs-1">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.position}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Position</span>
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.name}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Name Id</span>
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.tooltip}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Tooltip Text</span>
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.action}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Action</span>
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.mouseEvType}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Mouse Event Type</span>
+				</div>
+			</div>
+			<div class="col-xs-1" style="text-align: left;">
+				<div tooltip-placement="bottom" tooltip="{{tooltip.enabled}}">
+					<span style="color: #000000; font-size: 0.9em; font-weight: bold; padding-bottom: -20px;" translate>Enabled</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<hr style="border: 1px double black; height: 2px;  margin: 0; padding: 0;">
+			</div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row" ng-repeat="io in formItems.interactObjs" style="font-size: 13px;">
+			<div class="col-xs-1">
+				<div class="interactionBall" ng-class="io.color" style="width: 20px; height: 20px;"></div>
+			</div>
+			<div class="col-xs-1">
+				<input class="formitem" type="text" ng-model="io.index" disabled style="width: 30px; text-align: center;">
+			</div>
+			<div class="col-xs-1">
+				<img ng-src="{{io.pos}}" style="max-height: 150px; height: auto; width: auto; vertical-align: top;" />
+			</div>
+			<div class="col-xs-2">
+				<input class="formitem" type="text" ng-model="io.name" ng-disabled="io.action == 'Default'">
+			</div>
+			<div class="col-xs-2">
+				<input class="formitem" type="text" ng-model="io.tooltip" ng-disabled="io.action == 'Default'">
+			</div>
+			<div class="col-xs-2">
+				<select class="formitem" ng-model="io.action" ng-options="ca for ca in formItems.customActions" ng-change="enableActionPack($index)" ng-disabled="io.action == 'Default'" ng-style="{'background-color': (io.action == 'Default' ? '#e8e8e8' : '#ffffff')}"></select>
+				<div ng-show="(io.action == 'Change Slot')">
+					<div style="margin-top: -15px;" ng-repeat="ap in formItems.interactObjs[$index].actionPack" >
+						</br><select class="formitem" ng-model="ap.slot" ng-options="slot.id as slot.name for slot in formItems.thisWblSlots"></select>
+						<br ng-if="ap.slot != ''"><textarea id="formulaBox_{{$parent.$index}}_{{$index}}" ng-show="ap.slot != ''" class="formitem" ng-model="ap.formula" rows="2" style="width: 100%;"></textarea>
+						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="slotpick.id as slotpick.name for slotpick in formItems.thisWblSlotsPlus" ng-model="ap.selectedSlotForBox" ng-change="placeSlotInBox($parent.$index, $index)"></select>
+						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="sa for sa in formItems.multiActions" ng-model="ap.selectedMultiAction" ng-change="maybeWantMoreAction($parent.$index, $index)"></select>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<select class="formitem" ng-model="io.mouseEvType" ng-options="met for met in formItems.mouseEventTypes" ng-change="checkIfOptionIsAllowed($index)" ng-disabled="io.action == 'Default'" ng-style="{'background-color': (io.action == 'Default' ? '#e8e8e8' : '#ffffff')}"></select>
+			</div>
+			<div class="col-xs-1" style="text-align: center;">
+				<input class="formitem" style="width: 18px; height: 18px;" type="checkbox" ng-model="io.enabled" ng-disabled="io.name == 'AssignParent'">
+			</div>
+			<div class="col-xs-12">
+				<hr style="border: 1px dashed #d3d3d3; margin: 2px; padding: 0;">
+			</div>
+		</div>
+	</div>
+
+	<div class="dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-12">
+				<span ng-style="{'color': formProps.errorMsgColor}" style="font-weight: bold;">{{formProps.errorMsg | translate}}</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!--=================================================================================================================-->
