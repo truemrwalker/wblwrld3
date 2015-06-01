@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function WebContentWrapperCtrl($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('WebContentWrapperCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
 
@@ -102,7 +102,7 @@ function WebContentWrapperCtrl($scope, $log, $timeout, Slot, Enum) {
 
   //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 

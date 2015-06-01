@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function labelWebbleCtrl($scope, $log, Slot, Enum, gettext, wwConsts) {
+wblwrld3App.controller('labelWebbleCtrl', function($scope, $log, Slot, Enum, gettext, wwConsts) {
 
     //=== PROPERTIES ====================================================================
 
@@ -71,5 +71,5 @@ function labelWebbleCtrl($scope, $log, Slot, Enum, gettext, wwConsts) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //======================================================================================================================

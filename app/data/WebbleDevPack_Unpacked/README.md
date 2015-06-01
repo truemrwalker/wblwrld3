@@ -197,16 +197,19 @@ $scope, the core can be reached to get following methods and data:
     // This is a Webble specific info object that keeps track of what basic (non-value related) events that are firing
     // in this webble. This is used in combination with $watch in webble development to be able to react properly to
     // things of interest that a related Webble is experiencing. (Note: [] comment characters below does not mean Array)
-    $scope.wblEventInfo = {
-        slotChanged: null,          //As set: {slotname: [Slot Name], slotvalue: [Slot Value]}
-        deleted: null,              //As set: [time of deletion]
-        duplicated: null,           //As set: [Instance Id for Webble that is a copy]
-        shareModelCreated: null,    //As set: [Instance Id for Webble that is a copy]
-        pasted: null,               //As set: [Instance Id for Webble that is pasted upon]
-        gotChild: null,             //As set: [Instance Id for Webble that was pasted]
-        peeled: null,               //As set: [Instance Id for Webble that was peeled from]
-        lostChild: null             //As set: [Instance Id for Webble that was peeled]
-    };
+    // timestamp is used to separate two events of the same type happening twice
+    $scope.eventInfo = {
+            slotChanged: null, 			//As set: {instanceid: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
+            deletingWebble: null, 		//As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
+            keyDownForWebble: null, 	//As set: {instanceid: [Instance Id for webble being selected], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [when it happened as ms integer]}
+            duplicatingWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
+            shareModelWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
+            pastingWebble: null, 		//As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
+            peelingWebble: null, 		//As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
+            loadingWebble: null, 		//As set: [Instance Id for webble being loaded]
+            mainMenuExecuted: null, 	//As set: {menuid: [menu sublink id], timestamp: [millisecond for when it happened]}
+            wblMenuExecuted: null 		//As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name], timestamp: [millisecond for when it happened]}
+        };
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -251,15 +254,16 @@ system and specific Webbles:
     // the platform. This is used in combination with $watch in webble development to be able to react properly to
     // things of interest.
     $scope.eventInfo = {
-        slotChanged: null,          //As set: {instanceid: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
-        deletingWebble: null,       //As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
-        keyDownForWebble: null,     //As set: {instanceid: [Instance Id for webble being selected], key: {code: [key code], name: [key name], released: [True When Key Released]}
-        duplicatingWebble: null,    //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy]}
-        shareModelWebble: null,     //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy]}
-        pastingWebble: null,        //As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon]}
-        peelingWebble: null,        //As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from]}
-        loadingWebble: null,        //As set: [Instance Id for webble being loaded]
-        mainMenuExecuted: null      //As set: [menu sublink id]
+        slotChanged: null, 			//As set: {instanceId: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
+		deletingWebble: null, 		//As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
+		keyDownForWebble: null, 	//As set: {instanceIdList: [Instance Id list for webbles being selected], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [when it happened as ms integer]}
+		duplicatingWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
+		shareModelWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
+		pastingWebble: null, 		//As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
+		peelingWebble: null, 		//As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
+		loadingWebble: null, 		//As set: [Instance Id for webble being loaded]
+		mainMenuExecuted: null, 	//As set: {menuId: [menu sublink id], timestamp: [millisecond for when it happened]}
+		wblMenuExecuted: null 		//As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name], timestamp: [millisecond for when it happened]}
     };
 
     // Reset Selections, resets the work surface by removing all selections and half finished connections.

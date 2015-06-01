@@ -39,16 +39,16 @@
                     </thead>
 
                     <tbody>
-                        <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in formProps.EAData">
+                        <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in formProps.EAData track by $index">
                             <td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
                                 <ul style="padding-left: 20px;">
-                                    <li ng-click="openEdit('Event', $parent.$index, $index);" ng-repeat="event in row.eventGroup"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(event.strVal)}}</span></li>
+                                    <li ng-click="openEdit('Event', $parent.$index, $index);" ng-repeat="event in row.eventGroup track by $index"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(event.strVal)}}</span></li>
                                     <li ng-click="openEdit('Event', $index, -1);"><span class="addNew">+</span></li>
                                 </ul>
                             </td>
                             <td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
                                 <ul style="padding-left: 20px;">
-                                    <li ng-click="openEdit('Action', $parent.$index, $index);" ng-repeat="action in row.actionGroup"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(action.strVal)}}</span></li>
+                                    <li ng-click="openEdit('Action', $parent.$index, $index);" ng-repeat="action in row.actionGroup track by $index"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(action.strVal)}}</span></li>
                                     <li ng-click="openEdit('Action', $index, -1);"><span class="addNew">+</span></li>
                                 </ul>
                             </td>

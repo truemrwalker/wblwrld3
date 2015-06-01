@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function soapClientCtrl($scope, $log, Slot, Enum, dbService, $timeout) {
+wblwrld3App.controller('soapClientCtrl', function($scope, $log, Slot, Enum, dbService, $timeout) {
 
     //=== PROPERTIES ====================================================================
 
@@ -501,7 +501,7 @@ $log.log(methodType);
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 
@@ -513,7 +513,7 @@ $log.log(methodType);
 // EVENT ACTION MAIN FORM CONTROLLER
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
-function addServiceParamForm_Ctrl($scope, $log, $modalInstance, $timeout, Slot, Enum, props) {
+wblwrld3App.controller('addServiceParamForm_Ctrl', function($scope, $log, $modalInstance, $timeout, Slot, Enum, props) {
 
     //=== PROPERTIES ====================================================================
     $scope.formitem = {
@@ -562,6 +562,6 @@ function addServiceParamForm_Ctrl($scope, $log, $modalInstance, $timeout, Slot, 
 
     //=== CTRL MAIN CODE ======================================================================
     $('#paramNameInputBox').focus();
-}
+});
 //=======================================================================================
 //======================================================================================================================

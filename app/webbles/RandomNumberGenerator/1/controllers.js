@@ -7,7 +7,7 @@
 // RANDOMIZER WEBBLE CONTROLLER
 // This is the Main controller for the RANDOMIZER Webble Template
 //=======================================================================================
-function randomizerWebbleCtrl($scope, $log, Slot, Enum, gettext) {
+wblwrld3App.controller('randomizerWebbleCtrl', function($scope, $log, Slot, Enum, gettext) {
 
     //=== PROPERTIES ====================================================================
 
@@ -111,5 +111,5 @@ function randomizerWebbleCtrl($scope, $log, Slot, Enum, gettext) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //======================================================================================================================

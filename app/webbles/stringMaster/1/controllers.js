@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function stringMasterCtrl($scope, $log, Slot, Enum) {
+wblwrld3App.controller('stringMasterCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -433,7 +433,7 @@ function stringMasterCtrl($scope, $log, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 // More Controllers may of course be added here if needed

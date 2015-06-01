@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function windowContainerCtrl($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -325,19 +325,19 @@ function windowContainerCtrl($scope, $log, $timeout, Slot, Enum) {
 
 
         $scope.$watch(function(){ return $scope.wblEventInfo.gotChild;}, function(newVal, oldVal) {
-            if(newVal){
-                $timeout(function(){bindChildTighter(newVal);});
+            if(newVal !== undefined && newVal !== null){
+                $timeout(function(){bindChildTighter(newVal.childId);});
             }
         }, true);
 
         $scope.$watch(function(){ return $scope.wblEventInfo.lostChild;}, function(newVal, oldVal) {
-            if(newVal){
-                var thisChild = $scope.getWebbleByInstanceId(newVal);
+			if(newVal !== undefined && newVal !== null){
+                var thisChild = $scope.getWebbleByInstanceId(newVal.childId);
                 thisChild.scope().theView.unbind('vmousedown', onChild_mouseDownEH);
 
                 if(!$scope.gimme('killDefectors')){
                     for(var i = 0; i < winContents.length; i++){
-                        if(winContents[i].wblId == newVal){
+                        if(winContents[i].wblId == newVal.childId){
                             winContents[i].moveWatch();
                             winContents.splice(i, 1);
                             break;
@@ -443,5 +443,5 @@ function windowContainerCtrl($scope, $log, $timeout, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================

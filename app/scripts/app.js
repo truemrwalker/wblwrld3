@@ -88,7 +88,7 @@ var wblwrld3App = angular.module('wblwrld3App', [
     'wblwrld3App.controllers'], function($rootScopeProvider) {
         //Since many webbles have many watches it needs a few more iterations available than the default 10 without
         //error out when creating many webbles at the same time
-        $rootScopeProvider.digestTtl(50);
+        $rootScopeProvider.digestTtl(100);
     }
 );
 //================================================================================================================

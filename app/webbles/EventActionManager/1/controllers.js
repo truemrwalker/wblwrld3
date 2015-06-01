@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function EAM_Ctrl($scope, $log, $location, Slot, Enum, gettext, bitflags, jsonQuery, $timeout, $http, $window) {
+wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum, gettext, bitflags, jsonQuery, $timeout, $http, $window) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -2235,7 +2235,7 @@ function EAM_Ctrl($scope, $log, $location, Slot, Enum, gettext, bitflags, jsonQu
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 //*********************************************************************************************************************
@@ -2245,7 +2245,7 @@ function EAM_Ctrl($scope, $log, $location, Slot, Enum, gettext, bitflags, jsonQu
 // EVENT ACTION MAIN FORM CONTROLLER
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
-function EAMForm_Ctrl($scope, $log, $modalInstance, $timeout, Slot, Enum, props, isEmpty) {
+wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $modalInstance, $timeout, Slot, Enum, props, isEmpty) {
     $scope.formProps = {
         EAData: [
         ]
@@ -2477,7 +2477,7 @@ function EAMForm_Ctrl($scope, $log, $modalInstance, $timeout, Slot, Enum, props,
     if($scope.formProps.EAData.length == 0 || ($scope.formProps.EAData[$scope.formProps.EAData.length - 1].eventGroup.length > 0 || $scope.formProps.EAData[$scope.EAData.length - 1].actionGroup.length > 0)){
         $scope.formProps.EAData.push({eventGroup: [], actionGroup: [], strVal: ''});
     }
-}
+});
 //=======================================================================================
 
 //*********************************************************************************************************************
@@ -2486,7 +2486,7 @@ function EAMForm_Ctrl($scope, $log, $modalInstance, $timeout, Slot, Enum, props,
 // EVENT ACTION SUB FORM CONTROLLER
 // This is the controller for this Webbles Editing Event / Action Form
 //=======================================================================================
-function EAMForm2_Ctrl($scope, $log, $modalInstance, Slot, Enum, props) {
+wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $modalInstance, Slot, Enum, props) {
 
     $scope.formProps = {
         type: props.editType,
@@ -2587,8 +2587,7 @@ function EAMForm2_Ctrl($scope, $log, $modalInstance, Slot, Enum, props) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-
-}
+});
 //=======================================================================================
 
 
@@ -2598,7 +2597,7 @@ function EAMForm2_Ctrl($scope, $log, $modalInstance, Slot, Enum, props) {
 // EVENT ACTION SUB SUB FORM CONTROLLER
 // This is the controller for this Webbles Editing specific items Form
 //=======================================================================================
-function EAMForm3_Ctrl($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
 
     $scope.formProps = {
         eaType: props.eaType,
@@ -3333,5 +3332,5 @@ function EAMForm3_Ctrl($scope, $log, $modalInstance, Slot, Enum, props, menuItem
             }
         }
     }
-}
+});
 //=======================================================================================

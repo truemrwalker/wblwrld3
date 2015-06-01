@@ -1,0 +1,22 @@
+/*/=====================================================================================================================
+// Styles for Game Manager Webble for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: Game Manager Classes === /*/
+
+.gameManagerContainer{
+    width: 250px;
+    height: 250px;
+    background-color: #a3d39e;
+    border: 4px solid black;
+    border-radius:25px;
+}
+
+
+/*/ === END: Game Manager Classes === /*/
+
+/*====================================================================================================================*/

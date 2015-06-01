@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function dateWebbleCtrl($scope, $log, Slot, Enum) {
+wblwrld3App.controller('dateWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -191,7 +191,7 @@ function dateWebbleCtrl($scope, $log, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 // More Controllers may of course be added here if needed

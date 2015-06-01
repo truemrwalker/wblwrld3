@@ -248,10 +248,10 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" collapse="navCollapsed">
                 <ul class="nav navbar-nav disable-select">
-                    <li class="dropdown" ng-repeat="item in menuItems" ng-show="item.visibility_enabled">
+                    <li class="dropdown" ng-repeat="item in menuItems track by $index" ng-show="item.visibility_enabled">
                         <a ng-cloak href="#" class="dropdown-toggle menuHeaderText" data-hover="dropdown">{{item.title | translate | titleMod:item.itemName:getCurrWS()}}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li ng-repeat="sublink in item.sublinks" ng-show="sublink.visibility_enabled">
+                            <li ng-repeat="sublink in item.sublinks track by $index" ng-show="sublink.visibility_enabled">
                                 <a ng-if="sublink.sublink_itemName != 'divider'" ng-cloak class="menuItemText" ng-click="executeMenuSelection(sublink.sublink_itemName, null);">{{sublink.title | translate}} {{sublink.shortcut}}</a>
                                 <a ng-if="sublink.sublink_itemName == 'divider'" ng-cloak class="menuItemText">------------------------------------</a>
                             </li>
@@ -283,7 +283,7 @@
                     <li class="dropdown">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="fa fa-user"></span> {{user.username ? user.username : user.email }} <span class="badge" ng-show="user.notif.pending.length">{{user.notif.pending.length}}</span> <strong class="caret"></strong></a>
                         <ul class="dropdown-menu">
-                            <li ng-show="user.notif.pending.length" ng-repeat="n in user.notif.pending"><a href="" ng-click="executeMenuSelection('notif')"><p class="text-notif"><span class="fa fa-info-circle"></span> {{n.text}}</p></a></li>
+                            <li ng-show="user.notif.pending.length" ng-repeat="n in user.notif.pending track by $index"><a href="" ng-click="executeMenuSelection('notif')"><p class="text-notif"><span class="fa fa-info-circle"></span> {{n.text}}</p></a></li>
                             <li ng-show="user.notif.pending.length" role="presentation" class="divider"></li>
                             <li><a href="" ng-click="executeMenuSelection('profile')"><span translate>Profile Settings</span></a></li>
                             <li><a href="" ng-click="executeMenuSelection('groups')"><span translate>Groups</span></a></li>
@@ -311,7 +311,7 @@
     <!--=====================================================================================
     // This is Progress bar and progress indicator that can be displayed and used when needed
     //=====================================================================================-->
-    <div class="centerCenter progressIndicator" data-ng-show="progressManager.isWorking" style="z-index: 200000">
+    <div class="centerCenter progressIndicator" data-ng-show="progressManager.isWorking" style="z-index: 200000;">
         <img style="width: 100px; height: 100px;" src="images/ajax-loader.gif">
     </div>
     <div class="span4 centerCenter progressBar" data-ng-show="progressManager.isLoading">

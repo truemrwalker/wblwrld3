@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function blankSheetCtrl($scope, $log, Slot, Enum) {
+wblwrld3App.controller('blankSheetCtrl', function($scope, $log, Slot, Enum) {
     //=== PROPERTIES ====================================================================
     //TODO: An object with element-id keys holding arrays of css style names that should be converted to slots
     // These slots will be found by the name format '[TEMPLATE ID]_[ELEMENT NAME]:[CSS ATTRIBUTE NAME]'
@@ -162,8 +162,6 @@ function blankSheetCtrl($scope, $log, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
-
-// More Controllers may of course be added here if needed
 //======================================================================================================================

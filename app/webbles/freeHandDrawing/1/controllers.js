@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function freeHandDrawingCtrl($scope, $log, $timeout, Slot, Enum, colorService) {
+wblwrld3App.controller('freeHandDrawingCtrl', function($scope, $log, $timeout, Slot, Enum, colorService) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -255,5 +255,5 @@ function freeHandDrawingCtrl($scope, $log, $timeout, Slot, Enum, colorService) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================

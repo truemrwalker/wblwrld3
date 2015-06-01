@@ -2045,7 +2045,7 @@ ww3Services.factory('valMod', function($log, localStorageService) {
                 } catch(err) { /*Don't need to do any catching, just ignore the failed attempt and return the original value*/ }
             }
             return theVal;
-        }   ,
+        },
         parse: function(theVal) {
             if(theVal[0] == '[' && theVal[theVal.length-1] == ']'){
                 theVal = theVal.replace('[', '').replace(']', '').split(',');
@@ -2057,7 +2057,26 @@ ww3Services.factory('valMod', function($log, localStorageService) {
                 } catch(err) { /*Don't need to do any catching, just ignore the failed attempt and return the original value*/ }
             }
             return theVal;
-        }
+        },
+		//Formats and return a javascript date to the iso format yyyy-mm-dd.
+		getFormatedDate: function(inDate) {
+			var newFormatedDate = '';
+
+			if(!inDate.getFullYear){
+				inDate = new Date(inDate);
+			}
+
+			if(inDate.getFullYear && inDate != 'Invalid Date'){
+				var month = inDate.getMonth()+1;
+				var day = inDate.getDate();
+				newFormatedDate = inDate.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
+			}
+			else{
+				$log.log("Date must be of proper format, preferably Iso standard yyyy-mm-dd");
+			}
+
+			return newFormatedDate;
+		}
     }
 });
 //=================================================================================

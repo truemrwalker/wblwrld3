@@ -7,7 +7,7 @@
     <table id="tableroot" class="tableroot">
         <thead>
             <tr id="tableheader" class="tableheader">
-                <th ng-repeat="header in headersOrder" ng-click="changeSorting(header, $index)" ng-style="{'border': gimme('tableborder')}" ng-mousedown="rememberClick(-1, $index);">
+                <th ng-repeat="header in headersOrder track by $index" ng-click="changeSorting(header, $index)" ng-style="{'border': gimme('tableborder')}" ng-mousedown="rememberClick(-1, $index);">
                     <span ng-show="cellEdit.cellName != ($index + '_-1')">{{ header }}</span>
                     <span ng-show="gimme('rowOrderBy') == header && gimme('rowOrderIsReversed')" style="padding-left: 3px;">&uarr;</span>
                     <span ng-show="gimme('rowOrderBy') == header && !gimme('rowOrderIsReversed')" style="padding-left: 3px;">&darr;</span>
@@ -19,7 +19,7 @@
 
         <tbody>
             <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in gimme('tableData').tabledata | orderBy:gimme('rowOrderBy'):gimme('rowOrderIsReversed')">
-                <td id="{{header}}_{{$parent.$index}}" ng-repeat="header in headersOrder" ng-style="{'border': gimme('tableBorder'), 'font-size': gimme('cellFontSize'), 'padding': gimme('cellPadding')}" ng-mousedown="rememberClick($parent.$index, header);">
+                <td id="{{header}}_{{$parent.$index}}" ng-repeat="header in headersOrder track by $index" ng-style="{'border': gimme('tableBorder'), 'font-size': gimme('cellFontSize'), 'padding': gimme('cellPadding')}" ng-mousedown="rememberClick($parent.$index, header);">
                     <span ng-show="cellEdit.cellName != (header + '_' + $parent.$index)">{{row[header]}}</span>
                     <input ng-show="cellEdit.cellName == (header + '_' + $parent.$index)" type="text" ng-model="row[header]" ng-enter="closeEdit();"/>
                 </td>

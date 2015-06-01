@@ -865,6 +865,8 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                             // Store the view appearance of this webble for fast retrieval
                             scope.theView = element.children().first();
 
+							scope.wblIndex = wIndex;
+
                             // assign the element of the new webble to the webbleInstance list item for this webble as the pointer for finding and manipulating this instance
                             scope.getCurrWS().webbles[wIndex].wblElement = scope.theView;
                             webbleConfig();

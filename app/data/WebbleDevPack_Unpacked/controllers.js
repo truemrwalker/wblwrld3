@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function fundamentalWebbleCtrl($scope, $log, Slot, Enum, cleanupService, gettextCatalog, gettext, dbService) {
+wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enum, cleanupService, gettextCatalog, gettext, dbService) {
     // $scope is needed for angularjs to work properly and is not recommended to be removed. Slot is a Webble World
     // available Service and is needed for any form of Slot manipulation inside this template and is not recommended
     // to be removed.
@@ -337,7 +337,7 @@ function fundamentalWebbleCtrl($scope, $log, Slot, Enum, cleanupService, gettext
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 // More Controllers may of course be added here if needed

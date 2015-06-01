@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function threeDCtrl($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('threeDCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     // WebGL presence check
     if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -791,5 +791,5 @@ function threeDCtrl($scope, $log, $timeout, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
