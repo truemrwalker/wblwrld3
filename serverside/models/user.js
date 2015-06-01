@@ -27,116 +27,116 @@ var crypto = require('crypto');
 
 module.exports = function(Q, app, config, mongoose, gettext) {
 
-    // Define the schema:
-    //
-    var UserSchema = new mongoose.Schema({
+	// Define the schema:
+	//
+	var UserSchema = new mongoose.Schema({
 
-        // Properties provided by the user or resolved from other connected accounts
-        name: {
-            first: { type: String, required: true, trim: true },
-	        middle: { type: String, required: false, trim: true },
-            last: { type: String, required: true, trim: true }
-        },
+		// Properties provided by the user or resolved from other connected accounts
+		name: {
+			first: { type: String, required: true, trim: true },
+			middle: { type: String, required: false, trim: true },
+			last: { type: String, required: true, trim: true }
+		},
 
-	    username: { type: String, required: false, trim: true, index: { unique: true, sparse: true } },
-        email: { type: String, required: true, trim: true, lowercase: true, index: { unique: true } },
+		username: { type: String, required: false, trim: true, index: { unique: true, sparse: true } },
+		email: { type: String, required: true, trim: true, lowercase: true, index: { unique: true } },
 
-        email_alts: [{ type: String, trim: true, lowercase: true }],
+		email_alts: [{ type: String, trim: true, lowercase: true }],
 
-        languages : [String],
+		languages : [String],
 
-        website_urls: [String],
-        image_urls: [String],
+		website_urls: [String],
+		image_urls: [String],
 
-        description: String,
+		description: String,
 
-        gender:  { type: String, enum: ['male', 'female'] },
-        date_born: { type: Date, required: false },
+		gender:  { type: String, enum: ['male', 'female'] },
+		date_born: { type: Date, required: false },
 
-	    notif: {
-		    platform: Boolean,
-		    modify: Boolean,
-		    share: Boolean
-	    },
+		notif: {
+			platform: Boolean,
+			modify: Boolean,
+			share: Boolean
+		},
 
-	    _tasks: [{
+		_tasks: [{
 			text: String,
 			kind: { type: String, enum: [ 'message', 'confirm', 'yesno' ], default: 'message' },
 
-		    date_created: { type: Date, required: true, default: Date.now },
-		    date_updated: { type: Date, required: true, default: Date.now },
-		    date_due: { type: Date },
+			date_created: { type: Date, required: true, default: Date.now },
+			date_updated: { type: Date, required: true, default: Date.now },
+			date_due: { type: Date },
 
-		    url: String,
+			url: String,
 			op: { type: String, enum: [ 'head', 'get', 'post', 'put', 'delete' ] },
 			payload: mongoose.Schema.Types.Mixed
-	    }],
+		}],
 
-	    _sec: {
+		_sec: {
 
-		    // The status and role of the account
-		    account_status: { type: String, enum: ['verified', 'ok', 'inactive', 'fakemail', 'suspended', 'deleted'], default: 'ok' },
+			// The status and role of the account
+			account_status: { type: String, enum: ['verified', 'ok', 'inactive', 'fakemail', 'suspended', 'deleted'], default: 'ok' },
 
-	        role: { type: String, enum: ['adm', 'dev', 'usr'], required: true, default: 'dev' },
+			role: { type: String, enum: ['adm', 'dev', 'usr'], required: true, default: 'dev' },
 
-		    // Security-oriented variables
-		    cert: String,
+			// Security-oriented variables
+			cert: String,
 
-		    groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
-	        trusts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+			groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+			trusts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
 
-		    // Keep log
-		    date_joined: { type: Date, required: true, default: Date.now },
-		    date_updated: { type: Date, required: false, default: Date.now },
+			// Keep log
+			date_joined: { type: Date, required: true, default: Date.now },
+			date_updated: { type: Date, required: false, default: Date.now },
 
-		    captains_log: [ { time: Date, event: String } ]
-	    },
+			captains_log: [ { time: Date, event: String } ]
+		},
 
-	    _auth: {
+		_auth: {
 
-		    keys: [{
-			    realm: { type: String, trim: true, required: true },
-			    resource: { type: String, trim: true, required: true },
-			    access_key: { type: String, required: true }
-		    }],
+			keys: [{
+				realm: { type: String, trim: true, required: true },
+				resource: { type: String, trim: true, required: true },
+				access_key: { type: String, required: true }
+			}],
 
-		    providers: [{ type: String, enum: ['local', 'twitter', 'facebook', 'google'] }],
+			providers: [{ type: String, enum: ['local', 'twitter', 'facebook', 'google'] }],
 
-		    local: {
+			local: {
 
-		        // Private fields for auth_provider == 'local'
-		        hash: { type: String, required: false},
-		        salt: { type: Buffer, required: false},
-		        forgot: { type: Number, required: true, min: 0, max: 5, default: 0 }
-		    },
+				// Private fields for auth_provider == 'local'
+				hash: { type: String, required: false},
+				salt: { type: Buffer, required: false},
+				forgot: { type: Number, required: true, min: 0, max: 5, default: 0 }
+			},
 
-		    twitter: {
+			twitter: {
 
-		        // Private fields for auth_provider == 'twitter'
-		        id: { type: Number, required: false, index: { unique: true, sparse: true } },
-		        username: { type: String, required: false },
-		        token: { type: String, required: false },
-		        secret: { type: String, required: false }
-		    },
+				// Private fields for auth_provider == 'twitter'
+				id: { type: Number, required: false, index: { unique: true, sparse: true } },
+				username: { type: String, required: false },
+				token: { type: String, required: false },
+				secret: { type: String, required: false }
+			},
 
-		    facebook: {
+			facebook: {
 
-		        // Private fields for auth_provider == 'facebook'
-		        id: { type: Number, required: false, index: { unique: true, sparse: true } },
-		        username: { type: String, required: false },
-		        token: { type: String, required: false },
-		        refresh: { type: String, required: false }
-		    },
+				// Private fields for auth_provider == 'facebook'
+				id: { type: Number, required: false, index: { unique: true, sparse: true } },
+				username: { type: String, required: false },
+				token: { type: String, required: false },
+				refresh: { type: String, required: false }
+			},
 
-		    google: {
+			google: {
 
-			    // Private fields for auth_provider == 'facebook'
-			    id: { type: String, required: false, index: { unique: true, sparse: true } },
-			    access_token: { type: String, required: false },
-			    refresh_token: { type: String, required: false }
-		    }
-	    }
-    });
+				// Private fields for auth_provider == 'facebook'
+				id: { type: String, required: false, index: { unique: true, sparse: true } },
+				access_token: { type: String, required: false },
+				refresh_token: { type: String, required: false }
+			}
+		}
+	});
 
 	// Options
 	//
@@ -187,115 +187,133 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		}
 	};
 
-    // Virtual properties
-    //
-    UserSchema.virtual('name.full').get(function () {
+	// Virtual properties
+	//
+	UserSchema.virtual('name.full').get(function () {
 
-        return !this.name.middle ? this.name.first + ' ' + this.name.last :
-	        this.name.first + ' ' + this.name.middle + ' ' + this.name.last;
-    });
-    UserSchema.virtual('name.full').set(function (name) {
+		var self = this;
 
-        var split = name.split(' ');
+		return !self.name.middle ? self.name.first + ' ' + self.name.last :
+		self.name.first + ' ' + self.name.middle + ' ' + self.name.last;
+	});
+	UserSchema.virtual('name.full').set(function (name) {
 
-	    if (split.length == 1) {
+		var self = this;
+		var split = name.split(' ');
 
-		    this.name.first = split[0];
-		    this.name.last = split[0] + 'vic';
-	    }
-	    else if (split.length == 2) {
+		if (split.length == 1) {
 
-		    this.name.first = split[0];
-            this.name.last = split[1];
-	    }
-	    else if (split.length >= 3) {
+			self.name.first = split[0];
+			self.name.last = split[0] + 'vic';
+		}
+		else if (split.length == 2) {
 
-		    this.name.first = split[0];
-		    this.name.middle = split[1];
-		    this.name.last = split[2];
-	    }
-    });
+			self.name.first = split[0];
+			self.name.last = split[1];
+		}
+		else if (split.length >= 3) {
 
-    UserSchema.virtual('language').get(function () {
+			self.name.first = split[0];
+			self.name.middle = split[1];
+			self.name.last = split[2];
+		}
+	});
 
-	    var self = this;
-        return (self.languages && self.languages[0]) || 'en';
-    });
-    UserSchema.virtual('language').set(function (lang) {
+	UserSchema.virtual('language').get(function () {
 
-	    var self = this;
-        var langs = [ lang ];
+		var self = this;
+		return (self.languages && self.languages[0]) || 'en';
+	});
+	UserSchema.virtual('language').set(function (lang) {
 
-        for (var i = 0; i < self.languages.length; ++i) {
-            if (self.languages[i] != lang)
-                langs.push(self.languages[i]);
-        }
-	    self.languages = langs;
-    });
+		var self = this;
+		var langs = [ lang ];
 
-    // The fields that we can send to the client to use in the interface
-    //
-    UserSchema.methods.getSafeProps = function() {
+		for (var i = 0; i < self.languages.length; ++i) {
+			if (self.languages[i] != lang)
+				langs.push(self.languages[i]);
+		}
+		self.languages = langs;
+	});
 
-	    return this.toJSON();
-    };
+	// The fields that we can send to the client to use in the interface
+	//
+	UserSchema.methods.getSafeProps = function() {
 
-    // Define additional methods for securely storing password info
-    //
-    UserSchema.methods.setPassword = function(password, cb) {
+		return this.toJSON();
+	};
+
+	// Define additional methods for securely storing password info
+	//
+	UserSchema.methods.setPassword = function(password, cb) {
 
 		if (!password)
-			cb(new mongoose.MongooseError("Invalid password"));
+			cb(new Error("Invalid password"));
 		else {
 
-	        var self = this;
+			var self = this;
 
-	        crypto.randomBytes(32, function(err, buf) {
+			try {
+				crypto.randomBytes(32, function (err, buf) {
 
-	            if (err)
-	                cb(err);
-				else {
+					if (err)
+						cb(err);
+					else {
 
-		            var salt = buf.toString('hex');
+						var salt = buf.toString('hex');
 
-		            crypto.pbkdf2(password, salt, 25000, 512, function(err, hashRaw) {
+						try {
+							crypto.pbkdf2(password, salt, 25000, 512, function (err, hashRaw) {
 
-		                if (err)
-		                    cb(err);
-			            else {
+								if (err)
+									cb(err);
+								else {
 
-			                self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
-			                self._auth.local.salt = salt;
-			                self._auth.local.forgot = 0;
+									self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
+									self._auth.local.salt = salt;
+									self._auth.local.forgot = 0;
 
-			                cb(null, self);
-		                }
-		            });
-	            }
-	        });
+									cb(null, self);
+								}
+							});
+						}
+						catch (err) {
+							cb(err);
+						}
+					}
+				});
+			}
+			catch (err) {
+				cb(err);
+			}
 		}
 
-    };
+	};
 
-    UserSchema.methods.checkPassword = function(password, cb) {
+	UserSchema.methods.checkPassword = function(password, cb) {
 
-        var self = this;
+		var self = this;
 
-        crypto.pbkdf2(password, this._auth.local.salt, 25000, 512, function(err, hashRaw) {
+		try {
+			crypto.pbkdf2(password, this._auth.local.salt, 25000, 512, function (err, hashRaw) {
 
-            if (err)
-                cb(err);
-			else {
+				if (err)
+					cb(err);
+				else {
 
-	            var hash = new Buffer(hashRaw, 'binary').toString('hex');
+					var hash = new Buffer(hashRaw, 'binary').toString('hex');
 
-	            if (hash === self._auth.local.hash)
-	                cb(null, self);
-	            else
-	                cb(null, null);
-            }
-        });
-    };
+					if (hash === self._auth.local.hash)
+						cb(null, self);
+					else
+						cb(null, null);
+				}
+			});
+		}
+		catch (err) {
+			cb(err);
+		}
+	};
 
 	// Introspective stuff
 	//
@@ -329,7 +347,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		app.emit('auth:user', user.email);
 	});
 
-    // Compile and return the model:
-    //
-    return mongoose.model('User', UserSchema);
+	// Compile and return the model:
+	//
+	return mongoose.model('User', UserSchema);
 };
