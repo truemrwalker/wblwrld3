@@ -96,6 +96,20 @@ module.exports = (function() {
 	};
 
 	////////////////////////////////////////////////////////////////////
+	// Options affected by third-party environment variables
+	//
+	if (process.env.NODE_ENV)
+		config.DEPLOYMENT = process.env.NODE_ENV;
+
+	if (process.env.DB_NAME && process.env.DB_PORT) {
+
+		config.MONGODB_HOST = process.env.DB_PORT_27017_TCP_ADDR;
+		config.MONGODB_PORT = parseInt(process.env.DB_PORT_27017_TCP_PORT, 10);
+	}
+	config.MONGODB_URL = "mongodb://" + config.MONGODB_DB_USERNAME + ":" + config.MONGODB_DB_PASSWORD + "@" +
+	config.MONGODB_HOST + ":" + config.MONGODB_PORT.toString() + "/" + config.MONGODB_DB_NAME;
+
+	////////////////////////////////////////////////////////////////////
 	// Allow env variables to override config values
 	//
 	Object.keys(config).forEach(function(key) {
@@ -133,21 +147,8 @@ module.exports = (function() {
 	config.SERVER_URL = port == 443  || config.DEPLOYMENT != 'development' ?
 		"https://" + config.SERVER_NAME : 'https://' + config.SERVER_NAME + ':' + port;
 
-	//******************************************************************
-
-	if (process.env.NODE_ENV)
-		config.DEPLOYMENT = process.env.NODE_ENV;
-
-	if (process.env.DB_NAME && process.env.DB_PORT) {
-
-		config.MONGODB_HOST = process.env.DB_PORT_27017_TCP_ADDR;
-		config.MONGODB_PORT = parseInt(process.env.DB_PORT_27017_TCP_PORT, 10);
-	}
-	config.MONGODB_URL = "mongodb://" + config.MONGODB_DB_USERNAME + ":" + config.MONGODB_DB_PASSWORD + "@" +
-		config.MONGODB_HOST + ":" + config.MONGODB_PORT.toString() + "/" + config.MONGODB_DB_NAME;
-
 	////////////////////////////////////////////////////////////////////
-	// Finally return the final configuration file
+	// Finally, return the configuration object
 	//
 	return config;
 })();
