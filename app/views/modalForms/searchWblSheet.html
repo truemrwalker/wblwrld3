@@ -61,7 +61,7 @@
         <div class="col-xs-12">
             <input id="searchBox" class="formitem" style="max-width: 250px; vertical-align: top; height: 30px; font-size: 14px; width: 200px;" type="text" ng-model="formItems.searchStr" ng-enter="search();"
                    placeholder="{{'search webbles' | translate}}" typeahead="w.webble.displayname for w in getWebbles($viewValue) | filter:$viewValue | limitTo:formItems.itemsPerPage" typeahead-min-length="1"
-                   typeahead-wait-ms="200" typeahead-on-select="clearTypeAheadList();">
+                   typeahead-wait-ms="200" typeahead-on-select="clearTypeAheadList();" autocomplete="off">
 
             <button ng-click="search()" class="btn btn-default btn-sm" translate>Search</button>
         </div>

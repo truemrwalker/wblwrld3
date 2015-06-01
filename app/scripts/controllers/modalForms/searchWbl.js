@@ -115,36 +115,38 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     // When hitting any ARROW key the selected Webble or page should change.
     //========================================================================================
     $scope.arrowKeyPressed = function(key){
-        if(key == 38 || key == 40){
-            var nextItem = key == 40 ? 1 : (-1);
-            var nextSelectedPageViewItem = $scope.formItems.selectedWbl - (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + nextItem;
+		if(!$('#searchBox').is(':focus')){
+			if(key == 38 || key == 40){
+				var nextItem = key == 40 ? 1 : (-1);
+				var nextSelectedPageViewItem = $scope.formItems.selectedWbl - (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + nextItem;
 
-            if($scope.formItems.selectedWbl == -1){
-                nextSelectedPageViewItem = 0;
-            }
+				if($scope.formItems.selectedWbl == -1){
+					nextSelectedPageViewItem = 0;
+				}
 
-            if(nextSelectedPageViewItem < $scope.formItems.pageViewResult.length && nextSelectedPageViewItem >= 0){
-                for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
-                    wbl['selectColor'] = 'transparent';
-                }
+				if(nextSelectedPageViewItem < $scope.formItems.pageViewResult.length && nextSelectedPageViewItem >= 0){
+					for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
+						wbl['selectColor'] = 'transparent';
+					}
 
-                $scope.formItems.pageViewResult[nextSelectedPageViewItem].selectColor = '#FFDB58';
-                $scope.formItems.selectedWbl = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + nextSelectedPageViewItem;
-                $('.modal').scrollTop(230 * nextSelectedPageViewItem);
-            }
-        }
-        else{
-            var nextPage = key == 39 ? 1 : (-1);
-            var nextSelectedPage = $scope.formItems.currentPage + nextPage;
+					$scope.formItems.pageViewResult[nextSelectedPageViewItem].selectColor = '#FFDB58';
+					$scope.formItems.selectedWbl = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + nextSelectedPageViewItem;
+					$('.modal').scrollTop(230 * nextSelectedPageViewItem);
+				}
+			}
+			else{
+				var nextPage = key == 39 ? 1 : (-1);
+				var nextSelectedPage = $scope.formItems.currentPage + nextPage;
 
-            if(nextSelectedPage <= $scope.formItems['numPages'] && nextSelectedPage >= 1){
-                for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
-                    wbl['selectColor'] = 'transparent';
-                }
-                $scope.formItems.currentPage = nextSelectedPage;
-                $scope.pageSelect($scope.formItems.currentPage);
-            }
-        }
+				if(nextSelectedPage <= $scope.formItems['numPages'] && nextSelectedPage >= 1){
+					for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
+						wbl['selectColor'] = 'transparent';
+					}
+					$scope.formItems.currentPage = nextSelectedPage;
+					$scope.pageSelect($scope.formItems.currentPage);
+				}
+			}
+		}
     };
     //========================================================================================
 

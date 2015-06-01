@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function txtAreaWblCtrl($scope, $log, Slot, Enum, gettext) {
+wblwrld3App.controller('txtAreaWblCtrl', function($scope, $log, Slot, Enum, gettext) {
 
     //=== PROPERTIES ====================================================================
     $scope.defaultMargin = 10;
@@ -116,7 +116,7 @@ function txtAreaWblCtrl($scope, $log, Slot, Enum, gettext) {
         }, true);
     };
     //===================================================================================
-}
+});
 //=======================================================================================
 
 // More Controllers may of course be added here if needed

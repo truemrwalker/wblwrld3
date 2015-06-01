@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function rssFeedCtrl($scope, $log, Slot, Enum, $timeout) {
+wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum, $timeout) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -311,7 +311,7 @@ function rssFeedCtrl($scope, $log, Slot, Enum, $timeout) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 

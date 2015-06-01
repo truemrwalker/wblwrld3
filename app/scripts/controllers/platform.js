@@ -145,6 +145,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var wblInstanceIdCounter_ = 0;
     $scope.getNewInstanceId = function(){wblInstanceIdCounter_++; return wblInstanceIdCounter_;};
 
+	//Used internally only for angular tracking
+	var nextUniqueId = 0;
+
     // Current workspace and the webbles they contain
     var currWS_ = undefined;
     $scope.getCurrWS = function(){return currWS_;};
@@ -181,6 +184,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     // When duplicating or creating webbles in large quantities this property keeps track of the amount of webbles being inserted
     var noOfNewWebbles_ = 0;
+
+	// When deleting Webbles en masse, we keep track of the group to be deleted and kill them one by one
+	var victimsOfDeletion_ = [];
 
     //A list of newly created Webbles and its original def objects used during initiation
     var underDevelopmentData_ = [];
@@ -279,32 +285,31 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // A set of flags for situations when default behavior needs to be set aside
     $scope.globalByPassFlags = {
 		byPassBlockingDeleteProtection: false,
-		byPassBlockingPeelProtection: false
+		byPassBlockingPeelProtection: false,
+		itHasAlreadyBeenShownThisSession: false
     };
 
     // This is a global info object that keeps track of what basic (non-value related) events that are firing in unrelated webbles and the platform
     // This is used in combination with $watch in webble development to be able to react properly to things of interest.
     $scope.eventInfo = {
-        slotChanged: null, //As set: {instanceid: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
+        slotChanged: null, //As set: {instanceId: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
         deletingWebble: null, //As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
-        keyDownForWebble: null, //As set: {instanceid: [Instance Id for webble being selected], key: {code: [key code], name: [key name], released: [True When Key Released]}
-        duplicatingWebble: null, //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy]}
-        shareModelWebble: null, //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy]}
-        pastingWebble: null, //As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon]}
-        peelingWebble: null, //As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from]}
+        keyDownForWebble: null, //As set: {instanceIdList: [Instance Id list for webbles being selected], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [when it happened as ms integer]}
+        duplicatingWebble: null, //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
+        shareModelWebble: null, //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
+        pastingWebble: null, //As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
+        peelingWebble: null, //As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
         loadingWebble: null, //As set: [Instance Id for webble being loaded]
-        mainMenuExecuted: null, //As set: [menu sublink id]
-        wblMenuExecuted: null //As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name]}
+        mainMenuExecuted: null, //As set: {menuId: [menu sublink id], timestamp: [millisecond for when it happened]}
+        wblMenuExecuted: null //As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name], timestamp: [millisecond for when it happened]}
     };
-
-    $scope.eventInfoStack = [];
     //-------------------------------
 
 
     // EasterEgg Properties
     //-------------------------------
     var soFarWord_ = '';
-    var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN'];
+    var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN', 'GEORGALIS'];
     var eeFunc_ = [
         function(){
             $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("http://h50146.www5.hp.com/products/servers/proliant/casestudy/hokudai/images/face03.jpg"); }</style>'));
@@ -316,7 +321,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         },
         function(){
             $window.open('https://www.google.se/search?q=Japan&hl=en&safe=off&rlz=1C1DVCA_enJP357JP357&prmd=imvnsu&source=lnms&tbm=isch&sa=X&ei=tvrzT5zxEeXEmAXa68mEBQ&ved=0CGgQ_AUoAQ&biw=1920&bih=1085', '_blank');
-        }
+        },
+		function(){
+			$window.open('https://www.google.co.jp/search?q=crete&source=lnms&tbm=isch&sa=X&ei=X7ZiVfStE4rg8AW_-4LgBg&ved=0CAcQ_AUoAQ&biw=1280&bih=899', '_blank');
+		}
     ];
     //-------------------------------
 
@@ -356,11 +364,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         }
                     }
                 }
-                $scope.eventInfoStack.push({event: "keyDownForWebble", info: {instanceidlist: selectedWbls, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: false}}});
-                $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-                $scope.eventInfoStack.push({event: "keyDownForWebble", info: null});
-                $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-
+				$scope.eventInfo.keyDownForWebble = {instanceIdList: selectedWbls, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: false}, timestamp: (new Date()).getTime()};
             }
         }
     };
@@ -380,11 +384,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if($event.keyCode == 17 && $scope.ctrlKeyIsDown){
             $scope.ctrlKeyIsDown = false;
         }
-
-        $scope.eventInfoStack.push({event: "keyDownForWebble", info: {instanceidlist: [], key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: true}}});
-        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-        $scope.eventInfoStack.push({event: "keyDownForWebble", info: null});
-        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
+		$scope.eventInfo.keyDownForWebble = {instanceIdList: [], key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: true}, timestamp: (new Date()).getTime()};
     };
     //========================================================================================
 
@@ -560,7 +560,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     }
                     $scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: theWbl.scope().createWblDef(true)}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
                     $scope.setPlatformDoNotSaveUndoEnabled(true);
-                    $scope.requestDeleteWebble(theWbl.scope().theView, false);
+                    $scope.requestDeleteWebble(theWbl.scope().theView);
                     $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 100);
                     $timeout(function(){$scope.showQIM((here.user + ' ' + gettext("unbundled the bundle with id") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});}, 200);
                 }
@@ -584,7 +584,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
             else{
                 $log.log('unknown transmit operation');
-                $log.log(here);
             }
 
             //Unlock
@@ -711,6 +710,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         }
 
+		if($location.path() == '/app'){ displayImportantDevMessage(); }
+
         var pathQuery = $location.search();
         if(pathQuery.webble && !pathQuery.workspace){
             $scope.downloadWebbleDef(pathQuery.webble)
@@ -718,6 +719,46 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     };
     //========================================================================================
 
+
+	//========================================================================================
+	// This method displays a hard coded important message to every Webble World visitor the
+	// first few times they visit from the development team.
+	//========================================================================================
+	var displayImportantDevMessage = function(){
+		if(!$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession){
+			$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession = true;
+
+			//---------------------------------------------------
+			//IMPORTANT MESSAGE FROM THE DEV TEAM
+			var postedDate = "2015-06-01";
+			var cookie = localStorageService.get('alertInfoNews' + postedDate);
+			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
+			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
+				localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Important News '+ postedDate + '!!! (Displayed ' + (readTimes + 1) + ' of 3 times)'), size: 'lg', content:
+				'<p>' +
+				'The latest major Webble world system update also included updating AngularJS framework to 1.3. These changes includes a change of how to declare the Webble controller function &nbsp;' +
+				'(not as a global function anymore, but registered with the Webble World App). This means that all Webbles you have made before this change (published and unpublished) are &nbsp;' +
+				'no longer working properly. </br></br><strong>But it is relatively easy to fix.</strong> Open your Webbles controller file and change the controller declaration line from... &nbsp;' +
+				'</br></br><strong>BEFORE:</strong> function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { &nbsp;' +
+				'</br>to... &nbsp;' +
+				'</br><strong>AFTER:</strong> wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { &nbsp;' +
+				'</br></br>Be aware that the controller name is now a string and that the function parameters are just examples and may differ in your Webble (except $scope). &nbsp;' +
+				'</br>You must also change the last line of the function in order to close it properly, from a single curly parenthesis...&nbsp;' +
+				'</br></br><strong>BEFORE:</strong> } &nbsp;' +
+				'</br>to the following... &nbsp;' +
+				'</br><strong>AFTER:</strong> }); &nbsp;' +
+				'</br></br>Thats it. Now the Webble should work just fine. &nbsp;' +
+				'</br>If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now. &nbsp;' +
+				'</p>' +
+				'<p>' +
+				'<i><strong> ~ Webble World Development Team, Hokkaido University ~</strong></i>' +
+				'</p>'
+				});
+			}
+			//---------------------------------------------------
+		}
+	};
 
     //========================================================================================
     // This method sets up and configures all $watch(ed)
@@ -792,6 +833,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
                 else{
                     quickLoadInternalSavedWS();
+					displayImportantDevMessage();
                 }
 
                 if(oldValue == '/templates'){
@@ -1139,7 +1181,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         if(currWS_){
             for(var i = 0; i < webblesToInsert.length; i++){
-                currWS_.webbles.push({wblDef: webblesToInsert[i]});
+                currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
             }
         }
     };
@@ -1271,7 +1313,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 currState.op = Enum.undoOps.deleteWbl;
                 currState.target = undefined;
                 currStateData.push({wbldef: target.scope().createWblDef(true)});
-                $scope.requestDeleteWebble(target, false);
+                $scope.requestDeleteWebble(target);
                 currState.execData = currStateData;
                 $timeout(function(){doNotSaveUndoEnabled_ = false;}, 300);
                 break;
@@ -1359,7 +1401,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     target.scope().getChildren()[0].scope().peel();
                 }
                 currStateData.push({wblDef: target.scope().createWblDef(true)});
-                $scope.requestDeleteWebble(target.scope().theView, false);
+                $scope.requestDeleteWebble(target.scope().theView);
                 currState.execData = currStateData;
                 $timeout(function(){doNotSaveUndoEnabled_ = false;}, 300);
                 break;
@@ -1388,100 +1430,108 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // This method deletes the webble provided as parameter from the platform list of webbles
     // in the current active workspace.
     //========================================================================================
-    var deleteWbl = function(target){
-        $scope.eventInfoStack.push({event: "deletingWebble", info: {instanceId: target.scope().getInstanceId(), templateId: target.scope().theWblMetadata['templateid']}});
-        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-        target.scope().wblEventInfoStack.push({event: "deleted", info: new Date()});
-        $timeout(function(){ var eisItem = target.scope().wblEventInfoStack.shift(); target.scope().wblEventInfo[eisItem.event] = eisItem.info; });
+    var deleteWbl = function(target, callbackFunc){
+		if(target == undefined){ target = (victimsOfDeletion_.length > 0) ? victimsOfDeletion_.pop() : null; }
 
-        //also call $apply since otherwise the webble most likely is killed before angular knows what happened an no $watch is fired
-        if(!$scope.$$phase){ $scope.$apply(); }
+		if(target != null){
+			if(target.scope().theWblMetadata['templateid'] == 'bundleTemplate'){
+				target.scope().killBundleSlotWatches();
+			}
 
-        var targetInstanceId = target.scope().getInstanceId();
+			//If the webble to be deleted has a parent, disconnect that first
+			$scope.globalByPassFlags.byPassBlockingPeelProtection = true;
+			if(target.scope().peel(true) == null){ return false; }
+			$scope.globalByPassFlags.byPassBlockingPeelProtection = false;
+			$scope.eventInfo.deletingWebble = {instanceId: target.scope().getInstanceId(), templateId: target.scope().theWblMetadata['templateid']};
+			target.scope().wblEventInfo.deleted = (new Date()).getTime();
 
-        $timeout(function(){
-            // Delete shared model connections
-            if(target.scope()){
-                for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-                    if(aw.scope().getInstanceId() != targetInstanceId){
-                        for(var n = 0, ms; ms = aw.scope().getModelSharees()[n]; n++){
-                            if(ms.scope().getInstanceId() == targetInstanceId){
-                                aw.scope().getModelSharees().splice(n, 1);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+			var targetInstanceId = target.scope().getInstanceId();
+			var targetIndex;
+			var updatedUntrustList = []
 
-            if(target.scope()){
-                // Unregister all slot watches in the webble for proper clean-up
-                for(var slot in target.scope().getSlots()){
-                    var thisSlot = target.scope().getSlot(slot);
-                    if(thisSlot.cssValWatch){
-                        thisSlot.cssValWatch();
-                    }
-                }
-            }
+			//Delete shared model connections
+			for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+				if(aw.scope().getInstanceId() != targetInstanceId){
+					for(var n = 0, ms; ms = aw.scope().getModelSharees()[n]; n++){
+						if(ms.scope().getInstanceId() == targetInstanceId){
+							aw.scope().getModelSharees().splice(n, 1);
+							break;
+						}
+					}
+				}
+				else{
+					targetIndex = i;
+				}
 
-            // do the actual deletion
-            for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-                if(aw.scope()){
-                    if(aw.scope().getInstanceId() == targetInstanceId){
-                        $scope.getCurrWS().webbles.splice(i, 1);
-                        target.parent().remove();
-                        $scope.eventInfoStack.push({event: "deletingWebble", info: null});
-                        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-                        break;
-                    }
-                }
-            }
+				for(var n = 0; n < listOfUntrustedWbls_.length; n++){
+					if(listOfUntrustedWbls_[n] == aw.scope().theWblMetadata['defid']){
+						updatedUntrustList.push(listOfUntrustedWbls_[n]);
+						break;
+					}
+				}
+			}
+			listOfUntrustedWbls_ = updatedUntrustList;
 
-            var updatedUntrustList = []
-            for(var k = 0, aw; aw = $scope.getActiveWebbles()[k]; k++){
-                for(var i = 0; i < listOfUntrustedWbls_.length; i++){
-                    if(listOfUntrustedWbls_[i] == aw.scope().theWblMetadata['defid']){
-                        updatedUntrustList.push(listOfUntrustedWbls_[i]);
-                        break;
-                    }
-                }
-            }
-            listOfUntrustedWbls_ = updatedUntrustList;
+			// Unregister all slot watches in the webble for proper clean-up
+			for(var slot in target.scope().getSlots()){
+				var thisSlot = target.scope().getSlot(slot);
+				if(thisSlot.cssValWatch){
+					thisSlot.cssValWatch();
+				}
+			}
 
-        }, 150);
+			//also call $apply since otherwise the webble most likely is killed before angular knows what happened an no $watch is fired
+			if(!$scope.$$phase){ $scope.$apply(); }
+
+			$scope.getCurrWS().webbles.splice(targetIndex, 1);
+			target.parent().remove();
+
+			if(victimsOfDeletion_.length == 0){
+				$timeout(function(){$scope.waiting(false);});
+				if(callbackFunc){ callbackFunc(); }
+			}
+			else{
+				deleteWbl(undefined, callbackFunc);
+			}
+		}
     };
     //========================================================================================
-
+	var almostdeadAlready_ = [];
 
     //========================================================================================
     // Connect Child Parent
     // This method connects two webbles as child and parent.
     //========================================================================================
-    var connectChildParent = function(child, parent){
+    var connectChildParent = function(child, parent, ignoreTesting){
         if (parent && child){
-            // Check so that the child doesn't already have a parent
-            if (child.scope().getParent() != undefined){
-                $log.warn($scope.strFormatFltr('This child [{0}] already has a parent [{1}] and does not want another [{2}]', [child.scope().getWebbleFullName(), child.scope().getParent().scope().getWebbleFullName(), parent.scope().getWebbleFullName()]));
-                return;
-            }
 
-            // Check so that child and parent are'nt already related in an unnatural way
-            for(var i = 0, d; d = $scope.getAllDescendants(child)[i]; i++){
-                if (d.scope().getInstanceId() == parent.scope().getInstanceId()){
-                    $log.warn('Incest is not allowed!!');
-                    return;
-                }
-            }
+			if(!ignoreTesting){
+				// Check so that the child doesn't already have a parent
+				if (child.scope().getParent() != undefined){
+					$log.warn($scope.strFormatFltr('This child [{0}] already has a parent [{1}] and does not want another [{2}]', [child.scope().getWebbleFullName(), child.scope().getParent().scope().getWebbleFullName(), parent.scope().getWebbleFullName()]));
+					return;
+				}
+
+				// Check so that child and parent are'nt already related in an unnatural way
+				for(var i = 0, d; d = $scope.getAllDescendants(child)[i]; i++){
+					if (d.scope().getInstanceId() == parent.scope().getInstanceId()){
+						$log.warn('Incest is not allowed!!');
+						return;
+					}
+				}
+			}
 
             if(child.scope().paste(parent)){
-                for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-                    if (aw.scope().getInstanceId() == parent.scope().getInstanceId()){
-                        aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNewParent);
-                    }
-                    else if (aw.scope().getInstanceId() == child.scope().getInstanceId()){
-                        aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNewChild);
-                    }
-                }
+				if(!ignoreTesting){
+					for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+						if (aw.scope().getInstanceId() == parent.scope().getInstanceId()){
+							aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNewParent);
+						}
+						else if (aw.scope().getInstanceId() == child.scope().getInstanceId()){
+							aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNewChild);
+						}
+					}
+				}
             }
         }
     };
@@ -2028,7 +2078,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         for(var i = 0, wtk; wtk = wblsToKill[i]; i++){
-            $scope.requestDeleteWebble(wtk, false);
+            $scope.requestDeleteWebble(wtk);
         }
 
         if($scope.getActiveWebbles().length > 0){
@@ -2182,8 +2232,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // child.
     //========================================================================================
     $scope.wblInitiationDone = function(whatWebble){
-        $scope.eventInfoStack.push({event: "loadingWebble", info: whatWebble.scope().getInstanceId()});
-        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
+		$scope.eventInfo.loadingWebble = whatWebble.scope().getInstanceId();
         var thisIsFirst = false;
         // if new webbles are still being added
         if (noOfNewWebbles_ != 0 && whatWebble != undefined){
@@ -2208,16 +2257,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     // If this is the first one and its a duplicate being made than set the eventInfo correctly to inform of this duplication going on
                     if(thisIsFirst && relationConnHistory_.length == 0 && relationHistory['oldId'] != udd.newInstanceId && $scope.getWebbleByInstanceId(relationHistory['oldId']) != undefined){
                         if($scope.getWebbleByInstanceId(relationHistory['oldId']).scope().getIsCreatingModelSharee()){
-                            $scope.eventInfoStack.push({event: "shareModelWebble", info: {originalId: relationHistory['oldId'], copyId: udd.newInstanceId}});
-                            $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-                            $scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfoStack.push({event: "shareModelCreated", info: udd.newInstanceId});
-                            $timeout(function(){ var eisItem = $scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfoStack.shift(); $scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfo[eisItem.event] = eisItem.info; });
+							$scope.eventInfo.shareModelWebble = {originalId: relationHistory['oldId'], copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
+							$scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfo.shareModelCreated = {copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
                         }
                         else{
-                            $scope.eventInfoStack.push({event: "duplicatingWebble", info: {originalId: relationHistory['oldId'], copyId: udd.newInstanceId}});
-                            $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-                            $scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfoStack.push({event: "duplicated", info: udd.newInstanceId});
-                            $timeout(function(){ var eisItem = $scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfoStack.shift(); $scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfo[eisItem.event] = eisItem.info; });
+							$scope.eventInfo.duplicatingWebble = {originalId: relationHistory['oldId'], copyId: udd.newInstanceId};
+							$scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfo.duplicated = {copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
                         }
                     }
 
@@ -2255,7 +2300,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         for(var n = 0, c; c = rch.oldChildren[n]; n++){
                             for(var t = 0, rch2; rch2 = relationConnHistory_[t]; t++){
                                 if (c == rch2.oldId){
-                                    connectChildParent(rch2.currWebble, rch.currWebble);
+                                    connectChildParent(rch2.currWebble, rch.currWebble, true);
                                     break;
                                 }
                             }
@@ -2311,12 +2356,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
             // close "wait please" info
             $scope.waiting(false);
-
-            $scope.eventInfoStack.push({event: "shareModelWebble", info: null});
-            $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-            $scope.eventInfoStack.push({event: "duplicatingWebble", info: null});
-            $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-
             $scope.resetSelections();
 
             if(wblFamiliesInLineForInsertion_.length > 0){
@@ -2807,12 +2846,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var familyMembers = [];
         if(whatWebble){
             familyMembers.push(whatWebble);
-
             for (var i = 0, c; c = whatWebble.scope().getChildren()[i]; i++){
                 familyMembers = familyMembers.concat($scope.getAllDescendants(c));
             }
         }
-
         return familyMembers;
     };
     //========================================================================================
@@ -2899,50 +2936,29 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Request Delete Webble
     // This method deletes a specified webble from the system.
     //========================================================================================
-    $scope.requestDeleteWebble = function(target, isFromWithin){
+    $scope.requestDeleteWebble = function(target, callbackFunc){
         if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
             $scope.onlineTransmit({id: currWS_.id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.deleteWbl, target: target.scope().getInstanceId()});
         }
+        $scope.addUndo({op: Enum.undoOps.deleteWbl, target: undefined, execData: [{wbldef: target.scope().createWblDef(true)}]}, !doNotSaveUndoEnabled_);
 
-        if(!isFromWithin){
-            $scope.addUndo({op: Enum.undoOps.deleteWbl, target: undefined, execData: [{wbldef: target.scope().createWblDef(true)}]}, !doNotSaveUndoEnabled_);
-        }
-        var allFamily = $scope.getAllDescendants(target);
-        allFamily = allFamily.concat($scope.getAllAncestors(target));
-
-        if(!$scope.globalByPassFlags.byPassBlockingDeleteProtection){
-          for(var i = 0, w; w = allFamily[i]; i++){
-            if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DELETE, 10)) !== 0){
-              $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Deletion Failed"), content: gettext("One or more of the Webbles included in the deletion attempt is protected from deletion and therefore this operation is canceled.")}, null);
-              return false;
-            }
-          }
-        }
-
-        // If the webble to be deleted is a bundle, kill all bundle slot watches before killing children connected to it
-        if(target.scope().theWblMetadata['templateid'] == 'bundleTemplate'){
-            target.scope().killBundleSlotWatches();
-        }
-
-        // If the webble to be deleted has a parent, disconnect that first
-		$scope.globalByPassFlags.byPassBlockingPeelProtection = true;
-        if(target.scope().peel() == null){ return false; }
-		$scope.globalByPassFlags.byPassBlockingPeelProtection = false;
-
-        // If the webble to be deleted has children, find them and delete them first
-        var foundOne = true;
-        while (foundOne){
-            var children = target.scope().getChildren();
-            foundOne = false;
-            if(children.length > 0){
-                foundOne = $scope.requestDeleteWebble(children[0], true);
-				if(foundOne == null){
+		victimsOfDeletion_ = victimsOfDeletion_.concat($scope.getAllDescendants(target));
+		if(!$scope.globalByPassFlags.byPassBlockingDeleteProtection){
+			for(var i = 0, w; w = victimsOfDeletion_[i]; i++){
+				if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DELETE, 10)) !== 0){
+					victimsOfDeletion_ = [];
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Deletion Failed"), content: gettext("One or more of the Webbles included in the deletion attempt is protected from deletion and therefore this operation is canceled.")}, null);
 					return false;
 				}
-            }
-        }
+			}
+		}
 
-        deleteWbl(target);
+
+		if(!$scope.waiting()){
+			$timeout(function(){$scope.waiting(true);});
+		}
+
+		$timeout(function(){deleteWbl(undefined, callbackFunc);});
 
         return true;
     };
@@ -3086,6 +3102,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 infoTitle: function(){ return content.title; },
                 infoContent: function(){ return content.content; }
             };
+			modalOptions.size = (content.size != undefined) ? content.size : 'md';
         }
         else if(whatForm == Enum.aopForms.publishWebble){
             modalOptions.templateUrl = 'views/modalForms/publishWebbleSheet.html';
@@ -3328,25 +3345,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
         //==== NON-MENU KEYBOARD ============================
-        if (sublink == 'altf1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1'))
-        {
-            $scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Non-Menu Shortcut Keys'), content:
-                    '<strong>Alt+F1</strong>: Display non-menu Shortcut keys and additional quick help info.<br>' +
-                        '<strong>Alt+F2</strong>: Toggle Main menu visibility.<br>' +
-                        '<strong>Alt+F3</strong>: Toggle Console Debug Logging.<br>' +
-                        '<strong>F4 (or Alt+F4)</strong>: Change Platform Language<br>' +
-                        '<strong>Alt+F5</strong>: Quick Save Current Desktop.<br>' +
-                        '<strong>Alt+F6</strong>: Quick Load Current Desktop.<br>' +
-                        '<strong>F8 (or Alt+F8)</strong>: Quick Load A Fundamental Webble.<br>' +
-                        '<strong>F9 (or Alt+F9)</strong>: Quick Toggles between System Language and English.<br>' +
-                        '<strong>Alt+Shift+PageDown (or Ctrl+Shift+PageDown)</strong>: Reset Webble World Intro to first time visitor mode.<br>' +
-                        '<strong>Alt+Shift+End (or Ctrl+Shift+End)</strong>: Clear all Webble world cookies and local storage user data.<br>' +
-                        '<strong>Esc</strong>: Cancel what is currently going on (e.g. Close form).<br>' +
-                        '<strong>Arrow Keys</strong>: Move current selected Webble in that directiont.<br>'}
-            );
+        if (sublink == 'altf1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1')){
+			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Non-Menu Shortcut Keys'), content:
+					'<strong>Alt+F1</strong>: Display non-menu Shortcut keys and additional quick help info.<br>' +
+						'<strong>Alt+F2</strong>: Toggle Main menu visibility.<br>' +
+						'<strong>Alt+F3</strong>: Toggle Console Debug Logging.<br>' +
+						'<strong>F4 (or Alt+F4)</strong>: Change Platform Language<br>' +
+						'<strong>Alt+F5</strong>: Quick Save Current Desktop.<br>' +
+						'<strong>Alt+F6</strong>: Quick Load Current Desktop.<br>' +
+						'<strong>F8 (or Alt+F8)</strong>: Quick Load A Fundamental Webble.<br>' +
+						'<strong>F9 (or Alt+F9)</strong>: Quick Toggles between System Language and English.<br>' +
+						'<strong>Alt+Shift+PageDown (or Ctrl+Shift+PageDown)</strong>: Reset Webble World Intro to first time visitor mode.<br>' +
+						'<strong>Alt+Shift+End (or Ctrl+Shift+End)</strong>: Clear all Webble world cookies and local storage user data.<br>' +
+						'<strong>Esc</strong>: Cancel what is currently going on (e.g. Close form).<br>' +
+						'<strong>Arrow Keys</strong>: Move current selected Webble in that directiont.<br>'}
+			);
         }
-        else if (sublink == 'altf2' || (whatKeys.theAltKey && whatKeys.theKey == 'F2')) //Toggle Main Menu visibility
-        {
+		//Toggle Main Menu visibility
+        else if (sublink == 'altf2' || (whatKeys.theAltKey && whatKeys.theKey == 'F2')){
             if((parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)){
                 platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
@@ -3798,8 +3814,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         else if(sublink == 'delete' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && !whatKeys.theShiftKey && whatKeys.theKey == 'Delete')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 var wblsToDel = getSelectedTopParents();
-                for(var i = 0, dw; dw = wblsToDel[i]; i++){
-                    $scope.requestDeleteWebble(dw);
+                for(var i = 0; i < wblsToDel.length; i++){
+					$scope.requestDeleteWebble(wblsToDel[i]);
                 }
             }
         }
@@ -3935,11 +3951,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-
-        $scope.eventInfoStack.push({event: "mainMenuExecuted", info: sublink});
-        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; });
-        $scope.eventInfoStack.push({event: "mainMenuExecuted", info: null});
-        $timeout(function(){ var eisItem = $scope.eventInfoStack.shift(); $scope.eventInfo[eisItem.event] = eisItem.info; }, 10);
+		$scope.eventInfo.mainMenuExecuted = {menuId: sublink, timestamp: (new Date()).getTime()};
 
         return actionWasExecuted;
     };

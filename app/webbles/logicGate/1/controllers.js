@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function logicGateCtrl($scope, $log, Slot, Enum) {
+wblwrld3App.controller('logicGateCtrl', function($scope, $log, Slot, Enum) {
     // $scope is needed for angularjs to work properly and is not recommended to be removed. Slot is a Webble World
     // available Service and is needed for any form of Slot manipulation inside this template and is not recommended
     // to be removed.
@@ -169,7 +169,7 @@ function logicGateCtrl($scope, $log, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 // More Controllers may of course be added here if needed

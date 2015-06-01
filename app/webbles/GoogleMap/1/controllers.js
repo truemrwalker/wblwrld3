@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function googleMapCtrl($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -279,5 +279,5 @@ function googleMapCtrl($scope, $log, $timeout, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================

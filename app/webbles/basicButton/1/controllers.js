@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function btnWebbleCtrl($scope, $log, Slot, Enum, gettext) {
+wblwrld3App.controller('btnWebbleCtrl', function($scope, $log, Slot, Enum, gettext) {
 
     //=== PROPERTIES ====================================================================
     var currentBtnStyle = 'btn-primary';
@@ -139,5 +139,5 @@ function btnWebbleCtrl($scope, $log, Slot, Enum, gettext) {
         }, true);
     };
     //===================================================================================
-}
+});
 //======================================================================================================================

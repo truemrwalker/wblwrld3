@@ -138,7 +138,7 @@
      <!--THIS IS THE WEBBLE TEMPLATE CONTAINER-->
     <div id="w_{{$index}}" class="webble" templateid="{{wbl.wblDef.templateid}}"
          ng-style="{'border-color': selectionBorder.color, 'border-width': selectionBorder.width, 'border-style': selectionBorder.style, '-webkit-box-shadow': selectionBorder.glow, '-moz-box-shadow': selectionBorder.glow, 'box-shadow': selectionBorder.glow}"
-         webble="{{wbl.wblDef}}" ng-repeat="wbl in getCurrWS().webbles" ng-include src="getTemplatePath(wbl.wblDef.templateid, wbl.wblDef.templaterevision) + '/view.html'" style="position: absolute;"
+         webble="{{wbl.wblDef}}" ng-repeat="wbl in getCurrWS().webbles track by wbl.uniqueId" ng-include src="getTemplatePath(wbl.wblDef.templateid, wbl.wblDef.templaterevision) + '/view.html'" style="position: absolute;"
          hm-double-tap="dblTapEventHandler($event)">
     </div>
 </div>

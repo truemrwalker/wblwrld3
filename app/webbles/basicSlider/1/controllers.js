@@ -7,7 +7,7 @@
 // SLIDER WEBBLE CONTROLLER
 // This is the Main controller for the Slider Webble Template
 //=======================================================================================
-function sliderWebbleCtrl($scope, $log, Slot, Enum) {
+wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.data = {
@@ -97,5 +97,5 @@ function sliderWebbleCtrl($scope, $log, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //======================================================================================================================

@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-function argManagerCtrl($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -163,5 +163,5 @@ function argManagerCtrl($scope, $log, $timeout, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================

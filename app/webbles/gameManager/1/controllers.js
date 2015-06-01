@@ -1,48 +1,37 @@
-//======================================================================================================================
-// Controllers for Basic Twitter Webble for Webble World v3.0 (2013)
+﻿//======================================================================================================================
+// Controllers for Game Manager Webble for Webble World v3.0 (2013)
 // Created By: truemrwalker
 //======================================================================================================================
 
 //=======================================================================================
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
+// NOTE: This file (with this name) must exist in order for the Webble to load but it
+//       does not require to be a proper angularJS controller. It can work as a simple
+//       javascript function collection file, but the developer would then miss out on
+//       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('twitterWblCtrl', function($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('gameManagerCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
-        twitterContainer: ['width', 'height', 'background-color', 'border', 'padding']
+		gameManagerContainer: ['width', 'height', 'background-color', 'border', 'border-radius']
     };
 
-    //TODO: Array of custom menu item keys and display names
-    //$scope.customMenu = [{itemId: '[MENU ITEM ID]', itemTxt: '[MENU ITEM DISPLAY TEXT]'}];
-    // EXAMPLE:
+    //$scope.customMenu = [{itemId: 'eat', itemTxt: 'Have Lunch'}, {itemId: 'drink', itemTxt: 'Have refreshment'}];
 
-    //TODO: Array of customized Interaction Balls
-    //$scope.customInteractionBalls = [{index: [POSITION INDEX 0-11], name: '[IDENTIFIER]', tooltipTxt: '[DISPLAY TEXT]'}];
-    // EXAMPLE:
+    //$scope.customInteractionBalls = [{index: 4, name: 'jump', tooltipTxt: 'Jump Home'}];
 
+    //WebFont.load({
+    //    google: { families: [ 'Ewert::latin', 'Freckle+Face::latin' ] }
+    //});
 
-    var twitterContainer;
-
+    //var internalFilesPath;
 
 
     //=== EVENT HANDLERS ================================================================
-    var onMouseUp = function(e){
-        if(e.which === 1){
-            var w = parseInt($scope.gimme('twitterContainer:width'));
-            var p = parseInt($scope.gimme('twitterContainer:padding'));
-            var p2 = p * 2;
-            if(w > (520 + p2)){
-                var newWP = ((w - 520) / 2);
-                $scope.set('twitterContainer:padding', p + 'px ' + newWP + 'px ' + p + 'px ' + newWP + 'px');
-            }
-            else{
-                $scope.set('twitterContainer:padding', p + 'px');
-            }
-            updateTwitterFeed($scope.gimme('widgetID'));
-        }
-    };
+
+
 
     //=== METHODS & FUNCTIONS ===========================================================
 
@@ -50,32 +39,46 @@ wblwrld3App.controller('twitterWblCtrl', function($scope, $log, $timeout, Slot, 
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
-        twitterContainer = $scope.theView.parent().find("#twitterContainer");
+          //internalFilesPath = $scope.getTemplatePath($scope.theWblMetadata['templateid'], $scope.theWblMetadata['templaterevision']);
 
-        $scope.addSlot(new Slot('widgetID',
-            "471867655654084609",
-            'Twitter Widget Id',
-            'The Id of the Twitter Widget you want to display',
+        $scope.addSlot(new Slot('msg',
+            "gamemanager",
+            'Message',
+            'Text displayed on the Webble',
             $scope.theWblMetadata['templateid'],
-            {inputType: Enum.aopInputTypes.TextBox},
+            undefined,                                  // Metadata... an object that may contain whatever or just be
+                                                        // left undefined.
+                                                        // Besides any custom data, the following content makes sense to
+                                                        // a Webble:
+                                                        // {inputType: Enum.aopInputTypes.[INPUT TYPE]}  //See Services for details for options
+                                                        // {noFloatValRound: true}  // stops rounding long floats in property form
+                                                        // {inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ['OPTION 1', 'OPTION 2', ETC]}  //Slot value is an integer (index)
+                                                        // {inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ['OPTION 1', 'OPTION 2', ETC]}  //Slot value is a string (selected content)
+                                                        // {inputType: Enum.aopInputTypes.RadioButton, comboBoxContent: ['OPTION 1', 'OPTION 2', ETC]}  //Slot value is a string (selected content)
+                                                        // {inputType: Enum.aopInputTypes.MultiListBox, comboBoxContent: ['OPTION 1', 'OPTION 2', ETC]}  //Slot value is an array
+                                                        // {inputType: Enum.aopInputTypes.MultiCheckBox, comboBoxContent: ['OPTION 1', 'OPTION 2', ETC]}  //Slot value is an array
+                                                        // {inputType: Enum.aopInputTypes.Slider, sliderMinMax: [0, 100]}
+                                                        // {inputType: Enum.aopInputTypes.DatePick}  // slot value is date filtered: $filter('date')(new Date(), 'yyyy-MM-dd');
+                                                        // If not set the Property form will make a pretty good guess
+                                                        // instead, which in most cases are more than enough.
             undefined
         ));
 
-        //$scope.setDefaultSlot('widgetID');
+		//$scope.getSlot('squareTxt:font-family').setMetaData({comboBoxContent: [ 'ewert', 'freckle face' ]});
+		//$scope.setDefaultSlot('msg');
 
-        $scope.setResizeSlots('twitterContainer:width', 'twitterContainer:height');
+		//$scope.setResizeSlots('square:width', 'square:height');
 
-        //TODO: Set template specific child container for clipping effects etc... default container is within the core Webble.
-        // EXAMPLE: $scope.setChildContainer([ELEMENT])
+		//$scope.setChildContainer([ELEMENT])
 
-        $scope.$watch(function(){return $scope.gimme('widgetID');}, function(newVal, oldVal) {
-            updateTwitterFeed(newVal);
+		//$scope.theView.parent().draggable('option', 'cancel', '#squareTxt');
+        //$scope.theView.parent().find('#squareTxt').bind('contextmenu',function(){ return false; });
+
+		$scope.$watch(function(){return $scope.gimme('msg');}, function(newVal, oldVal) {
+
         }, true);
-
-        $($scope.theView.parent().find("#ioContainer").children()[2]).bind('mouseup', onMouseUp);
     };
     //===================================================================================
-
 
 
     //===================================================================================
@@ -150,16 +153,20 @@ wblwrld3App.controller('twitterWblCtrl', function($scope, $log, $timeout, Slot, 
     //===================================================================================
 
 
+    // TODO: POSSIBLE ADDITIONAL CUSTOM METHODS
+    //========================================================================================
+    // Custom template specific methods is very likely to be quite a few of in every Webble,
+    // and they contain what ever the developer want them to contain.
+    //========================================================================================
+    // "Public" (accessible outside this controller)
+//    $scope.[CUSTOM NEW METHOD NAME] = function([PARAMETERS]){
+//        [CUSTOM CODE HERE]
+//    }
 
-    //========================================================================================
-    // Update Twitter Feed
-    //========================================================================================
-    var updateTwitterFeed = function(widId){
-        var paddVal = parseInt($scope.gimme('twitterContainer:padding')) * 2;
-        twitterContainer.html('');
-        twitterContainer.html('<a class="twitter-timeline" data-widget-id="' + widId + '" width="' + (parseInt($scope.gimme('twitterContainer:width')) - paddVal) + '" height="' + (parseInt($scope.gimme('twitterContainer:height')) - paddVal) + '">Loading Tweets...</a>');
-        twttr.widgets.load(twitterContainer[0]);
-    }
+    // "Private" (accessible only inside this controller)
+//    var [CUSTOM NEW METHOD NAME] = function([PARAMETERS]){
+//        [CUSTOM CODE HERE]
+//    }
     //========================================================================================
 
 
@@ -186,3 +193,6 @@ wblwrld3App.controller('twitterWblCtrl', function($scope, $log, $timeout, Slot, 
 
 });
 //=======================================================================================
+
+// More Controllers may of course be added here if needed
+//======================================================================================================================

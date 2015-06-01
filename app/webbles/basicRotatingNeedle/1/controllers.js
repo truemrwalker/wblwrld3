@@ -7,7 +7,7 @@
 // ROTATING NEEDLE WEBBLE CONTROLLER
 // This is the Main controller for the Rotating Needle Webble  Template
 //=======================================================================================
-function needleWebbleCtrl($scope, $log, Slot, Enum) {
+wblwrld3App.controller('needleWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.needle = {
@@ -110,5 +110,5 @@ function needleWebbleCtrl($scope, $log, Slot, Enum) {
 
 
     //=== CTRL MAIN CODE ======================================================================
-}
+});
 //======================================================================================================================

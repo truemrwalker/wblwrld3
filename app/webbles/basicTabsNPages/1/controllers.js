@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmpty) {
+wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmpty) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -571,17 +571,17 @@ function TNPCtrl($scope, $log, $timeout, Slot, Enum, dbService, jsonQuery, isEmp
 
         // Remember which child goes in what container
         $scope.$watch(function(){return $scope.wblEventInfo.gotChild;}, function(newVal, oldVal) {
-            if(!isInit && newVal != null && !isNaN(newVal) && !childContainers[newVal]){
+            if(!isInit && newVal != null && !isNaN(newVal.childId) && !childContainers[newVal]){
                 if(parseInt($scope.gimme('noOfTabs')) > 0){
-                    childContainers[newVal] = $scope.getChildContainer().attr('id');
+                    childContainers[newVal.childId] = $scope.getChildContainer().attr('id');
                 }
             }
         }, true);
 
         // Remove this child's container Memory
         $scope.$watch(function(){return $scope.wblEventInfo.lostChild;}, function(newVal, oldVal) {
-          if(newVal != null && !isNaN(newVal)){
-              delete childContainers[newVal];
+          if(newVal != null && !isNaN(newVal.childId)){
+              delete childContainers[newVal.childId];
 
               if($scope.gimme('noOfTabs') == 0 && isEmpty(childContainers) && (tnpTabs_a.length > 0 || tnpPages.length > 0)){
                   configureTabs(0);
@@ -1376,7 +1376,7 @@ var sindex = 0;
 
     //=== CTRL MAIN CODE ======================================================================
 
-}
+});
 //=======================================================================================
 
 //======================================================================================================================

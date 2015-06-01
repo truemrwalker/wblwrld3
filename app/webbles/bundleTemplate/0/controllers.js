@@ -8,7 +8,7 @@
 // This is not a loadable Webble, but instead a code generated Webble that is created
 // only to enclose a group of Webbles as a bundle.
 //=======================================================================================
-function bundleContainerCtrl($scope, $log, Slot, gettext, jsonQuery, Enum) {
+wblwrld3App.controller('bundleContainerCtrl', function($scope, $log, Slot, gettext, jsonQuery, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -240,7 +240,7 @@ function bundleContainerCtrl($scope, $log, Slot, gettext, jsonQuery, Enum) {
         return customWblDefPart;
     };
     //===================================================================================
-}
+});
 //=======================================================================================
 
 //======================================================================================================================

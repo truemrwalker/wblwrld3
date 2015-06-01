@@ -7,7 +7,7 @@
 // TIME WEBBLE CONTROLLER
 // This is the Main controller for the TIME Webble Template
 //=======================================================================================
-function timeWebbleCtrl($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
 
@@ -218,5 +218,5 @@ function timeWebbleCtrl($scope, $log, $timeout, Slot, Enum) {
 
     //=== CTRL MAIN CODE ======================================================================
     killTimer = $timeout($scope.timer, 50);
-}
+});
 //======================================================================================================================
