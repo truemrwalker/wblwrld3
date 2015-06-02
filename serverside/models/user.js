@@ -106,7 +106,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 				// Private fields for auth_provider == 'local'
 				hash: { type: String, required: false},
-				salt: { type: Buffer, required: false},
+				salt: { type: String, required: false},
 				forgot: { type: Number, required: true, min: 0, max: 5, default: 0 }
 			},
 
