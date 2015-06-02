@@ -327,8 +327,8 @@ system and specific Webbles:
     // form input requiremnets from user.
     $scope.requestPublishWebble(whatWbl);
 
-    // Request Delete Webble, deletes a specified webble from the system. (the last parameter is always false or undefined)
-    $scope.requestDeleteWebble(target, isFromWithin);
+    // Request Delete Webble, deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when job is done)
+    $scope.requestDeleteWebble(target, callbackFunc);
 
     // Request Assign Parent, deals with the interaction process of assigning child parent relationship due to user
     // interaction. The target is the child if no child is pending, and it is the parent if there is a pending child.
