@@ -730,7 +730,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			//---------------------------------------------------
 			//IMPORTANT MESSAGE FROM THE DEV TEAM
-			var postedDate = "2015-06-01";
+			var postedDate = "2015-06-02";
 			var cookie = localStorageService.get('alertInfoNews' + postedDate);
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
 			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
@@ -750,6 +750,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				'</br><strong>AFTER:</strong> }); &nbsp;' +
 				'</br></br>Thats it. Now the Webble should work just fine. &nbsp;' +
 				'</br>If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now. &nbsp;' +
+				'</br></br>Another change is regarding eventInfo and wblEventInfo. Some of those objects have changed in content and design and if your Webble is watching for any of those values &nbsp;' +
+				'</br>you may need to edit that code. Download the Development Pack and read the read me and the wblCore reference code for details on that. &nbsp;' +
 				'</p>' +
 				'<p>' +
 				'<i><strong> ~ Webble World Development Team, Hokkaido University ~</strong></i>' +

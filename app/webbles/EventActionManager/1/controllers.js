@@ -741,7 +741,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                 if(listenersData.platformActivityEvent.mainMenuExec.noOfClients == 0){
                     mainMenuExecuted = $scope.$watch(function(){return $scope.eventInfo.mainMenuExecuted;}, function(newVal, oldVal) {
                         listenersData.platformActivityEvent.mainMenuExec.lastTime = Date.now();
-                        listenersData.platformActivityEvent.mainMenuExec.sublink = newVal;
+                        listenersData.platformActivityEvent.mainMenuExec.sublink = newVal.menuId;
                     }, true);
                 }
                 listenersData.platformActivityEvent.mainMenuExec.noOfClients++;
