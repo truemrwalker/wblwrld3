@@ -121,7 +121,7 @@ function ($scope, gettext, authService, userPrefs, confirm, wwConsts) {
 	// Scope Properties & Initialization
 	//
     $scope.tabs = { notif: false, info: false, trust: false, auth: false };
-	$scope.$setSelectedTab($scope.tabs);
+	$scope.$setSelectedTab($scope.tabs, "info");
 
     $scope.providers = [
         { name: 'facebook', icon: 'facebook', isConnected: false },
