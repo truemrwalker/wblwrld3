@@ -10,6 +10,10 @@ Webble System Lead Architect & Developer: Micke Nicander Kuwahara
 Server Side Developer: Giannis Georgalis  
 Additional Support: Jonas Sjöbergh
 
+THIS PROJECT IS FOR THE WEBBLE WORLD PLATFORM AND CORE SYSTEM ONLY.
+IF YOU JUST WANT TO DEVELOP WEBBLE TEMPLATES THEN VISIT WEBBLE WORLD ONLINE AND USE THE BUILT IN WEBBLE TEMPLATE
+EDITOR. NO NEED TO STAY HERE ANY FURTHER!
+
 Visit Webble World 3 Online at:
 https://wws.meme.hokudai.ac.jp
 
