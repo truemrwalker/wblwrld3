@@ -39,6 +39,44 @@ wblwrld3App.controller('needleWebbleCtrl', function($scope, $log, Slot, Enum) {
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'needleLength'){
+				if(!isNaN(newVal)){
+					$scope.needle.x1 = newVal;
+					$scope.needle.y1 = newVal;
+					$scope.needle.x2 = newVal;
+					$scope.needle.y2 = 0;
+
+					var theModVal = newVal * 2;
+					$scope.svgContainer.width = theModVal;
+					$scope.svgContainer.height = theModVal;
+				}
+			}
+			else if(eventData.slotName == 'angleDivider' || eventData.slotName == 'inputValue'){
+				newVal = {ad: $scope.gimme('angleDivider'), iv: $scope.gimme('inputValue')};
+				if(!isNaN(newVal.ad) && !isNaN(newVal.iv) && newVal.ad > 0){
+					var newAngle = parseInt((360 / newVal.ad) * newVal.iv);
+					if(newAngle > 360){
+						newAngle = newAngle % 360;
+					}
+					$scope.set('needleContainer:transform-rotate', newAngle);
+				}
+			}
+			else if(eventData.slotName == 'needleContainer:transform-rotate'){
+				if(!isNaN(newVal)){
+					if(newVal > 360){
+						newVal = newVal % 360;
+					}
+					var possNewIV = (newVal / 360) * parseInt($scope.gimme('angleDivider'));
+					if(parseFloat($scope.gimme('inputValue')).toFixed(2) != possNewIV.toFixed(2)){
+						$scope.set('inputValue', possNewIV);
+					}
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('needleLength',
             100,
             'Needle Length',
@@ -69,41 +107,6 @@ wblwrld3App.controller('needleWebbleCtrl', function($scope, $log, Slot, Enum) {
 
         $scope.setDefaultSlot('inputValue');
         $scope.setRotateSlot('needleContainer:transform-rotate');
-
-        $scope.$watch(function(){return $scope.gimme('needleLength');}, function(newVal, oldVal) {
-            if(!isNaN(newVal)){
-                $scope.needle.x1 = newVal;
-                $scope.needle.y1 = newVal;
-                $scope.needle.x2 = newVal;
-                $scope.needle.y2 = 0;
-
-                var theModVal = newVal * 2;
-                $scope.svgContainer.width = theModVal;
-                $scope.svgContainer.height = theModVal;
-            }
-        }, true);
-
-        $scope.$watch(function(){return {ad: $scope.gimme('angleDivider'), iv: $scope.gimme('inputValue')}}, function(newVal, oldVal) {
-            if(newVal != oldVal && !isNaN(newVal.ad) && !isNaN(newVal.iv) && newVal.ad > 0){
-                var newAngle = parseInt((360 / newVal.ad) * newVal.iv);
-                if(newAngle > 360){
-                    newAngle = newAngle % 360;
-                }
-                $scope.set('needleContainer:transform-rotate', newAngle);
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('needleContainer:transform-rotate');}, function(newVal, oldVal) {
-            if(newVal != oldVal && !isNaN(newVal)){
-                if(newVal > 360){
-                    newVal = newVal % 360;
-                }
-                var possNewIV = (newVal / 360) * parseInt($scope.gimme('angleDivider'));
-                if(parseFloat($scope.gimme('inputValue')).toFixed(2) != possNewIV.toFixed(2)){
-                    $scope.set('inputValue', possNewIV);
-                }
-            }
-        }, true);
     };
     //===================================================================================
 

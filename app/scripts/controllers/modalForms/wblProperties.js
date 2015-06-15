@@ -152,7 +152,17 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
     //=== PUBLIC FUNCTIONS ============================================================================================
     //*****************************************************************************************************************
 
-    //========================================================================================
+	//========================================================================================
+	// Copy To Clipboard
+	// Gives the user the chance to quickly get a slotname stored in the clipboard.
+	//========================================================================================
+	$scope.copyToClipboard = function(slotName){
+		window.prompt("Copy to clipboard: Ctrl+C, Enter", slotName);
+	};
+	//========================================================================================
+
+
+	//========================================================================================
     // Adjust Tooltip Placement By Device Width
     // the placement of the tooltip is by default at the bottom, but with smaller devices in
     // some rare cases that should be set to right instead.

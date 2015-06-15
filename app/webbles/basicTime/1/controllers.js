@@ -191,17 +191,13 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
         ));
         $scope.getSlot('day').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
-
         $scope.getSlot('timeTxt:font-family').setMetaData({comboBoxContent: [ 'digital_dreamregular' ]});
         $scope.setDefaultSlot('currTime');
         $scope.setResizeSlots('timeBox:width', 'timeBox:height');
 
-
-        $scope.$watch(function(){return $scope.wblEventInfo.deleted;}, function(newVal, oldVal) {
-            if(newVal != null){
-                $timeout.cancel(killTimer);
-            }
-        }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.deleted, function(eventData){
+			$timeout.cancel(killTimer);
+		});
     };
     //===================================================================================
 

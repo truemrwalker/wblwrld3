@@ -83,6 +83,39 @@ wblwrld3App.controller('freeHandDrawingCtrl', function($scope, $log, $timeout, S
         drawingContainer = $scope.theView.parent().find("#drawingContainer");
         ctx = drawSurface[0].getContext("2d");
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'drawingContainer:width'){
+				drawSurface[0].width = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
+			}
+			else if(eventData.slotName == 'drawingContainer:height'){
+				drawSurface[0].height = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
+			}
+			else if(eventData.slotName == 'shadowEnabled'){
+				if(newVal == true){
+					drawingContainer.css('-moz-box-shadow', '10px 10px 5px #888888');
+					drawingContainer.css('-webkit-box-shadow', '0px 10px 5px #888888');
+					drawingContainer.css('box-shadow', '10px 10px 5px #888888');
+				}
+				else{
+					drawingContainer.css('-moz-box-shadow', '');
+					drawingContainer.css('-webkit-box-shadow', '');
+					drawingContainer.css('box-shadow', '');
+				}
+			}
+			else if(eventData.slotName == 'clearCanvasRequest'){
+				if(newVal == true || newVal > 0 && newVal != oldVal){
+					var w = $scope.gimme('drawingContainer:width');
+					var h = $scope.gimme('drawingContainer:height');
+					w = w.search('%') != -1 ? (parseInt(w)/ 100) * $(window).width() : parseInt(w);
+					h = h.search('%') != -1 ? (parseInt(h)/ 100) * $(window).height() : parseInt(h);
+					ctx.clearRect(0,0,w,h);
+					imgData = [];
+					$scope.getSlot('clearCanvasRequest').setValue(false);
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('toolType',
             0,
             'Tool Type',
@@ -151,42 +184,9 @@ wblwrld3App.controller('freeHandDrawingCtrl', function($scope, $log, $timeout, S
 
         drawSurface.bind('mousedown', onMouseDown);
 
-        $scope.$watch(function(){return $scope.gimme('drawingContainer:width');}, function(newVal, oldVal) {
-            drawSurface[0].width = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('drawingContainer:height');}, function(newVal, oldVal) {
-            drawSurface[0].height = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('shadowEnabled');}, function(newVal, oldVal) {
-            if(newVal == true){
-                drawingContainer.css('-moz-box-shadow', '10px 10px 5px #888888');
-                drawingContainer.css('-webkit-box-shadow', '0px 10px 5px #888888');
-                drawingContainer.css('box-shadow', '10px 10px 5px #888888');
-            }
-            else{
-                drawingContainer.css('-moz-box-shadow', '');
-                drawingContainer.css('-webkit-box-shadow', '');
-                drawingContainer.css('box-shadow', '');
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('clearCanvasRequest');}, function(newVal, oldVal) {
-            if(newVal == true || newVal > 0 && newVal != oldVal){
-                var w = $scope.gimme('drawingContainer:width');
-                var h = $scope.gimme('drawingContainer:height');
-                w = w.search('%') != -1 ? (parseInt(w)/ 100) * $(window).width() : parseInt(w);
-                h = h.search('%') != -1 ? (parseInt(h)/ 100) * $(window).height() : parseInt(h);
-                ctx.clearRect(0,0,w,h);
-                imgData = [];
-                $scope.getSlot('clearCanvasRequest').setValue(false);
-            }
-        }, true);
-
         // Reload saved image
         if(theInitWblDef.private != undefined && theInitWblDef.private.imageData != undefined){
-            $timeout(function(){redrawPreviousImg(theInitWblDef.private.imageData);}, 400);
+            $timeout(function(){redrawPreviousImg(theInitWblDef.private.imageData);});
         }
     };
     //===================================================================================

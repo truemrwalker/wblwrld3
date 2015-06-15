@@ -115,6 +115,41 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'headersOrder'){
+				if(newVal.search){
+					var workList = [];
+					if(newVal.search(';') != -1){
+						workList = newVal.split(';');
+					}
+					else if(newVal.search(',') != -1){
+						workList = newVal.split(',');
+					}
+
+					else if(newVal.search(' ') != -1){
+						workList = newVal.split(' ');
+					}
+
+					if(workList.length > 0){
+						$scope.headersOrder = [];
+						for(var i = 0; i < workList.length; i++){
+							$scope.headersOrder.push(workList[i]);
+						}
+					}
+					else{
+						$scope.headersOrder = [];
+					}
+				}
+			}
+			else if(eventData.slotName == 'tableData'){
+				if(!newVal.tabledata){
+					$scope.set('tableData', blankTable);
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('tableData',
             $scope.initTableData,
             'Table Data',
@@ -214,39 +249,8 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
 			undefined
 		));
 
-
-        $scope.$watch(function(){return $scope.gimme('headersOrder');}, function(newVal, oldVal) {
-
-            if(newVal.search){
-                var workList = [];
-                if(newVal.search(';') != -1){
-                    workList = newVal.split(';');
-                }
-                else if(newVal.search(',') != -1){
-                    workList = newVal.split(',');
-                }
-
-                else if(newVal.search(' ') != -1){
-                    workList = newVal.split(' ');
-                }
-
-                if(workList.length > 0){
-                    $scope.headersOrder = [];
-                    for(var i = 0; i < workList.length; i++){
-                        $scope.headersOrder.push(workList[i]);
-                    }
-                }
-                else{
-                    $scope.headersOrder = [];
-                }
-            }
-
-        }, true);
-
         $scope.$watch(function(){return $scope.cellEdit.cellName;}, function(newVal, oldVal) {
-
             if($scope.cellEdit.newVal != $scope.headersOrder[$scope.cellEdit.colIndex]){
-
                 var hoSlot = angular.copy($scope.gimme('headersOrder'));
                 var workList = [];
                 if(hoSlot.search){
@@ -283,13 +287,6 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
                 $scope.cellEdit.newVal = "";
                 $scope.cellEdit.colIndex = undefined;
             }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('tableData');}, function(newVal, oldVal) {
-            if(!newVal.tabledata){
-                $scope.set('tableData', blankTable);
-            }
-
         }, true);
     };
     //===================================================================================
@@ -355,22 +352,6 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
     //===================================================================================
 
 
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-        var customWblDefPart = {
-
-        };
-
-        return customWblDefPart;
-    };
-    //===================================================================================
-
-
     //========================================================================================
     // Get Row Background Color
     //========================================================================================
@@ -383,9 +364,6 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
         }
     };
     //========================================================================================
-
-
-
 
 
     //=== CTRL MAIN CODE ======================================================================

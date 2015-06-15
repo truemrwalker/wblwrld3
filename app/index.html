@@ -249,10 +249,10 @@
             <div class="collapse navbar-collapse" collapse="navCollapsed">
                 <ul class="nav navbar-nav disable-select">
                     <li class="dropdown" ng-repeat="item in menuItems track by $index" ng-show="item.visibility_enabled">
-                        <a ng-cloak href="#" class="dropdown-toggle menuHeaderText" data-hover="dropdown">{{item.title | translate | titleMod:item.itemName:getCurrWS()}}<b class="caret"></b></a>
+                        <a ng-cloak href="#/" class="dropdown-toggle menuHeaderText" data-hover="dropdown">{{item.title | translate | titleMod:item.itemName:getCurrWS()}}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li ng-repeat="sublink in item.sublinks track by $index" ng-show="sublink.visibility_enabled">
-                                <a ng-if="sublink.sublink_itemName != 'divider'" ng-cloak class="menuItemText" ng-click="executeMenuSelection(sublink.sublink_itemName, null);">{{sublink.title | translate}} {{sublink.shortcut}}</a>
+                                <a ng-if="sublink.sublink_itemName != 'divider'" ng-cloak class="menuItemText" ng-click="executeMenuSelection(sublink.sublink_itemName, null);">{{sublink.title | translate}} {{sublink.shortcut}}<div ng-show="isContentUpdated(sublink.sublink_itemName)" style="display: inline;"><img src="images/icons/Updated.png" style="padding-left: 10px; width: 60px;"/><span style="font-size: 9px; padding-left: 15px;">{{getUpdateDate(sublink.sublink_itemName)}}</span></div></a>
                                 <a ng-if="sublink.sublink_itemName == 'divider'" ng-cloak class="menuItemText">------------------------------------</a>
                             </li>
                         </ul>

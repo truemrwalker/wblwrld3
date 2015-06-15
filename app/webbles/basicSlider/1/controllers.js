@@ -37,6 +37,14 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			var nv = parseFloat(newVal);
+			if(!isNaN(nv) && nv != $scope.data.currVal){
+				$scope.data.currVal = nv;
+			}
+		}, undefined, 'currentValue');
+
         $scope.addSlot(new Slot('minValue',
             0,
             'Min Value',
@@ -75,14 +83,6 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
 
         $scope.setDefaultSlot('currentValue');
         $scope.setResizeSlots('sliderGrabber:width', 'sliderGrabber:height');
-
-        $scope.$watch(function(){return $scope.gimme('currentValue');}, function(newVal, oldVal) {
-            var nv = parseFloat(newVal);
-            if(!isNaN(nv) && nv != $scope.data.currVal){
-
-                $scope.data.currVal = nv;
-            }
-        }, true);
 
         $scope.$watch(function(){return $scope.data.currVal;}, function(newVal, oldVal) {
             var nv = parseFloat(newVal);

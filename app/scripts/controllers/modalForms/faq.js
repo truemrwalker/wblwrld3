@@ -196,8 +196,6 @@ ww3Controllers.controller('faqSheetCtrl', function ($scope, $modalInstance, $log
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //*****************************************************************************************************************
-    $log.log($scope.formItems.thisUser.isAdmin);
-
     dbService.getFAQs().then(function(data){
         if(data.length){
             data.sort(compareQ);

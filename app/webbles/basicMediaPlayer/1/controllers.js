@@ -11,25 +11,9 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, Slot, Enum) {
-    // $scope is needed for angularjs to work properly and is not recommended to be removed. Slot is a Webble World
-    // available Service and is needed for any form of Slot manipulation inside this template and is not recommended
-    // to be removed.
-    // cleanupService is just a custom service used as an example, but any services needed must be included in
-    // the controller call. If your Webble support multiple languages include gettextCatalog and gettext in your
-    // controller, if not, then they may be removed.
-    // dbService is basically only needed to access API access keys, if such are not needed it can be removed
-    // Try to avoid running any code at the creation of the controller, unless you know it is completely independent
-    // of any of the other files, this is due to file loading order. Instead make your first code calls inside the
-    // coreCall_Init function which will be called as soon as all files including the DOM of the Webble is done loading.
+wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
-    //TODO: An object with element-id keys holding arrays of css style names that should be converted to slots
-    // These slots will be found by the name format '[TEMPLATE ID]_[ELEMENT NAME]:[CSS ATTRIBUTE NAME]'
-    //$scope.stylesToSlots = {
-    //    [ELEMENT NAME]: ['[CSS ATTRIBUTE NAME]']
-    //};
-    // EXAMPLE:
     $scope.stylesToSlots = {
 		mediaPlayerContainer: ['background-color', 'border', 'border-radius', 'padding']
     };
@@ -81,6 +65,104 @@ wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, Slot, Enu
 		theMediaPlayer = $scope.theView.parent().find("#theVideoPlayer").get(0);
 		theVideoPlayer = $scope.theView.parent().find("#theVideoPlayer").get(0);
 		theAudioPlayer = $scope.theView.parent().find("#theAudioPlayer").get(0);
+
+		//--------------------
+		// EVENT LISTENERS
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'playerType'){
+				var playerTimePos = theMediaPlayer.currentTime;
+				var isPaused = theMediaPlayer.paused;
+				var autoEnabled = theMediaPlayer.autoplay;
+				theMediaPlayer.autoplay = false;
+				theMediaPlayer.pause();
+				if(newVal == 0){
+					theMediaPlayer = $scope.theView.parent().find("#theVideoPlayer").get(0);
+				}
+				else if(newVal == 1){
+					theMediaPlayer = $scope.theView.parent().find("#theAudioPlayer").get(0);
+				}
+				theMediaPlayer.autoplay = autoEnabled;
+				theMediaPlayer.currentTime = playerTimePos;
+				theMediaPlayer.pause();
+				if(!isPaused && theMediaPlayer.paused){ theMediaPlayer.play(); };
+			}
+			else if(eventData.slotName == 'mediaSrc'){
+				if(theMediaPlayer.currentSrc != newVal){
+					$timeout(function(){
+						theVideoPlayer.load();
+						theAudioPlayer.load();
+					});
+				}
+			}
+			else if(eventData.slotName == 'mediaWidth'){
+				var newPos = parseInt(newVal) - 5;
+				if($scope.rewiderPos != newPos){
+					$scope.rewiderPos = newPos + 'px';
+				}
+			}
+			else if(eventData.slotName == 'controlsEnabled'){
+				if(newVal == true || newVal == false){
+					theVideoPlayer.controls = newVal;
+					theAudioPlayer.controls = newVal;
+				}
+			}
+			else if(eventData.slotName == 'autplaEnabled'){
+				if(newVal == true || newVal == false){
+					theVideoPlayer.autoplay = false;
+					theAudioPlayer.autoplay = false;
+					theMediaPlayer.autoplay = newVal;
+				}
+			}
+			else if(eventData.slotName == 'playerAction'){
+				if(newVal == 1){  //play
+					theMediaPlayer.play();
+				}
+				else if(newVal == 2){  //pause
+					theMediaPlayer.pause();
+				}
+				else if(newVal == 3){  //restart
+					theMediaPlayer.currentTime = 0;
+					theMediaPlayer.play();
+				}
+				$scope.set('playerAction', 0);
+			}
+			else if(eventData.slotName == 'currTime'){
+				if(!isInternalPleaseIgnore){
+					theMediaPlayer.currentTime = newVal;
+				}
+				isInternalPleaseIgnore = false;
+			}
+			else if(eventData.slotName == 'isLoopEnabled'){
+				var isTrueSet = (newVal.toString().toLowerCase() === 'true');
+				if(isTrueSet == true || isTrueSet == false){
+					theVideoPlayer.loop = isTrueSet;
+					theAudioPlayer.loop = isTrueSet;
+				}
+			}
+			else if(eventData.slotName == 'isMuteEnabled'){
+				var isTrueSet = (newVal.toString().toLowerCase() === 'true');
+				if(isTrueSet == true || isTrueSet == false){
+					theVideoPlayer.muted = isTrueSet;
+					theAudioPlayer.muted = isTrueSet;
+				}
+			}
+			else if(eventData.slotName == 'playbackRate'){
+				var theValue = parseFloat(newVal);
+				if(!isNaN(theValue)){
+					theVideoPlayer.playbackRate = theValue;
+					theAudioPlayer.playbackRate = theValue;
+				}
+			}
+			else if(eventData.slotName == 'volume'){
+				var theValue = parseFloat(newVal);
+				if(!isNaN(theValue) && theValue >= 0 && theValue <= 1 ){
+					theVideoPlayer.volume = theValue;
+					theAudioPlayer.volume = theValue;
+				}
+			}
+		});
 
 		$scope.addSlot(new Slot('playerType',
 			randomNum == 1 ? 0 : 1,
@@ -191,121 +273,6 @@ wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, Slot, Enu
 		));
 
 		$scope.setDefaultSlot('mediaSrc');
-
-
-		//--------------------
-        // WATCHES & EVENTS
-
-		// Switch properly between player types
-		$scope.$watch(function(){ return $scope.gimme('playerType');}, function(newVal, oldVal) {
-			var playerTimePos = theMediaPlayer.currentTime;
-			var isPaused = theMediaPlayer.paused;
-			var autoEnabled = theMediaPlayer.autoplay;
-			theMediaPlayer.autoplay = false;
-			theMediaPlayer.pause();
-			if(newVal == 0){
-				theMediaPlayer = $scope.theView.parent().find("#theVideoPlayer").get(0);
-			}
-			else if(newVal == 1){
-				theMediaPlayer = $scope.theView.parent().find("#theAudioPlayer").get(0);
-			}
-			theMediaPlayer.autoplay = autoEnabled;
-			theMediaPlayer.currentTime = playerTimePos;
-			theMediaPlayer.pause();
-			if(!isPaused && theMediaPlayer.paused){ theMediaPlayer.play(); };
-		}, true);
-
-		// Make sure the new source file is loaded
-		$scope.$watch(function(){ return $scope.gimme('mediaSrc');}, function(newVal, oldVal) {
-			if(theMediaPlayer.currentSrc != newVal){
-				theVideoPlayer.load();
-				theAudioPlayer.load();
-			}
-		}, true);
-
-		// Make sure the re-wider handle is positioned correctly at all time
-		$scope.$watch(function(){ return $scope.gimme('mediaWidth');}, function(newVal, oldVal) {
-			var newPos = parseInt(newVal) - 5;
-			if($scope.rewiderPos != newPos){
-				$scope.rewiderPos = newPos + 'px';
-			}
-		}, true);
-
-		// Turn controls on or off
-		$scope.$watch(function(){return $scope.gimme('controlsEnabled');}, function(newVal, oldVal) {
-			if(newVal == true || newVal == false){
-				theVideoPlayer.controls = newVal;
-				theAudioPlayer.controls = newVal;
-			}
-		}, true);
-
-		// Set Autoplay
-        $scope.$watch(function(){return $scope.gimme('autplaEnabled');}, function(newVal, oldVal) {
-			if(newVal == true || newVal == false){
-				theVideoPlayer.autoplay = false;
-				theAudioPlayer.autoplay = false;
-				theMediaPlayer.autoplay = newVal;
-			}
-        }, true);
-
-		// Activate the player action via slot
-		$scope.$watch(function(){return $scope.gimme('playerAction');}, function(newVal, oldVal) {
-			if(newVal == 1){  //play
-				theMediaPlayer.play();
-			}
-			else if(newVal == 2){  //pause
-				theMediaPlayer.pause();
-			}
-			else if(newVal == 3){  //restart
-				theMediaPlayer.currentTime = 0;
-				theMediaPlayer.play();
-			}
-			$scope.set('playerAction', 0);
-		}, true);
-
-		// Sets the current time of the media file playing
-		$scope.$watch(function(){ return $scope.gimme('currTime');}, function(newVal, oldVal) {
-			if(!isInternalPleaseIgnore){
-				theMediaPlayer.currentTime = newVal;
-			}
-			isInternalPleaseIgnore = false;
-		}, true);
-
-		// Turn loop on or off
-		$scope.$watch(function(){return $scope.gimme('isLoopEnabled');}, function(newVal, oldVal) {
-			var isTrueSet = (newVal.toString().toLowerCase() === 'true');
-			if(isTrueSet == true || isTrueSet == false){
-				theVideoPlayer.loop = isTrueSet;
-				theAudioPlayer.loop = isTrueSet;
-			}
-		}, true);
-
-		// Turn mute on or off
-		$scope.$watch(function(){return $scope.gimme('isMuteEnabled');}, function(newVal, oldVal) {
-			var isTrueSet = (newVal.toString().toLowerCase() === 'true');
-			if(isTrueSet == true || isTrueSet == false){
-				theVideoPlayer.muted = isTrueSet;
-				theAudioPlayer.muted = isTrueSet;
-			}
-		}, true);
-
-		// Turn mute on or off
-		$scope.$watch(function(){return $scope.gimme('playbackRate');}, function(newVal, oldVal) {
-			var theValue = parseFloat(newVal);
-			if(!isNaN(theValue)){
-				theVideoPlayer.playbackRate = theValue;
-				theAudioPlayer.playbackRate = theValue;
-			}
-		}, true);
-
-		// Turn mute on or off
-		$scope.$watch(function(){return $scope.gimme('volume');}, function(newVal, oldVal) {
-			var theValue = parseFloat(newVal);
-			if(!isNaN(theValue) && theValue >= 0 && theValue <= 1 ){
-				theVideoPlayer.volume = theValue;
-				theAudioPlayer.volume = theValue;
-			}
-		}, true);
 
 		$scope.theView.parent().find("#theVideoPlayer").get(0).ontimeupdate = eventHandler_OnCurrTimeChange;
 		$scope.theView.parent().find("#theAudioPlayer").get(0).ontimeupdate = eventHandler_OnCurrTimeChange;

@@ -53,8 +53,6 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 		custMenuItemsOpenBtnImg: 'images/icons/pullUpArrow.png'
 	};
 
-
-	//TODO: fix tooltips and error messages
 	$scope.tooltip = {
 		dmi: gettext("The default menu items cannot be changed, but it can be turned on or off"),
 		cmi: gettext("A custom menu item can only have the action to change a slot value. Such value change is made by selecting which slot and then create a formula in the text box by the use of slot names (found in the drop down box below the text box) and mathematical operators. You can create multiple slot changes for one Menu item. Delete an existing item by clearing its id field.")

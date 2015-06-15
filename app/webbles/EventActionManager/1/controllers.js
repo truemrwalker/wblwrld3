@@ -233,22 +233,21 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         ));
         $scope.getSlot('relativeCounter').setDisabledSetting(Enum.SlotDisablingState.ConnectionVisibility);
 
-        //Watches
-        $scope.$watch(function(){return $scope.gimme('EAData');}, function(newVal, oldVal) {
-            var newValStr = '';
-            for(var i = 0; i < newVal.length; i++) {
-                newValStr += newVal[i].strVal
-            }
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newValStr = '';
+			for(var i = 0; i < eventData.slotValue.length; i++) {
+				newValStr += eventData.slotValue[i].strVal
+			}
 
-            if(newValStr != $scope.EAM_WblProps.EADataAsStr){
-                setEAData(newVal, true);
-            }
-        }, true);
+			if(newValStr != $scope.EAM_WblProps.EADataAsStr){
+				setEAData(eventData.slotValue, true);
+			}
+		}, undefined, 'EAData');
 
-        relativeInitWatch = $scope.$watch(function(){return $scope.gimme('relativeCounter');}, function(newVal, oldVal) {
-            noOfRelativesHistory = newVal;
-            relativeInitWatch();
-        }, true);
+		relativeInitWatch = $scope.$watch(function(){return $scope.gimme('relativeCounter');}, function(newVal, oldVal) {
+			noOfRelativesHistory = newVal;
+			relativeInitWatch();
+		}, true);
 
         $scope.$watch(function(){return ($scope.getAllDescendants($scope.theView).length + $scope.getAllAncestors($scope.theView).length);}, function(newVal, oldVal) {
             if(!isNaN(newVal)){
@@ -739,44 +738,42 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
             }
             else if(whatEvGrItem.operation == 'Main Menu Item Selected'){
                 if(listenersData.platformActivityEvent.mainMenuExec.noOfClients == 0){
-                    mainMenuExecuted = $scope.$watch(function(){return $scope.eventInfo.mainMenuExecuted;}, function(newVal, oldVal) {
-                        listenersData.platformActivityEvent.mainMenuExec.lastTime = Date.now();
-                        listenersData.platformActivityEvent.mainMenuExec.sublink = newVal.menuId;
-                    }, true);
+					mainMenuExecuted = $scope.registerWWEventListener(Enum.availableWWEvents.mainMenuExecuted, function(eventData){
+						listenersData.platformActivityEvent.mainMenuExec.lastTime = eventData.timestamp;
+						listenersData.platformActivityEvent.mainMenuExec.sublink = eventData.menuId;
+					});
                 }
                 listenersData.platformActivityEvent.mainMenuExec.noOfClients++;
             }
             else if(whatEvGrItem.operation == 'New Webble Loaded'){
                 if(listenersData.platformActivityEvent.loadingNewWbl.noOfClients == 0){
-                    loadingNewWbl = $scope.$watch(function(){return $scope.eventInfo.loadingWebble;}, function(newVal, oldVal) {
-                        listenersData.platformActivityEvent.loadingNewWbl.lastTime = Date.now();
-                        listenersData.platformActivityEvent.loadingNewWbl.wblId = newVal;
-                    }, true);
+					loadingNewWbl = $scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
+						listenersData.platformActivityEvent.loadingNewWbl.lastTime = eventData.timestamp;
+						listenersData.platformActivityEvent.loadingNewWbl.wblId = eventData.targetId;
+					});
                 }
                 listenersData.platformActivityEvent.loadingNewWbl.noOfClients++;
             }
             else if(whatEvGrItem.operation == 'Webble Deleted'){
                 if(listenersData.platformActivityEvent.deletingWbl.noOfClients == 0){
-                    deletingWbl = $scope.$watch(function(){return $scope.eventInfo.deletingWebble;}, function(newVal, oldVal) {
-                        if(newVal != null){
-                            listenersData.platformActivityEvent.deletingWbl.lastTime = Date.now();
-                            listenersData.platformActivityEvent.deletingWbl.wblId = newVal.instanceId;
-                            listenersData.platformActivityEvent.deletingWbl.wblTemplId = newVal.templateId;
-                        }
-                    }, true);
+					deletingWbl = $scope.registerWWEventListener(Enum.availableWWEvents.deleted, function(eventData){
+						listenersData.platformActivityEvent.deletingWbl.lastTime = eventData.timestamp;
+						listenersData.platformActivityEvent.deletingWbl.wblId = eventData.targetId;
+						listenersData.platformActivityEvent.deletingWbl.wblTemplId = $scope.getWebbleByInstanceId(eventData.targetId).scope().theWblMetadata['templateid'];
+					}, null);
                 }
                 listenersData.platformActivityEvent.deletingWbl.noOfClients++;
             }
             else if(whatEvGrItem.operation == 'Keyboard Event'){
                 if(listenersData.platformActivityEvent.keyPress.noOfClients == 0){
-                    keyPress = $scope.$watch(function(){return $scope.eventInfo.keyDownForWebble;}, function(newVal, oldVal) {
-                        if(newVal != null && !$scope.getIsFormOpen()){
-                            listenersData.platformActivityEvent.keyPress.lastTime = Date.now();
-                            listenersData.platformActivityEvent.keyPress.keyName = newVal.key.name;
-                            listenersData.platformActivityEvent.keyPress.keyCode = newVal.key.code;
-                            listenersData.platformActivityEvent.keyPress.released = newVal.key.released;
-                        }
-                    }, true);
+					keyPress = $scope.registerWWEventListener(Enum.availableWWEvents.keyDown, function(eventData){
+						if(!$scope.getIsFormOpen()){
+							listenersData.platformActivityEvent.keyPress.lastTime = eventData.timestamp;
+							listenersData.platformActivityEvent.keyPress.keyName = eventData.key.name;
+							listenersData.platformActivityEvent.keyPress.keyCode = eventData.key.code;
+							listenersData.platformActivityEvent.keyPress.released = eventData.key.released;
+						}
+					});
                 }
                 listenersData.platformActivityEvent.keyPress.noOfClients++;
             }
@@ -831,36 +828,30 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                 }
                 else if(whatEvGrItem.operation == 'Webble Menu Item Selected'){
                     if(listenersData.wblActivityEvent.menuExec.currentListeners.length == 0){
-                        wblMenuExecuted = $scope.$watch(function(){return $scope.eventInfo.wblMenuExecuted;}, function(newVal, oldVal) {
-                            if(newVal != undefined && newVal.instanceId && newVal != oldVal){
-                                var wblElementId = 'wbl_' + newVal.instanceId;
-                                listenersData.wblActivityEvent.menuExec[wblElementId] = {lastTime: Date.now(), sublinkId: Enum.availableOnePicks_DefaultWebbleMenuTargets[newVal.menuItemName]};
-                            }
-                        }, true);
+						wblMenuExecuted = $scope.registerWWEventListener(Enum.availableWWEvents.wblMenuExecuted, function(eventData){
+							var wblElementId = 'wbl_' + eventData.targetId;
+							listenersData.wblActivityEvent.menuExec[wblElementId] = {lastTime: eventData.timestamp, sublinkId: Enum.availableOnePicks_DefaultWebbleMenuTargets[eventData.menuId]};
+						}, null);
                     }
                     var tId = t.scope().getInstanceId();
                     listenersData.wblActivityEvent.menuExec.currentListeners.push(tId);
                 }
                 else if(whatEvGrItem.operation == 'Was Deleted'){
                     if(listenersData.wblActivityEvent.wblDeletion.currentListeners.length == 0){
-                        wblDeleted = $scope.$watch(function(){return $scope.eventInfo.deletingWebble;}, function(newVal, oldVal) {
-                            if(newVal != undefined && newVal.instanceId && newVal != oldVal){
-                                listenersData.wblActivityEvent.wblDeletion.lastTime = Date.now();
-                                listenersData.wblActivityEvent.wblDeletion.deletedWbls.push(newVal.instanceId);
-                            }
-                        }, true);
+						wblDeleted = $scope.registerWWEventListener(Enum.availableWWEvents.deleted, function(eventData){
+							listenersData.wblActivityEvent.wblDeletion.lastTime = eventData.timestamp;
+							listenersData.wblActivityEvent.wblDeletion.deletedWbls.push(eventData.targetId);
+						}, null);
                     }
                     var tId = t.scope().getInstanceId();
                     listenersData.wblActivityEvent.wblDeletion.currentListeners.push(tId);
                 }
                 else if(whatEvGrItem.operation == 'Was Duplicated'){
                     if(listenersData.wblActivityEvent.wblDuplication.currentListeners.length == 0){
-                        wblDuplicated = $scope.$watch(function(){return $scope.eventInfo.duplicatingWebble;}, function(newVal, oldVal) {
-                            if(newVal != undefined && newVal.originalId && newVal != oldVal){
-                                var wblElementId = 'wbl_' + newVal.originalId;
-                                listenersData.wblActivityEvent.wblDuplication[wblElementId] = {lastTime: Date.now(), duplId: newVal.copyId};
-                            }
-                        }, true);
+						wblDuplicated = $scope.registerWWEventListener(Enum.availableWWEvents.duplicated, function(eventData){
+							var wblElementId = 'wbl_' + eventData.targetId;
+							listenersData.wblActivityEvent.wblDuplication[wblElementId] = {lastTime: eventData.timestamp, duplId: eventData.copyId};
+						}, null);
                     }
                     var tId = t.scope().getInstanceId();
                     listenersData.wblActivityEvent.wblDuplication.currentListeners.push(tId);
@@ -1678,12 +1669,10 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                             // create event listener if lacking
                             if(listenersData.wblActivityEvent.menuExec.currentListeners.length == 0){
                                 listenersData.wblActivityEvent.menuExec.currentListeners.push(tId);
-                                wblMenuExecuted = $scope.$watch(function(){return $scope.eventInfo.wblMenuExecuted;}, function(newVal, oldVal) {
-                                    if(newVal != undefined && newVal.instanceId != undefined && newVal != oldVal){
-                                        var wblElementId = 'wbl_' + newVal.instanceId;
-                                        listenersData.wblActivityEvent.menuExec[wblElementId] = {lastTime: Date.now(), sublinkId: newVal.menuItemName};
-                                    }
-                                }, true);
+								wblMenuExecuted = $scope.registerWWEventListener(Enum.availableWWEvents.wblMenuExecuted, function(eventData){
+									var wblElementId = 'wbl_' + eventData.targetId;
+									listenersData.wblActivityEvent.menuExec[wblElementId] = {lastTime: eventData.timestamp, sublinkId: eventData.menuId};
+								}, null);
                             }
 
                             // Check if the event has triggered
@@ -1724,12 +1713,10 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                             // create event listener if lacking
                             if(listenersData.wblActivityEvent.wblDeletion.currentListeners.length == 0){
                                 listenersData.wblActivityEvent.wblDeletion.currentListeners.push(tId);
-                                wblDeleted = $scope.$watch(function(){return $scope.eventInfo.deletingWebble;}, function(newVal, oldVal) {
-                                    if(newVal != undefined && newVal.instanceId != undefined && newVal != oldVal){
-                                        listenersData.wblActivityEvent.wblDeletion.lastTime = Date.now();
-                                        listenersData.wblActivityEvent.wblDeletion.deletedWbls.push(newVal.instanceId);
-                                    }
-                                }, true);
+								wblDeleted = $scope.registerWWEventListener(Enum.availableWWEvents.deleted, function(eventData){
+									listenersData.wblActivityEvent.wblDeletion.lastTime = eventData.timestamp;
+									listenersData.wblActivityEvent.wblDeletion.deletedWbls.push(eventData.targetId);
+								}, null);
                             }
 
                             // Check if the event has triggered
@@ -1772,12 +1759,10 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                             // create event listener if lacking
                             if(listenersData.wblActivityEvent.wblDuplication.currentListeners.length == 0){
                                 listenersData.wblActivityEvent.wblDuplication.currentListeners.push(tId);
-                                wblDuplicated = $scope.$watch(function(){return $scope.eventInfo.duplicatingWebble;}, function(newVal, oldVal) {
-                                    if(newVal != undefined && newVal.originalId != undefined && newVal != oldVal){
-                                        var wblElementId = 'wbl_' + newVal.originalId;
-                                        listenersData.wblActivityEvent.wblDuplication[wblElementId] = {lastTime: Date.now(), duplId: newVal.copyId};
-                                    }
-                                }, true);
+								wblDuplicated = $scope.registerWWEventListener(Enum.availableWWEvents.duplicated, function(eventData){
+									var wblElementId = 'wbl_' + eventData.targetId;
+									listenersData.wblActivityEvent.wblDuplication[wblElementId] = {lastTime: eventData.timestamp, duplId: eventData.copyId};
+								}, null);
                             }
 
                             // Check if the event has triggered
@@ -1834,28 +1819,26 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                                     }
                                 }
 
-                                wblMoved = $scope.$watch(function(){return $scope.eventInfo.slotChanged;}, function(newVal, oldVal) {
-                                    if(newVal != undefined){
-                                        if(newVal.slotname == 'root:left' || newVal.slotname == 'root:top'){
-                                            var wblElementId = 'wbl_' + newVal.instanceid;
-                                            var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                            var wblSizeSlots = thisWbl.scope().getResizeSlots();
-                                            var wblSize = {w: parseInt(thisWbl.scope().gimme(wblSizeSlots.width)), h: parseInt(thisWbl.scope().gimme(wblSizeSlots.height))};
-                                            if(wblSize.w != undefined && wblSize.h != undefined){
-                                                var wblAbsPos = $scope.getWblAbsPosInPixels(thisWbl);
-                                                listenersData.wblActivityEvent.collision[wblElementId] = {
-                                                    lastTime: Date.now(),
-                                                    templateId: thisWbl.scope().theWblMetadata['templateid'],
-                                                    displayName: thisWbl.scope().theWblMetadata['displayname'],
-                                                    left: wblAbsPos.x,
-                                                    top: wblAbsPos.y,
-                                                    right: wblAbsPos.x + wblSize.w,
-                                                    bottom: wblAbsPos.y + wblSize.h
-                                                };
-                                            }
-                                        }
-                                    }
-                                }, true);
+								wblMoved = $scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+									if(eventData.slotName == 'root:left' || eventData.slotName == 'root:top'){
+										var wblElementId = 'wbl_' + eventData.targetId;
+										var thisWbl = $scope.getWebbleByInstanceId(eventData.targetId);
+										var wblSizeSlots = thisWbl.scope().getResizeSlots();
+										var wblSize = {w: parseInt(thisWbl.scope().gimme(wblSizeSlots.width)), h: parseInt(thisWbl.scope().gimme(wblSizeSlots.height))};
+										if(wblSize.w != undefined && wblSize.h != undefined){
+											var wblAbsPos = $scope.getWblAbsPosInPixels(thisWbl);
+											listenersData.wblActivityEvent.collision[wblElementId] = {
+												lastTime: eventData.timestamp,
+												templateId: thisWbl.scope().theWblMetadata['templateid'],
+												displayName: thisWbl.scope().theWblMetadata['displayname'],
+												left: wblAbsPos.x,
+												top: wblAbsPos.y,
+												right: wblAbsPos.x + wblSize.w,
+												bottom: wblAbsPos.y + wblSize.h
+											};
+										}
+									}
+								}, null);
                             }
 
                             // Check if the event has triggered

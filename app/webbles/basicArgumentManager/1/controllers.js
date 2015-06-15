@@ -30,7 +30,7 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
         $scope.addSlot(new Slot('resultTemplate',
-            '$arg1$+" "+$arg2$',
+            '',
             'Result Template',
             'This is the template the Webble will use to create the result. Within dollar signs $ write any slotname and use any mathematical operator to create a math result. Or use + and strings within quatation marks to build a dynamic string.',
             $scope.theWblMetadata['templateid'],
@@ -77,38 +77,43 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
 
         $scope.setDefaultSlot('result');
 
-        $scope.$watch(function(){return $scope.gimme('resultTemplate');}, function(newVal, oldVal) {
-            var pattern = /\$(.*?)\$/g;
-            argSlots = [];
-            newVal.replace(pattern, function(g0,g1){argSlots.push(g1);});
-            pattern = /\"(.*?)\"/g;
-            templateStrings = [];
-            newVal.replace(pattern, function(g0,g1){templateStrings.push(g1);});
-            doCalc();
-        }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotName == 'resultTemplate'){
+				if(eventData.slotValue != ''){
+					var pattern = /\$(.*?)\$/g;
+					argSlots = [];
+					eventData.slotValue.replace(pattern, function(g0,g1){argSlots.push(g1);});
+					pattern = /\"(.*?)\"/g;
+					templateStrings = [];
+					eventData.slotValue.replace(pattern, function(g0,g1){templateStrings.push(g1);});
+					doCalc();
+				}
+				else{
+					$scope.set('result', '');
+					showIt(eventData.slotValue);
+				}
+			}
+			else if(eventData.slotName == 'displayMode'){
+				showIt(eventData.slotValue);
+			}
 
-        $scope.$watch(function(){return $scope.wblEventInfo.slotChanged;}, function(newVal, oldVal) {
-            if(newVal && newVal.slotname){
-                var found = false;
-                for(var i = 0; i < argSlots.length; i++){
-                    if(newVal.slotname.toLowerCase() == argSlots[i].toLowerCase()){
-                        doCalc();
-                        break;
-                    }
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('displayMode');}, function(newVal, oldVal) {
-            $timeout(function(){showIt(newVal);});
-        }, true);
+			var found = false;
+			for(var i = 0; i < argSlots.length; i++){
+				if(eventData.slotName.toLowerCase() == argSlots[i].toLowerCase()){
+					doCalc();
+					break;
+				}
+			}
+		});
 
         $scope.$watch(function(){return $scope.theWblMetadata['displayname'];}, function(newVal, oldVal) {
             var dm = $scope.gimme('displayMode');
             if(dm == 2){
-                $timeout(function(){showIt(dm);});
+				showIt(dm);
             }
         }, true);
+
+		$scope.set('resultTemplate', '$arg1$+" "+$arg2$');
     };
     //===================================================================================
 

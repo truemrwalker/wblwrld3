@@ -123,20 +123,21 @@ wblwrld3App.controller('btnWebbleCtrl', function($scope, $log, Slot, Enum, gette
             event.stopPropagation();
         });
 
-        // Slot Watches
-        $scope.$watch(function(){return $scope.gimme('btnStyle');}, function(newVal, oldVal) {
-            $scope.theView.find('#theBtn').removeClass(currentBtnStyle);
-            currentBtnStyle = newVal;
-            $scope.theView.find('#theBtn').addClass(newVal);
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('btnSize');}, function(newVal, oldVal) {
-            if(currentBtnSize != ''){
-                $scope.theView.find('#theBtn').removeClass(currentBtnSize);
-            }
-            currentBtnSize = btnSizes[newVal];
-            $scope.theView.find('#theBtn').addClass(btnSizes[newVal]);
-        }, true);
+		//Slot Listeners
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotName == 'btnStyle'){
+					$scope.theView.find('#theBtn').removeClass(currentBtnStyle);
+					currentBtnStyle = eventData.slotValue;
+					$scope.theView.find('#theBtn').addClass(eventData.slotValue);
+			}
+			else if(eventData.slotName == 'btnSize'){
+					if(currentBtnSize != ''){
+						$scope.theView.find('#theBtn').removeClass(currentBtnSize);
+					}
+					currentBtnSize = btnSizes[eventData.slotValue];
+					$scope.theView.find('#theBtn').addClass(btnSizes[eventData.slotValue]);
+			}
+		});
     };
     //===================================================================================
 });

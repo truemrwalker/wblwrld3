@@ -48,6 +48,67 @@ wblwrld3App.controller('soapClientCtrl', function($scope, $log, Slot, Enum, dbSe
     $scope.coreCall_Init = function(theInitWblDef){
         SoClDisplay = $scope.theView.parent().find("#SoClDisplay");
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'executeServiceCall'){
+				if(newVal == true){
+					$scope.set('result', '');
+					$scope.set('resultAsJson', '');
+					$timeout(function(){SoClDisplay.trigger('autosize.resize');});
+					$scope.set('executeServiceCall', false);
+					var serviceUrl = $scope.gimme('serviceUrl');
+					var serviceMethod = $scope.gimme('serviceMethod');
+					var serviceType = $scope.gimme('serviceType');
+					if(serviceUrl != '' && (serviceMethod != '' || serviceType == 1)){
+						$scope.waiting(true);
+						$scope.showQIM("Call Made, Waiting for reply...", 20000);
+						if(serviceType == 0){ //SOAP
+							makeSoapCall(serviceUrl, serviceMethod);
+						}
+						else{ //REST
+							makeRestCall(serviceUrl, serviceMethod);
+						}
+					}
+					else{
+						$scope.showQIM("Service URL or Service Method are not set properly", 2000);
+					}
+				}
+			}
+			else if(newVal.slotname == 'serviceUrl' || newVal.slotname == 'serviceMethod') {
+				$scope.set('result', '');
+				$scope.set('resultAsJson', '');
+				$timeout(function () { SoClDisplay.trigger('autosize.resize'); });
+			}
+			else if(newVal.slotname == 'APIKeyRealm' || newVal.slotname == 'APIKeyResource') {
+				var apiRealm = $scope.gimme('APIKeyRealm');
+				var apiResource = $scope.gimme('APIKeyResource');
+				if(apiRealm != '' && apiResource != ''){
+					myAccessKeyForSomething = undefined;
+					$scope.set('APIKeyIsLoaded', false);
+					dbService.getMyAccessKey(apiRealm, apiResource).then(
+						function(returningKey) {
+							if(returningKey){
+								myAccessKeyForSomething = returningKey;
+								$scope.set('APIKeyIsLoaded', true);
+								$scope.showQIM("API access key was collected and stored inside the Webble to be used with the next REST call", 3500, {w: 250, h: 80});
+							}
+							else{
+								$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm and resource saved in your user profile.")}, null);
+							}
+						},
+						function (err) {
+							$log.log("ERROR: " + err);
+						}
+					);
+				}
+				else{
+					myAccessKeyForSomething = undefined;
+					$scope.set('APIKeyIsLoaded', false);
+					$scope.showQIM("Stored API access key was unloaded from this Webble", 3000);
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('serviceType',
             1,
             'Web Service Type',
@@ -179,82 +240,19 @@ wblwrld3App.controller('soapClientCtrl', function($scope, $log, Slot, Enum, dbSe
 
         $scope.setResizeSlots('SoClHolder:width', 'SoClHolder:height');
 
-        initiationDone = $scope.$watch(function(){return $scope.eventInfo.loadingWebble;}, function(newVal, oldVal) {
-            if(newVal != undefined && $scope.getInstanceId() == newVal){
-                initiationDone();
-                for(var slot in $scope.getSlots()){
-                    if(slot.search('wbSrvcParam_') != -1){
-                        var thePSlot = $scope.getSlot(slot);
-                        var pName = slot.replace('wbSrvcParam_', '');
-                        thePSlot.setDisplayName(pName);
-                        thePSlot.setDisplayDescription('This is a web service parameter slot which value will be sent when invoking the web service with the selected method');
-                    }
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('executeServiceCall');}, function(newVal, oldVal) {
-            if(newVal != undefined && newVal == true){
-                $scope.set('result', '');
-                $scope.set('resultAsJson', '');
-                $timeout(function(){SoClDisplay.trigger('autosize.resize');});
-                $scope.set('executeServiceCall', false);
-                var serviceUrl = $scope.gimme('serviceUrl');
-                var serviceMethod = $scope.gimme('serviceMethod');
-				var serviceType = $scope.gimme('serviceType');
-                if(serviceUrl != '' && (serviceMethod != '' || serviceType == 1)){
-                    $scope.waiting(true);
-                    $scope.showQIM("Call Made, Waiting for reply...", 20000);
-                    if(serviceType == 0){ //SOAP
-                        makeSoapCall(serviceUrl, serviceMethod);
-                    }
-                    else{ //REST
-                        makeRestCall(serviceUrl, serviceMethod);
-                    }
-                }
-                else{
-                    $scope.showQIM("Service URL or Service Method are not set properly", 2000);
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.wblEventInfo.slotChanged;}, function(newVal, oldVal) {
-            if(newVal != undefined && newVal.slotname != undefined){
-              if(newVal.slotname == 'serviceUrl' || newVal.slotname == 'serviceMethod') {
-                  $scope.set('result', '');
-                  $scope.set('resultAsJson', '');
-                  $timeout(function () { SoClDisplay.trigger('autosize.resize'); });
-              }
-              else if(newVal.slotname == 'APIKeyRealm' || newVal.slotname == 'APIKeyResource') {
-                  var apiRealm = $scope.gimme('APIKeyRealm');
-                  var apiResource = $scope.gimme('APIKeyResource');
-                  if(apiRealm != '' && apiResource != ''){
-                      myAccessKeyForSomething = undefined;
-                      $scope.set('APIKeyIsLoaded', false);
-                      dbService.getMyAccessKey(apiRealm, apiResource).then(
-                          function(returningKey) {
-                                if(returningKey){
-                                    myAccessKeyForSomething = returningKey;
-                                    $scope.set('APIKeyIsLoaded', true);
-                                    $scope.showQIM("API access key was collected and stored inside the Webble to be used with the next REST call", 3500, {w: 250, h: 80});
-                                }
-                                else{
-                                    $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm and resource saved in your user profile.")}, null);
-                                }
-                            },
-                            function (err) {
-                                $log.log("ERROR: " + err);
-                            }
-                      );
-                  }
-                  else{
-                      myAccessKeyForSomething = undefined;
-                      $scope.set('APIKeyIsLoaded', false);
-                      $scope.showQIM("Stored API access key was unloaded from this Webble", 3000);
-                  }
-              }
-            }
-        }, true);
+		initiationDone = $scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
+			if($scope.getInstanceId() == eventData.targetId){
+				initiationDone();
+				for(var slot in $scope.getSlots()){
+					if(slot.search('wbSrvcParam_') != -1){
+						var thePSlot = $scope.getSlot(slot);
+						var pName = slot.replace('wbSrvcParam_', '');
+						thePSlot.setDisplayName(pName);
+						thePSlot.setDisplayDescription('This is a web service parameter slot which value will be sent when invoking the web service with the selected method');
+					}
+				}
+			}
+		});
 
         $timeout(function(){$scope.set('SoClHolder:height', 'auto'); $scope.set('SoClHolder:width', 'auto'); SoClDisplay.autosize();}, 300);
     };
@@ -282,7 +280,6 @@ wblwrld3App.controller('soapClientCtrl', function($scope, $log, Slot, Enum, dbSe
     var makeRestCall = function(serviceUrl, serviceMethod){
       var params = createServiceParametersObject();
       var methodType = RestCallMethods[parseInt($scope.gimme('serviceMethodType'))];
-$log.log(methodType);
       if(methodType != undefined){
 		  $.ajax({
 			  url: serviceUrl,

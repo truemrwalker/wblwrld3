@@ -84,6 +84,24 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
     $scope.coreCall_Init = function(theInitWblDef){
         ctx = $scope.theView.parent().find("#theChart").get(0).getContext("2d");
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotName == 'chartWidth'){
+				$scope.canvasSize.width = parseInt(eventData.slotValue);
+				$timeout(function(){drawChart($scope.gimme('dataObject'), $scope.gimme('chartType'));}, 200);
+			}
+			else if(eventData.slotName == 'chartHeight'){
+				$scope.canvasSize.height = parseInt(eventData.slotValue);
+				$timeout(function(){drawChart($scope.gimme('dataObject'), $scope.gimme('chartType'));}, 200);
+			}
+			else if(eventData.slotName == 'dataObject'){
+				drawChart(eventData.slotValue, $scope.gimme('chartType'));
+			}
+			else if(eventData.slotName == 'chartType'){
+				drawChart($scope.gimme('dataObject'), eventData.slotValue);
+			}
+		});
+
+
         $scope.addSlot(new Slot('dataObject',
             exampleDataBarLike,
             gettext('Data'),
@@ -122,24 +140,6 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
 
         $scope.setDefaultSlot('dataObject');
         $scope.setResizeSlots('chartWidth', 'chartHeight');
-
-        $scope.$watch(function(){return $scope.gimme('chartWidth');}, function(newVal, oldVal) {
-            $scope.canvasSize.width = parseInt(newVal);
-            $timeout(function(){drawChart($scope.gimme('dataObject'), $scope.gimme('chartType'));}, 200);
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('chartHeight');}, function(newVal, oldVal) {
-            $scope.canvasSize.height = parseInt(newVal);
-            $timeout(function(){drawChart($scope.gimme('dataObject'), $scope.gimme('chartType'));}, 200);
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('dataObject');}, function(newVal, oldVal) {
-            drawChart(newVal, $scope.gimme('chartType'));
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('chartType');}, function(newVal, oldVal) {
-            drawChart($scope.gimme('dataObject'), newVal);
-        }, true);
     };
     //===================================================================================
 
@@ -160,10 +160,9 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
     //===================================================================================
 
 
-    // TODO: POSSIBLE ADDITIONAL CUSTOM METHODS
     //========================================================================================
-    // Custom template specific methods is very likely to be quite a few of in every Webble,
-    // and they contain what ever the developer want them to contain.
+    // Draw Chart
+    // Draws the chart as specified
     //========================================================================================
     var drawChart = function(chartData, chartType){
         if(ctx){

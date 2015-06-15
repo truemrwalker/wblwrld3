@@ -57,6 +57,24 @@ wblwrld3App.controller('txtInputWblCtrl', function($scope, $log, Slot, Enum, get
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+
+			// bind the slot value of the text to the ng-model value of the text and vice versa
+			if(eventData.slotName == 'theText'){
+				if(newVal != $scope.theTxt){
+					$scope.theTxt = newVal;
+				}
+			}
+
+			// Make sure the readonly slot sets the corresponding ng-model value
+			else if(eventData.slotName == 'isDisabled'){
+				if(newVal != $scope.isDisabled && (newVal.toString().toLowerCase() == 'true' || newVal.toString().toLowerCase() == 'false')){
+					$scope.isDisabled = (newVal.toString().toLowerCase() == 'true');
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('theText',
             '',
             gettext("The Text"),
@@ -83,34 +101,21 @@ wblwrld3App.controller('txtInputWblCtrl', function($scope, $log, Slot, Enum, get
             undefined,
             undefined
         ));
-      $scope.getSlot('LastKeyPressed').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+      	$scope.getSlot('LastKeyPressed').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
         $scope.setDefaultSlot('theText');
 
-        // Make sure the re-wider handle is positioned correctly at all time
-        $scope.$watch(function(){ return $scope.gimme('txtInput:width');}, function(newVal, oldVal) {
-            var newPos = parseInt(newVal) + parseInt($scope.gimme('txtInput:margin'));
-            if($scope.rewiderPos != newPos){
-                $scope.rewiderPos = newPos;
-            }
-        }, true);
+		// Make sure the re-wider handle is positioned correctly at all time
+		$scope.$watch(function(){ return $scope.gimme('txtInput:width');}, function(newVal, oldVal) {
+			var newPos = parseInt(newVal) + parseInt($scope.gimme('txtInput:margin'));
+			if($scope.rewiderPos != newPos){
+				$scope.rewiderPos = newPos;
+			}
+		}, true);
 
-        // bind the slot value of the text to the ng-model value of the text and vice versa
-        $scope.$watch(function(){ return $scope.gimme('theText');}, function(newVal, oldVal) {
-            if(newVal != $scope.theTxt){
-                $scope.theTxt = newVal;
-            }
-        }, true);
         $scope.$watch(function(){ return $scope.theTxt;}, function(newVal, oldVal) {
             if(newVal != $scope.gimme('theText') ){
                 $scope.set('theText', $scope.theTxt);
-            }
-        }, true);
-
-        // Make sure the readonly slot sets the corresponding ng-model value
-        $scope.$watch(function(){ return $scope.gimme('isDisabled');}, function(newVal, oldVal) {
-            if(newVal != $scope.isDisabled && (newVal.toString().toLowerCase() == 'true' || newVal.toString().toLowerCase() == 'false')){
-                $scope.isDisabled = (newVal.toString().toLowerCase() == 'true');
             }
         }, true);
     };

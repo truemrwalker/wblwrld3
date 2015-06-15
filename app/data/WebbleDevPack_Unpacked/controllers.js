@@ -6,19 +6,16 @@
 //=======================================================================================
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
-// NOTE: This file (with this name) must exist in order for the Webble to load but it
-//       does not require to be a proper angularJS controller. It can work as a simple
-//       javascript function collection file, but the developer would then miss out on
-//       all nice AngularJS developers possibilities.
+// NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
 wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enum, cleanupService, gettextCatalog, gettext, dbService) {
-    // $scope is needed for angularjs to work properly and is not recommended to be removed. Slot is a Webble World
-    // available Service and is needed for any form of Slot manipulation inside this template and is not recommended
-    // to be removed.
-    // cleanupService is just a custom service used as an example, but any services needed must be included in
-    // the controller call. If your Webble support multiple languages include gettextCatalog and gettext in your
-    // controller, if not, then they may be removed.
-    // dbService is basically only needed to access API access keys, if such are not needed it can be removed
+    // $scope is needed for angularjs to work properly and should not be removed. Slot is a Webble World
+    // available Service and is needed for any form of Slot manipulation inside this template and should neither be
+    // removed.
+    // cleanupService is just a custom service used as an example, but any services needed (Core Services and Webble
+    // specific) must be included in the controller call. If your Webble support multiple languages, include
+    // gettextCatalog and gettext in your controller, if not, then they may be removed.
+    // dbService is basically only needed to access API access keys, if such are not needed it can be removed.
     // Try to avoid running any code at the creation of the controller, unless you know it is completely independent
     // of any of the other files, this is due to file loading order. Instead make your first code calls inside the
     // coreCall_Init function which will be called as soon as all files including the DOM of the Webble is done loading.
@@ -205,9 +202,25 @@ wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enu
         // EXAMPLE: $scope.theView.parent().draggable('option', 'cancel', '#squareTxt');
         // EXAMPLE: $scope.theView.parent().find('#squareTxt').bind('contextmenu',function(){ return false; });
 
-        //TODO: Create Initial template specific Value Listeners using angular $watch (additional $watch can be made and discarded in other places and times during the webbles life of course)
+		//TODO: There are two ways to listen for internal and external Webble events and Webble value changes.
+		//TODO: Either you register a internal Event listener as seen below, which specifies the event, the target
+		//TODO: (undefined = self, instanceId for targeted Webble or null = all Webbles) and (optional) only for slot
+		//TODO: change events, which slot (if not specified all slot changes are triggering) and most important the callback function.
+		//TODO: If you need to kill the listener, store the returning kill function returned by the registration method
+		//TODO: and call it to execute the kill.
+		//var [KILL LISTENER FUNCTION] = $scope.registerWWEventListener(Enum.availableWWEvents.[EVENT TYPE TO LISTEN FOR], function(eventData){
+		//	[CALLBACK CODE FOR WHEN EVENT TRIGGERS]
+		//}, [TARGET INSTANCE ID], [OPTIONAL NAME OF SLOT IF EVENT TYPE IS SLOT CHANGE]);
+		//EXAMPLE:
+		$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){
+			var newChild = $scope.getWebbleByInstanceId(eventData.childId);
+			if(newChild.scope().theWblMetadata['templateid'] == 'fundamental'){
+				newChild.scope().set('msg', 'Daddy!!!');
+			}
+		});
+		//TODO: Besides slot changes, this is mainly used for events like 'gotChildren' 'deleted', 'duplicated' etc
+		//TODO: Another approach is to use AngularJS $watch. targeting specific slots and internal values.
         //TODO: Remember to never listen to values containing complete webble references since they change constantly and creates watch loops
-        //TODO You also use watches for slot value changes within yourself
         //$scope.$watch(function(){return [VALUE HOLDER TO WATCH];}, function(newVal, oldVal) {
         //  [CODE FOR TAKING CARE OF VALUE CHANGE]
         //}, true);
@@ -223,6 +236,11 @@ wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enu
                 }
             }
         }, true);
+		//TODO: Internal event listener registration are fired instantly as they happen and the Webble is immediately informed
+		//TODO: while $watches follow the life cycle of AngularJS and are fired when Angular process them. This delay may mean
+		//TODO: that time may pass and intermediate changes are lost and only the last is sent back to the watch, but sometimes
+		//TODO: that is a good thing when you want the listener to follow the rhythm of Angular and not react too soon.
+		//TODO: So which type to use is up to you and the purpose. Less watches are better for optimization though.
     };
     //===================================================================================
 

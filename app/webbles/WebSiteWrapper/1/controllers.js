@@ -40,6 +40,12 @@ wblwrld3App.controller('WebContentWrapperCtrl', function($scope, $log, $timeout,
         HTMLTxtContainer = $scope.theView.parent().find('#HTMLTxtContainer');
         webContentContainer = $scope.theView.parent().find('#webContentContainer');
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotValue != ''){
+				HTMLTxtContainer[0].innerHTML = eventData.slotValue;
+			}
+		}, undefined, 'htmlStr');
+
         $scope.addSlot(new Slot('theSrc',
             '//www.youtube.com/embed/xa3cZnfOtE0',
             'URL',
@@ -65,33 +71,27 @@ wblwrld3App.controller('WebContentWrapperCtrl', function($scope, $log, $timeout,
           $scope.theView.parent().draggable('option', 'cancel', '#HTMLTxtContainer');
         }
 
-        $scope.$watch(function(){return $scope.gimme('htmlStr');}, function(newVal, oldVal) {
-            if(newVal != ''){
-                HTMLTxtContainer[0].innerHTML = newVal;
-            }
-        }, true);
+		$scope.$watch(function(){return $scope.gimme('wcwGrabber:width');}, function(newVal, oldVal) {
+			var w = parseInt(newVal);
+			if(!isNaN(w)){
+				webContentContainer.css('width', w-25);
+				HTMLTxtContainer.css('width', w-25);
+			}
+		}, true);
 
-        $scope.$watch(function(){return $scope.gimme('wcwGrabber:width');}, function(newVal, oldVal) {
-            var w = parseInt(newVal);
-            if(!isNaN(w)){
-                webContentContainer.css('width', w-25);
-                HTMLTxtContainer.css('width', w-25);
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('wcwGrabber:height');}, function(newVal, oldVal) {
-          var h = parseInt(newVal);
-          if(!isNaN(h)){
-            if($scope.gimme('htmlStr') != '' && $scope.gimme('theSrc') != ''){
-                h = (h - 25) / 2;
-            }
-            else{
-                h = h - 25;
-            }
-            webContentContainer.css('height', h);
-            HTMLTxtContainer.css('height', h);
-          }
-        }, true);
+		$scope.$watch(function(){return $scope.gimme('wcwGrabber:height');}, function(newVal, oldVal) {
+			var h = parseInt(newVal);
+			if(!isNaN(h)){
+				if($scope.gimme('htmlStr') != '' && $scope.gimme('theSrc') != ''){
+					h = (h - 25) / 2;
+				}
+				else{
+					h = h - 25;
+				}
+				webContentContainer.css('height', h);
+				HTMLTxtContainer.css('height', h);
+			}
+		}, true);
 
         $scope.set('HTMLTxtContainer:overflow-x', 'auto');
         $scope.set('HTMLTxtContainer:overflow-y', 'auto');

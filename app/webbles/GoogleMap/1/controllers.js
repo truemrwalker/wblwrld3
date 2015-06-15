@@ -14,14 +14,6 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
         googleMapContainer: ['width', 'height', 'background-color']
     };
 
-    //TODO: Array of custom menu item keys and display names
-    //$scope.customMenu = [{itemId: '[MENU ITEM ID]', itemTxt: '[MENU ITEM DISPLAY TEXT]'}];
-    // EXAMPLE:
-
-    //TODO: Array of customized Interaction Balls
-    //$scope.customInteractionBalls = [{index: [POSITION INDEX 0-11], name: '[IDENTIFIER]', tooltipTxt: '[DISPLAY TEXT]'}];
-    // EXAMPLE:
-
     var mapContainer, mapCanvas;
     var map, currentPlace, placesService, infowindow;
     var markers = [], listeners = [];
@@ -41,6 +33,52 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
     $scope.coreCall_Init = function(theInitWblDef){
         mapContainer = $scope.theView.parent().find("#googleMapContainer");
         mapCanvas = $scope.theView.parent().find("#map-canvas");
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'currentLat'){
+				if(map){
+					if(currentPlace.lat() != newVal){
+						currentPlace = new google.maps.LatLng(parseFloat($scope.gimme('currentLat')),parseFloat($scope.gimme('currentLong')));
+						map.panTo(currentPlace);
+					}
+
+				}
+			}
+			else if(eventData.slotName == 'currentLong'){
+				if(map){
+					if(currentPlace.lng() != newVal){
+						currentPlace = new google.maps.LatLng(parseFloat($scope.gimme('currentLat')),parseFloat($scope.gimme('currentLong')));
+						map.panTo(currentPlace);
+					}
+				}
+			}
+			else if(eventData.slotName == 'currentZoom'){
+				if(map){
+					if(map.getZoom() != newVal){
+						map.setZoom(parseInt(newVal));
+					}
+				}
+			}
+			else if(eventData.slotName == 'searchStr'){
+				if(placesService && newVal != ''){
+					var request = {
+						location: currentPlace,
+						radius: '50000',
+						query: newVal
+					};
+
+					placesService.textSearch(request, searchCallback);
+				}
+				else{
+					for (var i = 0; i < markers.length; i++) {
+						google.maps.event.removeListener(listeners[i]);
+						markers[i].setMap(null);
+					}
+					markers = [];
+				}
+			}
+		});
 
         $scope.addSlot(new Slot('currentLat',
             43.08,
@@ -80,126 +118,8 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
 
         $scope.setDefaultSlot('searchStr');
 
-        $scope.$watch(function(){return $scope.gimme('currentLat');}, function(newVal, oldVal) {
-            if(map){
-                if(currentPlace.lat() != newVal){
-                    currentPlace = new google.maps.LatLng(parseFloat($scope.gimme('currentLat')),parseFloat($scope.gimme('currentLong')));
-                    map.panTo(currentPlace);
-                }
-
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('currentLong');}, function(newVal, oldVal) {
-            if(map){
-                if(currentPlace.lng() != newVal){
-                    currentPlace = new google.maps.LatLng(parseFloat($scope.gimme('currentLat')),parseFloat($scope.gimme('currentLong')));
-                    map.panTo(currentPlace);
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('currentZoom');}, function(newVal, oldVal) {
-            if(map){
-                if(map.getZoom() != newVal){
-                    map.setZoom(parseInt(newVal));
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('searchStr');}, function(newVal, oldVal) {
-            if(placesService && newVal != ''){
-                var request = {
-                    location: currentPlace,
-                    radius: '50000',
-                    query: newVal
-                };
-
-                placesService.textSearch(request, searchCallback);
-            }
-            else{
-                for (var i = 0; i < markers.length; i++) {
-                    google.maps.event.removeListener(listeners[i]);
-                    markers[i].setMap(null);
-                }
-                markers = [];
-            }
-        }, true);
-
         mapCanvas.bind('mousedown', onMouseDown);
-        initializeGoogleMap();
-    };
-    //===================================================================================
-
-
-    //===================================================================================
-    // Webble template Interaction Object Activity Reaction
-    // If this template has its own custom Interaction balls that needs to be taken care
-    // of when activated, then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_Event_InteractionObjectActivityReaction = function(event){
-        var targetName = $(event.target).scope().getName();
-
-        if (targetName != ""){
-            //=== [TARGET NAME] ====================================
-            //if (targetName == $scope.customInteractionBalls[0].name){
-            //    [CODE FOR MOUSE DOWN]
-            //    $scope.theView.mouseup(function(event){
-            //        [CODE FOR MOUSE UP]
-            //    });
-            //    $scope.theView.mousemove(function(event){
-            //        [CODE FOR MOUSE MOVE]
-            //    });
-            //}
-            //=============================================
-
-            //=== Jump ====================================
-            // EXAMPLE:
-            //if (targetName == $scope.customInteractionBalls[0].name){ //jump
-            //    $scope.set('root:left', 0);
-            //    $scope.set('root:top', 0);
-            //}
-            //=============================================
-        }
-    };
-    //===================================================================================
-
-
-    //===================================================================================
-    // Webble template Menu Item Activity Reaction
-    // If this template has its own custom menu items that needs to be taken care of,
-    // then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
-        //if(itemName == $scope.customMenu[0].itemId){  //[CUSTOM ITEM NAME]
-        //    [CODE FOR THIS MENU ITEM GOES HERE]
-        //}
-
-        // EXAMPLE:
-        //if(itemName == $scope.customMenu[0].itemId){  //eat
-        //    $log.log('Are you hungry?');
-        //}
-        //else if(itemName == $scope.customMenu[1].itemId){  //drink
-        //    $log.log('Are you thirsty?')
-        //}
-    };
-    //===================================================================================
-
-
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-        var customWblDefPart = {
-
-        };
-
-        return customWblDefPart;
+		$timeout(function(){initializeGoogleMap();});
     };
     //===================================================================================
 

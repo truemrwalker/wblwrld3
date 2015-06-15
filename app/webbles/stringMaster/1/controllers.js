@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('stringMasterCtrl', function($scope, $log, Slot, Enum) {
+wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -44,7 +44,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, Slot, Enum) {
         ));
 
         $scope.addSlot(new Slot('primaryString',
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla lacinia accumsan dolor. Integer nec odio consequat, pellentesque eros at, aliquam ipsum.",
+            "",
             'Primary String',
             'The Primary text string that is being evaluated and manipulated',
             $scope.theWblMetadata['templateid'],
@@ -233,41 +233,47 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, Slot, Enum) {
         ));
         $scope.getSlot('lowerCaseStr').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
-
-
         $scope.setDefaultSlot('primaryString');
         $scope.setResizeSlots('stringContainer:width', 'stringContainer:height');
 
-        $scope.$watch(function(){return $scope.wblEventInfo.slotChanged;}, function(newVal, oldVal) {
-        if(newVal != null && newVal.slotname != undefined){
-            var theSlot = newVal.slotname;
-            var theValue = newVal.slotvalue;
-            switch(theSlot){
-                case 'displayedSlot': updateDisplayValue(theValue); break;
-                case 'primaryString': updateSlotsFromPrimaryString(); break;
-                case 'subStrStartIndex': buildSubStr(); break;
-                case 'subStrNoOfChars': buildSubStr(); break;
-                case 'subStrEndIndex': buildSubStr(); break;
-                case 'secondaryString': mergeStr(); break;
-                case 'indexInString': getCharacterAtIndex(); break;
-                case 'strPart': getIndexesForStrPart(); break;
-                case 'replaceStrOut': replaceStrWithOtherStr(); break;
-                case 'replaceStrIn': replaceStrWithOtherStr(); break;
-                case 'splitChar': splitStr(); break;
-                default: if(theSlot == 'stringLength' || theSlot == 'subString' || theSlot == 'joinedString' || theSlot == 'charInStringAtIndex' || theSlot == 'firstIndexOf' ||
-                      theSlot == 'lastIndexOf' || theSlot == 'replaceStrResult' || theSlot == 'splitResult' || theSlot == 'upperCaseStr' || theSlot == 'lowerCaseStr'){
-                        updateSlotsFromPrimaryString();
-                    }
-                    else{
-                        theSlot = undefined;
-                    }
-                    break;
-            }
-            if(theSlot != undefined && theSlot != 'displayedSlot'){
-                updateDisplayValue($scope.gimme('displayedSlot'));
-            }
-        }
-      }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var theSlot = eventData.slotName;
+			var theValue = eventData.slotValue;
+			if(theSlot == 'displayedSlot'){
+				$timeout(function(){updateDisplayValue(theValue);});
+			}
+			else if(theSlot == 'primaryString' || theSlot == 'stringLength' || theSlot == 'subString' || theSlot == 'joinedString' || theSlot == 'charInStringAtIndex' || theSlot == 'firstIndexOf' ||
+				theSlot == 'lastIndexOf' || theSlot == 'replaceStrResult' || theSlot == 'splitResult' || theSlot == 'upperCaseStr' || theSlot == 'lowerCaseStr'){
+				$timeout(function(){updateSlotsFromPrimaryString();});
+			}
+			else if(theSlot == 'subStrStartIndex' || theSlot == 'subStrNoOfChars' || theSlot == 'subStrEndIndex'){
+				$timeout(function(){buildSubStr();});
+			}
+			else if(theSlot == 'secondaryString'){
+				$timeout(function(){mergeStr();});
+			}
+			else if(theSlot == 'indexInString'){
+				$timeout(function(){getCharacterAtIndex();});
+			}
+			else if(theSlot == 'strPart'){
+				$timeout(function(){getIndexesForStrPart();});
+			}
+			else if(theSlot == 'replaceStrOut' || theSlot == 'replaceStrIn'){
+				$timeout(function(){replaceStrWithOtherStr();});
+			}
+			else if(theSlot == 'splitChar'){
+				$timeout(function(){splitStr();});
+			}
+			else{
+				theSlot = undefined;
+			}
+
+			if(theSlot != undefined && theSlot != 'displayedSlot'){
+				updateDisplayValue($scope.gimme('displayedSlot'));
+			}
+		});
+
+		$scope.set('primaryString', "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla lacinia accumsan dolor. Integer nec odio consequat, pellentesque eros at, aliquam ipsum.");
 
         $scope.set('stringContainer:height', 'auto');
         updateSlotsFromPrimaryString();

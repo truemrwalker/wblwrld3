@@ -108,6 +108,26 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.menuItems = angular.copy(menuItemsFactoryService.menuItems);
     $scope.getMenuItem = function(itemName){ for (var i = 0,item; item = $scope.menuItems[i]; i++) { if(item.itemName == itemName){ return item; } for (var n = 0, subitem; subitem = item.sublinks[n]; n++) { if(subitem.sublink_itemName == itemName){ return subitem; } } } };
     var originalWebbleMenu_ = angular.copy(menuItemsFactoryService.menuItems[1].sublinks);
+	var updatedContent = [
+		{name: 'docs', date: '2015-06-15'},
+		{name: 'devpack', date: '2015-06-15'}
+	];
+	$scope.getUpdateDate = function(whatContent){
+		for(var i = 0; i < updatedContent.length; i++){
+			if(updatedContent[i].name == whatContent){
+				return updatedContent[i].date;
+			}
+		}
+		return '';
+	};
+	$scope.isContentUpdated = function(whatContent){
+		for(var i = 0; i < updatedContent.length; i++){
+			if(updatedContent[i].name == whatContent && ((new Date()).getMonth() - (new Date(updatedContent[i].date)).getMonth() <= 1)){
+				return true;
+			}
+		}
+		return false;
+	};
     //-------------------------------
 
 
@@ -247,6 +267,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Remember who is being share model duplicated when doing all selected
     var sharedModelTemplate = undefined;
 
+	// Remember duplication event data while we still are configuration the duplicated webble(s)
+	var duplEventData;
+
     // Image container element for auto generated images
     var autoGenImageFrame;
 
@@ -289,20 +312,30 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		itHasAlreadyBeenShownThisSession: false
     };
 
-    // This is a global info object that keeps track of what basic (non-value related) events that are firing in unrelated webbles and the platform
-    // This is used in combination with $watch in webble development to be able to react properly to things of interest.
-    $scope.eventInfo = {
-        slotChanged: null, //As set: {instanceId: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
-        deletingWebble: null, //As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
-        keyDownForWebble: null, //As set: {instanceIdList: [Instance Id list for webbles being selected], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [when it happened as ms integer]}
-        duplicatingWebble: null, //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-        shareModelWebble: null, //As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-        pastingWebble: null, //As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
-        peelingWebble: null, //As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
-        loadingWebble: null, //As set: [Instance Id for webble being loaded]
-        mainMenuExecuted: null, //As set: {menuId: [menu sublink id], timestamp: [millisecond for when it happened]}
-        wblMenuExecuted: null //As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name], timestamp: [millisecond for when it happened]}
-    };
+	// This is an object that contains all callback functions registered by webbles within Webble World for all existing
+	// events.
+	// All callback functions are sent a datapack object as a parameter when they fire which includes different things
+	// depending on the event. The targeId post in these datapacks are only useful when the webble are listening to
+	// multiple webbles with the same callback.
+	var wwEventListeners_ = {
+		slotChanged: [],	 		//Returning Data: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
+		deleted: [],                //Returning Data: {targetId: [Instance Id for webble being deleted], timestamp: [a chronical timestamp value]}
+		duplicated: [],             //Returning Data: {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
+		sharedModelDuplicated: [],	//Returning Data: {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
+		pasted: [],                 //Returning Data: {targetId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [a chronological timestamp value]}
+		gotChild: [],				//Returning Data: {targetId: [Instance Id for webble getting child], childId: [Instance Id for Webble that was pasted], timestamp: [a chronological timestamp value]}
+		peeled: [],                 //Returning Data: {targetId: [Instance Id for Webble leaving parent], parentId: [Instance Id for Webble that lost its child], timestamp: [when it happened as ms integer]}
+		lostChild: [],              //Returning Data: {targetId: [Instance Id for Webble losing child], childId: [Instance Id for Webble that was peeled away], timestamp: [when it happened as ms integer]}
+		keyDown: [],				//Returning Data: {targetId: null[=UNSPECIFIED], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [a chronological timestamp value]}
+		loadingWbl: [],				//Returning Data: {targetId: [Instance Id for webble that got loaded], timestamp: [a chronological timestamp value]}
+		mainMenuExecuted: [],       //Returning Data: {targetId: null[=UNSPECIFIED], menuId: [menu sublink id], timestamp: [a chronological timestamp value]}
+		wblMenuExecuted: []         //Returning Data: {targetId: [Instance Id for the Webble executing menu], menuId: [menu item name], timestamp: [a chronological timestamp value]}
+	};
+
+	// a que of handles that should be called (one by one in order) due to events triggered
+	var queOfHandlersToBeTriggered = [];
+	var unqueingStartTime = 0;
+
     //-------------------------------
 
 
@@ -364,7 +397,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         }
                     }
                 }
-				$scope.eventInfo.keyDownForWebble = {instanceIdList: selectedWbls, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: false}, timestamp: (new Date()).getTime()};
+				$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: false}, timestamp: (new Date()).getTime()});
             }
         }
     };
@@ -384,7 +417,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if($event.keyCode == 17 && $scope.ctrlKeyIsDown){
             $scope.ctrlKeyIsDown = false;
         }
-		$scope.eventInfo.keyDownForWebble = {instanceIdList: [], key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: true}, timestamp: (new Date()).getTime()};
+		$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: true}, timestamp: (new Date()).getTime()});
     };
     //========================================================================================
 
@@ -730,28 +763,32 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			//---------------------------------------------------
 			//IMPORTANT MESSAGE FROM THE DEV TEAM
-			var postedDate = "2015-06-02";
+			var postedDate = "2015-06-15";
 			var cookie = localStorageService.get('alertInfoNews' + postedDate);
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
 			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
 				localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
 				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Important News '+ postedDate + '!!! (Displayed ' + (readTimes + 1) + ' of 3 times)'), size: 'lg', content:
+				'<h2>For Webble Template Developer</h2>' +
 				'<p>' +
 				'The latest major Webble world system update also included updating AngularJS framework to 1.3. These changes includes a change of how to declare the Webble controller function &nbsp;' +
 				'(not as a global function anymore, but registered with the Webble World App). This means that all Webbles you have made before this change (published and unpublished) are &nbsp;' +
 				'no longer working properly. </br></br><strong>But it is relatively easy to fix.</strong> Open your Webbles controller file and change the controller declaration line from... &nbsp;' +
-				'</br></br><strong>BEFORE:</strong> function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { &nbsp;' +
+				'</br></br><strong>BEFORE:</strong> <span style="font-family: courier, monospace;">function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
 				'</br>to... &nbsp;' +
-				'</br><strong>AFTER:</strong> wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { &nbsp;' +
+				'</br><strong>AFTER:</strong> <span style="font-family: courier, monospace;">wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
 				'</br></br>Be aware that the controller name is now a string and that the function parameters are just examples and may differ in your Webble (except $scope). &nbsp;' +
 				'</br>You must also change the last line of the function in order to close it properly, from a single curly parenthesis...&nbsp;' +
-				'</br></br><strong>BEFORE:</strong> } &nbsp;' +
+				'</br></br><strong>BEFORE:</strong> <span style="font-family: courier, monospace;">} </span>&nbsp;' +
 				'</br>to the following... &nbsp;' +
-				'</br><strong>AFTER:</strong> }); &nbsp;' +
+				'</br><strong>AFTER:</strong> <span style="font-family: courier, monospace;">}); </span>&nbsp;' +
 				'</br></br>Thats it. Now the Webble should work just fine. &nbsp;' +
 				'</br>If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now. &nbsp;' +
-				'</br></br>Another change is regarding eventInfo and wblEventInfo. Some of those objects have changed in content and design and if your Webble is watching for any of those values &nbsp;' +
-				'</br>you may need to edit that code. Download the Development Pack and read the read me and the wblCore reference code for details on that. &nbsp;' +
+				'</br></br>Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data &nbsp;' +
+				'objects they are now deprecated and have to be changed to the new event handling object. &nbsp;' +
+				'</br><i>Example:</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;' +
+				'</br></br>We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution. &nbsp;' +
+				'</br>Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that. &nbsp;' +
 				'</p>' +
 				'<p>' +
 				'<i><strong> ~ Webble World Development Team, Hokkaido University ~</strong></i>' +
@@ -1444,12 +1481,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			$scope.globalByPassFlags.byPassBlockingPeelProtection = true;
 			if(target.scope().peel(true) == null){ return false; }
 			$scope.globalByPassFlags.byPassBlockingPeelProtection = false;
-			$scope.eventInfo.deletingWebble = {instanceId: target.scope().getInstanceId(), templateId: target.scope().theWblMetadata['templateid']};
-			target.scope().wblEventInfo.deleted = (new Date()).getTime();
 
 			var targetInstanceId = target.scope().getInstanceId();
 			var targetIndex;
 			var updatedUntrustList = []
+
+			$scope.fireWWEventListener(Enum.availableWWEvents.deleted, {targetId: targetInstanceId, timestamp: (new Date()).getTime()});
 
 			//Delete shared model connections
 			for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
@@ -1474,7 +1511,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			}
 			listOfUntrustedWbls_ = updatedUntrustList;
 
-			// Unregister all slot watches in the webble for proper clean-up
+			// Unregister all css slot watches in the webble for proper clean-up
 			for(var slot in target.scope().getSlots()){
 				var thisSlot = target.scope().getSlot(slot);
 				if(thisSlot.cssValWatch){
@@ -1482,8 +1519,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 			}
 
-			//also call $apply since otherwise the webble most likely is killed before angular knows what happened an no $watch is fired
-			if(!$scope.$$phase){ $scope.$apply(); }
+			// Remove all event handlers for this Webble
+			for(var event in wwEventListeners_){
+				var newList = [];
+				for(var i = 0; i < wwEventListeners_[event].length; i++){
+					if(wwEventListeners_[event][i].listenerId != targetInstanceId){
+						newList.push(wwEventListeners_[event][i]);
+					}
+				}
+				wwEventListeners_[event] = newList;
+			}
 
 			$scope.getCurrWS().webbles.splice(targetIndex, 1);
 			target.parent().remove();
@@ -1865,6 +1910,74 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //=== PUBLIC FUNCTIONS ============================================================================================
     //*****************************************************************************************************************
 
+	//========================================================================================
+	// Register Webble World Event Listener
+	// Register an event listener for a specific event for a specific target (self, other or
+	// all) and the callback function the webble wish to be called if the event fire.
+	// The callback function will then be handed a datapack object containing needed
+	// information to react to the event accordingly. (see wwEventListeners_)
+	// if targetId is undefined the webble will be listening to itself and if the targetId is
+	// set to null it will listen to all webbles.
+	//========================================================================================
+	$scope.regWblWrldListener = function(listenerId, eventType, callbackFunc, targetId, targetData){
+		var eventKey = getKeyByValue(Enum.availableWWEvents, eventType);
+		var uid = Math.random() + (nextUniqueId++);
+		wwEventListeners_[eventKey].push({uid: uid, listenerId: listenerId, callback: callbackFunc, target: targetId, targetData: targetData});
+		return function(){
+			for(var i = 0; i < wwEventListeners_[eventKey].length; i++){
+				if(wwEventListeners_[eventKey][i].uid == uid){
+					wwEventListeners_[eventKey].splice(i, 1);
+					break;
+				}
+			}
+		}
+	}
+	//========================================================================================
+
+
+	//========================================================================================
+	// Fire Webble World Event Listener
+	// This method is called if any event anywhere is fired and this in turn will create a
+	// que of handlers that will be notified of the triggered event. If the que is not already
+	// being managed and is not empty then start unqueing handlers
+	//========================================================================================
+	$scope.fireWWEventListener = function(eventType, eventData){
+		var queWasEmpty = (queOfHandlersToBeTriggered.length == 0) ? true : false;
+		var eventKey = getKeyByValue(Enum.availableWWEvents, eventType);
+		for(var i = 0; i < wwEventListeners_[eventKey].length; i++){
+			if(wwEventListeners_[eventKey][i].target === null || eventData.targetId == wwEventListeners_[eventKey][i].target){
+				if(wwEventListeners_[eventKey][i].targetData === undefined || eventData.slotName === undefined || (eventData.slotName !== undefined && wwEventListeners_[eventKey][i].targetData == eventData.slotName)){
+					queOfHandlersToBeTriggered.push({cb: wwEventListeners_[eventKey][i].callback, ed: eventData});
+				}
+			}
+		}
+		if(queWasEmpty && queOfHandlersToBeTriggered.length > 0){
+			unqueingStartTime = (new Date()).getTime();
+			unqueUntriggeredHandlers();
+		}
+	}
+	//========================================================================================
+
+
+	//========================================================================================
+	// Unque Untriggered Handlers
+	// This method remove one handler at a time from the que and calls it.
+	//========================================================================================
+	var unqueUntriggeredHandlers = function(){
+		if(((new Date()).getTime() - unqueingStartTime) > 10000){
+			$log.log('it seems we have been managing event handlers for more than 10 seconds now, so maybe something has locked itself in a loop and cannot stop. Maybe you should consider reloading the page...')
+		}
+
+		var theCallbackObject = queOfHandlersToBeTriggered.shift();
+		theCallbackObject.cb(theCallbackObject.ed);
+
+		if(queOfHandlersToBeTriggered.length > 0){
+			unqueUntriggeredHandlers();
+		}
+	}
+	//========================================================================================
+
+
     //========================================================================================
     // Get Template Path
     // This method gets the path to the template as either from the sandbox if a webble by
@@ -2234,7 +2347,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // child.
     //========================================================================================
     $scope.wblInitiationDone = function(whatWebble){
-		$scope.eventInfo.loadingWebble = whatWebble.scope().getInstanceId();
+		$scope.fireWWEventListener(Enum.availableWWEvents.loadingWbl, {targetId: whatWebble.scope().getInstanceId(), timestamp: (new Date()).getTime()});
+
         var thisIsFirst = false;
         // if new webbles are still being added
         if (noOfNewWebbles_ != 0 && whatWebble != undefined){
@@ -2258,14 +2372,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
                     // If this is the first one and its a duplicate being made than set the eventInfo correctly to inform of this duplication going on
                     if(thisIsFirst && relationConnHistory_.length == 0 && relationHistory['oldId'] != udd.newInstanceId && $scope.getWebbleByInstanceId(relationHistory['oldId']) != undefined){
-                        if($scope.getWebbleByInstanceId(relationHistory['oldId']).scope().getIsCreatingModelSharee()){
-							$scope.eventInfo.shareModelWebble = {originalId: relationHistory['oldId'], copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
-							$scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfo.shareModelCreated = {copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
-                        }
-                        else{
-							$scope.eventInfo.duplicatingWebble = {originalId: relationHistory['oldId'], copyId: udd.newInstanceId};
-							$scope.getWebbleByInstanceId(relationHistory['oldId']).scope().wblEventInfo.duplicated = {copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
-                        }
+                        if(!$scope.getWebbleByInstanceId(relationHistory['oldId']).scope().getIsCreatingModelSharee()){
+							duplEventData = {targetId: relationHistory['oldId'], copyId: udd.newInstanceId, timestamp: (new Date()).getTime()};
+						}
                     }
 
                     // keep track of children connection
@@ -2333,7 +2442,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                                     for(var p = 0, nmsSlot; nmsSlot = rch.oldModelShareesSlots[p]; p++){
                                         rch.currWebble.scope().getSlots()[nmsSlot]['isShared'] = true;
                                     }
-
                                     break;
                                 }
                             }
@@ -2355,6 +2463,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if (pcm != null){
                 pcm(pca);
             }
+
+			if(duplEventData){
+				var ded = duplEventData;
+				duplEventData = undefined;
+				$scope.fireWWEventListener(Enum.availableWWEvents.duplicated, ded);
+			}
 
             // close "wait please" info
             $scope.waiting(false);
@@ -3021,6 +3135,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 templateId: function(){ return content[0]; },
                 props: function(){ return content[1]; }
             };
+			modalOptions.size = 'lg';
         }
         else if(whatForm == Enum.aopForms.wblAbout){
             modalOptions.templateUrl = 'views/modalForms/wblAbout.html';
@@ -3066,6 +3181,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 currSelected: function(){ return content[2]; },
                 slotConnDir: function(){ return content[3]; }
             };
+			modalOptions.size = 'lg';
         }
         else if(whatForm == Enum.aopForms.protect){
             modalOptions.templateUrl = 'views/modalForms/wblProtectionSheet.html';
@@ -3879,11 +3995,21 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $window.location = "mailto:mkuwahara@meme.hokudai.ac.jp?subject=Webble World Support Request";
             }
         }
+		else if(sublink == 'community' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'C')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
+				$window.open('http://stackoverflow.com/', '_blank');
+			}
+		}
         else if(sublink == 'devpack' || (whatKeys.theAltKey && whatKeys.theKey == 'G')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
                 $window.open('data/WebbleDevPack.zip');
             }
         }
+		else if(sublink == 'git' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'G')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
+				$window.open('https://github.com/truemrwalker/wblwrld3', '_blank');
+			}
+		}
         else if(sublink == 'bugreport' || (whatKeys.theAltKey && whatKeys.theKey == 'NUM 7')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
                 $window.location = "mailto:mkuwahara@meme.hokudai.ac.jp?subject=Webble World Bug Report";
@@ -3953,7 +4079,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-		$scope.eventInfo.mainMenuExecuted = {menuId: sublink, timestamp: (new Date()).getTime()};
+		$scope.fireWWEventListener(Enum.availableWWEvents.mainMenuExecuted, {targetId: null, menuId: sublink, timestamp: (new Date()).getTime()});
 
         return actionWasExecuted;
     };

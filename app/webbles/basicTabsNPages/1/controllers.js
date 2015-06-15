@@ -198,6 +198,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
           childPosMemory = theInitWblDef.private.childPos;
         }
 
+
         // --- SLOTS ---
 
         $scope.addSlot(new Slot('tabDisplayStyle',
@@ -417,101 +418,101 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		));
 
 
-        // --- WATCHES ---
+		// --- WATCHES ---
 
-        // listen to page type display style
-        $scope.$watch(function(){return $scope.gimme('tabDisplayStyle');}, function(newVal, oldVal) {
-          var whatStyle = parseInt(newVal);
-          if(!isNaN(whatStyle)){
-              configureTabs($scope.gimme('noOfTabs'));
-          }
-        }, true);
+		// listen to page type display style
+		$scope.$watch(function(){return $scope.gimme('tabDisplayStyle');}, function(newVal, oldVal) {
+			var whatStyle = parseInt(newVal);
+			if(!isNaN(whatStyle)){
+				configureTabs($scope.gimme('noOfTabs'));
+			}
+		}, true);
 
-        // listen to number of tabs/pages
-        $scope.$watch(function(){return $scope.gimme('noOfTabs');}, function(newVal, oldVal) {
-            var noOfPages = parseInt(newVal);
-            if(!isNaN(noOfPages)){
-                configureTabs(noOfPages);
-            }
-        }, true);
+		// listen to number of tabs/pages
+		$scope.$watch(function(){return $scope.gimme('noOfTabs');}, function(newVal, oldVal) {
+			var noOfPages = parseInt(newVal);
+			if(!isNaN(noOfPages)){
+				configureTabs(noOfPages);
+			}
+		}, true);
 
-        // listen to selected current tab
-        $scope.$watch(function(){return $scope.gimme('currentSelectedTab');}, function(newVal, oldVal) {
-              var currentPage = parseInt(newVal);
-              if(!isInit && currentPage > 0){
-                  if($scope.gimme('tabDisplayStyle') == 0){
-                      if(tnpTabs_a && currentPage <= tnpTabs_a.length){
-                          activateTabAndContent(newVal);
-                      }
-                      else{
-                          if(tnpTabs_a && tnpTabs_a.length > 0){
-                            $scope.set('currentSelectedTab', parseInt(tnpTabs.find('[class=tnpCurrent]').find('a').attr('name').replace('tab', '')));
-                          }
-                          else{
-                            $scope.set('currentSelectedTab', 0);
-                          }
-                      }
-                  }
-                  else{
-                      if(tnpPages && currentPage <= tnpPages.length){
-                          $timeout(function(){activateTabAndContent($scope.gimme('currentSelectedTab'))});
-                      }
-                      else{
-                        if(tnpPages && tnpPages.length > 0){
-                            $scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
-                        }
-                        else{
-                            $scope.set('currentSelectedTab', 0);
-                        }
-                      }
-                  }
-              }
-        }, true);
+		// listen to selected current tab
+		$scope.$watch(function(){return $scope.gimme('currentSelectedTab');}, function(newVal, oldVal) {
+			var currentPage = parseInt(newVal);
+			if(!isInit && currentPage > 0){
+				if($scope.gimme('tabDisplayStyle') == 0){
+					if(tnpTabs_a && currentPage <= tnpTabs_a.length){
+						activateTabAndContent(newVal);
+					}
+					else{
+						if(tnpTabs_a && tnpTabs_a.length > 0){
+							$scope.set('currentSelectedTab', parseInt(tnpTabs.find('[class=tnpCurrent]').find('a').attr('name').replace('tab', '')));
+						}
+						else{
+							$scope.set('currentSelectedTab', 0);
+						}
+					}
+				}
+				else{
+					if(tnpPages && currentPage <= tnpPages.length){
+						$timeout(function(){activateTabAndContent($scope.gimme('currentSelectedTab'))});
+					}
+					else{
+						if(tnpPages && tnpPages.length > 0){
+							$scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
+						}
+						else{
+							$scope.set('currentSelectedTab', 0);
+						}
+					}
+				}
+			}
+		}, true);
 
-        // listen to names of the tabs
-        $scope.$watch(function(){return $scope.gimme('tabNames');}, function(newVal, oldVal) {
-            if(!doNotBother){
-                configureTabNames();
-            }
-            doNotBother = false;
-        }, true);
+		// listen to names of the tabs
+		$scope.$watch(function(){return $scope.gimme('tabNames');}, function(newVal, oldVal) {
+			if(!doNotBother){
+				configureTabNames();
+			}
+			doNotBother = false;
+		}, true);
 
-        // listen to unique background colors of the tabs
-        $scope.$watch(function(){return $scope.gimme('tabBkgColorList');}, function(newVal, oldVal) {
-            if(!doNotBother){
-                configureTabColors();
-            }
-            doNotBother = false;
-        }, true);
+		// listen to unique background colors of the tabs
+		$scope.$watch(function(){return $scope.gimme('tabBkgColorList');}, function(newVal, oldVal) {
+			if(!doNotBother){
+				configureTabColors();
+			}
+			doNotBother = false;
+		}, true);
 
-        // listen to a set of decoration slots for tabs
-        $scope.$watch(function(){return [$scope.gimme('closedTabBackgroundColor'), $scope.gimme('openTabBackgroundColor'), $scope.gimme('tabPadding'), $scope.gimme('tabTextColor'), $scope.gimme('tabText_font-family'), $scope.gimme('tabTextFontSize'), $scope.gimme('tabTextFontWeight')];}, function(newVal, oldVal) {
-            if(!isInit && newVal[0] != undefined){
-                if($scope.gimme('tabDisplayStyle') == 0){
-                    configureTabs($scope.gimme('noOfTabs'));
-                }
-            }
-        }, true);
+		// listen to a set of decoration slots for tabs
+		$scope.$watch(function(){return [$scope.gimme('closedTabBackgroundColor'), $scope.gimme('openTabBackgroundColor'), $scope.gimme('tabPadding'), $scope.gimme('tabTextColor'), $scope.gimme('tabText_font-family'), $scope.gimme('tabTextFontSize'), $scope.gimme('tabTextFontWeight')];}, function(newVal, oldVal) {
+			if(!isInit && newVal[0] != undefined){
+				if($scope.gimme('tabDisplayStyle') == 0){
+					configureTabs($scope.gimme('noOfTabs'));
+				}
+			}
+		}, true);
 
-        // listen to book proportions slots
-        $scope.$watch(function(){return [$scope.gimme('bookPadding'), $scope.gimme('bookBorderWidth')];}, function(newVal, oldVal) {
-            if(!isInit && newVal[0] != undefined){
-                if($scope.gimme('tabDisplayStyle') == 1){
-                    adjustBookProportions();
-                }
-            }
-        }, true);
+		// listen to book proportions slots
+		$scope.$watch(function(){return [$scope.gimme('bookPadding'), $scope.gimme('bookBorderWidth')];}, function(newVal, oldVal) {
+			if(!isInit && newVal[0] != undefined){
+				if($scope.gimme('tabDisplayStyle') == 1){
+					adjustBookProportions();
+				}
+			}
+		}, true);
 
-        // listen to page design slots
-        $scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage'), $scope.gimme('pageBkgImageStretchEnabled')];}, function(newVal, oldVal) {
-            if(!isInit && newVal[0] != undefined){
-                if($scope.gimme('tabDisplayStyle') == 1){
-                    tnpPages.each(function(index) {
-                        $(this).css("border-width", parseInt($scope.gimme('pageBorderWidth')) + "px");
-                        $(this).css("border-color", $scope.gimme('pageBorderColor'));
-                        $(this).css("background-color", $scope.gimme('pageBkgColor'));
-                        var pageBkgImage = $scope.gimme('pageBkgImage');
-                        $(this).css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+		// listen to page design slots
+		$scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage'), $scope.gimme('pageBkgImageStretchEnabled')];}, function(newVal, oldVal) {
+			if(!isInit && newVal[0] != undefined){
+				if($scope.gimme('tabDisplayStyle') == 1){
+					tnpPages.each(function(index) {
+						$(this).css("border-width", parseInt($scope.gimme('pageBorderWidth')) + "px");
+						$(this).css("border-color", $scope.gimme('pageBorderColor'));
+						$(this).css("background-color", $scope.gimme('pageBkgColor'));
+						var pageBkgImage = $scope.gimme('pageBkgImage');
+						$(this).css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
 						if($scope.gimme('pageBkgImageStretchEnabled')){
 							$(this).css("background-size", '100% 100%');
 							$(this).css("background-repeat", 'no-repeat');
@@ -520,140 +521,156 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 							$(this).css("background-size", 'auto auto');
 							$(this).css("background-repeat", 'repeat');
 						}
-                    });
-                }
-            }
-        }, true);
+					});
+				}
+			}
+		}, true);
 
-        // listen to book design slots
-        $scope.$watch(function(){return [$scope.gimme('bookBkgImage'), $scope.gimme('bookBinderEnabled')];}, function(newVal, oldVal) {
-          if(!isInit && newVal[0] != undefined){
-            if($scope.gimme('tabDisplayStyle') == 1){
-                var bookBkgImage = $scope.gimme('bookBkgImage');
-                $scope.theView.parent().find('#theBook').css("background-image", bookBkgImage != "" ? "url(" + bookBkgImage + ")" : "");
-                $scope.theView.parent().find('#theBinder').css("display", $scope.gimme('bookBinderEnabled') == true ? "initial" : "none");
-            }
-          }
-        }, true);
+		// listen to book design slots
+		$scope.$watch(function(){return [$scope.gimme('bookBkgImage'), $scope.gimme('bookBinderEnabled')];}, function(newVal, oldVal) {
+			if(!isInit && newVal[0] != undefined){
+				if($scope.gimme('tabDisplayStyle') == 1){
+					var bookBkgImage = $scope.gimme('bookBkgImage');
+					$scope.theView.parent().find('#theBook').css("background-image", bookBkgImage != "" ? "url(" + bookBkgImage + ")" : "");
+					$scope.theView.parent().find('#theBinder').css("display", $scope.gimme('bookBinderEnabled') == true ? "initial" : "none");
+				}
+			}
+		}, true);
 
-      // Make sure the Surrounding Holder has the proper height depending on the height of the content area
-        $scope.$watch(function(){return $scope.gimme('tabsContent:height');}, function(newVal, oldVal) {
-            h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
-            if(!isNaN(h)){
-                setTNPHolderHeight(h);
-                var p1 = parseInt(tnpHolder.css('padding-top')) * 2;
-                var p2 = 0;
-                if(tnpTabs_a && tnpTabs_a.length > 0){
-                    p2 = (parseInt(tnpTabs_a.css('padding-top')) * 2) + parseInt(tnpTabs_a.css('line-height'));
-                }
-                tnpHolder.css('height', (h + p1 + p2) + 'px');
+		// Make sure the Surrounding Holder has the proper height depending on the height of the content area
+		$scope.$watch(function(){return $scope.gimme('tabsContent:height');}, function(newVal, oldVal) {
+			h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
+			if(!isNaN(h)){
+				setTNPHolderHeight(h);
+				var p1 = parseInt(tnpHolder.css('padding-top')) * 2;
+				var p2 = 0;
+				if(tnpTabs_a && tnpTabs_a.length > 0){
+					p2 = (parseInt(tnpTabs_a.css('padding-top')) * 2) + parseInt(tnpTabs_a.css('line-height'));
+				}
+				tnpHolder.css('height', (h + p1 + p2) + 'px');
 
-                //Book related
-                if($scope.gimme('tabDisplayStyle') == 1){
-                    adjustBookProportions();
-                }
-            }
-        }, true);
+				//Book related
+				if($scope.gimme('tabDisplayStyle') == 1){
+					adjustBookProportions();
+				}
+			}
+		}, true);
 
-      // Make sure the Surrounding Holder has the proper width depending on the width of the content area
-        $scope.$watch(function(){return $scope.gimme('tabsContent:width');}, function(newVal, oldVal) {
-          var w = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
-          if(!isNaN(w)){
-            var p = parseInt(tnpHolder.css('padding-left')) * 2;
-            tnpHolder.css('width', (w + p) + 'px');
+		// Make sure the Surrounding Holder has the proper width depending on the width of the content area
+		$scope.$watch(function(){return $scope.gimme('tabsContent:width');}, function(newVal, oldVal) {
+			var w = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
+			if(!isNaN(w)){
+				var p = parseInt(tnpHolder.css('padding-left')) * 2;
+				tnpHolder.css('width', (w + p) + 'px');
 
-            //Book related
-            if($scope.gimme('tabDisplayStyle') == 1){
-                adjustBookProportions();
-            }
-          }
-        }, true);
+				//Book related
+				if($scope.gimme('tabDisplayStyle') == 1){
+					adjustBookProportions();
+				}
+			}
+		}, true);
 
-        // Remember which child goes in what container
-        $scope.$watch(function(){return $scope.wblEventInfo.gotChild;}, function(newVal, oldVal) {
-            if(!isInit && newVal != null && !isNaN(newVal.childId) && !childContainers[newVal]){
-                if(parseInt($scope.gimme('noOfTabs')) > 0){
-                    childContainers[newVal.childId] = $scope.getChildContainer().attr('id');
-                }
-            }
-        }, true);
+		// Remember which child goes in what container
+		$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){
+			if(!childContainers[eventData.childId]){
+				var thisChild = $scope.getWebbleByInstanceId(eventData.childId);
+				adjustChildPos(eventData.childId, "root:left", thisChild.scope().gimme("root:left"));
+				adjustChildPos(eventData.childId, "root:top", thisChild.scope().gimme("root:top"));
 
-        // Remove this child's container Memory
-        $scope.$watch(function(){return $scope.wblEventInfo.lostChild;}, function(newVal, oldVal) {
-          if(newVal != null && !isNaN(newVal.childId)){
-              delete childContainers[newVal.childId];
+				if(parseInt($scope.gimme('noOfTabs')) > 0){
+					childContainers[eventData.childId] = $scope.getChildContainer().attr('id');
+				}
+			}
+		});
 
-              if($scope.gimme('noOfTabs') == 0 && isEmpty(childContainers) && (tnpTabs_a.length > 0 || tnpPages.length > 0)){
-                  configureTabs(0);
-                  $scope.showQIM('Since there are no tab folders to hold any child Webbles, they have all been peeled and are now orphans', 4000);
-              }
-          }
-        }, true);
+		// Remove this child's container Memory
+		$scope.registerWWEventListener(Enum.availableWWEvents.lostChild, function(eventData){
+			delete childContainers[eventData.childId];
 
-        // Keeping track of children wandering outside visible area an put them back in
-        $scope.$watch(function(){return $scope.eventInfo.slotChanged;}, function(newVal, oldVal) {
-          if(newVal != null && newVal.instanceid && childContainers[newVal.instanceid] && $($scope.getChildContainer()).attr('id') != 'wblChildContainer'){
-              if(newVal.slotname == 'root:left' || newVal.slotname == 'root:top'){
-                  if(newVal.slotname == 'root:left'){
-                      if(parseInt(newVal.slotvalue) < 0){
-                          if($scope.gimme('tabDisplayStyle') == 0){
-                              $scope.getWebbleByInstanceId(newVal.instanceid).scope().set('root:left', 0);
-                          }
-                          else{
-                            $scope.getWebbleByInstanceId(newVal.instanceid).scope().set('root:left', 0);
-                          }
-                      }
-                      else{
-                          if($scope.gimme('tabDisplayStyle') == 0){
-                              var tcWidth = $scope.gimme('tabsContent:width');
-                              tcWidth = tcWidth.search('%') != -1 ? (parseInt(tcWidth)/ 100) * $(window).width() : parseInt(tcWidth);
-                              if(parseInt(newVal.slotvalue) > (tcWidth - 20)){
-                                  var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                  thisWbl.scope().set('root:left', tcWidth - 30);
-                              }
-                          }
-                          else{
-                              if(parseInt(newVal.slotvalue) > (pageWidth - 20)){
-                                  var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                  thisWbl.scope().set('root:left', pageWidth - 30);
-                              }
-                          }
-                      }
-                  }
-                  else if(newVal.slotname == 'root:top'){
-                      if(parseInt(newVal.slotvalue) < 0){
-                          if($scope.gimme('tabDisplayStyle') == 0){
-                              $scope.getWebbleByInstanceId(newVal.instanceid).scope().set('root:top', 0);
-                          }
-                          else{
-                              $scope.getWebbleByInstanceId(newVal.instanceid).scope().set('root:top', 0);
-                          }
-                      }
-                      else{
-                          if($scope.gimme('tabDisplayStyle') == 0){
-                              var tcHeight = $scope.gimme('tabsContent:height');
-                              tcHeight = tcHeight.search('%') != -1 ? (parseInt(tcHeight)/ 100) * $(window).height() : parseInt(tcHeight);
-                              if(parseInt(newVal.slotvalue) > (tcHeight - 20)){
-                                  var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                  thisWbl.scope().set('root:top', tcHeight - 30);
-                              }
-                          }
-                          else{
-                              if(parseInt(newVal.slotvalue) > (pageHeight - 20)){
-                                var thisWbl = $scope.getWebbleByInstanceId(newVal.instanceid);
-                                thisWbl.scope().set('root:top', pageHeight - 30);
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-        }, true);
+			if($scope.gimme('noOfTabs') == 0 && isEmpty(childContainers) && (tnpTabs_a.length > 0 || tnpPages.length > 0)){
+				configureTabs(0);
+				$scope.showQIM('Since there are no tab folders to hold any child Webbles, they have all been peeled and are now orphans', 4000);
+			}
+		});
+
+		// Keeping track of children wandering outside visible area an put them back in
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(childContainers[eventData.targetId] && $($scope.getChildContainer()).attr('id') != 'wblChildContainer'){
+				if(eventData.slotName == 'root:left' || eventData.slotName == 'root:top'){
+					adjustChildPos(eventData.targetId, eventData.slotName, eventData.slotValue);
+				}
+			}
+		}, null);
 
         // Finalize the initiation
         finalInitiation();
     };
     //===================================================================================
+
+
+	//===================================================================================
+	// Adjust Child Pos
+	// This method makes sure that the children Webbles does not disappear outside the
+	// borders of the parent webble.
+	//===================================================================================
+	var adjustChildPos = function(targetId, slotName, slotValue){
+		if(slotName == 'root:left'){
+			if(parseInt(slotValue) < 0){
+				if($scope.gimme('tabDisplayStyle') == 0){
+					$scope.getWebbleByInstanceId(targetId).scope().set('root:left', 0);
+				}
+				else{
+					$scope.getWebbleByInstanceId(targetId).scope().set('root:left', 0);
+				}
+			}
+			else{
+				if($scope.gimme('tabDisplayStyle') == 0){
+					var tcWidth = $scope.gimme('tabsContent:width');
+					tcWidth = tcWidth.search('%') != -1 ? (parseInt(tcWidth)/ 100) * $(window).width() : parseInt(tcWidth);
+					if(parseInt(slotValue) > (tcWidth - 20)){
+						var thisWbl = $scope.getWebbleByInstanceId(targetId);
+						thisWbl.scope().set('root:left', tcWidth - 30);
+					}
+				}
+				else{
+					if(parseInt(slotValue) > (pageWidth - 20)){
+						var thisWbl = $scope.getWebbleByInstanceId(targetId);
+						thisWbl.scope().set('root:left', pageWidth - 30);
+					}
+				}
+			}
+		}
+		else if(slotName == 'root:top'){
+			if(parseInt(slotValue) < 0){
+				if($scope.gimme('tabDisplayStyle') == 0){
+					$scope.getWebbleByInstanceId(targetId).scope().set('root:top', 0);
+				}
+				else{
+					$scope.getWebbleByInstanceId(targetId).scope().set('root:top', 0);
+				}
+			}
+			else{
+				if($scope.gimme('tabDisplayStyle') == 0){
+					var tcHeight = $scope.gimme('tabsContent:height');
+					tcHeight = tcHeight.search('%') != -1 ? (parseInt(tcHeight)/ 100) * $(window).height() : parseInt(tcHeight);
+					if(parseInt(slotValue) > (tcHeight - 20)){
+						var thisWbl = $scope.getWebbleByInstanceId(targetId);
+						thisWbl.scope().set('root:top', tcHeight - 30);
+					}
+				}
+				else{
+					if(parseInt(slotValue) > (pageHeight - 20)){
+						var thisWbl = $scope.getWebbleByInstanceId(targetId);
+						thisWbl.scope().set('root:top', pageHeight - 30);
+					}
+				}
+			}
+		}
+	}
+	//===================================================================================
+
+
+
 
 
     //===================================================================================

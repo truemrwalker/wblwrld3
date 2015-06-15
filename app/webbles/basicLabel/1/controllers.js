@@ -21,9 +21,6 @@ wblwrld3App.controller('labelWebbleCtrl', function($scope, $log, Slot, Enum, get
     };
 
 
-
-
-
     //=== EVENT HANDLERS ================================================================
 
 
@@ -55,16 +52,16 @@ wblwrld3App.controller('labelWebbleCtrl', function($scope, $log, Slot, Enum, get
 
         $scope.setResizeSlots('labelContainer:width', 'labelContainer:height');
 
-        $scope.$watch(function(){return $scope.gimme('googleFont');}, function(newVal, oldVal) {
-            if(newVal != ''){
-                try {
-                    WebFont.load({ google: { families: [ newVal ] } });
-                    var fontName = newVal.substr(0, newVal.indexOf(':')).replace(/\+/g, ' ');
-                    $scope.theView.find('#labelTxt').css('font-family', fontName);
-                }
-                catch(err) { }
-            }
-        }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotValue != ''){
+				try {
+					WebFont.load({ google: { families: [ eventData.slotValue ] } });
+					var fontName = eventData.slotValue.substr(0, eventData.slotValue.indexOf(':')).replace(/\+/g, ' ');
+					$scope.theView.find('#labelTxt').css('font-family', fontName);
+				}
+				catch(err) { }
+			}
+		}, undefined, 'googleFont');
     };
     //===================================================================================
 

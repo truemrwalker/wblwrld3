@@ -12,22 +12,11 @@
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
 wblwrld3App.controller('logicGateCtrl', function($scope, $log, Slot, Enum) {
-    // $scope is needed for angularjs to work properly and is not recommended to be removed. Slot is a Webble World
-    // available Service and is needed for any form of Slot manipulation inside this template and is not recommended
-    // to be removed.
-    // cleanupService is just a custom service used as an example, but any services needed must be included in
-    // the controller call. If your Webble support multiple languages include gettextCatalog and gettext in your
-    // controller, if not, then they may be removed.
-    // dbService is basically only needed to access API access keys, if such are not needed it can be removed
-    // Try to avoid running any code at the creation of the controller, unless you know it is completely independent
-    // of any of the other files, this is due to file loading order. Instead make your first code calls inside the
-    // coreCall_Init function which will be called as soon as all files including the DOM of the Webble is done loading.
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
         //square: ['width', 'height', 'background-color', 'border', 'border-radius'],
     };
-
 
 
     // internal images
@@ -55,6 +44,20 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, Slot, Enum) {
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
         internalFilesPath = $scope.getTemplatePath($scope.theWblMetadata['templateid'], $scope.theWblMetadata['templaterevision']);
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'gateType'){
+				$scope.imgSrc = internalFilesPath + '/images/' + newVal + '.png';
+				calcOut();
+			}
+			else if(eventData.slotName == 'input_1'){
+				calcOut();
+			}
+			else if(eventData.slotName == 'input_2'){
+				calcOut();
+			}
+		});
 
         $scope.addSlot(new Slot('gateType',
             'AND',
@@ -91,20 +94,6 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, Slot, Enum) {
             undefined,
             undefined
         ));
-
-
-        $scope.$watch(function(){return $scope.gimme('gateType');}, function(newVal, oldVal) {
-            $scope.imgSrc = internalFilesPath + '/images/' + newVal + '.png';
-            calcOut();
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('input_1');}, function(newVal, oldVal) {
-            calcOut();
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('input_2');}, function(newVal, oldVal) {
-            calcOut();
-        }, true);
     };
     //===================================================================================
 

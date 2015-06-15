@@ -50,7 +50,6 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
         }
     };
 
-
     $scope.maximizeWin = function(){
         if(parseInt($scope.gimme('windowContainer:height')) != (parseInt($scope.getSurfaceHeight()) - 17)){
             $scope.winStyles.rememberSize.w = parseInt($scope.gimme('windowContainer:width'));
@@ -116,6 +115,92 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
         wtbt = $scope.theView.parent().find('#winTitleBarTxt');
         winBrdr = $scope.theView.parent().find('#winBorder');
         winArea = $scope.theView.parent().find('#winArea');
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'titleBarVisible'){
+				if(newVal == true){
+					$scope.winStyles.titlebarDisplay = 'block';
+					winBrdr.css('height', (parseInt(winBrdr.css('height')) - 25) + 'px');
+				}
+				else{
+					$scope.winStyles.titlebarDisplay = 'none';
+					winBrdr.css('height', (parseInt(winBrdr.css('height')) + 25) + 'px');
+				}
+				$scope.set('winBorder:height', parseInt($scope.gimme('windowContainer:height')) + 0.01);
+			}
+			else if(eventData.slotName == 'miniBtnVisible'){
+				if(newVal == true){
+					$scope.winStyles.minimizeBtnDisplay = 'block';
+				}
+				else{
+					$scope.winStyles.minimizeBtnDisplay = 'none';
+				}
+			}
+			else if(eventData.slotName == 'maxiBtnVisible'){
+				if(newVal == true){
+					$scope.winStyles.maximizeBtnDisplay = 'block';
+				}
+				else{
+					$scope.winStyles.maximizeBtnDisplay = 'none';
+				}
+			}
+			else if(eventData.slotName == 'closeBtnVisible'){
+				if(newVal == true){
+					$scope.winStyles.closeBtnDisplay = 'block';
+				}
+				else{
+					$scope.winStyles.closeBtnDisplay = 'none';
+				}
+			}
+			else if(eventData.slotName == 'horizontalStretch'){
+				if(newVal == true){
+					$scope.set('windowContainer:width',(parseInt($(document).width()) - 37 - parseInt($scope.gimme('root:left'))));
+				}
+			}
+			else if(eventData.slotName == 'verticalStretch'){
+				if(newVal == true){
+					$scope.set('windowContainer:height', parseInt($scope.getSurfaceHeight()) - 17 - parseInt($scope.gimme('root:top')));
+				}
+			}
+			else if(eventData.slotName == 'windowContainer:width'){
+				if($scope.winStyles.resizingXPos != newVal){
+					$scope.winStyles.resizingXPos = newVal;
+				}
+
+				var newVal = parseInt(newVal);
+				if(parseInt(wtb.css('width')) != newVal){
+					wtb.css('width', newVal + 'px');
+				}
+
+				if(parseInt(winBrdr.css('width')) != newVal){
+					winBrdr.css('width', newVal + 'px');
+				}
+			}
+			else if(eventData.slotName == 'windowContainer:height'){
+				newVal = parseInt(newVal);
+				if(!isNaN(newVal)){
+					var titleBarHeight = 20;
+					if(!$scope.gimme('titleBarVisible')){
+						var titleBarHeight = 0;
+					}
+
+					if(parseInt(winBrdr.css('height')) != (newVal - titleBarHeight)){
+						winBrdr.css('height', (newVal - titleBarHeight) + 'px');
+					}
+				}
+			}
+			else if(eventData.slotName == 'root:left'){
+				if($scope.gimme('horizontalStretch') == true){
+					$scope.set('windowContainer:width',(parseInt($(document).width()) - 37 - parseInt($scope.gimme('root:left'))));
+				}
+			}
+			else if(eventData.slotName == 'root:top'){
+				if($scope.gimme('verticalStretch') == true){
+					$scope.set('windowContainer:height', parseInt($scope.getSurfaceHeight()) - 17 - parseInt($scope.gimme('root:top')));
+				}
+			}
+		});
 
         $scope.theView.parent().find('#winArea').draggable({
             drag: function(event, ui){
@@ -223,136 +308,33 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
             undefined
         ));
 
-
         $scope.setDefaultSlot('titleBarTxt');
         $scope.setChildContainer($scope.theView.parent().find('#winArea'));
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){
+			bindChildTighter(eventData.childId);
+		});
 
-        $scope.$watch(function(){ return $scope.gimme('titleBarVisible');}, function(newVal, oldVal) {
-            if(newVal != undefined){
-                if(newVal == true){
-                    $scope.winStyles.titlebarDisplay = 'block';
-                    winBrdr.css('height', (parseInt(winBrdr.css('height')) - 25) + 'px');
-                }
-                else{
-                    $scope.winStyles.titlebarDisplay = 'none';
-                    winBrdr.css('height', (parseInt(winBrdr.css('height')) + 25) + 'px');
-                }
-                $scope.set('winBorder:height', parseInt($scope.gimme('windowContainer:height')) + 0.01);
-            }
-        }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.lostChild, function(eventData){
+			var thisChild = $scope.getWebbleByInstanceId(eventData.childId);
+			thisChild.scope().theView.unbind('vmousedown', onChild_mouseDownEH);
 
-        $scope.$watch(function(){ return $scope.gimme('miniBtnVisible');}, function(newVal, oldVal) {
-            if(newVal == true){
-                $scope.winStyles.minimizeBtnDisplay = 'block';
-            }
-            else{
-                $scope.winStyles.minimizeBtnDisplay = 'none';
-            }
-        }, true);
+			if(!$scope.gimme('killDefectors')){
+				for(var i = 0; i < winContents.length; i++){
+					if(winContents[i].wblId == eventData.childId){
+						winContents[i].moveWatch();
+						winContents.splice(i, 1);
+						break;
+					}
+				}
+			}
+		});
 
-        $scope.$watch(function(){ return $scope.gimme('maxiBtnVisible');}, function(newVal, oldVal) {
-            if(newVal == true){
-                $scope.winStyles.maximizeBtnDisplay = 'block';
-            }
-            else{
-                $scope.winStyles.maximizeBtnDisplay = 'none';
-            }
-        }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.deleted, function(eventData){
+			cleanDeleted(eventData.targetId);
+		},null);
 
-        $scope.$watch(function(){ return $scope.gimme('closeBtnVisible');}, function(newVal, oldVal) {
-            if(newVal == true){
-                $scope.winStyles.closeBtnDisplay = 'block';
-            }
-            else{
-                $scope.winStyles.closeBtnDisplay = 'none';
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.gimme('horizontalStretch');}, function(newVal, oldVal) {
-            if(newVal == true){
-                $scope.set('windowContainer:width',(parseInt($(document).width()) - 37 - parseInt($scope.gimme('root:left'))));
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.gimme('verticalStretch');}, function(newVal, oldVal) {
-            if(newVal == true){
-                $scope.set('windowContainer:height', parseInt($scope.getSurfaceHeight()) - 17 - parseInt($scope.gimme('root:top')));
-            }
-        }, true);
-
-        // Make sure all parts of the windows is resized accordingly
-        $scope.$watch(function(){ return $scope.gimme('windowContainer:width');}, function(newVal, oldVal) {
-            if($scope.winStyles.resizingXPos != newVal){
-                $scope.winStyles.resizingXPos = newVal;
-            }
-
-            var newVal = parseInt(newVal);
-            if(parseInt(wtb.css('width')) != newVal){
-                wtb.css('width', newVal + 'px');
-            }
-
-            if(parseInt(winBrdr.css('width')) != newVal){
-                winBrdr.css('width', newVal + 'px');
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.gimme('windowContainer:height');}, function(newVal, oldVal) {
-            var newVal = parseInt(newVal);
-            if(!isNaN(newVal)){
-                var titleBarHeight = 20;
-                if(!$scope.gimme('titleBarVisible')){
-                    var titleBarHeight = 0;
-                }
-
-                if(parseInt(winBrdr.css('height')) != (newVal - titleBarHeight)){
-                    winBrdr.css('height', (newVal - titleBarHeight) + 'px');
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.gimme('root:left');}, function(newVal, oldVal) {
-            if($scope.gimme('horizontalStretch') == true){
-                $scope.set('windowContainer:width',(parseInt($(document).width()) - 37 - parseInt($scope.gimme('root:left'))));
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.gimme('root:top');}, function(newVal, oldVal) {
-            if($scope.gimme('verticalStretch') == true){
-                $scope.set('windowContainer:height', parseInt($scope.getSurfaceHeight()) - 17 - parseInt($scope.gimme('root:top')));
-            }
-        }, true);
-
-
-        $scope.$watch(function(){ return $scope.wblEventInfo.gotChild;}, function(newVal, oldVal) {
-            if(newVal !== undefined && newVal !== null){
-                $timeout(function(){bindChildTighter(newVal.childId);});
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.wblEventInfo.lostChild;}, function(newVal, oldVal) {
-			if(newVal !== undefined && newVal !== null){
-                var thisChild = $scope.getWebbleByInstanceId(newVal.childId);
-                thisChild.scope().theView.unbind('vmousedown', onChild_mouseDownEH);
-
-                if(!$scope.gimme('killDefectors')){
-                    for(var i = 0; i < winContents.length; i++){
-                        if(winContents[i].wblId == newVal.childId){
-                            winContents[i].moveWatch();
-                            winContents.splice(i, 1);
-                            break;
-                        }
-                    }
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){ return $scope.eventInfo.deletingWebble;}, function(newVal, oldVal) {
-            if(newVal != null){
-                $timeout(function(){cleanDeleted(newVal.instanceId);}, 250);
-
-            }
-        }, true);
+		$scope.set('windowContainer:height', 201);
     };
     //===================================================================================
 
@@ -377,7 +359,7 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
         var childMoving = $scope.$watch(function(){ return thisChild.scope().getWebbleConfig();}, function(newVal, oldVal) {
             if($scope.gimme('killDefectors')){
                 if((parseInt(newVal, 10) & parseInt(Enum.bitFlags_WebbleConfigs.IsMoving, 10)) == 0){
-                    $timeout(function(){killOrphans(thisChild);}, 250);
+					killOrphans(thisChild);
                 }
             }
         }, true);
@@ -422,22 +404,6 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
             }
         }
     }
-    //===================================================================================
-
-
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-        var customWblDefPart = {
-
-        };
-
-        return customWblDefPart;
-    };
     //===================================================================================
 
 

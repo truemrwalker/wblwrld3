@@ -76,24 +76,25 @@ wblwrld3App.controller('randomizerWebbleCtrl', function($scope, $log, Slot, Enum
             event.stopPropagation();
         });
 
-        $scope.$watch(function(){return $scope.gimme('randomGeneratorTrigger');}, function(newVal, oldVal) {
-            if(newVal == true){
-                $scope.randomize();
-                $scope.set('randomGeneratorTrigger', false);
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('randomMax');}, function(newVal, oldVal) {
-            if(newVal < parseInt($scope.gimme('randomNumber'))){
-                $scope.set('randomNumber', newVal);
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('randomMin');}, function(newVal, oldVal) {
-            if(newVal > parseInt($scope.gimme('randomNumber'))){
-                $scope.set('randomNumber', newVal);
-            }
-        }, true);
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'randomGeneratorTrigger'){
+				if(newVal == true){
+					$scope.randomize();
+					$scope.set('randomGeneratorTrigger', false);
+				}
+			}
+			else if(eventData.slotName == 'randomMax'){
+				if(newVal < parseInt($scope.gimme('randomNumber'))){
+					$scope.set('randomNumber', newVal);
+				}
+			}
+			else if(eventData.slotName == 'randomMin'){
+				if(newVal > parseInt($scope.gimme('randomNumber'))){
+					$scope.set('randomNumber', newVal);
+				}
+			}
+		});
     };
     //===================================================================================
 

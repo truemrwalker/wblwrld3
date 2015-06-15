@@ -38,17 +38,6 @@ wblwrld3App.controller('threeDCtrl', function($scope, $log, $timeout, Slot, Enum
     //-----------------------
 
 
-
-    //TODO: Array of custom menu item keys and display names
-    //$scope.customMenu = [{itemId: '[MENU ITEM ID]', itemTxt: '[MENU ITEM DISPLAY TEXT]'}];
-    // EXAMPLE:
-
-    //TODO: Array of customized Interaction Balls
-    //$scope.customInteractionBalls = [{index: [POSITION INDEX 0-11], name: '[IDENTIFIER]', tooltipTxt: '[DISPLAY TEXT]'}];
-    // EXAMPLE:
-
-
-
     //=== EVENT HANDLERS ================================================================
 
 
@@ -61,6 +50,21 @@ wblwrld3App.controller('threeDCtrl', function($scope, $log, $timeout, Slot, Enum
     $scope.coreCall_Init = function(theInitWblDef){
         threeDContainer = $scope.theView.parent().find("#threeDContainer");
         threeDHolder = $scope.theView.parent().find("#threeDHolder");
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotName == 'threeDHolder:width' || eventData.slotName == 'threeDHolder:height'){
+				if(renderer){
+					renderer.setSize(parseInt($scope.gimme('threeDHolder:width')), parseInt($scope.gimme('threeDHolder:height')));
+				}
+			}
+			else if(eventData.slotName == 'geometry' || eventData.slotName == 'meshJSON' || eventData.slotName == 'meshDataOverride' || eventData.slotName == 'meshColor' || eventData.slotName == 'imgTexture'
+				|| eventData.slotName == 'geometryWidth' || eventData.slotName == 'geometryHeight' || eventData.slotName == 'geometryDepth' || eventData.slotName == 'ambientLightColor'
+				|| eventData.slotName == 'dirLightColor' || eventData.slotName == 'geometryWidthSegments' || eventData.slotName == 'geometryHeightSegments' || eventData.slotName == 'geometryDepthSegments'
+				|| eventData.slotName == 'geometryRadius' || eventData.slotName == 'geometryInnerBottomRadius' || eventData.slotName == 'phiLength' || eventData.slotName == 'thetaLength'
+				|| eventData.slotName == 'geometryRadiusSegments' || eventData.slotName == 'openCapEnabled' || eventData.slotName == 'geometryTubeDiameter'){
+				redrawScene();
+			}
+		});
 
         $scope.addSlot(new Slot('geometry',
             0,
@@ -145,7 +149,7 @@ wblwrld3App.controller('threeDCtrl', function($scope, $log, $timeout, Slot, Enum
             'Mesh Color',
             'Color of the current mesh',
             $scope.theWblMetadata['templateid'],
-            undefined,
+			{inputType: Enum.aopInputTypes.ColorPick},
             undefined
         ));
 
@@ -300,36 +304,7 @@ wblwrld3App.controller('threeDCtrl', function($scope, $log, $timeout, Slot, Enum
 
         init();
 
-        $scope.$watch(function(){return $scope.gimme('threeDHolder:width');}, function(newVal, oldVal) {
-            if(renderer){
-                renderer.setSize(parseInt($scope.gimme('threeDHolder:width')), parseInt($scope.gimme('threeDHolder:height')));
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('threeDHolder:height');}, function(newVal, oldVal) {
-            if(renderer){
-                renderer.setSize(parseInt($scope.gimme('threeDHolder:width')), parseInt($scope.gimme('threeDHolder:height')));
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('geometry');}, function(newVal, oldVal) {
-            redrawScene();
-        }, true);
-
-        $scope.$watch(function(){return $scope.wblEventInfo.slotChanged;}, function(newVal, oldVal) {
-            if(newVal && newVal.slotname) {
-                if (newVal.slotname == 'meshJSON' || newVal.slotname == 'meshDataOverride' || newVal.slotname == 'meshColor' || newVal.slotname == 'imgTexture'
-                    || newVal.slotname == 'geometryWidth' || newVal.slotname == 'geometryHeight' || newVal.slotname == 'geometryDepth' || newVal.slotname == 'ambientLightColor'
-                    || newVal.slotname == 'dirLightColor' || newVal.slotname == 'geometryWidthSegments' || newVal.slotname == 'geometryHeightSegments' || newVal.slotname == 'geometryDepthSegments'
-                    || newVal.slotname == 'geometryRadius' || newVal.slotname == 'geometryInnerBottomRadius' || newVal.slotname == 'phiLength' || newVal.slotname == 'thetaLength'
-                    || newVal.slotname == 'geometryRadiusSegments' || newVal.slotname == 'openCapEnabled' || newVal.slotname == 'geometryTubeDiameter'){
-                    redrawScene();
-                }
-            }
-        }, true);
-
         redrawScene();
-
     };
     //===================================================================================
 

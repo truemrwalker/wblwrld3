@@ -55,7 +55,7 @@
     </div>
 
     <div class="row keepTheDistanceBelow" ng-hide="item.deleteRequest == true || item.disabledSettings == 2" ng-repeat="item in props" ng-if="item.cat == cat" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
-        <div class="col-xs-3" tooltip-placement="right" tooltip="{{item.key;}}"><span class="formTitle">{{item.name | translate}}:</span></div>
+        <div class="col-xs-3" tooltip-placement="right" tooltip="{{item.key;}}" ng-click="copyToClipboard(item.key)"><span class="formTitle">{{item.name | translate}}:</span></div>
 
         <div class="col-xs-6" ng-switch on="item.inputType">
             <!--CheckBox-->

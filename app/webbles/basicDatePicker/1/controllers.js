@@ -50,6 +50,19 @@ wblwrld3App.controller('dateWebbleCtrl', function($scope, $log, Slot, Enum) {
         theDatePicker.datepicker( "option", "firstDay", 1 );
         theDatePicker.datepicker( "setDate", new Date() );
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotName == 'currentDate'){
+				$scope.formProps.dateValue = eventData.slotValue;
+				setSeparateDatePartSlots();
+			}
+			// Make sure the readonly slot sets the corresponding ng-model value
+			else if(eventData.slotName == 'isDisabled'){
+				if(eventData.slotValue != $scope.formProps.isDisabled && (eventData.slotValue.toString().toLowerCase() == 'true' || eventData.slotValue.toString().toLowerCase() == 'false')){
+					$scope.formProps.isDisabled = (eventData.slotValue.toString().toLowerCase() == 'true');
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('currentDate',
             getFormatedDate(new Date()),
             'Selected Date',
@@ -116,30 +129,16 @@ wblwrld3App.controller('dateWebbleCtrl', function($scope, $log, Slot, Enum) {
             undefined,
             undefined
         ));
-        $scope.getSlot('currentMonthString').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+        $scope.getSlot('currentDateNumeral').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
         $scope.setDefaultSlot('currentDate');
 
-        $scope.$watch(function(){return $scope.formProps.dateValue;}, function(newVal, oldVal) {
-            if(getFormatedDate(newVal) != $scope.gimme('currentDate')){
-                $scope.set('currentDate', getFormatedDate(newVal));
-                setSeparateDatePartSlots();
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('currentDate');}, function(newVal, oldVal) {
-            if(newVal != $scope.formProps.dateValue){
-                $scope.formProps.dateValue = newVal;
-                setSeparateDatePartSlots();
-            }
-        }, true);
-
-        // Make sure the readonly slot sets the corresponding ng-model value
-        $scope.$watch(function(){ return $scope.gimme('isDisabled');}, function(newVal, oldVal) {
-            if(newVal != $scope.formProps.isDisabled && (newVal.toString().toLowerCase() == 'true' || newVal.toString().toLowerCase() == 'false')){
-               $scope.formProps.isDisabled = (newVal.toString().toLowerCase() == 'true');
-            }
-        }, true);
+		$scope.$watch(function(){return $scope.formProps.dateValue;}, function(newVal, oldVal) {
+			if(getFormatedDate(newVal) != $scope.gimme('currentDate')){
+				$scope.set('currentDate', getFormatedDate(newVal));
+				setSeparateDatePartSlots();
+			}
+		}, true);
     };
     //===================================================================================
 

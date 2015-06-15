@@ -179,23 +179,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
     var onGoingTimeOuts = {};
 
-    // This is a Webble specific info object that keeps track of what basic (non-value related) events that are firing in this webble
-    // This is used in combination with $watch in webble development to be able to react properly to things of interest that a related Webble is experiencing.
-    $scope.wblEventInfo = {
-        slotChanged: null, //As set: {slotname: [Slot Name], slotvalue: [Slot Value]}
-        deleted: null, //As set: [timestamp of deletion]
-        duplicated: null, //As set: {copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-        shareModelCreated: null, //As set: {copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-        pasted: null, //As set: {parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
-        gotChild: null, //As set: {childId: [Instance Id for Webble that was pasted], timestamp: [when it happened as ms integer]}
-        peeled: null, //As set: {parentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
-        lostChild: null //As set: {childId: [Instance Id for Webble that was peeled], timestamp: [when it happened as ms integer]}
-    };
+
 
     //=== EVENT HANDLERS =====================================================================
 
-    // /// TOUCH GESTURE EVENTS /////////////////////////////////////////////////////
-
+    // *** TOUCH GESTURE EVENTS ***
 
     //========================================================================================
     // Double Tap
@@ -277,6 +265,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 }
             }
         }
+
+		$scope.fireWWEventListener(Enum.availableWWEvents.slotChanged, {targetId: instanceId_, slotName: whatSlotName, slotValue: $scope.gimme(whatSlotName), timestamp: (new Date()).getTime()});
     };
     //========================================================================================
 
@@ -365,7 +355,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
     //===================================================================================
     // Create Child/Parent Merged Slot Watches
-    // Set up watches for all slots that is related with bundle content.
+    // Set up watches for all slots that is related with merged content.
     //===================================================================================
     var createChildParentMergedSlotWatches = function(){
         if(mergedSlotWatchSetupIndex < mcSlotData_.length){
@@ -802,8 +792,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
     //========================================================================================
     // Get Modified Webble Definition With Absolute Positions
-    // This method returns  a modified version of a webble definition object where all webbles
-    // in the object has had there position changed to absolute values
+    // This method returns  a modified version of a webble definition object where its
+	// z-index layer value is increased with one.
     //========================================================================================
     var getModifiedWblZIndex = function(whatWblDef){
         var slotList = whatWblDef['webble'].slotdata.slots;
@@ -968,7 +958,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 	//========================================================================================
 	// System Internal Slot Update
 	// If this Webble has purely internal system made slots that is used for internal
-	// configuration, then read thoise values are and update the Webble accordingly.
+	// configuration, then read those values are and update the Webble accordingly.
 	//========================================================================================
 	var systemInternalSlotUpdate = function(){
 		var ccm = $scope.gimme('customContextMenu');
@@ -1322,7 +1312,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method reacts on context menu item click.
     //========================================================================================
     $scope.activateMenuItem = function(itemName){
-		$scope.eventInfo.wblMenuExecuted = {instanceId: $scope.getInstanceId(), menuItemName: itemName, timestamp: (new Date()).getTime()};
+		$scope.fireWWEventListener(Enum.availableWWEvents.wblMenuExecuted, {targetId: instanceId_, menuId: itemName, timestamp: (new Date()).getTime()});
 
         //=== ASSIGN PARENT ==================================================================
         if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.AssignParent)){
@@ -1521,7 +1511,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // doc and from the template, setting up everything needed before the webble can be fully
     // operational, looking and behaving as intended.
     //========================================================================================
-    $scope.wblInit = function(whatWblDef){
+    $scope.wblInit = function(whatWblDef, whatSSSK){
         if((parseInt(theInitiationState_, 10) & parseInt(Enum.bitFlags_InitStates.InitFinished, 10)) === 0){
             // indicate that initiation has started
             theInitiationState_ = bitflags.on(theInitiationState_, Enum.bitFlags_InitStates.InitBegun);
@@ -1657,6 +1647,26 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         }
     };
     //========================================================================================
+
+
+
+	//========================================================================================
+	// Register Webble World Event Listener
+	// Register an event listener for a specific event for a specific target (self, other or
+	// all) (targetData can be a set for slotChange as a slotName to narrow down event further)
+	// and the callback function the webble wish to be called if the event fire.
+	// The callback function will then be handed a datapack object containing needed
+	// information to react to the event accordingly. (see wwEventListeners_)
+	// if targetId is undefined the webble will be listening to itself and if the targetId is
+	// set to null it will listen to all webbles.
+	//========================================================================================
+	$scope.registerWWEventListener = function(eventType, callbackFunc, targetId, targetData){
+		targetId = (targetId === undefined) ? instanceId_ : targetId;
+		if(eventType == Enum.availableWWEvents.keyDown || eventType == Enum.availableWWEvents.loadingWbl || eventType == Enum.availableWWEvents.mainMenuExecuted){targetId = null}
+		return $scope.regWblWrldListener(instanceId_, eventType, callbackFunc, targetId, targetData);
+	}
+	//========================================================================================
+
 
 
     //========================================================================================
@@ -1833,23 +1843,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         if(listenToParentSlot != undefined){ if($.isArray(listenToParentSlot)){ for(var i = 0; i < listenToParentSlot.length; i++){ listenToParentSlot[i](); } } else{ listenToParentSlot(); } listenToParentSlot = undefined; }
         if(listenToChildSlot != undefined){ if($.isArray(listenToChildSlot)){ for(var i = 0; i < listenToChildSlot.length; i++){ listenToChildSlot[i](); } } else{ listenToChildSlot(); } listenToChildSlot = undefined; }
 
-        // Create new watches and preset slots
+        // Set slots accordingly
         if (theConnectedSlot_ != '' && theSelectedSlot_ != '' && (slotConnDir_.send || slotConnDir_.receive)){
             if(isEmpty(mcSlotData_)){
                 if(slotConnDir_.send){
-                    listenToChildSlot = $scope.$watch(function(){return $scope.gimme(theSelectedSlot_);}, function(newVal, oldVal) {
-                        if ((newVal !== undefined) && (newVal !== oldVal)) {
-                            $scope.getParent().scope().set(theConnectedSlot_, newVal);
-                        }
-                    }, true);
 					if(!doNotBotherAdjustingStuff){ $scope.getParent().scope().set(theConnectedSlot_, $scope.gimme(theSelectedSlot_)); }
                 }
                 if(slotConnDir_.receive){
-                    listenToParentSlot = $scope.$watch(function(){return $scope.getParent().scope().gimme(theConnectedSlot_);}, function(newVal, oldVal) {
-                        if ((newVal !== undefined) && (newVal !== oldVal)) {
-                            $scope.set(theSelectedSlot_, newVal);
-                        }
-                    }, true);
 					if(!doNotBotherAdjustingStuff){ $scope.set(theSelectedSlot_, $scope.getParent().scope().gimme(theConnectedSlot_)); }
 				}
             }
@@ -2024,6 +2024,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     if(styleName == 'border' && newVal == ''){
                         newVal = whatSlot.getElementPntr().css('border-top-width') + ' ' + whatSlot.getElementPntr().css('border-top-style') + ' ' + whatSlot.getElementPntr().css('border-top-color');
                     }
+					else if(styleName == 'font-family'){
+						newVal = newVal.toLowerCase();
+						oldVal = oldVal.toLowerCase();
+					}
                     else if(styleName == 'margin' && newVal == ''){
                         newVal = whatSlot.getElementPntr().css('margin-top') + ' ' + whatSlot.getElementPntr().css('margin-right') + ' ' + whatSlot.getElementPntr().css('margin-bottom') + ' ' + whatSlot.getElementPntr().css('margin-left');
                     }
@@ -2243,6 +2247,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 sharedModelCandidate.wbl.scope().getSlots()[slot]['isShared'] = false;
             }
         }
+
+		$scope.fireWWEventListener(Enum.availableWWEvents.sharedModelDuplicated, {targetId: instanceId_, copyId: sharedModelCandidate.wbl.scope().getInstanceId(), timestamp: (new Date()).getTime()});
     };
     //========================================================================================
 
@@ -2312,7 +2318,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     $scope.addChild = function(newChild){
         if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_CONNECT, 10)) == 0){
             theChildren_.push(newChild);
-			$scope.wblEventInfo.gotChild = {childId: newChild.scope().getInstanceId(), timestamp: (new Date()).getTime()};
+			$scope.fireWWEventListener(Enum.availableWWEvents.gotChild, {targetId: instanceId_, childId: newChild.scope().getInstanceId(), timestamp: (new Date()).getTime()});
         }
     };
     //========================================================================================
@@ -2327,7 +2333,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             for(var i = 0, c; c = theChildren_[i]; i++){
                 if(c.scope().getInstanceId() == oldChild.scope().getInstanceId()){
                     theChildren_.splice(i, 1);
-                    $scope.wblEventInfo.lostChild = {childId: oldChild.scope().getInstanceId(), timestamp: (new Date()).getTime()};
+					$scope.fireWWEventListener(Enum.availableWWEvents.lostChild, {targetId: instanceId_, childId: oldChild.scope().getInstanceId(), timestamp: (new Date()).getTime()});
                     break;
                 }
             }
@@ -2383,9 +2389,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			if(!doNotBotherAdjustingStuff){ adjustPositionInRelationToParent(false); }
 
             if(!insideUndoRedo){ $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 300); }
-			var ts = (new Date()).getTime();
-			$scope.eventInfo.pastingWebble = {childId: $scope.getInstanceId(), parentId: theParent_.scope().getInstanceId(), timestamp: ts};
-			$scope.wblEventInfo.pasted = {parentId: theParent_.scope().getInstanceId(), timestamp: ts};
 
             var io = $scope.getInteractionObjectByName(getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.AssignParent));
             if (io){ io.scope().setIsEnabled(false); }
@@ -2416,6 +2419,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     $scope.connectSlots(parentSlot, childSlot, slotConnDir_, doNotBotherAdjustingStuff);
                 }
             }
+
+			$scope.fireWWEventListener(Enum.availableWWEvents.pasted, {targetId: instanceId_, parentId: theParent_.scope().getInstanceId(), timestamp: (new Date()).getTime()});
 
             return true;
         }
@@ -2464,13 +2469,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             theParent_.scope().removeChild($scope.theView);
             var lostParentId = theParent_.scope().getInstanceId();
             theParent_ = undefined;
-			var ts = (new Date()).getTime();
-			$scope.eventInfo.peelingWebble = {formerChildId: $scope.getInstanceId(), formerParentId: lostParentId, timestamp: ts};
-			$scope.wblEventInfo.peeled = {parentId: lostParentId, timestamp: ts};
 
-            // Kill watches for relationship slots
-            if(listenToParentSlot != undefined){ if($.isArray(listenToParentSlot)){ for(var i = 0; i < listenToParentSlot.length; i++){ listenToParentSlot[i](); } } else{ listenToParentSlot(); } listenToParentSlot = undefined; }
-            if(listenToChildSlot != undefined){ if($.isArray(listenToChildSlot)){ for(var i = 0; i < listenToChildSlot.length; i++){ listenToChildSlot[i](); } } else{ listenToChildSlot(); } listenToChildSlot = undefined; }
+			$scope.fireWWEventListener(Enum.availableWWEvents.peeled, {targetId: instanceId_, parentId: lostParentId, timestamp: (new Date()).getTime()});
 
             return true;
         }
@@ -2562,16 +2562,38 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setSlot, target: $scope.getInstanceId(), slotName: slotName, slotValue: slotValue});
             }
             $scope.addUndo(prevState, !$scope.getPlatformDoNotSaveUndoEnabled());
-			$scope.eventInfo.slotChanged = {instanceid: $scope.getInstanceId(), slotname: slotName, slotvalue: slotValue};
-			$scope.wblEventInfo.slotChanged = {slotname: slotName, slotvalue: slotValue};
 
             modelSharedUpdate(slotName, slotValue);
             slotValueChanged(slotName);
+
+			// Tell parent if it exists and needs to know
+			if(theParent_ != undefined && slotName == theSelectedSlot_ && slotConnDir_.send && $scope.gimme(theSelectedSlot_) != theParent_.scope().gimme(theConnectedSlot_)){
+				theParent_.scope().set(theConnectedSlot_, $scope.gimme(theSelectedSlot_));
+			}
+
+			// Tell children a slot change have happened
+			for(var i = 0, c; c = theChildren_[i]; i++){
+				c.scope().update(slotName);
+			}
         }
 
         return result;
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Update
+	// This method is called by a parent when it gets a slot change so that the child may
+	// react on it if it has a slot connection.
+	//========================================================================================
+	$scope.update = function(slotName){
+		if(slotName == theConnectedSlot_ && slotConnDir_.receive && $scope.gimme(theSelectedSlot_) != theParent_.scope().gimme(theConnectedSlot_)){
+			$scope.set(theSelectedSlot_, theParent_.scope().gimme(theConnectedSlot_));
+		}
+	}
+	//========================================================================================
+
 
     //=== CTRL MAIN CODE =====================================================================
 

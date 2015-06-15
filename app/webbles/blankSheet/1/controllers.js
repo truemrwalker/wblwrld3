@@ -9,12 +9,6 @@
 //=======================================================================================
 wblwrld3App.controller('blankSheetCtrl', function($scope, $log, Slot, Enum) {
     //=== PROPERTIES ====================================================================
-    //TODO: An object with element-id keys holding arrays of css style names that should be converted to slots
-    // These slots will be found by the name format '[TEMPLATE ID]_[ELEMENT NAME]:[CSS ATTRIBUTE NAME]'
-    //$scope.stylesToSlots = {
-    //    [ELEMENT NAME]: ['[CSS ATTRIBUTE NAME]']
-    //};
-    // EXAMPLE:
     $scope.stylesToSlots = {
 		blankSheetContainer: ['background-color', 'border', 'padding']
     };
@@ -77,51 +71,51 @@ wblwrld3App.controller('blankSheetCtrl', function($scope, $log, Slot, Enum) {
 			undefined
 		));
 
-        $scope.$watch(function(){return $scope.gimme('customChildContainerElementName');}, function(newVal, oldVal) {
-			setCustomCC(newVal);
-        }, true);
-
-		$scope.$watch(function(){return $scope.gimme('customHTML');}, function(newVal, oldVal) {
-			if(newVal.search($scope.gimme('customChildContainerElementName')) == -1){
-				for(var i = 0, c; c = $scope.getChildren()[i]; i++){
-					c.scope().peel();
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'customChildContainerElementName'){
+				setCustomCC(newVal);
+			}
+			else if(eventData.slotName == 'customHTML'){
+				if(newVal.search($scope.gimme('customChildContainerElementName')) == -1){
+					for(var i = 0, c; c = $scope.getChildren()[i]; i++){
+						c.scope().peel();
+					}
+					$scope.set('customChildContainerElementName', "");
 				}
-				$scope.set('customChildContainerElementName', "");
-			}
 
-			bsContainer.empty();
-			if(newVal != ""){
-				$(newVal).appendTo(bsContainer);
-				setCustomCC($scope.gimme('customChildContainerElementName'));
+				bsContainer.empty();
+				if(newVal != ""){
+					$(newVal).appendTo(bsContainer);
+					setCustomCC($scope.gimme('customChildContainerElementName'));
+				}
 			}
-		}, true);
-
-		$scope.$watch(function(){return $scope.gimme('customCSSClasses');}, function(newVal, oldVal) {
-			for(var i = 0; i < listOfClasses.length; i++){
-				sheet.deleteRule(0);
-			}
-			listOfClasses = [];
-			if(newVal != ""){
-				listOfClasses = newVal.split('}');
-				listOfClasses.pop();
-
+			else if(eventData.slotName == 'customCSSClasses'){
 				for(var i = 0; i < listOfClasses.length; i++){
-					listOfClasses[i] += '}';
-					sheet.insertRule(listOfClasses[i], 0);
+					sheet.deleteRule(0);
 				}
-			}
-		}, true);
+				listOfClasses = [];
+				if(newVal != ""){
+					listOfClasses = newVal.split('}');
+					listOfClasses.pop();
 
-		$scope.$watch(function(){return $scope.gimme('customJS');}, function(newVal, oldVal) {
-			if(newVal != ""){
-				try{
-					eval(newVal);
-				}
-				catch (err){
-					$log.log("WRONG!");
+					for(var i = 0; i < listOfClasses.length; i++){
+						listOfClasses[i] += '}';
+						sheet.insertRule(listOfClasses[i], 0);
+					}
 				}
 			}
-		}, true);
+			else if(eventData.slotName == 'customJS'){
+				if(newVal != ""){
+					try{
+						eval(newVal);
+					}
+					catch (err){
+						$log.log("WRONG!");
+					}
+				}
+			}
+		});
     };
     //===================================================================================
 
@@ -157,7 +151,6 @@ wblwrld3App.controller('blankSheetCtrl', function($scope, $log, Slot, Enum) {
 		}
 	};
 	//===================================================================================
-
 
 
     //=== CTRL MAIN CODE ======================================================================

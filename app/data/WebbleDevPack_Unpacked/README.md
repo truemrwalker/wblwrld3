@@ -3,14 +3,14 @@ Like ReadMe.txt but a little bit better
 
 Dear Webble Developer,
 
-Welcome to Webble World 3.0. We invite you to start developing your own Webble Templates and upload them to the Online
+Welcome to Webble World 3.1. We invite you to start developing your own Webble Templates and upload them to the Online
 Webble repository for the world to share.
 
 In the files provided you will find the necessary information (as comments and TODO's) that you need to build your
-Webble template.
+Webble template. You can also download and read the Webble World Manual found online.
 
 Also, be aware of the order the webble files load in case you have some crucial dependencies. First is the manifest files 
-and the library files incuded in it, next the styles.css is loaded followed by the servuces, filters, directives and 
+and the library files included in it, next the styles.css is loaded followed by the services, filters, directives and 
 finally the controller. The last file of all to be loaded is the view.html. Because of this one should not run any code
 inside the controller (or the other js files) that is dependent on the DOM before it actually exist. Such code should be 
 called from or inside the $scope.coreCall_Init function which is automatically called by the Webble as soon as all files 
@@ -24,7 +24,7 @@ existing services, directives and filters that your Webble might want to use to 
 The WEBBLE CORE is exactly what it sounds like. The heart of a Webble and what makes it such. within the Webble-template
 $scope, the core can be reached to get following methods and data:
 
-    // Returns the unique identifyer for this particular Webble instance
+    // Returns the unique identifier for this particular Webble instance
     $scope.getInstanceId();
 
     // The unique template element for a webble, in order to get access to the inner scope of other Webbles
@@ -46,7 +46,7 @@ $scope, the core can be reached to get following methods and data:
     $scope.getInstanceName();
 
     // Get Webble Full Name returns this webbles user defined display name together with its
-    // instance id  and its template id.
+    // instance id and its template id.
     $scope.getWebbleFullName();
 
     // The children of this webble, if any
@@ -60,14 +60,6 @@ $scope, the core can be reached to get following methods and data:
 
     // Peel removes the parent for the Webble and make it an orphan again
     $scope.peel();
-
-    // Add Child adds a new child to the Webble. This is automatically called from paste() so very seldom is it needed
-    // to be called explicitly, but it is available in those rare cases it might be needed.
-    $scope.addChild(newChild);
-
-    // Remove Child removes a child from the webbles list of children. This is automatically called from peel() so very
-    // seldom is it needed to be called explicitly, but it is available in those rare cases it might be needed.
-    $scope.removeChild(oldChild);
 
     // The childcontainer is a jquery element object pointing at the place in the webble where children should be DOM
     // pasted. Default value usually works fine, but for Webbles using clipping this might be useful.
@@ -193,23 +185,34 @@ $scope, the core can be reached to get following methods and data:
         doubleTapTemporarelyDisabled: false,
         interactionObjectActivated: false
     };
-
-    // This is a Webble specific info object that keeps track of what basic (non-value related) events that are firing
-    // in this webble. This is used in combination with $watch in webble development to be able to react properly to
-    // things of interest that a related Webble is experiencing. (Note: [] comment characters below does not mean Array)
-    // timestamp is used to separate two events of the same type happening twice
-    $scope.eventInfo = {
-            slotChanged: null, 			//As set: {instanceid: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
-            deletingWebble: null, 		//As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
-            keyDownForWebble: null, 	//As set: {instanceid: [Instance Id for webble being selected], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [when it happened as ms integer]}
-            duplicatingWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-            shareModelWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-            pastingWebble: null, 		//As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
-            peelingWebble: null, 		//As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
-            loadingWebble: null, 		//As set: [Instance Id for webble being loaded]
-            mainMenuExecuted: null, 	//As set: {menuid: [menu sublink id], timestamp: [millisecond for when it happened]}
-            wblMenuExecuted: null 		//As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name], timestamp: [millisecond for when it happened]}
-        };
+    	
+	// Register Webble World Event Listener
+	// Register an event listener for a specific event for a specific target (self, other or
+	// all) (targetData can be set for slotChange as a slotName to narrow down event further)
+	// and the callback function the webble wish to be called if the event fire.
+	// The callback function will then be handed a datapack object containing needed
+	// information to react to the event accordingly. (see wwEventListeners_)
+	// if targetId is undefined the webble will be listening to itself and if the targetId is
+	// set to null it will listen to all webbles.	
+	$scope.registerWWEventListener(eventType, callbackFunc, targetId, targetData);
+	
+	// All callback functions are sent a datapack object as a parameter when they fire which includes different things
+	// depending on the event. The targetId post in these datapacks are only useful when the webble are listening to
+	// multiple webbles with the same callback.
+	wwEventListeners_ = {
+		slotChanged:		 		Returning Data: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
+		deleted: 	                Returning Data: {targetId: [Instance Id for webble being deleted], timestamp: [a chronical timestamp value]}
+		duplicated: 	            Returning Data: {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
+		sharedModelDuplicated: 		Returning Data: {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
+		pasted: 	                Returning Data: {targetId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [a chronological timestamp value]}
+		gotChild: 					Returning Data: {targetId: [Instance Id for webble getting child], childId: [Instance Id for Webble that was pasted], timestamp: [a chronological timestamp value]}
+		peeled: 	                Returning Data: {targetId: [Instance Id for Webble leaving parent], parentId: [Instance Id for Webble that lost its child], timestamp: [when it happened as ms integer]}
+		lostChild: 		            Returning Data: {targetId: [Instance Id for Webble losing child], childId: [Instance Id for Webble that was peeled away], timestamp: [when it happened as ms integer]}
+		keyDown: 					Returning Data: {targetId: null[=UNSPECIFIED], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [a chronological timestamp value]}
+		loadingWbl: 				Returning Data: {targetId: [Instance Id for webble that got loaded], timestamp: [a chronological timestamp value]}
+		mainMenuExecuted: 		    Returning Data: {targetId: null[=UNSPECIFIED], menuId: [menu sublink id], timestamp: [a chronological timestamp value]}
+		wblMenuExecuted: 	        Returning Data: {targetId: [Instance Id for the Webble executing menu], menuId: [menu item name], timestamp: [a chronological timestamp value]}
+	};
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -248,22 +251,6 @@ system and specific Webbles:
     // A set of flags for rescuing weird touch event behavior
     $scope.touchRescuePlatformFlags = {
         noParentSelectPossibleYet: false
-    };
-
-    // This is an info object that keeps track of what basic (non-value related) events that are firing in webbles and
-    // the platform. This is used in combination with $watch in webble development to be able to react properly to
-    // things of interest.
-    $scope.eventInfo = {
-        slotChanged: null, 			//As set: {instanceId: [Instance Id for webble getting slot changed], slotname: [Slot Name], slotvalue: [Slot Value]}
-		deletingWebble: null, 		//As set: {instanceId: [Instance Id for webble being deleted], templateId: [template Id for webble being deleted]}
-		keyDownForWebble: null, 	//As set: {instanceIdList: [Instance Id list for webbles being selected], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [when it happened as ms integer]}
-		duplicatingWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-		shareModelWebble: null, 	//As set: {originalId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [when it happened as ms integer]}
-		pastingWebble: null, 		//As set: {childId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [when it happened as ms integer]}
-		peelingWebble: null, 		//As set: {formerChildId: [Instance Id for webble being peeled], formerParentId: [Instance Id for Webble that was peeled from], timestamp: [when it happened as ms integer]}
-		loadingWebble: null, 		//As set: [Instance Id for webble being loaded]
-		mainMenuExecuted: null, 	//As set: {menuId: [menu sublink id], timestamp: [millisecond for when it happened]}
-		wblMenuExecuted: null 		//As set: {instanceId: [Instance Id for the Webble executing menu], menuItemName: [menu item name], timestamp: [millisecond for when it happened]}
     };
 
     // Reset Selections, resets the work surface by removing all selections and half finished connections.
@@ -484,7 +471,7 @@ themselves inside the template are the following:
     Enum.aopForms
     { userReg: 0, wblProps: 1, slotConn: 2, protect: 3, addCustSlot: 4, infoMsg: 5, langChange: 6, publishWebble: 7,
       loadWebble: 8, saveWorkspace: 9, platformProps: 10, about: 12, wblAbout: 13, wblSearch: 14, faq: 15, bundle: 16,
-      deleteWorkspace: 17, rateWbl: 18, saveWorkspaceAs: 19, shareWorkspaces: 20 }
+      deleteWorkspace: 17, rateWbl: 18, saveWorkspaceAs: 19, shareWorkspaces: 20, editCustMenuItems: 21, editCustInteractObj: 22 }
 
     // Default Interaction objects that all webbles share
     Enum.availableOnePicks_DefaultInteractionObjects
@@ -555,12 +542,12 @@ themselves inside the template are the following:
     Enum.bitFlags_WebbleConfigs
     { None: 0, IsMoving: 2, NoBubble: 4 }
 
-    // The different protections that can be set on a webble [Bitwise Flags]
+    // The different protections that can be set on a webble [Bitwise Flags] (See Webble Protection in a live Webble for further details)
     Enum.bitFlags_WebbleProtection
     { NO: 0, MOVE: 1, RESIZE: 2, DUPLICATE: 4, SHAREDMODELDUPLICATE: 8, DELETE: 16, PUBLISH: 32, PROPERTY: 64,
       PARENT_CONNECT: 128, CHILD_CONNECT: 256, PARENT_DISCONNECT: 512, CHILD_DISCONNECT: 1024, BUNDLE: 2048,
       UNBUNDLE: 4096, DEFAULT_MENU: 8192, INTERACTION_OBJECTS: 16384, SELECTED: 32768, POPUP_MENU: 65536,
-      NON_DEV_HIDDEN: 131072, DRAG_CLONE: 262144 }
+      NON_DEV_HIDDEN: 131072, DRAG_CLONE: 262144, BUNDLE_LOCKED: 524288 }
 
     // A service that returns useful constant values
     wwConsts.palette
@@ -669,6 +656,7 @@ themselves inside the template are the following:
     valMod.addPxMaybe(theName, theVal);         //for css values who requires a unit
     valMod.stringify(theVal);                   //to string from object
     valMod.parse(theVal);                       //from string to object
+    valMod.getFormatedDate(inDate);				//Formats and return a javascript date to the iso format yyyy-mm-dd.
 
     // Is Empty, checks weather an object is empty (in every way that may be).
     isEmpty(obj);

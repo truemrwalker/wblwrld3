@@ -41,6 +41,83 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'theList'){
+				updateList(newVal);
+			}
+			else if(eventData.slotName == 'theListType'){
+				if(fxList != undefined){ stroll.unbind(fxList); }
+				updateList(newVal);
+				if(newVal == 6){
+					$timeout(function(){fxList = $scope.theView.parent().find("#fxList ul"); stroll.bind(fxList);});
+				}
+			}
+			else if(eventData.slotName == 'theListDirection'){
+				if(newVal == 0){
+					$scope.formProps.CBDisplayClass = 'checkbox';
+					$scope.formProps.RBDisplayClass = 'radio';
+				}
+				else if(newVal == 1){
+					$scope.formProps.CBDisplayClass = 'checkbox-inline';
+					$scope.formProps.RBDisplayClass = 'radio-inline';
+				}
+			}
+			else if(eventData.slotName == 'theListContainerHeight'){
+				if(newVal != undefined){
+					var valParsed = parseInt(newVal);
+					if(!isNaN(valParsed)){
+						$scope.formProps.listHeight = valParsed + 'px';
+						$scope.formProps.listOverflow = 'scroll';
+					}
+					else{
+						$scope.formProps.listHeight = 'auto';
+						$scope.formProps.listOverflow = 'visible';
+					}
+				}
+			}
+			else if(eventData.slotName == 'theListItemMarkerImage'){
+				if(newVal != undefined){
+					$scope.formProps.listItemMarkerImage = 'url(' + newVal + ')';
+				}
+			}
+			else if(eventData.slotName == 'theSelectedName'){
+				if(!selectChangeBlocked){
+					selectChangeBlocked = true;
+					$timeout(function(){selectChangeBlocked = false;}, 100);
+					$scope.theList.currentSelected = newVal;
+					var count = 0;
+					for(var i = 0; i < $scope.theList.items.length; i++){
+						if($scope.theList.items[i] == newVal){
+							$scope.set('theSelectedIndex', i);
+							count++;
+						}
+					}
+					if(count > 1 || (newVal != '' && count == 0)){
+						$scope.set('theSelectedIndex', -2);
+					}
+					if(newVal == ''){
+						$scope.set('theSelectedIndex', -1);
+					}
+				}
+			}
+			else if(eventData.slotName == 'theSelectedIndex'){
+				if(newVal != -2 && !selectChangeBlocked){
+					selectChangeBlocked = true;
+					$timeout(function(){selectChangeBlocked = false;}, 100);
+					if(newVal < $scope.theList.items.length){
+						$scope.theList.currentSelected = $scope.theList.items[newVal];
+						$scope.set('theSelectedName', $scope.theList.currentSelected);
+					}
+					else{
+						$scope.set('theSelectedIndex', -1);
+						$scope.theList.currentSelected = '';
+						$scope.set('theSelectedName', '');
+					}
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('theList',
             'One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen Twenty Twentyone Twentytwo Twentythree Twentyfour Twentyfive Twentysix Twentyseven Twentyeight Twentynine Thirty Thirtyone Thirtytwo Thirtythree Thirtyfour Thirtyfive Thirtysix Thirtyseven Thirtyeight Thirtynine Forty Fortyone Fortytwo Fortythree Fortyfour Fortyfive Fortysix Fortyseven Fortyeight Fortynine Fifty Fiftyone Fiftytwo Fiftythree Fiftyfour Fiftyfive Fiftysix Fiftyseven Fiftyeight Fiftynine Sixty Sixtyone Sixtytwo Sixtythree Sixtyfour Sixtyfive Sixtysix Sixtyseven Sixtyeight Sixtynine Seventy Seventyone Seventytwo Seventythree Seventyfour Seventyfive Seventysix Seventyseven Seventyeight Seventynine Eighty Eightyone Eightytwo Eightythree Eightyfour Eightyfive Eightysix Eightyseven Eightyeight Eightynine Ninety Ninetyone Ninetytwo Ninetythree Ninetyfour Ninetyfive Ninetysix Ninetyseven Ninetyeight Ninetynine',
             'The List Items',
@@ -193,106 +270,26 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
             $scope.theView.parent().draggable('option', 'cancel', '#listContainer');
         }
 
-        $scope.$watch(function(){return $scope.gimme('theList');}, function(newVal, oldVal) {
-            updateList(newVal);
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('theListType');}, function(newVal, oldVal) {
-            if(fxList != undefined){ stroll.unbind(fxList); }
-            updateList(newVal);
-            if(newVal == 6){
-                $timeout(function(){fxList = $scope.theView.parent().find("#fxList ul"); stroll.bind(fxList);});
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('theListDirection');}, function(newVal, oldVal) {
-          if(newVal == 0){
-              $scope.formProps.CBDisplayClass = 'checkbox';
-              $scope.formProps.RBDisplayClass = 'radio';
-          }
-          else if(newVal == 1){
-              $scope.formProps.CBDisplayClass = 'checkbox-inline';
-              $scope.formProps.RBDisplayClass = 'radio-inline';
-          }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('theListContainerHeight');}, function(newVal, oldVal) {
-            if(newVal != undefined){
-              var valParsed = parseInt(newVal);
-              if(!isNaN(valParsed)){
-                  $scope.formProps.listHeight = valParsed + 'px';
-                  $scope.formProps.listOverflow = 'scroll';
-              }
-              else{
-                  $scope.formProps.listHeight = 'auto';
-                  $scope.formProps.listOverflow = 'visible';
-              }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('theListItemMarkerImage');}, function(newVal, oldVal) {
-            if(newVal != undefined){
-                $scope.formProps.listItemMarkerImage = 'url(' + newVal + ')';
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.theList.currentSelected;}, function(newVal, oldVal) {
-            if(newVal != oldVal && !selectChangeBlocked){
-                selectChangeBlocked = true;
-                $timeout(function(){selectChangeBlocked = false;}, 100);
-                $scope.set('theSelectedName', newVal);
-                var count = 0;
-                for(var i = 0; i < $scope.theList.items.length; i++){
-                    if($scope.theList.items[i] == newVal){
-                        $scope.set('theSelectedIndex', i);
-                        count++;
-                    }
-                }
-                if(count > 1 || (newVal != '' && count == 0)){
-                    $scope.set('theSelectedIndex', -2);
-                }
-                if(newVal == ''){
-                    $scope.set('theSelectedIndex', -1);
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('theSelectedName');}, function(newVal, oldVal) {
-            if(newVal != oldVal && !selectChangeBlocked){
-                selectChangeBlocked = true;
-                $timeout(function(){selectChangeBlocked = false;}, 100);
-                $scope.theList.currentSelected = newVal;
-                var count = 0;
-                for(var i = 0; i < $scope.theList.items.length; i++){
-                    if($scope.theList.items[i] == newVal){
-                        $scope.set('theSelectedIndex', i);
-                        count++;
-                    }
-                }
-                if(count > 1 || (newVal != '' && count == 0)){
-                    $scope.set('theSelectedIndex', -2);
-                }
-                if(newVal == ''){
-                    $scope.set('theSelectedIndex', -1);
-                }
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('theSelectedIndex');}, function(newVal, oldVal) {
-            if(newVal != oldVal && newVal != -2 && !selectChangeBlocked){
-                selectChangeBlocked = true;
-                $timeout(function(){selectChangeBlocked = false;}, 100);
-                if(newVal < $scope.theList.items.length){
-                    $scope.theList.currentSelected = $scope.theList.items[newVal];
-                    $scope.set('theSelectedName', $scope.theList.currentSelected);
-                }
-                else{
-                    $scope.set('theSelectedIndex', -1);
-                    $scope.theList.currentSelected = '';
-                    $scope.set('theSelectedName', '');
-                }
-            }
-        }, true);
+		$scope.$watch(function(){return $scope.theList.currentSelected;}, function(newVal, oldVal) {
+			if(newVal != oldVal && !selectChangeBlocked){
+				selectChangeBlocked = true;
+				$timeout(function(){selectChangeBlocked = false;}, 100);
+				$scope.set('theSelectedName', newVal);
+				var count = 0;
+				for(var i = 0; i < $scope.theList.items.length; i++){
+					if($scope.theList.items[i] == newVal){
+						$scope.set('theSelectedIndex', i);
+						count++;
+					}
+				}
+				if(count > 1 || (newVal != '' && count == 0)){
+					$scope.set('theSelectedIndex', -2);
+				}
+				if(newVal == ''){
+					$scope.set('theSelectedIndex', -1);
+				}
+			}
+		}, true);
     };
     //===================================================================================
 

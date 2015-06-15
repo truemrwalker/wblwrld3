@@ -51,7 +51,6 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 	};
 
 
-	//TODO: fix tooltips and error messages
 	$scope.tooltip = {
 		color: gettext("The color value of the Interaction Object is static and cannot be changed"),
 		index: gettext("The index value of the Interaction Object is static and cannot be changed"),

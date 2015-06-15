@@ -304,7 +304,23 @@ ww3Services.factory('Enum', function (gettext) {
             NON_DEV_HIDDEN: 131072,             //Is not Visible unless in developer mode
             DRAG_CLONE: 262144,                 //Dragged Clone is not allowed (slot pos immediately updated)
             BUNDLE_LOCKED: 524288              //Locking and trapping a Webble from being dragged inside a bundle is not allowed
-        }
+        },
+
+		availableWWEvents: {
+			slotChanged: 0,
+			deleted: 1,
+			duplicated: 2,
+			sharedModelDuplicated: 3,
+			pasted: 4,
+			gotChild: 5,
+			peeled: 6,
+			lostChild: 7,
+			keyDown: 8,
+			loadingWbl: 9,
+			mainMenuExecuted: 10,
+			wblMenuExecuted: 11
+
+		}
     };
 });
 //=================================================================================
@@ -1090,7 +1106,9 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
                 {"sublink_itemName": "faq", "title": gettext("FAQ"), "shortcut": "(Alt+Shift+F)", "visibility_enabled": true},
                 {"sublink_itemName": "openchat", "title": gettext("Open Chat"), "shortcut": "(Alt+C)", "visibility_enabled": true},
                 {"sublink_itemName": "support", "title": gettext("Support"), "shortcut": "(Alt+H)", "visibility_enabled": true},
+				{"sublink_itemName": "community", "title": gettext("Developer Community"), "shortcut": "(Alt+Shift+C)", "visibility_enabled": true},
                 {"sublink_itemName": "devpack", "title": gettext("Download Developers Package"), "shortcut": "(Alt+G)", "visibility_enabled": true},
+				{"sublink_itemName": "git", "title": gettext("Webble Platform On GitHub"), "shortcut": "(Alt+Shift+G)", "visibility_enabled": true},
                 {"sublink_itemName": "bugreport", "title": gettext("Report Bug"), "shortcut": "(Alt+Num7)", "visibility_enabled": true},
                 {"sublink_itemName": "about", "title": gettext("About"), "shortcut": "(Alt+Num5)", "visibility_enabled": true}
             ]}

@@ -40,6 +40,41 @@ wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum, $timeou
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
 
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'rssURL'){
+				if(newVal != ''){
+					google.load('feeds', '1', {'callback':rssCall});
+				}
+			}
+			else if(eventData.slotName == 'noOfItems'){
+				if(!isNaN(newVal)){
+					google.load('feeds', '1', {'callback':rssCall});
+				}
+			}
+			else if(eventData.slotName == 'selectedItemIndex'){
+				var feedList = $scope.gimme('feedList');
+				if(newVal < feedList.length){
+					if(newVal != -1){
+						setSelectedItemValues(feedList[newVal]);
+					}
+					else{
+						setSelectedItemValues();
+					}
+
+					if($scope.formProps.thePickableItemList[newVal] != $scope.formProps.listSelectionIndex){
+						$scope.formProps.listSelectionIndex = $scope.formProps.thePickableItemList[newVal];
+					}
+				}
+				else{
+					if(isNaN(oldVal)){
+						oldVal = -1;
+					}
+					$scope.set('selectedItemIndex', oldVal)
+				}
+			}
+		});
+
         $scope.addSlot(new Slot('rssURL',
             'http://rss.cnn.com/rss/edition.rss',
             'RSS URL',
@@ -185,43 +220,7 @@ wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum, $timeou
         ));
         $scope.getSlot('selectedItemImage').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
-
         $scope.setDefaultSlot('rssURL');
-
-
-        $scope.$watch(function(){return $scope.gimme('rssURL');}, function(newVal, oldVal) {
-              if(newVal != ''){
-                 google.load('feeds', '1', {'callback':rssCall});
-              }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('noOfItems');}, function(newVal, oldVal) {
-            if(!isNaN(newVal)){
-                google.load('feeds', '1', {'callback':rssCall});
-            }
-        }, true);
-
-        $scope.$watch(function(){return $scope.gimme('selectedItemIndex');}, function(newVal, oldVal) {
-            var feedList = $scope.gimme('feedList');
-            if(newVal < feedList.length){
-              if(newVal != -1){
-                  setSelectedItemValues(feedList[newVal]);
-              }
-              else{
-                  setSelectedItemValues();
-              }
-
-              if($scope.formProps.thePickableItemList[newVal] != $scope.formProps.listSelectionIndex){
-                  $scope.formProps.listSelectionIndex = $scope.formProps.thePickableItemList[newVal];
-              }
-            }
-            else{
-              if(isNaN(oldVal)){
-                oldVal = -1;
-              }
-              $scope.set('selectedItemIndex', oldVal)
-            }
-        }, true);
 
         $scope.$watch(function(){return $scope.formProps.listSelectionIndex;}, function(newVal, oldVal) {
             var currIndex = parseInt($scope.gimme('selectedItemIndex'));

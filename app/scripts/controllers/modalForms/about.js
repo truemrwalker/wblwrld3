@@ -38,7 +38,7 @@
 ww3Controllers.controller('AboutSheetCtrl', function ($scope, $modalInstance, $log) {
 
     //=== PROPERTIES ================================================================
-    $scope.version = '3.0.10';
+    $scope.version = '3.1.0';
 
 
 
