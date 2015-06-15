@@ -202,11 +202,11 @@
                 <thead>
                     <tr>
                         <td>
-                            <div ng-show="!currFileDirty"  class="btn-group" dropdown is-open="isNewFileDropDownOpen">
-                                <button class="btn btn-success btn-xs dropdown-toggle"><span translate>New File</span> <span class="caret"></span></button>
+                            <div ng-show="!currFileDirty"  class="btn-group dropdown" dropdown is-open="isNewFileDropDownOpen">
+                                <a href class="btn btn-success btn-xs dropdown-toggle" dropdown-toggle><span translate>New File</span> <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li ng-repeat="f in newTemplateFiles | filter:missingFile" tooltip="{{f.help}}" tooltip-placement="right">
-                                        <a ng-click="isNewFileDropDownOpen = false || createFile(f.name)">{{f.name}}</a>
+                                        <a ng-click="isNewFileDropDownOpen = createFile(f.name)">{{f.name}}</a>
                                     </li>
                                 </ul>
                             </div>
