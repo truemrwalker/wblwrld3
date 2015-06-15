@@ -893,10 +893,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         $scope.$watch(function(){ return (currWS_ ? currWS_.name : ''); }, function(newValue, oldValue) {
             if(newValue != oldValue){
                 if(newValue != ''){
-                    $rootScope.pageTitle = newValue + gettext(" in Webble World 3.0");
+                    $rootScope.pageTitle = newValue + gettext(" in Webble World 3.1");
                 }
                 else{
-                    $rootScope.pageTitle = gettext("Webble World 3.0 - Where memes comes alive");
+                    $rootScope.pageTitle = gettext("Webble World 3.1 - Where memes comes alive");
                 }
             }
         });
