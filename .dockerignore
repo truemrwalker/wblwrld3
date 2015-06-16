@@ -1,6 +1,6 @@
-Dockerfile
 node_modules
 dist
+test
 .tmp
 .sass-cache
 app/bower_components

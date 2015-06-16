@@ -7,3 +7,4 @@ app/devwebbles
 .idea
 .DS_Store
 *.log
+/Dockerfile
