@@ -6,7 +6,7 @@
         // Webble World
         // [IntelligentPad system for the web]
         // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-        // v3.0 (2013)
+        // v3.0 (2013), v3.1(2015)
         //
         // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
         // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -102,7 +102,7 @@
         <script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
 
         <!-- AngularJS - MAIN -->
-        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
 
 
         <!-- build:js scripts/modules.js -->
@@ -269,7 +269,7 @@
 
                 <!--Right side info of current language and weather logging is enabled-->
                 <ul class="nav navbar-nav navbar-right disable-select">
-                    <li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}" translate>{{getCurrentLanguage() | nativeName}}</a></li>
+                    <li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}">{{getCurrentLanguage() | nativeName}}</a></li>
                 </ul>
 
                 <!--User login-->

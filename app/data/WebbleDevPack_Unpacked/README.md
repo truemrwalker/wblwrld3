@@ -3,7 +3,7 @@ Like ReadMe.txt but a little bit better
 
 Dear Webble Developer,
 
-Welcome to Webble World 3.1. We invite you to start developing your own Webble Templates and upload them to the Online
+Welcome to current version of Webble World 3. We invite you to start developing your own Webble Templates and upload them to the Online
 Webble repository for the world to share.
 
 In the files provided you will find the necessary information (as comments and TODO's) that you need to build your
@@ -359,7 +359,7 @@ system and specific Webbles:
     // Execute Menu Selection, executes the correct action, based on menu or shortcut selection.
     // For more details of avialable selections please see SERVICES menuItemsFactoryService, where the itemnames are
     // used as a sublink call. Additionally exists short cut keys outside the menu, which can be examined in the
-    // Webble World 3.1 Platform by pressing Alt+F1.
+    // Webble World 3 Platform by pressing Alt+F1.
     $scope.executeMenuSelection(sublink, whatKeys);
 
     // Fast access to filter that lets you write dynamic string outputs in an efficient way.

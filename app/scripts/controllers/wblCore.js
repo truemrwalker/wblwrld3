@@ -2,7 +2,7 @@
 // Webble World
 // [IntelligentPad system for the web]
 // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-// v3.0 (2013)
+// v3.0 (2013), v3.1(2015)
 //
 // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
 // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -1677,18 +1677,16 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         // If no parent is assigned yet...
 		if(localStorageService.get('TutInfoAssignParent') == undefined &&  (parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.PopupInfoEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.PopupInfoEnabled, 10)){
 			localStorageService.add('TutInfoAssignParent', true);
-			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Assign Parent'), size: 'lg', content:
+			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Assign Parent"), size: 'lg', content:
 			'<p>' +
-				'The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be &nbsp;' +
-				'able to become a possible parent gets a light blue glowing border. After the user have &nbsp;' +
-				'selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red. &nbsp;' +
-				'This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball. &nbsp;' +
+				gettext("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
+				gettext("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
+				gettext("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
 			'</p>' +
 			'<p>' +
-				'Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we <strong>highly recommend </strong> &nbsp;' +
-				'that beginners of Webble World instead stack children on top of parents as shown in the second image, This way you get a much better overview &nbsp;' +
-				'which is parent to which. Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication &nbsp;' +
-				'but that is totally okay, and as we said, even recommended.' +
+				gettext("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettext("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
+				gettext("This way you get a much better overview which is parent to which.") + "&nbsp;" +
+				gettext("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
 			'</p>' +
 			'<div style="display: block; margin-left: auto; margin-right: auto; width: 640px;">' +
 				'<img src="../../images/tutorInfo/parentChildConn.png" style="display: block; margin-right: 20px; width: 300px; float: left" />' +
@@ -1703,7 +1701,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     };
     //========================================================================================
 
-
+	                /**/
     //========================================================================================
     // Get Instance Name
     // This method gets this webbles display name.

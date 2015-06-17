@@ -2,7 +2,7 @@
 // Webble World
 // [IntelligentPad system for the web]
 // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-// v3.0 (2013)
+// v3.0 (2013), v3.1(2015)
 //
 // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
 // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -165,7 +165,7 @@ ww3Controllers.controller('protectSheetCtrl', function ($scope, $modalInstance, 
     ];
 
     // Form validation error message
-    $scope.errorMsg = gettext('NOTE: Multiple Webble setting available, meaning that if any Webbles are selected (border highlighted), those will also be effected by the settings done here.');
+    $scope.errorMsg = gettext("NOTE: Multiple Webble setting available, meaning that if any Webbles are selected (border highlighted), those will also be effected by the settings done here.");
 
 
     //=== EVENT HANDLERS =====================================================================

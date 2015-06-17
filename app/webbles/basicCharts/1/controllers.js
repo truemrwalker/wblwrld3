@@ -104,8 +104,8 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
 
         $scope.addSlot(new Slot('dataObject',
             exampleDataBarLike,
-            gettext('Data'),
-            gettext('The json data that is used to draw this chart'),
+            gettext("Data"),
+            gettext("The json data that is used to draw this chart"),
             $scope.theWblMetadata['templateid'],
             {inputType: Enum.aopInputTypes.TextArea},
             undefined
@@ -113,8 +113,8 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
 
         $scope.addSlot(new Slot('chartType',
             0,
-            gettext('Chart Type'),
-            gettext('The chart type, such as bar, line pie etc'),
+            gettext("Chart Type"),
+            gettext("The chart type, such as bar, line pie etc"),
             $scope.theWblMetadata['templateid'],
             {inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ['Line', 'Bar', 'Radar', 'Polar', 'Pie', 'Doughnut']},
             undefined
@@ -122,8 +122,8 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
 
         $scope.addSlot(new Slot('chartWidth',
             $scope.canvasSize.width,
-            gettext('Chart Width'),
-            gettext('The chart width'),
+            gettext("Chart Width"),
+            gettext("The chart width"),
             $scope.theWblMetadata['templateid'],
             undefined,
             $scope.theView.parent().find("#theChart")
@@ -131,8 +131,8 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
 
         $scope.addSlot(new Slot('chartHeight',
             $scope.canvasSize.height,
-            gettext('Chart Heigh'),
-            gettext('The chart height'),
+            gettext("Chart Heigh"),
+            gettext("The chart height"),
             $scope.theWblMetadata['templateid'],
             undefined,
             $scope.theView.parent().find("#theChart")
