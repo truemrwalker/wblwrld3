@@ -306,7 +306,7 @@ function($window, $location, $rootScope, gettextCatalog, gettext) {
     gettextCatalog.currentLanguage = $window.navigator.userLanguage || $window.navigator.language || 'en';
     gettextCatalog.debug = false;
 
-    $rootScope.pageTitle = gettext("Webble World 3.0 - Where memes comes alive");
+    $rootScope.pageTitle = "Webble World 3.1 - " + gettext("Where memes comes alive");
 
 	// Allow for more generic controllers that can either be used as routes OR as modals
 	//

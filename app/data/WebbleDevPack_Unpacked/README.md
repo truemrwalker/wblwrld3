@@ -359,7 +359,7 @@ system and specific Webbles:
     // Execute Menu Selection, executes the correct action, based on menu or shortcut selection.
     // For more details of avialable selections please see SERVICES menuItemsFactoryService, where the itemnames are
     // used as a sublink call. Additionally exists short cut keys outside the menu, which can be examined in the
-    // Webble World 3.0 Platform by pressing Alt+F1.
+    // Webble World 3.1 Platform by pressing Alt+F1.
     $scope.executeMenuSelection(sublink, whatKeys);
 
     // Fast access to filter that lets you write dynamic string outputs in an efficient way.
