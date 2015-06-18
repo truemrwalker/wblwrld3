@@ -54,7 +54,7 @@ wblwrld3App.directive('winWblReSizing', function($log) {
 // This directive is specified to create event handlers for the mouse in order to let us
 // resize the width and height of the Webble.
 //=======================================================================================
-wblwrld3App.directive('childGrabbing', function($log, $timeout) {
+wblwrld3App.directive('childGrabbing', function($log, $timeout, Enum, bitflags) {
     return {
         restrict:'AC',
         link: function(scope, element, attrs) {
@@ -63,8 +63,14 @@ wblwrld3App.directive('childGrabbing', function($log, $timeout) {
                 accept: ".webble",
                 drop: function( event, ui ) {
                     if(scope.gimme('grabDropped')){
-						ui.draggable.scope().wblStateFlags.pasteByUser = true; ui.draggable.scope().paste(scope.theView);
-                        //$timeout(function(){ }, 200);
+						var draggedWblId = ui.draggable.scope().getInstanceId();
+						//var wbl = scope.getWebbleByInstanceId(draggedWblId);
+						//wbl.scope().wblStateFlags.pasteByUser = true;
+						//wbl.scope().paste(scope.theView);
+
+						//ui.draggable.scope().wblStateFlags.pasteByUser = true;
+						//ui.draggable.scope().paste(scope.theView);
+                        $timeout(function(){ var wbl = scope.getWebbleByInstanceId(draggedWblId); wbl.scope().wblStateFlags.pasteByUser = true; wbl.scope().paste(scope.theView);});
                     }
                 }
             });
