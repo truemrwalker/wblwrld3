@@ -63,7 +63,8 @@ wblwrld3App.directive('childGrabbing', function($log, $timeout) {
                 accept: ".webble",
                 drop: function( event, ui ) {
                     if(scope.gimme('grabDropped')){
-                        $timeout(function(){ ui.draggable.scope().wblStateFlags.pasteByUser = true; ui.draggable.scope().paste(scope.theView);}, 200);
+						ui.draggable.scope().wblStateFlags.pasteByUser = true; ui.draggable.scope().paste(scope.theView);
+                        //$timeout(function(){ }, 200);
                     }
                 }
             });
