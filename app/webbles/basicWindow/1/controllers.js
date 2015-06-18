@@ -383,9 +383,8 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
                 }
             }
         }
-        if(!parent){
-            $scope.requestDeleteWebble(thisChild);
-        }
+		var cId = thisChild.scope().getInstanceId();
+		$timeout(function(){ if(!parent){ $scope.requestDeleteWebble($scope.getWebbleByInstanceId((cId))); } });
     };
     //===================================================================================
 

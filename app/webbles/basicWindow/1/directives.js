@@ -58,19 +58,12 @@ wblwrld3App.directive('childGrabbing', function($log, $timeout, Enum, bitflags) 
     return {
         restrict:'AC',
         link: function(scope, element, attrs) {
-
             element.droppable({
                 accept: ".webble",
                 drop: function( event, ui ) {
                     if(scope.gimme('grabDropped')){
 						var draggedWblId = ui.draggable.scope().getInstanceId();
-						//var wbl = scope.getWebbleByInstanceId(draggedWblId);
-						//wbl.scope().wblStateFlags.pasteByUser = true;
-						//wbl.scope().paste(scope.theView);
-
-						//ui.draggable.scope().wblStateFlags.pasteByUser = true;
-						//ui.draggable.scope().paste(scope.theView);
-                        $timeout(function(){ var wbl = scope.getWebbleByInstanceId(draggedWblId); wbl.scope().wblStateFlags.pasteByUser = true; wbl.scope().paste(scope.theView);});
+						$timeout(function(){ var wbl = scope.getWebbleByInstanceId(draggedWblId); wbl.scope().wblStateFlags.pasteByUser = true; wbl.scope().paste(scope.theView);});
                     }
                 }
             });
