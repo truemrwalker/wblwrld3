@@ -3428,8 +3428,8 @@ msgid ""
 "child and all other Webbles that might be able to become a possible parent "
 "gets a light blue glowing border."
 msgstr ""
-"Mål Webblen får en guldlysand bård som indikerar att detta är ett framtida "
-"barn medan alla andra Webblar som kan bli förälder får en lysande ljusblå "
+"Mål-Webblen får en guld-lysande bård som indikerar att detta är ett framtida "
+"barn medan alla andra Webblar som kan bli förälder får en ljusblå-lysande "
 "bård."
 
 #: app/scripts/directives/directives.js:433

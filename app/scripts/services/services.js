@@ -368,6 +368,7 @@ ww3Services.factory('wwConsts', ['colorService', function(colorService) {
             {code: "sv", NativeName: "Svenska", EnglishName: "Swedish", ChangeStr: "Ändra Språk"},
             {code: "ja", NativeName: "日本語", EnglishName: "Japanese", ChangeStr: "言語を変更する"},
             {code: "de", NativeName: "Deutsch", EnglishName: "German", ChangeStr: "Sprache ändern"},
+			{code: "fi", NativeName: "Suomalainen", EnglishName: "Finnish", ChangeStr: "Muuta kieli"},
             {code: "fr", NativeName: "Français", EnglishName: "French", ChangeStr: "Changer de langue"},
             {code: "ru", NativeName: "русский", EnglishName: "Russian", ChangeStr: "Изменить язык"},
             {code: "he", NativeName: "עברית", EnglishName: "Hebrew", ChangeStr: "שנה שפה"},

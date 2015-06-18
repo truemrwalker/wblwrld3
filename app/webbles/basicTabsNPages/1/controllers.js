@@ -35,6 +35,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
     var isInit = true; //if the webble are still initiating
     var doNotBother = false; //if the webble should not react on slot change
     var isMoving = false;
+	var isRedrawing = false;
 
     $scope.whatElementIsAsking = {
       tabsContent: 0,
@@ -197,7 +198,6 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
           childContainersMemory = theInitWblDef.private.childContainers;
           childPosMemory = theInitWblDef.private.childPos;
         }
-
 
         // --- SLOTS ---
 
@@ -418,157 +418,125 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		));
 
 
-		// --- WATCHES ---
 
-		// listen to page type display style
-		$scope.$watch(function(){return $scope.gimme('tabDisplayStyle');}, function(newVal, oldVal) {
-			var whatStyle = parseInt(newVal);
-			if(!isNaN(whatStyle)){
-				configureTabs($scope.gimme('noOfTabs'));
+		// --- EVENT LISTENERS ---
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'tabDisplayStyle' || eventData.slotName == 'noOfTabs' || eventData.slotName == 'closedTabBackgroundColor' || eventData.slotName == 'openTabBackgroundColor' || eventData.slotName == 'tabPadding' || eventData.slotName == 'tabTextColor' || eventData.slotName == 'tabText_font-family' || eventData.slotName == 'tabTextFontSize' || eventData.slotName == 'tabTextFontWeight'){
+				var whatStyle = parseInt(newVal);
+				if(!isInit && !isNaN(whatStyle) && !isRedrawing){
+					$timeout(function(){configureTabs($scope.gimme('noOfTabs'));});
+					//configureTabs($scope.gimme('noOfTabs'));
+				}
 			}
-		}, true);
-
-		// listen to number of tabs/pages
-		$scope.$watch(function(){return $scope.gimme('noOfTabs');}, function(newVal, oldVal) {
-			var noOfPages = parseInt(newVal);
-			if(!isNaN(noOfPages)){
-				configureTabs(noOfPages);
-			}
-		}, true);
-
-		// listen to selected current tab
-		$scope.$watch(function(){return $scope.gimme('currentSelectedTab');}, function(newVal, oldVal) {
-			var currentPage = parseInt(newVal);
-			if(!isInit && currentPage > 0){
-				if($scope.gimme('tabDisplayStyle') == 0){
-					if(tnpTabs_a && currentPage <= tnpTabs_a.length){
-						activateTabAndContent(newVal);
+			else if(eventData.slotName == 'currentSelectedTab'){
+				var currentPage = parseInt(newVal);
+				if(!isInit && currentPage > 0){
+					if($scope.gimme('tabDisplayStyle') == 0){
+						if(tnpTabs_a && currentPage <= tnpTabs_a.length){
+							activateTabAndContent(newVal);
+						}
+						else{
+							if(tnpTabs_a && tnpTabs_a.length > 0){
+								$scope.set('currentSelectedTab', parseInt(tnpTabs.find('[class=tnpCurrent]').find('a').attr('name').replace('tab', '')));
+							}
+							else{
+								$scope.set('currentSelectedTab', 0);
+							}
+						}
 					}
 					else{
+						if(tnpPages && currentPage <= tnpPages.length){
+							$timeout(function(){activateTabAndContent($scope.gimme('currentSelectedTab'))});
+						}
+						else{
+							if(tnpPages && tnpPages.length > 0){
+								$scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
+							}
+							else{
+								$scope.set('currentSelectedTab', 0);
+							}
+						}
+					}
+				}
+			}
+			else if(eventData.slotName == 'tabNames'){
+				if(!doNotBother){
+					configureTabNames();
+				}
+				doNotBother = false;
+			}
+			else if(eventData.slotName == 'tabBkgColorList'){
+				if(!doNotBother){
+					configureTabColors();
+				}
+				doNotBother = false;
+			}
+			else if(eventData.slotName == 'bookPadding' || eventData.slotName == 'bookBorderWidth'){
+				if(!isInit){
+					if($scope.gimme('tabDisplayStyle') == 1){
+						adjustBookProportions();
+					}
+				}
+			}
+			else if(eventData.slotName == 'book:border-color'){
+				if(!isInit){
+					if($scope.gimme('tabDisplayStyle') == 1){
+						$scope.theView.parent().find('#theBook').css("border-color", eventData.slotValue);
+					}
+				}
+			}
+			else if(eventData.slotName == 'pageBorderWidth' || eventData.slotName == 'pageBorderColor' || eventData.slotName == 'pageBkgColor' || eventData.slotName == 'pageBkgImage' || eventData.slotName == 'pageBkgImageStretchEnabled' || eventData.slotName == ''){
+				if(!isInit){
+					if($scope.gimme('tabDisplayStyle') == 1){
+						tnpPages.each(function(index) {
+							$(this).css("border-width", parseInt($scope.gimme('pageBorderWidth')) + "px");
+							$(this).css("border-color", $scope.gimme('pageBorderColor'));
+							$(this).css("background-color", $scope.gimme('pageBkgColor'));
+							var pageBkgImage = $scope.gimme('pageBkgImage');
+							$(this).css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+							if($scope.gimme('pageBkgImageStretchEnabled')){
+								$(this).css("background-size", '100% 100%');
+								$(this).css("background-repeat", 'no-repeat');
+							}
+							else{
+								$(this).css("background-size", 'auto auto');
+								$(this).css("background-repeat", 'repeat');
+							}
+						});
+					}
+				}
+			}
+			else if(eventData.slotName == 'bookBkgImage' || eventData.slotName == 'bookBinderEnabled'){
+				if(!isInit){
+					if($scope.gimme('tabDisplayStyle') == 1){
+						var bookBkgImage = $scope.gimme('bookBkgImage');
+						$scope.theView.parent().find('#theBook').css("background-image", bookBkgImage != "" ? "url(" + bookBkgImage + ")" : "");
+						$scope.theView.parent().find('#theBinder').css("display", $scope.gimme('bookBinderEnabled') == true ? "initial" : "none");
+					}
+				}
+			}
+			else if(eventData.slotName == 'tabsContent:height'){
+				if(!isInit){
+					var h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
+					if(!isNaN(h)){
+						setTNPHolderHeight(h);
+						var p1 = parseInt(tnpHolder.css('padding-top')) * 2;
+						var p2 = 0;
 						if(tnpTabs_a && tnpTabs_a.length > 0){
-							$scope.set('currentSelectedTab', parseInt(tnpTabs.find('[class=tnpCurrent]').find('a').attr('name').replace('tab', '')));
+							p2 = (parseInt(tnpTabs_a.css('padding-top')) * 2) + parseInt(tnpTabs_a.css('line-height'));
 						}
-						else{
-							$scope.set('currentSelectedTab', 0);
-						}
-					}
-				}
-				else{
-					if(tnpPages && currentPage <= tnpPages.length){
-						$timeout(function(){activateTabAndContent($scope.gimme('currentSelectedTab'))});
-					}
-					else{
-						if(tnpPages && tnpPages.length > 0){
-							$scope.set('currentSelectedTab', parseInt(currentCCId.replace('flipPage', '')));
-						}
-						else{
-							$scope.set('currentSelectedTab', 0);
+						tnpHolder.css('height', (h + p1 + p2) + 'px');
+
+						//Book related
+						if($scope.gimme('tabDisplayStyle') == 1){
+							adjustBookProportions();
 						}
 					}
 				}
 			}
-		}, true);
-
-		// listen to names of the tabs
-		$scope.$watch(function(){return $scope.gimme('tabNames');}, function(newVal, oldVal) {
-			if(!doNotBother){
-				configureTabNames();
-			}
-			doNotBother = false;
-		}, true);
-
-		// listen to unique background colors of the tabs
-		$scope.$watch(function(){return $scope.gimme('tabBkgColorList');}, function(newVal, oldVal) {
-			if(!doNotBother){
-				configureTabColors();
-			}
-			doNotBother = false;
-		}, true);
-
-		// listen to a set of decoration slots for tabs
-		$scope.$watch(function(){return [$scope.gimme('closedTabBackgroundColor'), $scope.gimme('openTabBackgroundColor'), $scope.gimme('tabPadding'), $scope.gimme('tabTextColor'), $scope.gimme('tabText_font-family'), $scope.gimme('tabTextFontSize'), $scope.gimme('tabTextFontWeight')];}, function(newVal, oldVal) {
-			if(!isInit && newVal[0] != undefined){
-				if($scope.gimme('tabDisplayStyle') == 0){
-					configureTabs($scope.gimme('noOfTabs'));
-				}
-			}
-		}, true);
-
-		// listen to book proportions slots
-		$scope.$watch(function(){return [$scope.gimme('bookPadding'), $scope.gimme('bookBorderWidth')];}, function(newVal, oldVal) {
-			if(!isInit && newVal[0] != undefined){
-				if($scope.gimme('tabDisplayStyle') == 1){
-					adjustBookProportions();
-				}
-			}
-		}, true);
-
-		// listen to page design slots
-		$scope.$watch(function(){return [$scope.gimme('pageBorderWidth'), $scope.gimme('pageBorderColor'), $scope.gimme('pageBkgColor'), $scope.gimme('pageBkgImage'), $scope.gimme('pageBkgImageStretchEnabled')];}, function(newVal, oldVal) {
-			if(!isInit && newVal[0] != undefined){
-				if($scope.gimme('tabDisplayStyle') == 1){
-					tnpPages.each(function(index) {
-						$(this).css("border-width", parseInt($scope.gimme('pageBorderWidth')) + "px");
-						$(this).css("border-color", $scope.gimme('pageBorderColor'));
-						$(this).css("background-color", $scope.gimme('pageBkgColor'));
-						var pageBkgImage = $scope.gimme('pageBkgImage');
-						$(this).css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
-						if($scope.gimme('pageBkgImageStretchEnabled')){
-							$(this).css("background-size", '100% 100%');
-							$(this).css("background-repeat", 'no-repeat');
-						}
-						else{
-							$(this).css("background-size", 'auto auto');
-							$(this).css("background-repeat", 'repeat');
-						}
-					});
-				}
-			}
-		}, true);
-
-		// listen to book design slots
-		$scope.$watch(function(){return [$scope.gimme('bookBkgImage'), $scope.gimme('bookBinderEnabled')];}, function(newVal, oldVal) {
-			if(!isInit && newVal[0] != undefined){
-				if($scope.gimme('tabDisplayStyle') == 1){
-					var bookBkgImage = $scope.gimme('bookBkgImage');
-					$scope.theView.parent().find('#theBook').css("background-image", bookBkgImage != "" ? "url(" + bookBkgImage + ")" : "");
-					$scope.theView.parent().find('#theBinder').css("display", $scope.gimme('bookBinderEnabled') == true ? "initial" : "none");
-				}
-			}
-		}, true);
-
-		// Make sure the Surrounding Holder has the proper height depending on the height of the content area
-		$scope.$watch(function(){return $scope.gimme('tabsContent:height');}, function(newVal, oldVal) {
-			h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
-			if(!isNaN(h)){
-				setTNPHolderHeight(h);
-				var p1 = parseInt(tnpHolder.css('padding-top')) * 2;
-				var p2 = 0;
-				if(tnpTabs_a && tnpTabs_a.length > 0){
-					p2 = (parseInt(tnpTabs_a.css('padding-top')) * 2) + parseInt(tnpTabs_a.css('line-height'));
-				}
-				tnpHolder.css('height', (h + p1 + p2) + 'px');
-
-				//Book related
-				if($scope.gimme('tabDisplayStyle') == 1){
-					adjustBookProportions();
-				}
-			}
-		}, true);
-
-		// Make sure the Surrounding Holder has the proper width depending on the width of the content area
-		$scope.$watch(function(){return $scope.gimme('tabsContent:width');}, function(newVal, oldVal) {
-			var w = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
-			if(!isNaN(w)){
-				var p = parseInt(tnpHolder.css('padding-left')) * 2;
-				tnpHolder.css('width', (w + p) + 'px');
-
-				//Book related
-				if($scope.gimme('tabDisplayStyle') == 1){
-					adjustBookProportions();
-				}
-			}
-		}, true);
+		});
 
 		// Remember which child goes in what container
 		$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){
@@ -601,6 +569,23 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 				}
 			}
 		}, null);
+
+
+		// --- WATCHES ---
+
+		//Make sure the Surrounding Holder has the proper width depending on the width of the content area
+		$scope.$watch(function(){return $scope.gimme('tabsContent:width');}, function(newVal, oldVal) {
+			var w = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).width() : parseInt(newVal);
+			if(!isNaN(w)){
+				var p = parseInt(tnpHolder.css('padding-left')) * 2;
+				tnpHolder.css('width', (w + p) + 'px');
+
+				//Book related
+				if($scope.gimme('tabDisplayStyle') == 1){
+					adjustBookProportions();
+				}
+			}
+		}, true);
 
         // Finalize the initiation
         finalInitiation();
@@ -679,6 +664,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
     // requested
     //===================================================================================
     var configureTabs = function(noOfTabs){
+		isRedrawing = true;
         if(noOfTabs == 0 && $scope.getChildren().length > 0){
             cutOffAllChildren();
         }
@@ -919,6 +905,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
                 $scope.set('tabsContent:height', (parseFloat($scope.gimme('tabsContent:height'))+0.001) + currUnit);
             }
         }
+		isRedrawing = false;
     };
     //===================================================================================
 
@@ -1124,11 +1111,14 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
                     var cst = parseInt($scope.gimme('currentSelectedTab'));
                     if(cst > 0 && cst <= tnpPages.length){ $timeout(function(){activateTabAndContent($scope.gimme('currentSelectedTab'))}); }
                     else{ $scope.set('currentSelectedTab', 1); }
+
+					configureTabs($scope.gimme('noOfTabs'));
                 }
             }, true);
         }
         else {
             isInit = false;
+			configureTabs($scope.gimme('noOfTabs'));
         }
     };
     //===================================================================================

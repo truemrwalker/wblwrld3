@@ -35,7 +35,7 @@
 // WEBBLE CORE CONTROLLER
 // This is the controller for the core of a webble
 //====================================================================================================================
-ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy) {
+ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, gettextCatalog, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy) {
 
     //=== WEBBLE CORE PROPERTIES ================================================================
     // Unique instance Id
@@ -1679,14 +1679,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			localStorageService.add('TutInfoAssignParent', true);
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Assign Parent"), size: 'lg', content:
 			'<p>' +
-				gettext("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
-				gettext("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
-				gettext("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
+				gettextCatalog.getString("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
+				gettextCatalog.getString("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
+				gettextCatalog.getString("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
 			'</p>' +
 			'<p>' +
-				gettext("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettext("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
-				gettext("This way you get a much better overview which is parent to which.") + "&nbsp;" +
-				gettext("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
+				gettextCatalog.getString("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettextCatalog.getString("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
+				gettextCatalog.getString("This way you get a much better overview which is parent to which.") + "&nbsp;" +
+				gettextCatalog.getString("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
 			'</p>' +
 			'<div style="display: block; margin-left: auto; margin-right: auto; width: 640px;">' +
 				'<img src="../../images/tutorInfo/parentChildConn.png" style="display: block; margin-right: 20px; width: 300px; float: left" />' +

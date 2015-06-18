@@ -76,8 +76,8 @@ border-radius: 0 5px 0 0;
 
 .tabsContent {
   background: #f9ffd7;
-  width: 600px;
-  height: 400px;
+  width: 400px;
+  height: 300px;
   position: absolute;
   z-index: 2;
   border-radius: 0 5px 5px 5px;

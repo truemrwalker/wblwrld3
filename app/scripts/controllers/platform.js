@@ -768,31 +768,31 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
 			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
 				localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
-				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Important News") + '!!! ' + postedDate + ' ' + gettext("Displayed") + ' ' + (readTimes + 1) + ' ' + gettext("of") + ' 3 ' + gettext("times"), size: 'lg', content:
-				'<h2>' + gettext("For Webble Template Developer") + '</h2>' +
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettextCatalog.getString("Important News") + '!!! ' + postedDate + ' ' + gettextCatalog.getString("Displayed") + ' ' + (readTimes + 1) + ' ' + gettextCatalog.getString("of") + ' 3 ' + gettextCatalog.getString("times"), size: 'lg', content:
+				'<h2>' + gettextCatalog.getString("For Webble Template Developer") + '</h2>' +
 				'<p>' +
-					gettext("The latest major Webble world system update also included updating AngularJS framework to 1.3.") + '&nbsp;' +
-					gettext("These changes includes a change of how to declare the Webble controller function (not as a global function anymore, but registered with the Webble World App).") + '&nbsp;' +
-					gettext("This means that all Webbles you have made before this change (published and unpublished) are no longer working properly.") + '&nbsp;' +
-					'</br></br><strong>' + gettext("But it is relatively easy to fix.") + '</strong>&nbsp;' +
-					gettext("Open your Webbles controller file and change the controller declaration line from...") + '&nbsp;' +
-					'</br></br><strong>' + gettext("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
-					'</br>' + gettext("to...") + '&nbsp;' +
-					'</br><strong>' + gettext("AFTER:") + '</strong> <span style="font-family: courier, monospace;">wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;</br></br>' +
-					gettext("Be aware that the controller name is now a string and that the function parameters are just examples and may differ in your Webble (except $scope).") + '&nbsp;</br>' +
-					gettext("You must also change the last line of the function in order to close it properly, from a single curly parenthesis...") + '&nbsp;' +
-					'</br></br><strong>' + gettext("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">} </span>&nbsp;' +
-					'</br>' + gettext("to the following...") + ' &nbsp;' +
-					'</br><strong>' + gettext("AFTER:") + '</strong> <span style="font-family: courier, monospace;">}); </span>&nbsp;</br></br>' +
-					gettext("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
-					gettext("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
-					gettext("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
-					'</br><i>' + gettext("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;</br></br>' +
-					gettext("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
-					gettext("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
+					gettextCatalog.getString("The latest major Webble world system update also included updating AngularJS framework to 1.3.") + '&nbsp;' +
+					gettextCatalog.getString("These changes includes a change of how to declare the Webble controller function (not as a global function anymore, but registered with the Webble World App).") + '&nbsp;' +
+					gettextCatalog.getString("This means that all Webbles you have made before this change (published and unpublished) are no longer working properly.") + '&nbsp;' +
+					'</br></br><strong>' + gettextCatalog.getString("But it is relatively easy to fix.") + '</strong>&nbsp;' +
+					gettextCatalog.getString("Open your Webbles controller file and change the controller declaration line from...") + '&nbsp;' +
+					'</br></br><strong>' + gettextCatalog.getString("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
+					'</br>' + gettextCatalog.getString("to...") + '&nbsp;' +
+					'</br><strong>' + gettextCatalog.getString("AFTER:") + '</strong> <span style="font-family: courier, monospace;">wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;</br></br>' +
+					gettextCatalog.getString("Be aware that the controller name is now a string and that the function parameters are just examples and may differ in your Webble (except $scope).") + '&nbsp;</br>' +
+					gettextCatalog.getString("You must also change the last line of the function in order to close it properly, from a single curly parenthesis...") + '&nbsp;' +
+					'</br></br><strong>' + gettextCatalog.getString("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">} </span>&nbsp;' +
+					'</br>' + gettextCatalog.getString("to the following...") + ' &nbsp;' +
+					'</br><strong>' + gettextCatalog.getString("AFTER:") + '</strong> <span style="font-family: courier, monospace;">}); </span>&nbsp;</br></br>' +
+					gettextCatalog.getString("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
+					gettextCatalog.getString("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
+					gettextCatalog.getString("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
+					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;</br></br>' +
+					gettextCatalog.getString("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
+					gettextCatalog.getString("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
 				'</p>' +
 				'<p>' +
-					'<i><strong>~' + gettext("Webble World Development Team, Hokkaido University") + '~</strong></i>' +
+					'<i><strong>~' + gettextCatalog.getString("Webble World Development Team, Hokkaido University") + '~</strong></i>' +
 				'</p>'
 				});
 			}
@@ -3466,18 +3466,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         //==== NON-MENU KEYBOARD ============================
         if (sublink == 'altf1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1')){
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Non-Menu Shortcut Keys"), content:
-					'<strong>Alt+F1</strong>:' + gettext("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
-					'<strong>Alt+F2</strong>:' + gettext("Toggle Main menu visibility.") + '<br>' +
-					'<strong>Alt+F3</strong>:' + gettext("Toggle Console Debug Logging.") + '<br>' +
-					'<strong>F4 (Alt+F4)</strong>:' + gettext("Change Platform Language") + '<br>' +
-					'<strong>Alt+F5</strong>:' + gettext("Quick Save Current Desktop.") + '<br>' +
-					'<strong>Alt+F6</strong>:' + gettext("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
-					'<strong>F8 (Alt+F8)</strong>:' + gettext("Quick Load A Fundamental Webble.") + '<br>' +
-					'<strong>F9 (Alt+F9)</strong>:' + gettext("Quick Toggles between System Language and English.") + '<br>' +
-					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettext("Reset Webble World Intro to first time visitor mode.") + '<br>' +
-					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettext("Clear all Webble world cookies and local storage user data.") + '<br>' +
-					'<strong>Esc</strong>:' + gettext("Cancel what is currently going on (e.g. Close form).") + '<br>' +
-					'<strong>Arrow Keys</strong>:' + gettext("Move current selected Webble in that directiont.") + '<br>'}
+					'<strong>Alt+F1</strong>:' + gettextCatalog.getString("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
+					'<strong>Alt+F2</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
+					'<strong>Alt+F3</strong>:' + gettextCatalog.getString("Toggle Console Debug Logging.") + '<br>' +
+					'<strong>F4 (Alt+F4)</strong>:' + gettextCatalog.getString("Change Platform Language") + '<br>' +
+					'<strong>Alt+F5</strong>:' + gettextCatalog.getString("Quick Save Current Desktop.") + '<br>' +
+					'<strong>Alt+F6</strong>:' + gettextCatalog.getString("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
+					'<strong>F8 (Alt+F8)</strong>:' + gettextCatalog.getString("Quick Load A Fundamental Webble.") + '<br>' +
+					'<strong>F9 (Alt+F9)</strong>:' + gettextCatalog.getString("Quick Toggles between System Language and English.") + '<br>' +
+					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode.") + '<br>' +
+					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
+					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
+					'<strong>Arrow Keys</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>'}
 			);
         }
 		//Toggle Main Menu visibility
@@ -3861,7 +3861,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     $scope.requestPublishWebble(selectedWbls[0]);
                 }
                 else{
-                    $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Cannot do that..."), content: gettext("This operation only works with one selected Webble at a time, and you have") + ' ' + selectedWbls.length + ' ' + gettext("Webbles selected.")}, null);
+                    $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Cannot do that..."), content: gettextCatalog.getString("This operation only works with one selected Webble at a time, and you have") + ' ' + selectedWbls.length + ' ' + gettextCatalog.getString("Webbles selected.")}, null);
                 }
             }
         }
@@ -3964,10 +3964,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 var appTime = ((((new Date()).getTime() - applicationStartTime_.getTime())/1000)/60).toFixed(2);
                 $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Webble World Platform Information"), content:
-                    '<strong>' + gettext("Application Runtime") + '</strong>: ' + appTime + ' ' + gettext("minutes") + '.<br>' +
-					'<strong>' + gettext("No of loaded Webbles") + '</strong>: ' + $scope.getActiveWebbles().length + '<br>' +
-					'<strong>' + gettext("No of different Webble Templates used") + '</strong>: ' + webbleTemplates_.length + '<br>' +
-					'<strong>' + gettext("No of different Webble Definitions used") + '</strong>: ' + webbleDefs_.length + '<br>'
+                    '<strong>' + gettextCatalog.getString("Application Runtime") + '</strong>: ' + appTime + ' ' + gettextCatalog.getString("minutes") + '.<br>' +
+					'<strong>' + gettextCatalog.getString("No of loaded Webbles") + '</strong>: ' + $scope.getActiveWebbles().length + '<br>' +
+					'<strong>' + gettextCatalog.getString("No of different Webble Templates used") + '</strong>: ' + webbleTemplates_.length + '<br>' +
+					'<strong>' + gettextCatalog.getString("No of different Webble Definitions used") + '</strong>: ' + webbleDefs_.length + '<br>'
                 });
             }
         }
