@@ -48,6 +48,10 @@
         <meta name="google-site-verification" content="makSg-XnaN-RDJxY0CWDn3mp8GrCzwz3nD0frGGdRUk" />
 		<meta property="og:title" content="Webble World 3.1" />
 		<meta property="og:image" content="https://wws.meme.hokudai.ac.jp/images/icons/webbleworldIcon2_lg.png" />
+		<meta property="og:description" content="Create your own custom online applications and share with the world with little or no programming." />
+		<meta property="og:url" content="https://wws.meme.hokudai.ac.jp/" />
+
+
 
         <!--===========================================================================================
         // Webbles are interactive digital objects that resides inside Webble World which is a new
@@ -269,6 +273,14 @@
                         <p ng-cloak class="navbar-text" style="margin: -14px 0 0; font-size: 0.8em;">{{debugValue.txt}}</p>
                     </li>
                 </ul>
+
+				<ul class="nav navbar-nav disable-select" style="margin-left: 20px; margin-top: 15px">
+					<li>
+						<div style="float: left;"><div fb-like="socialMedia.Url"></div></div>
+						<div style="float: left; margin-left: 3px;"><div google-plus="socialMedia.Url"></div></div>
+						<div style="float: left; margin-left: -20px;"><div tweet="socialMedia.Text" tweet-url="socialMedia.Url"></div></div>
+					</li>
+				</ul>
 
                 <!--Right side info of current language and weather logging is enabled-->
                 <ul class="nav navbar-nav navbar-right disable-select">

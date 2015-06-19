@@ -128,6 +128,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 		return false;
 	};
+	$scope.socialMedia = {
+		Url: "https://wws.meme.hokudai.ac.jp/",
+		Text: "Webble World, meme media object tool for building and using Webble applications"
+	};
     //-------------------------------
 
 
@@ -747,7 +751,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         var pathQuery = $location.search();
         if(pathQuery.webble && !pathQuery.workspace){
-            $scope.downloadWebbleDef(pathQuery.webble)
+            $timeout(function(){$scope.downloadWebbleDef(pathQuery.webble)});
         }
     };
     //========================================================================================

@@ -84,6 +84,7 @@ var wblwrld3App = angular.module('wblwrld3App', [
 	'angularFileUpload',
 	'textAngular',
     'LocalStorageModule',
+	'angulike',
     'wblwrld3App.services',
     'wblwrld3App.filters',
     'wblwrld3App.directives',
@@ -330,6 +331,8 @@ function($window, $location, $rootScope, gettextCatalog, gettext) {
 		else if (defaultTab)
 			tabs[defaultTab] = true;
 	};
+
+	$rootScope.facebookAppId = '374058982798136';
 }]);
 
 //================================================================================================================

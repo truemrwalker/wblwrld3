@@ -35,7 +35,7 @@
 // SEARCH WEBBLE FORM CONTROLLER
 // This controls the form for browsing and searching for Webbles online
 //====================================================================================================================
-ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $modalInstance, $modal, $log, $http, $location, $timeout, dbService, gettext, Enum, platformScope, jsonQuery) {
+ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $modalInstance, $modal, $log, $http, $location, $timeout, dbService, gettext, Enum, platformScope, jsonQuery, appPaths) {
 
     //=== PROPERTIES ================================================================
     $scope.thePlatform = platformScope;
@@ -281,6 +281,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
                     wbl['rateShow'] = true;
+					wbl['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + wbl.webble.defid;
+					wbl['socialMediaModelName'] = 'Cool Webble, ' + wbl.webble.displayname + ', found in Webble World. Check it out!';
                 }
 
                 $scope.formItems.searchResult = $scope.formItems.searchResult.concat(resp.data);
@@ -408,6 +410,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                 mru['selectColor'] = 'transparent';
                 mru.rating = parseInt(mru.rating);
                 mru['rateShow'] = true;
+				mru['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + mru.webble.defid;
+				mru['socialMediaModelName'] = 'Cool Webble, ' + mru.webble.displayname + ', found in Webble World. Check it out!';
             }
 
             $scope.formItems.searchResult = resp.data;
@@ -506,6 +510,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
                     wbl['rateShow'] = true;
+					wbl['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + wbl.webble.defid;
+					wbl['socialMediaModelName'] = 'Cool Webble, ' + wbl.webble.displayname + ', found in Webble World. Check it out!';
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
@@ -535,6 +541,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                         wbl['selectColor'] = 'transparent';
                         wbl.rating = parseInt(wbl.rating);
                         wbl['rateShow'] = true;
+						wbl['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + wbl.webble.defid;
+						wbl['socialMediaModelName'] = 'Cool Webble, ' + wbl.webble.displayname + ', found in Webble World. Check it out!';
                     }
 
                     $scope.formItems.searchResult = resp.data;
