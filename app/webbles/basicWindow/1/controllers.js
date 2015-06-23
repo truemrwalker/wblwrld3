@@ -359,7 +359,7 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
         var childMoving = $scope.$watch(function(){ return thisChild.scope().getWebbleConfig();}, function(newVal, oldVal) {
             if($scope.gimme('killDefectors')){
                 if((parseInt(newVal, 10) & parseInt(Enum.bitFlags_WebbleConfigs.IsMoving, 10)) == 0){
-					killOrphans(thisChild);
+					$timeout(function(){killOrphans(thisChild);});
                 }
             }
         }, true);
@@ -384,7 +384,7 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
             }
         }
 		var cId = thisChild.scope().getInstanceId();
-		$timeout(function(){ if(!parent){ $scope.requestDeleteWebble($scope.getWebbleByInstanceId((cId))); } });
+		if(!parent){ $scope.requestDeleteWebble($scope.getWebbleByInstanceId((cId))); }
     };
     //===================================================================================
 
