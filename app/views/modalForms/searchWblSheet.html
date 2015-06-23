@@ -3,7 +3,7 @@
 // Webble World
 // [IntelligentPad system for the web]
 // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-// v3.0 (2013)
+// v3.0 (2013), v3.1(2015)
 //
 // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
 // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -46,7 +46,7 @@
 
     <div class="row keepTheDistanceBelow dividerLineAbove">
         <div class="col-xs-12">
-            <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{textParts.searchBoxTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{textParts.noOfWebblesTxt | translate}} {{formItems.noOfExistingWbls}}</span>
+            <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;">{{textParts.searchBoxTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;">{{textParts.noOfWebblesTxt | translate}} {{formItems.noOfExistingWbls}}</span>
             <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
         </div>
     </div>
@@ -89,7 +89,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{textParts.resultTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>{{formItems.searchCriteria | translate}} {{formItems.searchStrResult}}</span>
+            <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;">{{textParts.resultTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;"{{formItems.searchCriteria | translate}} {{formItems.searchStrResult}}</span>
             <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
         </div>
     </div>
@@ -98,19 +98,22 @@
          ng-dblclick="close('submit');" ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">
 
         <div class="row" style="padding-bottom: 5px;">
-            <div class="col-xs-5">
+            <div class="col-xs-4">
                 <img ng-show="wblMeta.is_trusted" src="images/icons/TrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.haveTrustIconInfo | translate}}">
                 <img ng-show="!wblMeta.is_trusted" src="images/icons/UntrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.noTrustIconInfo | translate}}">
                 <span style="font-size: 22px; font-weight: bold; margin-left: 5px;">{{wblMeta.webble.displayname}}</span>
             </div>
-            <div class="col-xs-3">
+			<div class="col-xs-2">
                 <span style="font-size: 14px; font-weight: lighter; font-style: italic;">[{{wblMeta.webble.author}}]</span>
             </div>
+			<div class="col-xs-4">
+				<div style="float: left;"><div fb-like="wblMeta.socialMediaUrl"></div></div>
+				<div style="float: left; margin-left: 3px;"><div google-plus="wblMeta.socialMediaUrl"></div></div>
+				<div style="float: left; margin-left: -20px;"><div tweet="wblMeta.socialMediaModelName" tweet-url="wblMeta.socialMediaUrl"></div></div>
+			</div>
             <div class="col-xs-1">
                 <button ng-click="close('submit');" class="btn btn-primary btn-xs" translate>Load</button>
-            </div>
-            <div class="col-xs-1">
-                <button ng-show="isOwned($index);" ng-click="close('delete')" class="btn btn-danger btn-xs" translate>Delete</button>
+				<button ng-show="isOwned($index);" ng-click="close('delete')" class="btn btn-danger btn-xs" translate>Delete</button>
             </div>
             <div class="col-xs-1">
                 <button ng-show="wblMeta.rateShow" ng-click="rateThis(wblMeta)" class="btn btn-info btn-xs" translate>Rate</button>

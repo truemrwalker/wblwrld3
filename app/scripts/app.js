@@ -2,7 +2,7 @@
 // Webble World
 // [IntelligentPad system for the web]
 // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-// v3.0 (2013)
+// v3.0 (2013), v3.1(2015)
 //
 // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
 // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -42,7 +42,9 @@
 var wwDef = {
     EMPTY: 0,
     WEBSERVICE_ENABLED: true,
-    PLATFORM_DEFAULT_LEVEL: 3 // 0=None, 1=Slim, 2=Limited, 3=Full, 4=Custom, 5=Undefined
+    PLATFORM_DEFAULT_LEVEL: 3, // 0=None, 1=Slim, 2=Limited, 3=Full, 4=Custom, 5=Undefined
+	WWVERSION: '3.1',
+	FULLWWVERSION: '3.1.0'
 };
 //================================================================================================================
 
@@ -82,6 +84,7 @@ var wblwrld3App = angular.module('wblwrld3App', [
 	'angularFileUpload',
 	'textAngular',
     'LocalStorageModule',
+	'angulike',
     'wblwrld3App.services',
     'wblwrld3App.filters',
     'wblwrld3App.directives',
@@ -306,7 +309,7 @@ function($window, $location, $rootScope, gettextCatalog, gettext) {
     gettextCatalog.currentLanguage = $window.navigator.userLanguage || $window.navigator.language || 'en';
     gettextCatalog.debug = false;
 
-    $rootScope.pageTitle = "Webble World 3.1 - " + gettext("Where memes comes alive");
+	$rootScope.pageTitle = "Webble World" + " " + wwDef.WWVERSION + " - " + gettext("Where memes comes alive");
 
 	// Allow for more generic controllers that can either be used as routes OR as modals
 	//
@@ -328,6 +331,8 @@ function($window, $location, $rootScope, gettextCatalog, gettext) {
 		else if (defaultTab)
 			tabs[defaultTab] = true;
 	};
+
+	$rootScope.facebookAppId = '374058982798136';
 }]);
 
 //================================================================================================================

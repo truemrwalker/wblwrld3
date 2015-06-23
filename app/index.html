@@ -6,7 +6,7 @@
         // Webble World
         // [IntelligentPad system for the web]
         // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-        // v3.0 (2013)
+        // v3.0 (2013), v3.1(2015)
         //
         // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
         // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -46,6 +46,12 @@
         <meta name="generator" content="WebStorm 7.02"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="google-site-verification" content="makSg-XnaN-RDJxY0CWDn3mp8GrCzwz3nD0frGGdRUk" />
+		<meta property="og:title" content="Webble World 3.1" />
+		<meta property="og:image" content="https://wws.meme.hokudai.ac.jp/images/icons/webbleworldIcon2_lg.png" />
+		<meta property="og:description" content="Create your own custom online applications and share with the world with little or no programming." />
+		<meta property="og:url" content="https://wws.meme.hokudai.ac.jp/" />
+
+
 
         <!--===========================================================================================
         // Webbles are interactive digital objects that resides inside Webble World which is a new
@@ -138,6 +144,7 @@
         <script src="scripts/libs/hamster.js"></script> <!--For Mouse Wheel support-->
         <script src="scripts/libs/SaveAs/Blob.js"></script> <!--For Save File Locally support-->
         <script src="scripts/libs/SaveAs/FileSaver.js"></script> <!--For Save File Locally support-->
+		<script src="scripts/libs/angulike.js"></script>
         <!-- endbuild -->
 
 
@@ -267,9 +274,17 @@
                     </li>
                 </ul>
 
+				<ul class="nav navbar-nav disable-select" style="margin-left: 20px; margin-top: 15px">
+					<li>
+						<div style="float: left;"><div fb-like="socialMedia.Url"></div></div>
+						<div style="float: left; margin-left: 3px;"><div google-plus="socialMedia.Url"></div></div>
+						<div style="float: left; margin-left: -20px;"><div tweet="socialMedia.Text" tweet-url="socialMedia.Url"></div></div>
+					</li>
+				</ul>
+
                 <!--Right side info of current language and weather logging is enabled-->
                 <ul class="nav navbar-nav navbar-right disable-select">
-                    <li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}" translate>{{getCurrentLanguage() | nativeName}}</a></li>
+                    <li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}">{{getCurrentLanguage() | nativeName}}</a></li>
                 </ul>
 
                 <!--User login-->

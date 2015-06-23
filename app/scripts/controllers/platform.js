@@ -2,7 +2,7 @@
 // Webble World
 // [IntelligentPad system for the web]
 // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-// v3.0 (2013)
+// v3.0 (2013), v3.1(2015)
 //
 // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
 // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
@@ -127,6 +127,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			}
 		}
 		return false;
+	};
+	$scope.socialMedia = {
+		Url: "https://wws.meme.hokudai.ac.jp/",
+		Text: "Webble World, meme media object tool for building and using Webble applications"
 	};
     //-------------------------------
 
@@ -747,7 +751,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         var pathQuery = $location.search();
         if(pathQuery.webble && !pathQuery.workspace){
-            $scope.downloadWebbleDef(pathQuery.webble)
+            $timeout(function(){$scope.downloadWebbleDef(pathQuery.webble)});
         }
     };
     //========================================================================================
@@ -768,30 +772,31 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
 			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
 				localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
-				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Important News '+ postedDate + '!!! (Displayed ' + (readTimes + 1) + ' of 3 times)'), size: 'lg', content:
-				'<h2>For Webble Template Developer</h2>' +
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettextCatalog.getString("Important News") + '!!! ' + postedDate + ' ' + gettextCatalog.getString("Displayed") + ' ' + (readTimes + 1) + ' ' + gettextCatalog.getString("of") + ' 3 ' + gettextCatalog.getString("times"), size: 'lg', content:
+				'<h2>' + gettextCatalog.getString("For Webble Template Developer") + '</h2>' +
 				'<p>' +
-				'The latest major Webble world system update also included updating AngularJS framework to 1.3. These changes includes a change of how to declare the Webble controller function &nbsp;' +
-				'(not as a global function anymore, but registered with the Webble World App). This means that all Webbles you have made before this change (published and unpublished) are &nbsp;' +
-				'no longer working properly. </br></br><strong>But it is relatively easy to fix.</strong> Open your Webbles controller file and change the controller declaration line from... &nbsp;' +
-				'</br></br><strong>BEFORE:</strong> <span style="font-family: courier, monospace;">function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
-				'</br>to... &nbsp;' +
-				'</br><strong>AFTER:</strong> <span style="font-family: courier, monospace;">wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
-				'</br></br>Be aware that the controller name is now a string and that the function parameters are just examples and may differ in your Webble (except $scope). &nbsp;' +
-				'</br>You must also change the last line of the function in order to close it properly, from a single curly parenthesis...&nbsp;' +
-				'</br></br><strong>BEFORE:</strong> <span style="font-family: courier, monospace;">} </span>&nbsp;' +
-				'</br>to the following... &nbsp;' +
-				'</br><strong>AFTER:</strong> <span style="font-family: courier, monospace;">}); </span>&nbsp;' +
-				'</br></br>Thats it. Now the Webble should work just fine. &nbsp;' +
-				'</br>If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now. &nbsp;' +
-				'</br></br>Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data &nbsp;' +
-				'objects they are now deprecated and have to be changed to the new event handling object. &nbsp;' +
-				'</br><i>Example:</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;' +
-				'</br></br>We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution. &nbsp;' +
-				'</br>Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that. &nbsp;' +
+					gettextCatalog.getString("The latest major Webble world system update also included updating AngularJS framework to 1.3.") + '&nbsp;' +
+					gettextCatalog.getString("These changes includes a change of how to declare the Webble controller function (not as a global function anymore, but registered with the Webble World App).") + '&nbsp;' +
+					gettextCatalog.getString("This means that all Webbles you have made before this change (published and unpublished) are no longer working properly.") + '&nbsp;' +
+					'</br></br><strong>' + gettextCatalog.getString("But it is relatively easy to fix.") + '</strong>&nbsp;' +
+					gettextCatalog.getString("Open your Webbles controller file and change the controller declaration line from...") + '&nbsp;' +
+					'</br></br><strong>' + gettextCatalog.getString("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">function FUNCTION-NAME($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;' +
+					'</br>' + gettextCatalog.getString("to...") + '&nbsp;' +
+					'</br><strong>' + gettextCatalog.getString("AFTER:") + '</strong> <span style="font-family: courier, monospace;">wblwrld3App.controller("FUNCTION-NAME", function($scope, $log, $timeout, Slot, Enum, ETC) { </span>&nbsp;</br></br>' +
+					gettextCatalog.getString("Be aware that the controller name is now a string and that the function parameters are just examples and may differ in your Webble (except $scope).") + '&nbsp;</br>' +
+					gettextCatalog.getString("You must also change the last line of the function in order to close it properly, from a single curly parenthesis...") + '&nbsp;' +
+					'</br></br><strong>' + gettextCatalog.getString("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">} </span>&nbsp;' +
+					'</br>' + gettextCatalog.getString("to the following...") + ' &nbsp;' +
+					'</br><strong>' + gettextCatalog.getString("AFTER:") + '</strong> <span style="font-family: courier, monospace;">}); </span>&nbsp;</br></br>' +
+					gettextCatalog.getString("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
+					gettextCatalog.getString("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
+					gettextCatalog.getString("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
+					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;</br></br>' +
+					gettextCatalog.getString("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
+					gettextCatalog.getString("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
 				'</p>' +
 				'<p>' +
-				'<i><strong> ~ Webble World Development Team, Hokkaido University ~</strong></i>' +
+					'<i><strong>~' + gettextCatalog.getString("Webble World Development Team, Hokkaido University") + '~</strong></i>' +
 				'</p>'
 				});
 			}
@@ -893,10 +898,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         $scope.$watch(function(){ return (currWS_ ? currWS_.name : ''); }, function(newValue, oldValue) {
             if(newValue != oldValue){
                 if(newValue != ''){
-                    $rootScope.pageTitle = newValue + gettext(" in") + " Webble World 3.1";
+                    $rootScope.pageTitle = newValue + gettext(" in") + " Webble World" + " " + wwDef.WWVERSION;
                 }
                 else{
-                    $rootScope.pageTitle = "Webble World 3.1 - " + gettext("Where memes comes alive");
+                    $rootScope.pageTitle = "Webble World" + " " + wwDef.WWVERSION + " - " + gettext("Where memes comes alive");
                 }
             }
         });
@@ -1845,8 +1850,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 for(var i = 0, faq; faq = data[i]; i++){
                     if(faq.a == 'Unanswered' || faq.a == ''){
                         $scope.openForm(Enum.aopForms.infoMsg, {
-                                title: gettext('Pending Questions in the FAQ'),
-                                content: gettext('There are pending questions in the FAQ waiting for your attention. Please visit there and give some good answers.')}
+                                title: gettext("Pending Questions in the FAQ"),
+                                content: gettext("There are pending questions in the FAQ waiting for your attention. Please visit there and give some good answers.")}
                         );
                         break;
                     }
@@ -3464,19 +3469,19 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         //==== NON-MENU KEYBOARD ============================
         if (sublink == 'altf1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1')){
-			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Non-Menu Shortcut Keys'), content:
-					'<strong>Alt+F1</strong>: Display non-menu Shortcut keys and additional quick help info.<br>' +
-						'<strong>Alt+F2</strong>: Toggle Main menu visibility.<br>' +
-						'<strong>Alt+F3</strong>: Toggle Console Debug Logging.<br>' +
-						'<strong>F4 (or Alt+F4)</strong>: Change Platform Language<br>' +
-						'<strong>Alt+F5</strong>: Quick Save Current Desktop.<br>' +
-						'<strong>Alt+F6</strong>: Quick Load Current Desktop.<br>' +
-						'<strong>F8 (or Alt+F8)</strong>: Quick Load A Fundamental Webble.<br>' +
-						'<strong>F9 (or Alt+F9)</strong>: Quick Toggles between System Language and English.<br>' +
-						'<strong>Alt+Shift+PageDown (or Ctrl+Shift+PageDown)</strong>: Reset Webble World Intro to first time visitor mode.<br>' +
-						'<strong>Alt+Shift+End (or Ctrl+Shift+End)</strong>: Clear all Webble world cookies and local storage user data.<br>' +
-						'<strong>Esc</strong>: Cancel what is currently going on (e.g. Close form).<br>' +
-						'<strong>Arrow Keys</strong>: Move current selected Webble in that directiont.<br>'}
+			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Non-Menu Shortcut Keys"), content:
+					'<strong>Alt+F1</strong>:' + gettextCatalog.getString("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
+					'<strong>Alt+F2</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
+					'<strong>Alt+F3</strong>:' + gettextCatalog.getString("Toggle Console Debug Logging.") + '<br>' +
+					'<strong>F4 (Alt+F4)</strong>:' + gettextCatalog.getString("Change Platform Language") + '<br>' +
+					'<strong>Alt+F5</strong>:' + gettextCatalog.getString("Quick Save Current Desktop.") + '<br>' +
+					'<strong>Alt+F6</strong>:' + gettextCatalog.getString("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
+					'<strong>F8 (Alt+F8)</strong>:' + gettextCatalog.getString("Quick Load A Fundamental Webble.") + '<br>' +
+					'<strong>F9 (Alt+F9)</strong>:' + gettextCatalog.getString("Quick Toggles between System Language and English.") + '<br>' +
+					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode.") + '<br>' +
+					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
+					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
+					'<strong>Arrow Keys</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>'}
 			);
         }
 		//Toggle Main Menu visibility
@@ -3775,7 +3780,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         modalInstance.result.then(function () {
                             dbService.removeMeAsWSCollaborator(currWS_.id).then(function(data){
                                 $scope.cleanActiveWS();
-                                $scope.showQIM(gettext("You were successfully rewmoved from the Workspace sharing collaboartor list"));
+                                $scope.showQIM(gettext("You were successfully removed from the Workspace sharing collaborator list"));
                             },function(eMsg){
                                 $scope.serviceError(eMsg);
                             });
@@ -3860,7 +3865,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     $scope.requestPublishWebble(selectedWbls[0]);
                 }
                 else{
-                    $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Cannot do that..."), content: gettext("This operation only works with one selected Webble at a time, and you have") + ' ' + selectedWbls.length + ' ' + gettext("Webbles selected.")}, null);
+                    $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Cannot do that..."), content: gettextCatalog.getString("This operation only works with one selected Webble at a time, and you have") + ' ' + selectedWbls.length + ' ' + gettextCatalog.getString("Webbles selected.")}, null);
                 }
             }
         }
@@ -3962,11 +3967,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         else if(sublink == 'wsinfo' || (whatKeys.theAltKey && whatKeys.theKey == 'I')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 var appTime = ((((new Date()).getTime() - applicationStartTime_.getTime())/1000)/60).toFixed(2);
-                $scope.openForm(Enum.aopForms.infoMsg, {title: gettext('Webble World Platform Information'), content:
-                    '<strong>Application Runtime</strong>: ' + appTime + ' minutes.<br>' +
-                        '<strong>No of loaded Webbles</strong>: ' + $scope.getActiveWebbles().length + '<br>' +
-                        '<strong>No of different Webble Templates used</strong>: ' + webbleTemplates_.length + '<br>' +
-                        '<strong>No of different Webble Definitions used</strong>: ' + webbleDefs_.length + '<br>'
+                $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Webble World Platform Information"), content:
+                    '<strong>' + gettextCatalog.getString("Application Runtime") + '</strong>: ' + appTime + ' ' + gettextCatalog.getString("minutes") + '.<br>' +
+					'<strong>' + gettextCatalog.getString("No of loaded Webbles") + '</strong>: ' + $scope.getActiveWebbles().length + '<br>' +
+					'<strong>' + gettextCatalog.getString("No of different Webble Templates used") + '</strong>: ' + webbleTemplates_.length + '<br>' +
+					'<strong>' + gettextCatalog.getString("No of different Webble Definitions used") + '</strong>: ' + webbleDefs_.length + '<br>'
                 });
             }
         }
