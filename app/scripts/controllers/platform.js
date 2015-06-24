@@ -336,9 +336,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		wblMenuExecuted: []         //Returning Data: {targetId: [Instance Id for the Webble executing menu], menuId: [menu item name], timestamp: [a chronological timestamp value]}
 	};
 
-	// a que of handles that should be called (one by one in order) due to events triggered
-	var queOfHandlersToBeTriggered = [];
-	var unqueingStartTime = 0;
+	// a queue of handles that should be called (one by one in order) due to events triggered
+	var queueOfHandlersToBeTriggered = [];
+	var unqueueingStartTime = 0;
+	var unqueueingActive = false;
 
     //-------------------------------
 
@@ -1943,42 +1944,43 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 	// Fire Webble World Event Listener
 	// This method is called if any event anywhere is fired and this in turn will create a
-	// que of handlers that will be notified of the triggered event. If the que is not already
-	// being managed and is not empty then start unqueing handlers
+	// queue of handlers that will be notified of the triggered event. If the queue is not already
+	// being managed and is not empty then start unqueueing handlers
 	//========================================================================================
 	$scope.fireWWEventListener = function(eventType, eventData){
-		var queWasEmpty = (queOfHandlersToBeTriggered.length == 0) ? true : false;
+		var queueWasEmpty = (queueOfHandlersToBeTriggered.length == 0) ? true : false;
 		var eventKey = getKeyByValue(Enum.availableWWEvents, eventType);
 		for(var i = 0; i < wwEventListeners_[eventKey].length; i++){
 			if(wwEventListeners_[eventKey][i].target === null || eventData.targetId == wwEventListeners_[eventKey][i].target){
 				if(wwEventListeners_[eventKey][i].targetData === undefined || eventData.slotName === undefined || (eventData.slotName !== undefined && wwEventListeners_[eventKey][i].targetData == eventData.slotName)){
-					queOfHandlersToBeTriggered.push({cb: wwEventListeners_[eventKey][i].callback, ed: eventData});
+					queueOfHandlersToBeTriggered.push({cb: wwEventListeners_[eventKey][i].callback, ed: eventData});
 				}
 			}
 		}
-		if(queWasEmpty && queOfHandlersToBeTriggered.length > 0){
-			unqueingStartTime = (new Date()).getTime();
-			unqueUntriggeredHandlers();
+		if(!unqueueingActive){
+			unqueueingStartTime = (new Date()).getTime();
+			unqueueUntriggeredHandlers();
 		}
 	}
 	//========================================================================================
 
 
 	//========================================================================================
-	// Unque Untriggered Handlers
-	// This method remove one handler at a time from the que and calls it.
+	// Unqueue Untriggered Handlers
+	// This method remove one handler at a time from the queue and calls it.
 	//========================================================================================
-	var unqueUntriggeredHandlers = function(){
-		if(((new Date()).getTime() - unqueingStartTime) > 10000){
-			$log.log('it seems we have been managing event handlers for more than 10 seconds now, so maybe something has locked itself in a loop and cannot stop. Maybe you should consider reloading the page...')
-		}
+	var unqueueUntriggeredHandlers = function(){
+		unqueueingActive = true;
 
-		var theCallbackObject = queOfHandlersToBeTriggered.shift();
-		theCallbackObject.cb(theCallbackObject.ed);
+		while(queueOfHandlersToBeTriggered.length > 0){
+			if(((new Date()).getTime() - unqueueingStartTime) > 10000){
+				$log.log('it seems we have been managing event handlers for more than 10 seconds now, so maybe something has locked itself in a loop and cannot stop. Maybe you should consider reloading the page...')
+			}
 
-		if(queOfHandlersToBeTriggered.length > 0){
-			unqueUntriggeredHandlers();
+			var theCallbackObject = queueOfHandlersToBeTriggered.shift();
+			theCallbackObject.cb(theCallbackObject.ed);
 		}
+		unqueueingActive = false;
 	}
 	//========================================================================================
 
