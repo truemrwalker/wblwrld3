@@ -68,6 +68,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         isLoading: false,
         soFarLevel: 0
     };
+	var waitingServiceDeactivated_ = false;
+	$scope.setWaitingServiceDeactivationState = function(newState){waitingServiceDeactivated_ = newState};
     $scope.mouseCursor = 'default';
     $scope.ExistingBitFlagsForPlatformConfigs = Enum.bitFlags_PlatformConfigs;
     var platformBkgColor_ = '#ffffff';
@@ -2578,19 +2580,21 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // This method turns on or off the appearance indicators in waiting mode
     //========================================================================================
     $scope.waiting = function(isWaitingEnabled) {
-        if(isWaitingEnabled){
-            $scope.progressManager.isWorking = true;
-            $scope.mouseCursor = 'wait';
-        }
-        else{
-            if(isWaitingEnabled == undefined){
-                return $scope.progressManager.isWorking;
-            }
-            else{
-                $scope.progressManager.isWorking = false;
-                $scope.mouseCursor = 'default';
-            }
-        }
+		if(isWaitingEnabled){
+			if(!waitingServiceDeactivated_) {
+				$scope.progressManager.isWorking = true;
+				$scope.mouseCursor = 'wait';
+			}
+		}
+		else{
+			if(isWaitingEnabled == undefined){
+				return $scope.progressManager.isWorking;
+			}
+			else{
+				$scope.progressManager.isWorking = false;
+				$scope.mouseCursor = 'default';
+			}
+		}
 
         return undefined;
     };

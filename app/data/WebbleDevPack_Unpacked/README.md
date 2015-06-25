@@ -375,6 +375,9 @@ system and specific Webbles:
     $scope.altKeyIsDown = false;
     $scope.shiftKeyIsDown = false;
     $scope.ctrlKeyIsDown = false;
+    
+    // Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
+    $scope.setWaitingServiceDeactivationState(newState);
 
 -----------------------------------------------------------------------------------------------------------------
 
