@@ -21,7 +21,7 @@ wblwrld3App.controller('golCtrl', function($scope, $log, $timeout, $rootScope, S
 	var isTurnedOn = false;
 	var keyHasBeenPressed = false;
 	var theTimerFunc;
-	var tick = 600;
+	var tick = 700;
 
 	var surroundingOffsets = [
 		{x: -40, y: -40},

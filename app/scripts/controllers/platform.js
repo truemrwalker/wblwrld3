@@ -1010,7 +1010,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     }
                 }
                 recentWebble_ = storedPlatformSettings.recentWebble != undefined ? storedPlatformSettings.recentWebble : recentWebble_;
-                recentWS_ = storedPlatformSettings.recentWS != undefined ? storedPlatformSettings.recentWS : recentWS_;
+				if($location.search().workspace == undefined){
+					recentWS_ = storedPlatformSettings.recentWS != undefined ? storedPlatformSettings.recentWS : recentWS_;
+				}
             }
             else{
                 $log.log('No stored platform settings object found for the user [' + $scope.user.email + '].');
