@@ -143,6 +143,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 					}
 
 					theListStr = theListStr.replace(theListItem, '').replace(splitChar + splitChar, splitChar);
+					if(theListStr[0] == splitChar){theListStr = theListStr.substr(1)}
 					$scope.set('removeListItem', '');
 					$scope.set('theList', theListStr);
 				}
@@ -310,7 +311,6 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
             $scope.theView.parent().draggable('option', 'cancel', '#listContainer');
         }
 
-
 		$scope.$watch(function(){return $scope.theList.currentSelected;}, function(newVal, oldVal) {
 			if(newVal != oldVal && !selectChangeBlocked){
 				selectChangeBlocked = true;
@@ -331,6 +331,10 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 				}
 			}
 		}, true);
+
+		if($scope.theList.currentSelected != $scope.gimme('theSelectedName')){
+			$timeout(function(){$scope.theList.currentSelected = $scope.gimme('theSelectedName');}, 200);
+		}
     };
     //===================================================================================
 
