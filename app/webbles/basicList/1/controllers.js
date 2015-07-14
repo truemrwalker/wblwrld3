@@ -144,6 +144,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 
 					theListStr = theListStr.replace(theListItem, '').replace(splitChar + splitChar, splitChar);
 					if(theListStr[0] == splitChar){theListStr = theListStr.substr(1)}
+
 					$scope.set('removeListItem', '');
 					$scope.set('theList', theListStr);
 				}
