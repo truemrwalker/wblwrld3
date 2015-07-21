@@ -1317,8 +1317,8 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
 
                                 var calcVal = getCalculatedValue(ev.oParams.p3);
 
-                                if(!isNaN(calcVal)){ calcVal = parseFloat(calcVal); }
-                                if(!isNaN(theSlotVal)){ theSlotVal = parseFloat(theSlotVal); }
+								if(!isNaN(calcVal)){ calcVal = parseFloat(calcVal); }
+								if(!isNaN(theSlotVal)){ theSlotVal = parseFloat(theSlotVal); }
 
                                 switch(ev.oParams.p2){
                                     case '=': eventWasTriggered = (theSlotVal == calcVal ? true : false ); break;

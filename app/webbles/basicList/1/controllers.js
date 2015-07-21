@@ -148,7 +148,65 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 
 					$scope.set('removeListItem', '');
 					$scope.set('theList', theListStr);
+					adjustSelectedItem();
+					$timeout(function(){adjustSelectedItem();});
 				}
+			}
+			else if(eventData.slotName == 'addListItem'){
+				if(eventData.slotValue != ''){
+					var theListStr = $scope.gimme('theList');
+					var splitChar = ';';
+
+					if(theListStr.search(',') != -1){ splitChar = ','; }
+					else if(theListStr.search(' ') != -1){ splitChar = ' '; }
+
+					theListStr += (splitChar + eventData.slotValue);
+
+					$scope.set('addListItem', '');
+
+					if(fxList != undefined){ stroll.unbind(fxList); }
+					$scope.set('theList', theListStr);
+					if($scope.gimme('theListType') == 6){
+						$timeout(function(){fxList = $scope.theView.parent().find("#fxList ul"); stroll.bind(fxList);});
+					}
+					adjustSelectedItem();
+				}
+			}
+			else if(eventData.slotName == 'insertListItem'){
+				if(eventData.slotValue != ''){
+					var theIndex = parseInt($scope.gimme('theSelectedIndex'));
+					var newListStr = '';
+					if(isNaN(theIndex)){ theIndex = 0; }
+
+					if($scope.theList.items.length > theIndex){
+						var theListStr = $scope.gimme('theList');
+						var splitChar = ';';
+
+						if(theListStr.search(',') != -1){ splitChar = ','; }
+						else if(theListStr.search(' ') != -1){ splitChar = ' '; }
+
+						$scope.theList.items.splice(theIndex, 0, eventData.slotValue);
+
+						for(var i = 0; i < $scope.theList.items.length; i++){
+							if(i > 0){ newListStr += splitChar }
+							newListStr += $scope.theList.items[i];
+						}
+					}
+
+					$scope.set('insertListItem', '');
+
+					if(newListStr != ''){
+						if(fxList != undefined){ stroll.unbind(fxList); }
+						$scope.set('theList', newListStr);
+						if($scope.gimme('theListType') == 6){
+							$timeout(function(){fxList = $scope.theView.parent().find("#fxList ul"); stroll.bind(fxList);});
+						}
+						adjustSelectedItem();
+					}
+				}
+			}
+			else if(eventData.slotName == 'sortListEnabled'){
+				updateList($scope.gimme('theList'));
 			}
 		});
 
@@ -181,14 +239,24 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
         ));
         $scope.getSlot('theSelectedName').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
-          $scope.addSlot(new Slot('theListType',
-              6,
-              'The Display Type',
-              'The type of way the list is being displayed',
-              $scope.theWblMetadata['templateid'],
-              {inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ['Undefined', 'Drop Down Box', 'Radio Buttons', 'Multi Select List Box', 'Check Boxes', 'Classic List', 'FX List']},
-              undefined
-          ));
+		$scope.addSlot(new Slot('listLength',
+			0,
+			'List Length',
+			'The amount of items in the list',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+		$scope.getSlot('listLength').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+
+		$scope.addSlot(new Slot('theListType',
+			6,
+			'The Display Type',
+			'The type of way the list is being displayed',
+			$scope.theWblMetadata['templateid'],
+			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ['Undefined', 'Drop Down Box', 'Radio Buttons', 'Multi Select List Box', 'Check Boxes', 'Classic List', 'FX List']},
+			undefined
+		));
 
         $scope.addSlot(new Slot('fxListEffect',
             'twirl',
@@ -198,6 +266,15 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
             {inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ['none', 'cards', 'curl', 'fan', 'flip', 'fly', 'fly-reverse', 'fly-simplified', 'grow', 'helix', 'papercut', 'skew', 'tilt', 'twirl', 'wave', 'zipper']},
             undefined
         ));
+
+		$scope.addSlot(new Slot('sortListEnabled',
+			false,
+			'Sort List Enabled',
+			'If checked the list will always be sorted in alphabetic order',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
         $scope.addSlot(new Slot('theListDirection',
             0,
@@ -307,6 +384,24 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 			undefined
 		));
 
+		$scope.addSlot(new Slot('addListItem',
+			'',
+			'List Item to Be added',
+			'The name of an item being added at the end of the list',
+			$scope.theWblMetadata['templateid'],
+			{inputType: Enum.aopInputTypes.TextBox},
+			undefined
+		));
+
+		$scope.addSlot(new Slot('insertListItem',
+			'',
+			'List Item to Be inserted',
+			'The name of an item being inserted at the current selected position. (at the beginning if no item is selected)',
+			$scope.theWblMetadata['templateid'],
+			{inputType: Enum.aopInputTypes.TextBox},
+			undefined
+		));
+
         $scope.setDefaultSlot('theSelectedName');
 
         if(BrowserDetect.browser == 'Firefox'){
@@ -381,6 +476,17 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
                 $scope.theList.items.push(newVal[i]);
             }
         }
+
+		if($scope.gimme('sortListEnabled') == true){
+			$scope.theList.items.sort();
+		}
+
+		if(newVal == ""){
+			$scope.set('listLength', 0);
+		}
+		else{
+			$scope.set('listLength', $scope.theList.items.length);
+		}
     };
     //========================================================================================
 
@@ -406,6 +512,36 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
         }
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Adjust Selected Item
+	// Make sure that the current selected index and name are the same after list change
+	//========================================================================================
+	var adjustSelectedItem = function(cbName) {
+		var currIndex = $scope.gimme('theSelectedIndex');
+		if(currIndex != -2){
+			selectChangeBlocked = true;
+			$timeout(function(){selectChangeBlocked = false;}, 100);
+			if(currIndex < $scope.theList.items.length){
+				$scope.theList.currentSelected = $scope.theList.items[currIndex];
+				$log.log($scope.theList.currentSelected);
+				$scope.set('theSelectedName', $scope.theList.currentSelected);
+			}
+			else{
+				$scope.set('theSelectedIndex', -1);
+				$scope.theList.currentSelected = '';
+				$scope.set('theSelectedName', '');
+			}
+		}
+	};
+	//========================================================================================
+
+
+
+
+
+
 
 
     //========================================================================================

@@ -29,6 +29,36 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotName == 'resultTemplate'){
+				if(eventData.slotValue != ''){
+					var pattern = /\$(.*?)\$/g;
+					argSlots = [];
+					eventData.slotValue.replace(pattern, function(g0,g1){argSlots.push(g1);});
+					pattern = /\"(.*?)\"/g;
+					templateStrings = [];
+					eventData.slotValue.replace(pattern, function(g0,g1){templateStrings.push(g1);});
+					doCalc();
+				}
+				else{
+					$scope.set('result', '');
+					showIt(eventData.slotValue);
+				}
+			}
+			else if(eventData.slotName == 'displayMode'){
+				showIt(eventData.slotValue);
+			}
+
+			var found = false;
+			for(var i = 0; i < argSlots.length; i++){
+				if(eventData.slotName.toLowerCase() == argSlots[i].toLowerCase()){
+					doCalc();
+					break;
+				}
+			}
+		});
+
+
         $scope.addSlot(new Slot('resultTemplate',
             '',
             'Result Template',
@@ -77,35 +107,6 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
 
         $scope.setDefaultSlot('result');
 
-		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-			if(eventData.slotName == 'resultTemplate'){
-				if(eventData.slotValue != ''){
-					var pattern = /\$(.*?)\$/g;
-					argSlots = [];
-					eventData.slotValue.replace(pattern, function(g0,g1){argSlots.push(g1);});
-					pattern = /\"(.*?)\"/g;
-					templateStrings = [];
-					eventData.slotValue.replace(pattern, function(g0,g1){templateStrings.push(g1);});
-					doCalc();
-				}
-				else{
-					$scope.set('result', '');
-					showIt(eventData.slotValue);
-				}
-			}
-			else if(eventData.slotName == 'displayMode'){
-				showIt(eventData.slotValue);
-			}
-
-			var found = false;
-			for(var i = 0; i < argSlots.length; i++){
-				if(eventData.slotName.toLowerCase() == argSlots[i].toLowerCase()){
-					doCalc();
-					break;
-				}
-			}
-		});
-
         $scope.$watch(function(){return $scope.theWblMetadata['displayname'];}, function(newVal, oldVal) {
             var dm = $scope.gimme('displayMode');
             if(dm == 2){
@@ -144,9 +145,7 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
         }
         $scope.set('result', theRes);
         var dm = $scope.gimme('displayMode');
-        if(dm == 1){
-            $timeout(function(){showIt(dm);});
-        }
+        if(dm == 1){ showIt(dm); }
     };
     //===================================================================================
 
