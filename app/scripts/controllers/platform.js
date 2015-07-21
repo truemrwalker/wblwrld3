@@ -879,7 +879,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     $scope.getMenuItem('webbles').visibility_enabled = false;
                 }
                 else{
-					alert(newValue);
 					quickLoadInternalSavedWS();
 					displayImportantDevMessage();
                 }
