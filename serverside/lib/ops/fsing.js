@@ -72,7 +72,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 				var files = req.files.file ? req.files.file :
 					util.transform(Object.keys(req.files), function (k) {
-						return req.files[k];
+						return req.files[k][0];
 					});
 
 				// Grrrrrrrrrrr.....

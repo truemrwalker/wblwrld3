@@ -80,7 +80,12 @@ var app = express();
 	app.use(serveStaticFavicon(path.join(config.APP_ROOT_DIR, 'favicon.ico')));
 	app.use(serveStatic(config.APP_ROOT_DIR));
 
-	app.use(multipartFormParser());
+	var multerFieldsHack = [];
+	while (multerFieldsHack.length < 21)
+		multerFieldsHack.push({name: 'file' + multerFieldsHack.length, maxCount: 1});
+	var multerOptionsHack = { dest: 'tmpuploads/' };
+	app.use(multipartFormParser(multerOptionsHack).fields(multerFieldsHack));
+
 	app.use(bodyParser.json({ limit: '10mb' }));
 	//app.use(bodyParser.urlencoded({ extended: true })); // Turn off for now, we don't really need it
 
