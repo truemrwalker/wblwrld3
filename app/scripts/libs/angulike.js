@@ -7,27 +7,28 @@
     angular.module('angulike', [])
 
       .directive('fbLike', [
-          '$window', '$rootScope', function ($window, $rootScope) {
+          '$window', '$rootScope', '$timeout', function ($window, $rootScope, $timeout) {
               return {
                   restrict: 'A',
                   scope: {
                       fbLike: '=?'
                   },
                   link: function (scope, element, attrs) {
-                      if (!$window.FB) {
-                          // Load Facebook SDK if not already loaded
-                          $.getScript('//connect.facebook.net/en_US/sdk.js', function () {
-                              $window.FB.init({
-                                  appId: $rootScope.facebookAppId,
-                                  xfbml: true,
-                                  version: 'v2.3'
-                              });
-                              renderLikeButton();
-                          });
-                      } else {
-                          renderLikeButton();
-                      }
-
+					  $timeout(function(){
+						  if (!$window.FB) {
+							  // Load Facebook SDK if not already loaded
+							  $.getScript('//connect.facebook.net/en_US/sdk.js', function () {
+								  $window.FB.init({
+									  appId: $rootScope.facebookAppId,
+									  xfbml: true,
+									  version: 'v2.3'
+								  });
+								  renderLikeButton();
+							  });
+						  } else {
+							  renderLikeButton();
+						  }
+					  });
                       var watchAdded = false;
                       function renderLikeButton() {
                           if (!!attrs.fbLike && !scope.fbLike && !watchAdded) {
@@ -54,21 +55,23 @@
       ])
 
       .directive('googlePlus', [
-          '$window', function ($window) {
+          '$window', '$timeout', function ($window, $timeout) {
               return {
                   restrict: 'A',
                   scope: {
                       googlePlus: '=?'
                   },
                   link: function (scope, element, attrs) {
-                      if (!$window.gapi) {
-                          // Load Google SDK if not already loaded
-                          $.getScript('//apis.google.com/js/platform.js', function () {
-                              renderPlusButton();
-                          });
-                      } else {
-                          renderPlusButton();
-                      }
+					  $timeout(function(){
+						  if (!$window.gapi) {
+							  // Load Google SDK if not already loaded
+							  $.getScript('//apis.google.com/js/platform.js', function () {
+								  renderPlusButton();
+							  });
+						  } else {
+							  renderPlusButton();
+						  }
+					  });
 
                       var watchAdded = false;
                       function renderPlusButton() {
@@ -96,8 +99,7 @@
       ])
 
       .directive('tweet', [
-          '$window', '$location',
-          function ($window, $location) {
+          '$window', '$location', '$timeout', function ($window, $location, $timeout) {
               return {
                   restrict: 'A',
                   scope: {
@@ -105,15 +107,16 @@
                       tweetUrl: '='
                   },
                   link: function (scope, element, attrs) {
-                      if (!$window.twttr) {
-                          // Load Twitter SDK if not already loaded
-                          $.getScript('//platform.twitter.com/widgets.js', function () {
-                              renderTweetButton();
-                          });
-                      } else {
-                          renderTweetButton();
-                      }
-
+					  $timeout(function(){
+						  if (!$window.twttr) {
+							  // Load Twitter SDK if not already loaded
+							  $.getScript('//platform.twitter.com/widgets.js', function () {
+								  renderTweetButton();
+							  });
+						  } else {
+							  renderTweetButton();
+						  }
+					  });
                       var watchAdded = false;
                       function renderTweetButton() {
                           if (!scope.tweet && !watchAdded) {

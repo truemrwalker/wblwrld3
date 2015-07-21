@@ -1511,7 +1511,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 	// doc and from the template, setting up everything needed before the webble can be fully
 	// operational, looking and behaving as intended.
 	//========================================================================================
-	$scope.wblInit = function(whatWblDef, whatSSSK){
+	$scope.wblInit = function(whatWblDef){
 		if((parseInt(theInitiationState_, 10) & parseInt(Enum.bitFlags_InitStates.InitFinished, 10)) === 0){
 			// indicate that initiation has started
 			theInitiationState_ = bitflags.on(theInitiationState_, Enum.bitFlags_InitStates.InitBegun);

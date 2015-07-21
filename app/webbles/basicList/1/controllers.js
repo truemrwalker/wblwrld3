@@ -116,6 +116,40 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 					}
 				}
 			}
+			else if(eventData.slotName == 'removeListItem'){
+				if(eventData.slotValue != ''){
+					var theListItem = eventData.slotValue;
+					var theListStr = $scope.gimme('theList');
+					var tempListItems = [], splitChar = '';
+
+					if(theListStr.search(';') != -1){
+						tempListItems = theListStr.split(';');
+						splitChar = ';';
+					}
+					else if(theListStr.search(',') != -1){
+						tempListItems = theListStr.split(',');
+						splitChar = ',';
+					}
+					else if(theListStr.search(' ') != -1){
+						tempListItems = theListStr.split(' ');
+						splitChar = ' ';
+					}
+					else{
+						tempListItems.push(theListStr);
+					}
+
+					if(!isNaN(theListItem)){
+						theListItem = tempListItems[parseInt(theListItem)];
+					}
+
+					theListStr = theListStr.replace(theListItem, '').replace(splitChar + splitChar, splitChar);
+					if(theListStr[0] == splitChar){theListStr = theListStr.substr(1)}
+					if(theListStr[theListStr.length - 1] == splitChar){theListStr = theListStr.substr(0, theListStr.length - 1)}
+
+					$scope.set('removeListItem', '');
+					$scope.set('theList', theListStr);
+				}
+			}
 		});
 
         $scope.addSlot(new Slot('theList',
@@ -264,6 +298,15 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
           undefined
         ));
 
+		$scope.addSlot(new Slot('removeListItem',
+			'',
+			'List Item to Be removed',
+			'The name or the index number of a list item to be removed from the list',
+			$scope.theWblMetadata['templateid'],
+			{inputType: Enum.aopInputTypes.TextBox},
+			undefined
+		));
+
         $scope.setDefaultSlot('theSelectedName');
 
         if(BrowserDetect.browser == 'Firefox'){
@@ -290,6 +333,10 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 				}
 			}
 		}, true);
+
+		if($scope.theList.currentSelected != $scope.gimme('theSelectedName')){
+			$timeout(function(){$scope.theList.currentSelected = $scope.gimme('theSelectedName');}, 200);
+		}
     };
     //===================================================================================
 

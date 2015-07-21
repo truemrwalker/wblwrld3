@@ -635,7 +635,6 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                                     tempMemory['whenMovedTopPos'] = undefined;
                                     tempMemory['whenMovedVertDir'] = undefined;
                                 }
-
                             }
                             else{
                                 ui.helper.css('cursor', 'arrow');
