@@ -209,6 +209,10 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.then(function(files) {
 
 				return Q.all(util.transform_(files, function(f) {
+
+					if (!f.filename || !f.metadata) // Just log the error for now - TODO: handle it in the future
+						return console.error("Corrupt file in db:", f._id);
+
 					return syncRemoteWebbleFile(f, false, fileActionLogger);
 				}));
 			});
@@ -222,6 +226,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.then(function(files) {
 
 				return Q.all(util.transform_(files, function(f) {
+
+					if (!f.filename || !f.metadata) // Just log the error for now - TODO: handle it in the future
+						return console.error("Corrupt file in db:", f._id);
 
 					return getWebbleId(f.metadata.directory)
 						.then(function(ownerId) {
@@ -277,7 +284,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			return handleOrphanFiles();
 		})
 		.fail(function(err) {
-			console.error("Error: ", err);
+			console.error("File Sync Error:", err, "--", err.stack);
 		});
 
 	////////////////////////////////////////////////////////////////////
