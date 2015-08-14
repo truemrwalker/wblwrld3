@@ -160,6 +160,11 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	function syncRemoteWebbleFile(remoteFileEntry, evenWithoutOwnerId, fileActionLogger) {
 
+		if (remoteFileEntry.metadata == null) {
+
+			console.error("Missing METADATA:", remoteFileEntry)
+		}
+
 		return getWebbleId(remoteFileEntry.metadata.directory)
 			.then(function(ownerId) {
 
