@@ -277,7 +277,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			return handleOrphanFiles();
 		})
 		.fail(function(err) {
-			console.error("Error: ", err);
+			console.error("Error: ", err, err.trace("File Sync"));
 		});
 
 	////////////////////////////////////////////////////////////////////
