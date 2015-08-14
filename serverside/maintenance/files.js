@@ -160,11 +160,6 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	function syncRemoteWebbleFile(remoteFileEntry, evenWithoutOwnerId, fileActionLogger) {
 
-		if (remoteFileEntry.metadata == null) {
-
-			console.error("Missing METADATA:", remoteFileEntry)
-		}
-
 		return getWebbleId(remoteFileEntry.metadata.directory)
 			.then(function(ownerId) {
 
@@ -214,6 +209,11 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.then(function(files) {
 
 				return Q.all(util.transform_(files, function(f) {
+
+					if (!f.filename || !f.metadata) { // Something bad happened
+
+						return console.error("Corrupt file in db:", f._id);
+					}
 					return syncRemoteWebbleFile(f, false, fileActionLogger);
 				}));
 			});
