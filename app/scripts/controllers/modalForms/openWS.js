@@ -49,7 +49,7 @@ ww3Controllers.controller('openWSSheetCtrl', function ($scope, $modalInstance, $
     };
 
     // Form validation error message
-    $scope.errorMsg = '';
+    $scope.errorMsg = 'To open a Workspace without loading its containing Webbles just hold ALT + CTRL key while loading. This allows you to, for example, delete a Workspace without having to load all the webbles it contain.';
 
     //=== EVENT HANDLERS =====================================================================
 

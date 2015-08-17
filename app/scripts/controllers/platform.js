@@ -1721,6 +1721,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         var theWblDef = whatWebble.scope().createWblDef(true);
+		$log.log(theWblDef);
         theWblDef.webble.author = $scope.user.username;
 
         return {

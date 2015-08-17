@@ -94,7 +94,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 						}
 					}
 					if(count > 1 || (newVal != '' && count == 0)){
-						$scope.set('theSelectedIndex', -2);
+						//$scope.set('theSelectedIndex', -2);
 					}
 					if(newVal == ''){
 						$scope.set('theSelectedIndex', -1);
@@ -106,7 +106,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 					selectChangeBlocked = true;
 					$timeout(function(){selectChangeBlocked = false;}, 100);
 					if(newVal < $scope.theList.items.length){
-						$scope.theList.currentSelected = $scope.theList.items[newVal];
+						$scope.theList.currentSelected = $scope.theList.items[parseInt(newVal)];
 						$scope.set('theSelectedName', $scope.theList.currentSelected);
 					}
 					else{
@@ -429,9 +429,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 			}
 		}, true);
 
-		if($scope.theList.currentSelected != $scope.gimme('theSelectedName')){
-			$timeout(function(){$scope.theList.currentSelected = $scope.gimme('theSelectedName');}, 200);
-		}
+		$timeout(function(){$scope.selectAnItem($scope.gimme('theSelectedIndex'));});
     };
     //===================================================================================
 
@@ -525,7 +523,6 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 			$timeout(function(){selectChangeBlocked = false;}, 100);
 			if(currIndex < $scope.theList.items.length){
 				$scope.theList.currentSelected = $scope.theList.items[currIndex];
-				$log.log($scope.theList.currentSelected);
 				$scope.set('theSelectedName', $scope.theList.currentSelected);
 			}
 			else{
@@ -536,12 +533,6 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 		}
 	};
 	//========================================================================================
-
-
-
-
-
-
 
 
     //========================================================================================
