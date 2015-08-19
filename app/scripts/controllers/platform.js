@@ -3892,7 +3892,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if(sublink == 'upload' || (whatKeys.theAltKey && whatKeys.theKey == 'U')){
+        else if(sublink == 'upload' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'U')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 locationPathChangeRequest = '/templates';
                 $scope.waiting(true);
@@ -4008,6 +4008,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $window.open(appPaths.webbleDocRelPath);
             }
         }
+		else if(sublink == 'tutorials' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'U')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
+				$window.open('https://www.youtube.com/playlist?list=PL1sLx5eXq85NvFtnzhpOm4lNJFsDE6DlZ', '_blank');
+			}
+		}
         else if(sublink == 'faq' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'F')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
                 $scope.openForm(Enum.aopForms.faq, {userEmail: ($scope.user != undefined ? $scope.user.email : 'guest'), isAdmin: ($scope.user != undefined && $scope.user.role == 'adm')}, null);
