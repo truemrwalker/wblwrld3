@@ -438,7 +438,17 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
 
             if($scope.formitem.sa.nsName != ''){
                 sltNm = $scope.formitem.sa.nsName;
-                sltVl = $scope.formitem.sa.nsValue;
+				if(!isNaN($scope.formitem.sa.nsValue)){
+					sltVl = parseFloat($scope.formitem.sa.nsValue);
+				}
+				else{
+					try{
+						sltVl = JSON.parse($scope.formitem.sa.nsValue);
+					}
+					catch(e){
+						sltVl = $scope.formitem.sa.nsValue;
+					}
+				}
             }
             else if($scope.formitem.css.nsFullName != ''){
                 sltNm = $scope.formitem.css.nsFullName;

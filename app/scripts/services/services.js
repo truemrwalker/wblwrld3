@@ -1980,6 +1980,9 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         this.getIsCustomMade = function(){return isCustomMade_;};
         this.setIsCustomMade = function(customMadeState){isCustomMade_ = customMadeState;};
 
+		var originalType_ = '';
+		this.getOriginalType = function(){return originalType_;};
+
         this.cssValWatch = undefined;
 
         //prop initiation
@@ -2001,6 +2004,11 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         if(sElementPntr != undefined){
             elementPntr_ = sElementPntr;
         }
+
+		originalType_ = typeof value_;
+		if(Object.prototype.toString.call( value_ ) === '[object Array]' ) {
+			originalType_ = 'array';
+		}
     }
 
     return Slot;
