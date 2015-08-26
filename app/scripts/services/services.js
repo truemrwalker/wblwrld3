@@ -2006,7 +2006,10 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         }
 
 		originalType_ = typeof value_;
-		if(Object.prototype.toString.call( value_ ) === '[object Array]' ) {
+		if(metaData_ != null && (metaData_.inputType == Enum.aopInputTypes.Point || metaData_.inputType == Enum.aopInputTypes.Size)){
+			originalType_ = 'vector';
+		}
+		else if(Object.prototype.toString.call( value_ ) === '[object Array]') {
 			originalType_ = 'array';
 		}
     }
