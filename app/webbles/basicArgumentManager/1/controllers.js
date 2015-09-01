@@ -11,7 +11,7 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
-        argContainer: ['background-color', 'border', 'color']
+        argContainer: ['background-color', 'border', 'color', 'font-size', 'color', 'font-family']
     };
 
     $scope.viewArgs = {

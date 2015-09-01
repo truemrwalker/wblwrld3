@@ -611,21 +611,32 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                                         }
                                     }
 
+									if(itsOk){
+										var metadata = theSlots_[slot].getMetaData();
+										if(metadata != null && (metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size)){
+											if(JSON.stringify(theSlots_[slot].getValue()) == JSON.stringify(p.value)){
+												itsOk = false;
+											}
+										}
+									}
+
                                     if(itsOk){
 										if(p.originalValType == 'object' || p.originalValType == 'array') {
-											var jsonParsedVal;
-											try{
-												jsonParsedVal = JSON.parse(p.value);
-											}
-											catch(e){
-												if(p.originalValType == 'object'){
-													jsonParsedVal = JSON.parse("{}");
+											if(JSON.stringify(theSlots_[slot].getValue()) != p.value){
+												var jsonParsedVal;
+												try{
+													jsonParsedVal = JSON.parse(p.value);
 												}
-												else{
-													jsonParsedVal = new Array();
+												catch(e){
+													if(p.originalValType == 'object'){
+														jsonParsedVal = JSON.parse("{}");
+													}
+													else{
+														jsonParsedVal = new Array();
+													}
 												}
+												theSlotsToSet[slot] = jsonParsedVal;
 											}
-											theSlotsToSet[slot] = jsonParsedVal;
 										}
 										else{
 										    //theSlotsToSet[slot] = valMod.parse(p.value);
@@ -640,6 +651,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 }
 
                 for(var sts in theSlotsToSet){
+					$log.log(sts);
                     $scope.set(sts, theSlotsToSet[sts]);
                 }
             }
