@@ -111,8 +111,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getMenuItem = function(itemName){ for (var i = 0,item; item = $scope.menuItems[i]; i++) { if(item.itemName == itemName){ return item; } for (var n = 0, subitem; subitem = item.sublinks[n]; n++) { if(subitem.sublink_itemName == itemName){ return subitem; } } } };
     var originalWebbleMenu_ = angular.copy(menuItemsFactoryService.menuItems[1].sublinks);
 	var updatedContent = [
-		{name: 'docs', date: '2015-06-15'},
-		{name: 'devpack', date: '2015-06-15'}
+		{name: 'docs', date: '2015-09-02'},
+		{name: 'devpack', date: '2015-09-02'}
 	];
 	$scope.getUpdateDate = function(whatContent){
 		for(var i = 0; i < updatedContent.length; i++){

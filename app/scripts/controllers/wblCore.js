@@ -651,7 +651,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 }
 
                 for(var sts in theSlotsToSet){
-					$log.log(sts);
                     $scope.set(sts, theSlotsToSet[sts]);
                 }
             }
