@@ -25,68 +25,55 @@
 //
 var path = require('path');
 var fs = require('fs');
+var tar = require('tar-stream');
 
 var util = require('../util');
 var libGfs = require('../gfs');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
-
+module.exports = function (Q, app, config, mongoose, gettext, auth) {
+	
 	var User = mongoose.model('User');
 	var gfs = new libGfs.GFS(Q, mongoose);
-
+	
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
 	function ensureObjectValid(req, obj, readonly) {
-
+		
 		if (!obj)
 			throw new util.RestError(gettext("Requested object does not exist", 404));
-
+		
 		if (!obj.isUserOwner(req.user) && !readonly)
 			throw new util.RestError(gettext("You are not the owner of the requested object"), 403);
-
+		
 		if (obj.webble.defid !== obj.webble.templateid)
 			throw new util.RestError(gettext("Operation not applicable to this kind of object"));
 	}
-
+	
 	//******************************************************************
-
+	
 	function saveFiles(req, targetPath, ownerId) {
-
+		
 		if (!req.files || (req.files.file && req.files.file.length == 0))
 			return Q.resolve(null);
-
-		var files = req.files.file ? [ req.files.file ]:
+		
+		var files = req.files.file ? [req.files.file]:
 			util.transform(Object.keys(req.files), function (k) {
-				return req.files[k][0];
-			});
-
+			return req.files[k][0];
+		});
+		
 		return Q.all(util.transform_(files, function (f) {
 			return gfs.upload(fs.createReadStream(f.path), targetPath, f.originalname, ownerId);
 		}));
 	}
 	function getFiles(targetPath, ownerId) {
-
-		return gfs.getFiles(targetPath, ownerId).then(function(files) {
-
-			//quick test
-			//
-			//var haveSeen = {};
-			//var result = [];
-			//files.forEach(function(f) {
-            //
-			//	if (!haveSeen[f.metadata.filename]) {
-			//		haveSeen[f.metadata.filename] = true;
-			//		result.push(f.metadata.filename);
-			//	}
-			//});
-			//return result;
-			//
-
-			return util.transform_(files, function(f) {
+		
+		return gfs.getFiles(targetPath, ownerId).then(function (files) {
+			
+			return util.transform_(files, function (f) {
 				return f.metadata.filename;
 			});
-		}).fail(function() { return [] });
+		}).fail(function () { return [] });
 	}
 	function removeFiles(targetPath, ownerId) {
 		return gfs.deleteFiles(targetPath, ownerId);
@@ -97,56 +84,112 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	function copyFiles(fromPath, toPath, ownerId) {
 		return gfs.copyFiles(fromPath, toPath, ownerId);
 	}
-
+	
 	//******************************************************************
+	
+	function importFiles(targetPath, pack, ownerId) {
+		
+		return Q.Promise(function (resolve, reject) {
+			
+			var extract = tar.extract();
+			extract.on('entry', function (header, stream, next) {
+				
+				// header is the tar header
+				// stream is the content body (might be an empty stream)
+				// call next when you are done with this entry
+				
+				stream.on('end', next); // ready for next entry
+				
+				if (true) { // (header.directory.indexOf(targetPath) === 0) { // startsWith
+					
+					gfs.createWriteStream(header.directory, header.filename, ownerId, 0).then(function (writeStream) {
+						
+						stream.pipe(writeStream);
+						stream.once('error', reject);
+						
+						writeStream.once('error', reject);
 
-	function performOperationOnFile(req, query, targetPathPrefix, op) {
-
-		return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
-			.then(function (obj) {
-				ensureObjectValid(req, obj);
-
-				var targetVer = obj.getInfoObject().ver;
-				var targetPath = path.join(targetPathPrefix, targetVer.toString());
-
-				return op(targetPath, req.params.file || req.params[0], obj._id, req.body);
+					}).done();
+				}
+				else
+					stream.resume(); // just auto drain the stream
 			});
+			
+			extract.once('finish', resolve);
+			extract.once('error', reject);
+			
+			pack.pipe(extract);
+		});
 	}
 
+	function exportFiles(targetPath, pack, ownerId) {
+		
+		return gfs.getFiles(targetPath, ownerId).then(function (files) {
+			
+			// Obv., we need to store the files in the pack sequentially
+			return files.reduce(function (soFar, f) {
+
+				return soFar.then(function () {
+					
+					var deferred = Q.defer();
+					var entry = pack.entry({ name: f.metadata.filename, type: 'contigious-file', size: f.length }, 
+						deferred.makeNodeResolver());
+					gfs.createReadStreamFromFileEntrySync(f).pipe(entry);
+					return deferred.promise;
+				});
+
+			}, Q(null));
+		});
+	}
+	
+	//******************************************************************
+	
+	function performOperationOnFile(req, query, targetPathPrefix, op) {
+		
+		return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {			
+			ensureObjectValid(req, obj);
+			
+			var targetVer = obj.getInfoObject().ver;
+			var targetPath = path.join(targetPathPrefix, targetVer.toString());
+			
+			return op(targetPath, req.params.file || req.params[0], obj._id, req.body);
+		});
+	}
+	
 	function opGet(path, filename, ownerId) {
-
-		return gfs.downloadData('utf8', path, filename, ownerId).then(function(data) {
+		
+		return gfs.downloadData('utf8', path, filename, ownerId).then(function (data) {
 			return {
-
-				name: 'unknown',
+				
+				name: filename,
 				content: data
 			};
 		});
 	}
 	function opUpdate(path, filename, ownerId, props) {
-
-		return gfs.uploadData(props.content, 'utf8', path, filename, ownerId).then(function(data) {
+		
+		return gfs.uploadData(props.content, 'utf8', path, filename, ownerId).then(function (data) {
 			return {
-
-				name: 'unknown',
+				
+				name: filename,
 				content: data
 			};
 		});
 	}
 	function opDelete(path, filename, ownerId) {
-
-		return gfs.deleteFile(path, filename, ownerId).then(function() {
+		
+		return gfs.deleteFile(path, filename, ownerId).then(function () {
 			return {
-				name: 'unknown'
+				name: filename
 			};
 		});
 	}
-
+	
 	////////////////////////////////////////////////////////////////////
 	// Public methods
 	//
 	return {
-
+		
 		getFile: function (req, query, targetPathPrefix) {
 			return performOperationOnFile(req, query, targetPathPrefix, opGet);
 		},
@@ -156,127 +199,157 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		deleteFile: function (req, query, targetPathPrefix) {
 			return performOperationOnFile(req, query, targetPathPrefix, opDelete);
 		},
-
+		
 		//**************************************************************
+		
+		exportFiles: function (req, query, targetPathPrefix, pack) {
+			
+			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+				
+				ensureObjectValid(req, obj);
+				
+				pack.entry({ name: 'info.json' }, JSON.stringify(obj.getInfoObject()));
+				return exportFiles(targetPathPrefix, pack).then(function () { return obj; });
 
+				//var promises = [];
+				//for (var targetVer = 1; targetVer <= maxVer; ++targetVer) {
+                //
+				//	var targetPath = path.join(targetPathPrefix, targetVer.toString());
+				//	promises.push(exportFiles(targetPath, pack));
+				//}
+				//return Q.all(promises);
+			});
+		},
+		
+		importFiles: function (req, query, targetPathPrefix, pack) {
+			
+			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+				ensureObjectValid(req, obj);
+				
+				var targetVer = obj.getInfoObject().ver;
+				var targetPath = path.join(targetPathPrefix, targetVer.toString());
+				
+				// Import everything - ALL VERSIONS
+				return importFiles(targetPath, pack);
+			});
+		},
+		
+		//**************************************************************
+		
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
-
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					var targetVer = versionUpdater(obj);
-					var targetPath = path.join(targetPathPrefix, targetVer.toString());
-
-					return saveFiles(req, targetPath)
-						.then(function() {
-
-							// The library I'm using wants the data flat I cannot use
-							// req.body.info and then access id, name, etc.
-							//
-							var info = req.body;
-							info.ver = targetVer;
-
-							obj.mergeWithInfoObject(info);
-							return Q.ninvoke(obj, "save").then(function() { return obj; });
-						});
+			
+			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+				ensureObjectValid(req, obj);
+				
+				var targetVer = versionUpdater(obj);
+				var targetPath = path.join(targetPathPrefix, targetVer.toString());
+				
+				return saveFiles(req, targetPath)
+						.then(function () {
+					
+					// The library I'm using wants the data flat I cannot use
+					// req.body.info and then access id, name, etc.
+					//
+					var info = req.body;
+					info.ver = targetVer;
+					
+					obj.mergeWithInfoObject(info);
+					return Q.ninvoke(obj, "save").then(function () { return obj; });
 				});
+			});
 		},
-
+		
 		//**************************************************************
-
+		
 		associatedFiles: function (req, query, targetPathPrefix) {
-
-			return('exec' in query ? Q(query.exec()) : Q.resolve(query))
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					var targetVer = obj.getInfoObject().ver;
-					var targetPath = path.join(targetPathPrefix, targetVer.toString());
-
-					return getFiles(targetPath);
-				});
+			
+			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+				ensureObjectValid(req, obj);
+				
+				var targetVer = obj.getInfoObject().ver;
+				var targetPath = path.join(targetPathPrefix, targetVer.toString());
+				
+				return getFiles(targetPath);
+			});
 		},
-
+		
 		//**************************************************************
-
+		
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
-
-			return Q(query.exec())
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					var info = obj.getInfoObject();
-
-					var previousVer = info.ver;
-					var previousPath = path.join(targetPathPrefix, previousVer.toString());
-
-					return removeFiles(previousPath)
-						.then(function() {
-
-							var targetVer = versionUpdater(obj);
-
-							if (targetVer === 0)
-								return Q.ninvoke(obj, "remove");
-							else {
-
-								//var targetPath = path.join(targetPathPrefix, targetVer.toString());
-
-								info.ver = targetVer;
-								info.modified = Date.now();
-
-								obj.mergeWithInfoObject(info);
-								return Q.ninvoke(obj, "save").then(function() { return obj; });
-							}
-						});
+			
+			return Q(query.exec()).then(function (obj) {
+				ensureObjectValid(req, obj);
+				
+				var info = obj.getInfoObject();
+				
+				var previousVer = info.ver;
+				var previousPath = path.join(targetPathPrefix, previousVer.toString());
+				
+				return removeFiles(previousPath).then(function () {
+					
+					var targetVer = versionUpdater(obj);
+					
+					if (targetVer === 0)
+						return Q.ninvoke(obj, "remove");
+					else {
+						
+						//var targetPath = path.join(targetPathPrefix, targetVer.toString());
+						
+						info.ver = targetVer;
+						info.modified = Date.now();
+						
+						obj.mergeWithInfoObject(info);
+						return Q.ninvoke(obj, "save").then(function () { return obj; });
+					}
 				});
+			});
 		},
-
+		
 		//**************************************************************
-
+		
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
-
-			return Q.spread([ ('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery)) ],
-				function(fromObj, toObj) {
-					ensureObjectValid(req, fromObj);
-
-					var fromVer = fromObj.getInfoObject().ver;
-					var fromPath = path.join(fromTargetPathPrefix, fromVer.toString());
-
-					var toVer = toObj.getInfoObject().ver;
-					var toPath = path.join(toTargetPathPrefix, toVer.toString());
-
-					ensureObjectValid(req, toObj);
-
-					return moveFiles(fromPath, toPath).then(function() {
-
-						return Q.all([ Q.ninvoke(fromObj, "remove"), Q.ninvoke(toObj, "save") ])
-							.then(function() { return toObj; });
-					});
+			
+			return Q.spread([('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
+				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery))],
+				function (fromObj, toObj) {
+				ensureObjectValid(req, fromObj);
+				
+				var fromVer = fromObj.getInfoObject().ver;
+				var fromPath = path.join(fromTargetPathPrefix, fromVer.toString());
+				
+				var toVer = toObj.getInfoObject().ver;
+				var toPath = path.join(toTargetPathPrefix, toVer.toString());
+				
+				ensureObjectValid(req, toObj);
+				
+				return moveFiles(fromPath, toPath).then(function () {
+					
+					return Q.all([Q.ninvoke(fromObj, "remove"), Q.ninvoke(toObj, "save")])
+							.then(function () { return toObj; });
 				});
+			});
 		},
-
+		
 		//**************************************************************
-
+		
 		copyFiles: function (req, fromQuery, toQuery, fromPathPrefix, toPathPrefix) {
-
-			return Q.spread([ ('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-					('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery)) ],
-				function(fromObj, toObj) {
-					ensureObjectValid(req, fromObj, true);
-
-					var fromVer = fromObj.getInfoObject().ver;
-					var fromPath = path.join(fromPathPrefix, fromVer.toString());
-
-					var toVer = toObj.getInfoObject().ver;
-					var toPath = path.join(toPathPrefix, toVer.toString());
-
-					ensureObjectValid(req, toObj);
-
-					return copyFiles(fromPath, toPath)
-						.then(function() { return toObj; }); // We haven't modified the object at all... so, no need save
-				});
+			
+			return Q.spread([('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
+				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery))],
+				function (fromObj, toObj) {
+				ensureObjectValid(req, fromObj, true);
+				
+				var fromVer = fromObj.getInfoObject().ver;
+				var fromPath = path.join(fromPathPrefix, fromVer.toString());
+				
+				var toVer = toObj.getInfoObject().ver;
+				var toPath = path.join(toPathPrefix, toVer.toString());
+				
+				ensureObjectValid(req, toObj);
+				
+				return copyFiles(fromPath, toPath)
+						.then(function () { return toObj; }); // We haven't modified the object at all... so, no need save
+			});
 		}
 	};
 };

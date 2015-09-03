@@ -248,6 +248,10 @@ module.exports.GFS = function (Q, mongoose) {
 		//	return gfs.createReadStream(file);
 		//});
 	};
+	
+	this.createReadStreamFromFileEntrySync = function (fileEntry) {
+		return gfs.createReadStream(fileEntry);
+	};
 
 	// Upload
 	//
@@ -315,7 +319,7 @@ module.exports.GFS = function (Q, mongoose) {
 				readStream.once('error', reject);
 
 				writeStream.once('error', reject);
-				writeStream.once('finish', resolve);
+				writeStream.once('end', resolve);
 			});
 		});
 	};
@@ -346,7 +350,7 @@ module.exports.GFS = function (Q, mongoose) {
 			readStream.once('error', reject);
 
 			writeStream.once('error', reject);
-			writeStream.once('finish', resolve);
+			writeStream.once('end', resolve);
 		});
 	};
 };

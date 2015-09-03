@@ -28,6 +28,7 @@
 		"mongoose-user": "latest",
 		"gridfs-stream": "latest",
 		"connect-mongo": "latest",
+		"tar-stream": "latest",
 
 		"passport": "latest",
 		"passport-local": "latest",
