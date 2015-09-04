@@ -122,9 +122,11 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		});
 	}
 
-	function exportFiles(targetPath, pack, ownerId) {
+	function exportFiles(targetPath, info, pack, ownerId) {
         
-        pack.entry({ name: 'foo', type: 'directory' });
+        var dir = info.id;
+        pack.entry({ name: dir, type: 'directory' });        
+        pack.entry({ name: dir + '/' + 'info.json' }, JSON.stringify(info));
 
 		return gfs.getFiles(targetPath, ownerId).then(function (files) {
 			
@@ -138,11 +140,18 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
                 else if (files.length == 0)
                     deferred.resolve(targetPath);
                 else {
-
+                    
                     var f = files.pop();
-                    var entry = pack.entry({ name: 'foo/' + f.metadata.filename, type: 'file', size: f.length }, next);
-                    gfs.createReadStreamFromFileEntrySync(f).pipe(entry);
-                }                
+                    var chunks = [];
+                    var stream = gfs.createReadStreamFromFileEntrySync(f);
+                    stream.on('data', function (chunk) { chunks.push(chunk); });
+                    stream.on('error', function (err) { next(err); });
+                    stream.on('end', function () {
+                        
+                        pack.entry({ name: dir + '/' + f.metadata.filename, type: 'file', size: f.length }, Buffer.concat(chunks));
+                        next();
+                    });
+                }
             };
 
             next();
@@ -216,8 +225,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				
 				ensureObjectValid(req, obj);
 				
-				pack.entry({ name: 'info.json' }, JSON.stringify(obj.getInfoObject()));
-				return exportFiles(targetPathPrefix, pack).then(function () { return obj; });
+				return exportFiles(targetPathPrefix, obj.getInfoObject(), pack).then(function () { return obj; });
 
 				//var promises = [];
 				//for (var targetVer = 1; targetVer <= maxVer; ++targetVer) {
