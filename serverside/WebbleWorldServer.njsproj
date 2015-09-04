@@ -14,11 +14,14 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <StartWebBrowser>True</StartWebBrowser>
     <Environment>PORT=7000</Environment>
-    <NodeExePath>C:\Program Files\nodejs\node.exe</NodeExePath>
+    <NodeExePath>C:\Program Files (x86)\nodejs\node.exe</NodeExePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="keys\ca.crt" />
+    <Content Include="keys\server.crt" />
+    <Content Include="keys\server.key" />
     <Content Include="secretsdb.json" />
     <Compile Include="api\takeout.js" />
     <Compile Include="config.js" />

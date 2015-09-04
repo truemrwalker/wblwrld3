@@ -42,9 +42,9 @@ module.exports = (function() {
 		SERVER_PORT: 7000,
 		SERVER_BEHIND_REVERSE_PROXY: false,
 
-		SERVER_CA: '', // Certificate Authority Bundle
-		SERVER_KEY: path.join(__dirname, 'keys/key.pem'),
-		SERVER_CERT: path.join(__dirname, 'keys/cert.pem'),
+		SERVER_CA: path.join(__dirname, 'keys/ca.crt'),
+		SERVER_KEY: path.join(__dirname, 'keys/server.key'),
+		SERVER_CERT: path.join(__dirname, 'keys/server.crt'),
 		SERVER_PASSPHRASE: '',
 		SERVER_ROOT_DIR: __dirname,
 
