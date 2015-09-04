@@ -123,22 +123,30 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	}
 
 	function exportFiles(targetPath, pack, ownerId) {
-		
+        
+        pack.entry({ name: 'foo', type: 'directory' });
+
 		return gfs.getFiles(targetPath, ownerId).then(function (files) {
 			
-			// Obv., we need to store the files in the pack sequentially
-			return files.reduce(function (soFar, f) {
+            // Obv., we need to store the files in the pack sequentially
+            var deferred = Q.defer();
+            
+            var next = function (err) {
+                
+                if (err)
+                    deferred.reject(err);
+                else if (files.length == 0)
+                    deferred.resolve(targetPath);
+                else {
 
-				return soFar.then(function () {
-					
-					var deferred = Q.defer();
-					var entry = pack.entry({ name: f.metadata.filename, type: 'contigious-file', size: f.length }, 
-						deferred.makeNodeResolver());
-					gfs.createReadStreamFromFileEntrySync(f).pipe(entry);
-					return deferred.promise;
-				});
+                    var f = files.pop();
+                    var entry = pack.entry({ name: 'foo/' + f.metadata.filename, type: 'file', size: f.length }, next);
+                    gfs.createReadStreamFromFileEntrySync(f).pipe(entry);
+                }                
+            };
 
-			}, Q(null));
+            next();
+            return deferred.promise;
 		});
 	}
 	
