@@ -29,6 +29,31 @@
 ww3Controllers.controller('TemplatesCtrl', ['$scope', '$timeout', 'gettext', 'templates', 'templateService', 'confirm',
 function ($scope, $timeout, gettext, templates, templateService, confirm) {
 
+    ////////////////////////////////////////////////////////////////////
+    // Utility functions
+    //
+    function validatePendingFiles(files) {
+
+        files = files || $scope.filesToUpload;
+
+        var archivesIncluded = false;
+        for (var i = 0; i < files.length; ++i) {
+
+            var f = files[i];
+
+            if (f.name.lastIndexOf(".war") != -1)
+                archivesIncluded = true;
+        }
+        $scope.filesToUploadAreArchives = archivesIncluded;
+        return files;
+    }
+    function filterPendingFiles(files) {
+
+        files = files || $scope.filesToUpload;
+        return !$scope.filesToUploadAreArchives ? files :
+            files.filter(function (f) { return f.name.lastIndexOf(".war") != -1 });
+    }
+
 	// Existing templates
 	//
 	$scope.templates = templates;
@@ -37,18 +62,22 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 	// Manipulation of template files
 	//
 	$scope.filesToUpload = [];
+	$scope.filesToUploadAreArchives = false;
 
 	$scope.onFilesAdded = function(files) {
 		//$scope.filesToUpload.push.apply(files);
 		//console.log(files[0]);
-		$scope.filesToUpload = $scope.filesToUpload.concat(files);
+
+	    $scope.filesToUpload = filterPendingFiles(validatePendingFiles($scope.filesToUpload.concat(files)));
 	};
 	$scope.onFileRemoved = function(index) {
-		$scope.filesToUpload.splice(index, 1);
+	    $scope.filesToUpload.splice(index, 1);
+	    validatePendingFiles();
 	};
 	$scope.onFilesCleared = function() {
 
 		$scope.filesToUpload.length = 0;
+		validatePendingFiles();
 		angular.element(document.getElementById('selectMultipleFilesInputEntry')).val('');
 	};
 
@@ -406,5 +435,16 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 	};
 
 	//******************************************************************
+
+	$scope.formImportTemplate = function () {
+
+		if ($scope.filesToUploadAreArchives) {
+
+			templateService.importArchive($scope.filesToUpload).then(function () {
+
+				$scope.filesToUploadAreArchives = false;
+			});
+		}
+	};
 
 }]);

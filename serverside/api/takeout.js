@@ -50,14 +50,14 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	var fsOps = require('../lib/ops/gfsing')(Q, app, config, mongoose, gettext, auth);
 	
 	app.get('/api/takeout/devwebbles', auth.dev, function (req, res) {
-		
+        
+        var pack = tar.pack();
+
 		Q.ninvoke(DevWebble, "find", { $or: [{ _owner: req.user._id }, { _owner: null }] }).then(function (webbles) {
 			
 			if (!webbles)
 				throw new util.RestError(gettext("Cannot retrieve webbles"));
-			
-			var pack = tar.pack();
-			
+						
 			// Sequentially		
 			return webbles.reduce(function (soFar, w) {
 				
@@ -109,5 +109,32 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	});
     
 	//******************************************************************
+
+	app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
+
+		fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
+
+			var newWebble = new DevWebble({
+				webble: { defid: tarDir, templateid: tarDir },
+				_owner: req.user._id
+			});
+
+			return Q.ninvoke(newWebble, "save").then(function (saveResult) { // We need to save first to get an _id
+				return { obj: saveResult[0], pathSuffix: path.join(saveResult[0]._id.toString(), "0") };
+			});
+
+		}, function (w, infoObj) {
+
+			w.mergeWithInfoObject(infoObj);
+			return Q.ninvoke(w, "save");
+
+		}).fail(function (err) {
+			util.resSendError(res, err);
+		}).done();;
+	});
+
+	app.post('/api/takeout/devwebbles/:id', auth.dev, function (req, res) {
+
+	});
 
 };

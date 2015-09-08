@@ -128,6 +128,24 @@ ww3Services.factory('templateService', ['$q', '$upload', '$http', function($q, $
 		},
 		deleteFile: function(id, file) {
 			return $http.delete('/api/dev/webbles/' + id + '/files/' + encodeURIComponent(file));
+		},
+			
+		//**************************************************************
+			
+		exportArchive: function () {
+			return $http.get('/api/takeout/devwebbles');
+		},
+
+		importArchive: function (files) {
+
+			return $upload.upload({
+				url: '/api/takeout/devwebbles',
+				method: 'POST',
+				file: files
+			});
 		}
+
+		//**************************************************************
+
 	};
 }]);

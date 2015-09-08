@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "WebbleWorldServer", "serverside\WebbleWorldServer.njsproj", "{5AA6AD81-8B6C-46F7-9C54-EC1AE8CC1662}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "WebbleWorld", "WebbleWorld.njsproj", "{036276DC-65FD-43E1-84F4-3329FBE75298}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,9 +11,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5AA6AD81-8B6C-46F7-9C54-EC1AE8CC1662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AA6AD81-8B6C-46F7-9C54-EC1AE8CC1662}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AA6AD81-8B6C-46F7-9C54-EC1AE8CC1662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{036276DC-65FD-43E1-84F4-3329FBE75298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{036276DC-65FD-43E1-84F4-3329FBE75298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{036276DC-65FD-43E1-84F4-3329FBE75298}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

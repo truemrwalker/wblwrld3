@@ -93,55 +93,58 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="id" class="control-label col-xs-2" translate>Id</label>
-            <div class="col-xs-6">
-                <input type="text" id="id" name="id" class="form-control formitem" ng-model="templateData.id" placeholder="{{'Template Id'|translate}}" ng-required="true" ng-minlength="5"
-                       typeahead="t.id for t in queryTemplates($viewValue) | filter:$viewValue | limitTo:20"
-                       typeahead-on-select="onSelectQueriedTemplate($item)" typeahead-editable="true" typeahead-min-length="3" typeahead-wait-ms="700"/>
-                <p class="help-block" ng-if="enableCopyTemplate"><span translate>You can create a copy of this, already published template or create a new one</span></p>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="name" class="control-label col-xs-2" translate>Name</label>
-            <div class="col-xs-6">
-                <input type="text" class="form-control formitem" ng-model="templateData.name" placeholder="{{'Template Name'|translate}}" id="name" name="name" required  ng-minlength="5"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="description" class="control-label col-xs-2" translate>Description</label>
-            <div class="col-xs-6">
-                <textarea class="form-control formitem" ng-model="templateData.description" placeholder="{{'Template Description'|translate}}" id="description" name="description">
-                </textarea>
-            </div>
-        </div>
+		<div ng-hide="filesToUploadAreArchives">
+			<div class="form-group">
+				<label for="id" class="control-label col-xs-2" translate>Id</label>
+				<div class="col-xs-6">
+					<input type="text" id="id" name="id" class="form-control formitem" ng-model="templateData.id" placeholder="{{'Template Id'|translate}}" ng-required="true" ng-minlength="5"
+						   typeahead="t.id for t in queryTemplates($viewValue) | filter:$viewValue | limitTo:20"
+						   typeahead-on-select="onSelectQueriedTemplate($item)" typeahead-editable="true" typeahead-min-length="3" typeahead-wait-ms="700" />
+					<p class="help-block" ng-if="enableCopyTemplate"><span translate>You can create a copy of this, already published template or create a new one</span></p>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="name" class="control-label col-xs-2" translate>Name</label>
+				<div class="col-xs-6">
+					<input type="text" class="form-control formitem" ng-model="templateData.name" placeholder="{{'Template Name'|translate}}" id="name" name="name" required ng-minlength="5" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="description" class="control-label col-xs-2" translate>Description</label>
+				<div class="col-xs-6">
+					<textarea class="form-control formitem" ng-model="templateData.description" placeholder="{{'Template Description'|translate}}" id="description" name="description"></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<alert type="danger" ng-show="serverErrorMessage || (templateForm.$invalid && templateForm.id.$dirty && templateForm.name.$dirty && templateForm.description.$dirty)">
+					<strong translate>Please correct the following errors:</strong>
+					<ul style="margin-left:20px; margin-top:5px;">
+						<li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+						<li ng-show="templateForm.id.$invalid" translate>Please provide a valid id for the template</li>
+						<li ng-show="templateForm.name.$invalid" translate>Please provide a valid name for the template</li>
+						<li ng-show="templateForm.description.$invalid" translate>Please provide a valid description for the template</li>
+					</ul>
+				</alert>
+			</div>
 
-        <div class="form-group">
-            <alert type="danger" ng-show="serverErrorMessage || (templateForm.$invalid && templateForm.id.$dirty && templateForm.name.$dirty && templateForm.description.$dirty)">
-                <strong translate>Please correct the following errors:</strong>
-                <ul style="margin-left:20px; margin-top:5px;">
-                    <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+			<div class="form-group">
+				<div class="col-xs-offset-2 col-xs-5">
+					<a ng-show="!currTemplateId" ng-disabled="templateForm.$invalid" class="btn btn-primary" ng-click="formCreateTemplate()" translate>Create</a>
+					<a ng-hide="!currTemplateId" ng-disabled="templateForm.$invalid" class="btn btn-primary" ng-click="formUpdateTemplate()" translate>Update</a>
+					<a ng-show="enableCopyTemplate" ng-disabled="!templateData.id" class="btn btn-info" ng-click="formCopyTemplate(templateData.id)"><span class="fa fa-copy"></span> <span translate>Copy</span></a>
+					<a ng-if="false" ng-disabled="!currTemplateId" class="btn btn-danger" ng-click="formDeleteTemplate(true)">Publish</a>
+					<!--<button type="submit" ng-disabled="templateForm.$invalid" class="btn btn-primary" translate>Update</button>-->
+				</div>
+			</div>
+		</div>
 
-                    <li ng-show="templateForm.id.$invalid" translate>Please provide a valid id for the template</li>
-                    <li ng-show="templateForm.name.$invalid" translate>Please provide a valid name for the template</li>
-                    <li ng-show="templateForm.description.$invalid" translate>Please provide a valid description for the template</li>
-                </ul>
-            </alert>
-        </div>
-
-        <div class="form-group">
-            <div class="col-xs-offset-2 col-xs-5">
-
-                <a ng-show="!currTemplateId" ng-disabled="templateForm.$invalid" class="btn btn-primary" ng-click="formCreateTemplate()" translate>Create</a>
-                <a ng-hide="!currTemplateId" ng-disabled="templateForm.$invalid" class="btn btn-primary" ng-click="formUpdateTemplate()" translate>Update</a>
-
-                <a ng-show="enableCopyTemplate" ng-disabled="!templateData.id" class="btn btn-info" ng-click="formCopyTemplate(templateData.id)"><span class="fa fa-copy"></span> <span translate>Copy</span></a>
-
-                <a ng-if="false" ng-disabled="!currTemplateId" class="btn btn-danger" ng-click="formDeleteTemplate(true)">Publish</a>
-
-                <!--<button type="submit" ng-disabled="templateForm.$invalid" class="btn btn-primary" translate>Update</button>-->
-            </div>
-        </div>
+		<div ng-show="filesToUploadAreArchives">
+			<div class="form-group">
+				<div class="col-xs-offset-2 col-xs-5">
+					<a class="btn btn-primary" ng-click="formImportTemplate()"><span translate>Import Archives</span></a>
+				</div>
+			</div>
+		</div>
 
     </form>
 

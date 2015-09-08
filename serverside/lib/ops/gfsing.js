@@ -87,42 +87,87 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	
 	//******************************************************************
 	
-	function importFiles(targetPath, pack, ownerId) {
+	function importAllFiles(req, targetPathPrefix, objGetterAsync, objSetterAsync) {
+
+		if (!req.files || (req.files.file && req.files.file.length == 0))
+			return Q.resolve(null);
+
+		var files = req.files.file ? [req.files.file]:
+			util.transform(Object.keys(req.files), function (k) {
+			return req.files[k][0];
+		});
+		
+		return Q.all(util.transform_(files, function (f) {
+			return importFiles(fs.createReadStream(f.path), targetPathPrefix, objGetterAsync, objSetterAsync);
+		}));
+	}
+
+	function importFiles(tarStream, targetPathPrefix, objGetterAsync, objSetterAsync) {
 		
 		return Q.Promise(function (resolve, reject) {
 			
-			var extract = tar.extract();
+			var extract = tar.extract();            
+            var targetObj = null, targetPath = null;
+			
 			extract.on('entry', function (header, stream, next) {
 				
 				// header is the tar header
 				// stream is the content body (might be an empty stream)
 				// call next when you are done with this entry
-				
-				stream.on('end', next); // ready for next entry
-				
-				if (true) { // (header.directory.indexOf(targetPath) === 0) { // startsWith
+
+				if (!header)
+					reject();
+				else if (header.type === 'directory') {
 					
-					gfs.createWriteStream(header.directory, header.filename, ownerId, 0).then(function (writeStream) {
+					objGetterAsync(path.basename(header.name)).then(function (result) {
+						
+						targetObj = result.obj;
+						targetPath = path.join(targetPathPrefix, result.pathSuffix);
+						
+						stream.resume(); // Drain the stream just in case
+						next();
+
+					}, reject).done();
+				}
+				else if (!targetObj || !targetPath)
+					reject();
+				else if (path.basename(header.name) === 'info.json') {
+					
+					var jsonString = '';
+					stream.on('data', function (chunk) { jsonString += chunk; });
+					stream.on('error', reject);
+					stream.on('end', function () {
+						
+						var infoObj = JSON.parse(jsonString);
+                        objSetterAsync(targetObj, infoObj).then(function () {
+                            next();
+                        }, function (err) {
+                            reject();
+                        }).done();
+					});
+				}
+				else {
+
+					gfs.createWriteStream(targetPath, path.basename(header.name), null, 0).then(function (writeStream) {
 						
 						stream.pipe(writeStream);
-						stream.once('error', reject);
 						
-						writeStream.once('error', reject);
+						stream.on('end', next); // ready for next entry
+						stream.on('error', reject);
+
+						writeStream.on('error', reject);
 
 					}).done();
 				}
-				else
-					stream.resume(); // just auto drain the stream
 			});
 			
-			extract.once('finish', resolve);
-			extract.once('error', reject);
-			
-			pack.pipe(extract);
+			extract.on('finish', resolve);
+			extract.on('error', reject);
+			tarStream.pipe(extract);
 		});
 	}
-
-	function exportFiles(targetPath, info, pack, ownerId) {
+	
+	function exportFiles(pack, targetPath, info, ownerId) {
         
         var dir = info.id;
         pack.entry({ name: dir, type: 'directory' });        
@@ -225,28 +270,27 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				
 				ensureObjectValid(req, obj);
 				
-				return exportFiles(targetPathPrefix, obj.getInfoObject(), pack).then(function () { return obj; });
+				return exportFiles(pack, targetPathPrefix, obj.getInfoObject()).then(function () { return obj; });
 
 				//var promises = [];
 				//for (var targetVer = 1; targetVer <= maxVer; ++targetVer) {
                 //
 				//	var targetPath = path.join(targetPathPrefix, targetVer.toString());
-				//	promises.push(exportFiles(targetPath, pack));
+				//	promises.push(exportFiles(pack, targetPath));
 				//}
 				//return Q.all(promises);
 			});
 		},
 		
-		importFiles: function (req, query, targetPathPrefix, pack) {
+		importFiles: function (req, query, targetPathPrefix, objGetterAsync, objSetterAsync) {
 			
 			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
-				ensureObjectValid(req, obj);
+				// ensureObjectValid(req, obj);
 				
-				var targetVer = obj.getInfoObject().ver;
-				var targetPath = path.join(targetPathPrefix, targetVer.toString());
-				
-				// Import everything - ALL VERSIONS
-				return importFiles(targetPath, pack);
+				// Ignore everything we get from query ... we don't really use it now
+				// but it may be used in the future PLUS it's consistent with the other methods
+
+				return importAllFiles(req, targetPathPrefix, objGetterAsync, objSetterAsync);
 			});
 		},
 		
@@ -260,9 +304,8 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				var targetVer = versionUpdater(obj);
 				var targetPath = path.join(targetPathPrefix, targetVer.toString());
 				
-				return saveFiles(req, targetPath)
-						.then(function () {
-					
+                return saveFiles(req, targetPath).then(function () {
+                    					
 					// The library I'm using wants the data flat I cannot use
 					// req.body.info and then access id, name, etc.
 					//
@@ -326,8 +369,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
 			
 			return Q.spread([('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery))],
-				function (fromObj, toObj) {
+				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery))], function (fromObj, toObj) {
 				ensureObjectValid(req, fromObj);
 				
 				var fromVer = fromObj.getInfoObject().ver;

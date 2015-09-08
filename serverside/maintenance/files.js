@@ -118,8 +118,15 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		var ver = pathComponents.length > 2 ? pathComponents[2] : "0";
 
 		var query = null;
-		if (category == 'devwebbles')
-			query = DevWebble.findById(mongoose.Types.ObjectId(id));
+		if (category == 'devwebbles') {
+			
+			try {
+				query = DevWebble.findById(mongoose.Types.ObjectId(id));				
+			}
+			catch (err) {
+				console.error("Invalid PATH for webble at directory:", relativeDirectory);
+			}
+		}
 		else if (category == 'webbles')
 			query = Webble.findOne({ "webble.defid": id });
 
