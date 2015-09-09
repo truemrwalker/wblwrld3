@@ -141,9 +141,19 @@
 		<div ng-show="filesToUploadAreArchives">
 			<div class="form-group">
 				<div class="col-xs-offset-2 col-xs-5">
-					<a class="btn btn-primary" ng-click="formImportTemplate()"><span translate>Import Archives</span></a>
+					<a class="btn btn-primary" ng-click="formImportTemplate()"><i class="fa fa-cloud-upload"></i> <span translate>Import Archives</span></a>
 				</div>
 			</div>
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-5">
+                    <div class="checkbox">
+                        <label for="replace">
+                            <input type="checkbox" ng-model="importPrefsData.replace" id="replace" name="replace" />
+                            <span translate>Overwrite existing templates with conflicting Ids</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
 		</div>
 
     </form>

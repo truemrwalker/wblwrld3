@@ -32,7 +32,7 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
     ////////////////////////////////////////////////////////////////////
     // Utility functions
     //
-    function validatePendingFiles(files) {
+    function processFilesToUpload(files) {
 
         files = files || $scope.filesToUpload;
 
@@ -45,13 +45,6 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
                 archivesIncluded = true;
         }
         $scope.filesToUploadAreArchives = archivesIncluded;
-        return files;
-    }
-    function filterPendingFiles(files) {
-
-        files = files || $scope.filesToUpload;
-        return !$scope.filesToUploadAreArchives ? files :
-            files.filter(function (f) { return f.name.lastIndexOf(".war") != -1 });
     }
 
 	// Existing templates
@@ -65,19 +58,21 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 	$scope.filesToUploadAreArchives = false;
 
 	$scope.onFilesAdded = function(files) {
-		//$scope.filesToUpload.push.apply(files);
-		//console.log(files[0]);
-
-	    $scope.filesToUpload = filterPendingFiles(validatePendingFiles($scope.filesToUpload.concat(files)));
+        
+	    var updatedFiles = $scope.filesToUpload.concat(files);
+	    processFilesToUpload(updatedFiles);
+	    $scope.filesToUpload = !$scope.filesToUploadAreArchives ? updatedFiles :
+	        updatedFiles.filter(function (f) { return f.name.lastIndexOf(".war") != -1 });
 	};
-	$scope.onFileRemoved = function(index) {
+	$scope.onFileRemoved = function (index) {
+
 	    $scope.filesToUpload.splice(index, 1);
-	    validatePendingFiles();
+	    processFilesToUpload();
 	};
 	$scope.onFilesCleared = function() {
 
 		$scope.filesToUpload.length = 0;
-		validatePendingFiles();
+		processFilesToUpload();
 		angular.element(document.getElementById('selectMultipleFilesInputEntry')).val('');
 	};
 
@@ -85,6 +80,7 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 	//
 	$scope.templateData = {};
 	$scope.filesUploaded = [];
+	$scope.importPrefsData = {};
 
 	$scope.selectTemplate = function(t) {
 
@@ -440,9 +436,17 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 
 		if ($scope.filesToUploadAreArchives) {
 
-			templateService.importArchive($scope.filesToUpload).then(function () {
+		    templateService.importArchive($scope.filesToUpload, $scope.importPrefsData).then(function (resp) {
 
+		        var t = resp.data;
+		        //$scope.templates.push(t);
+
+		        $scope.onFilesCleared();
+		        $scope.selectTemplate(null);
 				$scope.filesToUploadAreArchives = false;
+		    },
+			function(resp) {
+			    $scope.serverErrorMessage = resp.data;
 			});
 		}
 	};

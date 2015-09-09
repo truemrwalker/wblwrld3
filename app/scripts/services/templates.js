@@ -136,11 +136,12 @@ ww3Services.factory('templateService', ['$q', '$upload', '$http', function($q, $
 			return $http.get('/api/takeout/devwebbles');
 		},
 
-		importArchive: function (files) {
+		importArchive: function (files, prefs) {
 
 			return $upload.upload({
 				url: '/api/takeout/devwebbles',
 				method: 'POST',
+                data: prefs,
 				file: files
 			});
 		}

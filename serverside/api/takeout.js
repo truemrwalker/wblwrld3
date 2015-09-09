@@ -111,6 +111,8 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	//******************************************************************
 
 	app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
+        
+        var affectedTemplates = [];
 
 		fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
             
@@ -135,10 +137,13 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
 		}, function (w, infoObj) {
 
-			w.mergeWithInfoObject(infoObj);
+            affectedTemplates.push(w);
+            w.mergeWithInfoObject(infoObj);
 			return Q.ninvoke(w, "save");
 
-		}).fail(function (err) {
+        }).then(function () { 
+            res.json(affectedTemplates);
+        }).fail(function (err) {
 			util.resSendError(res, err);
 		}).done();;
 	});
