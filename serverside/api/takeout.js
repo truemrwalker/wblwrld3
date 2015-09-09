@@ -53,7 +53,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
         
         var pack = tar.pack();
 
-		Q.ninvoke(DevWebble, "find", { $or: [{ _owner: req.user._id }, { _owner: null }] }).then(function (webbles) {
+		Q(DevWebble.find({ _owner: req.user._id }).exec()).then(function (webbles) {
 			
 			if (!webbles)
 				throw new util.RestError(gettext("Cannot retrieve webbles"));
@@ -113,15 +113,25 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
 
 		fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
+            
+            return Q(DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.defid': tarDir }] }).exec()).then(function (w) {
 
-			var newWebble = new DevWebble({
-				webble: { defid: tarDir, templateid: tarDir },
-				_owner: req.user._id
-			});
+                if (w && (!req.body || !req.body.replace))
+                    return { obj: null, pathSuffix: '' };
+                else if (w)
+                    return { obj: w, pathSuffix: path.join(w._id.toString(), "0") };
+                else {
 
-			return Q.ninvoke(newWebble, "save").then(function (saveResult) { // We need to save first to get an _id
-				return { obj: saveResult[0], pathSuffix: path.join(saveResult[0]._id.toString(), "0") };
-			});
+                    var newWebble = new DevWebble({
+                        webble: { defid: tarDir, templateid: tarDir },
+                        _owner: req.user._id
+                    });
+
+                    return Q.ninvoke(newWebble, "save").then(function (saveResult) { // We need to save first to get an _id
+                        return { obj: saveResult[0], pathSuffix: path.join(saveResult[0]._id.toString(), "0") };
+                    });
+                }
+            });
 
 		}, function (w, infoObj) {
 

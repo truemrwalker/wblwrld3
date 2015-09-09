@@ -129,8 +129,12 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
 					}, reject).done();
 				}
-				else if (!targetObj || !targetPath)
-					reject();
+                else if (!targetObj || !targetPath) { // Skip the current entry
+
+                    stream.on('end', next);
+                    stream.on('error', reject);
+                    stream.resume(); // drain the stream
+                }
 				else if (path.basename(header.name) === 'info.json') {
 					
 					var jsonString = '';
