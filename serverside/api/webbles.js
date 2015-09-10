@@ -40,19 +40,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-	function normalizeWebble(w, isVerified, isTrusted) {
-
-		var obj = w.toJSON();
-		obj.created = w._created || w._id.getTimestamp() || Date.now();
-		obj.updated = w._updated || new Date();
-		obj.rating = w._rating.average;
-		obj.rating_count = w._rating.count;
-
-		obj.is_shared = w._contributors.length != 0;
-		obj.is_verified = !!isVerified;
-		obj.is_trusted = !!isTrusted;
-
-		return obj;
+    function normalizeWebble(w, isVerified, isTrusted) {
+        return w.getNormalizedObject(null, isVerified, isTrusted);
 	}
 
 	////////////////////////////////////////////////////////////////////

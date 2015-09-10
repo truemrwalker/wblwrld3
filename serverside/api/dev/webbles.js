@@ -43,21 +43,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	// Utility functions
 	//
 	function normalizeWebble(w, files) {
-
-		var obj = w.toJSON();
-		obj.created = w._created || w._id.getTimestamp() || Date.now();
-		obj.updated = w._updated || new Date();
-		obj.rating = w._rating.average;
-		obj.rating_count = w._rating.count;
-		obj.is_shared = w._contributors.length != 0;
-
-		if (files !== null) {
-
-			obj.id = w._id;
-			obj.is_dev = true;
-			obj.files = files;
-		}
-		return obj;
+        return w.getNormalizedObject(files);
 	}
 
 	////////////////////////////////////////////////////////////////////

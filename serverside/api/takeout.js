@@ -43,7 +43,10 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-	
+    function normalizeWebble(w, files) {
+        return w.getNormalizedObject(files);
+    }
+
 	////////////////////////////////////////////////////////////////////
 	// Basic routes for webbles
 	//
@@ -112,8 +115,6 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
 	app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
         
-        var affectedTemplates = [];
-
 		fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
             
             return Q(DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.defid': tarDir }] }).exec()).then(function (w) {
@@ -137,12 +138,20 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
 		}, function (w, infoObj) {
 
-            affectedTemplates.push(w);
             w.mergeWithInfoObject(infoObj);
-			return Q.ninvoke(w, "save");
+            return Q.ninvoke(w, "save").then(function (saveResult) { return { obj: saveResult[0] }; });
 
-        }).then(function () { 
-            res.json(affectedTemplates);
+        }).then(function (result) {
+            
+            return Q.all(util.transform_(result[0].objs, function (w) {
+
+                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString())).then(function (files) {
+                    return normalizeWebble(w, files);
+                });
+            }));
+
+        }).then(function (webbles) {
+            res.json(webbles);
         }).fail(function (err) {
 			util.resSendError(res, err);
 		}).done();;

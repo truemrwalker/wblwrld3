@@ -47,6 +47,34 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
         $scope.filesToUploadAreArchives = archivesIncluded;
     }
 
+    function mergeTemplate(t) {
+
+        var handledTemplate = false;
+        for (var i = 0; i < $scope.templates.length; ++i) {
+
+            if ($scope.templates[i].id === t.id) {
+
+                //$scope.templates[i] = t; // This doesn't trigger a changed event...
+                angular.copy(t, $scope.templates[i]);
+
+                // After the update try to keep the previous state intact to not interrupt Jonas' workflow
+                if ($scope.currTemplateId === t.id)
+                    $scope.filesUploaded = $scope.templates[i].files;
+
+                //$scope.resetSelectedFile();
+                handledTemplate = true;
+                break;
+            }
+        }
+
+        if (!handledTemplate)
+            $scope.templates.push(t);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    // Properties and main functionality
+    //
+
 	// Existing templates
 	//
 	$scope.templates = templates;
@@ -361,20 +389,7 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 		templateService.update(id, $scope.filesToUpload, $scope.templateData)
 			.then(function(response) {
 
-				for (var i = 0; i < $scope.templates.length; ++i) {
-					if ($scope.templates[i].id === id) {
-
-						//$scope.templates[i] = response.data;
-						angular.copy(response.data, $scope.templates[i]); // WARNING: THIS IS NOT AUTOMATICALLY CAUGHT, WHY???
-
-						// After the update try to keep the previous state intact to not interrupt Jonas' workflow
-						//
-						$scope.filesUploaded = $scope.templates[i].files;
-						//$scope.resetSelectedFile();
-						//
-						break;
-					}
-				}
+				mergeTemplate(response.data);
 				$scope.onFilesCleared();
 //				$scope.selectTemplate(null);
 			},
@@ -438,11 +453,9 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 
 		    templateService.importArchive($scope.filesToUpload, $scope.importPrefsData).then(function (resp) {
 
-		        var t = resp.data;
-		        //$scope.templates.push(t);
-
+		        resp.data.forEach(mergeTemplate);
 		        $scope.onFilesCleared();
-		        $scope.selectTemplate(null);
+		        //$scope.selectTemplate(null);
 				$scope.filesToUploadAreArchives = false;
 		    },
 			function(resp) {

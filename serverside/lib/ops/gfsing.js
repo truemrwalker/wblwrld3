@@ -108,6 +108,8 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			
 			var extract = tar.extract();            
             var targetObj = null, targetPath = null;
+
+            var importResult = { objs: [], targetPath: targetPathPrefix };
 			
 			extract.on('entry', function (header, stream, next) {
 				
@@ -143,11 +145,12 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 					stream.on('end', function () {
 						
 						var infoObj = JSON.parse(jsonString);
-                        objSetterAsync(targetObj, infoObj).then(function () {
+                        objSetterAsync(targetObj, infoObj).then(function (result) {
+
+                            importResult.objs.push(result.obj);
                             next();
-                        }, function (err) {
-                            reject();
-                        }).done();
+
+                        }, reject).done();
 					});
 				}
 				else {
@@ -161,11 +164,11 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
 						writeStream.on('error', reject);
 
-					}).done();
+					}, reject).done();
 				}
 			});
 			
-			extract.on('finish', resolve);
+            extract.on('finish', function () { resolve(importResult); });
 			extract.on('error', reject);
 			tarStream.pipe(extract);
 		});
