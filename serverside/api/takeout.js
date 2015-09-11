@@ -117,7 +117,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
         
 		fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
             
-            return Q(DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.defid': tarDir }] }).exec()).then(function (w) {
+            return Q(DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.templateid': tarDir }] }).exec()).then(function (w) {
 
                 if (w && (!req.body || !req.body.replace))
                     return { obj: null, pathSuffix: '' };
@@ -143,7 +143,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
         }).then(function (result) {
             
-            return Q.all(util.transform_(result[0].objs, function (w) {
+            return Q.all(util.transform_(result.objs, function (w) {
 
                 return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString())).then(function (files) {
                     return normalizeWebble(w, files);

@@ -96,10 +96,27 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			util.transform(Object.keys(req.files), function (k) {
 			return req.files[k][0];
 		});
-		
-		return Q.all(util.transform_(files, function (f) {
-			return importFiles(fs.createReadStream(f.path), targetPathPrefix, objGetterAsync, objSetterAsync);
-		}));
+        
+        var importResult = { objs: [], targetPath: targetPathPrefix };
+        
+        // Sequentially
+        return files.reduce(function (soFar, f) {
+            
+            return soFar.then(function () {
+                return importFiles(fs.createReadStream(f.path), targetPathPrefix, objGetterAsync, objSetterAsync).then(function (result) {
+                    result.objs.forEach(function (obj) {
+                        
+                        for (var i = 0; i < importResult.objs.length; ++i) {
+                            if (importResult.objs[i]._id === obj._id)
+                                return;
+                        }
+                        importResult.objs.push(obj);
+                    });
+                });
+            });
+        }, Q(null)).then(function () {
+            return importResult;
+        });
 	}
 
 	function importFiles(tarStream, targetPathPrefix, objGetterAsync, objSetterAsync) {
