@@ -75,7 +75,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			
 			res.writeHead(200, {
 				'Content-Description': 'Webble Archive: ' + req.user.name.first,
-				'Content-Disposition' : 'inline; filename="' + req.user.username + '.tar"',
+				'Content-Disposition' : 'inline; filename="' + req.user.username + '.war"',
 				'Content-Type': 'application/octet-stream'
 			});
 			pack.pipe(res);
@@ -100,7 +100,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			
 			res.writeHead(200, {
 				'Content-Description': 'Webble Archive: ' + w.webble.displayname,
-				'Content-Disposition' : 'inline; filename="' + w.webble.defid + '.tar"',
+				'Content-Disposition' : 'inline; filename="' + w.webble.defid + '.war"',
 				'Content-Type': 'application/octet-stream',
 				//'Content-Length': pack.size
 			});

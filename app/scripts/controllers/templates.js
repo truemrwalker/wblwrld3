@@ -463,5 +463,6 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 			});
 		}
 	};
+	$scope.formExportTemplatesUrl = templateService.exportArchiveUrl;
 
 }]);
