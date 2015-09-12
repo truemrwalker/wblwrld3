@@ -295,14 +295,6 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				ensureObjectValid(req, obj);
 				
 				return exportFiles(pack, targetPathPrefix, obj.getInfoObject()).then(function () { return obj; });
-
-				//var promises = [];
-				//for (var targetVer = 1; targetVer <= maxVer; ++targetVer) {
-                //
-				//	var targetPath = path.join(targetPathPrefix, targetVer.toString());
-				//	promises.push(exportFiles(pack, targetPath));
-				//}
-				//return Q.all(promises);
 			});
 		},
 		
