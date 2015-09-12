@@ -1104,6 +1104,7 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
         {"itemName": "help", "title": gettext("Help"), "description": "", "visibility_enabled": true,
             "sublinks": [
                 {"sublink_itemName": "docs", "title": gettext("Documentation"), "shortcut": "(Alt+M)", "visibility_enabled": true},
+				{"sublink_itemName": "tutorials", "title": gettext("Tutorial Vids"), "shortcut": "(Alt+Shift+U)", "visibility_enabled": true},
                 {"sublink_itemName": "faq", "title": gettext("FAQ"), "shortcut": "(Alt+Shift+F)", "visibility_enabled": true},
                 {"sublink_itemName": "openchat", "title": gettext("Open Chat"), "shortcut": "(Alt+C)", "visibility_enabled": true},
                 {"sublink_itemName": "support", "title": gettext("Support"), "shortcut": "(Alt+H)", "visibility_enabled": true},
@@ -1979,6 +1980,9 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         this.getIsCustomMade = function(){return isCustomMade_;};
         this.setIsCustomMade = function(customMadeState){isCustomMade_ = customMadeState;};
 
+		var originalType_ = '';
+		this.getOriginalType = function(){return originalType_;};
+
         this.cssValWatch = undefined;
 
         //prop initiation
@@ -2000,6 +2004,14 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         if(sElementPntr != undefined){
             elementPntr_ = sElementPntr;
         }
+
+		originalType_ = typeof value_;
+		if(metaData_ != null && (metaData_.inputType == Enum.aopInputTypes.Point || metaData_.inputType == Enum.aopInputTypes.Size)){
+			originalType_ = 'vector';
+		}
+		else if(Object.prototype.toString.call( value_ ) === '[object Array]') {
+			originalType_ = 'array';
+		}
     }
 
     return Slot;

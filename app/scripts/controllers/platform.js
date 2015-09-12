@@ -111,8 +111,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getMenuItem = function(itemName){ for (var i = 0,item; item = $scope.menuItems[i]; i++) { if(item.itemName == itemName){ return item; } for (var n = 0, subitem; subitem = item.sublinks[n]; n++) { if(subitem.sublink_itemName == itemName){ return subitem; } } } };
     var originalWebbleMenu_ = angular.copy(menuItemsFactoryService.menuItems[1].sublinks);
 	var updatedContent = [
-		{name: 'docs', date: '2015-06-15'},
-		{name: 'devpack', date: '2015-06-15'}
+		{name: 'docs', date: '2015-09-02'},
+		{name: 'devpack', date: '2015-09-02'}
 	];
 	$scope.getUpdateDate = function(whatContent){
 		for(var i = 0; i < updatedContent.length; i++){
@@ -1271,14 +1271,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // This method manages a successful response form the web service containing the requested
     // data of a Webble definition defined by name and developer.
     //========================================================================================
-    var serviceRes_getWebbleDef_Completed = function(whatWblDefId, data){
+    var serviceRes_getWebbleDef_Completed = function(whatWblDefId, whatCallBackMethod, data){
         if(data['webble'] != undefined){
             if(data['webble']['defid'] != whatWblDefId){
                 $log.error('The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled.');
             }
             else{
-                webbleDefs_.push({wblDefId: whatWblDefId, json: data});
-                $scope.loadWebbleFromDef(data, pendingCallbackMethod_);
+				$scope.loadWebbleFromDef(data, whatCallBackMethod);
             }
         }
         else{
@@ -1722,6 +1721,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         var theWblDef = whatWebble.scope().createWblDef(true);
+		$log.log(theWblDef);
         theWblDef.webble.author = $scope.user.username;
 
         return {
@@ -2119,7 +2119,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     function(workspace) {
                         currWS_.name = workspace.name;
                         currWS_.creator = workspace.creator;
-                        if(workspace.webbles.length > 0){
+                        if(workspace.webbles.length > 0 && !($scope.altKeyIsDown && $scope.ctrlKeyIsDown)){
                             $scope.setEmitLockEnabled(true);
                             wblFamiliesInLineForInsertion_ = workspace.webbles;
                             var wblFamily = wblFamiliesInLineForInsertion_.shift();
@@ -2286,20 +2286,28 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
             // ...and if not get it from the server.
             else{
-                pendingCallbackMethod_ = whatCallbackMethod;
-                dbService.getWebbleDef(whatWblDefId, true).then(function(data){serviceRes_getWebbleDef_Completed(whatWblDefId, data);},function(eMsg){$scope.serviceError(eMsg);});
+                dbService.getWebbleDef(whatWblDefId, true).then(function(data){serviceRes_getWebbleDef_Completed(whatWblDefId, whatCallbackMethod, data);},function(eMsg){$scope.serviceError(eMsg);});
             }
         }
     };
     //========================================================================================
 
+	var webbleCreationInProcess = false;
+	var webblesWaitingToBeLoaded = []
 
-    //========================================================================================
+
+	//========================================================================================
     // Load From Definition File
     // This method loads a webble from a JSON definition provided as a parameter.
     //========================================================================================
     $scope.loadWebbleFromDef = function(whatWblDef, whatCallbackMethod){
         if(whatWblDef){
+			if(webbleCreationInProcess){
+				webblesWaitingToBeLoaded.push({wblDef: whatWblDef, callBack: whatCallbackMethod});
+				return;
+			}
+			webbleCreationInProcess =  true;
+
             if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
                 $scope.onlineTransmit({id: currWS_.id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.loadWbl, wblDef: whatWblDef});
             }
@@ -2471,6 +2479,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             pendingCallbackMethod_ = null;
             var pca = pendingCallbackArgument_;
             pendingCallbackArgument_ = null;
+			webbleCreationInProcess = false;
             if (pcm != null){
                 pcm(pca);
             }
@@ -2565,12 +2574,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 trustedParameterWasUndefined = false;
                 $scope.waiting(false);
 
-                var pathQuery = $location.search();
-                if(pathQuery.webble && pathQuery.workspace){
-                    var requestedWbl = pathQuery.webble;
-                    $location.search('webble', null);
-                    $scope.downloadWebbleDef(requestedWbl)
-                }
+				if(!webbleCreationInProcess && webblesWaitingToBeLoaded.length > 0){
+					var lwfdPack = webblesWaitingToBeLoaded.shift();
+					$scope.loadWebbleFromDef(lwfdPack.wblDef, lwfdPack.callBack);
+				}
+				else{
+					var pathQuery = $location.search();
+					if(pathQuery.webble && pathQuery.workspace){
+						var requestedWbl = pathQuery.webble;
+						$location.search('webble', null);
+						$scope.downloadWebbleDef(requestedWbl)
+					}
+				}
             }
         }
     };
@@ -3877,7 +3892,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if(sublink == 'upload' || (whatKeys.theAltKey && whatKeys.theKey == 'U')){
+        else if(sublink == 'upload' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'U')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 locationPathChangeRequest = '/templates';
                 $scope.waiting(true);
@@ -3993,6 +4008,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $window.open(appPaths.webbleDocRelPath);
             }
         }
+		else if(sublink == 'tutorials' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'U')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
+				$window.open('https://www.youtube.com/playlist?list=PL1sLx5eXq85NvFtnzhpOm4lNJFsDE6DlZ', '_blank');
+			}
+		}
         else if(sublink == 'faq' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'F')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
                 $scope.openForm(Enum.aopForms.faq, {userEmail: ($scope.user != undefined ? $scope.user.email : 'guest'), isAdmin: ($scope.user != undefined && $scope.user.role == 'adm')}, null);

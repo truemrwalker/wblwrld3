@@ -400,11 +400,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             isShared: undefined,
             isCustom: undefined,
             notification: '',
-            inputType: Enum.aopInputTypes.TextBox
+            inputType: Enum.aopInputTypes.TextBox,
+			originalValType: ''
         });
 
         angular.forEach(theSlots_, function (value, key) {
             if(value.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
+				var isDate = false;
                 var tmp = {};
                 var metadata = value.getMetaData() != undefined ? value.getMetaData() : {};
                 var theValue = value.getValue();
@@ -418,6 +420,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
                 // Set prop form 'is Custom made'
                 tmp['isCustom'] = value.getIsCustomMade();
+
+				// Set prop form 'original Value Type'
+				tmp['originalValType'] = value.getOriginalType();
 
                 // Set prop form display name
                 tmp['name'] = value.getDisplayName();
@@ -437,7 +442,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 else if(theValue.toString().toLowerCase() == 'true' || theValue.toString().toLowerCase() == 'false'){
                     tmp['value'] = (theValue.toString().toLowerCase() == 'true');
                 }
-                else if((!isNaN(theValue) && metadata.inputType != Enum.aopInputTypes.DatePick)
+                else if(value.getOriginalType() != 'array' && (!isNaN(theValue) && metadata.inputType != Enum.aopInputTypes.DatePick)
                     || ($.isArray(theValue) && (((metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size) && theValue.length == 2) || metadata.inputType == Enum.aopInputTypes.MultiListBox || metadata.inputType == Enum.aopInputTypes.MultiCheckBox))
                     || ($.isArray(theValue) && metadata['comboBoxContent'] && metadata['comboBoxContent'].length > 0)){
                     tmp['value'] = theValue;
@@ -445,15 +450,18 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 else if(metadata.inputType == Enum.aopInputTypes.DatePick){
                     tmp['value'] = dateFilter(new Date(theValue), 'yyyy-MM-dd');
                 }
-                else if(theValue == '[object Object]' || $.isArray(theValue)){
-                    tmp['value'] = JSON.stringify(theValue);
-                }
+				else if(value.getOriginalType() == 'object' || value.getOriginalType() == 'array'){
+					tmp['isArrObj'] = true;
+					tmp['value'] = JSON.stringify(theValue);
+				}
                 else{
                     tmp['value'] = theValue;
                     if(key.search('font-family') != -1){
                         tmp['value'] = tmp['value'].toString().replace(/"/g, '').replace(/'/g, '').toLowerCase();
                     }
                 }
+
+
 
                 // Set prop form category and description
                 tmp['cat'] = value.getCategory();
@@ -603,16 +611,37 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                                         }
                                     }
 
+									if(itsOk){
+										var metadata = theSlots_[slot].getMetaData();
+										if(metadata != null && (metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size)){
+											if(JSON.stringify(theSlots_[slot].getValue()) == JSON.stringify(p.value)){
+												itsOk = false;
+											}
+										}
+									}
+
                                     if(itsOk){
-                                        if($.isArray(p.value)){
-                                            if(theSlots_[slot].getValue().toString() != p.value.toString()){
-                                                theSlotsToSet[slot] = p.value;
-                                            }
-                                        }
-                                        else{
-                                            theSlotsToSet[slot] = valMod.parse(p.value);
-                                            //theSlotsToSet[slot] = p.value;
-                                        }
+										if(p.originalValType == 'object' || p.originalValType == 'array') {
+											if(JSON.stringify(theSlots_[slot].getValue()) != p.value){
+												var jsonParsedVal;
+												try{
+													jsonParsedVal = JSON.parse(p.value);
+												}
+												catch(e){
+													if(p.originalValType == 'object'){
+														jsonParsedVal = JSON.parse("{}");
+													}
+													else{
+														jsonParsedVal = new Array();
+													}
+												}
+												theSlotsToSet[slot] = jsonParsedVal;
+											}
+										}
+										else{
+										    //theSlotsToSet[slot] = valMod.parse(p.value);
+										    theSlotsToSet[slot] = p.value;
+										}
                                     }
                                 }
                                 break;

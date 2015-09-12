@@ -629,6 +629,9 @@ themselves inside the template are the following:
     // Slot (class service), is an object instance provider for the class concept of 'Slot'. If you want a special
     // behavior, like for example a custom gimme, then you override the getValue method for the specified slot instance
     // in your Webble init function at slot creation time.
+    // Good to know is that only the unique name, the value, the slot category and the metadata are saved in the JSON 
+    // configuration file. Other values must be recreated at slot creation (usually during Webble initiation) and are 
+    // not stored.
     new Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr);
         [slotInstance].getName();
         [slotInstance].setName(newSlotName);
