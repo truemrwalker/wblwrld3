@@ -319,7 +319,7 @@ module.exports.GFS = function (Q, mongoose) {
 				readStream.once('error', reject);
 
 				writeStream.once('error', reject);
-				writeStream.once('end', resolve);
+				writeStream.once('finish', resolve);
 			});
 		});
 	};
@@ -350,7 +350,7 @@ module.exports.GFS = function (Q, mongoose) {
 			readStream.once('error', reject);
 
 			writeStream.once('error', reject);
-			writeStream.once('end', resolve);
+			writeStream.once('finish', resolve);
 		});
 	};
 };

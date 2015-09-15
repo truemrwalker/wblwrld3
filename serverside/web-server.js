@@ -195,7 +195,7 @@ function serverEntryPoint() {
 		case 'development':
 		case 'testing':
 			promise = loader.executeAllScripts(path.join(__dirname, 'maintenance'),
-				Q, app, config, mongoose, gettext, ['files.js', 'templates.js']);
+				Q, app, config, mongoose, gettext, ['templates.js', 'files.js']);
 			break;
 	}
 	return Q.when(promise, shouldExit ? process.exit : startWebServer);

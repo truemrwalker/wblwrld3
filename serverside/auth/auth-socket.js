@@ -23,8 +23,9 @@
 // auth-socket.js
 // Created by Giannis Georgalis on 1/22/14
 //
-// Summon the cookieParser for parsing signed cookiez...
-var cookie = require('cookie-parser/node_modules/cookie');
+
+// Summon the cookieParser for parsing signed cookiez
+var cookie = require('cookie');
 var parse = require('cookie-parser/lib/parse');
 
 module.exports = function(Q, app, config, mongoose, gettext, io) {

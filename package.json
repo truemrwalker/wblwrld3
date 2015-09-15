@@ -17,6 +17,7 @@
 		"multer": "latest",
 		"body-parser": "latest",
 		"method-override": "latest",
+		"cookie": "latest",
 		"cookie-parser": "latest",
 		"serve-static": "latest",
 		"serve-favicon": "latest",

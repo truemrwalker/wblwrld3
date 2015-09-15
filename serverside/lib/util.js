@@ -131,14 +131,28 @@ module.exports.indexOf = function (input, func) {
 //**********************************************************************
 // More specialized array ops
 //
-module.exports.anyTrue = function (input) {
+module.exports.anyTrue = function (input, func) {
+    
+    func = func || function (v) { return v; };
 
 	var len = input.length;
 	for (var i = 0; i < len; ++i) {
-		if (input[i])
+		if (func(input[i]))
 			return true;
 	}
 	return false;
+};
+
+module.exports.allTrue = function (input, func) {
+    
+    func = func || function (v) { return v; };
+
+    var len = input.length;
+    for (var i = 0; i < len; ++i) {
+        if (!func(input[i]))
+            return false;
+    }
+    return true;
 };
 
 ////////////////////////////////////////////////////////////////////////

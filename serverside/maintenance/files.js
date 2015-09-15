@@ -29,6 +29,7 @@ var fs = require('fs');
 
 var libGfs = require('../lib/gfs');
 var util = require('../lib/util');
+var xfs = require('../lib/xfs');
 
 module.exports = function(Q, app, config, mongoose, gettext) {
 
@@ -38,34 +39,14 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	var rootWebbleDir = config.APP_ROOT_DIR;
 	var webbleDir = path.join(rootWebbleDir, 'webbles');
 	var devWebbleDir = path.join(rootWebbleDir, 'devwebbles');
+    
+    var backupDir = path.join(config.APP_ROOT_DIR, 'backup');
 
 	var gfs = new libGfs.GFS(Q, mongoose);
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-	function walkSync(baseDir, callback) {
-
-		var filenames = fs.readdirSync(baseDir);
-
-		var items = filenames.reduce(function (acc, name) {
-
-			var abspath = path.join(baseDir, name);
-			if (fs.statSync(abspath).isDirectory())
-				acc.dirs.push(name);
-			else
-				acc.files.push(name);
-			return acc;
-
-		}, {"files": [], "dirs": []});
-
-		callback(baseDir, items.dirs, items.files);
-
-		items.dirs.forEach(function (d) {
-			walkSync(path.join(baseDir, d), callback);
-		});
-	}
-
 	function syncWebbleFileEntry(localFilePath, localStat, remoteFile, fileActionLogger) {
 
 		var localTime = util.toUnixTimestamp((localStat && localStat.mtime) || new Date(0));
@@ -170,7 +151,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		return getWebbleId(remoteFileEntry.metadata.directory)
 			.then(function(ownerId) {
 
-				var localFilePath = path.join(rootWebbleDir, remoteFileEntry.filename);
+				var localFilePath = path.join(backupDir, remoteFileEntry.filename);
 
 				if (!ownerId && !evenWithoutOwnerId) // Sync only if the webble actually exists
 					return fileActionLogger(localFilePath, remoteFileEntry, false);
@@ -197,7 +178,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		}
 
 		var promises = [];
-		walkSync(webbleBaseDir, function(baseDir, dirs, files) {
+		xfs.walkSync(webbleBaseDir, function(baseDir, dirs, files) {
 
 			files.forEach(function(f) {
 
@@ -281,7 +262,10 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
 	return syncLocalWebbleFiles(webbleDir, true, trackSyncedFiles)
-		.then(function() {
+		.then(function () {
+        
+            // This is only for backwards compatibility
+            //
 			return syncLocalWebbleFiles(devWebbleDir, false, trackSyncedFiles);
 		})
 		.then(function() {
