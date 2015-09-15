@@ -48,19 +48,21 @@
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Platform Execution Mode:</span></div>
-            <div class="col-xs-7"><select class="formitem" ng-model="formItems.currentExecutionMode" ng-options="mode.key as mode.val for mode in execModeOptions"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.currentExecutionMode | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-5"><select class="formitem" ng-model="formItems.currentExecutionMode" ng-options="mode.key as mode.val for mode in execModeOptions"></select></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.currentExecutionMode}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-2"></div>
         </div>
     </div>
 
     <div class="keepTheDistanceBelow">
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Work surface background color:</span></div>
-            <div class="col-xs-7">
+            <div class="col-xs-5">
                 <input type="color" ng-model="formItems.platformBkgColor" style="width: 30px; height: 24px; float:left;" />
                 <input class="formitem" type="text" ng-model="formItems.platformBkgColor" style="width: 100px; min-width: 80px; float:left;" />
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.platformBkgColor | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.platformBkgColor}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-2"></div>
         </div>
     </div>
 
@@ -75,10 +77,20 @@
     <div class="keepTheDistanceBelow">
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Auto Behavior Enabled:</span></div>
-            <div class="col-xs-7"><input class="formitem" type="checkbox" ng-model="formItems.autoBehaviorEnabled" style="padding-right: 20px;" /></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.autoBehaviorEnabled | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-5"><input class="formitem" type="checkbox" ng-model="formItems.autoBehaviorEnabled" style="padding-right: 20px;" /></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.autoBehaviorEnabled}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-2"></div>
         </div>
     </div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-4"><span class="formTitle" translate>Logging Enabled:</span></div>
+			<div class="col-xs-5"><input class="formitem" type="checkbox" ng-model="formItems.loggingEnabled" style="padding-right: 20px;" /></div>
+			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.loggingEnabled}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-2"></div>
+		</div>
+	</div>
 
     <div class="dividerLineAbove">
         <div class="row">

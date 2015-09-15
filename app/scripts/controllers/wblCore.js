@@ -2600,7 +2600,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
 			// Tell children a slot change have happened
 			for(var i = 0, c; c = theChildren_[i]; i++){
-				c.scope().update(slotName);
+				if(c.scope() != undefined){
+					c.scope().update(slotName);
+				}
 			}
         }
 

@@ -49,7 +49,8 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
         platformBkgColor: gettext("This is the background color of you workspace"),
         currentExecutionMode: gettext("This is the execution mode the system is currently in. Developer opens up all locks, Admin is for working Webble maintanance and user modes are for basic usage."),
         popupEnabled: gettext("If this is unchecked, some of the more tutorial-like and repetetive informative Message popups will be disabled."),
-        autoBehaviorEnabled: gettext("If this is unchecked, Webble will no longer try to auto connects default slots etc.")
+        autoBehaviorEnabled: gettext("If this is unchecked, Webble will no longer try to auto connects default slots etc."),
+		loggingEnabled: gettext("If this is checked, log texts will be written to the JavaScript console for development support [$log.log()], if unckecked all log commands in the code will be ignored.")
     };
 
     // Form validation error message
