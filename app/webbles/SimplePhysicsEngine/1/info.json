@@ -1,0 +1,8 @@
+{
+    "name": "Simple Physics Engine",
+    "description": "This is a simple physics engine which makes its webble children behave like they are victim of different type of forces, like gravity and speed etc",
+    "keywords": "Physics Engine Gravity Game",
+    "author": "truemrwalker",
+    "image": "images/wbls/physeng.png",
+    "noautogen": true
+}

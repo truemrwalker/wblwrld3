@@ -81,6 +81,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var vcvVisibility_ = 'none';
     $scope.getVCVVisibility = function(){return vcvVisibility_;};
     $scope.setVCVVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){vcvVisibility_ = newVal;}else{vcvVisibility_ = 'none';}};
+	var appViewOpen = true;
     //-------------------------------
 
 
@@ -288,6 +289,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // When switching path, the ws must be saved internally or it will be lost or damaged, this is where it is kept
     var quickSavedWS;
 
+	// If user wants to load a WS without cleaning workboard beforehand, we store the request here and clean first and then call for the new WS.
+	var pendingWS;
+
     // Instead of direct calling location path change, this value is set to the requested path and when all needed prep
     // work is done, then the path is changed
     var locationPathChangeRequest = '';
@@ -352,7 +356,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN', 'GEORGALIS'];
     var eeFunc_ = [
         function(){
-            $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("http://h50146.www5.hp.com/products/servers/proliant/casestudy/hokudai/images/face03.jpg"); }</style>'));
+            $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("https://wws.meme.hokudai.ac.jp/images/extra/mnk.jpg"); }</style>'));
             $scope.bkgLogoClass = 'easterEgg';
             alert('Micke Nicander Kuwahara made this, how about that!!');
         },
@@ -877,10 +881,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     $scope.getMenuItem('wsinfo').visibility_enabled = false;
 
                     $scope.getMenuItem('webbles').visibility_enabled = false;
+					appViewOpen = false;
                 }
                 else{
 					quickLoadInternalSavedWS();
 					displayImportantDevMessage();
+					appViewOpen = true;
                 }
 
                 if(oldValue == '/templates'){
@@ -1785,7 +1791,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             platformBkgColor: platformBkgColor_,
             currentExecutionMode: currentExecutionMode_,
             popupEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.PopupInfoEnabled) != 0,
-            autoBehaviorEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0
+            autoBehaviorEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
+			loggingEnabled: $scope.isLoggingEnabled
         };
     };
     //========================================================================================
@@ -1812,6 +1819,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             else if(returnData.autoBehaviorEnabled == false){
                 platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled);
             }
+
+			if (returnData.loggingEnabled != $scope.isLoggingEnabled) {
+				$scope.isLoggingEnabled = !$scope.isLoggingEnabled;
+				wwGlobals.loggingEnabled = $scope.isLoggingEnabled;
+				localStorageService.add('isLoggingEnabled', $scope.isLoggingEnabled.toString());
+			}
 
             $scope.saveUserSettings(false);
         }
@@ -2007,7 +2020,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         if(!isInSandbox || whatTemplateRevision > 0){
-			if(location.hostname == 'localhost' && $scope.user.username == 'truemrwalker'){
+			if(location.hostname == 'localhost' && $scope.user !== undefined && $scope.user.username == 'truemrwalker'){
 				corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
 			}
 			else{
@@ -2076,6 +2089,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // This method Inserts a workspace and calls for the insertion of its stored webbles.
     //========================================================================================
     $scope.insertWS = function(wsDef){
+		if($scope.getActiveWebbles().length > 0){
+			pendingWS = wsDef;
+			$scope.cleanActiveWS();
+			return;
+		}
+		else{ pendingWS = undefined; }
+
         $scope.waiting(true);
         $timeout(updateWorkSurfce, 100);
 
@@ -2212,7 +2232,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 if(newVal == 0){
                     watchingForWebbleExtermination();
                     $scope.globalByPassFlags.byPassBlockingDeleteProtection = false;
-                    $scope.insertWS({id: undefined, name: '', creator: '', is_shared: false});
+					if(!pendingWS){
+						$scope.insertWS({id: undefined, name: '', creator: '', is_shared: false});
+					}
                     recentWS_ = undefined;
                     $scope.saveUserSettings(true);
                     if(locationPathChangeRequest != ''){
@@ -2221,6 +2243,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         $scope.waiting(false);
                         $location.path(thePathToGo);
                     }
+					if(pendingWS){
+						$scope.insertWS(pendingWS);
+					}
                 }
             }, true);
         }
@@ -3274,6 +3299,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             modalOptions.resolve = {
                 platformProps: function(){ return content; }
             };
+			modalOptions.size = 'lg';
         }
         else if(whatForm == Enum.aopForms.langChange){
             modalOptions.templateUrl = 'views/modalForms/platformLangSheet.html';
@@ -4088,7 +4114,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 actionWasExecuted = false;
 
                 //Easter egg check
-                if (!whatKeys.theAltKey && whatKeys.theKey != null && whatKeys.theKey != '')
+                if (appViewOpen && !whatKeys.theAltKey && whatKeys.theKey != null && whatKeys.theKey != '')
                 {
                     var specialIndex = -1;
                     soFarWord_ += whatKeys.theKey.toString();
