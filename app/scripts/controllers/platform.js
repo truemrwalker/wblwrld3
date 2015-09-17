@@ -1128,9 +1128,22 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
 			}
 		},function(eMsg){
-			forceResetDownloadFlagsAndMemories();
-			$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
-			alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+			var isInSandbox = false;
+			for(var i = 0; i < availableSandboxWebbles_.length; i++){
+				if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
+					isInSandbox = true;
+					break;
+				}
+			}
+
+			if(isInSandbox){
+				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+			}
+			else{
+				forceResetDownloadFlagsAndMemories();
+				$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+				alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+			}
 		});
 	}
 	//========================================================================================
