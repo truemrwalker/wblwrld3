@@ -82,6 +82,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getVCVVisibility = function(){return vcvVisibility_;};
     $scope.setVCVVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){vcvVisibility_ = newVal;}else{vcvVisibility_ = 'none';}};
 	var appViewOpen = true;
+	var templateRevisionBehavior_ = 0;
     //-------------------------------
 
 
@@ -295,6 +296,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Instead of direct calling location path change, this value is set to the requested path and when all needed prep
     // work is done, then the path is changed
     var locationPathChangeRequest = '';
+
+	// Flags that keeps track of current Webble loading processes
+	var webbleCreationInProcess = false;
+	var webblesWaitingToBeLoaded = [];
+	var downloadingManifestLibs = false;
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -1019,6 +1025,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				if($location.search().workspace == undefined){
 					recentWS_ = storedPlatformSettings.recentWS != undefined ? storedPlatformSettings.recentWS : recentWS_;
 				}
+				if(storedPlatformSettings.templateRevisionBehavior != undefined){
+					templateRevisionBehavior_ = storedPlatformSettings.templateRevisionBehavior;
+				}
             }
             else{
                 $log.log('No stored platform settings object found for the user [' + $scope.user.email + '].');
@@ -1084,6 +1093,49 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
 
 
+	//========================================================================================
+	// Prepare Download Webble Template
+	// This method is checking the available version of the template being requested to make
+	// sure it exists or if there is a newer and better version perhaps.
+	// If any of the above mentioned this method tries to fix it if it can or abort.
+	//========================================================================================
+	var prepareDownloadWblTemplate = function(whatTemplateId, whatTemplateRevision, whatWblDef){
+		dbService.getWebbleDef(whatTemplateId).then(function(data) {
+			var topAvailableTemplateVersion = data.webble.templaterevision;
+			if(topAvailableTemplateVersion > whatTemplateRevision){
+				if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime){
+					if (confirm($scope.strFormatFltr('There is a more recent version [{2}] of the Webble template "{0}" available than the version [{1}] that was requested. Do you want to use the newer version instead (OK) or stick with the requested older version (Cancel). (Be aware that a newer template version may not be fully compatible with your other Webbles)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
+						downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
+					} else {
+						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+					}
+				}
+				else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate){
+					downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
+				}
+				else{
+					downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+				}
+			}
+			else if(topAvailableTemplateVersion < whatTemplateRevision){
+				if (confirm($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist, but there is a template with the same name of lower revision "{2}" available. Do you want to use that one instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
+					downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
+				} else {
+					forceResetDownloadFlagsAndMemories();
+				}
+			}
+			else{
+				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+			}
+		},function(eMsg){
+			forceResetDownloadFlagsAndMemories();
+			$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+			alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+		});
+	}
+	//========================================================================================
+
+
     //========================================================================================
     // Download Webble Template
     // This method loads a new set of webble template files and then adds a new instance of a
@@ -1119,30 +1171,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             error: function(){
                 $log.error($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist or was broken and can therefore not be loaded.', [whatTemplateId, whatTemplateRevision]));
 
-                // Remove it from the list of healthy compound webbles
-                for (var i = 0; i < webbleDefs_.length; i++){
-                    if (webbleDefs_[i]['defId'] == whatWblDef.webble.defid){
-                        webbleDefs_.splice(i, 1);
-                        break;
-                    }
-                }
-                pendingCallbackMethod_ = null;
-                pendingCallbackArgument_ = null;
-
-                $scope.waiting(false);
-                if($scope.isLoggingEnabled){
-                    alert($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist or was broken and therefore the loading of the the webble named {2} will be canceled.', [whatTemplateId, whatTemplateRevision, whatWblDef['webble']['defid']]));
-                }
-                else{
-					alert($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist or was broken and therefore the loading of the the webble named {2} will be canceled including any Workspace which included it.', [whatTemplateId, whatTemplateRevision, whatWblDef['webble']['defid']]));
-                    //alert($scope.strFormatFltr('The Webble currently loading did not exist or was broken and therefore the loading of this Webble and any Workspace which included it will be canceled.'));
-                }
+				if (confirm($scope.strFormatFltr('It seems the attempt to load the Webble template "{0}" of revision [{1}] did not exist, do you wish to try to load the template using another revision instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision])) == true) {
+					prepareDownloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+				} else {
+					// Remove it from the list of healthy compound webbles
+					for (var i = 0; i < webbleDefs_.length; i++){
+						if (webbleDefs_[i]['defId'] == whatWblDef.webble.defid){
+							webbleDefs_.splice(i, 1);
+							break;
+						}
+					}
+					forceResetDownloadFlagsAndMemories();
+				}
             }
         });
     };
     //========================================================================================
 
-    var downloadingManifestLibs = false;
+
     //========================================================================================
     // Download Webble Template Manifest File
     // This method loads all files (one by one) found in the webble templates manifest file.
@@ -1204,7 +1250,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
                                                 // if no more templates are being loaded Insert the webble into the desktop
                                                 if (noOfNewTemplates_ == 0){
-                                                    insertWebble(whatWblDef);
+                                                    insertWebble(whatWblDef, whatTemplateRevision);
                                                 }
                                             }
                                         )
@@ -1220,12 +1266,37 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
 
 
+	//========================================================================================
+	// Force Reset Download Flags And Memories
+	// This method resets all flags and memoriy variables by force due to failed and aborted
+	// attempt to load a Webble.
+	//========================================================================================
+	var forceResetDownloadFlagsAndMemories = function(){
+		relationConnHistory_ = [];
+		pendingCallbackMethod_ = null;
+		pendingCallbackArgument_ = null;
+		webbleCreationInProcess = false;
+		duplEventData = undefined;
+		$scope.waiting(false);
+		$scope.resetSelections();
+		wblFamiliesInLineForInsertion_ = [];
+		longtermrelationConnHistory_ = [];
+		var pathQuery = $location.search();
+		if(pathQuery.webble && pathQuery.workspace){
+			var requestedWbl = pathQuery.webble;
+			$location.search('webble', null);
+			$scope.downloadWebbleDef(requestedWbl)
+		}
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Insert Webble Definition
     // This method creates and insert a webble definition, a number of related webbles of a
     // number of specified classes.
     //========================================================================================
-    var insertWebble = function(whatWblDef){
+    var insertWebble = function(whatWblDef, whatRevision){
         var webblesToInsert = jsonQuery.allValByKey(whatWblDef, 'webble');
         noOfNewWebbles_ = webblesToInsert.length;
 
@@ -1236,6 +1307,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         if(currWS_){
             for(var i = 0; i < webblesToInsert.length; i++){
+				if(whatRevision != undefined && whatRevision != webblesToInsert[i].templaterevision){ webblesToInsert[i].templaterevision = whatRevision; }
                 currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
             }
         }
@@ -1505,22 +1577,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			//Delete shared model connections
 			for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-				if(aw.scope().getInstanceId() != targetInstanceId){
-					for(var n = 0, ms; ms = aw.scope().getModelSharees()[n]; n++){
-						if(ms.scope().getInstanceId() == targetInstanceId){
-							aw.scope().getModelSharees().splice(n, 1);
-							break;
+				if(aw.scope() !== undefined) {
+					if(aw.scope().getInstanceId() != targetInstanceId){
+						for(var n = 0, ms; ms = aw.scope().getModelSharees()[n]; n++){
+							if(ms.scope().getInstanceId() == targetInstanceId){
+								aw.scope().getModelSharees().splice(n, 1);
+								break;
+							}
 						}
 					}
-				}
-				else{
-					targetIndex = i;
-				}
+					else{
+						targetIndex = i;
+					}
 
-				for(var n = 0; n < listOfUntrustedWbls_.length; n++){
-					if(listOfUntrustedWbls_[n] == aw.scope().theWblMetadata['defid']){
-						updatedUntrustList.push(listOfUntrustedWbls_[n]);
-						break;
+					for(var n = 0; n < listOfUntrustedWbls_.length; n++){
+						if(listOfUntrustedWbls_[n] == aw.scope().theWblMetadata['defid']){
+							updatedUntrustList.push(listOfUntrustedWbls_[n]);
+							break;
+						}
 					}
 				}
 			}
@@ -1792,7 +1866,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             currentExecutionMode: currentExecutionMode_,
             popupEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.PopupInfoEnabled) != 0,
             autoBehaviorEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
-			loggingEnabled: $scope.isLoggingEnabled
+			loggingEnabled: $scope.isLoggingEnabled,
+			templateRevisionBehavior: templateRevisionBehavior_
         };
     };
     //========================================================================================
@@ -1825,6 +1900,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				wwGlobals.loggingEnabled = $scope.isLoggingEnabled;
 				localStorageService.add('isLoggingEnabled', $scope.isLoggingEnabled.toString());
 			}
+
+			templateRevisionBehavior_ = returnData.templateRevisionBehavior
 
             $scope.saveUserSettings(false);
         }
@@ -2062,7 +2139,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     'popupEnabled': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.PopupInfoEnabled) != 0,
                     'autoBehaviorEnabled': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
                     'systemMenuVisibility': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled) != 0,
-                    'recentWebble': recentWebble_
+                    'recentWebble': recentWebble_,
+					'templateRevisionBehavior': templateRevisionBehavior_
                 };
             }
             localStorageService.add(rootPathName + wwConsts.storedPlatformSettingsPathLastName, JSON.stringify(platformProps));
@@ -2317,8 +2395,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     };
     //========================================================================================
 
-	var webbleCreationInProcess = false;
-	var webblesWaitingToBeLoaded = []
 
 
 	//========================================================================================
@@ -2376,7 +2452,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             else{
                 noOfNewTemplates_ = containingNewWblTemplates.length;
                 for(var i = 0; i < containingNewWblTemplates.length; i++){
-                    downloadWblTemplate(containingNewWblTemplates[i]['templateid'], containingNewWblTemplates[i]['templaterevision'], whatWblDef)
+					prepareDownloadWblTemplate(containingNewWblTemplates[i]['templateid'], containingNewWblTemplates[i]['templaterevision'], whatWblDef);
                 }
             }
         }

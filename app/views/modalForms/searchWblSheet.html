@@ -70,7 +70,7 @@
     <div class="row keepTheDistanceBelow">
         <div class="col-xs-2"><span style="font-size: 10px;" translate>Sorted By: </span></div>
         <div class="col-xs-2">
-            <select class="formitem" ng-model="formItems.sortedBy" style="font-size: 10px;" ng-change="reSort()">
+            <select id="sortBy" class="formitem" ng-model="formItems.sortedBy" style="font-size: 10px;" ng-change="reSort()">
                 <option value="name" translate>Name</option>
                 <option value="rate" translate selected>Rating</option>
                 <option value="developer" translate>Developer</option>
@@ -79,7 +79,7 @@
         </div>
         <div class="col-xs-3">
             <span style="margin-left: 10px; font-size: 10px;" translate>Reversed</span>
-            <input class="formitem" type="checkbox" ng-model="formItems.isReversed" ng-change="toggleReverse()" />
+            <input id="reverseSort" class="formitem" type="checkbox" ng-model="formItems.isReversed" ng-change="toggleReverse()" />
         </div>
         <div class="col-xs-5">
             <pager class="pagination-sm" total-items="formItems.totalItems" ng-model="formItems.currentPage" items-per-page="formItems.itemsPerPage" style="margin-top: 0; margin-bottom: 0" ng-change="pageSelect();"
@@ -112,7 +112,7 @@
 				<div style="float: left; margin-left: -20px;"><div tweet="wblMeta.socialMediaModelName" tweet-url="wblMeta.socialMediaUrl"></div></div>
 			</div>
             <div class="col-xs-1">
-                <button ng-click="close('submit');" class="btn btn-primary btn-xs" translate>Load</button>
+				<button name="{{wblMeta.webble.defid}}" ng-click="loadWebble(wblMeta.webble.defid);" class="btn btn-primary btn-xs" translate>Load</button>
 				<button ng-show="isOwned($index);" ng-click="close('delete')" class="btn btn-danger btn-xs" translate>Delete</button>
             </div>
             <div class="col-xs-1">

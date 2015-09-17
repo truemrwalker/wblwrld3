@@ -42,6 +42,7 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
     // Form content needed for proper processing
     $scope.formItems = platformProps;
     $scope.execModeOptions = [];
+	$scope.templateRevisionBehaviorOptions = [];
     $scope.browser = BrowserDetect.browser;
 
     // Information tooltip texts
@@ -50,7 +51,8 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
         currentExecutionMode: gettext("This is the execution mode the system is currently in. Developer opens up all locks, Admin is for working Webble maintanance and user modes are for basic usage."),
         popupEnabled: gettext("If this is unchecked, some of the more tutorial-like and repetetive informative Message popups will be disabled."),
         autoBehaviorEnabled: gettext("If this is unchecked, Webble will no longer try to auto connects default slots etc."),
-		loggingEnabled: gettext("If this is checked, log texts will be written to the JavaScript console for development support [$log.log()], if unckecked all log commands in the code will be ignored.")
+		loggingEnabled: gettext("If this is checked, log texts will be written to the JavaScript console for development support [$log.log()], if unckecked all log commands in the code will be ignored."),
+		templateRevisionBehavior: gettext("This allows the user to define the automatic behavior for the system when a requested version of a Webble Template exists as a newer version as well. Upgrade or not.")
     };
 
     // Form validation error message
@@ -109,5 +111,11 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
         $scope.execModeOptions.push({key: index, val: Enum.availableOnePicks_ExecutionModesDisplayText[mode]});
         index++;
     }
+
+	index = 0;
+	for(var behavior in Enum.availableOnePicks_templateRevisionBehaviorDisplayText){
+		$scope.templateRevisionBehaviorOptions.push({key: index, val: Enum.availableOnePicks_templateRevisionBehaviorDisplayText[behavior]});
+		index++;
+	}
 });
 //======================================================================================================================
