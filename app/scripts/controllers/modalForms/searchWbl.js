@@ -182,6 +182,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         }
 
         $location.search('webble', $scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid);
+		$('button[name="' + $scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid + '"]').focus();
     };
     //========================================================================================
 
@@ -306,8 +307,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     };
     //========================================================================================
 
-    //    copyPublishedTemplateAsMyUnpublishedTemplate
-//    jsonQuery.allValByKey(wbl.webble, 'webble').length;
 
     //*****************************************************************************************************************
     //=== PRIVATE FUNCTIONS ===========================================================================================
@@ -421,6 +420,11 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
             latestSearchStr = 'aperitifPack';
 
             $('#searchBox').focus();
+			$timeout(function(){
+				if(!$('#searchBox').is(':focus')){
+					$('#searchBox').focus();
+				}
+			}, 1000);
         });
     };
     //========================================================================================
@@ -532,6 +536,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                 }
 
                 $scope.formItems.typeAheadResult = [];
+				$('#reverseSort').focus();
             }
             else{
                 return $http.get('/api/webbles?limit=' + $scope.formItems.itemsPerPage + '&orderby=' + getSortStr() + '&q=' + latestSearchStr + '&verify=1').then(function(resp){
@@ -562,6 +567,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     if($scope.formItems.pageViewResult.length > 0){
                         $scope.selectWbl(0);
                     }
+					$('#reverseSort').focus();
                 });
             }
         }
@@ -649,6 +655,16 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         }
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Load Webble
+	// When Load button is pressed the Webble for that button will be loaded
+	//========================================================================================
+	$scope.loadWebble = function (webbleDefId) {
+		$scope.thePlatform.downloadWebbleDef(webbleDefId);
+	};
+	//========================================================================================
 
 
 

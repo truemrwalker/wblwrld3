@@ -186,6 +186,18 @@ ww3Services.factory('Enum', function (gettext) {
             LowClearanceUser:  gettext("Low Clearance User")
         },
 
+		availableOnePicks_templateRevisionBehaviors: {
+			askEverytime: 0,
+			autoUpdate:  1,
+			autoKeep:  2
+		},
+
+		availableOnePicks_templateRevisionBehaviorDisplayText: {
+			askEverytime: gettext("Ask everytime"),
+			autoUpdate:  gettext("Automatically upgrade to newer"),
+			autoKeep:  gettext("Automatically keep current older")
+		},
+
         // The different available form input types used to interact with webble properties and similar
         aopInputTypes: {
             Undefined: 0,
