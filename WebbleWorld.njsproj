@@ -28,10 +28,10 @@
     <Content Include="bower.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Compile Include="app\webbles\SimplePhysicsEngine\1\controllers.js" />
-    <Compile Include="app\webbles\SimplePhysicsEngine\1\directives.js" />
-    <Compile Include="app\webbles\SimplePhysicsEngine\1\filters.js" />
-    <Compile Include="app\webbles\SimplePhysicsEngine\1\services.js" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\controllers.js" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\directives.js" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\filters.js" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\services.js" />
     <Compile Include="Gruntfile.js" />
     <Compile Include="karma-e2e.conf.js" />
     <Compile Include="karma.conf.js" />

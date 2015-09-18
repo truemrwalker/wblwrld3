@@ -121,12 +121,25 @@ module.exports.GFS = function (Q, mongoose) {
 	// Move files
 	//
 	this.moveFileEntry = function(fileEntry, toDirectory) {
+        
+        var self = this;
+        var newFilename = genFn(toDirectory, fileEntry.metadata.filename);
 
-		return update({ _id: fileEntry._id }, { '$set': {
-			filename: genFn(toDirectory, fileEntry.metadata.filename),
-			aliases: genAliases(toDirectory),
-			"metadata.directory": toDirectory
-		}});
+        self.getFileWithPath(newFilename).then(function (oldFile) {
+
+            return update({ _id: fileEntry._id }, {
+                '$set': {
+                    filename: newFilename,
+                    aliases: genAliases(toDirectory),
+                    "metadata.directory": toDirectory
+                }
+            }).then(function () {
+
+                if (oldFile)
+                    return self.deleteFileEntry(oldFile);
+            });
+        });
+
 	};
 
 	this.moveFiles = function(fromDirectory, toDirectory, ownerId) {

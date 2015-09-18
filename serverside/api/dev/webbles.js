@@ -299,6 +299,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 					var info = fromW.getInfoObject();
 					info.ver = toW.webble.templaterevision + 1;
 					toW.mergeWithInfoObject(info);
+                
+                    console.log("Target Webble Reported version:", info.ver - 1, "and it will be bumped up to version:", info.ver);
 
 					if (req.body.webble) {
 
