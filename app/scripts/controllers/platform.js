@@ -1100,34 +1100,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// If any of the above mentioned this method tries to fix it if it can or abort.
 	//========================================================================================
 	var prepareDownloadWblTemplate = function(whatTemplateId, whatTemplateRevision, whatWblDef){
-		dbService.getWebbleDef(whatTemplateId).then(function(data) {
-			var topAvailableTemplateVersion = data.webble.templaterevision;
-			if(topAvailableTemplateVersion > whatTemplateRevision){
-				if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime){
-					if (confirm($scope.strFormatFltr('There is a more recent version [{2}] of the Webble template "{0}" available than the version [{1}] that was requested. Do you want to use the newer version instead (OK) or stick with the requested older version (Cancel). (Be aware that a newer template version may not be fully compatible with your other Webbles)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
-						downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
-					} else {
-						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
-					}
-				}
-				else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate){
-					downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
-				}
-				else{
-					downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
-				}
-			}
-			else if(topAvailableTemplateVersion < whatTemplateRevision){
-				if (confirm($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist, but there is a template with the same name of lower revision "{2}" available. Do you want to use that one instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
-					downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
-				} else {
-					forceResetDownloadFlagsAndMemories();
-				}
-			}
-			else{
-				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
-			}
-		},function(eMsg){
+		if(whatTemplateId != 'bundleTemplate'){
 			var isInSandbox = false;
 			for(var i = 0; i < availableSandboxWebbles_.length; i++){
 				if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
@@ -1135,16 +1108,60 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					break;
 				}
 			}
+			if(!isInSandbox){
+				dbService.getWebbleDef(whatTemplateId).then(function(data) {
+					var topAvailableTemplateVersion = data.webble.templaterevision;
+					if(topAvailableTemplateVersion > whatTemplateRevision){
+						if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime){
+							if (confirm($scope.strFormatFltr('There is a more recent version [{2}] of the Webble template "{0}" available than the version [{1}] that was requested. Do you want to use the newer version instead (OK) or stick with the requested older version (Cancel). (Be aware that a newer template version may not be fully compatible with your other Webbles)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
+								downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
+							} else {
+								downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+							}
+						}
+						else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate){
+							downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
+						}
+						else{
+							downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+						}
+					}
+					else if(topAvailableTemplateVersion < whatTemplateRevision){
+						if (confirm($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist, but there is a template with the same name of lower revision "{2}" available. Do you want to use that one instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
+							downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
+						} else {
+							forceResetDownloadFlagsAndMemories();
+						}
+					}
+					else{
+						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+					}
+				},function(eMsg){
+					var isInSandbox = false;
+					for(var i = 0; i < availableSandboxWebbles_.length; i++){
+						if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
+							isInSandbox = true;
+							break;
+						}
+					}
 
-			if(isInSandbox){
-				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+					if(isInSandbox){
+						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+					}
+					else{
+						forceResetDownloadFlagsAndMemories();
+						$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+						alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+					}
+				});
 			}
 			else{
-				forceResetDownloadFlagsAndMemories();
-				$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
-				alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
 			}
-		});
+		}
+		else{
+			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+		}
 	}
 	//========================================================================================
 
@@ -1258,7 +1275,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                                     .always(function() {
                                         $.getScript(corePath + appPaths.webbleCtrl)
                                             .always(function() {
-                                                webbleTemplates_.push({templateid: whatTemplateId, templaterevision: whatTemplateRevision});
+												webbleTemplates_.push({templateid: whatTemplateId, templaterevision: whatTemplateRevision});
                                                 noOfNewTemplates_--;
 
                                                 // if no more templates are being loaded Insert the webble into the desktop
@@ -1320,7 +1337,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         if(currWS_){
             for(var i = 0; i < webblesToInsert.length; i++){
-				if(whatRevision != undefined && whatRevision != webblesToInsert[i].templaterevision){ webblesToInsert[i].templaterevision = whatRevision; }
+				if(webblesToInsert[i].templateid != 'bundleTemplate' && whatRevision != undefined && whatRevision != webblesToInsert[i].templaterevision){ webblesToInsert[i].templaterevision = whatRevision; }
                 currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
             }
         }
@@ -2110,12 +2127,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         if(!isInSandbox || whatTemplateRevision > 0){
-			if(location.hostname == 'localhost' && $scope.user !== undefined && $scope.user.username == 'truemrwalker'){
-				corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
-			}
-			else{
+			//if(location.hostname == 'localhost' && $scope.user !== undefined && $scope.user.username == 'truemrwalker'){
+			//	corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
+			//}
+			//else{
 				corePath = appPaths.webbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
-			}
+			//}
         }
 
         return corePath;
