@@ -76,7 +76,17 @@ function genQuery(directory, filename, ownerId) {
 //
 module.exports.GFS = function (Q, mongoose) {
 
-	var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
+    var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
+    
+    // Wrapper for updating the gsf.files collection and returning a promise:
+    // This should've worked: Q.denodeify(gfs.files.update);
+    //
+    function update(query, data) {
+
+        var deferred = Q.defer();
+        gfs.files.update(query, data, deferred.makeNodeResolver());
+        return deferred.promise;
+    }
 
 	// Get a file
 	//
@@ -112,13 +122,11 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.moveFileEntry = function(fileEntry, toDirectory) {
 
-		// For some reason this works... but can't we wait for it (?)
-		var q = gfs.files.update({ _id: fileEntry._id }, { '$set': {
+		return update({ _id: fileEntry._id }, { '$set': {
 			filename: genFn(toDirectory, fileEntry.metadata.filename),
 			aliases: genAliases(toDirectory),
 			"metadata.directory": toDirectory
 		}});
-		return Q.resolve(q);
 	};
 
 	this.moveFiles = function(fromDirectory, toDirectory, ownerId) {
@@ -193,27 +201,23 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.chownFileEntry = function(fileEntry, ownerId) {
 
-		// For some reason this works... but can't we wait for it (?)
-		var q = gfs.files.update({ _id: fileEntry._id }, { '$set': {
+		return update({ _id: fileEntry._id }, { '$set': {
 			"metadata._owner": ownerId
 		}});
-		return Q.resolve(q);
 	};
 
 	// Create a write stream
 	//
-	this.createWriteStream = function(directory, filename, ownerId, unixTimestamp) {
+	this.createWriteStream = function(directory, filename, ownerId, mtime) {
 
 		var self = this;
 		return self.getFile(directory, filename, ownerId).then(function(file) {
 
-			var mtime = util.toUnixTimestamp(unixTimestamp || new Date());
-
 			if (file) {
-
-				// For some reason this works... but can't we wait for it (?)
-				gfs.files.update({ _id: file._id }, { '$set': { "metadata.mtime": mtime }});
-				return gfs.createWriteStream({_id: file._id, mode: 'w'});
+                
+                return update({ _id: file._id }, { '$set': { "metadata.mtime": mtime || new Date() } }).then(function () {
+                    return gfs.createWriteStream({ _id: file._id, mode: 'w' });
+                });                
 			}
 			else {
 
@@ -225,7 +229,7 @@ module.exports.GFS = function (Q, mongoose) {
 					metadata: {
 						directory: directory,
 						filename: filename,
-						mtime: mtime,
+						mtime: mtime || new Date(),
 						_owner: ownerId
 					}
 				});
@@ -255,10 +259,10 @@ module.exports.GFS = function (Q, mongoose) {
 
 	// Upload
 	//
-	this.upload = function(readStream, directory, filename, ownerId, unixTimestamp) {
+	this.upload = function(readStream, directory, filename, ownerId, mtime) {
 
 		var self = this;
-		return self.createWriteStream(directory, filename, ownerId, unixTimestamp).then(function(writeStream) {
+		return self.createWriteStream(directory, filename, ownerId, mtime).then(function(writeStream) {
 
 			return Q.Promise(function(resolve, reject) {
 
@@ -271,22 +275,21 @@ module.exports.GFS = function (Q, mongoose) {
 		});
 	};
 
-	this.uploadToFileEntry = function(readStream, fileEntry, unixTimestamp) {
+	this.uploadToFileEntry = function(readStream, fileEntry, mtime) {
+        
+        return update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": mtime || new Date() } }).then(function (result) {
 
-		return Q.Promise(function(resolve, reject) {
-
-			var mtime = util.toUnixTimestamp(unixTimestamp || new Date());
-
-			// For some reason this works... but can't we wait for it (?)
-			gfs.files.update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": mtime }});
-			var writeStream = gfs.createWriteStream({_id: fileEntry._id, mode: 'w'});
-
-			readStream.pipe(writeStream);
-			readStream.once('error', reject);
-
-			writeStream.once('error', reject);
-			writeStream.once('close', resolve);
-		});
+            return Q.Promise(function (resolve, reject) {
+                
+                var writeStream = gfs.createWriteStream({ _id: fileEntry._id, mode: 'w' });
+                
+                readStream.pipe(writeStream);
+                readStream.once('error', reject);
+                
+                writeStream.once('error', reject);
+                writeStream.once('close', resolve);
+            });
+        });
 	};
 
 	this.uploadData = function(data, encoding, directory, filename, ownerId) {
@@ -352,5 +355,19 @@ module.exports.GFS = function (Q, mongoose) {
 			writeStream.once('error', reject);
 			writeStream.once('finish', resolve);
 		});
-	};
+    };
+
+    this.downloadFromFileEntryUntilClosed = function (writeStream, fileEntry) {
+        
+        return Q.Promise(function (resolve, reject) {
+            
+            var readStream = gfs.createReadStream(fileEntry);
+            
+            readStream.pipe(writeStream);
+            readStream.once('error', reject);
+            
+            writeStream.once('error', reject);
+            writeStream.once('close', resolve);
+        });
+    };
 };

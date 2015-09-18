@@ -21,9 +21,17 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="app\webbles\SimplePhysicsEngine\1\info.json" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\manifest.json" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\styles.css" />
+    <Content Include="app\webbles\SimplePhysicsEngine\1\view.html" />
     <Content Include="bower.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Compile Include="app\webbles\SimplePhysicsEngine\1\controllers.js" />
+    <Compile Include="app\webbles\SimplePhysicsEngine\1\directives.js" />
+    <Compile Include="app\webbles\SimplePhysicsEngine\1\filters.js" />
+    <Compile Include="app\webbles\SimplePhysicsEngine\1\services.js" />
     <Compile Include="Gruntfile.js" />
     <Compile Include="karma-e2e.conf.js" />
     <Compile Include="karma.conf.js" />
@@ -591,6 +599,8 @@
     <Folder Include="app\webbles\RandomNumberGenerator\1" />
     <Folder Include="app\webbles\RSSFeed" />
     <Folder Include="app\webbles\RSSFeed\1" />
+    <Folder Include="app\webbles\SimplePhysicsEngine\" />
+    <Folder Include="app\webbles\SimplePhysicsEngine\1\" />
     <Folder Include="app\webbles\SoapAndRestCall" />
     <Folder Include="app\webbles\SoapAndRestCall\1" />
     <Folder Include="app\webbles\stringMaster" />

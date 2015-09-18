@@ -41,14 +41,6 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
-    function isNumberString(str) {
-
-        for (var i = 0; i < str.length; ++i)
-            if (str[i] < '0' || str[i] > '9')
-                return false;
-        return str.length !== 0;
-    }
-
 	function createInfoSync(infoDir, id, ver) {
 		try {
             
@@ -93,7 +85,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
     //
     xfs.walkSync(webbleDir, function (baseDir, dirs, files) {
         
-        if (files.length === 0 && !util.allTrue(dirs, isNumberString))
+        if (files.length === 0 && !util.allTrue(dirs, util.isStringNumber))
             return false;
             
         var infoDir = baseDir;

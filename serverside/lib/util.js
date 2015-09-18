@@ -180,6 +180,14 @@ module.exports.isUrlValid = function (url) {
 	return regExp.test(url);
 };
 
+module.exports.isStringNumber = function (str) {
+    
+    for (var i = 0; i < str.length; ++i)
+        if (str[i] < '0' || str[i] > '9')
+            return false;
+    return str.length !== 0;
+};
+
 ////////////////////////////////////////////////////////////////////////
 // Rest-specific utility functions
 //
@@ -262,12 +270,4 @@ module.exports.resSendError = function (res, error, message) {
 		error = new RestError(message);
 	}
 	res.status(error.statusCode).send(error.message);
-};
-
-//**********************************************************************
-
-module.exports.toUnixTimestamp = function(time) {
-
-	// convert to 123.456 UNIX timestamp
-	return util.isDate(time) ? Math.floor(time.getTime() / 1000) : time;
 };

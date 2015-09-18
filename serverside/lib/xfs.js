@@ -57,3 +57,15 @@ function walkSync(baseDir, callback) {
 //
 module.exports.walkSync = walkSync;
 
+////////////////////////////////////////////////////////////////////////
+// Quick and dirty IO stuff
+//
+module.exports.log = function () {
+    
+    var line = "";
+    for (var i = 0; i < arguments.length; ++i)
+        line += arguments[i].toString() + " ";
+    line += "\n";
+    
+    fs.appendFileSync('./logfile.log', line);
+}
