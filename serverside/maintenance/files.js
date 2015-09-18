@@ -221,6 +221,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	//******************************************************************
 
 	function syncBackupFiles() {
+        
+        // Check and try to fix duplicate files
+        var dups = {};
 
         return gfs.listAllFiles().then(function (files) {
             
@@ -229,6 +232,17 @@ module.exports = function(Q, app, config, mongoose, gettext) {
                 if (!f.filename || !f.metadata) // Just log the error for now - TODO: handle it in the future
                     return console.error("Corrupt file in db:", f._id);
                 
+                // Check and try to fix duplicate files
+                //
+                if (dups.hasOwnProperty(f.filename)) {
+                    
+                    console.error("Terminating duplicate file entry:", f.filename);
+                    return gfs.deleteFileEntry(f);
+                }
+                else
+                    dups[f.filename] = f;
+                // -- end of check of duplicate files
+
                 if (f.metadata._owner)
                     return syncRemoteWebbleFile(f);
 
