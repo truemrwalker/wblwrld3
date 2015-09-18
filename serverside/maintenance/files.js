@@ -59,6 +59,13 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		var localTime = (localStat && localStat.mtime) || new Date(0);
 		var remoteTime = (remoteFile && remoteFile.metadata && remoteFile.metadata.mtime) || new Date(0);
         
+        // This is here just for backwards compatibility
+        // remoteTime used to be stored as integer unix timestamps
+        //
+        if ((typeof remoteTime) == 'number')
+            remoteTime = new Date(remoteTime * 1000);
+        // -- end backwards compatibility
+
         remoteTime.setMilliseconds(0); // Reset the milliseconds because stat values have seconds granularity
         localTime.setMilliseconds(0);
         
