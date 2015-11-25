@@ -2121,12 +2121,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         for(var i = 0; i < availableSandboxWebbles_.length; i++){
             if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
                 isInSandbox = true;
-                corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/' + whatTemplateRevision;
+                corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/0';// + whatTemplateRevision;
                 break;
             }
         }
 
-        if(!isInSandbox || whatTemplateRevision > 0){
+        if(!isInSandbox){// && whatTemplateRevision > 0
 			//if(location.hostname == 'localhost' && $scope.user !== undefined && $scope.user.username == 'truemrwalker'){
 			//	corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
 			//}
