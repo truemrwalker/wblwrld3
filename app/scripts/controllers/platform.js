@@ -1351,7 +1351,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             for(var i = 0; i < webblesToInsert.length; i++){
 				if(webblesToInsert[i].templateid != 'bundleTemplate'){
 					for(var j = 0; j < webbleTemplates_.length; j++){
-						if(webblesToInsert[i].templateid != webbleTemplates_[j].templateid){
+						if(webblesToInsert[i].templateid == webbleTemplates_[j].templateid){
 							webblesToInsert[i].templaterevision = webbleTemplates_[j].templaterevision;
 						}
 					}
