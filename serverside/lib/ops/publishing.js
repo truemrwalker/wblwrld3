@@ -133,7 +133,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 					//
 					var pub_promises = [];
 
-					if (req.body.groups) {
+					if (req.body.groups && req.body.groups.length) {
 
 						if (!req.user._sec.groups || req.user._sec.groups.length == 0)
 							throw new util.RestError(gettext("Wrong publication group"), 403);
