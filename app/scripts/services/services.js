@@ -1339,7 +1339,7 @@ ww3Services.factory('dbService', function($log, $http, webService, getFakeData) 
 
         getTemplateMetadata: function(templateId) {
             if(wwDef.WEBSERVICE_ENABLED){
-                return webService.get('/api/templates/' + encodeURIComponent(templateId));
+                return webService.get('/api/dev/templates/' + encodeURIComponent(templateId));
             }
             else{
                 return webService.get('', getFakeData.anyFakeData(templateId));
