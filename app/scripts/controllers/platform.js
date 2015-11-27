@@ -1356,7 +1356,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						}
 					}
 				}
-
                 currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
             }
         }
@@ -1877,6 +1876,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             theWbl.scope().theWblMetadata['description'] = returnData.description;
             theWbl.scope().theWblMetadata['keywords'] = returnData.keywords;
             theWbl.scope().theWblMetadata['image'] = returnData.image;
+			theWbl.scope().theWblMetadata['author'] = $scope.user.username;
             if(returnData.sandboxWblPublished){
                 loadSandboxWblDefs();
             }
