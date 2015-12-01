@@ -1878,6 +1878,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             theWbl.scope().theWblMetadata['image'] = returnData.image;
 			theWbl.scope().theWblMetadata['author'] = $scope.user.username;
             if(returnData.sandboxWblPublished){
+				//$scope.cleanActiveWS();
                 loadSandboxWblDefs();
             }
 
