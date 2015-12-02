@@ -1275,12 +1275,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                                     .always(function() {
                                         $.getScript(corePath + appPaths.webbleCtrl)
                                             .always(function() {
-												webbleTemplates_.push({templateid: whatTemplateId, templaterevision: whatTemplateRevision});
+												var wblTemplateExists = false;
+												for(var i = 0; i < webbleTemplates_.length; i++){
+													if(webbleTemplates_[i].templateid == whatTemplateId){
+														webbleTemplates_[i].templaterevision = whatTemplateRevision;
+														wblTemplateExists = true;
+														break;
+													}
+												}
+
+												if(!wblTemplateExists){
+													webbleTemplates_.push({templateid: whatTemplateId, templaterevision: whatTemplateRevision});
+												}
+
                                                 noOfNewTemplates_--;
 
                                                 // if no more templates are being loaded Insert the webble into the desktop
                                                 if (noOfNewTemplates_ == 0){
-                                                    insertWebble(whatWblDef, whatTemplateRevision);
+                                                    insertWebble(whatWblDef);
                                                 }
                                             }
                                         )
@@ -1326,7 +1338,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // This method creates and insert a webble definition, a number of related webbles of a
     // number of specified classes.
     //========================================================================================
-    var insertWebble = function(whatWblDef, whatRevision){
+    var insertWebble = function(whatWblDef){
         var webblesToInsert = jsonQuery.allValByKey(whatWblDef, 'webble');
         noOfNewWebbles_ = webblesToInsert.length;
 
@@ -1337,7 +1349,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         if(currWS_){
             for(var i = 0; i < webblesToInsert.length; i++){
-				if(webblesToInsert[i].templateid != 'bundleTemplate' && whatRevision != undefined && whatRevision != webblesToInsert[i].templaterevision){ webblesToInsert[i].templaterevision = whatRevision; }
+				if(webblesToInsert[i].templateid != 'bundleTemplate'){
+					for(var j = 0; j < webbleTemplates_.length; j++){
+						if(webblesToInsert[i].templateid == webbleTemplates_[j].templateid){
+							webblesToInsert[i].templaterevision = webbleTemplates_[j].templaterevision;
+						}
+					}
+				}
                 currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
             }
         }
@@ -1858,7 +1876,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             theWbl.scope().theWblMetadata['description'] = returnData.description;
             theWbl.scope().theWblMetadata['keywords'] = returnData.keywords;
             theWbl.scope().theWblMetadata['image'] = returnData.image;
+			theWbl.scope().theWblMetadata['author'] = $scope.user.username;
             if(returnData.sandboxWblPublished){
+				//$scope.cleanActiveWS();
                 loadSandboxWblDefs();
             }
 
@@ -2121,12 +2141,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         for(var i = 0; i < availableSandboxWebbles_.length; i++){
             if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
                 isInSandbox = true;
-                corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/' + whatTemplateRevision;
+                corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/0';// + whatTemplateRevision;
                 break;
             }
         }
 
-        if(!isInSandbox || whatTemplateRevision > 0){
+        if(!isInSandbox){// && whatTemplateRevision > 0
 			//if(location.hostname == 'localhost' && $scope.user !== undefined && $scope.user.username == 'truemrwalker'){
 			//	corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
 			//}
