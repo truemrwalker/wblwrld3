@@ -310,6 +310,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.setEmitLockEnabled = function(emitLockState){ emitLockEnabled_ = emitLockState; };
     var hasBeenUpdated_ = false;
     var trustedParameterWasUndefined = false;
+	var dontAskJustDoIt = false;
 
     //Trust related variables
     var listOfUntrustedWbls_ = [];
@@ -1112,14 +1113,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				dbService.getWebbleDef(whatTemplateId).then(function(data) {
 					var topAvailableTemplateVersion = data.webble.templaterevision;
 					if(topAvailableTemplateVersion > whatTemplateRevision){
-						if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime){
+						if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime && !dontAskJustDoIt){
 							if (confirm($scope.strFormatFltr('There is a more recent version [{2}] of the Webble template "{0}" available than the version [{1}] that was requested. Do you want to use the newer version instead (OK) or stick with the requested older version (Cancel). (Be aware that a newer template version may not be fully compatible with your other Webbles)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
 								downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
 							} else {
 								downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
 							}
 						}
-						else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate){
+						else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate || dontAskJustDoIt){
 							downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef);
 						}
 						else{
@@ -1201,17 +1202,22 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             error: function(){
                 $log.error($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist or was broken and can therefore not be loaded.', [whatTemplateId, whatTemplateRevision]));
 
-				if (confirm($scope.strFormatFltr('It seems the attempt to load the Webble template "{0}" of revision [{1}] did not exist, do you wish to try to load the template using another revision instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision])) == true) {
+				if (dontAskJustDoIt) {
 					prepareDownloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
-				} else {
-					// Remove it from the list of healthy compound webbles
-					for (var i = 0; i < webbleDefs_.length; i++){
-						if (webbleDefs_[i]['defId'] == whatWblDef.webble.defid){
-							webbleDefs_.splice(i, 1);
-							break;
+				}
+				else{
+					if (confirm($scope.strFormatFltr('It seems the attempt to load the Webble template "{0}" of revision [{1}] did not exist, do you wish to try to load the template using another revision instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision])) == true) {
+						prepareDownloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef);
+					} else {
+						// Remove it from the list of healthy compound webbles
+						for (var i = 0; i < webbleDefs_.length; i++){
+							if (webbleDefs_[i]['defId'] == whatWblDef.webble.defid){
+								webbleDefs_.splice(i, 1);
+								break;
+							}
 						}
+						forceResetDownloadFlagsAndMemories();
 					}
-					forceResetDownloadFlagsAndMemories();
 				}
             }
         });
@@ -1849,7 +1855,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         var theWblDef = whatWebble.scope().createWblDef(true);
-		$log.log(theWblDef);
         theWblDef.webble.author = $scope.user.username;
 
         return {
@@ -1877,13 +1882,31 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             theWbl.scope().theWblMetadata['keywords'] = returnData.keywords;
             theWbl.scope().theWblMetadata['image'] = returnData.image;
 			theWbl.scope().theWblMetadata['author'] = $scope.user.username;
-            if(returnData.sandboxWblPublished){
-				//$scope.cleanActiveWS();
+
+			if(returnData.sandboxWblPublished){
+				quickSaveWSInternal();
+
+				var sandboxMemoryToBeCleared = [];
+				for(var i = 0; i < webbleTemplates_.length; i++){
+					if(webbleTemplates_[i].templaterevision == 0){
+						sandboxMemoryToBeCleared.push(webbleTemplates_[i].templateid)
+					}
+				}
+				for(var j = 0; j < sandboxMemoryToBeCleared.length; j++){
+					for(var i = 0; i < webbleTemplates_.length; i++){
+						if(webbleTemplates_[i].templateid == sandboxMemoryToBeCleared[j]){
+							webbleTemplates_.splice(i, 1);
+							break;
+						}
+					}
+				}
                 loadSandboxWblDefs();
+				dontAskJustDoIt = true;
+				quickLoadInternalSavedWS();
             }
 
 			$scope.waiting(false);
-            $scope.showQIM(gettext("Webble Successfully Published"));
+			$scope.showQIM(gettext("Webble Successfully Published"));
         }
     };
     //========================================================================================
@@ -2035,6 +2058,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.loadWebbleFromDef(wblFamiliesInLineForInsertion_.shift());
             }
         }
+		else{
+			dontAskJustDoIt = false;
+		}
     };
     //========================================================================================
 
@@ -2146,13 +2172,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         }
 
-        if(!isInSandbox){// && whatTemplateRevision > 0
-			//if(location.hostname == 'localhost' && $scope.user !== undefined && $scope.user.username == 'truemrwalker'){
-			//	corePath = appPaths.localDevWebbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
-			//}
-			//else{
-				corePath = appPaths.webbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
-			//}
+        if(!isInSandbox){
+			corePath = appPaths.webbleRepCore + whatTemplateId + '/' + whatTemplateRevision;
         }
 
         return corePath;
@@ -2684,6 +2705,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
                 longtermrelationConnHistory_ = [];
                 $scope.setEmitLockEnabled(false);
+				dontAskJustDoIt = false;
 
                 // Check for trust in webbles delivered via a Workspace
                 if(listOfUntrustedWbls_.length == 0 && trustedParameterWasUndefined){
