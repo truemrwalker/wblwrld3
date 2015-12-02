@@ -26,7 +26,7 @@
 
 // Summon the cookieParser for parsing signed cookiez
 var cookie = require('cookie');
-var parse = require('cookie-parser/lib/parse');
+var parser = require('cookie-parser');
 
 module.exports = function(Q, app, config, mongoose, gettext, io) {
 
@@ -40,10 +40,10 @@ module.exports = function(Q, app, config, mongoose, gettext, io) {
 
 		try {
 			var signedCookies = cookie.parse(decodeURIComponent(cookieHeader));
-			var parsedCookie = parse.signedCookies(signedCookies, config.SESSION_SECRET);
+			var parsedCookie = parser.signedCookies(signedCookies, config.SESSION_SECRET);
 
 			// Do I need this????
-			parsedCookie = parse.JSONCookies(parsedCookie);
+			parsedCookie = parser.JSONCookies(parsedCookie);
 
 			return parsedCookie[config.SESSION_KEY];
 		}
