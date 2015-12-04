@@ -29,7 +29,7 @@
 //
 module.exports = function(Q, app, config, mongoose, gettext, io, auth) {
 
-    io.sockets.on('connection', function (socket) {
+    io.on('connection', function (socket) {
 
 	    socket.on('chat:started', function () {
 		    socket.join('chat');

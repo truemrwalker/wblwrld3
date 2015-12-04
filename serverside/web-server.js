@@ -34,9 +34,6 @@ var express = require('express');
 var session = require('express-session');
 var multipartFormParser = require('multer');
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var serveStatic = require('serve-static');
-var serveStaticFavicon = require('serve-favicon');
 
 var path = require('path');
 var fs = require('fs');
@@ -71,14 +68,9 @@ mongoose.connection.on('open', function() {
 ////////////////////////////////////////////////////////////////////////
 // Configure the web server
 //
-var appInsecure = express();
 var app = express();
 
 (function(){
-
-	// Serve static stuff quickly and get it out of the way
-	app.use(serveStaticFavicon(path.join(config.APP_ROOT_DIR, 'favicon.ico')));
-	app.use(serveStatic(config.APP_ROOT_DIR));
 
 	var multerFieldsHack = [];
 	while (multerFieldsHack.length < 21)
@@ -89,10 +81,11 @@ var app = express();
 	app.use(bodyParser.json({ limit: '10mb' }));
 	//app.use(bodyParser.urlencoded({ extended: true })); // Turn off for now, we don't really need it
 
-    app.use(cookieParser(/*config.SESSION_SECRET*/));
-
 	// We want to save this in app
 	var sessionStore;
+    
+    // trust first proxy, so that despite "secure: true" cookies are set over HTTP when behind proxy
+    app.set('trust proxy', 1);
 
 	// Set up the session-specific parameters
     app.use(session({
@@ -111,29 +104,29 @@ var app = express();
 })();
 
 ////////////////////////////////////////////////////////////////////////
-// Configure the insecure web server
-//
-(function() {
-
-    // For now the insecure server -- just redirects to https immediately
-    //
-    appInsecure.use(function(req, res) { // we don't need to call next()
-        res.redirect(301, config.SERVER_URL + req.path);
-    });
-})();
-
-////////////////////////////////////////////////////////////////////////
 // Starts the socket server (for real-time message dispatching)
 //
 function startSocketServer(webServer) {
 
     // Start the socket (real-time) server
-    var io = require('socket.io').listen(webServer);
+    var io = require('socket.io').listen(webServer).of('/socket.io/endpt'); // start under endpoint for easier revproxy conf
 	var socketAuth = require('./auth/auth-socket')(Q, app, config, mongoose, gettext, io);
 
     // Load all real-time modules
 	loader.executeAllSocketScriptsSync(path.join(__dirname, 'realtime'),
 		Q, app, config, mongoose, gettext, io, socketAuth);
+}
+
+////////////////////////////////////////////////////////////////////////
+// Starts the redirection server
+//
+function startRedirectServer() {
+
+    var redirectApp = express();
+    redirectApp.use(function (req, res) { // we don't need to call next()
+        res.redirect(301, config.SERVER_URL + req.path);
+    });
+    return require('http').createServer(redirectApp).listen(config.SERVER_PORT_INSECURE);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -152,22 +145,43 @@ function startWebServer() {
 		Q, app, config, mongoose, gettext, auth);
 
 	// Start the http and https servers on the appropriate endpoints
-	var http = require('http');
-	var https = require('https');
+    //    
+    var server = null;
 
-	var options = {
-		ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
-		key: fs.readFileSync(config.SERVER_KEY),
-		cert: fs.readFileSync(config.SERVER_CERT),
-		passphrase: config.SERVER_PASSPHRASE || undefined
-	};
-	var httpsServer = https.createServer(options, app).listen(config.SERVER_PORT);
-	var httpServer = http.createServer(appInsecure).listen(config.SERVER_PORT_INSECURE);
+    if (!config.SERVER_BEHIND_REVERSE_PROXY) {
+        
+        // If we're not behind a proxy we want to serve static stuff
+        //
+        var serveStatic = require('serve-static');
+        var serveStaticFavicon = require('serve-favicon');
+
+        app.use(serveStaticFavicon(path.join(config.APP_ROOT_DIR, 'favicon.ico')));
+        app.use(serveStatic(config.APP_ROOT_DIR));
+        //
+        // - end of serving static stuff
+
+        var options = {
+            ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
+            key: fs.readFileSync(config.SERVER_KEY),
+            cert: fs.readFileSync(config.SERVER_CERT),
+            passphrase: config.SERVER_PASSPHRASE || undefined
+        };
+
+        server = require('https').createServer(options, app).listen(config.SERVER_PORT);
+    }
+    else {
+        
+        config.SERVER_PORT = config.SERVER_PORT_INSECURE;
+        config.SERVER_URL = config.SERVER_URL_INSECURE;
+
+        server = require('http').createServer(app).listen(config.SERVER_PORT);
+    }    
+    
 
 	// Finally, start the socket server
-	startSocketServer(httpsServer, httpServer);
+	startSocketServer(server);
 
-	console.log("[OK] Server endpoint:", config.SERVER_URL, "\n\tInsecure endpoint:", config.SERVER_URL_INSECURE);
+	console.log("[OK] Server endpoint:", config.SERVER_URL);
 }
 
 ////////////////////////////////////////////////////////////////////////

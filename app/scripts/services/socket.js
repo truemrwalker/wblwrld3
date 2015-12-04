@@ -43,7 +43,7 @@ ww3Services.provider('socketFactory', function () {
 
         return function socketFactory (options) {
             options = options || {};
-            var socket = options.ioSocket || io.connect();
+            var socket = options.ioSocket || io('/socket.io/endpt');
             var prefix = options.prefix || defaultPrefix;
             var defaultScope = options.scope || $rootScope;
 
