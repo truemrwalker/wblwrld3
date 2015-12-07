@@ -54,29 +54,29 @@ module.exports = function(Q, app, config, mongoose, gettext, io) {
 
 	function forEachConnectedClient(func) {
 
-		var clientIds = Object.keys(io.sockets.connected);
+		var clientIds = Object.keys(io.connected);
 		for (var i = 0; i < clientIds.length; ++i) {
 
-			var client = io.sockets.connected[clientIds[i]];
+			var client = io.connected[clientIds[i]];
 			func(client);
 		}
 	}
 	function forEachAuthenicatedClient(func) {
 
-		var clientIds = Object.keys(io.sockets.connected);
+		var clientIds = Object.keys(io.connected);
 		for (var i = 0; i < clientIds.length; ++i) {
 
-			var client = io.sockets.connected[clientIds[i]];
+			var client = io.connected[clientIds[i]];
 			if (client.handshake.user)
 				func(client);
 		}
 	}
 	function forEachUnauthenicatedClient(func) {
 
-		var clientIds = Object.keys(io.sockets.connected);
+		var clientIds = Object.keys(io.connected);
 		for (var i = 0; i < clientIds.length; ++i) {
 
-			var client = io.sockets.connected[clientIds[i]];
+			var client = io.connected[clientIds[i]];
 			if (!client.handshake.user)
 				func(client);
 		}
@@ -114,10 +114,10 @@ module.exports = function(Q, app, config, mongoose, gettext, io) {
   app.getAllActiveUsers = function() {
 
     var result = [];
-    var clientIds = Object.keys(io.sockets.connected);
+    var clientIds = Object.keys(io.connected);
     for (var i = 0; i < clientIds.length; ++i) {
 
-      var client = io.sockets.connected[clientIds[i]];
+      var client = io.connected[clientIds[i]];
       result.push({ sessionID: client.handshake.sessionID, user: client.handshake.user });
     }
     return result;

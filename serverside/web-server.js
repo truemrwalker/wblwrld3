@@ -35,6 +35,8 @@ var session = require('express-session');
 var multipartFormParser = require('multer');
 var bodyParser = require('body-parser');
 
+var http = require('http');
+
 var path = require('path');
 var fs = require('fs');
 
@@ -66,12 +68,15 @@ mongoose.connection.on('open', function() {
 });
 
 ////////////////////////////////////////////////////////////////////////
-// Configure the web server
+// Configure the applications
 //
-var app = express();
+var app = (function createApp(){
 
-(function(){
-
+    var app = express();
+    
+    //
+    // 1. First part of middleware initialization
+    //
 	var multerFieldsHack = [];
 	while (multerFieldsHack.length < 21)
 		multerFieldsHack.push({name: 'file' + multerFieldsHack.length, maxCount: 1});
@@ -79,11 +84,10 @@ var app = express();
 	app.use(multipartFormParser(multerOptionsHack).fields(multerFieldsHack));
 
 	app.use(bodyParser.json({ limit: '10mb' }));
-	//app.use(bodyParser.urlencoded({ extended: true })); // Turn off for now, we don't really need it
 
 	// We want to save this in app
 	var sessionStore;
-    
+
     // trust first proxy, so that despite "secure: true" cookies are set over HTTP when behind proxy
     app.set('trust proxy', 1);
 
@@ -100,8 +104,50 @@ var app = express();
 	    resave: false
     }));
 
-	app.set('sessionStore', sessionStore);
+    app.set('sessionStore', sessionStore);
+    
+    //
+    // 2. Configure database models and set up routes
+    //
+    loader.executeAllScriptsSync(path.join(__dirname, 'models'),
+		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
+    
+    // Setup the authentication token
+    var auth = require('./auth/auth')(Q, app, config, mongoose, gettext);
+    
+    // Load all modules that define the web server's routes
+    loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
+		Q, app, config, mongoose, gettext, auth);
+    
+    loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
+		Q, app, config, mongoose, gettext, auth);
+    
+    //
+    // 3. Second part of middleware initialization (after having had set up routes)
+    //    
+    if (!config.SERVER_BEHIND_REVERSE_PROXY) {
+        
+        // If we're not behind a proxy we also want to serve static stuff
+        //
+        var serveStatic = require('serve-static');
+        var serveStaticFavicon = require('serve-favicon');
+        
+        app.use(serveStaticFavicon(path.join(config.APP_ROOT_DIR, 'favicon.ico')));
+        app.use(serveStatic(config.APP_ROOT_DIR));
+    }
+    return app;
 })();
+
+// We're going to initialize this lazily if needed
+//
+function createRedirectApp() {
+
+    var redirectApp = express();
+    redirectApp.use(function (req, res) { // we don't need to call next()
+        res.redirect(301, config.SERVER_URL + req.path);
+    });
+    return redirectApp;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // Starts the socket server (for real-time message dispatching)
@@ -115,83 +161,61 @@ function startSocketServer(webServer) {
     // Load all real-time modules
 	loader.executeAllSocketScriptsSync(path.join(__dirname, 'realtime'),
 		Q, app, config, mongoose, gettext, io, socketAuth);
+
+    return io;
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Starts the redirection server
 //
 function startRedirectServer() {
-
-    var redirectApp = express();
-    redirectApp.use(function (req, res) { // we don't need to call next()
-        res.redirect(301, config.SERVER_URL + req.path);
-    });
-    return require('http').createServer(redirectApp).listen(config.SERVER_PORT_INSECURE);
+    return http.createServer(createRedirectApp()).listen(config.SERVER_PORT_INSECURE);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Starts the http and https servers
 //
-function startWebServer() {
+function startAppServer() {
 
-	// Setup the authentication token
-	var auth = require('./auth/auth')(Q, app, config, mongoose, gettext);
-
-	// Load all modules that define the web server's routes
-	loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
-		Q, app, config, mongoose, gettext, auth);
-
-	loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
-		Q, app, config, mongoose, gettext, auth);
-
-	// Start the http and https servers on the appropriate endpoints
+	// Start the application server on the appropriate endpoints
     //    
-    var server = null;
-
     if (!config.SERVER_BEHIND_REVERSE_PROXY) {
         
-        // If we're not behind a proxy we want to serve static stuff
-        //
-        var serveStatic = require('serve-static');
-        var serveStaticFavicon = require('serve-favicon');
-
-        app.use(serveStaticFavicon(path.join(config.APP_ROOT_DIR, 'favicon.ico')));
-        app.use(serveStatic(config.APP_ROOT_DIR));
-        //
-        // - end of serving static stuff
-
         var options = {
             ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
             key: fs.readFileSync(config.SERVER_KEY),
             cert: fs.readFileSync(config.SERVER_CERT),
             passphrase: config.SERVER_PASSPHRASE || undefined
         };
-
-        server = require('https').createServer(options, app).listen(config.SERVER_PORT);
+        return require('https').createServer(options, app).listen(config.SERVER_PORT);
     }
     else {
         
         config.SERVER_PORT = config.SERVER_PORT_INSECURE;
         config.SERVER_URL = config.SERVER_URL_INSECURE;
 
-        server = require('http').createServer(app).listen(config.SERVER_PORT);
+        return http.createServer(app).listen(config.SERVER_PORT);
     }    
+}
+
+////////////////////////////////////////////////////////////////////////
+// Start all servers
+//
+function startAllServers() {
+
+    var server = startAppServer();
+    startSocketServer(server);
     
+    if (config.SERVER_URL != config.SERVER_URL_INSECURE)
+        startRedirectServer();
 
-	// Finally, start the socket server
-	startSocketServer(server);
-
-	console.log("[OK] Server endpoint:", config.SERVER_URL);
+    console.log("[OK] Server endpoint:", config.SERVER_URL);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // The main function of this process
 //
 function serverEntryPoint() {
-
-	// Compile all the necessary mongoose schema models
-	loader.executeAllScriptsSync(path.join(__dirname, 'models'),
-		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
 
 	// Execute code based on the deployment mode
 	var promise = Q.resolve(0);
@@ -212,5 +236,5 @@ function serverEntryPoint() {
 				Q, app, config, mongoose, gettext, ['templates.js', 'files.js']);
 			break;
 	}
-	return Q.when(promise, shouldExit ? process.exit : startWebServer);
+	return Q.when(promise, shouldExit ? process.exit : startAllServers);
 }
