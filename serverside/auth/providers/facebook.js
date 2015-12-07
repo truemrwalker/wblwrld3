@@ -68,7 +68,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
     passport.use(new FacebookStrategy({
             clientID: config.FACEBOOK_APP_ID,
             clientSecret: config.FACEBOOK_APP_SECRET,
-            callbackURL: config.SERVER_URL + '/auth/facebook/callback'
+            callbackURL: config.SERVER_URL_PUBLIC + '/auth/facebook/callback'
         },
         function(accessToken, refreshToken, profile, done) {
 

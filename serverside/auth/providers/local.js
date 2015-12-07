@@ -276,7 +276,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
                             // Create auto-login link
                             var userIdHash = createUserIdHash(user);
                             var seed = config.APP_CRYPT_PASSWORD + userIdHash.substring(5, 15);
-                            var resetUrl = config.SERVER_URL + '/auth/autologin/' + userIdHash + '/' + crypt.encryptText(user.email, seed);
+                            var resetUrl = config.SERVER_URL_PUBLIC + '/auth/autologin/' + userIdHash + '/' + crypt.encryptText(user.email, seed);
 
                             smtpTransport.sendMail({
                                 from: config.APP_EMAIL_ADDRESS,

@@ -191,9 +191,6 @@ function startAppServer() {
     }
     else {
         
-        config.SERVER_PORT = config.SERVER_PORT_INSECURE;
-        config.SERVER_URL = config.SERVER_URL_INSECURE;
-
         return http.createServer(app).listen(config.SERVER_PORT);
     }    
 }
@@ -209,7 +206,7 @@ function startAllServers() {
     if (config.SERVER_URL != config.SERVER_URL_INSECURE)
         startRedirectServer();
 
-    console.log("[OK] Server endpoint:", config.SERVER_URL);
+    console.log("[OK] Server public endpoint:", config.SERVER_URL_PUBLIC, "[" + config.SERVER_URL + "]");
 }
 
 ////////////////////////////////////////////////////////////////////////

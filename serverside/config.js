@@ -77,14 +77,16 @@ module.exports = (function() {
 		FACEBOOK_APP_ID: sec.get('facebook_app_id'),
 		FACEBOOK_APP_SECRET: sec.get('facebook_app_secret'),
 
-		// Settings that are set automatically at startup
-		//
-		// SERVER_URL
-		// SERVER_PORT
-		// SERVER_URL_INSECURE
-		// SERVER_PORT_INSECURE
-		//
-		// MONGODB_URL
+		// Settings that are set automatically at startup using the other values
+        //
+		SERVER_URL: undefined,
+		SERVER_PORT: undefined,
+		SERVER_URL_INSECURE: undefined,
+		SERVER_PORT_INSECURE: undefined,
+        SERVER_URL_PUBLIC: undefined,
+        SERVER_PORT_PUBLIC: undefined,
+		
+		MONGODB_URL: undefined,
 
 		// Finally, Settings that are influenced by other, 3rd party, environment variables
 		//
@@ -135,17 +137,31 @@ module.exports = (function() {
 
 	////////////////////////////////////////////////////////////////////
 	// Calculate, update and populate other (specialized) config options
-	//
-	var portInsecure = process.env.PORT ? parseInt(process.env.PORT, 10) : config.SERVER_PORT;
-	var port = portInsecure == 80 ? 443 : portInsecure + 443;
-
-	config.SERVER_PORT_INSECURE = portInsecure;
-	config.SERVER_URL_INSECURE = portInsecure == 80 || config.DEPLOYMENT != 'development' ?
+    //
+    var portInsecure = process.env.PORT ? parseInt(process.env.PORT, 10) : config.SERVER_PORT;
+    var port = portInsecure == 80 ? 443 : portInsecure + 443;
+    
+    config.SERVER_PORT_INSECURE = portInsecure;
+    config.SERVER_URL_INSECURE = portInsecure == 80 || config.DEPLOYMENT != 'development' ?
 		"http://" + config.SERVER_NAME : 'http://' + config.SERVER_NAME + ':' + portInsecure;
-
-	config.SERVER_PORT = port;
-	config.SERVER_URL = port == 443  || config.DEPLOYMENT != 'development' ?
+    
+    config.SERVER_PORT = port;
+    config.SERVER_URL = port == 443 || config.DEPLOYMENT != 'development' ?
 		"https://" + config.SERVER_NAME : 'https://' + config.SERVER_NAME + ':' + port;
+    
+    if (!config.SERVER_BEHIND_REVERSE_PROXY) {
+
+        config.SERVER_PORT_PUBLIC = config.SERVER_PORT;
+        config.SERVER_URL_PUBLIC = config.SERVER_URL;
+    }
+    else {
+        
+        config.SERVER_PORT = config.SERVER_PORT_INSECURE;
+        config.SERVER_URL = config.SERVER_URL_INSECURE;
+
+        config.SERVER_PORT_PUBLIC = 443;
+        config.SERVER_URL_PUBLIC = "https://" + config.SERVER_NAME;
+    }
 
 	////////////////////////////////////////////////////////////////////
 	// Finally, return the configuration object

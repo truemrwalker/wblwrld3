@@ -68,7 +68,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
             sessionKey: config.SESSION_KEY,
             consumerKey: config.TWITTER_CONSUMER_KEY,
             consumerSecret: config.TWITTER_CONSUMER_SECRET,
-            callbackURL: config.SERVER_URL + "/auth/twitter/callback"
+            callbackURL: config.SERVER_URL_PUBLIC + "/auth/twitter/callback"
         },
         function(token, tokenSecret, profile, done) {
 

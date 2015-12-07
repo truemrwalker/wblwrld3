@@ -89,11 +89,11 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
     passport.use(new GoogleStrategy({
 		    clientID: config.GOOGLE_CLIENT_ID,
 		    clientSecret: config.GOOGLE_CLIENT_SECRET,
-            callbackURL: config.SERVER_URL + '/auth/google/callback',
+            callbackURL: config.SERVER_URL_PUBLIC + '/auth/google/callback',
 			scope: [
 				'https://www.googleapis.com/auth/plus.me',
-				'https://www.googleapis.com/auth/userinfo.profile',
-				'https://www.googleapis.com/auth/userinfo.email'
+				'profile',
+				'email'
 			],
 		    realm: config.SERVER_URL
         },
