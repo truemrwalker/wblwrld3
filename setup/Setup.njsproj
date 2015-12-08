@@ -32,6 +32,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Content Include="server\conf\nginx_default.conf" />
+    <Content Include="server\conf\nginx_windows.conf" />
     <Content Include="docker\docker-build.sh" />
     <Content Include="docker\docker-compose.yml" />
     <Content Include="docker\docker-run.sh" />
@@ -39,7 +41,12 @@
     <Content Include="docker_autonomous\docker-build.sh" />
     <Content Include="docker_autonomous\docker-run.sh" />
     <Content Include="docker_autonomous\Dockerfile" />
-    <Content Include="conf\nginx.conf" />
+    <Content Include="server\conf\nginx.conf" />
+    <Content Include="server\nginx_autoreload.sh" />
+    <Content Include="server\server_key.sh" />
+    <Content Include="server\iptables.rules" />
+    <Content Include="server\install\mongodb_latest.sh" />
+    <Content Include="server\install\nginx_latest.sh" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="scripts_runtime\cron.sh" />
@@ -47,12 +54,15 @@
     <Content Include="scripts_runtime\start.sh" />
     <Content Include="scripts_runtime\updateapp.sh" />
     <Content Include="scripts_runtime\updateserver.sh" />
+    <Content Include="server\iptables.sh" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docker\" />
     <Folder Include="docker_autonomous\" />
-    <Folder Include="conf\" />
+    <Folder Include="server\conf\" />
+    <Folder Include="server\" />
     <Folder Include="scripts_runtime\" />
+    <Folder Include="server\install\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
