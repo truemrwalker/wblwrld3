@@ -1,0 +1,10 @@
+{
+  "name": "setup",
+  "version": "0.0.0",
+  "description": "setup",
+  "main": "app.js",
+  "author": {
+    "name": "jgeorgal",
+    "email": ""
+  }
+}
