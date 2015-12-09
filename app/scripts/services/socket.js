@@ -43,7 +43,14 @@ ww3Services.provider('socketFactory', function () {
 
         return function socketFactory (options) {
             options = options || {};
-            var socket = options.ioSocket || io('/socket.io/endpt');
+            //var socket = options.ioSocket || io('/socket.io/endpt');
+
+            // TODO: FIXME: DUE TO A BUG IN socket.io - see:
+            // https://github.com/socketio/socket.io-client/issues/812
+            // USE THE ABOVE COMMENTED-OUT LINE WHEN FIXED
+            //
+            var socket = io(window.location.origin + '/socket.io/endpt');
+
             var prefix = options.prefix || defaultPrefix;
             var defaultScope = options.scope || $rootScope;
 

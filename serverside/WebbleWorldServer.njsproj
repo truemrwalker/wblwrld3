@@ -88,6 +88,7 @@ SERVER_BEHIND_REVERSE_PROXY=1</Environment>
     <Folder Include="logs" />
     <Folder Include="maintenance" />
     <Folder Include="models" />
+    <Folder Include="scripts\" />
     <Folder Include="realtime" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
