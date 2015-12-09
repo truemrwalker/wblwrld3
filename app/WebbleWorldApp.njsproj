@@ -55,6 +55,7 @@
     <Folder Include="views\modalForms\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="502.html" />
     <Content Include="index.html" />
     <Content Include="scripts\libs\jquery-contextmenu\images\cut.png" />
     <Content Include="scripts\libs\jquery-contextmenu\images\door.png" />

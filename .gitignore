@@ -9,3 +9,6 @@ app/bower_components
 *.log
 /Dockerfile
 /tmpuploads
+.ntvs_analysis.dat
+obj
+.vs
