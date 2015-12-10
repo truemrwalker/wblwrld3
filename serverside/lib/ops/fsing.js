@@ -66,7 +66,11 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		//
 		return Q.nfcall(mkdirp, targetPath)
 			.then(function () {
-
+            
+                // NOTE: that this doesn't work because req.files is never populated by any middleware
+                // However, since I'm not using these fs ops anymore, I'm leaving it as it is for reference
+                // In case of emergency, use busboy as in the file 'gfsing.js'
+                //
 				if (!req.files || (req.files.file && req.files.file.length == 0))
 					return Q.resolve();
 

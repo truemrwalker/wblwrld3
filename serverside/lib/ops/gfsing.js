@@ -104,7 +104,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
             
             busboy.on('file', function (fieldName, tarStream, filename, encoding, mimeType) {
                 
-                promise = promise.then(function () {
+                promise = promise.then(function () { // Import each stream - one by one
                     
                     return importFiles(tarStream, targetPathPrefix, objGetterAsync, objSetterAsync).then(function (result) {
                         result.objs.forEach(function (obj) {

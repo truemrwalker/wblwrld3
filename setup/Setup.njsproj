@@ -32,6 +32,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="scripts\mongoshell.js" />
+    <Compile Include="scripts\mongoshellgen.js" />
+    <Compile Include="scripts\updateheader.js" />
+    <Content Include="scripts\bootstrap.bat" />
+    <Content Include="scripts\bootstrap.sh" />
+    <Content Include="scripts\header.txt" />
     <Content Include="server\conf\nginx_default.conf" />
     <Content Include="server\conf\nginx_windows.conf" />
     <Content Include="docker\docker-build.sh" />
@@ -60,6 +66,7 @@
   <ItemGroup>
     <Folder Include="docker\" />
     <Folder Include="docker_autonomous\" />
+    <Folder Include="scripts\" />
     <Folder Include="server\conf\" />
     <Folder Include="server\" />
     <Folder Include="scripts_runtime\" />
