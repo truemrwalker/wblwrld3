@@ -27,6 +27,8 @@ var path = require('path');
 var fs = require('fs');
 var tar = require('tar-stream');
 
+var Busboy = require('busboy');
+
 var util = require('../util');
 var libGfs = require('../gfs');
 
@@ -53,18 +55,23 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	//******************************************************************
 	
 	function saveFiles(req, targetPath, ownerId) {
-		
-		if (!req.files || (req.files.file && req.files.file.length == 0))
-			return Q.resolve(null);
-		
-		var files = req.files.file ? [req.files.file]:
-			util.transform(Object.keys(req.files), function (k) {
-			return req.files[k][0];
-		});
-		
-		return Q.all(util.transform_(files, function (f) {
-			return gfs.upload(fs.createReadStream(f.path), targetPath, f.originalname, ownerId);
-		}));
+        
+        return Q.Promise(function (resolve, reject) {
+            
+            var busboy = new Busboy({ headers: req.headers });
+            var promises = [];
+            
+            busboy.on('file', function (fieldName, stream, filename, encoding, mimeType) {
+                promises.push(gfs.upload(stream, targetPath, filename, ownerId));
+            });
+            busboy.on('field', function (fieldName, value) {
+                req.body[fieldName] = value;
+            });
+            busboy.on('finish', function () {
+                Q.all(promises).then(resolve, reject);
+            });
+            req.pipe(busboy);
+        });
 	}
 	function getFiles(targetPath, ownerId) {
 		
@@ -88,34 +95,33 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	//******************************************************************
 	
 	function importAllFiles(req, targetPathPrefix, objGetterAsync, objSetterAsync) {
-
-		if (!req.files || (req.files.file && req.files.file.length == 0))
-			return Q.resolve(null);
-
-		var files = req.files.file ? [req.files.file]:
-			util.transform(Object.keys(req.files), function (k) {
-			return req.files[k][0];
-		});
         
-        var importResult = { objs: [], targetPath: targetPathPrefix };
-        
-        // Sequentially
-        return files.reduce(function (soFar, f) {
+        return Q.Promise(function (resolve, reject) {
             
-            return soFar.then(function () {
-                return importFiles(fs.createReadStream(f.path), targetPathPrefix, objGetterAsync, objSetterAsync).then(function (result) {
-                    result.objs.forEach(function (obj) {
-                        
-                        for (var i = 0; i < importResult.objs.length; ++i) {
-                            if (importResult.objs[i]._id === obj._id)
-                                return;
-                        }
-                        importResult.objs.push(obj);
+            var busboy = new Busboy({ headers: req.headers });
+            var promise = Q(null);
+            var importResult = { objs: [], targetPath: targetPathPrefix };
+            
+            busboy.on('file', function (fieldName, tarStream, filename, encoding, mimeType) {
+                
+                promise = promise.then(function () {
+                    
+                    return importFiles(tarStream, targetPathPrefix, objGetterAsync, objSetterAsync).then(function (result) {
+                        result.objs.forEach(function (obj) {
+                            
+                            for (var i = 0; i < importResult.objs.length; ++i) {
+                                if (importResult.objs[i]._id === obj._id)
+                                    return;
+                            }
+                            importResult.objs.push(obj);
+                        });
                     });
                 });
             });
-        }, Q(null)).then(function () {
-            return importResult;
+            busboy.on('finish', function () {
+                promise.then(function () { resolve(importResult); }, reject);
+            });
+            req.pipe(busboy);
         });
 	}
 

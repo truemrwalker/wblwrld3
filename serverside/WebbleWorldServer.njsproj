@@ -21,6 +21,7 @@ SERVER_BEHIND_REVERSE_PROXY=1</Environment>
   <ItemGroup>
     <Content Include="secretsdb.json" />
     <Compile Include="config.js" />
+    <Compile Include="models\message.js" />
     <Compile Include="secrets.js" />
     <Compile Include="web-server.js" />
     <Compile Include="api\groups.js" />

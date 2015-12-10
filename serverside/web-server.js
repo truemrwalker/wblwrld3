@@ -32,7 +32,6 @@ var Q = require('q');
 // Express & Friends
 var express = require('express');
 var session = require('express-session');
-var multipartFormParser = require('multer');
 var bodyParser = require('body-parser');
 
 var http = require('http');
@@ -50,7 +49,7 @@ var gettext = function(str) { return str; };
 // Connect to database and invoke the process' entry-point
 //
 var mongoose = require('mongoose');
-var MongoStore = require('connect-mongo')({session: session});
+var MongoStore = require('connect-mongo')(session);
 
 mongoose.connect(config.MONGODB_URL);
 //mongoose.set('debug', true);
@@ -74,15 +73,8 @@ var app = (function createApp(){
 
     var app = express();
     
-    //
     // 1. First part of middleware initialization
     //
-	var multerFieldsHack = [];
-	while (multerFieldsHack.length < 21)
-		multerFieldsHack.push({name: 'file' + multerFieldsHack.length, maxCount: 1});
-	var multerOptionsHack = { dest: 'tmpuploads/' };
-	app.use(multipartFormParser(multerOptionsHack).fields(multerFieldsHack));
-
 	app.use(bodyParser.json({ limit: '10mb' }));
 
 	// We want to save this in app
@@ -106,7 +98,6 @@ var app = (function createApp(){
 
     app.set('sessionStore', sessionStore);
     
-    //
     // 2. Configure database models and set up routes
     //
     loader.executeAllScriptsSync(path.join(__dirname, 'models'),
@@ -122,7 +113,6 @@ var app = (function createApp(){
     loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
 		Q, app, config, mongoose, gettext, auth);
     
-    //
     // 3. Second part of middleware initialization (after having had set up routes)
     //    
     if (!config.SERVER_BEHIND_REVERSE_PROXY) {
