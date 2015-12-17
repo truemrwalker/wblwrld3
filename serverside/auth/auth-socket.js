@@ -109,20 +109,20 @@ module.exports = function(Q, app, config, mongoose, gettext, io) {
 	});
 
 	////////////////////////////////////////////////////////////////////
-  // Enhance app with extra functions for checking internal state
-  //
-  app.getAllActiveUsers = function() {
+    // Enhance app with extra functions for checking internal state
+    //
+    app.getAllActiveUsers = function() {
 
     var result = [];
     var clientIds = Object.keys(io.connected);
     for (var i = 0; i < clientIds.length; ++i) {
 
-      var client = io.connected[clientIds[i]];
-      result.push({ sessionID: client.handshake.sessionID, user: client.handshake.user });
+        var client = io.connected[clientIds[i]];
+        result.push({ sessionID: client.handshake.sessionID, user: client.handshake.user });
     }
     return result;
-  };
-
+    };
+    
 	////////////////////////////////////////////////////////////////////
 	// Reload session details when somebody logs in or out
 	//

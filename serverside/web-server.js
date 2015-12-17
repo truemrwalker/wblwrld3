@@ -51,6 +51,8 @@ var gettext = function(str) { return str; };
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
 
+mongoose.Promise = Q.Promise;
+
 mongoose.connect(config.MONGODB_URL);
 //mongoose.set('debug', true);
 
@@ -197,6 +199,12 @@ function startAllServers() {
         startRedirectServer();
 
     console.log("[OK] Server public endpoint:", config.SERVER_URL_PUBLIC, "[" + config.SERVER_URL + "]");
+    
+    require('./control/machine')(Q, app, config, mongoose, gettext).then(function (machine) {
+        console.log("[OKEY DOKEY] Machine:", machine);
+    }).fail(function (err) {
+        console.error("SOMETHINVZ VERY WRONG HAPPEND!!11111");
+    }).done();
 }
 
 ////////////////////////////////////////////////////////////////////////

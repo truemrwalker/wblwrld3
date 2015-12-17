@@ -20,35 +20,52 @@
 //
 
 //
-// message.js
+// server.js
 // Created by Giannis Georgalis on 12/11/14
 //
 module.exports = function(Q, app, config, mongoose, gettext) {
-
-    // Capped message schema for realtime message exchange via websockets among server instances
-    //
-    var MessageSchema = new mongoose.Schema({
-
+    
+    var ServiceSchema = new mongoose.Schema( {
+        
         name: { type: String, required: true },
+        address: { type: String, required: true },
+        port: { type: Number, min: 1025, max: 65534, required: true },
+
+        context: String,
+        description: String,
+    });
+
+    var ServerSchema = new mongoose.Schema({
+
+        name: { type: String, required: true },                
+        services: [ServiceSchema],
         date: { type: Date, required: true, default: Date.now },
-        ctx: String,
-        data: {},
+        
+        context: String,
+        description: String,
 
         _owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    });
 
-    }, { capped: 1024 });
+    var MachineSchema = new mongoose.Schema({
+
+        name: { type: String, required: true, index: { unique: true } },
+        description: String,
+
+        machine_id: { type: String, required: true, index: { unique: true } },
+        addresses: { type: [String], required: true },
+
+        servers: [ServerSchema],
+        
+        _locked: { type: Boolean, required: true, default: true },
+        _owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    });
 
 	// Options
 	//
-    MessageSchema.options.toJSON = {};
-    MessageSchema.options.toJSON.transform = function(doc, ret, options) {
+    MachineSchema.options.toJSON = {};
+    MachineSchema.options.toJSON.transform = function(doc, ret, options) {
 
-		// Add stuff
-		//
-		//ret.id = doc._id;
-
-		// Delete stuff
-		//
 		delete ret._id;
 		delete ret.__v;
         
@@ -57,11 +74,11 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	// Methods
 	//
-    MessageSchema.methods.isUserOwner = function (user) {
+    MachineSchema.methods.isUserOwner = function (user) {
 		return this._owner.equals(user._id);
 	};
 
-    MessageSchema.methods.isUserAuthorized = function (user) {
+    MachineSchema.methods.isUserAuthorized = function (user) {
 
 		if (!this._owner || this._owner.equals(user._id) || user._sec.role === 'adm')
 			return true;
@@ -70,11 +87,11 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	// Other generic "inherited" methods
 	//
-    MessageSchema.methods.repr = function () {
+    MachineSchema.methods.repr = function () {
 		return this.name;
 	};
 
 	// Compile and return the model:
     //
-    return mongoose.model('Message', MessageSchema);
+    return mongoose.model('Machine', MachineSchema);
 };
