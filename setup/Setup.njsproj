@@ -49,6 +49,7 @@
     <Content Include="docker_autonomous\Dockerfile" />
     <Content Include="server\conf\nginx.conf" />
     <Content Include="server\install\nodejs_latest.sh" />
+    <Content Include="server\kernel_modifications.sh" />
     <Content Include="server\nginx_autoreload.sh" />
     <Content Include="server\server_key.sh" />
     <Content Include="server\iptables.rules" />

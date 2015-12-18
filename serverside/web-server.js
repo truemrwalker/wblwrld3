@@ -136,7 +136,7 @@ function createRedirectApp() {
 
     var redirectApp = express();
     redirectApp.use(function (req, res) { // we don't need to call next()
-        res.redirect(301, config.SERVER_URL + req.path);
+        res.redirect(301, config.SERVER_URL_PUBLIC + req.path);
     });
     return redirectApp;
 }
@@ -144,47 +144,55 @@ function createRedirectApp() {
 ////////////////////////////////////////////////////////////////////////
 // Starts the socket server (for real-time message dispatching)
 //
-function startSocketServer(webServer) {
+function initSocketServer(webServer) {
 
-    // Start the socket (real-time) server
-    var io = require('socket.io').listen(webServer).of('/socket.io/endpt'); // start under endpoint for easier revproxy conf
+    // Start under endpoint for easier reverse proxy configuration
+    var io = require('socket.io')(webServer).of('/socket.io/endpt');
 	var socketAuth = require('./auth/auth-socket')(Q, app, config, mongoose, gettext, io);
 
     // Load all real-time modules
 	loader.executeAllSocketScriptsSync(path.join(__dirname, 'realtime'),
 		Q, app, config, mongoose, gettext, io, socketAuth);
-
-    return io;
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Starts the redirection server
+// Starts the control server (for intra server communication)
 //
-function startRedirectServer() {
-    return http.createServer(createRedirectApp()).listen(config.SERVER_PORT_INSECURE);
+function initControlServer(webServer) {
+
+    //require('./control/machine')(Q, app, config, mongoose, gettext).then(function (machine) {
+    //    console.log("[OKEY DOKEY] Machine:", machine);
+    //}).fail(function (err) {
+    //    console.error("SOMETHINVZ VERY WRONG HAPPEND!!11111");
+    //}).done();
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Starts the http and https servers
+// Starts the http and https servers on the appropriate endpoints
 //
 function startAppServer() {
-
-	// Start the application server on the appropriate endpoints
-    //    
+    
     if (!config.SERVER_BEHIND_REVERSE_PROXY) {
-        
+
+        if (config.SERVER_PORT != config.SERVER_PORT_PUBLIC)
+            http.createServer(createRedirectApp()).listen(config.SERVER_PORT);
+
         var options = {
             ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
             key: fs.readFileSync(config.SERVER_KEY),
             cert: fs.readFileSync(config.SERVER_CERT),
             passphrase: config.SERVER_PASSPHRASE || undefined
         };
-        return require('https').createServer(options, app).listen(config.SERVER_PORT);
+        var appServer = require('https').createServer(options, app);
+        appServer.listen(config.SERVER_PORT_PUBLIC);
+        return appServer;
     }
     else {
-        
-        return http.createServer(app).listen(config.SERVER_PORT);
-    }    
+
+        var appServer = http.createServer(app);
+        appServer.listen(config.SERVER_PORT);
+        return appServer;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -192,19 +200,11 @@ function startAppServer() {
 //
 function startAllServers() {
 
-    var server = startAppServer();
-    startSocketServer(server);
-    
-    if (config.SERVER_URL != config.SERVER_URL_INSECURE)
-        startRedirectServer();
+    var server = startAppServer();    
+    initSocketServer(server);
+    //initControlServer(server);
 
     console.log("[OK] Server public endpoint:", config.SERVER_URL_PUBLIC, "[" + config.SERVER_URL + "]");
-    
-    require('./control/machine')(Q, app, config, mongoose, gettext).then(function (machine) {
-        console.log("[OKEY DOKEY] Machine:", machine);
-    }).fail(function (err) {
-        console.error("SOMETHINVZ VERY WRONG HAPPEND!!11111");
-    }).done();
 }
 
 ////////////////////////////////////////////////////////////////////////
