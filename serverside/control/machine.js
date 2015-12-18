@@ -62,36 +62,30 @@ function getIPv4Addresses() {
 ////////////////////////////////////////////////////////////////////////
 // 
 //
-module.exports = function(Q, app, config, mongoose, gettext) {
+module.exports = function(Q, app, config, mongoose, gettext, webServer) {
     
     var Machine = mongoose.model('Machine');
-    
-    var addresses = util.transform_(getIPv4Addresses(), function (e) { return e.addr; });
-    var machineId = addresses.join(',');
-    
-    console.log("**EXP** CURR_MACHINE_ID:", machineId);
 
-    var portBase = config.SERVER_PORT + 85;
-    
     ////////////////////////////////////////////////////////////////////
     // Atomically acquire and release the current machine
     //    
     function acquireMachine() {
+        
+        var name = os.hostname();
 
-        return Q(Machine.findOneAndUpdate({ machine_id: machineId }, { $set : { _locked: true } }, { upsert: true }).exec()).then(function (machine) {
+        return Q(Machine.findOneAndUpdate({ name: name }, { $set : { _locked: true } }, { upsert: true }).exec()).then(function (machine) {
             
             if (!machine || !machine.name) {
                 
                 // Obtain the previously created LOCKED document
-                return (!machine ? Q(Machine.findOne({ machine_id: machineId })) : Q(machine)).then(function (machine) {
+                return (!machine ? Q(Machine.findOne({ name: name })) : Q(machine)).then(function (machine) {
                     
-                    if (!machine) // I shouldn't happen - but just in case...
+                    if (!machine) // It shouldn't happen - but just in case...
                         machine = new Machine();
 
-                    machine.name = os.hostname();
+                    machine.name = name;
                     machine.description = os.toString();
-                    machine.machine_id = machineId;
-                    machine.addresses = addresses;
+                    machine.addresses = util.transform_(getIPv4Addresses(), function (e) { return e.addr; });
                     machine.servers = [];
                     return machine;
                 });
@@ -103,7 +97,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
                 
                 return Q.delay(1000).then(function () {
                     
-                    return Q(Machine.findOneAndUpdate({ machine_id: machineId, _locked: false }, { $set : { _locked: true } })).then(function (machine) {
+                    return Q(Machine.findOneAndUpdate({ name: name, _locked: false }, { $set : { _locked: true } })).then(function (machine) {
                         
                         if (machine)
                             return machine;
@@ -126,34 +120,29 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
     ////////////////////////////////////////////////////////////////////
     // Update servers and services
-    //    
-    return acquireMachine(Machine).then(function (machine) {
+    //
+    acquireMachine(Machine).then(function (machine) {
         
         var services = [];
 
         services.push({
             name: 'HTTPS Server',
             address: 'localhost',
-            port: config.SERVER_PORT,
-            
+            port: config.SERVER_PORT_PUBLIC,
             context: 'https',
-            description: gettext('HTTPS Server for REST calls: ' + config.SERVER_URL),
+            description: gettext('HTTPS Server for REST calls: ' + config.SERVER_URL_PUBLIC),
         });
         
-        if (config.SERVER_URL != config.SERVER_URL_INSECURE) {
+        services.push({
+            name: 'HTTP Server',
+            address: 'localhost',
+            port: config.SERVER_PORT,
+            context: 'http',
+            description: gettext('HTTP Server for private use: ' + config.SERVER_URL),
+        });
 
-            services.push({
-                name: 'HTTP Redirection Server',
-                address: 'localhost',
-                port: config.SERVER_PORT_INSECURE,
-                
-                context: 'http',
-                description: gettext('HTTP Server to redirect to the secure URL: ' + config.SERVER_URL_INSECURE),
-            });
-        }
-        
         var sock = zmq.socket('pub');
-        var port = portBase;
+        var port = config.SERVER_PORT + 1;
         var endpoint = 'tcp://127.0.0.1:' + port;
 
         sock.bindSync(endpoint);
@@ -162,13 +151,11 @@ module.exports = function(Q, app, config, mongoose, gettext) {
         services.push({
             name: 'Control Server',
             address: 'localhost',
-            port: port,
-            
+            port: port,            
             context: 'zmq',
             description: gettext('Control server for intra-server communication'),
         });
-        
-        //
+
         machine.servers.push({
             name: 'Webble World App Server',
             services: services,
@@ -178,5 +165,15 @@ module.exports = function(Q, app, config, mongoose, gettext) {
         return releaseMachine(machine);
 
     }).fail(function (err) {
+        console.error("Error:", err);
     }).done();
+
+    ////////////////////////////////////////////////////////////////////
+    // Return control object
+    //
+    return {
+        'broadcast': function () { },
+        'request': function () { },
+        'notify': function () { }
+    };
 };

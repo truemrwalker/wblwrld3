@@ -29,7 +29,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
         
         name: { type: String, required: true },
         address: { type: String, required: true },
-        port: { type: Number, min: 1025, max: 65534, required: true },
+        port: { type: Number, min: 1, max: 65534, required: true },
 
         context: String,
         description: String,
@@ -52,7 +52,6 @@ module.exports = function(Q, app, config, mongoose, gettext) {
         name: { type: String, required: true, index: { unique: true } },
         description: String,
 
-        machine_id: { type: String, required: true, index: { unique: true } },
         addresses: { type: [String], required: true },
 
         servers: [ServerSchema],

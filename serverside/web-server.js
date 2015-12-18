@@ -130,17 +130,6 @@ var app = (function createApp(){
     return app;
 })();
 
-// We're going to initialize this lazily if needed
-//
-function createRedirectApp() {
-
-    var redirectApp = express();
-    redirectApp.use(function (req, res) { // we don't need to call next()
-        res.redirect(301, config.SERVER_URL_PUBLIC + req.path);
-    });
-    return redirectApp;
-}
-
 ////////////////////////////////////////////////////////////////////////
 // Starts the socket server (for real-time message dispatching)
 //
@@ -160,11 +149,7 @@ function initSocketServer(webServer) {
 //
 function initControlServer(webServer) {
 
-    //require('./control/machine')(Q, app, config, mongoose, gettext).then(function (machine) {
-    //    console.log("[OKEY DOKEY] Machine:", machine);
-    //}).fail(function (err) {
-    //    console.error("SOMETHINVZ VERY WRONG HAPPEND!!11111");
-    //}).done();
+    var ctrl = require('./control/machine')(Q, app, config, mongoose, gettext, webServer);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -174,8 +159,14 @@ function startAppServer() {
     
     if (!config.SERVER_BEHIND_REVERSE_PROXY) {
 
-        if (config.SERVER_PORT != config.SERVER_PORT_PUBLIC)
-            http.createServer(createRedirectApp()).listen(config.SERVER_PORT);
+        if (config.SERVER_PORT != config.SERVER_PORT_PUBLIC) {
+            
+            var redirectApp = express();
+            redirectApp.use(function (req, res) { // we don't need to call next()
+                res.redirect(301, config.SERVER_URL_PUBLIC + req.path);
+            });
+            http.createServer(redirectApp).listen(config.SERVER_PORT);
+        }
 
         var options = {
             ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
@@ -202,7 +193,7 @@ function startAllServers() {
 
     var server = startAppServer();    
     initSocketServer(server);
-    //initControlServer(server);
+    initControlServer(server);
 
     console.log("[OK] Server public endpoint:", config.SERVER_URL_PUBLIC, "[" + config.SERVER_URL + "]");
 }
