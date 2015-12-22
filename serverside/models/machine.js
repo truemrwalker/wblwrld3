@@ -26,18 +26,19 @@
 module.exports = function(Q, app, config, mongoose, gettext) {
     
     var ServiceSchema = new mongoose.Schema( {
-        
+
         name: { type: String, required: true },
         address: { type: String, required: true },
         port: { type: Number, min: 1, max: 65534, required: true },
+        uri: { type: String, required: true },
 
         context: String,
         description: String,
     });
 
-    var ServerSchema = new mongoose.Schema({
+    var ProcSchema = new mongoose.Schema({
 
-        name: { type: String, required: true },                
+        name: { type: String, required: true },
         services: [ServiceSchema],
         date: { type: Date, required: true, default: Date.now },
         
@@ -54,7 +55,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
         addresses: { type: [String], required: true },
 
-        servers: [ServerSchema],
+        procs: [ProcSchema],
         
         _locked: { type: Boolean, required: true, default: true },
         _owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

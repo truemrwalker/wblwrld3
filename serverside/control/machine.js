@@ -68,20 +68,19 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
 
     ////////////////////////////////////////////////////////////////////
     // Atomically acquire and release the current machine
-    //    
+    //
     function acquireMachine() {
         
         var name = os.hostname();
 
         return Q(Machine.findOneAndUpdate({ name: name }, { $set : { _locked: true } }, { upsert: true }).exec()).then(function (machine) {
             
-            if (!machine || !machine.name) {
+            if (!machine) {
                 
-                // Obtain the previously created LOCKED document
-                return (!machine ? Q(Machine.findOne({ name: name })) : Q(machine)).then(function (machine) {
-                    
-                    if (!machine) // It shouldn't happen - but just in case...
-                        machine = new Machine();
+                // Obtain the previously created (with upsert) LOCKED document
+                return Q(Machine.findOne({ name: name })).then(function (machine) {
+
+                    console.assert(machine, "Shouldn't happen since upsert=true in query");
 
                     machine.name = name;
                     machine.description = os.toString();
@@ -93,15 +92,16 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
             else if (!machine._locked)
                 return machine;
             
+            var retryCount = 0, prevMachine = machine;
             var retry = function () {
                 
                 return Q.delay(1000).then(function () {
                     
-                    return Q(Machine.findOneAndUpdate({ name: name, _locked: false }, { $set : { _locked: true } })).then(function (machine) {
-                        
-                        if (machine)
-                            return machine;
-                        return retry();
+                    if (++retryCount == 5)
+                        return prevMachine; // Hostile takeover of the machine lock
+
+                    return Q(Machine.findOneAndUpdate({ name: name, _locked: false }, { $set : { _locked: true } })).then(function (machine) {                        
+                        return machine || retry();
                     });
                 });
             };
@@ -115,6 +115,8 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
         //return Q(null);
         
         machine._locked = false;
+        machine.markModified('_locked');
+
         return Q(machine.save());
     }
 
@@ -126,42 +128,45 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
         var services = [];
 
         services.push({
-            name: 'HTTPS Server',
-            address: 'localhost',
-            port: config.SERVER_PORT_PUBLIC,
-            context: 'https',
-            description: gettext('HTTPS Server for REST calls: ' + config.SERVER_URL_PUBLIC),
-        });
-        
-        services.push({
             name: 'HTTP Server',
             address: 'localhost',
             port: config.SERVER_PORT,
-            context: 'http',
-            description: gettext('HTTP Server for private use: ' + config.SERVER_URL),
+            uri: config.SERVER_URL,
+            context: 'web',
+            description: gettext("HTTP Server for REST API"),
         });
 
         var sock = zmq.socket('pub');
         var port = config.SERVER_PORT + 1;
-        var endpoint = 'tcp://127.0.0.1:' + port;
+        var ctrlEndpoint = 'tcp://127.0.0.1:' + port;
+        //var ctrlEndpoint = 'tcp://' + config.SERVER_NAME + ':' + port;
 
-        sock.bindSync(endpoint);
-        console.log("**EXP** BOUND TO ENDPOINT:", endpoint);
-        
+        sock.bindSync(ctrlEndpoint);
+
         services.push({
             name: 'Control Server',
             address: 'localhost',
-            port: port,            
+            port: port,
+            uri: ctrlEndpoint,
             context: 'zmq',
-            description: gettext('Control server for intra-server communication'),
+            description: gettext("Control server for intra-server communication"),
+        });
+        console.log("[OK] Server control endpoint:", ctrlEndpoint);
+        
+        var index = util.indexOf(machine.procs, function (p) {
+            return p.services.length == 2 && p.services[0].uri == config.SERVER_URL && p.services[1].uri == ctrlEndpoint;
         });
 
-        machine.servers.push({
+        if (index != -1)
+            machine.procs[index].remove();
+
+        machine.procs.push({
             name: 'Webble World App Server',
             services: services,
             context: 'app',
             description: gettext('REST API Server')
         });
+
         return releaseMachine(machine);
 
     }).fail(function (err) {

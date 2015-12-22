@@ -118,14 +118,29 @@ module.exports.filter = function (input, func) {
 	return result;
 };
 
-module.exports.indexOf = function (input, func) {
+module.exports.indexOf = function (input, pred) {
 
 	var len = input.length;
 	for (var i = 0; i < len; ++i) {
-		if (func(input[i]))
+		if (pred(input[i]))
 			return i;
 	}
 	return -1;
+};
+
+module.exports.addOrReplace = function (input, value, pred) {
+
+    var len = input.length;
+    for (var i = 0; i < len; ++i) {
+        if (pred(input[i], value)) {
+
+            var prev = input[i];
+            input[i] = value;
+            return prev;
+        }
+    }
+    input.push(value);
+    return null;
 };
 
 //**********************************************************************
