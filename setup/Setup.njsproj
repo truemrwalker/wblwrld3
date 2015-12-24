@@ -38,6 +38,9 @@
     <Content Include="scripts\bootstrap.bat" />
     <Content Include="scripts\bootstrap.sh" />
     <Content Include="scripts\header.txt" />
+    <Content Include="server\conf\nginx_modular_tk.conf" />
+    <Content Include="server\conf\nginx_modular_wws.conf" />
+    <Content Include="server\conf\nginx_modular.conf" />
     <Content Include="server\conf\nginx_default.conf" />
     <Content Include="server\conf\nginx_windows.conf" />
     <Content Include="docker\docker-build.sh" />
