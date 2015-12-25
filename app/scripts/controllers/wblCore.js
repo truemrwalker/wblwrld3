@@ -671,8 +671,18 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // message form.
     //========================================================================================
     var getAboutWblContent = function(){
+		var wblDefMetaData = $scope.getWebbleDefsMetaDataMemory()[$scope.theWblMetadata['defid']];
+		if(wblDefMetaData == undefined){ wblDefMetaData = {rating: 0, ratingCount: 0, image: '', created: undefined, updated: undefined, isShared: false, isTrusted: false, isVerified: false}; }
         return {
             displayname: $scope.theWblMetadata['displayname'],
+			image: wblDefMetaData.image,
+			rating: wblDefMetaData.rating,
+			ratingCount: wblDefMetaData.ratingCount,
+			created: wblDefMetaData.created,
+			updated: wblDefMetaData.updated,
+			isShared: wblDefMetaData.isShared,
+			isTrusted: wblDefMetaData.isTrusted,
+			isVerified: wblDefMetaData.isVerified,
             instanceid: $scope.getInstanceId(),
             defid: $scope.theWblMetadata['defid'],
             author: $scope.theWblMetadata['author'],

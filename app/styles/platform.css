@@ -345,6 +345,14 @@ ul.rating {
     box-shadow: 0 1px 0 darkkhaki;
 }
 
+.dividerLineBetween {
+	padding-bottom: 4px;
+	border-bottom: 1px solid lightsteelblue;
+	-webkit-box-shadow: 0 1px 0 lightsteelblue;
+	-moz-box-shadow: 0 1px 0 lightsteelblue;
+	box-shadow: 0 1px 0 lightsteelblue;
+}
+
 .formTitle{
     font-weight: bolder;
 }

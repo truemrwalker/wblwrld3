@@ -196,6 +196,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // (A webble definition is a named JSON object containing one or more webbles of one or several templates)
     var webbleDefs_ = [];
     $scope.getWebbleDefs = function(){ return webbleDefs_; };
+	var webbleDefMetaDataMemory_ = {};
+	$scope.getWebbleDefsMetaDataMemory = function(){ return webbleDefMetaDataMemory_; };
 
     // A list of all at least once loaded webble templates since system startup. A webble template is a definition of a webble type which owns its own specific view.html file
     var webbleTemplates_ = [];
@@ -1409,6 +1411,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $log.error('The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled.');
             }
             else{
+				$log.log(data);
+				webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
 				$scope.loadWebbleFromDef(data, whatCallBackMethod);
             }
         }
@@ -3344,6 +3348,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             modalOptions.resolve = {
                 wblData: function(){ return content; }
             };
+			modalOptions.size = 'lg';
         }
         else if(whatForm == Enum.aopForms.openWorkspace){
             modalOptions.templateUrl = 'views/modalForms/openWSSheet.html';

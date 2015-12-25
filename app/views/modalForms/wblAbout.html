@@ -37,59 +37,92 @@
 //===================================================================================================================-->
 <div class="container-fluid padcontent" data-formclass="wblwrldform-main">
 
-    <div class="row">
-        <div class="col-xs-8"><h4 class="formTitle" translate>About This Webble</h4></div>
-    </div>
+    <div class="row keepTheDistanceBelow">
+		<div class="col-xs-8"><span style="font-size: 28px; font-weight: bold;" translate>{{formData.displayname}}</span></div>
+	</div>
 
     <div class="keepTheDistanceBelow dividerLineAbove">
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Display Name:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.displayname | translate}}</span></div>
+
+		<div class="row keepTheDistanceBelow">
+			<div class="col-xs-8">
+				<div style="float: left;"><div fb-like="formData.socialMediaUrl"></div></div>
+				<div style="float: left; margin-left: 3px;"><div google-plus="formData.socialMediaUrl"></div></div>
+				<div style="float: left; margin-left: -20px;"><div tweet="formData.socialMediaModelName" tweet-url="formData.socialMediaUrl"></div></div>
+			</div>
+		</div>
+
+		<div class="row keepTheDistanceBelow">
+			<div class="col-xs-3" style="padding-top: 10px;">
+				<div>
+					<img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(formData.rating, $index)}}" title="{{star | translate}}" style="margin-left: -1px; width: 20px; height: 20px;">
+				</div>
+			</div>
+			<div class="col-xs-2" style="padding-top: 11px;">
+				<div>
+					<span style="font-weight: bold;">{{getRateText(formData.rating)}} [{{formData.ratingCount}} {{textParts.rateTxtVoters | translate}}]</span>
+				</div>
+			</div>
+			<div class="col-xs-1" style="padding-top: 11px;" >
+				<button ng-show="formData.rateShow" ng-click="rateThis(formData)" class="btn btn-info btn-xs" translate>Rate</button>
+				<span ng-hide="formData.rateShow" style="color: forestgreen;" translate>Rated</span>
+			</div>
+		</div>
+
+		<div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Display Name:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.displayname | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.displayname | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Instance Id:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.instanceid | translate}}</span></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Instance Id:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.instanceid | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.instanceid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Definition Id:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.defid | translate}}</span></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Definition Id:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.defid | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.defid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Definition Author:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.author | translate}}</span></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Definition Author:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.author | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.author | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Definition Description:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.description | translate}}</span></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Definition Description:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.description | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.description | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Definition Keywords:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.keywords | translate}}</span></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Definition Keywords:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.keywords | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.keywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Template ID:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.templateid | translate}}</span><button ng-show="formData.templateid!='bundleTemplate'" style="float: right;" ng-click="makeCopy(formData.templateid);" class="btn btn-primary btn-xs" translate>Create Sandbox Copy</button></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Template ID:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.templateid | translate}}</span><button ng-show="formData.templateid!='bundleTemplate'" style="float: right;" ng-click="makeCopy(formData.templateid);" class="btn btn-primary btn-xs" translate>Create Sandbox Copy</button></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.templateid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Template Revision:</span></div>
-            <div class="col-xs-7"><span style="font-weight: normal;">{{formData.templaterevision | translate}}</span></div>
+        <div class="row keepTheDistanceBelow dividerLineBetween">
+            <div class="col-xs-3"><span class="formTitle" translate>Template Revision:</span></div>
+            <div class="col-xs-8"><span style="font-weight: normal;">{{formData.templaterevision | translate}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.templaterevision | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
-    </div>
+
+		<div class="row keepTheDistanceBelow">
+			<div class="col-xs-8">
+				<img class="img-responsive" ng-src="{{formData.image}}" style="border: 1px solid #000000; max-width: 250px; min-width: 250px;">
+			</div>
+		</div>
+
+	</div>
 
     <div class="dividerLineAbove">
         <div class="row">
