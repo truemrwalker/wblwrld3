@@ -781,7 +781,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		if(!$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession){
 			$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession = true;
 
-			//---------------------------------------------------
+			/*//---------------------------------------------------
 			//IMPORTANT MESSAGE FROM THE DEV TEAM
 			var postedDate = "2015-06-15";
 			var cookie = localStorageService.get('alertInfoNews' + postedDate);
@@ -809,7 +809,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					gettextCatalog.getString("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
 					gettextCatalog.getString("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
 					gettextCatalog.getString("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
-					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;</br></br>' +
+					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){*//*Your callback code*//*}); </span>&nbsp;</br></br>' +
 					gettextCatalog.getString("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
 					gettextCatalog.getString("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
 					'</p>' +
@@ -819,7 +819,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					});
 				}
 			}
-			//---------------------------------------------------
+			//---------------------------------------------------*/
 		}
 	};
 
