@@ -786,11 +786,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			var postedDate = "2015-06-15";
 			var cookie = localStorageService.get('alertInfoNews' + postedDate);
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
-			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
-				localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
-				$scope.openForm(Enum.aopForms.infoMsg, {title: gettextCatalog.getString("Important News") + '!!! ' + postedDate + ' ' + gettextCatalog.getString("Displayed") + ' ' + (readTimes + 1) + ' ' + gettextCatalog.getString("of") + ' 3 ' + gettextCatalog.getString("times"), size: 'lg', content:
-				'<h2>' + gettextCatalog.getString("For Webble Template Developer") + '</h2>' +
-				'<p>' +
+			var monthsSincePublish = (new Date()).getMonth() - (new Date(postedDate)).getMonth();
+			if(monthsSincePublish <= 2){
+				if( readTimes < 3 ){
+					localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettextCatalog.getString("Important News") + '!!! ' + postedDate + ' ' + gettextCatalog.getString("Displayed") + ' ' + (readTimes + 1) + ' ' + gettextCatalog.getString("of") + ' 3 ' + gettextCatalog.getString("times"), size: 'lg', content:
+					'<h2>' + gettextCatalog.getString("For Webble Template Developer") + '</h2>' +
+					'<p>' +
 					gettextCatalog.getString("The latest major Webble world system update also included updating AngularJS framework to 1.3.") + '&nbsp;' +
 					gettextCatalog.getString("These changes includes a change of how to declare the Webble controller function (not as a global function anymore, but registered with the Webble World App).") + '&nbsp;' +
 					gettextCatalog.getString("This means that all Webbles you have made before this change (published and unpublished) are no longer working properly.") + '&nbsp;' +
@@ -810,11 +812,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;</br></br>' +
 					gettextCatalog.getString("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
 					gettextCatalog.getString("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
-				'</p>' +
-				'<p>' +
+					'</p>' +
+					'<p>' +
 					'<i><strong>~' + gettextCatalog.getString("Webble World Development Team, Hokkaido University") + '~</strong></i>' +
-				'</p>'
-				});
+					'</p>'
+					});
+				}
 			}
 			//---------------------------------------------------
 		}
