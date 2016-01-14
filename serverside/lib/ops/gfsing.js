@@ -206,31 +206,31 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		return gfs.getFiles(targetPath, ownerId).then(function (files) {
 			
             // Obv., we need to store the files in the pack sequentially
-            var deferred = Q.defer();
-            
-            var next = function (err) {
-                
-                if (err)
-                    deferred.reject(err);
-                else if (files.length == 0)
-                    deferred.resolve(targetPath);
-                else {
-                    
-                    var f = files.pop();
-                    var chunks = [];
-                    var stream = gfs.createReadStreamFromFileEntrySync(f);
-                    stream.on('data', function (chunk) { chunks.push(chunk); });
-                    stream.on('error', function (err) { next(err); });
-                    stream.on('end', function () {
-                        
-                        pack.entry({ name: dir + '/' + f.metadata.filename, type: 'file', size: f.length }, Buffer.concat(chunks));
-                        next();
-                    });
-                }
-            };
+            return Q.Promise(function (resolve, reject) {
 
-            next();
-            return deferred.promise;
+                var next = function (err) {
+                    
+                    if (err)
+                        reject(err);
+                    else if (files.length == 0)
+                        resolve(targetPath);
+                    else {
+                        
+                        var f = files.pop();
+                        var chunks = [];
+                        var stream = gfs.createReadStreamFromFileEntrySync(f);
+                        stream.on('data', function (chunk) { chunks.push(chunk); });
+                        stream.on('error', function (err) { next(err); });
+                        stream.on('end', function () {
+                            
+                            pack.entry({ name: dir + '/' + f.metadata.filename, type: 'file', size: f.length }, Buffer.concat(chunks));
+                            next();
+                        });
+                    }
+                };
+                
+                next();
+            });
 		});
 	}
 	

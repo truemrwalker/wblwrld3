@@ -82,10 +82,7 @@ module.exports.GFS = function (Q, mongoose) {
     // This should've worked: Q.denodeify(gfs.files.update);
     //
     function update(query, data) {
-
-        var deferred = Q.defer();
-        gfs.files.update(query, data, deferred.makeNodeResolver());
-        return deferred.promise;
+        return gfs.files.update(query, data).exec();
     }
 
 	// Get a file

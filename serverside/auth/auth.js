@@ -55,42 +55,42 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	// Return a promise
 	//
 	function doLogin(err, req, user) {
+        
+        return Q.Promise(function (resolve, reject) {
 
-		var deferred = Q.defer();
-
-		if (err)
-			deferred.reject(err);
-		else if (!user._sec || !user._sec.account_status)
-			deferred.reject(new util.RestError(gettext("Account incomplete"), 403));
-		else if (user._sec.account_status === 'suspended')
-			deferred.reject(new util.RestError(gettext("Account suspended"), 403));
-		else if (user._sec.account_status === 'deleted')
-			deferred.reject(new util.RestError(gettext("Account deleted"), 403));
-		else if (req.user)
-			deferred.resolve(user.getSafeProps());
-		else {
-
-			if (user._sec.account_status === 'inactive') {
-
-				user._sec.account_status = 'ok';
-				user.save(); // Don't need to wait for this to finish -- not so important
-			}
-
-			req.login(user, function(err){
-
-				if (err)
-					deferred.reject(new util.RestError(gettext("Please try again later")));
-				else {
-
-					if (req.body.rememberMe)
-						req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-					app.emit('auth:login', req.sessionID, req.session);
-					deferred.resolve(user.getSafeProps());
-				}
-			});
-		}
-		return deferred.promise;
+            if (err)
+                reject(err);
+            else if (!user._sec || !user._sec.account_status)
+                reject(new util.RestError(gettext("Account incomplete"), 403));
+            else if (user._sec.account_status === 'suspended')
+                reject(new util.RestError(gettext("Account suspended"), 403));
+            else if (user._sec.account_status === 'deleted')
+                reject(new util.RestError(gettext("Account deleted"), 403));
+            else if (req.user)
+                resolve(user.getSafeProps());
+            else {
+                
+                if (user._sec.account_status === 'inactive') {
+                    
+                    user._sec.account_status = 'ok';
+                    user.save(); // Don't need to wait for this to finish -- not so important
+                }
+                
+                req.login(user, function (err) {
+                    
+                    if (err)
+                        reject(new util.RestError(gettext("Please try again later")));
+                    else {
+                        
+                        if (req.body.rememberMe)
+                            req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+                        
+                        app.emit('auth:login', req.sessionID, req.session);
+                        resolve(user.getSafeProps());
+                    }
+                });
+            }
+        });
 	}
 
 	//******************************************************************

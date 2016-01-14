@@ -51,10 +51,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function requestConfirmation(obj, group, msg) {
 
-		var deferred = Q.defer();
-		group.populate('_owner').populate('_contributors', deferred.makeNodeResolver());
-
-		return deferred.promise.then(function(g) {
+		return group.populate('_owner').populate('_contributors').execPopulate().then(function(g) {
 
 			if (!g._owner && g._contributors.length == 0)
 				throw new util.RestError(gettext("You cannot currently publish under this group"), 403);

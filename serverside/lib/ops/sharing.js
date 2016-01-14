@@ -106,12 +106,11 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getContributors: function (req, query) {
 
-			return Q.ninvoke(query.populate('_contributors', 'name email username'), "exec")
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					return util.transform(obj._contributors, function(u) { return u.username || u.email; }); // Everything OK
-				});
+			return query.populate('_contributors', 'name email username').execPopulate().then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                return util.transform(obj._contributors, function (u) { return u.username || u.email; }); // Everything OK
+            });
 		},
 
 		//**************************************************************

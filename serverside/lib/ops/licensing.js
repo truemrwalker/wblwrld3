@@ -43,17 +43,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			throw new util.RestError(gettext("You are not the owner of the requested object"), 403);
 	}
 
-	 function populateGroups(query) {
-
-		 if ('exec' in query)
-			 return Q.ninvoke(query.populate('_sec.groups', '_sec.groups _auth.keys'), "exec");
-		 else {
-
-			 var deferred = Q.defer();
-			 query.populate('_sec.groups', '_sec.groups _auth.keys', deferred.makeNodeResolver());
-			 return deferred.promise;
-		 }
-	 }
+    function populateGroups(query) {
+        return query.populate('_sec.groups', '_sec.groups _auth.keys').execPopulate();        
+    }
 
 	function findKeyRecursively(obj, realm, resource) {
 

@@ -41,17 +41,11 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		if (!obj.isUserAuthorized(req.user))
 			throw new util.RestError(gettext("You are not the owner of the requested object"), 403);
 	}
-	function populateTrusts(query) {
+    
+    function populateTrusts(query) {
+        return query.populate('_sec.trusts', '-_sec -_owner -_contributors').execPopulate();
+    }
 
-		if ('exec' in query)
-			return Q.ninvoke(query.populate('_sec.trusts', '-_sec -_owner -_contributors'), "exec");
-		else {
-
-			var deferred = Q.defer();
-			query.populate('_sec.trusts', '-_sec -_owner -_contributors', deferred.makeNodeResolver());
-			return deferred.promise;
-		}
-	}
 	function getGroupId(idString) {
 
 		try {

@@ -76,14 +76,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	    }
 	    query.conditions["$where"] = 'this.webble.defid === this.webble.templateid';
 
-	    var deferred = Q.defer();
-
 	    Webble.find(query.conditions,
 		    '_created _updated webble.templateid webble.templaterevision webble.displayname webble.description webble.keywords webble.author',
-		    query.options,
-		    deferred.makeNodeResolver());
-
-	    deferred.promise.then(function (results) {
+		    query.options).exec().then(function (results) {
 
 			    res.json(util.transform_(results, normalizeTemplate));
 		    },

@@ -119,9 +119,14 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	});
 
 	app.delete('/api/users/tasks/:id', auth.usr, function(req, res) {
-
-		var id = mongoose.Types.ObjectId(req.params.id);
-		var index = util.indexOf(req.user._tasks, function(n) { return n._id.equals(id); });
+        
+        var index = -1;
+        
+        try {
+            var id = mongoose.Types.ObjectId(req.params.id);
+            index = util.indexOf(req.user._tasks, function (n) { return n._id.equals(id); });
+        }
+        catch (err) { }
 
 		if (index == -1)
 			res.status(500).send(gettext("Invalid Operation"));
@@ -139,20 +144,16 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/users/groups', auth.usr, function(req, res) {
 
-		var deferred = Q.defer();
-		req.user.populate('_sec.groups', '-_sec -_auth -_owner -_contributors', deferred.makeNodeResolver());
+        req.user.populate('_sec.groups', '-_sec -_auth -_owner -_contributors').execPopulate().then(function (user) {
+            
+            res.json(util.transform_(user._sec.groups, function (g) {
+                return g.toJSON();
+            }));
 
-		deferred.promise
-			.then(function(user) {
+        }).fail(function (err) {
+            util.resSendError(res, err);
 
-				res.json(util.transform_(user._sec.groups, function(g) {
-					return g.toJSON();
-				}));
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        }).done();
 	});
 
 	app.put('/api/users/groups', auth.usr, function(req, res) {

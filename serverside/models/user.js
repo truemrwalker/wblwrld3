@@ -145,46 +145,41 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	};
 	UserSchema.options.toJSON.transform = function(doc, ret, options) {
 
-		if ('function' == typeof doc.ownerDocument) { // working with a sub doc
+		// Add stuff
+		//
+		if (doc._sec.role) { // Only include these if we've included _sec
 
-			ret.id = doc._id;
+			if (!ret.notif) // This check is mainly for backwards compatibility
+				ret.notif = {};
 
-			delete ret._id;
-			delete ret.access_key;
+			ret.notif.pending = ret._tasks; // ret._tasks not doc._tasks to use the transformed version            
+            ret.notif.pending.forEach(function (n) {
+
+                n.id = n._id;
+                delete n._id;
+            });
+
+			ret.role = doc._sec.role;
+			ret.date_joined = doc._sec.date_joined;
+
+			if (doc._sec.account_status === 'verified')
+				ret.verified = true;
 		}
-		else {
+		if (doc._auth.keys && doc._auth.providers) {
 
-			// Add stuff
-			//
-			if (doc._sec.role) { // Only include these if we've included _sec
-
-				if (!ret.notif) // This check is mainly for backwards compatibility
-					ret.notif = {};
-
-				ret.notif.pending = ret._tasks; // ret._tasks not doc._tasks to use the transformed version
-
-				ret.role = doc._sec.role;
-				ret.date_joined = doc._sec.date_joined;
-
-				if (doc._sec.account_status === 'verified')
-					ret.verified = true;
-			}
-			if (doc._auth.keys && doc._auth.providers) {
-
-				ret.auth_keys = ret._auth.keys; // ret._auth.keys not doc._auth.keys to use the transformed version
-				ret.auth_providers = doc._auth.providers;
-			}
-
-			// Delete stuff
-			//
-			delete ret.id;
-			delete ret._id;
-			delete ret.__v;
-
-			delete ret._tasks;
-			delete ret._sec;
-			delete ret._auth;
+			ret.auth_keys = ret._auth.keys; // ret._auth.keys not doc._auth.keys to use the transformed version
+			ret.auth_providers = doc._auth.providers;
 		}
+
+		// Delete stuff
+		//
+		delete ret.id;
+		delete ret._id;
+		delete ret.__v;
+
+		delete ret._tasks;
+		delete ret._sec;
+		delete ret._auth;
 	};
 
 	// Virtual properties
