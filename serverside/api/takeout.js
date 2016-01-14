@@ -130,8 +130,8 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
                         _owner: req.user._id
                     });
 
-                    return Q.ninvoke(newWebble, "save").then(function (saveResult) { // We need to save first to get an _id
-                        return { obj: saveResult[0], pathSuffix: path.join(saveResult[0]._id.toString(), "0") };
+                    return newWebble.save().then(function (savedDoc) { // We need to save first to get an _id
+                        return { obj: savedDoc, pathSuffix: path.join(savedDoc._id.toString(), "0") };
                     });
                 }
             });
@@ -139,7 +139,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		}, function (w, infoObj) {
 
             w.mergeWithInfoObject(infoObj);
-            return Q.ninvoke(w, "save").then(function (saveResult) { return { obj: saveResult[0] }; });
+            return w.save().then(function (savedDoc) { return { obj: savedDoc }; });
 
         }).then(function (result) {
             

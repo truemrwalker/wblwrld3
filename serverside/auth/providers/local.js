@@ -117,8 +117,8 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
 	    })
 		    .then(function () {
 
-			    return [!req.body.email ? null :  Q.ninvoke(User, "findOne", { email: req.body.email }),
-				    !req.body.username ? null : Q.ninvoke(User, "findOne", { username: req.body.username.toLowerCase() })];
+			    return [!req.body.email ? null :  User.findOne({ email: req.body.email }).exec(),
+				    !req.body.username ? null : User.findOne({ username: req.body.username.toLowerCase() }).exec()];
 		    })
 		    .spread(function (userByEmail, userByUsername) {
 
@@ -226,7 +226,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
 		        if (!user)
 			        throw new util.RestError(gettext("Could not set password"));
 
-		        return Q.ninvoke(user, "save").then(function () {
+		        return user.save().then(function () {
 			        doneAuth(null, req, res, user); // Everything's peachy...
 		        });
 	        })
@@ -310,29 +310,24 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
 
         var seed = config.APP_CRYPT_PASSWORD + (req.params.id.length > 15 ? req.params.id.substring(5, 15) : req.params.id);
 
-	    Q.ninvoke(User, "findOne", { email: crypt.decryptText(req.params.emailcrypted, seed) })
-		    .then(function (user) {
+	    User.findOne({ email: crypt.decryptText(req.params.emailcrypted, seed) }).exec().then(function (user) {
+            
+            if (!user || user._auth.local.forgot == 0 || createUserIdHash(user) !== req.params.id)
+                throw new Error();
+            
+            return Q.ninvoke(req, "login", user).then(function () {
+                return crypt.randomBytes(32);
+            }).then(function (buff) {
+                return Q.ninvoke(user, "setPassword", buff.toString('hex'));
+            }).then(function (user) {
+                return Q.ninvoke(user, "save");
+            }).then(function () {
+                res.redirect('/#/profile?tab=auth'); // Finally OK
+            });
 
-			    if (!user || user._auth.local.forgot == 0 || createUserIdHash(user) !== req.params.id)
-			        throw new Error();
+        }).fail(function (e) {
+            res.redirect('/404.html');
+        }).done();
 
-			    return Q.ninvoke(req, "login", user)
-				    .then(function() {
-					    return crypt.randomBytes(32);
-				    })
-				    .then(function (buff) {
-					    return Q.ninvoke(user, "setPassword", buff.toString('hex'));
-				    })
-				    .then(function(user) {
-				        return Q.ninvoke(user, "save");
-				    })
-				    .then(function() {
-				        res.redirect('/#/profile?tab=auth'); // Finally OK
-				    });
-		    })
-		    .fail(function (e) {
-			    res.redirect('/404.html');
-		    })
-		    .done();
     });
 };

@@ -52,45 +52,42 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function addOrRemoveContributors(req, query, opRemove) {
 
-		return Q.resolve(query.exec())
-			.then(function (obj) {
-				ensureObjectValid(req, obj);
+		return Q.resolve(query.exec()).then(function (obj) {
+            ensureObjectValid(req, obj);
+            
+            if (!req.body.users || req.body.users.length == 0)
+                throw new util.RestError(gettext("No users were provided"));
+            
+            return User.find({ $or: [{ email: { $in: req.body.users } } , { username: { $in: req.body.users } }] },
+					'name email username').exec().then(function (users) {
+                
+                if (!users || users.length == 0)
+                    throw new util.RestError(gettext("The provided users do not have an account"));
+                
+                if (opRemove) {
+                    
+                    users.forEach(function (u) {
+                        
+                        var index = obj._contributors.indexOf(u._id);
+                        
+                        if (index > -1)
+                            obj._contributors.splice(index, 1);
+                    });
+                }
+                else {
+                    
+                    users.forEach(function (u) {
+                        
+                        if (!obj.isUserContributor(u))
+                            obj._contributors.push(u._id);
+                    });
+                }
+                return [users, obj.save()];
+            });
 
-				if (!req.body.users || req.body.users.length == 0)
-					throw new util.RestError(gettext("No users were provided"));
-
-				return Q.ninvoke(User, "find",
-					{ $or: [{email: { $in: req.body.users }} , {username: { $in: req.body.users }}]},
-					'name email username')
-					.then(function (users) {
-
-						if (!users || users.length == 0)
-							throw new util.RestError(gettext("The provided users do not have an account"));
-
-						if (opRemove) {
-
-							users.forEach(function (u) {
-
-								var index = obj._contributors.indexOf(u._id);
-
-								if (index > -1)
-									obj._contributors.splice(index, 1);
-							});
-						}
-						else {
-
-							users.forEach(function (u) {
-
-								if (!obj.isUserContributor(u))
-									obj._contributors.push(u._id);
-							});
-						}
-						return [ users, Q.ninvoke(obj, "save") ];
-					});
-			})
-			.spread(function (users) {
-				return util.transform(users, function(u) { return u.username || u.email; }); // Everything OK
-			});
+        }).spread(function (users) {
+            return util.transform(users, function (u) { return u.username || u.email; }); // Everything OK
+        });
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -117,34 +114,32 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearContributors: function (req, query) {
 
-			return Q.resolve(query.exec())
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					obj._contributors = [];
-					return Q.ninvoke(obj, "save");
-				});
+			return Q.resolve(query.exec()).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                obj._contributors = [];
+                return obj.save();
+            });
 		},
 
 		//**************************************************************
 
 		 removeCurrentUser: function(req, query) {
 
-			 return Q.resolve(query.exec())
-				 .then(function (obj) {
-					 ensureObjectValidRelaxed(req, obj);
-
-					 if (!req.user || !obj._contributors)
-						 throw new util.RestError(gettext("User is not a contributor"));
-
-					 var index = obj._contributors.indexOf(req.user._id);
-
-					 if (index == -1)
-						 throw new util.RestError(gettext("User is not a contributor"));
-
-					 obj._contributors.splice(index, 1);
-					 return Q.ninvoke(obj, "save");
-				 });
+			 return Q.resolve(query.exec()).then(function (obj) {
+                ensureObjectValidRelaxed(req, obj);
+                
+                if (!req.user || !obj._contributors)
+                    throw new util.RestError(gettext("User is not a contributor"));
+                
+                var index = obj._contributors.indexOf(req.user._id);
+                
+                if (index == -1)
+                    throw new util.RestError(gettext("User is not a contributor"));
+                
+                obj._contributors.splice(index, 1);
+                return obj.save();
+            });
 		 }
 
 		//**************************************************************

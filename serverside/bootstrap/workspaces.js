@@ -87,7 +87,6 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		_owner: null
 	});
 
-	return Q.ninvoke(Workspace, "remove", {})
-		.then(function() { return Q.ninvoke(ws, "save"); });
+    return Workspace.remove({}).exec().then(function () { return ws.save(); });
 };
 

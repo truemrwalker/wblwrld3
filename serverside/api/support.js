@@ -69,15 +69,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		}
 		query.conditions["_type"] = 'qa';
 
-		Q.ninvoke(Post, "find", query.conditions, '', query.options)
-			.then(function (posts) {
+		Post.find(query.conditions, '', query.options).exec().then(function (posts) {
+            res.json(util.transform_(posts, normalizePost));
+        }).fail(function (err) {
+            util.resSendError(res, err, gettext("Cannot retrieve questions"));
+        }).done();
 
-				res.json(util.transform_(posts, normalizePost));
-			})
-			.fail(function (err) {
-				util.resSendError(res, err, gettext("Cannot retrieve questions"));
-			})
-			.done();
 	});
 
 	app.post('/api/support/qa', auth.usr, function (req, res) {
@@ -113,65 +110,60 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/support/qa/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!post || post._type !== 'qa')
+                throw new util.RestError(gettext("Question no longer exists"), 404);
+            
+            res.json(normalizePost(post));
 
-				if (!post || post._type !== 'qa')
-					throw new util.RestError(gettext("Question no longer exists"), 404);
+        }).fail(function (err) {
+            util.resSendError(res, err, gettext("Cannot get question"));
+        }).done();
 
-				res.json(normalizePost(post));
-			})
-			.fail(function(err) {
-				util.resSendError(res, err, gettext("Cannot get question"));
-			})
-			.done();
 	});
 
 	app.put('/api/support/qa/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!post || post._type !== 'qa')
+                throw new util.RestError(gettext("Question no longer exists"), 404);
+            
+            if (!req.body.qa)
+                throw new util.RestError(gettext("Malformed answer"));
+            
+            post.post.comments.push({
+                author: req.body.qa.au || req.user.name.full,
+                body: req.body.qa.a,
+                _owner: req.user._id
+            });
+            
+            return post.save().then(function () {       
+                res.json(normalizePost(post));
+            });
 
-				if (!post || post._type !== 'qa')
-					throw new util.RestError(gettext("Question no longer exists"), 404);
+        }).fail(function (err) {
+            util.resSendError(res, err, gettext("Cannot answer question"));
+        }).done();
 
-				if (!req.body.qa)
-					throw new util.RestError(gettext("Malformed answer"));
-
-				post.post.comments.push({
-					author: req.body.qa.au || req.user.name.full,
-					body: req.body.qa.a,
-					_owner: req.user._id
-				});
-
-				return Q.ninvoke(post, "save").then(function() {
-
-					res.json(normalizePost(post));
-				});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err, gettext("Cannot answer question"));
-			})
-			.done();
 	});
 
 	app.delete('/api/support/qa/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!post || post._type !== 'qa' || !post.isUserAuthorized(req.user))
+                throw new util.RestError(gettext("Question no longer exists"), 204); // 204 (No Content) per RFC2616
+            
+            return post.remove().then(function () {
+                res.status(200).send(gettext("Successfully deleted")); // Everything OK
+            });
 
-				if (!post || post._type !== 'qa' || !post.isUserAuthorized(req.user))
-					throw new util.RestError(gettext("Question no longer exists"), 204); // 204 (No Content) per RFC2616
+        }).fail(function (err) {
+            util.resSendError(res, err, gettext("Cannot delete question"));
+        }).done();
 
-				return Q.ninvoke(post, "remove").then(function() {
-
-					res.status(200).send(gettext("Successfully deleted")); // Everything OK
-				});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err, gettext("Cannot delete question"));
-			})
-			.done();
 	});
 
 	//******************************************************************

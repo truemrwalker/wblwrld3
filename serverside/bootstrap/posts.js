@@ -56,7 +56,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			});
 		}
 
-		promises.push(Q.ninvoke(post, "save"));
+		promises.push(post.save());
 	}
 
 	return Q.allSettled(promises).then(function (results) {

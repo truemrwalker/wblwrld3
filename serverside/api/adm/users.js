@@ -73,14 +73,11 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-		Q.ninvoke(User, "find", query.conditions, '-_sec', query.options)
-			.then(function(users) {
-				res.json(util.transform_(users, normalizeUser));
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		User.find(query.conditions, '-_sec', query.options).exec().then(function (users) {
+            res.json(util.transform_(users, normalizeUser));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
 	});
 

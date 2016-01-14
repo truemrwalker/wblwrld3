@@ -51,43 +51,41 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function createGroup(req, isTopLevel) {
 
-		return (!req.params.id ? Q.resolve(null) : Q.ninvoke(Group, "findById", mongoose.Types.ObjectId(req.params.id)))
-			.then(function(parentGroup) {
-
-				if (!isTopLevel) {
-
-					if (!parentGroup)
-						throw new util.RestError(gettext("Parent group does not exist"), 404);
-
-					if (!parentGroup.isUserAuthorized(req.user))
-						throw new util.RestError(gettext("You have no permission to create a subgroup"), 403); // Forbidden
-				}
-				else if (!req.user.hasRole('adm'))
-					throw new util.RestError(gettext("You have no permission to create a top-level group"), 403); // Forbidden
-
-				if (!req.body.group)
-					throw new util.RestError(gettext("Malformed group description"));
-
-				return (!req.body.owner ? Q.resolve(req.user) : Q.ninvoke(User, "findOne", {$or: [{email:req.body.owner}, {username:req.body.owner}]}))
-					.then(function(owner) {
-
-						if (!owner)
-							throw new util.RestError(gettext("Could not resolve the new group's owner"));
-
-						var group = new Group({
-							_sec: {
-								groups: parentGroup ? [ parentGroup._id ] : [],
-								cert: null // CREATE CERT FOR THIS GROUP SPECIFICALLY
-							},
-							_owner: owner._id
-						});
-						group.mergeWithObject(req.body.group);
-
-						return Q.ninvoke(group, "save").then(function() {
-							return group;
-						});
-					});
-			});
+		return (!req.params.id ? Q.resolve(null) : Group.findById(mongoose.Types.ObjectId(req.params.id)).exec()).then(function (parentGroup) {
+            
+            if (!isTopLevel) {
+                
+                if (!parentGroup)
+                    throw new util.RestError(gettext("Parent group does not exist"), 404);
+                
+                if (!parentGroup.isUserAuthorized(req.user))
+                    throw new util.RestError(gettext("You have no permission to create a subgroup"), 403); // Forbidden
+            }
+            else if (!req.user.hasRole('adm'))
+                throw new util.RestError(gettext("You have no permission to create a top-level group"), 403); // Forbidden
+            
+            if (!req.body.group)
+                throw new util.RestError(gettext("Malformed group description"));
+            
+            return (!req.body.owner ? Q.resolve(req.user) : User.findOne({ $or: [{ email: req.body.owner }, { username: req.body.owner }] }).exec()).then(function (owner) {
+                
+                if (!owner)
+                    throw new util.RestError(gettext("Could not resolve the new group's owner"));
+                
+                var group = new Group({
+                    _sec: {
+                        groups: parentGroup ? [parentGroup._id] : [],
+                        cert: null // CREATE CERT FOR THIS GROUP SPECIFICALLY
+                    },
+                    _owner: owner._id
+                });
+                group.mergeWithObject(req.body.group);
+                
+                return group.save().then(function () {
+                    return group;
+                });
+            });
+        });
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -109,26 +107,21 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			];
 		}
 
-		Q.ninvoke(Group, "find", query.conditions, '', query.options)
-			.then(function (groups) {
-				res.json(util.transform_(groups, normalizeGroup));
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		Group.find(query.conditions, '', query.options).exec().then(function (groups) {
+            res.json(util.transform_(groups, normalizeGroup));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.get('/api/mygroups', auth.usr, function (req, res) {
 
-		Q.ninvoke(Group, "find", {$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]})
-			.then(function (groups) {
-				res.json(util.transform_(groups, normalizeGroup));
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		Group.find({$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]}).exec().then(function (groups) {
+            res.json(util.transform_(groups, normalizeGroup));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 	});
 
 	app.post('/api/groups', auth.adm, function (req, res) { // Top-level groups must be managed by the adminzzz
@@ -147,84 +140,78 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/groups/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Group, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (group) {
+		Group.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (group) {
+            
+            if (!group)
+                throw new util.RestError(gettext("Group no longer exists"), 404);
+            
+            res.json(normalizeGroup(group));
 
-				if (!group)
-					throw new util.RestError(gettext("Group no longer exists"), 404);
-
-				res.json(normalizeGroup(group));
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 	});
 
 	app.put('/api/groups/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Group, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (group) {
+		Group.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (group) {
+            
+            if (!group)
+                throw new util.RestError(gettext("Group no longer exists"), 404);
+            
+            if (!group.isUserAuthorized(req.user))
+                throw new util.RestError(gettext("You have no permission editing this group"), 403); // Forbidden
+            
+            if (!req.body.group)
+                throw new util.RestError(gettext("Malformed group description"));
+            
+            group.mergeWithObject(req.body.group);
+            
+            return group.save().then(function () {
+                res.json(normalizeGroup(group));
+            });
 
-				if (!group)
-					throw new util.RestError(gettext("Group no longer exists"), 404);
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				if (!group.isUserAuthorized(req.user))
-					throw new util.RestError(gettext("You have no permission editing this group"), 403); // Forbidden
-
-				if (!req.body.group)
-					throw new util.RestError(gettext("Malformed group description"));
-
-				group.mergeWithObject(req.body.group);
-
-				return Q.ninvoke(group, "save").then(function() {
-
-					res.json(normalizeGroup(group));
-				});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	app.delete('/api/groups/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Group, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (group) {
+		Group.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (group) {
+            
+            if (!group)
+                throw new util.RestError(gettext("Group no longer exists"), 204); // 204 (No Content) per RFC2616
+            
+            return groupingOps.clearGroupMembers(req, group, dbutil.qAG(Webble.find({}), User.find({}))).then(function () {
+                
+                return Group.find({ "_sec.groups": group._id }).exec().then(function (subgroups) {
+                    
+                    return Q.all(util.transform_(subgroups, function (g) {
+                        
+                        var index = g._sec.groups.indexOf(group._id);
+                        if (index != -1)
+                            g._sec.groups.splice(index, 1);
+                        
+                        if (group._sec.groups.length > 0)
+                            g._sec.groups.push(group._sec.groups[0]);
+                        
+                        return g.save();
+                    }));
+                });
 
-				if (!group)
-					throw new util.RestError(gettext("Group no longer exists"), 204); // 204 (No Content) per RFC2616
+            }).then(function () {
+                
+                return group.remove().then(function () {
+                    res.status(200).send(gettext("Successfully deleted")); // Everything OK
+                });
+            });
 
-				return groupingOps.clearGroupMembers(req, group, dbutil.qAG(Webble.find({}), User.find({})))
-					.then(function() {
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-						return Q.ninvoke(Group, "find", { "_sec.groups": group._id }).then(function (subgroups) {
-
-							return Q.all(util.transform_(subgroups, function (g) {
-
-								var index = g._sec.groups.indexOf(group._id);
-								if (index != -1)
-									g._sec.groups.splice(index, 1);
-
-								if (group._sec.groups.length > 0)
-									g._sec.groups.push(group._sec.groups[0]);
-
-								return Q.ninvoke(g, "save");
-							}));
-						});
-					})
-					.then(function () {
-
-						return Q.ninvoke(group, "remove").then(function () {
-							res.status(200).send(gettext("Successfully deleted")); // Everything OK
-						});
-					});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	//******************************************************************
@@ -243,14 +230,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/groups/:id/groups', auth.usr, function (req, res) { // Sub-groups
 
-		return Q.ninvoke(Group, "find", { "_sec.groups" : getId(req) })
-			.then(function (groups) {
-				res.json(util.transform_(groups, normalizeGroup));
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		return Group.find({ "_sec.groups" : getId(req) }).exec().then(function (groups) {
+            res.json(util.transform_(groups, normalizeGroup));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	////////////////////////////////////////////////////////////////////

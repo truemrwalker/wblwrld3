@@ -57,14 +57,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-		Q.ninvoke(User, "find", query.conditions, 'name username languages', query.options)
-			.then(function(users) {
-				res.json(util.transform_(users, normalizeUser));
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		User.find(query.conditions, 'name username languages', query.options).exec().then(function (users) {
+            res.json(util.transform_(users, normalizeUser));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	//******************************************************************
@@ -134,7 +132,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 			req.user._tasks.splice(index, 1);
 
-			return Q.ninvoke(req.user, "save").then(function() {
+			req.user.save().then(function() {
 				res.status(200).send(gettext("OK"));
 			}).done();
 		}
@@ -169,7 +167,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 					req.user._sec.groups.splice(index, 1);
 
-					return Q.ninvoke(req.user, "save").then(function() {
+					return req.user.save().then(function() {
 						res.status(200).send(gettext("OK"));
 					});
 				}

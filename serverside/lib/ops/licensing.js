@@ -124,7 +124,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 					else
 						obj._auth.keys.push(req.body); // Add new
 
-					return Q.ninvoke(obj, "save");
+					return obj.save();
 				});
 		},
 

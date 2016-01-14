@@ -47,7 +47,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			return Q.resolve(true);
 		else {
 
-			return Q.ninvoke(Group, "findById", groupId).then(function(grp) {
+			return Group.findById(groupId).exec().then(function(grp) {
 
 				if (!grp)
 					return false;

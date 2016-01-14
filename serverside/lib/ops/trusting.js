@@ -62,27 +62,26 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyTrusts: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
-				.then(function(obj) {
-					ensureObjectValid(req, obj);
-
-					return getGroupId(req.body.group).then(function(groupId) {
-
-						var index = obj._sec.trusts.indexOf(groupId);
-
-						if (index != -1 && !req.body.remove)
-							throw new util.RestError(gettext("Trust relationship already exists"));
-						else {
-
-							if (index == -1)
-								obj._sec.trusts.push(groupId);
-							else
-								obj._sec.trusts.splice(index, 1);
-
-							return Q.ninvoke(obj, "save");
-						}
-					});
-				});
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                return getGroupId(req.body.group).then(function (groupId) {
+                    
+                    var index = obj._sec.trusts.indexOf(groupId);
+                    
+                    if (index != -1 && !req.body.remove)
+                        throw new util.RestError(gettext("Trust relationship already exists"));
+                    else {
+                        
+                        if (index == -1)
+                            obj._sec.trusts.push(groupId);
+                        else
+                            obj._sec.trusts.splice(index, 1);
+                        
+                        return obj.save();
+                    }
+                });
+            });
 		},
 
 		//**************************************************************
@@ -104,13 +103,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearTrusts: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
-				.then(function(obj) {
-					ensureObjectValid(req, obj);
-
-					obj._sec.trusts = [];
-					return Q.ninvoke(obj, "save");
-				});
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                obj._sec.trusts = [];
+                return obj.save();
+            });
 		}
 	};
 };

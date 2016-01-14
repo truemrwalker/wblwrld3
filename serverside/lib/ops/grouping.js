@@ -78,7 +78,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 								gettext("You became a group member") : gettext("Your group membership was revoked"))
 						});
 					}
-					return Q.ninvoke(obj, "save");
+					return obj.save();
 				});
 			});
 		},
@@ -90,7 +90,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
-				return Q.ninvoke(query.where('_sec.groups').equals(group._id), "exec").then(function (results) {
+				return query.where('_sec.groups').equals(group._id).exec().then(function (results) {
 					ensureObjectValid(req, results);
 
 					return results;
@@ -105,7 +105,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
-				return Q.ninvoke(query.where('_sec.groups').equals(group._id), "exec").then(function (results) {
+				return query.where('_sec.groups').equals(group._id).exec().then(function (results) {
 					ensureObjectValid(req, results);
 
 					return Q.all(util.transform(results, function (obj) {
@@ -114,7 +114,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 						if (index != -1)
 							obj._sec.groups.splice(index, 1);
 
-						return Q.ninvoke(obj, "save");
+						return obj.save();
 					}));
 				});
 			});

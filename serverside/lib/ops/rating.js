@@ -53,100 +53,89 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		updateRatings: function (req, query) {
 
-			return Q.resolve(query.exec())
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					if (!req.body.rating || req.body.rating <= 0 || req.body.rating > 10)
-						throw new util.RestError(gettext("The provided rating was incorrect"));
-
-					if (!req.body.post)
-						req.body.post = {};
-
-					if (!req.body.post.author)
-						req.body.post.author = req.user.username || req.user.name.full;
-
-					var post = new Post({
-						post: {},
-
-						_type: 'rating',
-
-						_target: {
-							rating: req.body.rating,
-							webble: obj._id // Webble should be renamed to object some day...
-						},
-						_owner: req.user.id
-					});
-					post.mergeWithObject(req.body.post);
-
-					// Moving average
-					//
-					obj._rating.average = obj._rating.average +
+			return Q.resolve(query.exec()).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                if (!req.body.rating || req.body.rating <= 0 || req.body.rating > 10)
+                    throw new util.RestError(gettext("The provided rating was incorrect"));
+                
+                if (!req.body.post)
+                    req.body.post = {};
+                
+                if (!req.body.post.author)
+                    req.body.post.author = req.user.username || req.user.name.full;
+                
+                var post = new Post({
+                    post: {},
+                    
+                    _type: 'rating',
+                    
+                    _target: {
+                        rating: req.body.rating,
+                        webble: obj._id // Webble should be renamed to object some day...
+                    },
+                    _owner: req.user.id
+                });
+                post.mergeWithObject(req.body.post);
+                
+                // Moving average
+                //
+                obj._rating.average = obj._rating.average +
 						((req.body.rating - obj._rating.average) / ++obj._rating.count);
+                
+                return [obj.save(), post.save()];
 
-					return [ Q.ninvoke(obj, "save"), Q.ninvoke(post, "save") ];
-				})
-				.spread(function(objSaveResult, postSaveResult) {
-
-					var obj = objSaveResult[0];
-					var post = postSaveResult[0];
-
-					return obj;
-				});
+            }).spread(function (savedObj, savedPost) {                
+                return savedObj;
+            });
 		},
 
 		//**************************************************************
 
 		getRatings: function (req, query) {
 
-			return Q.resolve(query.exec())
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
+			return Q.resolve(query.exec()).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                var query = util.buildQuery(req.query, ['q'], 'post');
+                
+                if (req.query.q) {
+                    
+                    var q = new RegExp(req.query.q, 'i');
+                    
+                    query.conditions["$or"] = [
+                        { "post.title" : q },
+                        { "post.keywords" : q },
+                        { "post.body" : q },
+                        { "post.author" : q }
+                    ];
+                }
+                query.conditions["_target.webble"] = obj._id; // Webble should be renamed to object some day...
+                
+                return Post.find(query.conditions, '', query.options).exec();
 
-					var query = util.buildQuery(req.query, ['q'], 'post');
-
-					if (req.query.q) {
-
-						var q = new RegExp(req.query.q, 'i');
-
-						query.conditions["$or"] = [
-							{ "post.title" : q },
-							{ "post.keywords" : q },
-							{ "post.body" : q },
-							{ "post.author" : q }
-						];
-					}
-					query.conditions["_target.webble"] = obj._id; // Webble should be renamed to object some day...
-
-					return Q.ninvoke(Post, "find", query.conditions, '', query.options);
-				})
-				.then(function(posts) {
-
-					return util.transform_(posts, normalizePost);
-				});
+            }).then(function (posts) {
+                return util.transform_(posts, normalizePost);
+            });
 		},
 
 		//**************************************************************
 
 		clearRatings: function (req, query) {
 
-			return Q.resolve(query.exec())
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
+			return Q.resolve(query.exec()).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                obj._rating.average = 0;
+                obj._rating.count = 0;
+                
+                return [Post.find({ "_target.webble": obj._id }).remove().exec(), obj.save()];
 
-					obj._rating.average = 0;
-					obj._rating.count = 0;
-
-					return [ Q.ninvoke(Post.find({"_target.webble": obj._id}).remove(), "exec"), Q.ninvoke(obj, "save") ];
-				})
-				.spread(function(posts, objSaveResult) {
-
-					var obj = objSaveResult[0];
-
-					console.log("DELETED POSTS: ", posts);
-
-					return obj;
-				});
+            }).spread(function (posts, savedObj) {
+                
+                console.log("DELETED POSTS: ", posts);                
+                return savedObj;
+            });
 		}
 	};
 };

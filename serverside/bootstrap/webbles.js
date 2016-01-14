@@ -76,6 +76,6 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		}
 	});
 
-	return Q.ninvoke(w, "save");
+	return w.save();
 };
 

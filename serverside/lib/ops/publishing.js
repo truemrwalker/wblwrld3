@@ -66,13 +66,13 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 				op: 'put',
 				payload: { obj: obj._id }
 			});
-			return Q.ninvoke(user, "save");
+			return user.save();
 		});
 	}
 
 	function addObjectToGroup(obj, gId) {
 
-		return Q.ninvoke(Group, "findById", gId).then(function(group) {
+		return Group.findById(gId).exec().then(function(group) {
 
 			if (!group)
 				throw new util.RestError(gettext("Group no longer exists"), 404);
@@ -153,10 +153,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 					obj._updated = Date.now();
 
 					return Q.all(pub_promises).then(function() {
-
-						return Q.ninvoke(obj, "save").then(function(saveResult) {
-							return saveResult[0];
-						});
+						return obj.save();
 					});
 				});
 		},
@@ -169,7 +166,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 				.then(function(obj) {
 					ensureObjectValid(req, obj, 204); // 204 (No Content) per RFC2616
 
-					return Q.ninvoke(obj, "remove");
+					return obj.remove();
 				});
 		}
 

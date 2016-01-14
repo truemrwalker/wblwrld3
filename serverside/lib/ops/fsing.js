@@ -242,61 +242,57 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					var targetVer = versionUpdater(obj);
-					var targetPath = path.join(targetPathPrefix, targetVer.toString());
-
-					return saveFiles(req, targetPath)
-						.then(function() {
-
-							return targetVer == 0 ? null :
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                var targetVer = versionUpdater(obj);
+                var targetPath = path.join(targetPathPrefix, targetVer.toString());
+                
+                return saveFiles(req, targetPath).then(function () {
+                    
+                    return targetVer == 0 ? null :
 								createSymLink(path.join(targetPathPrefix, 'latest'), targetPath);
-						})
-						.then(function() {
 
-							var targetInfoFile = path.join(targetPath, "info.json");
-
-							// The library I'm using wants the data flat I cannot use
-							// req.body.info and then access id, name, etc.
-							//
-							if (req.body.id) {
-
-								var info = req.body;
-								info.ver = targetVer;
-
-								obj.mergeWithInfoObject(info);
-
-								return Q.ninvoke(obj, "save") // Save and creat the targetInfo file (failure is ok)
-									.then(function() {
-
-										// .fin() Cannot be used to propagate values (apparently)
-										//
-										return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(info))
-											.then(function() { return obj; }, function() { return obj; });
-									});
-							}
-							else {
-
-								return Q.nfcall(fs.readFile, targetInfoFile, 'utf8')
+                }).then(function () {
+                    
+                    var targetInfoFile = path.join(targetPath, "info.json");
+                    
+                    // The library I'm using wants the data flat I cannot use
+                    // req.body.info and then access id, name, etc.
+                    //
+                    if (req.body.id) {
+                        
+                        var info = req.body;
+                        info.ver = targetVer;
+                        
+                        obj.mergeWithInfoObject(info);
+                        
+                        return obj.save().then(function () { // Save and creat the targetInfo file (failure is ok)
+                            
+                            // .fin() Cannot be used to propagate values (apparently)
+                            //
+                            return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(info))
+											.then(function () { return obj; }, function () { return obj; });
+                        });
+                    }
+                    else {
+                        
+                        return Q.nfcall(fs.readFile, targetInfoFile, 'utf8')
 									.then(function (data) {
+                            
+                            var info = JSON.parse(data, 'utf8');
+                            info.ver = targetVer;
+                            
+                            obj.mergeWithInfoObject(info);
+                            
+                            return obj.save().then(function () { return obj; });
 
-										var info = JSON.parse(data, 'utf8');
-										info.ver = targetVer;
-
-										obj.mergeWithInfoObject(info);
-
-										return Q.ninvoke(obj, "save")
-											.then(function() { return obj; });
-
-									}, function() { // File does not exist; it's OK
-										return obj;
-									});
-							}
-						});
-				});
+                        }, function () { // File does not exist; it's OK
+                            return obj;
+                        });
+                    }
+                });
+            });
 		},
 
 		//**************************************************************
@@ -336,12 +332,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 								return Q.nfcall(fs.rmdir, targetPathPrefix)
 									.then(function() {
-										return Q.ninvoke(obj, "remove");
+										return obj.remove();
 									}, function(err) {
 
 										if (err.code !== 'ENOENT') // If the path doesn't exist it's still OK - just remove db entry
 											throw err;
-										return Q.ninvoke(obj, "remove");
+										return obj.remove();
 									});
 							}
 							else {
@@ -355,7 +351,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 								obj.mergeWithInfoObject(info);
 
 								return createSymLink(linkPath, targetPath).then(function() {
-									return Q.ninvoke(obj, "save");
+									return obj.save();
 								});
 							}
 						});
@@ -368,38 +364,35 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 			return Q.spread([ ('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
 				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery)) ],
-				function(fromObj, toObj) {
-					ensureObjectValid(req, fromObj);
+				function (fromObj, toObj) {
 
-					var fromVer = fromObj.getInfoObject().ver;
-					var fromPath = path.join(fromTargetPathPrefix, fromVer.toString());
-
-					var toVer = toObj.getInfoObject().ver;
-					var toPath = path.join(toTargetPathPrefix, toVer.toString());
-
-					ensureObjectValid(req, toObj);
-
-					var targetInfoFile = path.join(fromPath, "info.json");
-					return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(toObj.getInfoObject()))
-						.then(function() {
-							return moveFiles(fromPath, toPath);
-						})
-						.then(function() {
-
-							return toVer === 0 ? null :
+                ensureObjectValid(req, fromObj);
+                
+                var fromVer = fromObj.getInfoObject().ver;
+                var fromPath = path.join(fromTargetPathPrefix, fromVer.toString());
+                
+                var toVer = toObj.getInfoObject().ver;
+                var toPath = path.join(toTargetPathPrefix, toVer.toString());
+                
+                ensureObjectValid(req, toObj);
+                
+                var targetInfoFile = path.join(fromPath, "info.json");
+                return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
+                    return moveFiles(fromPath, toPath);
+                }).then(function () {
+                    
+                    return toVer === 0 ? null :
 								createSymLink(path.join(toTargetPathPrefix, 'latest'), toPath);
-						})
-						.then(function() {
 
-							// Remove directory completely
-							return Q.nfcall(fs.rmdir, fromTargetPathPrefix).fail(function() {});
-						})
-						.then(function() {
+                }).then(function () {
+                    
+                    // Remove directory completely
+                    return Q.nfcall(fs.rmdir, fromTargetPathPrefix).fail(function () { });
 
-							return Q.all([ Q.ninvoke(fromObj, "remove"), Q.ninvoke(toObj, "save") ])
-								.then(function() { return toObj; });
-						});
-				});
+                }).then(function () {
+                    return Q.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
+                });
+            });
 		},
 
 		//**************************************************************

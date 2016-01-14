@@ -67,8 +67,8 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		var owner = info.author;
 		var pubgroup = info.group;
 
-		return Q.spread([owner && Q.ninvoke(User, "findOne", {$or: [{email: owner}, {username: owner}]}),
-				pubgroup && Q.ninvoke(Group, "findOne", {$or: [{email: pubgroup}, {name: pubgroup}]})],
+		return Q.spread([owner && User.findOne({$or: [{email: owner}, {username: owner}]}).exec(),
+				pubgroup && Group.findOne({$or: [{email: pubgroup}, {name: pubgroup}]}).exec()],
 			function (user, group) {
 
 				if (user)
@@ -76,7 +76,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 				if (group)
 					w._sec.groups.push(group._id);
 
-				return Q.ninvoke(w, "save");
+				return w.save();
 			});
 	}
 
@@ -109,7 +109,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	////////////////////////////////////////////////////////////////////
 	// Push the webbles in the database
 	//
-	return Q.ninvoke(Webble, "find", { $where: 'this.webble.defid == this.webble.templateid' }).then(function(webbles) {
+	return Webble.find({ $where: 'this.webble.defid == this.webble.templateid' }).exec().then(function(webbles) {
 
         var promises = [];
 
@@ -123,7 +123,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
                 
                 // Currently noop - we don't want to remove. It's incorrect to remove
                 //
-                //promises.push(Q.ninvoke(w, "remove"));
+                //promises.push(w.remove());
             }
             else {
                 

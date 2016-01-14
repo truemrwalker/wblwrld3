@@ -199,16 +199,14 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 			// Save user and logout
 			//
-			Q.ninvoke(req.user, "save")
-				.then(function() {
-					return doLogout(req);
-				})
-				.then(function() {
-					res.status(200).send(gettext("Successfully logged out"));
-				})
-				.fail(function(err) {
-					util.resSendError(res, err);
-				}).done();
+			req.user.save().then(function () {
+                return doLogout(req);
+            }).then(function () {
+                res.status(200).send(gettext("Successfully logged out"));
+            }).fail(function (err) {
+                util.resSendError(res, err);
+            }).done();
+
 		}
 		else
 			res.status(204).end(); // 204 (No Content) per RFC2616

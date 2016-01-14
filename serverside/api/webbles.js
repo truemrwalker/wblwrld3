@@ -119,19 +119,18 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/mywebbles', auth.usr, function (req, res) {
 
-		Q.ninvoke(Webble, "find", {$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]},
-			'-webble.protectflags -webble.modelsharees -webble.slotdata -webble.children -webble.private')
-			.then(function (webbles) {
+		Webble.find({$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]},
+			'-webble.protectflags -webble.modelsharees -webble.slotdata -webble.children -webble.private').exec().then(function (webbles) {
+            
+            if (!webbles)
+                throw new util.RestError(gettext("Cannot retrieve webbles"));
+            
+            res.json(util.transform_(webbles, normalizeWebble));
 
-				if (!webbles)
-					throw new util.RestError(gettext("Cannot retrieve webbles"));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				res.json(util.transform_(webbles, normalizeWebble));
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	//******************************************************************

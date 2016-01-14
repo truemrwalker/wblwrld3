@@ -90,16 +90,15 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
     app.get('/api/dev/templates/:id', auth.dev, function(req, res) {
 
-	    Q.ninvoke(Webble, "findOne", { "webble.defid": req.params.id })
-		    .then(function(w) {
+	    Webble.findOne({ "webble.defid": req.params.id }).exec().then(function (w) {
+            
+            if (!w)
+                throw new util.RestError(gettext("Template does not exist"), 404);
+            
+            res.json(normalizeTemplate(w));
 
-			    if (!w)
-			        throw new util.RestError(gettext("Template does not exist"), 404);
-
-				res.json(normalizeTemplate(w));
-		    })
-		    .fail(function (err) {
-		        util.resSendError(res, err);
-	        }).done();
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
     });
 };

@@ -53,27 +53,25 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/dev/webbles', auth.dev, function (req, res) {
 
-		Q.ninvoke(DevWebble, "find", {$or: [{ _owner: req.user._id }, { _owner: null }]})
-			.then(function (webbles) {
+		DevWebble.find({$or: [{ _owner: req.user._id }, { _owner: null }]}).exec().then(function (webbles) {
+            
+            if (!webbles)
+                throw new util.RestError(gettext("Cannot retrieve webbles"));
+            
+            return Q.all(util.transform_(webbles, function (w) {
+                
+                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
+						.then(function (files) {
+                    return normalizeWebble(w, files);
+                });
+            }));
 
-				if (!webbles)
-					throw new util.RestError(gettext("Cannot retrieve webbles"));
+        }).then(function (webbles) {
+            res.json(webbles); // Oh-Kay
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				return Q.all(util.transform_(webbles, function(w) {
-
-					return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-						.then(function(files) {
-							return normalizeWebble(w, files);
-						});
-				}));
-			})
-			.then(function(webbles) {
-				res.json(webbles); // Oh-Kay
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	app.get('/api/dev/webbles/:id', auth.non, function(req, res) {
@@ -109,71 +107,69 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			_owner: req.user._id
 		});
 
-		Q.ninvoke(newWebble, "save")
-			.then(function(saveResult) { // We need to save first to get an _id that we use for associating files
+		newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
+            
+            return fsOps.associateFiles(req,
+					savedDoc,
+					path.join(devWebbleDir, savedDoc._id.toString()),
+					function () { return 0; });
 
-				return fsOps.associateFiles(req,
-					saveResult[0],
-					path.join(devWebbleDir, saveResult[0]._id.toString()),
-					function() { return 0; });
-			})
-			.then(function (w) {
+        }).then(function (w) {
+            
+            return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
+					.then(function (files) {
+                res.json(normalizeWebble(w, files)); // Everything's peachy
+            });
 
-				return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-					.then(function(files) {
-						res.json(normalizeWebble(w, files)); // Everything's peachy
-					});
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			}).done();
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 	});
 
 	//******************************************************************
 
 	app.post('/api/dev/webbles/:defid', auth.dev, function(req, res) {
 
-		Q.ninvoke(Webble, "findOne", { "webble.defid": req.params.defid })
-			.then(function(fromW) {
+		Webble.findOne({ "webble.defid": req.params.defid }).exec().then(function (fromW) {
+            
+            if (!fromW)
+                throw new util.RestError(gettext("Requested object does not exist", 404));
+            
+            if (!fromW.isUserAuthorizedForOperation(req.user, 'copy'))
+                throw new util.RestError(gettext("This object cannot be copied"), 403);
+            
+            var newWebble = new DevWebble({
+                webble: {
+                    defid: req.params.defid,
+                    templateid: req.params.defid,
+                    templaterevision: 0,
+                    author: req.user.username || req.user.name.full,
+                    
+                    image: fromW.webble.image,
+                    displayname: fromW.webble.displayname,
+                    description: fromW.webble.description,
+                    keywords: fromW.webble.keywords
+                },
+                _owner: req.user._id
+            });
+            
+            newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
+                
+                return fsOps.copyFiles(req, fromW, savedDoc,
+							path.join(webbleDir, req.params.defid), path.join(devWebbleDir, savedDoc._id.toString()));
 
-				if (!fromW)
-					throw new util.RestError(gettext("Requested object does not exist", 404));
+            }).then(function (w) {
+                
+                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
+							.then(function (files) {
+                    res.json(normalizeWebble(w, files)); // Everything's peachy
+                });
+            });
 
-				if (!fromW.isUserAuthorizedForOperation(req.user, 'copy'))
-					throw new util.RestError(gettext("This object cannot be copied"), 403);
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				var newWebble = new DevWebble({
-					webble: {
-						defid: req.params.defid,
-						templateid: req.params.defid,
-						templaterevision: 0,
-						author: req.user.username || req.user.name.full,
-
-						image: fromW.webble.image,
-						displayname: fromW.webble.displayname,
-						description: fromW.webble.description,
-						keywords: fromW.webble.keywords
-					},
-					_owner: req.user._id
-				});
-
-				Q.ninvoke(newWebble, "save")
-					.then(function(saveResult) { // We need to save first to get an _id that we use for associating files
-
-						return fsOps.copyFiles(req, fromW, saveResult[0],
-							path.join(webbleDir, req.params.defid), path.join(devWebbleDir, saveResult[0]._id.toString()));
-					})
-					.then(function (w) {
-
-						return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-							.then(function(files) {
-								res.json(normalizeWebble(w, files)); // Everything's peachy
-							});
-					});
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			}).done();
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -276,68 +272,66 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.put('/api/dev/webbles/:id/publish', auth.dev, function(req, res) {
 
-		Q.ninvoke(DevWebble, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function(fromW) {
-
-				if (!fromW || !fromW.isUserAuthorized(req.user))
-					throw new util.RestError(gettext("Webble does not exist"), 404);
-
-				var defid = fromW.webble.defid;
-
-				return publishingOps.publish(req, Webble.findOne({ "webble.defid": defid }), function() {
-
-					return new Webble({
-						webble: { templateid: defid },
-						_owner: req.user._id
-					});
-
-				}, function(toW) {
-
-					if (toW.webble.templateid != defid)
-						throw new util.RestError(gettext("The target webble is not a template"), 403);
-
-					var info = fromW.getInfoObject();
-					info.ver = toW.webble.templaterevision + 1;
-					toW.mergeWithInfoObject(info);
+		DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (fromW) {
+            
+            if (!fromW || !fromW.isUserAuthorized(req.user))
+                throw new util.RestError(gettext("Webble does not exist"), 404);
+            
+            var defid = fromW.webble.defid;
+            
+            return publishingOps.publish(req, Webble.findOne({ "webble.defid": defid }), function () {
                 
-                    console.log("Target Webble Reported version:", info.ver - 1, "and it will be bumped up to version:", info.ver);
+                return new Webble({
+                    webble: { templateid: defid },
+                    _owner: req.user._id
+                });
 
-					if (req.body.webble) {
+            }, function (toW) {
+                
+                if (toW.webble.templateid != defid)
+                    throw new util.RestError(gettext("The target webble is not a template"), 403);
+                
+                var info = fromW.getInfoObject();
+                info.ver = toW.webble.templaterevision + 1;
+                toW.mergeWithInfoObject(info);
+                
+                console.log("Target Webble Reported version:", info.ver - 1, "and it will be bumped up to version:", info.ver);
+                
+                if (req.body.webble) {
+                    
+                    // We manage these - protect accidental overwriting
+                    //
+                    delete req.body.webble.defid;
+                    delete req.body.webble.templateid;
+                    delete req.body.webble.templaterevision;
+                    
+                    delete req.body.webble.protectflags;
+                    delete req.body.webble.modelsharees;
+                    delete req.body.webble.slotdata;
+                    delete req.body.webble.private;
+                    delete req.body.webble.children;
+                    
+                    toW.mergeWithObject(req.body.webble);
+                }
+                
+                if (!toW.webble.author)
+                    toW.webble.author = req.user.username || req.user.name.full;
+                
+                return toW;
 
-						// We manage these - protect accidental overwriting
-						//
-						delete req.body.webble.defid;
-						delete req.body.webble.templateid;
-						delete req.body.webble.templaterevision;
-
-						delete req.body.webble.protectflags;
-						delete req.body.webble.modelsharees;
-						delete req.body.webble.slotdata;
-						delete req.body.webble.private;
-						delete req.body.webble.children;
-
-						toW.mergeWithObject(req.body.webble);
-					}
-
-					if (!toW.webble.author)
-						toW.webble.author = req.user.username || req.user.name.full;
-
-					return toW;
-				})
-					.then(function(toW) {
-
-						return fsOps.reassociateFiles(req, fromW, toW,
+            }).then(function (toW) {
+                
+                return fsOps.reassociateFiles(req, fromW, toW,
 							path.join(devWebbleDir, req.params.id),
 							path.join(webbleDir, defid));
-					})
-					.then(function(webble) {
-						res.json(normalizeWebble(webble, null)); // Everything's rosy
-					});
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+
+            }).then(function (webble) {
+                res.json(normalizeWebble(webble, null)); // Everything's rosy
+            });
+
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 	});
 
 	//******************************************************************

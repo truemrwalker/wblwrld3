@@ -335,7 +335,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 					info.ver = targetVer;
 					
 					obj.mergeWithInfoObject(info);
-					return Q.ninvoke(obj, "save").then(function () { return obj; });
+					return obj.save().then(function () { return obj; });
 				});
 			});
 		},
@@ -371,7 +371,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 					var targetVer = versionUpdater(obj);
 					
 					if (targetVer === 0)
-						return Q.ninvoke(obj, "remove");
+						return obj.remove();
 					else {
 						
 						//var targetPath = path.join(targetPathPrefix, targetVer.toString());
@@ -380,7 +380,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 						info.modified = Date.now();
 						
 						obj.mergeWithInfoObject(info);
-						return Q.ninvoke(obj, "save").then(function () { return obj; });
+						return obj.save().then(function () { return obj; });
 					}
 				});
 			});
@@ -404,8 +404,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				
 				return moveFiles(fromPath, toPath).then(function () {
 					
-					return Q.all([Q.ninvoke(fromObj, "remove"), Q.ninvoke(toObj, "save")])
-							.then(function () { return toObj; });
+					return Q.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
 				});
 			});
 		},

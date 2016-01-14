@@ -63,15 +63,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		if (req.query.type)
 			query.conditions["_type"] = req.query.type;
 
-		Q.ninvoke(Post, "find", query.conditions, '', query.options)
-			.then(function (posts) {
+		Post.find(query.conditions, '', query.options).exec().then(function (posts) {
+            res.json(util.transform_(posts, normalizePost));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				res.json(util.transform_(posts, normalizePost));
-			})
-			.fail(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	app.post('/api/posts', auth.usr, function (req, res) {
@@ -90,24 +87,22 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 			if (post._type === 'rating' && req.body.rating  && req.query.webble) {
 
-				Q.ninvoke(Webble, "findOne", { "webble.defid": req.query.webble })
-					.then(function(webble) {
+				Webble.findOne({ "webble.defid": req.query.webble }).exec().then(function (webble) {
+                    
+                    if (!webble)
+                        throw new util.RestError(gettext("Webble does not exist"));
+                    
+                    post._target.rating = req.body.rating;
+                    post._target.webble = webble._id;
+                    
+                    return post.save().then(function () {
+                        res.json(normalizePost(post));
+                    });
 
-						if (!webble)
-							throw new util.RestError(gettext("Webble does not exist"));
+                }).fail(function (err) {
+                    util.resSendError(res, err);
+                }).done();
 
-						post._target.rating = req.body.rating;
-						post._target.webble = webble._id;
-
-						return Q.ninvoke(post, "save").then(function() {
-
-							res.json(normalizePost(post));
-						});
-					})
-					.fail(function (err) {
-						util.resSendError(res, err);
-					})
-					.done();
 			}
 			else if (post._type !== 'rating') {
 
@@ -131,91 +126,84 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.get('/api/posts/:id', auth.non, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!post)
+                throw new util.RestError(gettext("Post no longer exists"), 404);
+            
+            res.json(normalizePost(post));
 
-				if (!post)
-					throw new util.RestError(gettext("Post no longer exists"), 404);
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				res.json(normalizePost(post));
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	app.put('/api/posts/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!post || !post.isUserAuthorized(req.user))
+                throw new util.RestError(gettext("Post no longer exists"), 404);
+            
+            if (!req.body.post)
+                throw new util.RestError(gettext("Malformed post"));
+            
+            post.mergeWithObject(req.body.post);
+            
+            return post.save().then(function () {
+                res.json(normalizePost(post));
+            });
 
-				if (!post || !post.isUserAuthorized(req.user))
-					throw new util.RestError(gettext("Post no longer exists"), 404);
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				if (!req.body.post)
-					throw new util.RestError(gettext("Malformed post"));
-
-				post.mergeWithObject(req.body.post);
-
-				return Q.ninvoke(post, "save").then(function() {
-
-					res.json(normalizePost(post));
-				});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	app.delete('/api/posts/:id', auth.usr, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!post)
+                throw new util.RestError(gettext("Post no longer exists"), 204); // 204 (No Content) per RFC2616
+            
+            if (!post.isUserAuthorized(req.user))
+                throw new util.RestError(gettext("You have no permission deleting this post"), 403); // Forbidden
+            
+            return post.remove().then(function () {
+                res.status(200).send(gettext("Successfully deleted")); // Everything OK
+            });
 
-				if (!post)
-					throw new util.RestError(gettext("Post no longer exists"), 204); // 204 (No Content) per RFC2616
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				if (!post.isUserAuthorized(req.user))
-					throw new util.RestError(gettext("You have no permission deleting this post"), 403); // Forbidden
-
-				return Q.ninvoke(post, "remove").then(function() {
-
-					res.status(200).send(gettext("Successfully deleted")); // Everything OK
-				});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	//******************************************************************
 
 	app.put('/api/posts/:id/comment', auth.usr, function (req, res) {
 
-		Q.ninvoke(Post, "findById", mongoose.Types.ObjectId(req.params.id))
-			.then(function (post) {
+		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+            
+            if (!req.body.comment)
+                throw new util.RestError(gettext("Malformed comment"));
+            
+            if (!req.body.comment.author)
+                req.body.comment.author = req.user.name.full;
+            
+            req.body.comment._owner = req.user._id;
+            post.post.comments.push(req.body.comment);
+            
+            return post.save().then(function () {
+                res.json(normalizePost(post));
+            });
 
-				if (!req.body.comment)
-					throw new util.RestError(gettext("Malformed comment"));
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				if (!req.body.comment.author)
-					req.body.comment.author = req.user.name.full;
-
-				req.body.comment._owner = req.user._id;
-				post.post.comments.push(req.body.comment);
-
-				return Q.ninvoke(post, "save").then(function() {
-
-					res.json(normalizePost(post));
-				});
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 	//******************************************************************
