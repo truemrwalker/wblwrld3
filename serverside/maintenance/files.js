@@ -106,18 +106,18 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 		var category = pathComponents[0], id = pathComponents[1], ver = pathComponents[2];
 
-        var promise = Q(null);
+        var promise = Q.resolve(null);
         if (category == 'devwebbles') {
             
             try {
-                promise = Q(DevWebble.findById(mongoose.Types.ObjectId(id)).exec());
+                promise = Q.resolve(DevWebble.findById(mongoose.Types.ObjectId(id)).exec());
             }
 			catch (err) {
                 console.error("Invalid PATH for webble at directory:", relativeDirectory);
             }
         }
         else if (category == 'webbles')
-            promise = Q(Webble.findOne({ "webble.defid": id }).exec());
+            promise = Q.resolve(Webble.findOne({ "webble.defid": id }).exec());
         else
             return Q.reject(new Error("Cannot recognize webble category"));
         

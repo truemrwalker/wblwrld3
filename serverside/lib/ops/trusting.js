@@ -55,7 +55,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	function getGroupId(idString) {
 
 		try {
-			return Q(mongoose.Types.ObjectId(idString));
+			return Q.resolve(mongoose.Types.ObjectId(idString));
 		} catch (err) {
 			return Q.reject(new util.RestError("Invalid Group Description"));
 		}
@@ -68,7 +68,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyTrusts: function (req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 
@@ -110,7 +110,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearTrusts: function (req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 

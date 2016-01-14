@@ -183,7 +183,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function performOperationOnFile(req, query, targetPathPrefix, op) {
 
-		return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+		return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 			.then(function (obj) {
 				ensureObjectValid(req, obj);
 
@@ -242,7 +242,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -303,7 +303,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		associatedFiles: function (req, query, targetPathPrefix) {
 
-			return('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -318,7 +318,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
-			return Q(query.exec())
+			return Q.resolve(query.exec())
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -366,8 +366,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
 
-			return Q.spread([ ('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery)) ],
+			return Q.spread([ ('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
+				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery)) ],
 				function(fromObj, toObj) {
 					ensureObjectValid(req, fromObj);
 
@@ -406,8 +406,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		copyFiles: function (req, fromQuery, toQuery, fromPathPrefix, toPathPrefix) {
 
-			return Q.spread([ ('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-					('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery)) ],
+			return Q.spread([ ('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
+					('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery)) ],
 				function(fromObj, toObj) {
 					ensureObjectValid(req, fromObj, true);
 

@@ -113,7 +113,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		publish: function (req, query, createNewObjFunc, checkAndupdateObjFunc) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 
 					if (!obj) {
@@ -168,7 +168,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		unpublish: function (req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj, 204); // 204 (No Content) per RFC2616
 

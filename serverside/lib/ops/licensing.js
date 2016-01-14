@@ -108,7 +108,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyKey: function (req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 
@@ -140,7 +140,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getKey: function (req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 
@@ -155,7 +155,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		listKeys: function (req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 

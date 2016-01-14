@@ -70,7 +70,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		//
 		verify: function(req, query) {
 
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
 				.then(function(objs) {
 					ensureObjectValid(req, objs);
 

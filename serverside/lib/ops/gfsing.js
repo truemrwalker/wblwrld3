@@ -99,7 +99,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
         return Q.Promise(function (resolve, reject) {
             
             var busboy = new Busboy({ headers: req.headers });
-            var promise = Q(null);
+            var promise = Q.resolve(null);
             var importResult = { objs: [], targetPath: targetPathPrefix };
             
             busboy.on('file', function (fieldName, tarStream, filename, encoding, mimeType) {
@@ -238,7 +238,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	
 	function performOperationOnFile(req, query, targetPathPrefix, op) {
 		
-		return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {			
+		return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {			
 			ensureObjectValid(req, obj);
 			
 			var targetVer = obj.getInfoObject().ver;
@@ -296,7 +296,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		exportFiles: function (req, query, targetPathPrefix, pack) {
 			
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
 				
 				ensureObjectValid(req, obj);
 				
@@ -306,7 +306,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		importFiles: function (req, query, targetPathPrefix, objGetterAsync, objSetterAsync) {
 			
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
 				// ensureObjectValid(req, obj);
 				
 				// Ignore everything we get from query ... we don't really use it now
@@ -320,7 +320,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 			
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var targetVer = versionUpdater(obj);
@@ -344,7 +344,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		associatedFiles: function (req, query, targetPathPrefix) {
 			
-			return ('exec' in query ? Q(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var targetVer = obj.getInfoObject().ver;
@@ -358,7 +358,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 			
-			return Q(query.exec()).then(function (obj) {
+			return Q.resolve(query.exec()).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var info = obj.getInfoObject();
@@ -390,8 +390,8 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
 			
-			return Q.spread([('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery))], function (fromObj, toObj) {
+			return Q.spread([('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
+				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery))], function (fromObj, toObj) {
 				ensureObjectValid(req, fromObj);
 				
 				var fromVer = fromObj.getInfoObject().ver;
@@ -414,8 +414,8 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		copyFiles: function (req, fromQuery, toQuery, fromPathPrefix, toPathPrefix) {
 			
-			return Q.spread([('exec' in fromQuery ? Q(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q(toQuery.exec()) : Q.resolve(toQuery))],
+			return Q.spread([('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
+				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery))],
 				function (fromObj, toObj) {
 				ensureObjectValid(req, fromObj, true);
 				

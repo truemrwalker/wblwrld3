@@ -55,10 +55,10 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyGroupMember: function (req, groupQuery, query) {
 
-			return ('exec' in groupQuery ? Q(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
+			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
-				return Q(query.exec()).then(function (obj) {
+				return Q.resolve(query.exec()).then(function (obj) {
 					ensureObjectValid(req, obj);
 
 					var index = obj._sec.groups.indexOf(group._id);
@@ -87,7 +87,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getGroupMembers: function (req, groupQuery, query) {
 
-			return ('exec' in groupQuery ? Q(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
+			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
 				return Q.ninvoke(query.where('_sec.groups').equals(group._id), "exec").then(function (results) {
@@ -102,7 +102,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearGroupMembers: function (req, groupQuery, query) {
 
-			return ('exec' in groupQuery ? Q(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
+			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
 				return Q.ninvoke(query.where('_sec.groups').equals(group._id), "exec").then(function (results) {

@@ -56,7 +56,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
         
         var pack = tar.pack();
 
-		Q(DevWebble.find({ _owner: req.user._id }).exec()).then(function (webbles) {
+		DevWebble.find({ _owner: req.user._id }).exec().then(function (webbles) {
 			
 			if (!webbles)
 				throw new util.RestError(gettext("Cannot retrieve webbles"));
@@ -67,7 +67,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				return soFar.then(function () {
 					return fsOps.exportFiles(req, w, path.join(devWebbleDir, w._id.toString()), pack);
 				});
-			}, Q(null));
+			}, Q.resolve(null));
 
 		}).then(function () {
 
@@ -117,7 +117,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
         
 		fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
             
-            return Q(DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.templateid': tarDir }] }).exec()).then(function (w) {
+            return DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.templateid': tarDir }] }).exec().then(function (w) {
 
                 if (w && (!req.body || !req.body.replace))
                     return { obj: null, pathSuffix: '' };

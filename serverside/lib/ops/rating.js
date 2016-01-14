@@ -53,7 +53,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		updateRatings: function (req, query) {
 
-			return Q(query.exec())
+			return Q.resolve(query.exec())
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -99,7 +99,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getRatings: function (req, query) {
 
-			return Q(query.exec())
+			return Q.resolve(query.exec())
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -130,7 +130,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearRatings: function (req, query) {
 
-			return Q(query.exec())
+			return Q.resolve(query.exec())
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 

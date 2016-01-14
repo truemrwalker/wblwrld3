@@ -52,7 +52,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function addOrRemoveContributors(req, query, opRemove) {
 
-		return Q(query.exec())
+		return Q.resolve(query.exec())
 			.then(function (obj) {
 				ensureObjectValid(req, obj);
 
@@ -118,7 +118,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearContributors: function (req, query) {
 
-			return Q(query.exec())
+			return Q.resolve(query.exec())
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -131,7 +131,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		 removeCurrentUser: function(req, query) {
 
-			 return Q(query.exec())
+			 return Q.resolve(query.exec())
 				 .then(function (obj) {
 					 ensureObjectValidRelaxed(req, obj);
 

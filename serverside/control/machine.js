@@ -73,12 +73,12 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
         
         var name = os.hostname();
 
-        return Q(Machine.findOneAndUpdate({ name: name }, { $set : { _locked: true } }, { upsert: true }).exec()).then(function (machine) {
+        return Machine.findOneAndUpdate({ name: name }, { $set : { _locked: true } }, { upsert: true }).exec().then(function (machine) {
             
             if (!machine) {
                 
                 // Obtain the previously created (with upsert) LOCKED document
-                return Q(Machine.findOne({ name: name })).then(function (machine) {
+                return Machine.findOne({ name: name }).exec().then(function (machine) {
 
                     console.assert(machine, "Shouldn't happen since upsert=true in query");
 
@@ -100,7 +100,7 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
                     if (++retryCount == 5)
                         return prevMachine; // Hostile takeover of the machine lock
 
-                    return Q(Machine.findOneAndUpdate({ name: name, _locked: false }, { $set : { _locked: true } })).then(function (machine) {                        
+                    return Machine.findOneAndUpdate({ name: name, _locked: false }, { $set : { _locked: true } }).exec().then(function (machine) {                        
                         return machine || retry();
                     });
                 });
@@ -112,12 +112,12 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
     function releaseMachine(machine) {
         
         //machine.update({ $set : { _locked: false } }).exec();
-        //return Q(null);
+        //return Q.resolve(null);
         
         machine._locked = false;
         machine.markModified('_locked');
 
-        return Q(machine.save());
+        return Q.resolve(machine.save());
     }
 
     ////////////////////////////////////////////////////////////////////
