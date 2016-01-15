@@ -48,14 +48,14 @@ module.exports.executeAllScripts = function (scriptDirectory, Q, app, config, mo
 			if (index != -1) {
 
 				allScripts.splice(index, 1);
-				loadOrderPromise = Q.when(loadOrderPromise, function() {
+				loadOrderPromise = loadOrderPromise.then(function() {
 					return require(path.join(scriptDirectory, script))(Q, app, config, mongoose, gettext);
 				});
 			}
 		});
 	}
 
-	return Q.when(loadOrderPromise, function() {
+	return loadOrderPromise.then(function() {
 
 		var promises = [];
 

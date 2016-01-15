@@ -222,5 +222,5 @@ function serverEntryPoint() {
 				Q, app, config, mongoose, gettext, ['templates.js', 'files.js']);
 			break;
 	}
-	return Q.when(promise, shouldExit ? process.exit : startAllServers);
+	return promise.then(shouldExit ? process.exit : startAllServers);
 }
