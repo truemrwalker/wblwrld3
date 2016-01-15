@@ -51,21 +51,24 @@ var gettext = function(str) { return str; };
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
 
+// see: http://mongoosejs.com/docs/promises.html
+//
 mongoose.Promise = Q.Promise;
-
-mongoose.connect(config.MONGODB_URL);
 //mongoose.set('debug', true);
 
-mongoose.connection.on('error', function(err){
-
-    console.error("Database Error:", err.message);
-	process.exit(1);
+mongoose.connect(config.MONGODB_URL, function (err) {
+    
+    if (err)
+        process.exit(1);
+    else
+        serverEntryPoint();
 });
 
-mongoose.connection.on('open', function() {
-
-	console.log("Database: connected");
-	serverEntryPoint();
+mongoose.connection.on('open', function () {
+    console.log("Database:", "connected");
+});
+mongoose.connection.on('error', function(err){
+    console.log("Database Error:", err.message);
 });
 
 ////////////////////////////////////////////////////////////////////////

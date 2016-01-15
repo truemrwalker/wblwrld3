@@ -79,10 +79,13 @@ module.exports.GFS = function (Q, mongoose) {
     var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
     
     // Wrapper for updating the gsf.files collection and returning a promise:
-    // This should've worked: Q.denodeify(gfs.files.update);
+    // Seems that new versions of the node-mongodb-native driver (2.0+) already return promises:
+    //      http://mongodb.github.io/node-mongodb-native/2.0/api/lib_collection.js.html
+    // Also this indicates that gfs.files etc. are native collections:
+    //      https://github.com/aheckmann/gridfs-stream/blob/master/lib/index.js
     //
     function update(query, data) {
-        return gfs.files.update(query, data).exec();
+        return gfs.files.update(query, data);
     }
 
 	// Get a file
@@ -105,14 +108,16 @@ module.exports.GFS = function (Q, mongoose) {
 			options.filename = { $nin: excludeFilesList };
 		if (ownerId !== undefined)
 			options["metadata._owner"] = ownerId;
-
-		return Q.ninvoke(gfs.files.find(options), "toArray");
+        
+        // While .update() above returns a promise, .find() returns a Cursor, see here:
+        //      http://mongodb.github.io/node-mongodb-native/2.0/api/Cursor.html
+        // Then, cursor.toArray() returns a promise
+        //
+		return gfs.files.find(options).toArray();
 	};
 
 	this.getFiles = function(directory, ownerId) {
-
-		var q = gfs.files.find(genQuery(directory, null, ownerId));
-		return Q.ninvoke(q, "toArray");
+		return gfs.files.find(genQuery(directory, null, ownerId)).toArray(); // ditto
 	};
 
 	// Move files
@@ -198,7 +203,7 @@ module.exports.GFS = function (Q, mongoose) {
 	this._wipeOutEverythingForEverAndEverAndEver = function() {
 
 		var self = this;
-		return Q.ninvoke(gfs.files.find({}), "toArray").then(function(files) {
+		return gfs.files.find({}).toArray().then(function(files) {
 			return Q.all(util.transform_(files, function(f) {
 				return self.deleteFileEntry(f).then(function() {
 					console.log("WIPED OUT FILE:", f.filename);
@@ -247,20 +252,13 @@ module.exports.GFS = function (Q, mongoose) {
 		});
 	};
 
-	// Create a write stream
+	// Create a read stream
 	//
 	this.createReadStream = function(directory, filename, ownerId) {
 
-		return Q.resolve(gfs.createReadStream(genQuery(directory, filename, ownerId)));
-
-		//var self = this;
-		//return self.getFile(directory, filename, ownerId).then(function(file) {
-        //
-		//	if (!file)
-		//		throw new Error(gettext("File does not exist"));
-        //
-		//	return gfs.createReadStream(file);
-		//});
+        return Q.try(function () {
+            return gfs.createReadStream(genQuery(directory, filename, ownerId)); // Not async operation, just value
+        });
 	};
 	
 	this.createReadStreamFromFileEntrySync = function (fileEntry) {
