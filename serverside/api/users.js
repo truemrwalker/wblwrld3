@@ -156,26 +156,25 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.put('/api/users/groups', auth.usr, function(req, res) {
 
-		Q.fcall(function() { return mongoose.Types.ObjectId(req.body.group); })
-			.then(function (gId) {
+		Q.try(function() { return mongoose.Types.ObjectId(req.body.group); }).then(function (gId) {
+            
+            var index = req.user._sec.groups.indexOf(gId);
+            
+            if (index === -1 || !req.body.remove)
+                throw util.RestError(gettext("Invalid Operation"));
+            else {
+                
+                req.user._sec.groups.splice(index, 1);
+                
+                return req.user.save().then(function () {
+                    res.status(200).send(gettext("OK"));
+                });
+            }
 
-				var index = req.user._sec.groups.indexOf(gId);
+        }).fail(function (err) {
+            util.resSendError(res, err);
+        }).done();
 
-				if (index === -1 || !req.body.remove)
-					throw util.RestError(gettext("Invalid Operation"));
-				else {
-
-					req.user._sec.groups.splice(index, 1);
-
-					return req.user.save().then(function() {
-						res.status(200).send(gettext("OK"));
-					});
-				}
-			})
-			.fail(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
 	});
 
 };

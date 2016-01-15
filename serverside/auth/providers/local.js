@@ -96,7 +96,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
     //
     app.post('/auth/register', function (req, res) {
 
-	    Q.fcall(function() {
+	    Q.try(function() {
 
 		    // General Value Validity checks for provided values
 		    //
@@ -113,129 +113,129 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
 			    throw new util.RestError(gettext("Passwords don't match"));
 
 		    if (req.body.password && (req.body.password.length < 5 || req.body.password.length > 60))
-			    throw new util.RestError(gettext("Passwords have to be at least 5 and at most 60 characters long"));
-	    })
-		    .then(function () {
+                throw new util.RestError(gettext("Passwords have to be at least 5 and at most 60 characters long"));
 
-			    return [!req.body.email ? null :  User.findOne({ email: req.body.email }).exec(),
-				    !req.body.username ? null : User.findOne({ username: req.body.username.toLowerCase() }).exec()];
-		    })
-		    .spread(function (userByEmail, userByUsername) {
+	    }).then(function () {
+            
+            return [!req.body.email ? null :  User.findOne({ email: req.body.email }).exec(),
+                !req.body.username ? null : User.findOne({ username: req.body.username.toLowerCase() }).exec()];
 
-			    var user = req.user;
+        }).spread(function (userByEmail, userByUsername) {
+            
+            var user = req.user;
+            
+            if (user) {
+                
+                if (userByEmail && userByEmail._id !== user._id)
+                    throw new util.RestError(gettext("This email is already used at another account")); //, 401);
+                
+                if (userByUsername && userByUsername._id !== user._id)
+                    throw new util.RestError(gettext("This username is already taken")); //, 401);
+                
+                // Update main user information
+                //
+                if (req.body.name && req.body.name.split(' ').length >= 2)
+                    user.name.full = req.body.name;
+                
+                if (req.body.username && util.isUsernameValid(req.body.username) && !user.username)
+                    user.username = req.body.username;
+                
+                if (req.body.email && util.isEmailValid(req.body.email) && req.body.email != user.email) {
+                    
+                    if (user.email[0] != '@')
+                        user.email_alts.push(user.email);
+                    
+                    user.email = req.body.email;
+                }
+                
+                if (user._auth.providers.indexOf('local') == -1)
+                    user._auth.providers.push('local');
+            }
+            else {
+                
+                // Validity checks for new accounts
+                //
+                if (userByEmail || userByUsername)
+                    throw new util.RestError(gettext("Account already taken")); //, 401);
+                
+                if (!req.body.name)
+                    throw new util.RestError(gettext("Please provide your full name"));
+                
+                if (!req.body.email)
+                    throw new util.RestError(gettext("Please provide your email"));
+                
+                if (!req.body.password)
+                    throw new util.RestError(gettext("Please provide a password"));
+                
+                // Go ahead and create new user
+                //
+                user = new User();
+                
+                user.name.full = req.body.name;
+                if (req.body.username && util.isUsernameValid(req.body.username))
+                    user.username = req.body.username;
+                user.email = req.body.email;
+                
+                user._auth.providers.push('local');
+            }
+            
+            // Do not update these values even if they are available in the body of the request
+            //
+            delete req.body._sec;
+            delete req.body._auth;
+            
+            delete req.body.name;
+            delete req.body.username;
+            delete req.body.email;
+            
+            // Update any other relevant values
+            //
+            Object.keys(req.body).forEach(function (key) {
+                
+                if (req.body[key] !== undefined) {
+                    
+                    if (typeof req.body[key] === 'object') {
+                        
+                        Object.keys(req.body[key]).forEach(function (subKey) {
+                            user[key][subKey] = req.body[key][subKey];
+                        });
+                    }
+                    else
+                        user[key] = req.body[key];
+                }
+            });
+            
+            // Add a gravatar image if we don't have one util this point
+            //
+            if (user.image_urls.length === 0) {
+                
+                user.image_urls.push(gravatar.url(user.email, {
+                    d: 'identicon',
+                    s: 128
+                }, true // Fetch the image over https
+                ));
+            }
 
-			    if (user) {
-
-				    if (userByEmail && userByEmail._id !== user._id)
-			            throw new util.RestError(gettext("This email is already used at another account")); //, 401);
-
-				    if (userByUsername && userByUsername._id !== user._id)
-					    throw new util.RestError(gettext("This username is already taken")); //, 401);
-
-				    // Update main user information
-				    //
-				    if (req.body.name && req.body.name.split(' ').length >= 2)
-					    user.name.full = req.body.name;
-
-				    if (req.body.username && util.isUsernameValid(req.body.username) && !user.username)
-					    user.username = req.body.username;
-
-				    if (req.body.email && util.isEmailValid(req.body.email) && req.body.email != user.email) {
-
-					    if (user.email[0] != '@')
-						    user.email_alts.push(user.email);
-
-					    user.email = req.body.email;
-				    }
-
-				    if (user._auth.providers.indexOf('local') == -1)
-					    user._auth.providers.push('local');
-			    }
-			    else {
-
-				    // Validity checks for new accounts
-				    //
-				    if (userByEmail || userByUsername)
-					    throw new util.RestError(gettext("Account already taken")); //, 401);
-
-				    if (!req.body.name)
-					    throw new util.RestError(gettext("Please provide your full name"));
-
-				    if (!req.body.email)
-					    throw new util.RestError(gettext("Please provide your email"));
-
-				    if (!req.body.password)
-					    throw new util.RestError(gettext("Please provide a password"));
-
-				    // Go ahead and create new user
-				    //
-				    user =  new User();
-
-				    user.name.full = req.body.name;
-				    if (req.body.username && util.isUsernameValid(req.body.username))
-					    user.username = req.body.username;
-				    user.email = req.body.email;
-
-				    user._auth.providers.push('local');
-			    }
-
-			    // Do not update these values even if they are available in the body of the request
-			    //
-			    delete req.body._sec;
-			    delete req.body._auth;
-
-			    delete req.body.name;
-			    delete req.body.username;
-			    delete req.body.email;
-
-			    // Update any other relevant values
-			    //
-			    Object.keys(req.body).forEach(function(key) {
-
-				    if (req.body[key] !== undefined) {
-
-					    if (typeof req.body[key] === 'object') {
-
-						    Object.keys(req.body[key]).forEach(function(subKey) {
-								user[key][subKey] = req.body[key][subKey];
-						    });
-					    }
-					    else
-					        user[key] = req.body[key];
-				    }
-			    });
-
-			    // Add a gravatar image if we don't have one util this point
-			    //
-			    if (user.image_urls.length === 0) {
-
-				    user.image_urls.push(gravatar.url(user.email, {
-							d: 'identicon',
-						    s: 128
-					    }, true // Fetch the image over https
-				    ));
-			    }
-
-			    // Update Password if necessary
-				//
-			    return !req.body.password ? user :
+            // Update Password if necessary
+            //
+            return !req.body.password ? user :
 				    Q.ninvoke(user, "setPassword", req.body.password);
-		    })
-		    .then (function (user) {
 
-		        if (!user)
-			        throw new util.RestError(gettext("Could not set password"));
+        }).then (function (user) {
+            
+            if (!user)
+                throw new util.RestError(gettext("Could not set password"));
+            
+            return user.save().then(function () {
+                doneAuth(null, req, res, user); // Everything's peachy...
+            });
 
-		        return user.save().then(function () {
-			        doneAuth(null, req, res, user); // Everything's peachy...
-		        });
-	        })
-		    .fail(function (err) {
+        }).fail(function (err) {
+            
+            err = util.toRestError(err, gettext("Cannot register user"));
+            doneAuth(err, req, res);
+        }).done();
 
-			    err = util.toRestError(err, gettext("Cannot register user"));
-				doneAuth(err, req, res);
-		    })
-		    .done();
     });
 
     ////////////////////////////////////////////////////////////////////
