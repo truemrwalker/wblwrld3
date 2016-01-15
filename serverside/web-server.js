@@ -51,11 +51,17 @@ var gettext = function(str) { return str; };
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
 
-// see: http://mongoosejs.com/docs/promises.html
+// Temporarily until we replace Q with Bluebird
 //
-mongoose.Promise = Q.Promise;
-//mongoose.set('debug', true);
+Q.promisify = function (method, options) {
 
+    var ctx = options && options.context;
+    return ctx ? Q.nbind(method, ctx) : Q.denodeify(method);
+};
+
+mongoose.Promise = Q.Promise; // see: http://mongoosejs.com/docs/promises.html
+
+//mongoose.set('debug', true);
 mongoose.connect(config.MONGODB_URL, function (err) {
     
     if (err)

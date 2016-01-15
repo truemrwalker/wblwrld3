@@ -91,11 +91,11 @@ module.exports.GFS = function (Q, mongoose) {
 	// Get a file
 	//
 	this.getFileWithPath = function(fullPath, ownerId) {
-		return Q.ninvoke(gfs, "findOne", { filename: fullPath });
+		return Q.promisify(gfs.findOne, {context: gfs})({ filename: fullPath }); // TODO: gfs methods should return promise
 	};
 
 	this.getFile = function(directory, filename, ownerId) {
-		return Q.ninvoke(gfs, "findOne", genQuery(directory, filename, ownerId));
+		return Q.promisify(gfs.findOne, {context: gfs})(genQuery(directory, filename, ownerId)); // TODO: gfs methods should return promise
 	};
 
 	// Get multiple files
@@ -196,7 +196,7 @@ module.exports.GFS = function (Q, mongoose) {
 	};
 
 	this.deleteFileEntry = function(fileEntry) {
-		return Q.ninvoke(gfs, "remove", fileEntry);
+		return Q.promisify(gfs.remove, {context: gfs})(fileEntry); // TODO: gfs methods should return promise
 	};
 
 	// Just for the occasional spring-cleaning & testing

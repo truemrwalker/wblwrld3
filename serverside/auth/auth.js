@@ -104,7 +104,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 		// Better save than destroy...
 		//
-		return Q.ninvoke(req.session, "save").then(function() {
+		return Q.promisify(req.session.save, { context: req.session })().then(function() { // TODO: req methods should return promises
 
 //            req.session.destroy(function() {
 //                res.clearCookie(config.SESSION_KEY, { path: '/' });

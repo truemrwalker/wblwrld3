@@ -219,7 +219,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
             // Update Password if necessary
             //
             return !req.body.password ? user :
-				    Q.ninvoke(user, "setPassword", req.body.password);
+				    Q.promisify(user.setPassword, { context: user })(req.body.password); // TODO: user methods should return promise
 
         }).then (function (user) {
             
@@ -315,12 +315,12 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
             if (!user || user._auth.local.forgot == 0 || createUserIdHash(user) !== req.params.id)
                 throw new Error();
             
-            return Q.ninvoke(req, "login", user).then(function () {
+            return Q.promisify(req.login, { context: req })(user).then(function () { // TODO: req methods should return promise
                 return crypt.randomBytes(32);
             }).then(function (buff) {
-                return Q.ninvoke(user, "setPassword", buff.toString('hex'));
+                return Q.promisify(user.setPassword, { context: user })(buff.toString('hex')); // TODO: user methods should return promise
             }).then(function (user) {
-                return Q.ninvoke(user, "save");
+                return user.save();
             }).then(function () {
                 res.redirect('/#/profile?tab=auth'); // Finally OK
             });
