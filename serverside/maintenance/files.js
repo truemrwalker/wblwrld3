@@ -48,7 +48,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	// Utility functions
     //
     function statIfExists(localFilePath) {
-        return Q.nfcall(fs.stat, localFilePath).fail(function (err) { return null; });
+        return Q.nfcall(fs.stat, localFilePath).catch(function (err) { return null; });
     }
     function changeMTime(localFilePath, mtime) {        
         return Q.nfcall(fs.utimes, localFilePath, 0, mtime);
@@ -275,7 +275,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
     }).then(function () {
         return syncBackupFiles();
-    }).fail(function (err) {
+    }).catch(function (err) {
         console.error("File Sync Error:", err, "--", err.stack);
     });
 

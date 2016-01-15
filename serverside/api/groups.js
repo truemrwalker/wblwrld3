@@ -109,7 +109,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		Group.find(query.conditions, '', query.options).exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -119,7 +119,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		Group.find({$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]}).exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 	});
@@ -130,7 +130,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(group) {
 				res.json(normalizeGroup(group));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -147,7 +147,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             
             res.json(normalizeGroup(group));
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 	});
@@ -171,7 +171,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.json(normalizeGroup(group));
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -208,7 +208,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 });
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -222,7 +222,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(group) {
 				res.json(normalizeGroup(group));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -232,7 +232,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		return Group.find({ "_sec.groups" : getId(req) }).exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -251,7 +251,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("User added to group"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -263,7 +263,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(results) {
 				res.json(util.transform_(results, function(u) { return u.toJSON(); }));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -275,7 +275,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("User removed from group"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -289,7 +289,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Webble added to group"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -301,7 +301,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(results) {
 				res.json(util.transform_(results, function(w) { return w.toJSON(); }));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -313,7 +313,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Webble removed from group"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -330,7 +330,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Object added to group"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -344,7 +344,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(results) {
 				res.json(util.transform_(results, function(o) { return { id: o._id, repr: o.repr() } }));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -358,7 +358,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Objects removed from group"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();

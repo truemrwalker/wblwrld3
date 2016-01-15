@@ -124,7 +124,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.then(function(userJson) {
 				res.json(userJson);
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			}).done();
 	}
@@ -132,7 +132,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	function doneExternal(err, req, res, user) {
 
 		doLogin(err, req, user)
-			.fail(function(e) {
+			.catch(function(e) {
 				console.log("AUTH ERROR:", e);
 			})
 			.finally(function() {
@@ -203,7 +203,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
                 return doLogout(req);
             }).then(function () {
                 res.status(200).send(gettext("Successfully logged out"));
-            }).fail(function (err) {
+            }).catch(function (err) {
                 util.resSendError(res, err);
             }).done();
 
@@ -221,7 +221,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 			.then(function() {
 				res.status(200).send(gettext("Successfully logged out"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			}).done();
 	});

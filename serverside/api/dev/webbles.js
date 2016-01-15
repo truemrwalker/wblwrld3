@@ -68,7 +68,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
         }).then(function (webbles) {
             res.json(webbles); // Oh-Kay
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -121,7 +121,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.json(normalizeWebble(w, files)); // Everything's peachy
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 	});
@@ -166,7 +166,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 });
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -183,7 +183,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(files) {
 				res.json(files); // Everything's peachy
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			}).done();
 	});
@@ -204,7 +204,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 					res.json(normalizeWebble(webble, files)); // Everything's peachy
 				});
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			}).done();
     });
@@ -222,7 +222,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(webble) {
 				res.json(normalizeWebble(webble, [])); // Everything's peachy
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			}).done();
 	});
@@ -236,7 +236,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(file) {
 				res.json(file); // Everything's peachy
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			}).done();
 	});
@@ -248,7 +248,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(file) {
 				res.json(file); // Everything's peachy
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			}).done();
 	});
@@ -260,7 +260,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(file) {
 				res.json(file); // Everything's peachy
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			}).done();
 	});
@@ -329,7 +329,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.json(normalizeWebble(webble, null)); // Everything's rosy
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 	});

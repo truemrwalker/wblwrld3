@@ -169,7 +169,7 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
 
         return releaseMachine(machine);
 
-    }).fail(function (err) {
+    }).catch(function (err) {
         console.error("Error:", err);
     }).done();
 

@@ -80,7 +80,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			return util.transform_(files, function (f) {
 				return f.metadata.filename;
 			});
-		}).fail(function () { return [] });
+		}).catch(function () { return [] });
 	}
 	function removeFiles(targetPath, ownerId) {
 		return gfs.deleteFiles(targetPath, ownerId);

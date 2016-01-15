@@ -80,7 +80,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			});
 			pack.pipe(res);
 
-		}).fail(function (err) {
+		}).catch(function (err) {
 			util.resSendError(res, err);
 		}).done();
 	});
@@ -106,7 +106,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 			});
 			pack.pipe(res);
 
-		}).fail(function (err) {
+		}).catch(function (err) {
 			util.resSendError(res, err);
 		}).done();
 	});
@@ -152,7 +152,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
         }).then(function (webbles) {
             res.json(webbles);
-        }).fail(function (err) {
+        }).catch(function (err) {
 			util.resSendError(res, err);
 		}).done();;
 	});

@@ -59,7 +59,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		User.find(query.conditions, 'name username languages', query.options).exec().then(function (users) {
             res.json(util.transform_(users, normalizeUser));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -75,7 +75,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(groups) {
 				res.json(groups);
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -87,7 +87,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("OK"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -99,7 +99,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("OK"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -148,7 +148,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 return g.toJSON();
             }));
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
 
         }).done();
@@ -171,7 +171,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 });
             }
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 

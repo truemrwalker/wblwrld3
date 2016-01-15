@@ -65,7 +65,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		Post.find(query.conditions, '', query.options).exec().then(function (posts) {
             res.json(util.transform_(posts, normalizePost));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -99,7 +99,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                         res.json(normalizePost(post));
                     });
 
-                }).fail(function (err) {
+                }).catch(function (err) {
                     util.resSendError(res, err);
                 }).done();
 
@@ -133,7 +133,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             
             res.json(normalizePost(post));
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -155,7 +155,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.json(normalizePost(post));
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -175,7 +175,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.status(200).send(gettext("Successfully deleted")); // Everything OK
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -200,7 +200,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.json(normalizePost(post));
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 

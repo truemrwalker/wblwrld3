@@ -56,7 +56,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(results) {
 				res.json(results);
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -68,7 +68,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("License Key Modified"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -82,7 +82,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(results) {
 				res.json(results);
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -94,7 +94,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("License Key Modified"));
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -109,7 +109,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(value) {
 				res.json(value && value.access_key);
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 				util.resSendError(res, err);
 			})
 			.done();

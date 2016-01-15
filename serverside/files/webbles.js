@@ -64,7 +64,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 					return gfs.downloadFromFileEntry(res, fileEntry);
 				}
 			})
-			.fail(function(err) {
+			.catch(function(err) {
 
 				console.log(err);
 				res.status(404).end();

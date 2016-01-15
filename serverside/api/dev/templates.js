@@ -97,7 +97,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             
             res.json(normalizeTemplate(w));
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
     });

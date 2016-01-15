@@ -77,7 +77,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		Workspace.find(query.conditions, '_contributors workspace.name workspace.creator', query.options).exec().then(function (workspaces) {
             res.json(util.transform_(workspaces, normalizeWS));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err, gettext("Cannot retrieve workspaces"));
         }).done();
 
@@ -92,7 +92,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		ws.save().then(function () {
             res.json(normalizeWS(ws)); // Everything OK
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -109,7 +109,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             
             res.json(normalizeFullWS(ws));
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err, gettext("Cannot retrieve workspace"));
         }).done();
 
@@ -141,7 +141,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
         }).spread(function (ws) {
             res.json(normalizeWS(ws)); // Everything OK
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err, gettext("Cannot change workspace"));
         }).done();
 
@@ -161,7 +161,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 res.status(200).send(gettext("Successfully deleted")); // Everything OK
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err, gettext("Cannot delete workspace"));
         }).done();
 
@@ -178,7 +178,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(users) {
 				res.json(users);
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -190,7 +190,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(users) {
 				res.json(users);
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -204,7 +204,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Successfully deleted")); // Everything OK
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();

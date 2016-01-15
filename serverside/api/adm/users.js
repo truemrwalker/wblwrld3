@@ -75,7 +75,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		User.find(query.conditions, '-_sec', query.options).exec().then(function (users) {
             res.json(util.transform_(users, normalizeUser));
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 

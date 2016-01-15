@@ -94,7 +94,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		return Q.nfcall(fs.readdir, targetPath)
 			.then(omitInfoJsonFile)
-			.fail(function() { return [] });
+			.catch(function() { return [] });
 	}
 	function removeFiles(targetPath) {
 
@@ -269,7 +269,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                         
                         return obj.save().then(function () { // Save and creat the targetInfo file (failure is ok)
                             
-                            // .fin() Cannot be used to propagate values (apparently)
+                            // .finally() Cannot be used to propagate values (apparently)
                             //
                             return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(info))
 											.then(function () { return obj; }, function () { return obj; });
@@ -387,7 +387,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 }).then(function () {
                     
                     // Remove directory completely
-                    return Q.nfcall(fs.rmdir, fromTargetPathPrefix).fail(function () { });
+                    return Q.nfcall(fs.rmdir, fromTargetPathPrefix).catch(function () { });
 
                 }).then(function () {
                     return Q.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });

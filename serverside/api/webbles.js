@@ -104,7 +104,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 									res.json(results);
 								}
 							})
-							.fail(function(err) {
+							.catch(function(err) {
 
 								console.error("ERR:::----:::", err, "STACK:", err.stack);
 								res.status(500).send(gettext("Could not retrieve webbles"));
@@ -127,7 +127,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             
             res.json(util.transform_(webbles, normalizeWebble));
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             util.resSendError(res, err);
         }).done();
 
@@ -155,7 +155,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 				        .then(function(results) {
 					        res.json(normalizeWebble(webble, true, results[0]));
 				        })
-				        .fail(function(err) {
+				        .catch(function(err) {
 					        res.status(500).send(gettext("Could not retrieve webbles"));
 				        })
 				        .done();
@@ -212,7 +212,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 				.then(function(webble) {
 					res.json(normalizeWebble(webble)); // Everything OK
 				})
-				.fail(function (err) {
+				.catch(function (err) {
 					util.resSendError(res, err, gettext("could not modify webble"));
 				})
 				.done();
@@ -227,7 +227,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Successfully deleted"));
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err, gettext("Cannot delete this webble"));
 			})
 			.done();
@@ -244,7 +244,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(users) {
 				res.json(users);
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -256,7 +256,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(users) {
 				res.json(users);
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -268,7 +268,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Successfully deleted")); // Everything OK
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -285,7 +285,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Successfully rated"));
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -297,7 +297,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function(ratings) {
 				res.json(ratings);
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -309,7 +309,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 			.then(function() {
 				res.status(200).send(gettext("Successfully cleared")); // Everything OK
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				util.resSendError(res, err);
 			})
 			.done();
@@ -324,7 +324,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
        .then(function(results) {
 				 res.json(results[0]);
 			 })
-			 .fail(function (err) {
+			 .catch(function (err) {
 				 util.resSendError(res, err);
 			 })
 			 .done();
@@ -338,7 +338,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
       .then(function(results) {
         res.json(results);
       })
-      .fail(function (err) {
+      .catch(function (err) {
         util.resSendError(res, err);
       })
       .done();

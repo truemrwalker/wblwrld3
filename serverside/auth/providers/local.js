@@ -230,7 +230,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
                 doneAuth(null, req, res, user); // Everything's peachy...
             });
 
-        }).fail(function (err) {
+        }).catch(function (err) {
             
             err = util.toRestError(err, gettext("Cannot register user"));
             doneAuth(err, req, res);
@@ -325,7 +325,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
                 res.redirect('/#/profile?tab=auth'); // Finally OK
             });
 
-        }).fail(function (e) {
+        }).catch(function (e) {
             res.redirect('/404.html');
         }).done();
 
