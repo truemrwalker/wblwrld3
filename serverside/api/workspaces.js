@@ -23,13 +23,14 @@
 // workspaces.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
+var util = require('../lib/util');
 
 ////////////////////////////////////////////////////////////////////////
 // Workspaces Support
 //
-var util = require('../lib/util');
-
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Workspace = mongoose.model('Workspace');
 	var User = mongoose.model('User');
@@ -170,7 +171,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Sharing workspaces
 	//
-	var sharingOps = require('../lib/ops/sharing')(Q, app, config, mongoose, gettext, auth);
+	var sharingOps = require('../lib/ops/sharing')(app, config, mongoose, gettext, auth);
 
 	app.put('/api/workspaces/:id/share', auth.usr, function(req, res) {
 

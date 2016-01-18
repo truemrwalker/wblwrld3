@@ -23,13 +23,14 @@
 // info.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 var os = require('os');
 
 ////////////////////////////////////////////////////////////////////////
 // Meta info stuff
 //
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
     app.get('/api/info/availability', function (req, res) {
         res.json({

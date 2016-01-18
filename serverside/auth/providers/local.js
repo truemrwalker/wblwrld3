@@ -23,6 +23,7 @@
 // local.js
 // Created by Giannis Georgalis on 10/30/13
 //
+var Promise = require("bluebird");
 var LocalStrategy = require('passport-local').Strategy;
 
 var nodemailer = require('nodemailer');
@@ -32,7 +33,7 @@ var util = require('../../lib/util');
 var crypt = require('../../lib/crypt');
 var gravatar = require('../../lib/gravatar');
 
-module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
+module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
     ////////////////////////////////////////////////////////////////////
     // Utility functions
@@ -96,7 +97,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
     //
     app.post('/auth/register', function (req, res) {
 
-	    Q.try(function() {
+	    Promise.try(function() {
 
 		    // General Value Validity checks for provided values
 		    //
@@ -219,7 +220,7 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
             // Update Password if necessary
             //
             return !req.body.password ? user :
-				    Q.promisify(user.setPassword, { context: user })(req.body.password); // TODO: user methods should return promise
+				    Promise.promisify(user.setPassword, { context: user })(req.body.password); // TODO: user methods should return promise
 
         }).then (function (user) {
             
@@ -315,10 +316,10 @@ module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
             if (!user || user._auth.local.forgot == 0 || createUserIdHash(user) !== req.params.id)
                 throw new Error();
             
-            return Q.promisify(req.login, { context: req })(user).then(function () { // TODO: req methods should return promise
+            return Promise.promisify(req.login, { context: req })(user).then(function () { // TODO: req methods should return promise
                 return crypt.randomBytes(32);
             }).then(function (buff) {
-                return Q.promisify(user.setPassword, { context: user })(buff.toString('hex')); // TODO: user methods should return promise
+                return Promise.promisify(user.setPassword, { context: user })(buff.toString('hex')); // TODO: user methods should return promise
             }).then(function (user) {
                 return user.save();
             }).then(function () {

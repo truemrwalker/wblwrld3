@@ -23,11 +23,12 @@
 // auth.js
 // Created by Giannis Georgalis on 10/30/13
 //
-var passport = require('passport');
+var Promise = require("bluebird");
 
+var passport = require('passport');
 var util = require('../lib/util');
 
-module.exports = function(Q, app, config, mongoose, gettext) {
+module.exports = function(app, config, mongoose, gettext) {
 
 	var User = mongoose.model('User');
 
@@ -56,7 +57,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	//
 	function doLogin(err, req, user) {
         
-        return Q.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
 
             if (err)
                 reject(err);
@@ -98,13 +99,13 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	function doLogout(req) {
 
 		if (!req.isAuthenticated())
-			return Q.reject(new util.RestError(gettext("Not logged in")));
+			return Promise.reject(new util.RestError(gettext("Not logged in")));
 
 		req.logout(); // Installed by passport
 
 		// Better save than destroy...
 		//
-		return Q.promisify(req.session.save, { context: req.session })().then(function() { // TODO: req methods should return promises
+		return Promise.promisify(req.session.save, { context: req.session })().then(function() { // TODO: req methods should return promises
 
 //            req.session.destroy(function() {
 //                res.clearCookie(config.SESSION_KEY, { path: '/' });
@@ -146,10 +147,10 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 	// Specific 'Login' authentication methods
 	//
-	require('./providers/local')(Q, app, config, gettext, passport, User, doneLocal);
-	require('./providers/twitter')(Q, app, config, gettext, passport, User, doneExternal);
-	require('./providers/facebook')(Q, app, config, gettext, passport, User, doneExternal);
-	require('./providers/google')(Q, app, config, gettext, passport, User, doneExternal);
+	require('./providers/local')(app, config, gettext, passport, User, doneLocal);
+	require('./providers/twitter')(app, config, gettext, passport, User, doneExternal);
+	require('./providers/facebook')(app, config, gettext, passport, User, doneExternal);
+	require('./providers/google')(app, config, gettext, passport, User, doneExternal);
 
 	////////////////////////////////////////////////////////////////////
 	// User-specific functions

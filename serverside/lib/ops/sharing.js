@@ -23,9 +23,11 @@
 // sharing.js
 // Created by Giannis Georgalis on 2/6/14
 //
+var Promise = require("bluebird");
+
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var User = mongoose.model('User');
 
@@ -52,7 +54,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function addOrRemoveContributors(req, query, opRemove) {
 
-		return Q.resolve(query.exec()).then(function (obj) {
+		return Promise.resolve(query.exec()).then(function (obj) {
             ensureObjectValid(req, obj);
             
             if (!req.body.users || req.body.users.length == 0)
@@ -114,7 +116,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearContributors: function (req, query) {
 
-			return Q.resolve(query.exec()).then(function (obj) {
+			return Promise.resolve(query.exec()).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 obj._contributors = [];
@@ -126,7 +128,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		 removeCurrentUser: function(req, query) {
 
-			 return Q.resolve(query.exec()).then(function (obj) {
+			 return Promise.resolve(query.exec()).then(function (obj) {
                 ensureObjectValidRelaxed(req, obj);
                 
                 if (!req.user || !obj._contributors)

@@ -23,7 +23,9 @@
 // group.js
 // Created by Giannis Georgalis on 12/11/13
 //
-module.exports = function(Q, app, config, mongoose, gettext) {
+var Promise = require("bluebird");
+
+module.exports = function(app, config, mongoose, gettext) {
 
     // Define the Group schema it may be Hokudai, Fraunhofer, etc:
     //

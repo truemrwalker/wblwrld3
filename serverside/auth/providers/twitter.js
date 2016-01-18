@@ -23,9 +23,11 @@
 // twitter.js
 // Created by Giannis Georgalis on 10/30/13
 //
+var Promise = require("bluebird");
+
 var TwitterStrategy = require('passport-twitter').Strategy;
 
-module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
+module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
     var authError = new Error("Twitter Auth Error", "auth-twitter.js");
 

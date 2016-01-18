@@ -23,12 +23,14 @@
 // files.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var libGfs = require('../lib/gfs');
 var path = require('path');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
-	var gfs = new libGfs.GFS(Q, mongoose);
+	var gfs = new libGfs.GFS(mongoose);
 
 	// Just in case we are running on localhost on windows
 	//

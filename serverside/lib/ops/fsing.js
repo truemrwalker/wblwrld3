@@ -23,6 +23,8 @@
 // fsing.js
 // Created by Giannis Georgalis on 2/6/14
 //
+var Promise = require("bluebird");
+
 var path = require('path');
 var fs = require('fs');
 //var os = require('os');
@@ -30,15 +32,16 @@ var mkdirp = require('mkdirp');
 //var extend = require('util')._extend;
 
 var util = require('../util');
+var dbutil = require('../dbutil');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var User = mongoose.model('User');
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
-    var mkdirpAsync = Q.promisify(mkdirp);
+    var mkdirpAsync = Promise.promisify(mkdirp);
 
 	function ensureObjectValid(req, obj, readonly) {
 
@@ -73,7 +76,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             // In case of emergency, use busboy as in the file 'gfsing.js'
             //
             if (!req.files || (req.files.file && req.files.file.length == 0))
-                return Q.resolve();
+                return Promise.resolve();
             
             var files = req.files.file ? req.files.file :
 					util.transform(Object.keys(req.files), function (k) {
@@ -86,24 +89,24 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 files = [files];
             //
             
-            return Q.all(util.transform_(files, function (f) {
-                return Q.promisify(fs.rename)(f.path, path.join(targetPath, f.originalname));
+            return Promise.all(util.transform_(files, function (f) {
+                return Promise.promisify(fs.rename)(f.path, path.join(targetPath, f.originalname));
             }));
         });
 	}
 	function getFiles(targetPath) {
 
-		return Q.promisify(fs.readdir)(targetPath).then(omitInfoJsonFile)
+		return Promise.promisify(fs.readdir)(targetPath).then(omitInfoJsonFile)
 			.catch(function () { return [] });
 	}
 	function removeFiles(targetPath) {
 
-		return Q.promisify(fs.readdir)(targetPath).then(function (files) {
+		return Promise.promisify(fs.readdir)(targetPath).then(function (files) {
 
-            return Q.all(util.transform_(files, function (f) {
-                return Q.promisify(fs.unlink)(path.join(targetPath, f));
+            return Promise.all(util.transform_(files, function (f) {
+                return Promise.promisify(fs.unlink)(path.join(targetPath, f));
             })).then(function () {
-                return Q.promisify(fs.rmdir)(targetPath);
+                return Promise.promisify(fs.rmdir)(targetPath);
             });
 
         }, function (err) {
@@ -115,26 +118,26 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	function moveFiles(fromPath, toPath) {
 
 		return mkdirpAsync(toPath).then(function () {
-            return Q.promisify(fs.readdir)(fromPath);
+            return Promise.promisify(fs.readdir)(fromPath);
         }).then(function (files) {
             
-            return Q.all(util.transform(files, function (f) {
-                return Q.promisify(fs.rename)(path.join(fromPath, f), path.join(toPath, f));
+            return Promise.all(util.transform(files, function (f) {
+                return Promise.promisify(fs.rename)(path.join(fromPath, f), path.join(toPath, f));
             }));
 
         }).then(function () {
-            return Q.promisify(fs.rmdir)(fromPath);
+            return Promise.promisify(fs.rmdir)(fromPath);
         });
 	}
 	function copyFiles(fromPath, toPath) {
 
         return mkdirpAsync(toPath).then(function () {
-            return Q.promisify(fs.readdir)(fromPath);
+            return Promise.promisify(fs.readdir)(fromPath);
         }).then(omitInfoJsonFile).then(function (files) {
             
-            return Q.all(util.transform(files, function (f) {
+            return Promise.all(util.transform(files, function (f) {
                 
-                return Q.Promise(function (resolve, reject, notify) {
+                return new Promise(function (resolve, reject) {
                     
                     var readStream = fs.createReadStream(path.join(fromPath, f));
                     readStream.on('error', reject);
@@ -162,8 +165,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function createSymLink(linkPath, targetPath) {
 
-		return Q.promisify(fs.unlink)(linkPath).then(function() {
-			return Q.promisify(fs.symlink)(targetPath, linkPath, 'dir');
+		return Promise.promisify(fs.unlink)(linkPath).then(function() {
+			return Promise.promisify(fs.symlink)(targetPath, linkPath, 'dir');
 		}, function() {}); // We don't care for errors here: suppress
 	}
 
@@ -171,7 +174,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function performOperationOnFile(req, query, targetPathPrefix, op) {
 
-		return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+		return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
             ensureObjectValid(req, obj);
             
             var targetVer = obj.getInfoObject().ver;
@@ -183,7 +186,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
     function opGet(path) {
 
-        return Q.promisify(fs.readFile)(path, { encoding: 'utf8' }).then(function (data) {
+        return Promise.promisify(fs.readFile)(path, { encoding: 'utf8' }).then(function (data) {
 
 			return {
 				name: 'unknown',
@@ -193,7 +196,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	}
 	function opUpdate(path, props) {
 
-		return Q.promisify(fs.writeFile)(path, props.content, { encoding: 'utf8' }).then(function(data) {
+		return Promise.promisify(fs.writeFile)(path, props.content, { encoding: 'utf8' }).then(function(data) {
             
             return {
 				name: 'unknown',
@@ -203,7 +206,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	}
 	function opDelete(path) {
 
-        return Q.promisify(fs.unlink)(path).then(function () {
+        return Promise.promisify(fs.unlink)(path).then(function () {
 
 			return {
 				name: 'unknown'
@@ -230,7 +233,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 var targetVer = versionUpdater(obj);
@@ -259,13 +262,13 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                             
                             // .finally() Cannot be used to propagate values (apparently)
                             //
-                            return Q.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(info))
+                            return Promise.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(info))
                                 .then(function () { return obj; }, function () { return obj; });
                         });
                     }
                     else {
                         
-                        return Q.promisify(fs.readFile)(targetInfoFile, 'utf8').then(function (data) {
+                        return Promise.promisify(fs.readFile)(targetInfoFile, 'utf8').then(function (data) {
                             
                             var info = JSON.parse(data, 'utf8');
                             info.ver = targetVer;
@@ -286,7 +289,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		associatedFiles: function (req, query, targetPathPrefix) {
 
-			return('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
+			return('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
 				.then(function (obj) {
 					ensureObjectValid(req, obj);
 
@@ -301,7 +304,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
-			return Q.resolve(query.exec()).then(function (obj) {
+			return Promise.resolve(query.exec()).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 var info = obj.getInfoObject();
@@ -315,7 +318,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                     
                     if (targetVer === 0) {
                         
-                        return Q.promisify(fs.rmdir)(targetPathPrefix).then(function () {
+                        return Promise.promisify(fs.rmdir)(targetPathPrefix).then(function () {
                             return obj.remove();
                         }, function (err) {
                             
@@ -346,9 +349,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
 
-			return Q.spread([ ('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery)) ],
-				function (fromObj, toObj) {
+			return Promise.resolve([dbutil.execOrValue(fromQuery), dbutil.execOrValue(toQuery)]).spread(function (fromObj, toObj) {
 
                 ensureObjectValid(req, fromObj);
                 
@@ -361,7 +362,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 ensureObjectValid(req, toObj);
                 
                 var targetInfoFile = path.join(fromPath, "info.json");
-                return Q.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
+                return Promise.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
                     return moveFiles(fromPath, toPath);
                 }).then(function () {
                     
@@ -371,10 +372,10 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 }).then(function () {
                     
                     // Remove directory completely
-                    return Q.promisify(fs.rmdir)(fromTargetPathPrefix).catch(function () { });
+                    return Promise.promisify(fs.rmdir)(fromTargetPathPrefix).catch(function () { });
 
                 }).then(function () {
-                    return Q.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
+                    return Promise.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
                 });
             });
 		},
@@ -383,9 +384,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		copyFiles: function (req, fromQuery, toQuery, fromPathPrefix, toPathPrefix) {
 
-			return Q.spread([ ('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
-					('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery)) ],
-				function (fromObj, toObj) {
+			return Promise.resolve([dbutil.execOrValue(fromQuery), dbutil.execOrValue(toQuery)]).spread(function (fromObj, toObj) {
                 ensureObjectValid(req, fromObj, true);
                 
                 var fromVer = fromObj.getInfoObject().ver;
@@ -399,7 +398,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 return copyFiles(fromPath, toPath).then(function () {
                     
                     var targetInfoFile = path.join(toPath, "info.json");
-                    return Q.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject()));
+                    return Promise.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject()));
 
                 }).then(function () { return toObj; }); // We haven't modified the object at all... so, no need save
             });

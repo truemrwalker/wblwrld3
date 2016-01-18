@@ -27,11 +27,12 @@
 ////////////////////////////////////////////////////////////////////////
 // Development webbles API for creating and exposing new templates
 //
-var path = require('path');
+var Promise = require("bluebird");
 
+var path = require('path');
 var util = require('../../lib/util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Webble = mongoose.model('Webble');
 	var DevWebble = mongoose.model('DevWebble');
@@ -49,7 +50,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
     // Basic routes for webbles
     //
-	var fsOps = require('../../lib/ops/gfsing')(Q, app, config, mongoose, gettext, auth);
+	var fsOps = require('../../lib/ops/gfsing')(app, config, mongoose, gettext, auth);
 
 	app.get('/api/dev/webbles', auth.dev, function (req, res) {
 
@@ -58,7 +59,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             if (!webbles)
                 throw new util.RestError(gettext("Cannot retrieve webbles"));
             
-            return Q.all(util.transform_(webbles, function (w) {
+            return Promise.all(util.transform_(webbles, function (w) {
                 
                 return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
 						.then(function (files) {
@@ -268,7 +269,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Operations on template webbles
 	//
-	var publishingOps = require('../../lib/ops/publishing')(Q, app, config, mongoose, gettext, auth);
+	var publishingOps = require('../../lib/ops/publishing')(app, config, mongoose, gettext, auth);
 
 	app.put('/api/dev/webbles/:id/publish', auth.dev, function(req, res) {
 

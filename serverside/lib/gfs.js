@@ -23,6 +23,8 @@
 // gfs.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var util = require('./util');
 
 var mime = require('mime');
@@ -74,7 +76,7 @@ function genQuery(directory, filename, ownerId) {
 ////////////////////////////////////////////////////////////////////////
 // GFS class thing
 //
-module.exports.GFS = function (Q, mongoose) {
+module.exports.GFS = function (mongoose) {
 
     var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
     
@@ -91,11 +93,11 @@ module.exports.GFS = function (Q, mongoose) {
 	// Get a file
 	//
 	this.getFileWithPath = function(fullPath, ownerId) {
-		return Q.promisify(gfs.findOne, {context: gfs})({ filename: fullPath }); // TODO: gfs methods should return promise
+		return Promise.promisify(gfs.findOne, {context: gfs})({ filename: fullPath }); // TODO: gfs methods should return promise
 	};
 
 	this.getFile = function(directory, filename, ownerId) {
-		return Q.promisify(gfs.findOne, {context: gfs})(genQuery(directory, filename, ownerId)); // TODO: gfs methods should return promise
+		return Promise.promisify(gfs.findOne, {context: gfs})(genQuery(directory, filename, ownerId)); // TODO: gfs methods should return promise
 	};
 
 	// Get multiple files
@@ -149,7 +151,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.getFiles(fromDirectory, ownerId).then(function(files) {
 
-			return Q.all(util.transform_(files, function (f) {
+			return Promise.all(util.transform_(files, function (f) {
 				return self.moveFileEntry(f, toDirectory);
 			}));
 		});
@@ -168,7 +170,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.getFiles(fromDirectory, undefined).then(function(files) {
 
-			return Q.all(util.transform_(files, function (f) {
+			return Promise.all(util.transform_(files, function (f) {
 				return self.copyFileEntry(f, toDirectory, ownerId);
 			}));
 		});
@@ -181,7 +183,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.getFiles(directory, ownerId).then(function(files) {
 
-			return Q.all(util.transform_(files, function (f) {
+			return Promise.all(util.transform_(files, function (f) {
 				return self.deleteFileEntry(f);
 			}));
 		});
@@ -196,7 +198,7 @@ module.exports.GFS = function (Q, mongoose) {
 	};
 
 	this.deleteFileEntry = function(fileEntry) {
-		return Q.promisify(gfs.remove, {context: gfs})(fileEntry); // TODO: gfs methods should return promise
+		return Promise.promisify(gfs.remove, {context: gfs})(fileEntry); // TODO: gfs methods should return promise
 	};
 
 	// Just for the occasional spring-cleaning & testing
@@ -204,7 +206,7 @@ module.exports.GFS = function (Q, mongoose) {
 
 		var self = this;
 		return gfs.files.find({}).toArray().then(function(files) {
-			return Q.all(util.transform_(files, function(f) {
+			return Promise.all(util.transform_(files, function(f) {
 				return self.deleteFileEntry(f).then(function() {
 					console.log("WIPED OUT FILE:", f.filename);
 				});
@@ -256,7 +258,7 @@ module.exports.GFS = function (Q, mongoose) {
 	//
 	this.createReadStream = function(directory, filename, ownerId) {
 
-        return Q.try(function () {
+        return Promise.try(function () {
             return gfs.createReadStream(genQuery(directory, filename, ownerId)); // Not async operation, just value
         });
 	};
@@ -272,7 +274,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createWriteStream(directory, filename, ownerId, mtime).then(function(writeStream) {
 
-			return Q.Promise(function(resolve, reject) {
+			return new Promise(function(resolve, reject) {
 
 				readStream.pipe(writeStream);
 				readStream.once('error', reject);
@@ -287,7 +289,7 @@ module.exports.GFS = function (Q, mongoose) {
         
         return update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": mtime || new Date() } }).then(function (result) {
 
-            return Q.Promise(function (resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 
                 var writeStream = gfs.createWriteStream({ _id: fileEntry._id, mode: 'w' });
                 
@@ -305,7 +307,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createWriteStream(directory, filename, ownerId).then(function(writeStream) {
 
-			return Q.Promise(function(resolve, reject) {
+			return new Promise(function(resolve, reject) {
 
 				writeStream.once('error', reject);
 				writeStream.once('close', function() { resolve(data); });
@@ -324,7 +326,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createReadStream(directory, filename, ownerId).then(function(readStream) {
 
-			return Q.Promise(function(resolve, reject) {
+			return new Promise(function(resolve, reject) {
 
 				readStream.pipe(writeStream);
 				readStream.once('error', reject);
@@ -340,7 +342,7 @@ module.exports.GFS = function (Q, mongoose) {
 		var self = this;
 		return self.createReadStream(directory, filename, ownerId).then(function(readStream) {
 
-			return Q.Promise(function(resolve, reject) {
+			return new Promise(function(resolve, reject) {
 
 				var data = '';
 				readStream.setEncoding(encoding);
@@ -353,7 +355,7 @@ module.exports.GFS = function (Q, mongoose) {
 
 	this.downloadFromFileEntry = function(writeStream, fileEntry) {
 
-		return Q.Promise(function(resolve, reject) {
+		return new Promise(function(resolve, reject) {
 
 			var readStream = gfs.createReadStream(fileEntry);
 
@@ -367,7 +369,7 @@ module.exports.GFS = function (Q, mongoose) {
 
     this.downloadFromFileEntryUntilClosed = function (writeStream, fileEntry) {
         
-        return Q.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             
             var readStream = gfs.createReadStream(fileEntry);
             

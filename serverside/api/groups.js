@@ -23,10 +23,12 @@
 // groups.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var util = require('../lib/util');
 var dbutil = require('../lib/dbutil');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Group = mongoose.model('Group');
 	var User = mongoose.model('User');
@@ -51,7 +53,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function createGroup(req, isTopLevel) {
 
-		return (!req.params.id ? Q.resolve(null) : Group.findById(mongoose.Types.ObjectId(req.params.id)).exec()).then(function (parentGroup) {
+		return (!req.params.id ? Promise.resolve(null) : Group.findById(mongoose.Types.ObjectId(req.params.id)).exec()).then(function (parentGroup) {
             
             if (!isTopLevel) {
                 
@@ -67,7 +69,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
             if (!req.body.group)
                 throw new util.RestError(gettext("Malformed group description"));
             
-            return (!req.body.owner ? Q.resolve(req.user) : User.findOne({ $or: [{ email: req.body.owner }, { username: req.body.owner }] }).exec()).then(function (owner) {
+            return (!req.body.owner ? Promise.resolve(req.user) : User.findOne({ $or: [{ email: req.body.owner }, { username: req.body.owner }] }).exec()).then(function (owner) {
                 
                 if (!owner)
                     throw new util.RestError(gettext("Could not resolve the new group's owner"));
@@ -188,7 +190,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 
                 return Group.find({ "_sec.groups": group._id }).exec().then(function (subgroups) {
                     
-                    return Q.all(util.transform_(subgroups, function (g) {
+                    return Promise.all(util.transform_(subgroups, function (g) {
                         
                         var index = g._sec.groups.indexOf(group._id);
                         if (index != -1)
@@ -243,7 +245,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	// Grouping webbles - i.e. publishing them under a group (and thus sanctioning them)
 	// Grouping object - i.e. generic addition of any object to a group (should I deprecate the more specific versions?)
 	//
-	var groupingOps = require('../lib/ops/grouping')(Q, app, config, mongoose, gettext, auth);
+	var groupingOps = require('../lib/ops/grouping')(app, config, mongoose, gettext, auth);
 
 	app.put('/api/groups/:id/users', auth.usr, function (req, res) {
 

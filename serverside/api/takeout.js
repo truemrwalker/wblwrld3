@@ -27,12 +27,13 @@
 ////////////////////////////////////////////////////////////////////////
 // Development webbles API for creating and exposing new templates
 //
+var Promise = require("bluebird");
+
 var path = require('path');
 var tar = require('tar-stream');
-
 var util = require('../lib/util');
 
-module.exports = function (Q, app, config, mongoose, gettext, auth) {
+module.exports = function (app, config, mongoose, gettext, auth) {
 	
 	var Webble = mongoose.model('Webble');
 	var DevWebble = mongoose.model('DevWebble');
@@ -50,7 +51,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Basic routes for webbles
 	//
-	var fsOps = require('../lib/ops/gfsing')(Q, app, config, mongoose, gettext, auth);
+	var fsOps = require('../lib/ops/gfsing')(app, config, mongoose, gettext, auth);
 	
 	app.get('/api/takeout/devwebbles', auth.dev, function (req, res) {
         
@@ -67,7 +68,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				return soFar.then(function () {
 					return fsOps.exportFiles(req, w, path.join(devWebbleDir, w._id.toString()), pack);
 				});
-			}, Q.resolve(null));
+			}, Promise.resolve(null));
 
 		}).then(function () {
 
@@ -143,7 +144,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
         }).then(function (result) {
             
-            return Q.all(util.transform_(result.objs, function (w) {
+            return Promise.all(util.transform_(result.objs, function (w) {
 
                 return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString())).then(function (files) {
                     return normalizeWebble(w, files);

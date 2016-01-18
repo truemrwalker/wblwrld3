@@ -23,12 +23,13 @@
 // templates.js
 // Created by Giannis Georgalis on 12/12/13
 //
+var Promise = require("bluebird");
+
 var path = require('path');
 var fs = require('fs');
-
 var util = require('../../lib/util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Webble = mongoose.model('Webble');
 
@@ -54,7 +55,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
     ////////////////////////////////////////////////////////////////////
     // Routes for Templates
     //
-	var fsOps = require('../../lib/ops/fsing')(Q, app, config, mongoose, gettext, auth);
+	var fsOps = require('../../lib/ops/fsing')(app, config, mongoose, gettext, auth);
 
 	app.get('/api/dev/templates', auth.dev, function (req, res) {
 

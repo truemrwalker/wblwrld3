@@ -23,9 +23,11 @@
 // user.js
 // Created by Giannis Georgalis on 10/29/13
 //
+var Promise = require("bluebird");
+
 var crypto = require('crypto');
 
-module.exports = function(Q, app, config, mongoose, gettext) {
+module.exports = function(app, config, mongoose, gettext) {
 
 	// Define the schema:
 	//

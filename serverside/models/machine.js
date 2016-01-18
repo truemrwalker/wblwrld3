@@ -23,7 +23,9 @@
 // machine.js
 // Created by Giannis Georgalis on 12/11/14
 //
-module.exports = function(Q, app, config, mongoose, gettext) {
+var Promise = require("bluebird");
+
+module.exports = function(app, config, mongoose, gettext) {
     
     var ServiceSchema = new mongoose.Schema( {
 

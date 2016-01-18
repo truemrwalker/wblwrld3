@@ -34,12 +34,12 @@ var path = require('path');
 ////////////////////////////////////////////////////////////////////////
 //
 //
-module.exports.executeAllScripts = function (scriptDirectory, Q, app, config, mongoose, gettext, specificLoadOrderList) {
+module.exports.executeAllScripts = function (scriptDirectory, app, config, mongoose, gettext, specificLoadOrderList) {
 
 	var allScripts = fs.readdirSync(scriptDirectory)
 		.filter(function(f) { return path.extname(f) == '.js'; });
 
-	var loadOrderPromise = Q.resolve(null);
+	var loadOrderPromise = Promise.resolve(null);
 	if (specificLoadOrderList && specificLoadOrderList.length > 1) {
 
 		specificLoadOrderList.forEach(function(script) {
@@ -49,7 +49,7 @@ module.exports.executeAllScripts = function (scriptDirectory, Q, app, config, mo
 
 				allScripts.splice(index, 1);
 				loadOrderPromise = loadOrderPromise.then(function() {
-					return require(path.join(scriptDirectory, script))(Q, app, config, mongoose, gettext);
+					return require(path.join(scriptDirectory, script))(app, config, mongoose, gettext);
 				});
 			}
 		});
@@ -60,10 +60,10 @@ module.exports.executeAllScripts = function (scriptDirectory, Q, app, config, mo
 		var promises = [];
 
 		allScripts.forEach(function(script) {
-			promises.push(require(path.join(scriptDirectory, script))(Q, app, config, mongoose, gettext));
+			promises.push(require(path.join(scriptDirectory, script))(app, config, mongoose, gettext));
 		});
 
-        return Q.all(promises).then(function () { return 0; }, function (err) {
+        return Promise.all(promises).then(function () { return 0; }, function (err) {
 
             console.error("Error: ", err);
             return 1;
@@ -73,7 +73,7 @@ module.exports.executeAllScripts = function (scriptDirectory, Q, app, config, mo
 
 //**********************************************************************
 
-module.exports.executeAllScriptsSync = function (scriptDirectory, Q, app, config, mongoose, gettext, specificLoadOrderList) {
+module.exports.executeAllScriptsSync = function (scriptDirectory, app, config, mongoose, gettext, specificLoadOrderList) {
 
 	var allScripts = fs.readdirSync(scriptDirectory)
 		.filter(function(f) { return path.extname(f) == '.js'; });
@@ -86,19 +86,19 @@ module.exports.executeAllScriptsSync = function (scriptDirectory, Q, app, config
 			if (index != -1) {
 
 				allScripts.splice(index, 1);
-				require(path.join(scriptDirectory, script))(Q, app, config, mongoose, gettext);
+				require(path.join(scriptDirectory, script))(app, config, mongoose, gettext);
 			}
 		});
 	}
 
 	allScripts.forEach(function(script) {
-		require(path.join(scriptDirectory, script))(Q, app, config, mongoose, gettext);
+		require(path.join(scriptDirectory, script))(app, config, mongoose, gettext);
 	});
 };
 
 //**********************************************************************
 
-module.exports.executeAllRouteScriptsSync = function (scriptDirectory, Q, app, config, mongoose, gettext, auth) {
+module.exports.executeAllRouteScriptsSync = function (scriptDirectory, app, config, mongoose, gettext, auth) {
 
 	fs.readdirSync(scriptDirectory).forEach(function(apiModule) {
 		try {
@@ -107,11 +107,11 @@ module.exports.executeAllRouteScriptsSync = function (scriptDirectory, Q, app, c
 			var stats = fs.statSync(filePath);
 
 			if (stats.isFile())
-				require(filePath)(Q, app, config, mongoose, gettext, auth);
+				require(filePath)(app, config, mongoose, gettext, auth);
 			else if (stats.isDirectory()) {
 
 				fs.readdirSync(filePath).forEach(function (apiSubModule) {
-					require(path.join(filePath, apiSubModule))(Q, app, config, mongoose, gettext, auth);
+					require(path.join(filePath, apiSubModule))(app, config, mongoose, gettext, auth);
 				});
 			}
 		}
@@ -123,11 +123,11 @@ module.exports.executeAllRouteScriptsSync = function (scriptDirectory, Q, app, c
 
 //**********************************************************************
 
-module.exports.executeAllSocketScriptsSync = function (scriptDirectory, Q, app, config, mongoose, gettext, io, socketAuth) {
+module.exports.executeAllSocketScriptsSync = function (scriptDirectory, app, config, mongoose, gettext, io, socketAuth) {
 
 	fs.readdirSync(scriptDirectory).forEach(function(rtModule) {
 		try {
-			require(path.join(scriptDirectory, rtModule))(Q, app, config, mongoose, gettext, io, socketAuth);
+			require(path.join(scriptDirectory, rtModule))(app, config, mongoose, gettext, io, socketAuth);
 		}
 		catch (e) {
 			console.log("Could not load realtime module:", rtModule, "ERROR:", e);

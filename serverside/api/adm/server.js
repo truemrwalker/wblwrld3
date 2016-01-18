@@ -23,15 +23,15 @@
 // server.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
-////////////////////////////////////////////////////////////////////////
-// Server management stuff
-//
+var Promise = require("bluebird");
 
 var cp = require('child_process');
 var path = require('path');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+////////////////////////////////////////////////////////////////////////
+// Server management stuff
+//
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/adm/server/restart', auth.adm, function (req, res) {
 

@@ -23,13 +23,15 @@
 // templates.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var path = require('path');
 var fs = require('fs');
 
 var util = require('../lib/util');
 var xfs = require('../lib/xfs');
 
-module.exports = function(Q, app, config, mongoose, gettext) {
+module.exports = function(app, config, mongoose, gettext) {
 
 	var Webble = mongoose.model('Webble');
 	var User = mongoose.model('User');
@@ -67,17 +69,16 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		var owner = info.author;
 		var pubgroup = info.group;
 
-		return Q.spread([owner && User.findOne({$or: [{email: owner}, {username: owner}]}).exec(),
-				pubgroup && Group.findOne({$or: [{email: pubgroup}, {name: pubgroup}]}).exec()],
-			function (user, group) {
-
-				if (user)
-					w._owner = user._id;
-				if (group)
-					w._sec.groups.push(group._id);
-
-				return w.save();
-			});
+		return Promise.resolve([owner && User.findOne({$or: [{email: owner}, {username: owner}]}).exec(),
+				pubgroup && Group.findOne({$or: [{email: pubgroup}, {name: pubgroup}]}).exec()]).spread(function (user, group) {
+            
+            if (user)
+                w._owner = user._id;
+            if (group)
+                w._sec.groups.push(group._id);
+            
+            return w.save();
+        });
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -163,7 +164,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 		// Wait to finish and report the templates that were updated
 		//
-        return Q.all(promises).then(function (results) {
+        return Promise.all(promises).then(function (results) {
             
             results.forEach(function (result) {
                 

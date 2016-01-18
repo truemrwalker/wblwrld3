@@ -23,11 +23,11 @@
 // publishing.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
+var Promise = require("bluebird");
 
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Group = mongoose.model('Group');
 
@@ -110,7 +110,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		publish: function (req, query, createNewObjFunc, checkAndupdateObjFunc) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
 				.then(function(obj) {
 
 					if (!obj) {
@@ -152,7 +152,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 					obj._updated = Date.now();
 
-					return Q.all(pub_promises).then(function() {
+					return Promise.all(pub_promises).then(function() {
 						return obj.save();
 					});
 				});
@@ -162,7 +162,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		unpublish: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj, 204); // 204 (No Content) per RFC2616
 

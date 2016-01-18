@@ -23,10 +23,11 @@
 // licensing.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var User = mongoose.model('User');
 	var Group = mongoose.model('Group');
@@ -54,9 +55,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		});
 
 		if (index != -1)
-			return Q.resolve(obj._auth.keys[index]);
+			return Promise.resolve(obj._auth.keys[index]);
 		else if (!obj._sec.groups || obj._sec.groups.length == 0)
-			return Q.resolve(null);
+			return Promise.resolve(null);
 		else {
 
 			return populateGroups(obj).then(function (obj) {
@@ -67,7 +68,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 						return result || findKeyRecursively(g, realm, resource);
 					});
 
-				}, Q.resolve(null));
+				}, Promise.resolve(null));
 			});
 		}
 	}
@@ -81,12 +82,12 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		});
 
 		if (!obj._sec.groups || obj._sec.groups.length == 0)
-			return Q.resolve(null);
+			return Promise.resolve(null);
 		else {
 
 			return populateGroups(obj).then(function (obj) {
 
-				return Q.all(util.transform(obj._sec.groups, function (g) {
+				return Promise.all(util.transform(obj._sec.groups, function (g) {
 					return listKeysRecursively(g, user, resultsArray);
 				}));
 			});
@@ -100,7 +101,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyKey: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 
@@ -132,7 +133,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getKey: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 
@@ -147,7 +148,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		listKeys: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
 				.then(function(obj) {
 					ensureObjectValid(req, obj);
 

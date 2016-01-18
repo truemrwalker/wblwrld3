@@ -23,6 +23,7 @@
 // machine.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 var os = require('os');
 var zmq = require('zmq');
@@ -62,7 +63,7 @@ function getIPv4Addresses() {
 ////////////////////////////////////////////////////////////////////////
 // 
 //
-module.exports = function(Q, app, config, mongoose, gettext, webServer) {
+module.exports = function(app, config, mongoose, gettext, webServer) {
     
     var Machine = mongoose.model('Machine');
 
@@ -95,7 +96,7 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
             var retryCount = 0, prevMachine = machine;
             var retry = function () {
                 
-                return Q.delay(1000).then(function () {
+                return Promise.delay(1000).then(function () {
                     
                     if (++retryCount == 5)
                         return prevMachine; // Hostile takeover of the machine lock
@@ -112,12 +113,12 @@ module.exports = function(Q, app, config, mongoose, gettext, webServer) {
     function releaseMachine(machine) {
         
         //machine.update({ $set : { _locked: false } }).exec();
-        //return Q.resolve(null);
+        //return Promise.resolve(null);
         
         machine._locked = false;
         machine.markModified('_locked');
 
-        return Q.resolve(machine.save());
+        return Promise.resolve(machine.save());
     }
 
     ////////////////////////////////////////////////////////////////////

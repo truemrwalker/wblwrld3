@@ -23,15 +23,15 @@
 // webbles.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
+var path = require('path');
+var util = require('../lib/util');
 
 ////////////////////////////////////////////////////////////////////////
 // At startup, load all webble descriptions from disk
 //
-var path = require('path');
-
-var util = require('../lib/util');
-
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Webble = mongoose.model('Webble');
 	var User = mongoose.model('User');
@@ -47,7 +47,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
     // Routes for Webbles
     //
-	var verifyOps = require('../lib/ops/verifying')(Q, app, config, mongoose, gettext, auth);
+	var verifyOps = require('../lib/ops/verifying')(app, config, mongoose, gettext, auth);
 
 	app.get('/api/webbles', auth.non, function (req, res) {
 
@@ -184,7 +184,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Modifying and creating webbles
 	//
-	var publishingOps = require('../lib/ops/publishing')(Q, app, config, mongoose, gettext, auth);
+	var publishingOps = require('../lib/ops/publishing')(app, config, mongoose, gettext, auth);
 
 	app.put('/api/webbles/:id', auth.usr, function(req, res) {
 
@@ -236,7 +236,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Sharing webbles
 	//
-	var sharingOps = require('../lib/ops/sharing')(Q, app, config, mongoose, gettext, auth);
+	var sharingOps = require('../lib/ops/sharing')(app, config, mongoose, gettext, auth);
 
 	app.put('/api/webbles/:id/share', auth.usr, function(req, res) {
 
@@ -277,7 +277,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Rating webbles
 	//
-	var ratingOps = require('../lib/ops/rating')(Q, app, config, mongoose, gettext, auth);
+	var ratingOps = require('../lib/ops/rating')(app, config, mongoose, gettext, auth);
 
 	app.put('/api/webbles/:id/rating', auth.usr, function(req, res) {
 

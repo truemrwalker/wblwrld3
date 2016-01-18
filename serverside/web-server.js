@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////
 // Load essential modules
 //
-var Q = require('q');
+var Promise = require("bluebird");
 
 // Express & Friends
 var express = require('express');
@@ -51,15 +51,7 @@ var gettext = function(str) { return str; };
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
 
-// Temporarily until we replace Q with Bluebird
-//
-Q.promisify = function (method, options) {
-
-    var ctx = options && options.context;
-    return ctx ? Q.nbind(method, ctx) : Q.denodeify(method);
-};
-
-mongoose.Promise = Q.Promise; // see: http://mongoosejs.com/docs/promises.html
+mongoose.Promise = Promise; // see: http://mongoosejs.com/docs/promises.html
 
 //mongoose.set('debug', true);
 mongoose.connect(config.MONGODB_URL, function (err) {
@@ -112,17 +104,17 @@ var app = (function createApp(){
     // 2. Configure database models and set up routes
     //
     loader.executeAllScriptsSync(path.join(__dirname, 'models'),
-		Q, app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
+		app, config, mongoose, gettext, ['user.js', 'group.js', 'webble.js', 'workspace.js']);
     
     // Setup the authentication token
-    var auth = require('./auth/auth')(Q, app, config, mongoose, gettext);
+    var auth = require('./auth/auth')(app, config, mongoose, gettext);
     
     // Load all modules that define the web server's routes
     loader.executeAllRouteScriptsSync(path.join(__dirname, 'api'),
-		Q, app, config, mongoose, gettext, auth);
+		app, config, mongoose, gettext, auth);
     
     loader.executeAllRouteScriptsSync(path.join(__dirname, 'files'),
-		Q, app, config, mongoose, gettext, auth);
+		app, config, mongoose, gettext, auth);
     
     // 3. Second part of middleware initialization (after having had set up routes)
     //    
@@ -146,11 +138,11 @@ function initSocketServer(webServer) {
 
     // Start under endpoint for easier reverse proxy configuration
     var io = require('socket.io')(webServer).of('/socket.io/endpt');
-	var socketAuth = require('./auth/auth-socket')(Q, app, config, mongoose, gettext, io);
+	var socketAuth = require('./auth/auth-socket')(app, config, mongoose, gettext, io);
 
     // Load all real-time modules
 	loader.executeAllSocketScriptsSync(path.join(__dirname, 'realtime'),
-		Q, app, config, mongoose, gettext, io, socketAuth);
+		app, config, mongoose, gettext, io, socketAuth);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -158,7 +150,7 @@ function initSocketServer(webServer) {
 //
 function initControlServer(webServer) {
 
-    var ctrl = require('./control/machine')(Q, app, config, mongoose, gettext, webServer);
+    var ctrl = require('./control/machine')(app, config, mongoose, gettext, webServer);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -213,14 +205,14 @@ function startAllServers() {
 function serverEntryPoint() {
 
 	// Execute code based on the deployment mode
-	var promise = Q.resolve(0);
+	var promise = Promise.resolve(0);
 	var shouldExit = false;
 
 	switch(config.DEPLOYMENT) {
 
 		case 'bootstrap':
 			promise = loader.executeAllScripts(path.join(__dirname, 'bootstrap'),
-				Q, app, config, mongoose, gettext);
+				app, config, mongoose, gettext);
 			shouldExit = true;
 			break;
 		case 'maintenance':
@@ -228,7 +220,7 @@ function serverEntryPoint() {
 		case 'development':
 		case 'testing':
 			promise = loader.executeAllScripts(path.join(__dirname, 'maintenance'),
-				Q, app, config, mongoose, gettext, ['templates.js', 'files.js']);
+				app, config, mongoose, gettext, ['templates.js', 'files.js']);
 			break;
 	}
 	return promise.then(shouldExit ? process.exit : startAllServers);

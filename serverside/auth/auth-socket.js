@@ -23,12 +23,13 @@
 // auth-socket.js
 // Created by Giannis Georgalis on 1/22/14
 //
+var Promise = require("bluebird");
 
 // Summon the cookieParser for parsing signed cookiez
 var cookie = require('cookie');
 var parser = require('cookie-parser');
 
-module.exports = function(Q, app, config, mongoose, gettext, io) {
+module.exports = function(app, config, mongoose, gettext, io) {
 
 	var User = mongoose.model('User');
 	var sessionStore = app.get('sessionStore');

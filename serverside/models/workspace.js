@@ -23,7 +23,9 @@
 // workspace.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-module.exports = function(Q, app, config, mongoose, gettext) {
+var Promise = require("bluebird");
+
+module.exports = function(app, config, mongoose, gettext) {
 
 	var WebbleSchema = mongoose.model('Webble').schema;
 

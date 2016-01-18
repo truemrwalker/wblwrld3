@@ -60,6 +60,10 @@ function applyOp(self, op, arg) {
 ////////////////////////////////////////////////////////////////////////
 // Public methods
 //
+module.exports.execOrValue = function (value) {
+    return ('exec' in value) ? value.exec() : value;
+};
+
 module.exports.qOR = function (/*variable args...*/) {
 
 	// Exec'able object

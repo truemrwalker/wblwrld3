@@ -23,11 +23,11 @@
 // grouping.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
+var Promise = require("bluebird");
 
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Group = mongoose.model('Group');
 
@@ -55,10 +55,10 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyGroupMember: function (req, groupQuery, query) {
 
-			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
+			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
-				return Q.resolve(query.exec()).then(function (obj) {
+				return Promise.resolve(query.exec()).then(function (obj) {
 					ensureObjectValid(req, obj);
 
 					var index = obj._sec.groups.indexOf(group._id);
@@ -87,7 +87,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getGroupMembers: function (req, groupQuery, query) {
 
-			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
+			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
 				return query.where('_sec.groups').equals(group._id).exec().then(function (results) {
@@ -102,13 +102,13 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearGroupMembers: function (req, groupQuery, query) {
 
-			return ('exec' in groupQuery ? Q.resolve(groupQuery.exec()) : Q.resolve(groupQuery)).then(function(group) {
+			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
 				return query.where('_sec.groups').equals(group._id).exec().then(function (results) {
 					ensureObjectValid(req, results);
 
-					return Q.all(util.transform(results, function (obj) {
+					return Promise.all(util.transform(results, function (obj) {
 
 						var index = obj._sec.groups.indexOf(group._id);
 						if (index != -1)

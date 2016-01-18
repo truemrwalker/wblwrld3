@@ -23,11 +23,12 @@
 // google.js
 // Created by Giannis Georgalis on 10/30/13
 //
+var Promise = require("bluebird");
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var util = require('../../lib/util');
 
-module.exports = function(Q, app, config, gettext, passport, User, doneAuth) {
+module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
     var authError = new Error("Google Auth Error", "auth-google.js");
 

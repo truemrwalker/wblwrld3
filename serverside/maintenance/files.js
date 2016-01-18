@@ -23,6 +23,8 @@
 // files.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var path = require('path');
 var mkdirp = require('mkdirp');
 var fs = require('fs');
@@ -31,7 +33,7 @@ var libGfs = require('../lib/gfs');
 var util = require('../lib/util');
 var xfs = require('../lib/xfs');
 
-module.exports = function(Q, app, config, mongoose, gettext) {
+module.exports = function(app, config, mongoose, gettext) {
 
 	var Webble = mongoose.model('Webble');
 	var DevWebble = mongoose.model('DevWebble');
@@ -42,18 +44,18 @@ module.exports = function(Q, app, config, mongoose, gettext) {
     
     var backupDir = path.join(config.APP_ROOT_DIR, 'backup');
 
-	var gfs = new libGfs.GFS(Q, mongoose);
+	var gfs = new libGfs.GFS(mongoose);
     
-    var mkdirpAsync = Q.promisify(mkdirp);
+    var mkdirpAsync = Promise.promisify(mkdirp);
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
     function statIfExists(localFilePath) {
-        return Q.promisify(fs.stat)(localFilePath).catch(function (err) { return null; });
+        return Promise.promisify(fs.stat)(localFilePath).catch(function (err) { return null; });
     }
     function changeMTime(localFilePath, mtime) {        
-        return Q.promisify(fs.utimes)(localFilePath, 0, mtime);
+        return Promise.promisify(fs.utimes)(localFilePath, 0, mtime);
     }
 
     function syncWebbleFileEntry(localFilePath, localStat, remoteFile) {
@@ -104,24 +106,24 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
         var pathComponents = relativeDirectory.split(path.sep);        
         if (pathComponents.length < 3)
-            return Q.reject(new Error("Wrong webble relative directory"));
+            return Promise.reject(new Error("Wrong webble relative directory"));
 
 		var category = pathComponents[0], id = pathComponents[1], ver = pathComponents[2];
 
-        var promise = Q.resolve(null);
+        var promise = Promise.resolve(null);
         if (category == 'devwebbles') {
             
             try {
-                promise = Q.resolve(DevWebble.findById(mongoose.Types.ObjectId(id)).exec());
+                promise = Promise.resolve(DevWebble.findById(mongoose.Types.ObjectId(id)).exec());
             }
 			catch (err) {
                 console.error("Invalid PATH for webble at directory:", relativeDirectory);
             }
         }
         else if (category == 'webbles')
-            promise = Q.resolve(Webble.findOne({ "webble.defid": id }).exec());
+            promise = Promise.resolve(Webble.findOne({ "webble.defid": id }).exec());
         else
-            return Q.reject(new Error("Cannot recognize webble category"));
+            return Promise.reject(new Error("Cannot recognize webble category"));
         
         return getWebbleIdCache[relativeDirectory] = promise.then(function (webble) {            
             return webble && webble._id;
@@ -133,13 +135,13 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 	function syncLocalWebbleFile(localDir, remoteDir, filename) {
 
         if (!remoteDir)
-            return Q.reject(new Error("Remote directory is wrong"));
+            return Promise.reject(new Error("Remote directory is wrong"));
 
         return getWebbleId(remoteDir).then(function (ownerId) {
             
             var localFilePath = path.join(localDir, filename);
             
-            return Q.all([statIfExists(localFilePath), gfs.getFile(remoteDir, filename, ownerId)])
+            return Promise.all([statIfExists(localFilePath), gfs.getFile(remoteDir, filename, ownerId)])
                 .spread(function (localStat, remoteFile) {
                 
                     if (!remoteFile) {
@@ -168,12 +170,12 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		try {
 
 			if (!fs.statSync(webbleBaseDir).isDirectory())
-				return Q.reject(new Error("Is not a directory"));
+				return Promise.reject(new Error("Is not a directory"));
 		}
 		catch(e) {
 
 			// This is expected (esp. for devwebbles), so, report success - we've finished!
-			return Q.resolve(null);
+			return Promise.resolve(null);
 		}
         
         // Push the tasks to sync the local files
@@ -217,7 +219,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
                 return true; // prune
             }
         });
-		return Q.all(promises);
+		return Promise.all(promises);
 	}
 
 	//******************************************************************
@@ -229,7 +231,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
         return gfs.listAllFiles().then(function (files) {
             
-            return Q.all(util.transform_(files, function (f) {
+            return Promise.all(util.transform_(files, function (f) {
                 
                 if (!f.filename || !f.metadata) // Just log the error for now - TODO: handle it in the future
                     return console.error("Corrupt file in db:", f._id);

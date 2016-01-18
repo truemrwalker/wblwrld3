@@ -23,9 +23,11 @@
 // users.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var util = require('../lib/util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var User = mongoose.model('User');
 
@@ -67,7 +69,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	//******************************************************************
 
-	var trustingOps = require('../lib/ops/trusting')(Q, app, config, mongoose, gettext, auth);
+	var trustingOps = require('../lib/ops/trusting')(app, config, mongoose, gettext, auth);
 
 	app.get('/api/users/trusts', auth.usr, function(req, res) {
 
@@ -156,7 +158,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	app.put('/api/users/groups', auth.usr, function(req, res) {
 
-		Q.try(function() { return mongoose.Types.ObjectId(req.body.group); }).then(function (gId) {
+		Promise.try(function() { return mongoose.Types.ObjectId(req.body.group); }).then(function (gId) {
             
             var index = req.user._sec.groups.indexOf(gId);
             

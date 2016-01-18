@@ -23,9 +23,11 @@
 // verifying.js
 // Created by Giannis Georgalis on 2/6/14
 //
+var Promise = require("bluebird");
+
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var User = mongoose.model('User');
 	var Group = mongoose.model('Group');
@@ -42,9 +44,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	function verifyGroupRecursively(trustVector, groupId) {
 
 		if (!groupId)
-			return Q.resolve(false);
+			return Promise.resolve(false);
 		else if (trustVector.indexOf(groupId) !== -1)
-			return Q.resolve(true);
+			return Promise.resolve(true);
 		else {
 
 			return Group.findById(groupId).exec().then(function(grp) {
@@ -70,7 +72,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		//
 		verify: function(req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (objs) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (objs) {
                 ensureObjectValid(req, objs);
                 
                 if (!(objs instanceof Array)) // Sometimes we want to verify just one object
@@ -110,10 +112,10 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                             if (promises.length == 0) // This can never happen mate!
                                 throw new util.RestError(gettext("Halo!"));
                             
-                            results.push(Q.all(promises).then(util.anyTrue));
+                            results.push(Promise.all(promises).then(util.anyTrue));
                         }
                     });
-                    return Q.all(results);
+                    return Promise.all(results);
                 }
             });
 		},

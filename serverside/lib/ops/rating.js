@@ -23,9 +23,11 @@
 // rating.js
 // Created by Giannis Georgalis on 2/7/14
 //
+var Promise = require("bluebird");
+
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Post = mongoose.model('Post');
 
@@ -53,7 +55,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		updateRatings: function (req, query) {
 
-			return Q.resolve(query.exec()).then(function (obj) {
+			return Promise.resolve(query.exec()).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 if (!req.body.rating || req.body.rating <= 0 || req.body.rating > 10)
@@ -94,7 +96,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		getRatings: function (req, query) {
 
-			return Q.resolve(query.exec()).then(function (obj) {
+			return Promise.resolve(query.exec()).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 var query = util.buildQuery(req.query, ['q'], 'post');
@@ -123,7 +125,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearRatings: function (req, query) {
 
-			return Q.resolve(query.exec()).then(function (obj) {
+			return Promise.resolve(query.exec()).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 obj._rating.average = 0;

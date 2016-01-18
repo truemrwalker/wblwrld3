@@ -23,11 +23,12 @@
 // chat.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 ////////////////////////////////////////////////////////////////////////
 // Implementation of the real-time chat application
 //
-module.exports = function(Q, app, config, mongoose, gettext, io, auth) {
+module.exports = function(app, config, mongoose, gettext, io, auth) {
 
     io.on('connection', function (socket) {
 

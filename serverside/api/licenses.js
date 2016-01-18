@@ -23,11 +23,12 @@
 // licenses.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 var util = require('../lib/util');
 var dbutil = require('../lib/dbutil');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Group = mongoose.model('Group');
 	var User = mongoose.model('User');
@@ -48,7 +49,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Managing licenses
 	//
-	var licensingOps = require('../lib/ops/licensing')(Q, app, config, mongoose, gettext, auth);
+	var licensingOps = require('../lib/ops/licensing')(app, config, mongoose, gettext, auth);
 
 	app.get('/api/licenses/user', auth.usr, function (req, res) {
 

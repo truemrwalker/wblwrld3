@@ -23,19 +23,21 @@
 // gfsing.js
 // Created by Giannis Georgalis on 4/23/15
 //
+var Promise = require("bluebird");
+var Busboy = require('busboy');
+
 var path = require('path');
 var fs = require('fs');
 var tar = require('tar-stream');
 
-var Busboy = require('busboy');
-
 var util = require('../util');
+var dbutil = require('../dbutil');
 var libGfs = require('../gfs');
 
-module.exports = function (Q, app, config, mongoose, gettext, auth) {
+module.exports = function (app, config, mongoose, gettext, auth) {
 	
 	var User = mongoose.model('User');
-	var gfs = new libGfs.GFS(Q, mongoose);
+	var gfs = new libGfs.GFS(mongoose);
 	
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
@@ -56,7 +58,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	
 	function saveFiles(req, targetPath, ownerId) {
         
-        return Q.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             
             var busboy = new Busboy({ headers: req.headers });
             var promises = [];
@@ -68,7 +70,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
                 req.body[fieldName] = value;
             });
             busboy.on('finish', function () {
-                Q.all(promises).then(resolve, reject);
+                Promise.all(promises).then(resolve, reject);
             });
             req.pipe(busboy);
         });
@@ -96,10 +98,10 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	
 	function importAllFiles(req, targetPathPrefix, objGetterAsync, objSetterAsync) {
         
-        return Q.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             
             var busboy = new Busboy({ headers: req.headers });
-            var promise = Q.resolve(null);
+            var promise = Promise.resolve(null);
             var importResult = { objs: [], targetPath: targetPathPrefix };
             
             busboy.on('file', function (fieldName, tarStream, filename, encoding, mimeType) {
@@ -127,7 +129,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 
 	function importFiles(tarStream, targetPathPrefix, objGetterAsync, objSetterAsync) {
 		
-		return Q.Promise(function (resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			
 			var extract = tar.extract();            
             var targetObj = null, targetPath = null;
@@ -206,7 +208,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		return gfs.getFiles(targetPath, ownerId).then(function (files) {
 			
             // Obv., we need to store the files in the pack sequentially
-            return Q.Promise(function (resolve, reject) {
+            return new Promise(function (resolve, reject) {
 
                 var next = function (err) {
                     
@@ -238,7 +240,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 	
 	function performOperationOnFile(req, query, targetPathPrefix, op) {
 		
-		return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {			
+		return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {			
 			ensureObjectValid(req, obj);
 			
 			var targetVer = obj.getInfoObject().ver;
@@ -296,7 +298,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		exportFiles: function (req, query, targetPathPrefix, pack) {
 			
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
 				
 				ensureObjectValid(req, obj);
 				
@@ -306,7 +308,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		importFiles: function (req, query, targetPathPrefix, objGetterAsync, objSetterAsync) {
 			
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
 				// ensureObjectValid(req, obj);
 				
 				// Ignore everything we get from query ... we don't really use it now
@@ -320,7 +322,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 			
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var targetVer = versionUpdater(obj);
@@ -344,7 +346,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		associatedFiles: function (req, query, targetPathPrefix) {
 			
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var targetVer = obj.getInfoObject().ver;
@@ -358,7 +360,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 			
-			return Q.resolve(query.exec()).then(function (obj) {
+			return Promise.resolve(query.exec()).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var info = obj.getInfoObject();
@@ -390,8 +392,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
 			
-			return Q.spread([('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery))], function (fromObj, toObj) {
+			return Promise.resolve([dbutil.execOrValue(fromQuery), dbutil.execOrValue(toQuery)]).spread(function (fromObj, toObj) {
 				ensureObjectValid(req, fromObj);
 				
 				var fromVer = fromObj.getInfoObject().ver;
@@ -404,7 +405,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 				
 				return moveFiles(fromPath, toPath).then(function () {
 					
-					return Q.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
+					return Promise.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
 				});
 			});
 		},
@@ -413,9 +414,7 @@ module.exports = function (Q, app, config, mongoose, gettext, auth) {
 		
 		copyFiles: function (req, fromQuery, toQuery, fromPathPrefix, toPathPrefix) {
 			
-			return Q.spread([('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
-				('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery))],
-				function (fromObj, toObj) {
+			return Promise.resolve([dbutil.execOrValue(fromQuery), dbutil.execOrValue(toQuery)]).spread(function (fromObj, toObj) {
 				ensureObjectValid(req, fromObj, true);
 				
 				var fromVer = fromObj.getInfoObject().ver;

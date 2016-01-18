@@ -23,10 +23,11 @@
 // trusting.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 var util = require('../util');
 
-module.exports = function(Q, app, config, mongoose, gettext, auth) {
+module.exports = function(app, config, mongoose, gettext, auth) {
 
 	var Group = mongoose.model('Group');
 
@@ -49,9 +50,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	function getGroupId(idString) {
 
 		try {
-			return Q.resolve(mongoose.Types.ObjectId(idString));
+			return Promise.resolve(mongoose.Types.ObjectId(idString));
 		} catch (err) {
-			return Q.reject(new util.RestError("Invalid Group Description"));
+			return Promise.reject(new util.RestError("Invalid Group Description"));
 		}
 	}
 
@@ -62,7 +63,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		modifyTrusts: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 return getGroupId(req.body.group).then(function (groupId) {
@@ -103,7 +104,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		clearTrusts: function (req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 obj._sec.trusts = [];

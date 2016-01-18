@@ -23,9 +23,9 @@
 // webble.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
-
-module.exports = function(Q, app, config, mongoose, gettext) {
+module.exports = function(app, config, mongoose, gettext) {
 
 	// Utility functions and values used in the schema
 	//
