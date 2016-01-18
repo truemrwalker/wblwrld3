@@ -43,15 +43,17 @@ module.exports = function(Q, app, config, mongoose, gettext) {
     var backupDir = path.join(config.APP_ROOT_DIR, 'backup');
 
 	var gfs = new libGfs.GFS(Q, mongoose);
+    
+    var mkdirpAsync = Q.promisify(mkdirp);
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
     function statIfExists(localFilePath) {
-        return Q.nfcall(fs.stat, localFilePath).catch(function (err) { return null; });
+        return Q.promisify(fs.stat)(localFilePath).catch(function (err) { return null; });
     }
     function changeMTime(localFilePath, mtime) {        
-        return Q.nfcall(fs.utimes, localFilePath, 0, mtime);
+        return Q.promisify(fs.utimes)(localFilePath, 0, mtime);
     }
 
     function syncWebbleFileEntry(localFilePath, localStat, remoteFile) {
@@ -81,7 +83,7 @@ module.exports = function(Q, app, config, mongoose, gettext) {
             return statIfExists(path.dirname(localFilePath)).then(function (stat) {
                 
                 if (!stat) // what about if !stat.isDirectory() ?
-                    return Q.nfcall(mkdirp, path.dirname(localFilePath));
+                    return mkdirpAsync(path.dirname(localFilePath));
 
             }).then(function () {
                 return gfs.downloadFromFileEntryUntilClosed(fs.createWriteStream(localFilePath), remoteFile);

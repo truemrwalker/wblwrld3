@@ -37,7 +37,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
-	//
+    //
+    var mkdirpAsync = Q.promisify(mkdirp);
+
 	function ensureObjectValid(req, obj, readonly) {
 
 		if (!obj)
@@ -64,118 +66,109 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		// Validate the passed-in data
 		//
-		return Q.nfcall(mkdirp, targetPath)
-			.then(function () {
+		return mkdirpAsync(targetPath).then(function () {
             
-                // NOTE: that this doesn't work because req.files is never populated by any middleware
-                // However, since I'm not using these fs ops anymore, I'm leaving it as it is for reference
-                // In case of emergency, use busboy as in the file 'gfsing.js'
-                //
-				if (!req.files || (req.files.file && req.files.file.length == 0))
-					return Q.resolve();
-
-				var files = req.files.file ? req.files.file :
+            // NOTE: that this doesn't work because req.files is never populated by any middleware
+            // However, since I'm not using these fs ops anymore, I'm leaving it as it is for reference
+            // In case of emergency, use busboy as in the file 'gfsing.js'
+            //
+            if (!req.files || (req.files.file && req.files.file.length == 0))
+                return Q.resolve();
+            
+            var files = req.files.file ? req.files.file :
 					util.transform(Object.keys(req.files), function (k) {
-						return req.files[k][0];
-					});
-
-				// Grrrrrrrrrrr.....
-				//
-				if (!(files instanceof Array) && files.originalname)
-					files = [ files ];
-				//
-
-				return Q.all(util.transform_(files, function (f) {
-					return Q.nfcall(fs.rename, f.path, path.join(targetPath, f.originalname));
-				}));
-			});
+                return req.files[k][0];
+            });
+            
+            // Grrrrrrrrrrr.....
+            //
+            if (!(files instanceof Array) && files.originalname)
+                files = [files];
+            //
+            
+            return Q.all(util.transform_(files, function (f) {
+                return Q.promisify(fs.rename)(f.path, path.join(targetPath, f.originalname));
+            }));
+        });
 	}
 	function getFiles(targetPath) {
 
-		return Q.nfcall(fs.readdir, targetPath)
-			.then(omitInfoJsonFile)
-			.catch(function() { return [] });
+		return Q.promisify(fs.readdir)(targetPath).then(omitInfoJsonFile)
+			.catch(function () { return [] });
 	}
 	function removeFiles(targetPath) {
 
-		return Q.nfcall(fs.readdir, targetPath)
-			.then(function(files) {
+		return Q.promisify(fs.readdir)(targetPath).then(function (files) {
 
-				return Q.all(util.transform_(files, function (f) {
-						return Q.nfcall(fs.unlink, path.join(targetPath, f));
-					}))
-					.then(function() {
-						return Q.nfcall(fs.rmdir, targetPath);
-					});
+            return Q.all(util.transform_(files, function (f) {
+                return Q.promisify(fs.unlink)(path.join(targetPath, f));
+            })).then(function () {
+                return Q.promisify(fs.rmdir)(targetPath);
+            });
 
-			}, function(err) {
-
-				if (err.code !== 'ENOENT')
-					throw err;
-			});
+        }, function (err) {
+            
+            if (err.code !== 'ENOENT')
+                throw err;
+        });
 	}
 	function moveFiles(fromPath, toPath) {
 
-		return Q.nfcall(mkdirp, toPath)
-			.then(function() {
-				return Q.nfcall(fs.readdir, fromPath);
-			})
-			.then(function(files) {
+		return mkdirpAsync(toPath).then(function () {
+            return Q.promisify(fs.readdir)(fromPath);
+        }).then(function (files) {
+            
+            return Q.all(util.transform(files, function (f) {
+                return Q.promisify(fs.rename)(path.join(fromPath, f), path.join(toPath, f));
+            }));
 
-				return Q.all(util.transform(files, function (f) {
-					return Q.nfcall(fs.rename, path.join(fromPath, f), path.join(toPath, f));
-				}));
-			})
-			.then(function() {
-				return Q.nfcall(fs.rmdir, fromPath);
-			});
+        }).then(function () {
+            return Q.promisify(fs.rmdir)(fromPath);
+        });
 	}
 	function copyFiles(fromPath, toPath) {
 
-		return Q.nfcall(mkdirp, toPath)
-			.then(function() {
-				return Q.nfcall(fs.readdir, fromPath);
-			})
-			.then(omitInfoJsonFile)
-			.then(function(files) {
+		return mkdirpAsync(toPath).then(function () {
+            return Q.promisify(fs.readdir)(fromPath);
+        }).then(omitInfoJsonFile).then(function (files) {
 
-				return Q.allSettled(util.transform(files, function (f) {
+            return Q.allSettled(util.transform(files, function (f) {
+                
+                return Q.Promise(function (resolve, reject, notify) {
+                    
+                    var readStream = fs.createReadStream(path.join(fromPath, f));
+                    readStream.on('error', reject);
+                    
+                    // Using 'readable' instead of 'open' because open is emitted even when an error occurs
+                    // Case in point, Error: EISDIR
+                    //
+                    readStream.once('readable', function () {
+                        
+                        var writeStream = fs.createWriteStream(path.join(toPath, f));
+                        writeStream.once('finish', function () { resolve(f); });
+                        writeStream.once('open', function () {
+                            readStream.pipe(writeStream); //=== writeStream
+                        });
+                        writeStream.on('error', reject);
+                    });
+                });
+            }));
 
-					return Q.Promise(function(resolve, reject, notify) {
-
-						var readStream = fs.createReadStream(path.join(fromPath, f));
-						readStream.on('error', reject);
-
-						// Using 'readable' instead of 'open' because open is emitted even when an error occurs
-						// Case in point, Error: EISDIR
-						//
-						readStream.once('readable', function() {
-
-							var writeStream = fs.createWriteStream(path.join(toPath, f));
-							writeStream.once('finish', function() { resolve(f); });
-							writeStream.once('open', function() {
-								readStream.pipe(writeStream); //=== writeStream
-							});
-							writeStream.on('error', reject);
-						});
-					});
-				}));
-			})
-			.then(function(results) {
-
-				results.forEach(function(result) {
-
-					if (result.state !== 'fulfilled')
-						console.log("COPY WARNING:", result.reason);
-				});
-			});
+        }).then(function (results) {
+            
+            results.forEach(function (result) {
+                
+                if (result.state !== 'fulfilled')
+                    console.log("COPY WARNING:", result.reason);
+            });
+        });
 	}
 	//******************************************************************
 
 	function createSymLink(linkPath, targetPath) {
 
-		return Q.nfcall(fs.unlink, linkPath).then(function() {
-			return Q.nfcall(fs.symlink, targetPath, linkPath, 'dir');
+		return Q.promisify(fs.unlink)(linkPath).then(function() {
+			return Q.promisify(fs.symlink)(targetPath, linkPath, 'dir');
 		}, function() {}); // We don't care for errors here: suppress
 	}
 
@@ -183,21 +176,21 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 	function performOperationOnFile(req, query, targetPathPrefix, op) {
 
-		return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
-			.then(function (obj) {
-				ensureObjectValid(req, obj);
-
-				var targetVer = obj.getInfoObject().ver;
-				var targetPath = path.join(targetPathPrefix, targetVer.toString());
-
-				return op(path.join(targetPath, req.params.file || req.params[0]), req.body);
-			});
+		return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (obj) {
+            ensureObjectValid(req, obj);
+            
+            var targetVer = obj.getInfoObject().ver;
+            var targetPath = path.join(targetPathPrefix, targetVer.toString());
+            
+            return op(path.join(targetPath, req.params.file || req.params[0]), req.body);
+        });
 	}
 
-	function opGet(path) {
-		return Q.nfcall(fs.readFile, path, { encoding: 'utf8' }).then(function(data) {
-			return {
+    function opGet(path) {
 
+        return Q.promisify(fs.readFile)(path, { encoding: 'utf8' }).then(function (data) {
+
+			return {
 				name: 'unknown',
 				content: data
 			};
@@ -205,9 +198,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	}
 	function opUpdate(path, props) {
 
-		return Q.nfcall(fs.writeFile, path, props.content, { encoding: 'utf8' }).then(function(data) {
-			return {
-
+		return Q.promisify(fs.writeFile)(path, props.content, { encoding: 'utf8' }).then(function(data) {
+            
+            return {
 				name: 'unknown',
 				content: data
 			};
@@ -215,9 +208,9 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	}
 	function opDelete(path) {
 
-		return Q.nfcall(fs.unlink, path).then(function() {
-			return {
+        return Q.promisify(fs.unlink)(path).then(function () {
 
+			return {
 				name: 'unknown'
 			};
 		});
@@ -271,14 +264,13 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                             
                             // .finally() Cannot be used to propagate values (apparently)
                             //
-                            return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(info))
-											.then(function () { return obj; }, function () { return obj; });
+                            return Q.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(info))
+                                .then(function () { return obj; }, function () { return obj; });
                         });
                     }
                     else {
                         
-                        return Q.nfcall(fs.readFile, targetInfoFile, 'utf8')
-									.then(function (data) {
+                        return Q.promisify(fs.readFile)(targetInfoFile, 'utf8').then(function (data) {
                             
                             var info = JSON.parse(data, 'utf8');
                             info.ver = targetVer;
@@ -314,48 +306,45 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
-			return Q.resolve(query.exec())
-				.then(function (obj) {
-					ensureObjectValid(req, obj);
-
-					var info = obj.getInfoObject();
-
-					var previousVer = info.ver;
-					var previousPath = path.join(targetPathPrefix, previousVer.toString());
-
-					return removeFiles(previousPath)
-						.then(function() {
-
-							var targetVer = versionUpdater(obj);
-
-							if (targetVer === 0) {
-
-								return Q.nfcall(fs.rmdir, targetPathPrefix)
-									.then(function() {
-										return obj.remove();
-									}, function(err) {
-
-										if (err.code !== 'ENOENT') // If the path doesn't exist it's still OK - just remove db entry
-											throw err;
-										return obj.remove();
-									});
-							}
-							else {
-
-								var targetPath = path.join(targetPathPrefix, targetVer.toString());
-								var linkPath = path.join(targetPathPrefix, 'latest');
-
-								info.ver = targetVer;
-								info.modified = Date.now();
-
-								obj.mergeWithInfoObject(info);
-
-								return createSymLink(linkPath, targetPath).then(function() {
-									return obj.save();
-								});
-							}
-						});
-				});
+			return Q.resolve(query.exec()).then(function (obj) {
+                ensureObjectValid(req, obj);
+                
+                var info = obj.getInfoObject();
+                
+                var previousVer = info.ver;
+                var previousPath = path.join(targetPathPrefix, previousVer.toString());
+                
+                return removeFiles(previousPath).then(function () {
+                    
+                    var targetVer = versionUpdater(obj);
+                    
+                    if (targetVer === 0) {
+                        
+                        return Q.promisify(fs.rmdir)(targetPathPrefix).then(function () {
+                            return obj.remove();
+                        }, function (err) {
+                            
+                            if (err.code !== 'ENOENT') // If the path doesn't exist it's still OK - just remove db entry
+                                throw err;
+                            return obj.remove();
+                        });
+                    }
+                    else {
+                        
+                        var targetPath = path.join(targetPathPrefix, targetVer.toString());
+                        var linkPath = path.join(targetPathPrefix, 'latest');
+                        
+                        info.ver = targetVer;
+                        info.modified = Date.now();
+                        
+                        obj.mergeWithInfoObject(info);
+                        
+                        return createSymLink(linkPath, targetPath).then(function () {
+                            return obj.save();
+                        });
+                    }
+                });
+            });
 		},
 
 		//**************************************************************
@@ -377,7 +366,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 ensureObjectValid(req, toObj);
                 
                 var targetInfoFile = path.join(fromPath, "info.json");
-                return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
+                return Q.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
                     return moveFiles(fromPath, toPath);
                 }).then(function () {
                     
@@ -387,7 +376,7 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 }).then(function () {
                     
                     // Remove directory completely
-                    return Q.nfcall(fs.rmdir, fromTargetPathPrefix).catch(function () { });
+                    return Q.promisify(fs.rmdir)(fromTargetPathPrefix).catch(function () { });
 
                 }).then(function () {
                     return Q.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
@@ -401,25 +390,24 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 
 			return Q.spread([ ('exec' in fromQuery ? Q.resolve(fromQuery.exec()) : Q.resolve(fromQuery)),
 					('exec' in toQuery ? Q.resolve(toQuery.exec()) : Q.resolve(toQuery)) ],
-				function(fromObj, toObj) {
-					ensureObjectValid(req, fromObj, true);
+				function (fromObj, toObj) {
+                ensureObjectValid(req, fromObj, true);
+                
+                var fromVer = fromObj.getInfoObject().ver;
+                var fromPath = path.join(fromPathPrefix, fromVer.toString());
+                
+                var toVer = toObj.getInfoObject().ver;
+                var toPath = path.join(toPathPrefix, toVer.toString());
+                
+                ensureObjectValid(req, toObj);
+                
+                return copyFiles(fromPath, toPath).then(function () {
+                    
+                    var targetInfoFile = path.join(toPath, "info.json");
+                    return Q.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject()));
 
-					var fromVer = fromObj.getInfoObject().ver;
-					var fromPath = path.join(fromPathPrefix, fromVer.toString());
-
-					var toVer = toObj.getInfoObject().ver;
-					var toPath = path.join(toPathPrefix, toVer.toString());
-
-					ensureObjectValid(req, toObj);
-
-					return copyFiles(fromPath, toPath)
-						.then(function() {
-
-							var targetInfoFile = path.join(toPath, "info.json");
-							return Q.nfcall(fs.writeFile, targetInfoFile, JSON.stringify(toObj.getInfoObject()));
-						})
-						.then(function() { return toObj; }); // We haven't modified the object at all... so, no need save
-				});
+                }).then(function () { return toObj; }); // We haven't modified the object at all... so, no need save
+            });
 		}
 	};
 };

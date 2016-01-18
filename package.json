@@ -23,6 +23,7 @@
 		"serve-favicon": "latest",
 
 		"q": "latest",
+		"bluebird": "latest",
 		"socket.io": "latest",
 		"zmq": "latest",
 

@@ -23,8 +23,10 @@
 // crypt.js
 // Created by Giannis Georgalis on 1/20/14
 //
+var Promise = require("bluebird");
 var crypto = require('crypto');
-var Q = require('q');
+
+Promise.promisifyAll(crypto);
 
 ////////////////////////////////////////////////////////////////////////
 // Common utility functions
@@ -34,7 +36,8 @@ module.exports.createHash = function(text) {
 };
 
 //**********************************************************************
-
+// TODO: Make them asynchronous
+//
 module.exports.encryptText = function (text, seed) {
 	var cipher = crypto.createCipher('aes-128-cbc', seed);
 	var crypted = cipher.update(text, 'utf8', 'hex');
@@ -56,5 +59,5 @@ module.exports.decryptText = function (cryptText, seed) {
 //**********************************************************************
 
 module.exports.randomBytes = function(nBytes) {
-	return Q.nfcall(crypto.randomBytes, nBytes);
+	return crypto.randomBytesAsync(nBytes);
 };
