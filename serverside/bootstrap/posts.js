@@ -59,13 +59,9 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 		promises.push(post.save());
 	}
 
-	return Q.allSettled(promises).then(function (results) {
-
-		results.forEach(function (result) {
-
-			if (result.state !== 'fulfilled')
-				console.log("Error: ", result.reason);
-		});
-	});
+    return Q.all(promises).then(function (results) {
+        // Do something with the results (if you want)
+    }).catch(function (err) {
+        console.error("Error: ", err);
+    });
 };
-

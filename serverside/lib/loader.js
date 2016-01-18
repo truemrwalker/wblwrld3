@@ -63,22 +63,11 @@ module.exports.executeAllScripts = function (scriptDirectory, Q, app, config, mo
 			promises.push(require(path.join(scriptDirectory, script))(Q, app, config, mongoose, gettext));
 		});
 
-		return Q.allSettled(promises).then(function (results) {
+        return Q.all(promises).then(function () { return 0; }, function (err) {
 
-			var seenError = false;
-
-			results.forEach(function (result) {
-
-				if (result.state === 'fulfilled') {
-					var value = result.value; // we don't need this just added it here for reference
-				}
-				else {
-					seenError = true;
-					console.log("Error: ", result.reason);
-				}
-			});
-			return seenError ? 1 : 0;
-		});
+            console.error("Error: ", err);
+            return 1;
+        });
 	});
 };
 

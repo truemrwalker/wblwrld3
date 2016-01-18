@@ -128,11 +128,11 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 	}
 	function copyFiles(fromPath, toPath) {
 
-		return mkdirpAsync(toPath).then(function () {
+        return mkdirpAsync(toPath).then(function () {
             return Q.promisify(fs.readdir)(fromPath);
         }).then(omitInfoJsonFile).then(function (files) {
-
-            return Q.allSettled(util.transform(files, function (f) {
+            
+            return Q.all(util.transform(files, function (f) {
                 
                 return Q.Promise(function (resolve, reject, notify) {
                     
@@ -154,13 +154,8 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
                 });
             }));
 
-        }).then(function (results) {
-            
-            results.forEach(function (result) {
-                
-                if (result.state !== 'fulfilled')
-                    console.log("COPY WARNING:", result.reason);
-            });
+        }).catch(function (err) {
+            console.error("COPY FILES FAILED:", err)
         });
 	}
 	//******************************************************************

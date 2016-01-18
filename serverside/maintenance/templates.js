@@ -163,21 +163,16 @@ module.exports = function(Q, app, config, mongoose, gettext) {
 
 		// Wait to finish and report the templates that were updated
 		//
-		return Q.allSettled(promises).then(function (results) {
-
-			results.forEach(function (result) {
-
-				if (result.state === 'fulfilled') {
-
-					// I'm not sure why the value may be an array (investigate, but low priority)
-					var w = result.value instanceof Array ? result.value[0] : result.value;
-
-					console.log("Synced template: ", w.webble.defid);
-				}
-				else {
-					console.error("Error: ", result.reason);
-				}
-			});
-		});
+        return Q.all(promises).then(function (results) {
+            
+            results.forEach(function (result) {
+                
+                // I'm not sure why the value may be an array (investigate, but low priority)
+                var w = result instanceof Array ? result[0] : result;
+                console.log("Synced template: ", w.webble.defid);
+            });
+        }).catch(function (err) {
+            console.error("Error: ", err);
+        });
 	});
 };

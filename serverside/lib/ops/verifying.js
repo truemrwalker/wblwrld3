@@ -70,53 +70,52 @@ module.exports = function(Q, app, config, mongoose, gettext, auth) {
 		//
 		verify: function(req, query) {
 
-			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query))
-				.then(function(objs) {
-					ensureObjectValid(req, objs);
-
-					if (!(objs instanceof Array)) // Sometimes we want to verify just one object
-						objs = [ objs ];
-
-					var trustVector = req.user && req.user._sec.trusts;
-					if (!trustVector || trustVector.length == 0)
-						return util.transform(objs, function() { return false; });
-					else {
-
-						var results = [];
-						var cache = {}; // Store already calculated results for pruning
-
-						objs.forEach(function(obj) {
-
-							var groups = obj._sec.groups;
-
-							if (!groups)
-								results.push(false);
-							else if (util.any(groups, function(g) { return cache[g.toString()]; }))
-								results.push(true);
-							else if (util.all(groups, function(g) { return cache[g.toString()] !== undefined; }))
-								results.push(false);
-							else {
-
-								var promises = [];
-								groups.forEach(function(g) {
-
-									if (cache[g.toString()] === undefined) {
-
-										promises.push(verifyGroupRecursively(trustVector, g).then(function(result) {
-											return (cache[g.toString] = result);
-										}));
-									}
-								});
-
-								if (promises.length == 0) // This can never happen mate!
-									throw new util.RestError(gettext("Halo!"));
-
-								results.push(Q.all(promises).then(util.anyTrue));
-							}
-						});
-						return Q.all(results);
-					}
-				});
+			return ('exec' in query ? Q.resolve(query.exec()) : Q.resolve(query)).then(function (objs) {
+                ensureObjectValid(req, objs);
+                
+                if (!(objs instanceof Array)) // Sometimes we want to verify just one object
+                    objs = [objs];
+                
+                var trustVector = req.user && req.user._sec.trusts;
+                if (!trustVector || trustVector.length == 0)
+                    return util.transform(objs, function () { return false; });
+                else {
+                    
+                    var results = [];
+                    var cache = {}; // Store already calculated results for pruning
+                    
+                    objs.forEach(function (obj) {
+                        
+                        var groups = obj._sec.groups;
+                        
+                        if (!groups)
+                            results.push(false);
+                        else if (util.any(groups, function (g) { return cache[g.toString()]; }))
+                            results.push(true);
+                        else if (util.all(groups, function (g) { return cache[g.toString()] !== undefined; }))
+                            results.push(false);
+                        else {
+                            
+                            var promises = [];
+                            groups.forEach(function (g) {
+                                
+                                if (cache[g.toString()] === undefined) {
+                                    
+                                    promises.push(verifyGroupRecursively(trustVector, g).then(function (result) {
+                                        return (cache[g.toString] = result);
+                                    }));
+                                }
+                            });
+                            
+                            if (promises.length == 0) // This can never happen mate!
+                                throw new util.RestError(gettext("Halo!"));
+                            
+                            results.push(Q.all(promises).then(util.anyTrue));
+                        }
+                    });
+                    return Q.all(results);
+                }
+            });
 		},
 
 		//**************************************************************
