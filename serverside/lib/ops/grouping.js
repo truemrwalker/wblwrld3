@@ -58,7 +58,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {
 				ensureGroupValid(req, group);
 
-				return Promise.resolve(query.exec()).then(function (obj) {
+				return query.exec().then(function (obj) {
 					ensureObjectValid(req, obj);
 
 					var index = obj._sec.groups.indexOf(group._id);

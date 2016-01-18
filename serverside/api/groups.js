@@ -128,14 +128,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.post('/api/groups', auth.adm, function (req, res) { // Top-level groups must be managed by the adminzzz
 
-		createGroup(req, true)
-			.then(function(group) {
-				res.json(normalizeGroup(group));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		createGroup(req, true).then(function (group) {
+            res.json(normalizeGroup(group));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	//******************************************************************
@@ -220,14 +218,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.post('/api/groups/:id', auth.usr, function (req, res) {
 
-		createGroup(req, false)
-			.then(function(group) {
-				res.json(normalizeGroup(group));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		createGroup(req, false).then(function (group) {
+            res.json(normalizeGroup(group));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.get('/api/groups/:id/groups', auth.usr, function (req, res) { // Sub-groups
@@ -249,76 +245,68 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/groups/:id/users', auth.usr, function (req, res) {
 
-		groupingOps.modifyGroupMember(req, Group.findById(getId(req)), User.findOne({$or : [{email: req.body.user}, {username: req.body.user}]}))
-			.then(function() {
-				res.status(200).send(gettext("User added to group"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        groupingOps.modifyGroupMember(req, Group.findById(getId(req)), 
+            User.findOne({ $or : [{ email: req.body.user }, { username: req.body.user }] })).then(function () {
+
+            res.status(200).send(gettext("User added to group"));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.get('/api/groups/:id/users', auth.usr, function (req, res) {
 
-		groupingOps.getGroupMembers(req, Group.findById(getId(req)), User.find({}))
-			.then(function(results) {
-				res.json(util.transform_(results, function(u) { return u.toJSON(); }));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		groupingOps.getGroupMembers(req, Group.findById(getId(req)), User.find({})).then(function (results) {
+            res.json(util.transform_(results, function (u) { return u.toJSON(); }));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.delete('/api/groups/:id/users', auth.usr, function (req, res) {
 
-		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), User.find({}))
-			.then(function() {
-				res.status(200).send(gettext("User removed from group"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), User.find({})).then(function () {
+            res.status(200).send(gettext("User removed from group"));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	//******************************************************************
 
 	app.put('/api/groups/:id/webbles', auth.usr, function (req, res) {
 
-		groupingOps.modifyGroupMember(req, Group.findById(getId(req)), Webble.findOne({ "webble.defid": req.body.webble }))
-			.then(function() {
-				res.status(200).send(gettext("Webble added to group"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        groupingOps.modifyGroupMember(req, Group.findById(getId(req)), 
+            Webble.findOne({ "webble.defid": req.body.webble })).then(function () {
+            
+            res.status(200).send(gettext("Webble added to group"));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.get('/api/groups/:id/webbles', auth.usr, function (req, res) {
 
-		groupingOps.getGroupMembers(req, Group.findById(getId(req)), Webble.find({}))
-			.then(function(results) {
-				res.json(util.transform_(results, function(w) { return w.toJSON(); }));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        groupingOps.getGroupMembers(req, Group.findById(getId(req)), Webble.find({})).then(function (results) {
+            res.json(util.transform_(results, function (w) { return w.toJSON(); }));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.delete('/api/groups/:id/webbles', auth.usr, function (req, res) {
 
-		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), Webble.find({}))
-			.then(function() {
-				res.status(200).send(gettext("Webble removed from group"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), Webble.find({})).then(function () {
+            res.status(200).send(gettext("Webble removed from group"));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	//******************************************************************
@@ -328,42 +316,36 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		var execAble = dbutil.qOR(Webble.findById(mongoose.Types.ObjectId(req.body.obj)),
 			User.findById(mongoose.Types.ObjectId(req.body.obj)));
 
-		groupingOps.modifyGroupMember(req, Group.findById(getId(req)), execAble)
-			.then(function() {
-				res.status(200).send(gettext("Object added to group"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		groupingOps.modifyGroupMember(req, Group.findById(getId(req)), execAble).then(function () {
+            res.status(200).send(gettext("Object added to group"));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.get('/api/groups/:id/objects', auth.usr, function (req, res) {
 
 		var execAble = dbutil.qAG(Webble.find({}), User.find({}));
 
-		groupingOps.getGroupMembers(req, Group.findById(getId(req)), execAble)
-			.then(function(results) {
-				res.json(util.transform_(results, function(o) { return { id: o._id, repr: o.repr() } }));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		groupingOps.getGroupMembers(req, Group.findById(getId(req)), execAble).then(function (results) {
+            res.json(util.transform_(results, function (o) { return { id: o._id, repr: o.repr() } }));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 	app.delete('/api/groups/:id/objects', auth.usr, function (req, res) {
 
 		var execAble = dbutil.qAG(Webble.find({}), User.find({}));
 
-		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), execAble)
-			.then(function() {
-				res.status(200).send(gettext("Objects removed from group"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), execAble).then(function () {
+            res.status(200).send(gettext("Objects removed from group"));
+        }).catch(function (err) {
+            util.resSendError(res, err);
+        }).done();
+
 	});
 
 };

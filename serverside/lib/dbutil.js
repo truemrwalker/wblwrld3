@@ -23,19 +23,12 @@
 // dbutil.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
 
 ////////////////////////////////////////////////////////////////////////
 // Private convenience functions
 //
 function gettext(msg) { return msg; }
-
-function copyArgs(args) {
-
-	var result = [];
-	for (var i = 0; i < args.length; i++)
-		result.push(args[i]);
-	return result;
-}
 
 function extendArray(array, other) {
 
@@ -44,24 +37,54 @@ function extendArray(array, other) {
 		for (var i = 0; i < other.length; ++i)
 			array.push(other[i]);
 	}
-	else
+	else if (other)
 		array.push(other);
 
 	return array;
 }
 
-function applyOp(self, op, arg) {
+function genQueries(args) {
 
-	for (var i = 0; i < self.queries.length; ++i)
-		self.queries[i] = self.queries[i][op](arg);
-	return self;
+    var result = [];
+    for (var i = 0; i < args.length; ++i)
+        result.push({ query: args[i] });
+    return result;
+}
+function applyOp(self, op, arg) {
+    
+    self.queries.forEach(function (q) { q.query = q.query[op](arg); });
+    return self;
+}
+
+function promiseFirst(input, callback) {
+    
+    return new Promise(function (resolve, reject) {
+
+        var index = 0;
+        var next = function () {
+
+            if (index >= input.length)
+                resolve(null);
+            else {
+                
+                Promise.resolve(callback(input[index++])).then(function (result) {
+
+                    if (result)
+                        resolve(result);
+                    else
+                        next();
+                }, reject);                
+            }
+        };
+        next();
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Public methods
 //
 module.exports.execOrValue = function (value) {
-    return ('exec' in value) ? value.exec() : value;
+    return ('exec' in value) ? value.exec() : Promise.resolve(value);
 };
 
 module.exports.qOR = function (/*variable args...*/) {
@@ -69,28 +92,13 @@ module.exports.qOR = function (/*variable args...*/) {
 	// Exec'able object
 	//
 	return {
-		queries: copyArgs(arguments),
-		currIndex: 0,
+        queries: genQueries(arguments),
 
-		exec: function (callback) {
-
-			var self = this;
-
-			if (this.currIndex >= this.queries.length)
-				callback(null, null);
-			else {
-				var q = this.queries[this.currIndex++];
-
-				q.exec(function (err, results) {
-
-					if (err)
-						callback(err);
-					else if (results)
-						callback(null, results);
-					else
-						self.exec(callback);
-				});
-			}
+		exec: function () {
+            
+            return promiseFirst(this.queries, function (q) {
+                return q.query.exec();
+            });
 		}
 	};
 
@@ -103,37 +111,21 @@ module.exports.qAG = function (/*variable args...*/) {
 	// Exec'able object
 	//
 	return {
-		queries: copyArgs(arguments),
-		currIndex: 0,
-		results: [],
+		queries: genQueries(arguments),
 
 		and: function(arg) { return applyOp(this, 'and', arg); },
 		or: function(arg) { return applyOp(this, 'or', arg); },
 		where: function(arg) { return applyOp(this, 'where', arg); },
 		equals: function(arg) { return applyOp(this, 'equals', arg); },
 
-		exec: function (callback) {
-
-			var self = this;
-
-			if (this.currIndex >= this.queries.length)
-				callback(null, this.results);
-			else {
-				var q = this.queries[this.currIndex++];
-
-				q.exec(function (err, results) {
-
-					if (err)
-						callback(err);
-					else {
-
-						if (results)
-							extendArray(self.results, results);
-						self.exec(callback);
-					}
-				});
-			}
-		}
+		exec: function () {
+            
+            return Promise.reduce(this.queries, function (results, q) {
+                return q.query.exec().then(function (result) {
+                    return extendArray(results, result);
+                });
+            }, []);
+        }
 	};
 
 };
