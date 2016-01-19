@@ -36,7 +36,7 @@ module.exports = (function() {
 
 	try {
 		var hash = crypt.createHash(fs.readFileSync(path.join(__dirname, 'config.js'), {encoding: 'utf8'}).replace(/\r\n/g, '\n'));
-		obj = JSON.parse(crypt.decryptText(fs.readFileSync(secretsFile, {encoding: 'utf8'}), hash));
+		obj = JSON.parse(crypt.decryptTextSync(fs.readFileSync(secretsFile, {encoding: 'utf8'}), hash));
 	}
 	catch (err) {
 

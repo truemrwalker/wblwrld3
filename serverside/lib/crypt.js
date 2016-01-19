@@ -36,16 +36,15 @@ module.exports.createHash = function(text) {
 };
 
 //**********************************************************************
-// TODO: Make them asynchronous
-//
-module.exports.encryptText = function (text, seed) {
+
+module.exports.encryptTextSync = function (text, seed) {
 	var cipher = crypto.createCipher('aes-128-cbc', seed);
 	var crypted = cipher.update(text, 'utf8', 'hex');
 	crypted += cipher.final('hex');
 	return crypted;
 };
 
-module.exports.decryptText = function (cryptText, seed) {
+module.exports.decryptTextSync = function (cryptText, seed) {
 	try {
 		var decipher = crypto.createDecipher('aes-128-cbc', seed);
 		var dec = decipher.update(cryptText, 'hex', 'utf8');

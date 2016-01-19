@@ -33,5 +33,5 @@ var secretsFileUnencrypted = path.join(homeDir, "wblwrld3", "secretsdb.json");
 var secretsFileEncrypted = path.join(homeDir, "wblwrld3", "secretsdb.ejson");
 
 var hash = crypt.createHash(fs.readFileSync('../config.js', { encoding: 'utf8' }).replace(/\r\n/g, '\n'));
-var contents = crypt.encryptText(fs.readFileSync(secretsFileUnencrypted, { encoding: 'utf8' }), hash);
+var contents = crypt.encryptTextSync(fs.readFileSync(secretsFileUnencrypted, { encoding: 'utf8' }), hash);
 fs.writeFileSync(secretsFileEncrypted, contents, { encoding: 'utf8' });

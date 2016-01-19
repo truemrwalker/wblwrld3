@@ -269,7 +269,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
                             // Create auto-login link
                             var userIdHash = createUserIdHash(user);
                             var seed = config.APP_CRYPT_PASSWORD + userIdHash.substring(5, 15);
-                            var resetUrl = config.SERVER_URL_PUBLIC + '/auth/autologin/' + userIdHash + '/' + crypt.encryptText(user.email, seed);
+                            var resetUrl = config.SERVER_URL_PUBLIC + '/auth/autologin/' + userIdHash + '/' + crypt.encryptTextSync(user.email, seed);
 
                             smtpTransport.sendMail({
                                 from: config.APP_EMAIL_ADDRESS,
@@ -303,7 +303,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
         var seed = config.APP_CRYPT_PASSWORD + (req.params.id.length > 15 ? req.params.id.substring(5, 15) : req.params.id);
 
-	    User.findOne({ email: crypt.decryptText(req.params.emailcrypted, seed) }).exec().then(function (user) {
+	    User.findOne({ email: crypt.decryptTextSync(req.params.emailcrypted, seed) }).exec().then(function (user) {
             
             if (!user || user._auth.local.forgot == 0 || createUserIdHash(user) !== req.params.id)
                 throw new Error();
