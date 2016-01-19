@@ -79,6 +79,7 @@ function genQuery(directory, filename, ownerId) {
 module.exports.GFS = function (mongoose) {
 
     var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
+    Promise.promisifyAll(gfs);
     
     // Wrapper for updating the gsf.files collection and returning a promise:
     // Seems that new versions of the node-mongodb-native driver (2.0+) already return promises:
@@ -93,11 +94,11 @@ module.exports.GFS = function (mongoose) {
 	// Get a file
 	//
 	this.getFileWithPath = function(fullPath, ownerId) {
-		return Promise.promisify(gfs.findOne, {context: gfs})({ filename: fullPath }); // TODO: gfs methods should return promise
+		return gfs.findOneAsync({ filename: fullPath });
 	};
 
 	this.getFile = function(directory, filename, ownerId) {
-		return Promise.promisify(gfs.findOne, {context: gfs})(genQuery(directory, filename, ownerId)); // TODO: gfs methods should return promise
+		return gfs.findOneAsync(genQuery(directory, filename, ownerId));
 	};
 
 	// Get multiple files
@@ -198,7 +199,7 @@ module.exports.GFS = function (mongoose) {
 	};
 
 	this.deleteFileEntry = function(fileEntry) {
-		return Promise.promisify(gfs.remove, {context: gfs})(fileEntry); // TODO: gfs methods should return promise
+		return gfs.removeAsync(fileEntry);
 	};
 
 	// Just for the occasional spring-cleaning & testing

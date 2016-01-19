@@ -24,8 +24,9 @@
 // Created by Giannis Georgalis on 10/29/13
 //
 var Promise = require("bluebird");
-
 var crypto = require('crypto');
+
+Promise.promisifyAll(crypto);
 
 module.exports = function(app, config, mongoose, gettext) {
 
@@ -242,75 +243,37 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	// Define additional methods for securely storing password info
 	//
-	UserSchema.methods.setPassword = function(password, cb) {
+    UserSchema.methods.setPasswordAsync = function (password) {
+        
+        var self = this;
+        return Promise.try(function () {
 
-		if (!password)
-			cb(new Error("Invalid password"));
-		else {
+            if (!password)
+                throw new Error(gettext("Password is empty"));
 
-			var self = this;
+            return crypto.randomBytesAsync(32).then(function (buf) {
 
-			try {
-				crypto.randomBytes(32, function (err, buf) {
+                var salt = buf.toString('hex');
+                return crypto.pbkdf2Async(password, salt, 25000, 512).then(function (hashRaw) {
 
-					if (err)
-						cb(err);
-					else {
+                    self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
+                    self._auth.local.salt = salt;
+                    self._auth.local.forgot = 0;
+                    return self;
+                });
+            });
+        });
+    };
+    
+    UserSchema.methods.checkPasswordAsync = function (password) {
 
-						var salt = buf.toString('hex');
-
-						try {
-							crypto.pbkdf2(password, salt, 25000, 512, function (err, hashRaw) {
-
-								if (err)
-									cb(err);
-								else {
-
-									self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
-									self._auth.local.salt = salt;
-									self._auth.local.forgot = 0;
-
-									cb(null, self);
-								}
-							});
-						}
-						catch (err) {
-							cb(err);
-						}
-					}
-				});
-			}
-			catch (err) {
-				cb(err);
-			}
-		}
-
-	};
-
-	UserSchema.methods.checkPassword = function(password, cb) {
-
-		var self = this;
-
-		try {
-			crypto.pbkdf2(password, this._auth.local.salt, 25000, 512, function (err, hashRaw) {
-
-				if (err)
-					cb(err);
-				else {
-
-					var hash = new Buffer(hashRaw, 'binary').toString('hex');
-
-					if (hash === self._auth.local.hash)
-						cb(null, self);
-					else
-						cb(null, null);
-				}
-			});
-		}
-		catch (err) {
-			cb(err);
-		}
-	};
+        var self = this;
+        return crypto.pbkdf2Async(password, self._auth.local.salt, 25000, 512).then(function (hashRaw) {
+            
+            var hash = new Buffer(hashRaw, 'binary').toString('hex');            
+            return (hash === self._auth.local.hash) ? self : null;
+        });
+    };
 
 	// Introspective stuff
 	//

@@ -51,30 +51,23 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
     passport.use(new LocalStrategy({
 		    usernameField: 'email',
 			passwordField: 'password'
-	    }, function(username, password, done) {
+	    }, function (username, password, done) {
+        
+        User.findOne(createUserSearchObj(username)).exec().then(function (user) {
+            
+            if (!user)
+                done(null, null, { message: gettext("Incorrect username") });
+            else if (user._auth.providers.indexOf('local') == -1)
+                done(null, null, { message: gettext("You don't have a local account") });
+            else {
+                
+                return user.checkPasswordAsync(password).then(function (obj) {
+                    done(null, obj, obj || { message: gettext("Incorrect password") });
+                });
+            }
 
-            User.findOne(createUserSearchObj(username), function(err, user) {
-
-                if (err)
-                    done(err);
-                else if (!user)
-                    done(null, null, { message: gettext("Incorrect username") });
-                else if (user._auth.providers.indexOf('local') == -1)
-                    done(null, null, { message: gettext("You don't have a local account") });
-                else {
-                    user.checkPassword(password, function(err, matching) {
-
-                        if (err)
-                            done(err);
-                        else if (!matching)
-                            done(null, null, { message: gettext("Incorrect password") });
-                        else
-                            done(null, user);
-                    });
-                }
-            });
-        }
-    ));
+        }).catch(done).done();
+    }));
 
     ////////////////////////////////////////////////////////////////////
     // Login to account
@@ -219,8 +212,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
             // Update Password if necessary
             //
-            return !req.body.password ? user :
-				    Promise.promisify(user.setPassword, { context: user })(req.body.password); // TODO: user methods should return promise
+            return !req.body.password ? user : user.setPasswordAsync(req.body.password);
 
         }).then (function (user) {
             
@@ -317,13 +309,12 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
                 throw new Error();
             
             return Promise.promisify(req.login, { context: req })(user).then(function () { // TODO: req methods should return promise
-                return crypt.randomBytes(32);
-            }).then(function (buff) {
-                return Promise.promisify(user.setPassword, { context: user })(buff.toString('hex')); // TODO: user methods should return promise
-            }).then(function (user) {
-                return user.save();
-            }).then(function () {
-                res.redirect('/#/profile?tab=auth'); // Finally OK
+
+                return crypt.randomBytesAsync(32).then(function (buff) {
+                    return user.setPasswordAsync(buff.toString('hex')).call('save').then(function () {
+                        res.redirect('/#/profile?tab=auth'); // Finally OK
+                    });
+                });
             });
 
         }).catch(function (e) {

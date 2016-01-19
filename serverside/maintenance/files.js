@@ -33,6 +33,9 @@ var libGfs = require('../lib/gfs');
 var util = require('../lib/util');
 var xfs = require('../lib/xfs');
 
+var mkdirpAsync = Promise.promisify(mkdirp);
+Promise.promisifyAll(fs);
+
 module.exports = function(app, config, mongoose, gettext) {
 
 	var Webble = mongoose.model('Webble');
@@ -46,16 +49,14 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	var gfs = new libGfs.GFS(mongoose);
     
-    var mkdirpAsync = Promise.promisify(mkdirp);
-
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
     function statIfExists(localFilePath) {
-        return Promise.promisify(fs.stat)(localFilePath).catch(function (err) { return null; });
+        return fs.statAsync(localFilePath).catch(function (err) { return null; });
     }
     function changeMTime(localFilePath, mtime) {        
-        return Promise.promisify(fs.utimes)(localFilePath, 0, mtime);
+        return fs.utimesAsync(localFilePath, 0, mtime);
     }
 
     function syncWebbleFileEntry(localFilePath, localStat, remoteFile) {

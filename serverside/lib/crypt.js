@@ -58,6 +58,6 @@ module.exports.decryptText = function (cryptText, seed) {
 
 //**********************************************************************
 
-module.exports.randomBytes = function(nBytes) {
+module.exports.randomBytesAsync = function(nBytes) {
 	return crypto.randomBytesAsync(nBytes);
 };

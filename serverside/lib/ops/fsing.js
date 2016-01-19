@@ -27,12 +27,13 @@ var Promise = require("bluebird");
 
 var path = require('path');
 var fs = require('fs');
-//var os = require('os');
 var mkdirp = require('mkdirp');
-//var extend = require('util')._extend;
 
 var util = require('../util');
 var dbutil = require('../dbutil');
+
+var mkdirpAsync = Promise.promisify(mkdirp);
+Promise.promisifyAll(fs);
 
 module.exports = function(app, config, mongoose, gettext, auth) {
 
@@ -41,8 +42,6 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
-    var mkdirpAsync = Promise.promisify(mkdirp);
-
 	function ensureObjectValid(req, obj, readonly) {
 
 		if (!obj)
@@ -90,23 +89,23 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             //
             
             return Promise.all(util.transform_(files, function (f) {
-                return Promise.promisify(fs.rename)(f.path, path.join(targetPath, f.originalname));
+                return fs.renameAsync(f.path, path.join(targetPath, f.originalname));
             }));
         });
 	}
 	function getFiles(targetPath) {
 
-		return Promise.promisify(fs.readdir)(targetPath).then(omitInfoJsonFile)
+		return fs.readdirAsync(targetPath).then(omitInfoJsonFile)
 			.catch(function () { return [] });
 	}
 	function removeFiles(targetPath) {
 
-		return Promise.promisify(fs.readdir)(targetPath).then(function (files) {
+		return fs.readdirAsync(targetPath).then(function (files) {
 
             return Promise.all(util.transform_(files, function (f) {
-                return Promise.promisify(fs.unlink)(path.join(targetPath, f));
+                return fs.unlinkAsync(path.join(targetPath, f));
             })).then(function () {
-                return Promise.promisify(fs.rmdir)(targetPath);
+                return fs.rmdirAsync(targetPath);
             });
 
         }, function (err) {
@@ -118,21 +117,21 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	function moveFiles(fromPath, toPath) {
 
 		return mkdirpAsync(toPath).then(function () {
-            return Promise.promisify(fs.readdir)(fromPath);
+            return fs.readdirAsync(fromPath);
         }).then(function (files) {
             
             return Promise.all(util.transform(files, function (f) {
-                return Promise.promisify(fs.rename)(path.join(fromPath, f), path.join(toPath, f));
+                return fs.renameAsync(path.join(fromPath, f), path.join(toPath, f));
             }));
 
         }).then(function () {
-            return Promise.promisify(fs.rmdir)(fromPath);
+            return fs.rmdirAsync(fromPath);
         });
 	}
 	function copyFiles(fromPath, toPath) {
 
         return mkdirpAsync(toPath).then(function () {
-            return Promise.promisify(fs.readdir)(fromPath);
+            return fs.readdirAsync(fromPath);
         }).then(omitInfoJsonFile).then(function (files) {
             
             return Promise.all(util.transform(files, function (f) {
@@ -165,8 +164,8 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	function createSymLink(linkPath, targetPath) {
 
-		return Promise.promisify(fs.unlink)(linkPath).then(function() {
-			return Promise.promisify(fs.symlink)(targetPath, linkPath, 'dir');
+		return fs.unlinkAsync(linkPath).then(function() {
+			return fs.symlinkAsync(targetPath, linkPath, 'dir');
 		}, function() {}); // We don't care for errors here: suppress
 	}
 
@@ -186,7 +185,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     function opGet(path) {
 
-        return Promise.promisify(fs.readFile)(path, { encoding: 'utf8' }).then(function (data) {
+        return fs.readFileAsync(path, { encoding: 'utf8' }).then(function (data) {
 
 			return {
 				name: 'unknown',
@@ -196,7 +195,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	}
 	function opUpdate(path, props) {
 
-		return Promise.promisify(fs.writeFile)(path, props.content, { encoding: 'utf8' }).then(function(data) {
+		return fs.writeFileAsync(path, props.content, { encoding: 'utf8' }).then(function(data) {
             
             return {
 				name: 'unknown',
@@ -206,7 +205,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	}
 	function opDelete(path) {
 
-        return Promise.promisify(fs.unlink)(path).then(function () {
+        return fs.unlinkAsync(path).then(function () {
 
 			return {
 				name: 'unknown'
@@ -260,15 +259,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                         
                         return obj.save().then(function () { // Save and creat the targetInfo file (failure is ok)
                             
-                            // .finally() Cannot be used to propagate values (apparently)
-                            //
-                            return Promise.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(info))
-                                .then(function () { return obj; }, function () { return obj; });
+                            // .finally() Cannot be used to propagate values (apparently -- at least that was the case in Q)
+                            return fs.writeFileAsync(targetInfoFile, JSON.stringify(info)).return(obj).catchReturn(obj);
                         });
                     }
                     else {
                         
-                        return Promise.promisify(fs.readFile)(targetInfoFile, 'utf8').then(function (data) {
+                        return fs.readFileAsync(targetInfoFile, 'utf8').then(function (data) {
                             
                             var info = JSON.parse(data, 'utf8');
                             info.ver = targetVer;
@@ -318,7 +315,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                     
                     if (targetVer === 0) {
                         
-                        return Promise.promisify(fs.rmdir)(targetPathPrefix).then(function () {
+                        return fs.rmdirAsync(targetPathPrefix).then(function () {
                             return obj.remove();
                         }, function (err) {
                             
@@ -362,20 +359,17 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 ensureObjectValid(req, toObj);
                 
                 var targetInfoFile = path.join(fromPath, "info.json");
-                return Promise.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
+                return fs.writeFileAsync(targetInfoFile, JSON.stringify(toObj.getInfoObject())).then(function () {
                     return moveFiles(fromPath, toPath);
                 }).then(function () {
                     
-                    return toVer === 0 ? null :
-								createSymLink(path.join(toTargetPathPrefix, 'latest'), toPath);
+                    if (toVer != 0)
+                        return createSymLink(path.join(toTargetPathPrefix, 'latest'), toPath);
 
                 }).then(function () {
-                    
-                    // Remove directory completely
-                    return Promise.promisify(fs.rmdir)(fromTargetPathPrefix).catch(function () { });
-
+                    return fs.rmdirAsync(fromTargetPathPrefix).catchReturn(); // Remove directory completely
                 }).then(function () {
-                    return Promise.all([fromObj.remove(), toObj.save()]).then(function () { return toObj; });
+                    return Promise.all([fromObj.remove(), toObj.save()]).return(toObj);
                 });
             });
 		},
@@ -398,9 +392,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 return copyFiles(fromPath, toPath).then(function () {
                     
                     var targetInfoFile = path.join(toPath, "info.json");
-                    return Promise.promisify(fs.writeFile)(targetInfoFile, JSON.stringify(toObj.getInfoObject()));
+                    return fs.writeFileAsync(targetInfoFile, JSON.stringify(toObj.getInfoObject()));
 
-                }).then(function () { return toObj; }); // We haven't modified the object at all... so, no need save
+                }).return(toObj); // We haven't modified the object at all... so, no need save
             });
 		}
 	};
