@@ -360,7 +360,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // EasterEgg Properties
     //-------------------------------
     var soFarWord_ = '';
-    var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN', 'GEORGALIS'];
+    var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN'];
     var eeFunc_ = [
         function(){
             $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("https://wws.meme.hokudai.ac.jp/images/extra/mnk.jpg"); }</style>'));
@@ -372,10 +372,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         },
         function(){
             $window.open('https://www.google.se/search?q=Japan&hl=en&safe=off&rlz=1C1DVCA_enJP357JP357&prmd=imvnsu&source=lnms&tbm=isch&sa=X&ei=tvrzT5zxEeXEmAXa68mEBQ&ved=0CGgQ_AUoAQ&biw=1920&bih=1085', '_blank');
-        },
-		function(){
-			$window.open('https://www.google.co.jp/search?q=crete&source=lnms&tbm=isch&sa=X&ei=X7ZiVfStE4rg8AW_-4LgBg&ved=0CAcQ_AUoAQ&biw=1280&bih=899', '_blank');
-		}
+        }
     ];
     //-------------------------------
 
