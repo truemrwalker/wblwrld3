@@ -196,6 +196,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // (A webble definition is a named JSON object containing one or more webbles of one or several templates)
     var webbleDefs_ = [];
     $scope.getWebbleDefs = function(){ return webbleDefs_; };
+	var webbleDefMetaDataMemory_ = {};
+	$scope.getWebbleDefsMetaDataMemory = function(){ return webbleDefMetaDataMemory_; };
 
     // A list of all at least once loaded webble templates since system startup. A webble template is a definition of a webble type which owns its own specific view.html file
     var webbleTemplates_ = [];
@@ -776,16 +778,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		if(!$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession){
 			$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession = true;
 
-			//---------------------------------------------------
+			/*//---------------------------------------------------
 			//IMPORTANT MESSAGE FROM THE DEV TEAM
 			var postedDate = "2015-06-15";
 			var cookie = localStorageService.get('alertInfoNews' + postedDate);
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
-			if( readTimes < 3 && ((new Date()).getMonth() - (new Date(postedDate)).getMonth() <= 1) ){
-				localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
-				$scope.openForm(Enum.aopForms.infoMsg, {title: gettextCatalog.getString("Important News") + '!!! ' + postedDate + ' ' + gettextCatalog.getString("Displayed") + ' ' + (readTimes + 1) + ' ' + gettextCatalog.getString("of") + ' 3 ' + gettextCatalog.getString("times"), size: 'lg', content:
-				'<h2>' + gettextCatalog.getString("For Webble Template Developer") + '</h2>' +
-				'<p>' +
+			var monthsSincePublish = (new Date()).getMonth() - (new Date(postedDate)).getMonth();
+			if(monthsSincePublish <= 2){
+				if( readTimes < 3 ){
+					localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettextCatalog.getString("Important News") + '!!! ' + postedDate + ' ' + gettextCatalog.getString("Displayed") + ' ' + (readTimes + 1) + ' ' + gettextCatalog.getString("of") + ' 3 ' + gettextCatalog.getString("times"), size: 'lg', content:
+					'<h2>' + gettextCatalog.getString("For Webble Template Developer") + '</h2>' +
+					'<p>' +
 					gettextCatalog.getString("The latest major Webble world system update also included updating AngularJS framework to 1.3.") + '&nbsp;' +
 					gettextCatalog.getString("These changes includes a change of how to declare the Webble controller function (not as a global function anymore, but registered with the Webble World App).") + '&nbsp;' +
 					gettextCatalog.getString("This means that all Webbles you have made before this change (published and unpublished) are no longer working properly.") + '&nbsp;' +
@@ -802,16 +806,17 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					gettextCatalog.getString("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
 					gettextCatalog.getString("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
 					gettextCatalog.getString("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
-					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){/*Your callback code*/}); </span>&nbsp;</br></br>' +
+					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){*//*Your callback code*//*}); </span>&nbsp;</br></br>' +
 					gettextCatalog.getString("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
 					gettextCatalog.getString("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
-				'</p>' +
-				'<p>' +
+					'</p>' +
+					'<p>' +
 					'<i><strong>~' + gettextCatalog.getString("Webble World Development Team, Hokkaido University") + '~</strong></i>' +
-				'</p>'
-				});
+					'</p>'
+					});
+				}
 			}
-			//---------------------------------------------------
+			//---------------------------------------------------*/
 		}
 	};
 
@@ -1406,6 +1411,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $log.error('The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled.');
             }
             else{
+				$log.log(data);
+				webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
 				$scope.loadWebbleFromDef(data, whatCallBackMethod);
             }
         }
@@ -3341,6 +3348,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             modalOptions.resolve = {
                 wblData: function(){ return content; }
             };
+			modalOptions.size = 'lg';
         }
         else if(whatForm == Enum.aopForms.openWorkspace){
             modalOptions.templateUrl = 'views/modalForms/openWSSheet.html';

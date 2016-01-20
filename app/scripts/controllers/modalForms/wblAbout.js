@@ -35,11 +35,12 @@
 // ABOUT WEBBLE WORLD FORM CONTROLLER
 // This controls the Platforms About form
 //====================================================================================================================
-ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstance, $log, wblData, gettext, dbService) {
+ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstance, $log, wblData, gettext, dbService, Enum) {
 
     //=== PROPERTIES ================================================================
 
     $scope.formData = wblData;
+	var wblDefMetaData = $scope.formData.wblPlatformScope.getWebbleDefsMetaDataMemory();
 
     $scope.tooltip = {
         displayname: gettext("This is the currently chosen display name for this Webble Instance, may be changed in properties"),
@@ -52,6 +53,21 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
         templaterevision: gettext("This is the revision number of the template being used")
     };
 
+	$scope.textParts = {
+		starRatingTxt: [
+			gettext("Terrible"),
+			gettext("Very Bad"),
+			gettext("Bad"),
+			gettext("Could be better"),
+			gettext("Fairly Ok"),
+			gettext("Good"),
+			gettext("Very Good"),
+			gettext("Great!"),
+			gettext("Amazing!"),
+			gettext("Masterpiece!")
+		],
+		rateTxtVoters: gettext("votes")
+	};
 
 
     //=== EVENT HANDLERS =====================================================================
@@ -83,6 +99,50 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     };
     //========================================================================================
 
+	//========================================================================================
+	// Get Star Img
+	// Returns a lit star or an off star depending on the star index and the rate value of
+	// the Webble.
+	//========================================================================================
+	$scope.getStarImg = function(rate, index){
+		if(index < rate ){
+			return '../../images/starOn.png';
+		}
+		else{
+			return '../../images/starOff.png';
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Rate This
+	// Opens a modal window which lets the user rate the chosen Webble and comment on it.
+	//========================================================================================
+	$scope.rateThis = function(wbl){
+		$scope.formData.wblPlatformScope.openForm(Enum.aopForms.rateWbl, {wblDefId: wbl.defid, wblDefName: wbl.displayname}, function(done){
+			if(done != null){
+				wbl['rateShow'] = false;
+			}
+		});
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Get Rate Text
+	// Returns a the text that comes with the selected rating.
+	//========================================================================================
+	$scope.getRateText = function(theRate){
+		if(theRate == 0){
+			return gettext("Unrated");
+		}
+		else{
+			return $scope.textParts.starRatingTxt[theRate - 1];
+		}
+	};
+	//========================================================================================
+
 
     //========================================================================================
     // Make Copy
@@ -112,6 +172,9 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
-
+	$scope.formData['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + $scope.formData.defid;
+	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
+	$scope.formData['rateShow'] = true;
+	$log.log($scope.formData);
 });
 //======================================================================================================================

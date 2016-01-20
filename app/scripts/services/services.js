@@ -164,7 +164,7 @@ ww3Services.factory('Enum', function (gettext) {
 			AddCustomSlots: gettext("Add Custom Slots"),
 			EditCustomMenuItems: gettext("Custom Menu Items"),
 			EditCustomInteractionObjects: gettext("Custom Interaction Objects"),
-			About: gettext("About")
+			About: gettext("About (share, rate etc.)")
 		},
 
         // The different execution modes the webble world can be set to

@@ -97,15 +97,7 @@
     <div id="itemBox" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)" ng-click="selectWbl($index);"
          ng-dblclick="close('submit');" ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">
 
-		<div class="row" style="padding-bottom: 0px;" ng-if="wblMeta.webble.defid == formItems.searchResult[formItems.selectedWbl].webble.defid">
-			<div class="col-xs-12">
-				<div style="float: left;"><div fb-like="wblMeta.socialMediaUrl"></div></div>
-				<div style="float: left; margin-left: 3px;"><div google-plus="wblMeta.socialMediaUrl"></div></div>
-				<div style="float: left; margin-left: -20px;"><div tweet="wblMeta.socialMediaModelName" tweet-url="wblMeta.socialMediaUrl"></div></div>
-			</div>
-		</div>
-
-        <div class="row" style="padding-bottom: 5px;">
+		<div class="row" style="padding-bottom: 5px;">
             <div class="col-xs-5">
                 <img ng-show="wblMeta.is_trusted" src="images/icons/TrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.haveTrustIconInfo | translate}}">
                 <img ng-show="!wblMeta.is_trusted" src="images/icons/UntrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.noTrustIconInfo | translate}}">
@@ -114,18 +106,9 @@
 			<div class="col-xs-5">
                 <span style="font-size: 14px; font-weight: lighter; font-style: italic;">[{{wblMeta.webble.author}}]</span>
             </div>
-			<!--<div class="col-xs-4">-->
-				<!--<div style="float: left;"><div fb-like="wblMeta.socialMediaUrl"></div></div>-->
-				<!--<div style="float: left; margin-left: 3px;"><div google-plus="wblMeta.socialMediaUrl"></div></div>-->
-				<!--<div style="float: left; margin-left: -20px;"><div tweet="wblMeta.socialMediaModelName" tweet-url="wblMeta.socialMediaUrl"></div></div>-->
-			<!--</div>-->
-            <div class="col-xs-1">
+		    <div class="col-xs-2">
 				<button name="{{wblMeta.webble.defid}}" ng-click="loadWebble(wblMeta.webble.defid);" class="btn btn-primary btn-xs" translate>Load</button>
 				<button ng-show="isOwned($index);" ng-click="close('delete')" class="btn btn-danger btn-xs" translate>Delete</button>
-            </div>
-            <div class="col-xs-1">
-                <button ng-show="wblMeta.rateShow" ng-click="rateThis(wblMeta)" class="btn btn-info btn-xs" translate>Rate</button>
-                <span ng-hide="wblMeta.rateShow" style="color: forestgreen;" translate>Rated</span>
             </div>
         </div>
 
