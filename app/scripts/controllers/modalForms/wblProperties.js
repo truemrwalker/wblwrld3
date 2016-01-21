@@ -291,7 +291,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 					theItem.notification = '';
 				}
 				else{
-					theItem.notification = gettext("The file selected is not an video file.");
+					theItem.notification = gettext("The file selected is not a video file.");
 					theItem.value = '';
 				}
 				if(!$scope.$$phase){ $scope.$apply(); }
