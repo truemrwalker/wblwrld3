@@ -1415,7 +1415,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $log.error('The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled.');
             }
             else{
-				$log.log(data);
 				webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
 				$scope.loadWebbleFromDef(data, whatCallBackMethod);
             }

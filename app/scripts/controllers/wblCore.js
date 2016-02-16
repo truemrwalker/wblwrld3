@@ -596,7 +596,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                                 if (theSlots_[slot].getValue() != p.value && p.disabledSettings < Enum.SlotDisablingState.PropertyEditing){
                                     var itsOk = true;
                                     if(theParent_ && (slot == 'root:left' || slot == 'root:top') && p.value.toString().search('%') != -1){
-                                        $log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles i relation to the whole document, therefore this will change for {0} slot not be applied',[slot]));
+                                        $log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]));
                                         itsOk = false;
                                     }
 

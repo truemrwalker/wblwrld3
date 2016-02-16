@@ -394,7 +394,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                     scope.addSlot(new Slot('root:left',
                         20,
                         gettext("Horizontal Position"),
-                        gettext("The Horizontal position (left right) of the element either on the screen or in relation to its parent element (% sign is allowed)"),
+                        gettext("The Horizontal position (left right) of the element either on the screen or in relation to its parent element (% sign is allowed only for top parents)"),
                         'css',
                         undefined,
                         element
@@ -403,7 +403,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                     scope.addSlot(new Slot('root:top',
                         20,
                         gettext("Vertical Position"),
-                        gettext("The Vertical position (up down) of the element either on the screen or in relation to its parent element (% sign is allowed)"),
+                        gettext("The Vertical position (up down) of the element either on the screen or in relation to its parent element (% sign is allowed only for top parents)"),
                         'css',
                         undefined,
                         element
