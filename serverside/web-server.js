@@ -153,7 +153,8 @@ function initSocketServer(webServer) {
 //
 function initControlServer(webServer) {
 
-    var ctrl = require('./control/machine')(app, config, mongoose, gettext, webServer);
+	// -- removed because zmq package doesn't compile on Ubuntu
+    //var ctrl = require('./control/machine')(app, config, mongoose, gettext, webServer);
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -24,7 +24,6 @@
 
 		"bluebird": "latest",
 		"socket.io": "latest",
-		"zmq": "latest",
 
 		"mongoose": "latest",
 		"mongoose-user": "latest",
