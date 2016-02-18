@@ -57,7 +57,7 @@
 					<img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(formData.rating, $index)}}" title="{{star | translate}}" style="margin-left: -1px; width: 20px; height: 20px;">
 				</div>
 			</div>
-			<div class="col-xs-2" style="padding-top: 11px;">
+			<div class="col-xs-3" style="padding-top: 11px;">
 				<div>
 					<span style="font-weight: bold;">{{getRateText(formData.rating)}} [{{formData.ratingCount}} {{textParts.rateTxtVoters | translate}}]</span>
 				</div>

@@ -62,7 +62,7 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
         $scope.addSlot(new Slot('resultTemplate',
             '',
             'Result Template',
-            'This is the template the Webble will use to create the result. Within dollar signs $ write any slotname and use any mathematical operator to create a math result. Or use + and strings within quatation marks to build a dynamic string.',
+            'This is the template the Webble will use to create the result. Within dollar signs $ write any slotname and use any mathematical operator to create a math result. Or use + and strings within quatation marks to build a dynamic string. Also works with basic JavaScript functions, e.g. Math library etc.',
             $scope.theWblMetadata['templateid'],
             {inputType: Enum.aopInputTypes.TextBox},
             undefined
@@ -137,7 +137,11 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
         template = template.replace(/[\$]+/g, '');
         template = template.replace(/[\"]+/g, '');
         if(allIsNum && templateStrings.length == 0){
-            theRes = eval(template).toString();
+			try{
+				theRes = eval(template).toString();
+			}catch(err) {
+				theRes = "ERROR: "+err;
+			}
         }
         else{
             template = template.replace(/[\+]+/g, '');

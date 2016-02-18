@@ -354,6 +354,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// a queue of handles that should be called (one by one in order) due to events triggered
 	var queueOfHandlersToBeTriggered = [];
 	var unqueueingStartTime = 0;
+	var unqueueingStartTimeCounter = 0;
 	var unqueueingActive = false;
 
     //-------------------------------
@@ -1411,7 +1412,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $log.error('The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled.');
             }
             else{
-				$log.log(data);
 				webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
 				$scope.loadWebbleFromDef(data, whatCallBackMethod);
             }
@@ -2133,6 +2133,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 		if(!unqueueingActive){
 			unqueueingStartTime = (new Date()).getTime();
+			unqueueingStartTimeCounter = 1;
 			unqueueUntriggeredHandlers();
 		}
 	}
@@ -2147,8 +2148,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		unqueueingActive = true;
 
 		while(queueOfHandlersToBeTriggered.length > 0){
-			if(((new Date()).getTime() - unqueueingStartTime) > 10000){
-				$log.log('it seems we have been managing event handlers for more than 10 seconds now, so maybe something has locked itself in a loop and cannot stop. Maybe you should consider reloading the page...')
+			if(((new Date()).getTime() - unqueueingStartTime) > 20000){
+				$log.log('it seems we have been managing event handlers for more than ' + (20 * unqueueingStartTimeCounter) + ' seconds now, so maybe something has locked itself in a loop and cannot stop. Maybe you should consider reloading the page...')
+				unqueueingStartTimeCounter++;
+				unqueueingStartTime = (new Date()).getTime();
 			}
 
 			var theCallbackObject = queueOfHandlersToBeTriggered.shift();
