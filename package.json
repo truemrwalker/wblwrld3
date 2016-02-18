@@ -47,6 +47,8 @@
 
 	"devDependencies": {
 
+		"chokidar" : "latest",
+
 		"grunt": "latest",
 		"grunt-angular-gettext" : "latest",
 

@@ -128,6 +128,16 @@ module.exports.indexOf = function (input, pred) {
 	return -1;
 };
 
+module.exports.lastIndexOf = function (input, pred) {
+	
+	var len = input.length;
+	while (--len >= 0) {
+		if (pred(input[len]))
+			return len;
+	}
+	return -1;
+};
+
 module.exports.addOrReplace = function (input, value, pred) {
 
     var len = input.length;

@@ -22,6 +22,7 @@ SERVER_BEHIND_REVERSE_PROXY=1</Environment>
     <Content Include="secretsdb.json" />
     <Compile Include="config.js" />
     <Compile Include="control\machine.js" />
+    <Compile Include="files\autosync.js" />
     <Compile Include="models\machine.js" />
     <Compile Include="models\message.js" />
     <Compile Include="scripts\secretsdbgen.js" />

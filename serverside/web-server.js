@@ -57,9 +57,12 @@ mongoose.Promise = Promise; // see: http://mongoosejs.com/docs/promises.html
 mongoose.connect(config.MONGODB_URL, function (err) {
     
     if (err)
-        process.exit(1);
-    else
-        serverEntryPoint();
+        return process.exit(1);
+	
+	return serverEntryPoint().catch(function (err) {
+		console.log("Error:", err.message);
+		process.exit(1);
+	});
 });
 
 mongoose.connection.on('open', function () {
@@ -204,24 +207,22 @@ function startAllServers() {
 //
 function serverEntryPoint() {
 
-	// Execute code based on the deployment mode
-	var promise = Promise.resolve(0);
-	var shouldExit = false;
-
-	switch(config.DEPLOYMENT) {
+	switch (config.DEPLOYMENT) {
 
 		case 'bootstrap':
-			promise = loader.executeAllScripts(path.join(__dirname, 'bootstrap'),
-				app, config, mongoose, gettext);
-			shouldExit = true;
-			break;
+			return loader.executeAllScripts(path.join(__dirname, 'bootstrap'),
+				app, config, mongoose, gettext).then(process.exit);
+
 		case 'maintenance':
-			shouldExit = true; /*FALLTHROUGH*/
+			return loader.executeAllScripts(path.join(__dirname, 'maintenance'),
+				app, config, mongoose, gettext, ['templates.js', 'files.js']).then(process.exit);
+
 		case 'development':
 		case 'testing':
-			promise = loader.executeAllScripts(path.join(__dirname, 'maintenance'),
-				app, config, mongoose, gettext, ['templates.js', 'files.js']);
-			break;
+			return loader.executeAllScripts(path.join(__dirname, 'maintenance'),
+				app, config, mongoose, gettext, ['templates.js', 'files.js']).then(startAllServers);
+
+		default:
+			return Promise.try(startAllServers);
 	}
-	return promise.then(shouldExit ? process.exit : startAllServers);
 }
