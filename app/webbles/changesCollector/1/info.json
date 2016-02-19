@@ -1,0 +1,7 @@
+{
+    "name": "Changes Collector",
+    "description": "This is a webble that listens to relevant changes in the browser and collects the most current values related to those changes, such as window size etc. It also stores some browser related session static values for easy retrieval",
+    "keywords": "changes values JavaScript events size",
+    "author": "truemrwalker",
+    "image": "images/wbls/changes-ahead.jpg"
+}

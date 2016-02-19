@@ -1738,6 +1738,7 @@ ww3Services.factory('fromKeyCode', [function() {
         if(n==221) return '] }';
         if(n==222) return '\' "';
         if(n==224) return 'META|Command';
+		if(n==226) return '\\ _';
         if(n==229) return 'WIN IME';
 
         if(n==255) return 'Device-specific'; //Dell Home button (Inspiron laptops);

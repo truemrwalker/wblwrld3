@@ -1,0 +1,26 @@
+/*/=====================================================================================================================
+// Styles for changesCollector for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
+where you preferably put them.*/
+
+/*/ === BEGIN: changesCollector Classes === /*/
+
+.ccContainer{
+    width: 150px;
+    height: 50px;
+    background-color: #72bd86;
+    border: 2px solid black;
+    border-radius: 25px;
+	color: #000000;
+	text-align: center;
+	font-weight: bold;
+	font-size: 14px;
+	padding-top: 12px;
+}
+
+/*/ === END: Fundamental Classes === /*/
+
+/*====================================================================================================================*/

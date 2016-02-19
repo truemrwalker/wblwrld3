@@ -428,12 +428,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 tmp['name'] = value.getDisplayName();
 
                 // adjust numerical values with a more handsome number of decimals
-                var valueParts = valMod.getValUnitSeparated(theValue, true);
-                if(valueParts[0].toString() != 'NaN' && !metadata['noFloatValRound']){
-                    if(mathy.countDecimals(valueParts[0]) > 2){
-                        theValue = valueParts[0].toFixed(2) + valueParts[1];
-                    }
-                }
+				if(value.getOriginalType() != 'object' && value.getOriginalType() != 'array'){
+					var valueParts = valMod.getValUnitSeparated(theValue, true);
+					if(valueParts[0].toString() != 'NaN' && !metadata['noFloatValRound']){
+						if(mathy.countDecimals(valueParts[0]) > 2){
+							theValue = valueParts[0].toFixed(2) + valueParts[1];
+						}
+					}
+				}
 
                 // Set prop form Value
                 if(key.search('color') != -1 && theValue.toString().search('rgb') != -1){
@@ -460,8 +462,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                         tmp['value'] = tmp['value'].toString().replace(/"/g, '').replace(/'/g, '').toLowerCase();
                     }
                 }
-
-
 
                 // Set prop form category and description
                 tmp['cat'] = value.getCategory();
