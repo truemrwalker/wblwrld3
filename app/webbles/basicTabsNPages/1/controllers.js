@@ -231,7 +231,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		$scope.addSlot(new Slot('tabNames',
 			'',
 			'Tab Names List',
-			'The names of the existing tabs from left to right (separated by either comma[,], semicolon[;] or space [ ]. Left blank, generates names by the webble',
+			'The names of the existing tabs from left to right (separated by either comma[,], semicolon[;] or space [ ]. Left blank, auto generates names by the webble',
 			$scope.theWblMetadata['templateid'],
 			{inputType: Enum.aopInputTypes.TextBox},
 			undefined
@@ -401,8 +401,8 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 		$scope.addSlot(new Slot('pageBkgImage',
 			'',
-			'Page Background Image',
-			'The Background image of all Book pages',
+			'Page/Tab Background Image',
+			'The Background image of all Book and Tab pages',
 			$scope.theWblMetadata['templateid'],
 			{inputType: Enum.aopInputTypes.ImagePick},
 			undefined
@@ -410,8 +410,8 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 		$scope.addSlot(new Slot('pageBkgImageStretchEnabled',
 			false,
-			'Page Background Image Stretch Enabled',
-			'Default behavior is that a background image is displayed with its real size and if smaller than the surface repeats itself. But if checked the imnage does not repeat but instead stretch to fit the surface exactly',
+			'Page/Tab Background Image Stretch Enabled',
+			'Default behavior is that a background image is displayed with its real size and if smaller than the surface repeats itself. But if checked the image does not repeat but instead stretch to fit the surface exactly',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -522,6 +522,18 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 							$(this).css("background-repeat", 'repeat');
 						}
 					});
+				}
+				else if($scope.gimme('tabDisplayStyle') == 0){
+					var pageBkgImage = $scope.gimme('pageBkgImage');
+					tabsContent.css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+					if($scope.gimme('pageBkgImageStretchEnabled')){
+						tabsContent.css("background-size", '100% 100%');
+						tabsContent.css("background-repeat", 'no-repeat');
+					}
+					else{
+						tabsContent.css("background-size", 'auto auto');
+						tabsContent.css("background-repeat", 'repeat');
+					}
 				}
 			}
 		}, true);
