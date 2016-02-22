@@ -321,7 +321,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		$scope.addSlot(new Slot('bookPadding',
 			5,
 			'Book Edge Padding',
-			'The distance between the book cover edge and the boke page edge',
+			'The distance between the book cover edge and the book page edge',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -774,6 +774,17 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 						}
 						theBook.remove();
 					}
+				}
+
+				var pageBkgImage = $scope.gimme('pageBkgImage');
+				tabsContent.css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+				if($scope.gimme('pageBkgImageStretchEnabled')){
+					tabsContent.css("background-size", '100% 100%');
+					tabsContent.css("background-repeat", 'no-repeat');
+				}
+				else{
+					tabsContent.css("background-size", 'auto auto');
+					tabsContent.css("background-repeat", 'repeat');
 				}
 			}
 			// IF BOOK
