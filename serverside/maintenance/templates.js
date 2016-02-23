@@ -31,6 +31,8 @@ var fs = require('fs');
 var util = require('../lib/util');
 var xfs = require('../lib/xfs');
 
+Promise.promisifyAll(fs);
+
 module.exports = function(app, config, mongoose, gettext) {
 
 	var Webble = mongoose.model('Webble');
@@ -43,21 +45,20 @@ module.exports = function(app, config, mongoose, gettext) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
-	function createInfoSync(infoDir, id, ver) {
-		try {
-            
-            var infoFile = path.join(infoDir, 'info.json');
-			var info = JSON.parse(fs.readFileSync(infoFile), 'utf8');
-			info.id = id;
-            info.ver = ver;            
+    function createInfo(infoDir, id, ver) {
+
+        var infoFile = path.join(infoDir, 'info.json');
+        return fs.readFileAsync(infoFile).then(function (infoFileContents) {
+
+            var info = JSON.parse(infoFileContents, 'utf8');
+            info.id = id;
+            info.ver = ver;
             info.filedir = infoDir;
             info.file = infoFile;
-			return info;
-		}
-		catch(err) {
-			return { name: id, description: id + " Template", id: id, ver: ver, filedir: infoDir };
-		}
-	}
+            return info;
+
+        }).catchReturn({ name: id, description: id + " Template", id: id, ver: ver, filedir: infoDir });
+    }
 
 	function buildFromTemplate(w, info) {
 
@@ -84,96 +85,101 @@ module.exports = function(app, config, mongoose, gettext) {
 	////////////////////////////////////////////////////////////////////
 	// Load the database templates
     //
-    xfs.walkSync(webbleDir, function (baseDir, dirs, files) {
+    xfs.walk(webbleDir, function (baseDir, dirs, files) {
         
         if (files.length === 0 && !util.allTrue(dirs, util.isStringNumber))
             return false;
-            
+        
         var infoDir = baseDir;
         var latestVer = 1;
         var id = path.basename(baseDir);
-
+        
         if (files.length === 0) {
-                
+            
             infoDir = path.join(baseDir, latestVer.toString());
             latestVer = dirs.reduce(function (maxVer, verString) {
                 return Math.max(verString, parseInt(verString, 10));
             }, 0);
         }
-
-        if (latestVer > 0)
-            webbleTemplates[id] = createInfoSync(infoDir, id, latestVer);
-
+        
+        if (latestVer > 0) {
+            
+            return createInfo(infoDir, id, latestVer).then(function (info) {
+                webbleTemplates[id] = info;
+            });
+        }
         return true; // Handled - stop recursing into dirs
-    });
-    
-	////////////////////////////////////////////////////////////////////
-	// Push the webbles in the database
-	//
-	return Webble.find({ $where: 'this.webble.defid == this.webble.templateid' }).exec().then(function(webbles) {
 
-        var promises = [];
+    }).then(function () { 
 
-		// Sync already existing templates
-		//
-        webbles.forEach(function (w) {
+        ////////////////////////////////////////////////////////////////////
+        // Push the webbles in the database
+        //
+        return Webble.find({ $where: 'this.webble.defid == this.webble.templateid' }).exec().then(function (webbles) {
             
-            var t = webbleTemplates[w.webble.defid];
+            var promises = [];
             
-            if (!t) {
+            // Sync already existing templates
+            //
+            webbles.forEach(function (w) {
+                
+                var t = webbleTemplates[w.webble.defid];
+                
+                if (!t) {
                 
                 // Currently noop - we don't want to remove. It's incorrect to remove
                 //
                 //promises.push(w.remove());
-            }
-            else {
-                
-                if (!t.file) {
-                    
-                    var ver = t.ver; // Just in case we have a new version on the disk
-                    var infoFile = path.join(t.filedir, 'info.json');
-                    
-                    t = w.getInfoObject();
-                    t.ver = ver;
-                    
-                    fs.writeFileSync(infoFile, JSON.stringify(t), { encoding: 'utf8' });
                 }
-                
-                if (w.webble.templaterevision !== t.ver)
-                    promises.push(buildFromTemplate(w, t));
-            }
-            delete webbleTemplates[w.webble.defid]; // Finished working with this template
-        });
-
-		// Add missing templates
-		//
-        Object.keys(webbleTemplates).forEach(function (k) {
-            
-            var t = webbleTemplates[k];
-            
-            if (!t.noautogen || config.DEPLOYMENT === 'development') {
-                
-                var w = new Webble();
-                promises.push(buildFromTemplate(w, t));
-            }
-            else
-                console.log("Skipping template (noautogen): ", t.id);
-            
-            delete webbleTemplates[k];
-        });
-
-		// Wait to finish and report the templates that were updated
-		//
-        return Promise.all(promises).then(function (results) {
-            
-            results.forEach(function (result) {
-                
-                // I'm not sure why the value may be an array (investigate, but low priority)
-                var w = result instanceof Array ? result[0] : result;
-                console.log("Synced template: ", w.webble.defid);
+                else {
+                    
+                    if (!t.file) {
+                        
+                        var ver = t.ver; // Just in case we have a new version on the disk
+                        var infoFile = path.join(t.filedir, 'info.json');
+                        
+                        t = w.getInfoObject();
+                        t.ver = ver;
+                        
+                        fs.writeFileSync(infoFile, JSON.stringify(t), { encoding: 'utf8' });
+                    }
+                    
+                    if (w.webble.templaterevision !== t.ver)
+                        promises.push(buildFromTemplate(w, t));
+                }
+                delete webbleTemplates[w.webble.defid]; // Finished working with this template
             });
-        }).catch(function (err) {
-            console.error("Error: ", err);
+            
+            // Add missing templates
+            //
+            Object.keys(webbleTemplates).forEach(function (k) {
+                
+                var t = webbleTemplates[k];
+                
+                if (!t.noautogen || config.DEPLOYMENT === 'development') {
+                    
+                    var w = new Webble();
+                    promises.push(buildFromTemplate(w, t));
+                }
+                else
+                    console.log("Skipping template (noautogen): ", t.id);
+                
+                delete webbleTemplates[k];
+            });
+            
+            // Wait to finish and report the templates that were updated
+            //
+            return Promise.all(promises).then(function (results) {
+                
+                results.forEach(function (result) {
+                    
+                    // I'm not sure why the value may be an array (investigate, but low priority)
+                    var w = result instanceof Array ? result[0] : result;
+                    console.log("Synced template: ", w.webble.defid);
+                });
+            }).catch(function (err) {
+                console.error("Error: ", err);
+            });
         });
-	});
+    });
 };
