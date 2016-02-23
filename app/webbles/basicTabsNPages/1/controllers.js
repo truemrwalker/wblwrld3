@@ -318,6 +318,15 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 			undefined
 		));
 
+		$scope.addSlot(new Slot('fadeBetweenTabsTime',
+			0,
+			'Tab Content Fade Duration',
+			'The time it takes for the content to fade away and also for the new content to fade in (a value of 0 is no fade effect)',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
 		$scope.addSlot(new Slot('bookPadding',
 			5,
 			'Book Edge Padding',
@@ -1178,11 +1187,13 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 	//===================================================================================
 	var activateTabAndContent = function(requestedTab){
 		if($scope.gimme('tabDisplayStyle') == 0){
+			var fadeTime = parseInt($scope.gimme('fadeBetweenTabsTime'));
+			if(isInit){fadeTime = 0;}
 			if(!isNaN(parseInt(requestedTab))){
 				requestedTab = tnpTabs.find('[name=' + 'tab' + requestedTab + ']');
 			}
 			var tabIndex = parseInt(requestedTab.attr('name').replace('tab', ''));
-			tabsContent.find("[id^='tab']").hide(); // Hide all content
+			tabsContent.find("[id^='tab']").fadeOut(fadeTime); // Hide all content
 			tnpTabs.find("li").attr("class",""); //Reset class's
 			tnpTabs.find("li").find('.tnpTabsAfterA').removeClass("tnpCurrentAfterA"); //Remove class
 			tnpTabs_a.css('background-color',  $scope.gimme('closedTabBackgroundColor')); //Return to base color
@@ -1196,7 +1207,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 			requestedTab.parent().attr("class","tnpCurrent"); // Activate this
 			requestedTab.css("background-color", $scope.gimme('openTabBackgroundColor')); // Set active color
 			requestedTab.find('.tnpTabsAfterA').addClass("tnpCurrentAfterA").css("background-color", $scope.gimme('openTabBackgroundColor')); // Activate this
-			tabsContent.find('#' + requestedTab.attr('name')).show(); // Show content for the current tab
+			tabsContent.find('#' + requestedTab.attr('name')).fadeIn(fadeTime); // Show content for the current tab
 			$scope.setChildContainer(tabsContent.find('#' + requestedTab.attr('name')));
 			$scope.set('currentSelectedTab', tabIndex);
 		}
