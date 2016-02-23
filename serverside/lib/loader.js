@@ -23,114 +23,71 @@
 // loader.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
-
-var fs = require('fs');
+var Promise = require("bluebird");
 var path = require('path');
 
-////////////////////////////////////////////////////////////////////////
-// Private convenience functions
-//
+var xfs = require('./xfs');
 
 ////////////////////////////////////////////////////////////////////////
+// Utility functions
 //
+function filterAndhandleInorderScripts(allScripts, specificLoadOrderList, handlerCallback, initialValue) {
+	
+	if (specificLoadOrderList && specificLoadOrderList.length > 1) {
+		
+		return specificLoadOrderList.reduce(function (previousValue, script) {
+			
+			var index = allScripts.indexOf(script);
+			
+			if (index != -1) {
+				
+				allScripts.splice(index, 1);
+				return handlerCallback(previousValue, script);
+			}
+			return previousValue;
+
+		}, initialValue);
+	}
+	return initialValue;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Main API
 //
-module.exports.executeAllScripts = function (scriptDirectory, app, config, mongoose, gettext, specificLoadOrderList) {
+module.exports.executeAllScripts = function (scriptDir, app, config, mongoose, gettext, specificLoadOrderList, extraArg0, extraArg1) {
+	
+	if (!path.isAbsolute(scriptDir))
+		scriptDir = path.join(__dirname, "..", scriptDir);
 
-	var allScripts = fs.readdirSync(scriptDirectory)
-		.filter(function(f) { return path.extname(f) == '.js'; });
-
-	var loadOrderPromise = Promise.resolve(null);
-	if (specificLoadOrderList && specificLoadOrderList.length > 1) {
-
-		specificLoadOrderList.forEach(function(script) {
-
-			var index = allScripts.indexOf(script);
-			if (index != -1) {
-
-				allScripts.splice(index, 1);
-				loadOrderPromise = loadOrderPromise.then(function() {
-					return require(path.join(scriptDirectory, script))(app, config, mongoose, gettext);
-				});
-			}
+	return xfs.getAllFiles(scriptDir, ".js", 1).then(function (allScripts) {
+		
+		return filterAndhandleInorderScripts(allScripts, specificLoadOrderList, function (prevPromise, script) {
+			return prevPromise.then(function () {
+				return require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1);
+			});
+		}, Promise.resolve()).then(function () {
+			return Promise.all(allScripts.map(function (script) {
+				return require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1);
+			}));
 		});
-	}
-
-	return loadOrderPromise.then(function() {
-
-		var promises = [];
-
-		allScripts.forEach(function(script) {
-			promises.push(require(path.join(scriptDirectory, script))(app, config, mongoose, gettext));
-		});
-
-        return Promise.all(promises).then(function () { return 0; }, function (err) {
-
-            console.error("Error: ", err);
-            return 1;
-        });
 	});
 };
 
 //**********************************************************************
 
-module.exports.executeAllScriptsSync = function (scriptDirectory, app, config, mongoose, gettext, specificLoadOrderList) {
+module.exports.executeAllScriptsSync = function (scriptDir, app, config, mongoose, gettext, specificLoadOrderList, extraArg0, extraArg1) {
+	
+	if (!path.isAbsolute(scriptDir))
+		scriptDir = path.join(__dirname, "..", scriptDir);
 
-	var allScripts = fs.readdirSync(scriptDirectory)
-		.filter(function(f) { return path.extname(f) == '.js'; });
+	var allScripts = xfs.getAllFilesSync(scriptDir, ".js", 1);
+	var results = [];
 
-	if (specificLoadOrderList && specificLoadOrderList.length > 1) {
-
-		specificLoadOrderList.forEach(function(script) {
-
-			var index = allScripts.indexOf(script);
-			if (index != -1) {
-
-				allScripts.splice(index, 1);
-				require(path.join(scriptDirectory, script))(app, config, mongoose, gettext);
-			}
-		});
-	}
-
-	allScripts.forEach(function(script) {
-		require(path.join(scriptDirectory, script))(app, config, mongoose, gettext);
+	filterAndhandleInorderScripts(allScripts, specificLoadOrderList, function (result, script) {
+		results.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
 	});
-};
-
-//**********************************************************************
-
-module.exports.executeAllRouteScriptsSync = function (scriptDirectory, app, config, mongoose, gettext, auth) {
-
-	fs.readdirSync(scriptDirectory).forEach(function(apiModule) {
-		try {
-
-			var filePath = path.join(scriptDirectory, apiModule);
-			var stats = fs.statSync(filePath);
-
-			if (stats.isFile())
-				require(filePath)(app, config, mongoose, gettext, auth);
-			else if (stats.isDirectory()) {
-
-				fs.readdirSync(filePath).forEach(function (apiSubModule) {
-					require(path.join(filePath, apiSubModule))(app, config, mongoose, gettext, auth);
-				});
-			}
-		}
-		catch (e) {
-			console.log("Could not load api module:", apiModule, "ERROR:", e);
-		}
+	allScripts.forEach(function (script) {
+		results.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
 	});
-};
-
-//**********************************************************************
-
-module.exports.executeAllSocketScriptsSync = function (scriptDirectory, app, config, mongoose, gettext, io, socketAuth) {
-
-	fs.readdirSync(scriptDirectory).forEach(function(rtModule) {
-		try {
-			require(path.join(scriptDirectory, rtModule))(app, config, mongoose, gettext, io, socketAuth);
-		}
-		catch (e) {
-			console.log("Could not load realtime module:", rtModule, "ERROR:", e);
-		}
-	});
+	return results;
 };

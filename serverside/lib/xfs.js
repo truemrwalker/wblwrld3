@@ -23,39 +23,113 @@
 // xfs.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
+var Promise = require("bluebird");
+
 var fs = require('fs');
 var path = require('path');
+
+Promise.promisifyAll(fs);
 
 ////////////////////////////////////////////////////////////////////////
 // Private convenience functions
 //
 function walkSync(baseDir, callback) {
-    
-    var filenames = fs.readdirSync(baseDir);
-    
-    var items = filenames.reduce(function (acc, name) {
-        
-        var abspath = path.join(baseDir, name);
-        if (fs.statSync(abspath).isDirectory())
-            acc.dirs.push(name);
-        else
-            acc.files.push(name);
-        return acc;
+	
+	var filenames = fs.readdirSync(baseDir);
+	
+	var items = filenames.reduce(function (result, name) {
+		
+		var abspath = path.join(baseDir, name);
+		if (fs.statSync(abspath).isDirectory())
+			result.dirs.push(name);
+		else
+			result.files.push(name);
+		return result;
 
-    }, { "files": [], "dirs": [] });
-    
-    if (!callback(baseDir, items.dirs, items.files)) { // Prune if callback returns false
+	}, { files: [], dirs: [] });
+	
+	if (!callback(baseDir, items.dirs, items.files)) { // Prune if callback returns true - i.e., finished/handled
+		
+		items.dirs.forEach(function (d) {
+			walkSync(path.join(baseDir, d), callback);
+		});
+	}
+}
 
-        items.dirs.forEach(function (d) {
-            walkSync(path.join(baseDir, d), callback);
-        });
-    }    
+//**********************************************************************
+
+function walk(baseDir, callback) {
+	
+	return fs.readdirAsync(baseDir).then(function (filenames) {
+		
+		var result = { files: [], dirs: [] };
+
+		return Promise.all(filenames.map(function (name) {
+			
+			return fs.statAsync(path.join(baseDir, name)).then(function (stat) {
+				
+				if (stat.isDirectory())
+					result.dirs.push(name);
+				else
+					result.files.push(name);
+			});
+
+		})).then(function () {
+			
+			var resultOrPromise = callback(baseDir, result.dirs, result.files);
+
+			if (resultOrPromise) // Prune if callback returns true - i.e., finished/handled
+				return resultOrPromise;
+	
+			return Promise.all(result.dirs.map(function (d) {
+				return walk(path.join(baseDir, d), callback);
+			}));
+		});
+	});
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Visiting directories
 //
 module.exports.walkSync = walkSync;
+module.exports.walk = walk;
+
+//**********************************************************************
+
+function pickFiles(result, extname, baseDir, currDir, files, currRecursionDepth) {
+	
+	var relDir = path.relative(baseDir, currDir);
+	
+	files.forEach(function (f) {
+		
+		if (path.extname(f) == extname)
+			result.push(path.join(relDir, f));
+	});
+	return currRecursionDepth <= 0; // Stop recursing further if condition is true
+}
+
+module.exports.getAllFiles = function (baseDir, extname, recursionDepth) {
+	
+	if (recursionDepth === undefined || recursionDepth < 0)
+		recursionDepth = 32;
+	
+	var result = [];
+	return walk(baseDir, function (currDir, dirs, files) {
+		return pickFiles(result, extname, baseDir, currDir, files, recursionDepth--);
+	}).return(result);
+};
+
+module.exports.getAllFilesSync = function (baseDir, extname, recursionDepth) {
+	
+	if (recursionDepth === undefined || recursionDepth < 0)
+		recursionDepth = 64;
+	
+	var result = [];
+	walkSync(baseDir, function (currDir, dirs, files) {
+		return pickFiles(result, extname, baseDir, currDir, files, recursionDepth--);
+	});
+	return result;
+};
 
 ////////////////////////////////////////////////////////////////////////
 // Quick and dirty IO stuff

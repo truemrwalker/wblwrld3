@@ -83,6 +83,58 @@ function promiseFirst(input, callback) {
 ////////////////////////////////////////////////////////////////////////
 // Public methods
 //
+module.exports.connect2 = function (mongoose, mongodbURL) {
+	
+	console.time("connect");
+
+	return Promise.fromCallback(function (callback) {
+		mongoose.connect(mongodbURL, callback);
+	}).tap(function () {
+		console.timeEnd("connect");
+	});
+};
+
+module.exports.connect = function (mongoose, mongodbURL) {
+	
+	console.time("connect");
+
+	// See here: https://gist.github.com/mongolab-org/9959376
+	// and here: http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connect-options
+	// and here: http://mongodb.github.io/node-mongodb-native/api-generated/replset.html
+	//
+	const options = {
+		db: {
+			native_parser: true,
+			retryMiliSeconds: 5000,
+			numberOfRetries: 5
+		},
+		server: {
+			auto_reconnect: true,
+			socketOptions: {
+				keepAlive: 120, // 1,
+				connectTimeoutMS: 5000 // 30000,
+			},
+		},
+		replset: {
+			socketOptions: {
+				keepAlive: 120, // 1,
+				connectTimeoutMS: 5000 // 30000,
+			},
+		},
+		promiseLibrary: Promise // see: http://mongoosejs.com/docs/promises.html
+	};
+	mongoose.Promise = Promise; // see: http://mongoosejs.com/docs/promises.html
+	//mongoose.set('debug', true);
+	
+	return Promise.fromCallback(function (callback) {
+		mongoose.connect(mongodbURL, options, callback);
+	}).tap(function () {
+		console.timeEnd("connect");
+	});
+};
+
+//**********************************************************************
+
 module.exports.execOrValue = function (value) {
     return ('exec' in value) ? value.exec() : Promise.resolve(value);
 };

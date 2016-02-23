@@ -178,18 +178,18 @@ module.exports = function(app, config, mongoose, gettext) {
 			// This is expected (esp. for devwebbles), so, report success - we've finished!
 			return Promise.resolve(null);
 		}
-        
+
         // Push the tasks to sync the local files
         //
         function processWebbleVersionDir(promises, webbleFilesDir, category, id, version) {
 
-            xfs.walkSync(webbleFilesDir, function (baseDir, dirs, files) {
-                
+            return xfs.walk(webbleFilesDir, function (baseDir, dirs, files) {
+
                 var remainingPath = path.relative(webbleFilesDir, baseDir);
                 var remoteDir = path.join(category, id, version, remainingPath);
 
                 files.forEach(function (f) {
-                    
+
                     if (f != 'info.json') // Skip info.json files
                         promises.push(syncLocalWebbleFile(baseDir, remoteDir, f));
                 });
@@ -201,26 +201,27 @@ module.exports = function(app, config, mongoose, gettext) {
         var category = path.basename(path.relative(rootWebbleDir, webbleBaseDir));
         var promises = [];
 
-        xfs.walkSync(webbleBaseDir, function (baseDir, dirs, files) {
+        return xfs.walk(webbleBaseDir, function (baseDir, dirs, files) {
             
             if (files.length === 0 && !util.allTrue(dirs, util.isStringNumber))
-                return false;
-            else if (files.length === 0) { // We are inside a webble dir that has other version dirs
+				return false; // Continue recursing
+
+            if (files.length === 0) { // We are inside a webble dir that has other version dirs
                 
                 var id = path.basename(baseDir);
-                dirs.forEach(function (versionDir) {
-                    processWebbleVersionDir(promises, path.join(baseDir, versionDir), category, id, versionDir);
-                });
-                return true; // prune
+                return Promise.all(dirs.map(function (versionDir) {
+                    return processWebbleVersionDir(promises, path.join(baseDir, versionDir), category, id, versionDir);
+                }));
             }
             else {
 
                 var id = path.basename(baseDir), version = "1";
-                processWebbleVersionDir(promises, baseDir, category, id, version);
-                return true; // prune
-            }
-        });
-		return Promise.all(promises);
+                return processWebbleVersionDir(promises, baseDir, category, id, version);
+			}
+
+		}).then(function () {
+			return Promise.all(promises);
+		});
 	}
 
 	//******************************************************************
@@ -278,9 +279,7 @@ module.exports = function(app, config, mongoose, gettext) {
         // This is only for backwards compatibility
         return syncLocalWebbleFiles(devWebbleDir);
 
-    }).then(function () {
-        return syncBackupFiles();
-    }).catch(function (err) {
+    }).then(syncBackupFiles).catch(function (err) {
         console.error("File Sync Error:", err, "--", err.stack);
     });
 
