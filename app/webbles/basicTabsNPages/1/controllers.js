@@ -231,7 +231,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		$scope.addSlot(new Slot('tabNames',
 			'',
 			'Tab Names List',
-			'The names of the existing tabs from left to right (separated by either comma[,], semicolon[;] or space [ ]. Left blank, generates names by the webble',
+			'The names of the existing tabs from left to right (separated by either comma[,], semicolon[;] or space [ ]. Left blank, auto generates names by the webble',
 			$scope.theWblMetadata['templateid'],
 			{inputType: Enum.aopInputTypes.TextBox},
 			undefined
@@ -318,10 +318,19 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 			undefined
 		));
 
+		$scope.addSlot(new Slot('fadeBetweenTabsTime',
+			0,
+			'Tab Content Fade Duration',
+			'The time it takes for the content to fade away and also for the new content to fade in (a value of 0 is no fade effect)',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
 		$scope.addSlot(new Slot('bookPadding',
 			5,
 			'Book Edge Padding',
-			'The distance between the book cover edge and the boke page edge',
+			'The distance between the book cover edge and the book page edge',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -401,8 +410,8 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 		$scope.addSlot(new Slot('pageBkgImage',
 			'',
-			'Page Background Image',
-			'The Background image of all Book pages',
+			'Page/Tab Background Image',
+			'The Background image of all Book and Tab pages',
 			$scope.theWblMetadata['templateid'],
 			{inputType: Enum.aopInputTypes.ImagePick},
 			undefined
@@ -410,8 +419,8 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 		$scope.addSlot(new Slot('pageBkgImageStretchEnabled',
 			false,
-			'Page Background Image Stretch Enabled',
-			'Default behavior is that a background image is displayed with its real size and if smaller than the surface repeats itself. But if checked the imnage does not repeat but instead stretch to fit the surface exactly',
+			'Page/Tab Background Image Stretch Enabled',
+			'Default behavior is that a background image is displayed with its real size and if smaller than the surface repeats itself. But if checked the image does not repeat but instead stretch to fit the surface exactly',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -522,6 +531,18 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 							$(this).css("background-repeat", 'repeat');
 						}
 					});
+				}
+				else if($scope.gimme('tabDisplayStyle') == 0){
+					var pageBkgImage = $scope.gimme('pageBkgImage');
+					tabsContent.css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+					if($scope.gimme('pageBkgImageStretchEnabled')){
+						tabsContent.css("background-size", '100% 100%');
+						tabsContent.css("background-repeat", 'no-repeat');
+					}
+					else{
+						tabsContent.css("background-size", 'auto auto');
+						tabsContent.css("background-repeat", 'repeat');
+					}
 				}
 			}
 		}, true);
@@ -762,6 +783,17 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 						}
 						theBook.remove();
 					}
+				}
+
+				var pageBkgImage = $scope.gimme('pageBkgImage');
+				tabsContent.css("background-image", pageBkgImage != "" ? "url(" + pageBkgImage + ")" : "");
+				if($scope.gimme('pageBkgImageStretchEnabled')){
+					tabsContent.css("background-size", '100% 100%');
+					tabsContent.css("background-repeat", 'no-repeat');
+				}
+				else{
+					tabsContent.css("background-size", 'auto auto');
+					tabsContent.css("background-repeat", 'repeat');
 				}
 			}
 			// IF BOOK
@@ -1155,11 +1187,13 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 	//===================================================================================
 	var activateTabAndContent = function(requestedTab){
 		if($scope.gimme('tabDisplayStyle') == 0){
+			var fadeTime = parseInt($scope.gimme('fadeBetweenTabsTime'));
+			if(isInit){fadeTime = 0;}
 			if(!isNaN(parseInt(requestedTab))){
 				requestedTab = tnpTabs.find('[name=' + 'tab' + requestedTab + ']');
 			}
 			var tabIndex = parseInt(requestedTab.attr('name').replace('tab', ''));
-			tabsContent.find("[id^='tab']").hide(); // Hide all content
+			tabsContent.find("[id^='tab']").fadeOut(fadeTime); // Hide all content
 			tnpTabs.find("li").attr("class",""); //Reset class's
 			tnpTabs.find("li").find('.tnpTabsAfterA').removeClass("tnpCurrentAfterA"); //Remove class
 			tnpTabs_a.css('background-color',  $scope.gimme('closedTabBackgroundColor')); //Return to base color
@@ -1173,7 +1207,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 			requestedTab.parent().attr("class","tnpCurrent"); // Activate this
 			requestedTab.css("background-color", $scope.gimme('openTabBackgroundColor')); // Set active color
 			requestedTab.find('.tnpTabsAfterA').addClass("tnpCurrentAfterA").css("background-color", $scope.gimme('openTabBackgroundColor')); // Activate this
-			tabsContent.find('#' + requestedTab.attr('name')).show(); // Show content for the current tab
+			tabsContent.find('#' + requestedTab.attr('name')).fadeIn(fadeTime); // Show content for the current tab
 			$scope.setChildContainer(tabsContent.find('#' + requestedTab.attr('name')));
 			$scope.set('currentSelectedTab', tabIndex);
 		}

@@ -115,6 +115,7 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
         }, true);
 
 		$scope.set('resultTemplate', '$arg1$+" "+$arg2$');
+		$timeout(doCalc, 500);
     };
     //===================================================================================
 
