@@ -187,6 +187,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     // A list of available sandbox webble templates
     var availableSandboxWebbles_ = [];
+	var listOfLoadedSandboxWebbles_ = [];
+	$scope.getIsSandboxPresent = function(){return (listOfLoadedSandboxWebbles_.length > 0 );};
 
     // A list of open workspaces last time we checked
     var recentWS_ = undefined;
@@ -1903,6 +1905,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 							break;
 						}
 					}
+					for(var k = 0; k < listOfLoadedSandboxWebbles_.length; k++){
+						if(listOfLoadedSandboxWebbles_[k] == sandboxMemoryToBeCleared[j]){
+							listOfLoadedSandboxWebbles_.splice(k, 1);
+							break;
+						}
+					}
 				}
                 loadSandboxWblDefs();
 				dontAskJustDoIt = true;
@@ -2175,6 +2183,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
                 isInSandbox = true;
                 corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/0';// + whatTemplateRevision;
+
+				var loadedBefore = false;
+				for(var j = 0; j < listOfLoadedSandboxWebbles_.length; j++){
+					if(listOfLoadedSandboxWebbles_[j] == availableSandboxWebbles_[i].webble.defid){
+						loadedBefore = true;
+						break;
+					}
+				}
+				if(!loadedBefore){
+					listOfLoadedSandboxWebbles_.push(availableSandboxWebbles_[i].webble.defid);
+					$log.log(listOfLoadedSandboxWebbles_)
+				}
                 break;
             }
         }
@@ -2419,6 +2439,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         listOfUntrustedWbls_ = [];
+		listOfLoadedSandboxWebbles_ = [];
     };
     //========================================================================================
 
@@ -2990,6 +3011,35 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         return bundleMaster;
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Get List Of Unique Untrusted Wbls
+	// This method creates a list of unique Untrusted Webbles.
+	//========================================================================================
+	$scope.getListAsStringOfLoadedSandboxWebbles = function(){
+		var uniqueLoadedSandboxList = [], uniqueLoadedSandboxListAsStr = '';
+		for(var i = 0; i < listOfLoadedSandboxWebbles_.length; i++){
+			var alreadyExist = false;
+			for(var n = 0; n < uniqueLoadedSandboxList.length; n++){
+				if(listOfLoadedSandboxWebbles_[i] == uniqueLoadedSandboxList[n]){
+					alreadyExist = true;
+					break;
+				}
+			}
+			if(!alreadyExist){
+				uniqueLoadedSandboxList.push((listOfLoadedSandboxWebbles_[i]));
+			}
+		}
+
+		for(var n = 0; n < uniqueLoadedSandboxList.length; n++){
+			uniqueLoadedSandboxListAsStr += '\n"' + uniqueLoadedSandboxList[n] + '"';
+		}
+
+		return uniqueLoadedSandboxListAsStr;
+	};
+	//========================================================================================
+
 
 
     //========================================================================================

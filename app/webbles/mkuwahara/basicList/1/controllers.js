@@ -74,6 +74,11 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 						$scope.formProps.listHeight = 'auto';
 						$scope.formProps.listOverflow = 'visible';
 					}
+
+					if($scope.gimme('theListType') == 6){
+						if(fxList != undefined){ stroll.unbind(fxList); }
+						$timeout(function(){fxList = $scope.theView.parent().find("#fxList ul"); stroll.bind(fxList);});
+					}
 				}
 			}
 			else if(eventData.slotName == 'theListItemMarkerImage'){

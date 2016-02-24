@@ -63,7 +63,8 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $modal, $time
 
     // texts
     $scope.noConnExistMsg = gettext("No Webbles are connected with eachother or share their model");
-    $scope.noTrustIconInfo = gettext("Following Webbles in this workspace are from a source outside your circle of trust:");
+    $scope.noTrustIconInfo = gettext("Following Webbles in this workspace are from a source outside your circle of trust: ");
+	$scope.sandboxPresentIconInfo = gettext("Following Webbles in this workspace were originally loaded from the sandbox (they might have been published since then, but not yet reloaded): ");
 
 
 
