@@ -2193,7 +2193,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 				if(!loadedBefore){
 					listOfLoadedSandboxWebbles_.push(availableSandboxWebbles_[i].webble.defid);
-					$log.log(listOfLoadedSandboxWebbles_)
 				}
                 break;
             }
