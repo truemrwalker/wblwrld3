@@ -305,6 +305,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var webbleCreationInProcess = false;
 	var webblesWaitingToBeLoaded = [];
 	var downloadingManifestLibs = false;
+	var pleaseQuickLoadInternalSavedWS = false;
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -452,6 +453,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.$on('auth:login', function(event, user) {
         var hasUserChanged = ($scope.user == undefined || $scope.user.email != user.email);
         $scope.user = user;
+
+		if (hasUserChanged && $scope.getActiveWebbles().length > 0){ quickSaveWSInternal(); webbleDefs_ = []; webbleTemplates_ = []; pleaseQuickLoadInternalSavedWS = true;}
 
         // Set user platform settings if that is not blocked by overrides
         if (!wblwrldSystemOverrideSettings.ignore_UserSettings && hasUserChanged){
@@ -971,6 +974,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         var sbwItem = {"sublink_itemName": availableSandboxWebbles_[i].id, "title": gettext("Load Sandbox Webble") + ': ' + availableSandboxWebbles_[i].webble.displayname, "shortcut": "", "visibility_enabled": true};
                         wblMenuList.push(sbwItem);
                     }
+
+					if (pleaseQuickLoadInternalSavedWS){ dontAskJustDoIt = true; quickLoadInternalSavedWS(); }
                 }
             },
             function (msg) {
@@ -1179,6 +1184,20 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     var downloadWblTemplate = function(whatTemplateId, whatTemplateRevision, whatWblDef){
         var corePath = $scope.getTemplatePath(whatTemplateId, whatTemplateRevision);
+
+		if(corePath.search(appPaths.webbleSandboxCore) != -1){
+			var loadedBefore = false;
+			for(var j = 0; j < listOfLoadedSandboxWebbles_.length; j++){
+				if(listOfLoadedSandboxWebbles_[j] == whatTemplateId){
+					loadedBefore = true;
+					break;
+				}
+			}
+			if(!loadedBefore){
+				listOfLoadedSandboxWebbles_.push(whatTemplateId);
+			}
+		}
+
         $.ajax({url: corePath + appPaths.webbleView,
             success: function(){
                 $.ajax({url: corePath + appPaths.webbleManifest,
@@ -1367,7 +1386,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						}
 					}
 				}
-                currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
+                //currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
+				currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++, viewPath: $scope.getTemplatePath(webblesToInsert[i].templateid, webblesToInsert[i].templaterevision) + '/view.html'});
             }
         }
     };
@@ -2060,6 +2080,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Tries to restore an auto saved workspace
     //========================================================================================
     var quickLoadInternalSavedWS = function(){
+		pleaseQuickLoadInternalSavedWS = false;
         if(quickSavedWS){
             if(quickSavedWS.id){
                 $scope.insertWS(quickSavedWS);
@@ -2182,18 +2203,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         for(var i = 0; i < availableSandboxWebbles_.length; i++){
             if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
                 isInSandbox = true;
-                corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/0';// + whatTemplateRevision;
-
-				var loadedBefore = false;
-				for(var j = 0; j < listOfLoadedSandboxWebbles_.length; j++){
-					if(listOfLoadedSandboxWebbles_[j] == availableSandboxWebbles_[i].webble.defid){
-						loadedBefore = true;
-						break;
-					}
-				}
-				if(!loadedBefore){
-					listOfLoadedSandboxWebbles_.push(availableSandboxWebbles_[i].webble.defid);
-				}
+                corePath = appPaths.webbleSandboxCore + availableSandboxWebbles_[i].id + '/0';
                 break;
             }
         }
