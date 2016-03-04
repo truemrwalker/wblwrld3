@@ -38,7 +38,7 @@
 // This is the main controller for the Webble World platform
 //
 //====================================================================================================================
-ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $location, $modal, $log, $q, $http, $route, $filter, $window, $compile, $timeout, localStorageService, gettext, gettextCatalog, Enum, wwConsts, dbService, menuItemsFactoryService, appPaths, bitflags, getKeyByValue, getUrlVars, fromKeyCode, isValidEnumValue, isValidStyleValue, getCSSClassPropValue, jsonQuery, Slot, authService, valMod, socket, strCatcher, isExist) {    // DEBUG Mode announcement if logging is not commented out, and even with an alert if this is a non-localhost version
+ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $location, $modal, $log, $q, $http, $route, $filter, $window, $compile, $timeout, localStorageService, gettext, gettextCatalog, Enum, wwConsts, dbService, menuItemsFactoryService, appPaths, bitflags, getKeyByValue, getUrlVars, fromKeyCode, isValidEnumValue, isValidStyleValue, getCSSClassPropValue, jsonQuery, Slot, authService, valMod, socket, strCatcher, isExist, mathy) {    // DEBUG Mode announcement if logging is not commented out, and even with an alert if this is a non-localhost version
     $log.log('This application currently run in DEBUG mode.');
 
     //=== PLATFORM PROPERTIES =============================================
@@ -126,7 +126,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	};
 	$scope.isContentUpdated = function(whatContent){
 		for(var i = 0; i < updatedContent.length; i++){
-			if(updatedContent[i].name == whatContent && ((new Date()).getMonth() - (new Date(updatedContent[i].date)).getMonth() <= 1)){
+			if(updatedContent[i].name == whatContent && (mathy.monthDiff((new Date(updatedContent[i].date)), (new Date())) <= 1)){
 				return true;
 			}
 		}
@@ -784,12 +784,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		if(!$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession){
 			$scope.globalByPassFlags.itHasAlreadyBeenShownThisSession = true;
 
-			/*//---------------------------------------------------
+			//---------------------------------------------------
 			//IMPORTANT MESSAGE FROM THE DEV TEAM
 			var postedDate = "2015-06-15";
 			var cookie = localStorageService.get('alertInfoNews' + postedDate);
 			var readTimes = (cookie != undefined) ? parseInt(cookie) : 0;
-			var monthsSincePublish = (new Date()).getMonth() - (new Date(postedDate)).getMonth();
+			var monthsSincePublish = mathy.monthDiff((new Date(postedDate)), (new Date()));
 			if(monthsSincePublish <= 2){
 				if( readTimes < 3 ){
 					localStorageService.add('alertInfoNews' + postedDate, (readTimes + 1));
@@ -812,7 +812,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					gettextCatalog.getString("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
 					gettextCatalog.getString("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
 					gettextCatalog.getString("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
-					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){*//*Your callback code*//*}); </span>&nbsp;</br></br>' +
+					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){Your callback code}); </span>&nbsp;</br></br>' +
 					gettextCatalog.getString("We also strongly recommend to foremost use this internal event listener and secondly use $watches as a part of your Webble solution.") + '&nbsp;</br>' +
 					gettextCatalog.getString("Download and read the Development Pack and the ReadMe and the wblCore reference code as well as the updated Webble World Manual (chapter 3) for more details on all that.") + '&nbsp;' +
 					'</p>' +
@@ -822,7 +822,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					});
 				}
 			}
-			//---------------------------------------------------*/
+			//---------------------------------------------------
 		}
 	};
 
