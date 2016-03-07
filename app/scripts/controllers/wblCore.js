@@ -675,7 +675,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 		if(wblDefMetaData == undefined){ wblDefMetaData = {rating: 0, ratingCount: 0, image: '', created: undefined, updated: undefined, isShared: false, isTrusted: false, isVerified: false}; }
         return {
             displayname: $scope.theWblMetadata['displayname'],
-			image: wblDefMetaData.image,
+			image: wblDefMetaData.image != "" ? wblDefMetaData.image : $scope.theWblMetadata['image'],
 			rating: wblDefMetaData.rating,
 			ratingCount: wblDefMetaData.ratingCount,
 			created: wblDefMetaData.created,

@@ -175,6 +175,5 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 	$scope.formData['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + $scope.formData.defid;
 	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
 	$scope.formData['rateShow'] = true;
-	$log.log($scope.formData);
 });
 //======================================================================================================================

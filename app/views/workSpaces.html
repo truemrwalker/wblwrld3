@@ -42,8 +42,10 @@
     <div class="bubbleInfo" ng-class="putBelow" ng-show="getBubbleTxtVisibility()" style="z-index: 10000;" ng-style="{'left': getBubbleTxtPos().x, 'top': getBubbleTxtPos().y}">{{getBubbleTxt() | translate}}</div>
 
     <!--<div style="float: right; margin-top: 3px; margin-right: 3px;">-->
-    <div ng-show="getIsUntrustedWblsExisting()" style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
-        <img src="images/icons/untrusted.png" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
+    <div style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
+        <img src="images/icons/untrusted.png" ng-show="getIsUntrustedWblsExisting()" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
+		<br>
+		<img src="images/icons/sandbox.png" ng-show="getIsSandboxPresent()" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{sandboxPresentIconInfo | translate}} {{getListAsStringOfLoadedSandboxWebbles()}}">
     </div>
 
     <!--THIS IS A CONTAINER FOR MULTI WEBBLE PROPERTY FORM (RESIZABLE DOES NOT WORK WITH INCLUDE, THEREFORE THE INLINE SOLUTION)-->
@@ -138,7 +140,7 @@
      <!--THIS IS THE WEBBLE TEMPLATE CONTAINER-->
     <div id="w_{{$index}}" class="webble" templateid="{{wbl.wblDef.templateid}}"
          ng-style="{'border-color': selectionBorder.color, 'border-width': selectionBorder.width, 'border-style': selectionBorder.style, '-webkit-box-shadow': selectionBorder.glow, '-moz-box-shadow': selectionBorder.glow, 'box-shadow': selectionBorder.glow}"
-         webble="{{::wbl.wblDef}}" ng-repeat="wbl in getCurrWS().webbles track by wbl.uniqueId" ng-include src="getTemplatePath(wbl.wblDef.templateid, wbl.wblDef.templaterevision) + '/view.html'" style="position: absolute;"
+         webble="{{::wbl.wblDef}}" ng-repeat="wbl in getCurrWS().webbles track by wbl.uniqueId" ng-include src="::wbl.viewPath" style="position: absolute;"
          hm-double-tap="dblTapEventHandler($event)">
     </div>
 </div>

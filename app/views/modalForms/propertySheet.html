@@ -160,7 +160,7 @@
 
             <!--ImagePick-->
             <div ng-switch-when="17">
-                <img ng-src="{{item.value}}" style="max-height: 150px; height: auto; width: auto; vertical-align: top;" />
+                <img ng-src="{{item.value}}" style="max-height: 150px; max-width: 100%; height: auto; width: auto; vertical-align: top;" />
                 <input id="inputImage_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localImgFileChanged(this)"><br>
                 <textarea class="formitem" ng-model="item.value" rows="2" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px"></textarea>
                 <span style="width: 95%; min-width: 180px; color: red">{{item.notification | translate}}</span>
