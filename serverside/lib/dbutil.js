@@ -112,13 +112,13 @@ module.exports.connect = function (mongoose, mongodbURL) {
 			auto_reconnect: true,
 			socketOptions: {
 				keepAlive: 120, // 1,
-				connectTimeoutMS: 5000 // 30000,
+				connectTimeoutMS: 50000 // 30000,
 			},
 		},
 		replset: {
 			socketOptions: {
 				keepAlive: 120, // 1,
-				connectTimeoutMS: 5000 // 30000,
+				connectTimeoutMS: 50000 // 30000,
 			},
 		},
 		promiseLibrary: Promise // see: http://mongoosejs.com/docs/promises.html

@@ -105,7 +105,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		getContributors: function (req, query) {
 
-			return query.populate('_contributors', 'name email username').execPopulate().then(function (obj) {
+			return query.populate('_contributors', 'name email username').exec().then(function (obj) {
                 ensureObjectValid(req, obj);
                 
                 return util.transform(obj._contributors, function (u) { return u.username || u.email; }); // Everything OK
