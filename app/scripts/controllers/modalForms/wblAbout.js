@@ -134,6 +134,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 	// Returns a the text that comes with the selected rating.
 	//========================================================================================
 	$scope.getRateText = function(theRate){
+		theRate = Math.ceil(parseInt(theRate));
 		if(theRate == 0){
 			return gettext("Unrated");
 		}
