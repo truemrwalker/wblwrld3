@@ -1369,6 +1369,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // number of specified classes.
     //========================================================================================
     var insertWebble = function(whatWblDef){
+		// Check if the webble def has already been loaded before... (only to keep track, nothing else)
+		var webbleDefExist = false;
+        for (var i = 0, ewd; ewd = webbleDefs_[i]; i++){
+			if (ewd['defid'] == whatWblDef['webble']['defid'] && ewd['author'] == whatWblDef['webble']['author']){
+				webbleDefExist = true;
+				break;
+			}
+		}
+		if (!webbleDefExist){ webbleDefs_.push(whatWblDef['webble']); }
+
         var webblesToInsert = jsonQuery.allValByKey(whatWblDef, 'webble');
         noOfNewWebbles_ = webblesToInsert.length;
 
@@ -1386,7 +1396,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						}
 					}
 				}
-                //currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++});
 				currWS_.webbles.push({wblDef: webblesToInsert[i], uniqueId: nextUniqueId++, viewPath: $scope.getTemplatePath(webblesToInsert[i].templateid, webblesToInsert[i].templaterevision) + '/view.html'});
             }
         }
@@ -2481,24 +2490,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if (whatWblDefId != ""){
             $scope.waiting(true);
             $timeout(updateWorkSurfce, 100);
-            var existingWebbleDef = null;
-
-            // Check if the webble def has already been loaded before...
-            for (var i = 0; i < webbleDefs_.length; i++){
-                if (webbleDefs_[i]['wblDefId'] == whatWblDefId){
-                    existingWebbleDef = webbleDefs_[i]['json'];
-                    break;
-                }
-            }
-
-            // ...and if so get it from memory.
-            if (existingWebbleDef != null){
-                $scope.loadWebbleFromDef(existingWebbleDef, whatCallbackMethod);
-            }
-            // ...and if not get it from the server.
-            else{
-                dbService.getWebbleDef(whatWblDefId, true).then(function(data){serviceRes_getWebbleDef_Completed(whatWblDefId, whatCallbackMethod, data);},function(eMsg){$scope.serviceError(eMsg);});
-            }
+            dbService.getWebbleDef(whatWblDefId, true).then(function(data){serviceRes_getWebbleDef_Completed(whatWblDefId, whatCallbackMethod, data);},function(eMsg){$scope.serviceError(eMsg);});
         }
     };
     //========================================================================================
@@ -4235,7 +4227,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     '<strong>' + gettextCatalog.getString("Application Runtime") + '</strong>: ' + appTime + ' ' + gettextCatalog.getString("minutes") + '.<br>' +
 					'<strong>' + gettextCatalog.getString("No of loaded Webbles") + '</strong>: ' + $scope.getActiveWebbles().length + '<br>' +
 					'<strong>' + gettextCatalog.getString("No of different Webble Templates used") + '</strong>: ' + webbleTemplates_.length + '<br>' +
-					'<strong>' + gettextCatalog.getString("No of different Webble Definitions used") + '</strong>: ' + webbleDefs_.length + '<br>'
+					'<strong>' + gettextCatalog.getString("No of different Webble Definitions used") + '</strong>: ' + webbleDefs_.length + '<br>' +
+					'<strong>' + gettextCatalog.getString("No of different Sandbox Webbles used") + '</strong>: ' + listOfLoadedSandboxWebbles_.length + '<br>'
                 });
             }
         }
