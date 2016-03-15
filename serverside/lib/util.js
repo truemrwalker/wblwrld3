@@ -218,8 +218,8 @@ module.exports.isStringNumber = function (str) {
 //
 module.exports.buildQuery = function (query, ignoreList, namespace, aliasesObj) {
 
-	var start = query.start || 0;
-	var limit = query.limit || 500;
+	var start = (query.start && 1 * query.start) || 0;
+	var limit = (query.limit && 1 * query.limit) || 500;
 
 	// For extracting the target fields
 	//
