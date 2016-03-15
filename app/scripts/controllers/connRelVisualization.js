@@ -87,7 +87,7 @@ ww3Controllers.controller('VisualConnViewCtrl', function ($scope, $log, gettext,
                 var cPos = $scope.getWebbleCenterPos(aw);
                 var pPos = $scope.getWebbleCenterPos(parent);
                 var mPos = {x: cPos.x + ((pPos.x - cPos.x) / 2), y: cPos.y + ((pPos.y - cPos.y) / 2)};
-                var txtYPosOffset = 20;
+                var cPosTxtOffset = {x: 0, y: 0}, pPosTxtOffset = {x: 0, y: 0};
                 var startMarker = '#markerChild';
                 var endMarker = '#markerParent';
                 var midMarker = '#markerNoArrow';
@@ -121,11 +121,25 @@ ww3Controllers.controller('VisualConnViewCtrl', function ($scope, $log, gettext,
                     endMarker = '#markerChild';
                 }
 
-                if(cPos.y < pPos.y){
-                    txtYPosOffset = -20;
-                }
+				if((cPos.x - pPos.x) > 0){
+					cPosTxtOffset.x = -20;
+					pPosTxtOffset.x = 20;
+				}
+				else{
+					cPosTxtOffset.x = 20;
+					pPosTxtOffset.x = -20;
+				}
 
-                validConnList.push({cPos: cPos, pPos: pPos, path: path, cSlot: cSlot, pSlot: pSlot, startMarker: startMarker, endMarker: endMarker, midMarker: midMarker, txtYPosOffset: txtYPosOffset});
+				if((cPos.y - pPos.y) > 0){
+					cPosTxtOffset.y = -20;
+					pPosTxtOffset.y = -20;
+				}
+				else{
+					cPosTxtOffset.y = 20;
+					pPosTxtOffset.y = 20;
+				}
+
+                validConnList.push({cPos: cPos, pPos: pPos, path: path, cSlot: cSlot, pSlot: pSlot, startMarker: startMarker, endMarker: endMarker, midMarker: midMarker, cPosTxtOffset: cPosTxtOffset, pPosTxtOffset: pPosTxtOffset});
             }
         }
 

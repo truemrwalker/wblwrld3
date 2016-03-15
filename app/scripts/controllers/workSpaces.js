@@ -104,18 +104,6 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $modal, $time
                 reader.onload = function(e) {
                     var theWebbleDef = JSON.parse(e.target.result);
                     if(theWebbleDef['webble'] != undefined){
-                        // Check if the webble def has already been loaded before...
-                        var webbleDefExist = false;
-                        for (var i = 0, ewd; ewd = $scope.getWebbleDefs()[i]; i++){
-                            if (ewd['wblDefId'] == theWebbleDef['webble']['defid']){
-                                webbleDefExist = true;
-                                break;
-                            }
-                        }
-                        if (!webbleDefExist){
-                            $scope.getWebbleDefs().push({wblDefId: theWebbleDef['webble']['wblDefId'], json: theWebbleDef});
-                        }
-
                         $scope.loadWebbleFromDef(theWebbleDef, null);
                     }
                     else{
