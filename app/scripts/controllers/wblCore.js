@@ -1500,8 +1500,52 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.AddCustomSlots)){
             $scope.openForm(Enum.aopForms.addCustSlot, $scope.theView, function(retVal){
                 if(!retVal){
-                    $log.log('Custom slot was not added successfully');
+                    $log.log('Custom slot was canceled or not added successfully');
                 }
+				else{
+					for(var i = 0, selWbl; selWbl = $scope.getSelectedWebbles()[i]; i++ ){
+						if(selWbl.scope().getInstanceId() != $scope.getInstanceId()){
+							var sltElmnt = undefined;
+							if(retVal.getElementPntr() != undefined && retVal.getCategory() == 'custom-css'){
+								var elementId = '#' + retVal.getName().substr(0, retVal.getName().indexOf(':'));
+								var theElmnt = selWbl.scope().theView.parent().find(elementId);
+								if(elementId == '#root'){
+									theElmnt = selWbl.scope().theView.parent();
+								}
+								sltElmnt = theElmnt;
+								if(retVal.getName() == 'root:transition'){
+									var sn = retVal.getName(), sv = retVal.getValue();
+									$timeout(function(){$scope.setStyle(theElmnt, sn, sv);});
+								}
+								else{
+									$scope.setStyle(theElmnt, retVal.getName(), retVal.getValue());
+								}
+								if(sltElmnt.length == 0){sltElmnt = null};
+							}
+							else if(retVal.getCategory() == 'custom-merged' && retVal.getValue().length > 0){
+								for(var i = 0, slotname; slotname = retVal.getValue()[i]; i++){
+									if(selWbl.scope().gimme(slotname) == null){
+										sltElmnt = null
+										break;
+									}
+								}
+							}
+
+							if(sltElmnt !== null){
+								var theNewSlot = new Slot(retVal.getName(),
+									retVal.getValue(),
+									retVal.getDisplayName(),
+									retVal.getDisplayDescription(),
+									retVal.getCategory(),
+									undefined,
+									sltElmnt
+								);
+								theNewSlot.setIsCustomMade(true);
+								selWbl.scope().addSlot(theNewSlot);
+							}
+						}
+					}
+				}
             });
         }
         //=======================================================================================

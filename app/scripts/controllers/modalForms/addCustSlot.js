@@ -326,9 +326,10 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
 
     // Form validation error message
     $scope.formProps = {
-      errorMsg: '',
+      errorMsg: gettext("NOTE: Multiple Webble setting available, meaning that if any Webbles are selected (border highlighted), those will also be given a new custom slot created here (though CSS slots will only be applied to Webbles with elements of the same name)."),
       errorMsgColor: 'red'
     };
+
 
 
     //=== EVENT HANDLERS =====================================================================
@@ -491,7 +492,7 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
                 theNewSlot.setIsCustomMade(true);
                 thisWbl.scope().addSlot(theNewSlot);
 
-                $modalInstance.close(true);
+                $modalInstance.close(theNewSlot);
             }
             else{
                 $scope.formProps.errorMsgColor = 'red';

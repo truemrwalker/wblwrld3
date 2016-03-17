@@ -1861,7 +1861,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var ltrb = {l: 10000, t: 10000, r: 0, b: 0};
         for(var i = 0, wbl; wbl = theWblFamily[i]; i++){
             var wblLTPos = $scope.getWblAbsPosInPixels(wbl);
-            var wblLTRB = {l: wblLTPos.x, t: wblLTPos.y, r: wblLTPos.x + Math.round(getUnits(wbl.parent()[0], 'width').pixel), b: wblLTPos.y + Math.round(getUnits(wbl.parent()[0], 'height').pixel)};
+			var widthUnits = 0, heightUnits = 0;
+			try{ widthUnits = Math.round(getUnits(wbl.parent()[0], 'width').pixel); }catch(e){}
+			try{ heightUnits = Math.round(getUnits(wbl.parent()[0], 'height').pixel); }catch(e){}
+            var wblLTRB = {l: wblLTPos.x, t: wblLTPos.y, r: wblLTPos.x + widthUnits, b: wblLTPos.y + heightUnits};
             if(wblLTRB.l < ltrb.l){
                 ltrb.l = wblLTRB.l;
             }
