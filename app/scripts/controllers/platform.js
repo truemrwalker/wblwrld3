@@ -3168,7 +3168,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var theFullPos = {x: 0, y: 0};
         if(whatWebble){
             var ancestors = $scope.getAllAncestors(whatWebble);
-            theFullPos = {x: Math.round(getUnits(whatWebble.parent()[0], 'left').pixel), y: Math.round(getUnits(whatWebble.parent()[0], 'top').pixel)};
+			try{ theFullPos.x = Math.round(getUnits(whatWebble.parent()[0], 'left').pixel); }catch(e){}
+			try{ theFullPos.y = Math.round(getUnits(whatWebble.parent()[0], 'top').pixel); }catch(e){}
             for(var i = 0, a; a = ancestors[i]; i++){
                 theFullPos.x += Math.round(getUnits(a.parent()[0], 'left').pixel);
                 theFullPos.y += Math.round(getUnits(a.parent()[0], 'top').pixel);

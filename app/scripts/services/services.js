@@ -830,16 +830,16 @@ ww3Services.factory('strCatcher', function(gettext) {
         //DIRECTION: gettext("xxx"),
         //DISPLAY: gettext("xxx"),
         //EMPTYCELLS: gettext("xxx"),
-        FILTERBLUR: gettext("Applies a Gaussian blur to the input image. a value of ‘radius’ defines the value of how many pixels on the screen blend into each other"),
-        FILTERBRIGHTNESS: gettext("Applies a linear multiplier to input image, making it appear more or less bright. A value of 0% will create an image that is completely black. A value of 100% leaves the input unchanged. Values of an amount over 100% are allowed"),
-        FILTERCONTRAST: gettext("Adjusts the contrast of the input. A value of 0% will create an image that is completely black. A value of 100% leaves the input unchanged. Values of amount over 100% are allowed"),
-        FILTERDROPSHADOW: gettext("Applies a drop shadow effect to the input image. [offset-x] [offset-y](required) [blur-radius](optional) [spread-radius](optional)[color](optional)"),
-        FILTERGRAYSCALE: gettext("Converts the input image to grayscale. A value of 100% is completely grayscale. A value of 0% leaves the input unchanged"),
-        FILTERHUEROTATE: gettext("Applies a hue rotation on the input image. The value of ‘angle’ defines the number of degrees around the color circle the input samples will be adjusted. A value of 0deg leaves the input unchanged."),
-        FILTERINVERT: gettext("Inverts the samples in the input image. A value of 100% is completely inverted. A value of 0% leaves the input unchanged"),
-        FILTEROPACITY: gettext("Applies transparency to the samples in the input image. A value of 0% is completely transparent. A value of 100% leaves the input unchanged"),
-        FILTERSATURATE: gettext("Saturates the input image. A value of 0% is completely un-saturated. A value of 100% leaves the input unchanged"),
-        FILTERSEPIA: gettext("Converts the input image to sepia. A value of 100% is completely sepia. A value of 0% leaves the input unchanged"),
+        FILTERBLUR: gettext("Applies a Gaussian blur to the input image. a value of ‘radius’ defines the value of how many pixels on the screen blend into each other.EXAMPLE: 5px (Do not forget 'px'"),
+        FILTERBRIGHTNESS: gettext("Applies a linear multiplier to input image, making it appear more or less bright. A value of 0% will create an image that is completely black. A value of 100% leaves the input unchanged. Values of an amount over 100% are allowed.EXAMPLE: 50% (Do not forget '%'"),
+        FILTERCONTRAST: gettext("Adjusts the contrast of the input. A value of 0% will create an image that is completely black. A value of 100% leaves the input unchanged. Values of amount over 100% are allowed.EXAMPLE: 50% (Do not forget '%'"),
+        FILTERDROPSHADOW: gettext("Applies a drop shadow effect to the input image. [offset-x] [offset-y](required) [blur-radius](optional) [spread-radius](optional)[color](optional).EXAMPLE: 5px 5px 10px red (Do not forget 'px'"),
+        FILTERGRAYSCALE: gettext("Converts the input image to grayscale. A value of 100% is completely grayscale. A value of 0% leaves the input unchanged.EXAMPLE: 50% (Do not forget '%'"),
+        FILTERHUEROTATE: gettext("Applies a hue rotation on the input image. The value of ‘angle’ defines the number of degrees around the color circle the input samples will be adjusted. A value of 0deg leaves the input unchanged..EXAMPLE: 50% (Do not forget 'deg'"),
+        FILTERINVERT: gettext("Inverts the samples in the input image. A value of 100% is completely inverted. A value of 0% leaves the input unchanged.EXAMPLE: 50% (Do not forget '%'"),
+        FILTEROPACITY: gettext("Applies transparency to the samples in the input image. A value of 0% is completely transparent. A value of 100% leaves the input unchanged.EXAMPLE: 50% (Do not forget '%'"),
+        FILTERSATURATE: gettext("Saturates the input image. A value of 0% is completely un-saturated. A value of 100% leaves the input unchanged.EXAMPLE: 50% (Do not forget '%'"),
+        FILTERSEPIA: gettext("Converts the input image to sepia. A value of 100% is completely sepia. A value of 0% leaves the input unchanged.EXAMPLE: 50% (Do not forget '%'"),
         //FLEX: gettext("xxx"),
         //FLEXBASIS: gettext("xxx"),
         //FLEXDIRECTION: gettext("xxx"),
@@ -1005,7 +1005,7 @@ ww3Services.factory('strCatcher', function(gettext) {
                 desc: gettext("This slot is a custom slot added by a user or the Webble itself.")
             };
 
-            var slotNameModStr = whatSlotName.replace('-', '').substr(whatSlotName.indexOf(':')+1).toUpperCase();
+            var slotNameModStr = whatSlotName.replace(/-/g, '').substr(whatSlotName.indexOf(':')+1).toUpperCase();
             if(slotNameModStr.lastIndexOf('_') != -1){
                 slotNameModStr = slotNameModStr.substr(0, slotNameModStr.lastIndexOf('_'));
             }

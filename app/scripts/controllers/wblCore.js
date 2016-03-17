@@ -2565,8 +2565,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             return result;
         }
 
-        if(!$scope.getParent() && (slotName == 'root:left' || slotName == 'root:top') && parseInt(slotValue) < 0){
-            slotValue = 0;
+        if(slotName == 'root:left' || slotName == 'root:top'){
+			if((!$scope.getParent() && parseInt(slotValue) < 0) || slotValue == "auto"){ slotValue = 0; }
         }
 
         if (slotName in theSlots_){
