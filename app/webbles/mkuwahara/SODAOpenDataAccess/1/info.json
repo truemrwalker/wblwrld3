@@ -1,0 +1,8 @@
+{
+    "name": "SODA Open Data Access Webble",
+    "description": "This is a Webble that helps you easily access Open Data access points via the SODA API",
+    "keywords": "SODA open data web json",
+    "author": "truemrwalker",
+    "image": "images/wbls/socratasodaopendata.png",
+	"noautogen": true
+}

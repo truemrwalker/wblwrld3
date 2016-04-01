@@ -84,7 +84,6 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
 
     //Event timer
     var eventWatchTimer;
-    var timerInterval = 150;
     var currTime = 0;
     var firedEventeeList = [];
 
@@ -233,16 +232,34 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         ));
         $scope.getSlot('relativeCounter').setDisabledSetting(Enum.SlotDisablingState.ConnectionVisibility);
 
-		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-			var newValStr = '';
-			for(var i = 0; i < eventData.slotValue.length; i++) {
-				newValStr += eventData.slotValue[i].strVal
-			}
+		$scope.addSlot(new Slot('eventCheckInterval',
+			150,
+			'Event Check Interval',
+			'The interval in milliseconds between each time the Webble will check if an event has occurred. Lower values, more demanding for the system. usually default value of 150 is okay, but in cases where the platform timer is involved, one might need to have a shorter interval.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
-			if(newValStr != $scope.EAM_WblProps.EADataAsStr){
-				setEAData(eventData.slotValue, true);
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			if(eventData.slotName == 'EAData'){
+				var newValStr = '';
+				for(var i = 0; i < newVal.length; i++) {
+					newValStr += newVal[i].strVal
+				}
+
+				if(newValStr != $scope.EAM_WblProps.EADataAsStr){
+					setEAData(newVal, true);
+				}
 			}
-		}, undefined, 'EAData');
+			else if(eventData.slotName == 'eventCheckInterval'){
+				if(isNaN(newVal)){
+					$scope.set('eventCheckInterval', 150);
+				}
+			}
+		});
 
 		relativeInitWatch = $scope.$watch(function(){return $scope.gimme('relativeCounter');}, function(newVal, oldVal) {
 			noOfRelativesHistory = newVal;
@@ -261,7 +278,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
             }
         }, true);
 
-        eventWatchTimer = $timeout($scope.eventWatcher, timerInterval);
+        eventWatchTimer = $timeout($scope.eventWatcher, parseInt($scope.gimme('eventCheckInterval')));
     };
     //===================================================================================
 
@@ -375,7 +392,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
             setEAData(returnContent, false);
         }
 
-        eventWatchTimer = $timeout($scope.eventWatcher, timerInterval);
+        eventWatchTimer = $timeout($scope.eventWatcher, parseInt($scope.gimme('eventCheckInterval')));
     }
     //========================================================================================
 
@@ -1899,7 +1916,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
             }
         }
 
-        eventWatchTimer = $timeout($scope.eventWatcher, timerInterval);
+        eventWatchTimer = $timeout($scope.eventWatcher, parseInt($scope.gimme('eventCheckInterval')));
     }
     //========================================================================================
 
