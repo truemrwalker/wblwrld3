@@ -206,6 +206,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
 
 
 
+
     //=== METHODS & FUNCTIONS ===========================================================
 
     //===================================================================================
@@ -720,6 +721,8 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
     //========================================================================================
 
 
+
+
     //========================================================================================
     // Enable Event Listeners
     //========================================================================================
@@ -1225,7 +1228,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                         }
                     }
                     else if(ev.operation == 'Keyboard Event'){
-                        if((listenersData.platformActivityEvent.keyPress.lastTime - ev.oParams.p5) > 200){
+                        if((listenersData.platformActivityEvent.keyPress.lastTime - ev.oParams.p5) > 2){
                             ev.oParams.p5 = listenersData.platformActivityEvent.keyPress.lastTime;
                             if(ev.oParams.p1.search('##') == -1){
                                 if(ev.oParams.p1 == '' || ev.oParams.p1.toUpperCase() == listenersData.platformActivityEvent.keyPress.keyName || parseInt(ev.oParams.p1) == listenersData.platformActivityEvent.keyPress.keyCode){
