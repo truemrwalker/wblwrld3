@@ -3741,7 +3741,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode.") + '<br>' +
 					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
 					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
-					'<strong>Arrow Keys</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>'}
+					'<strong>Arrow Keys</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
+					'<strong>Alt (in "Development" mode)</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>'}
 			);
         }
 		//Toggle Main Menu visibility

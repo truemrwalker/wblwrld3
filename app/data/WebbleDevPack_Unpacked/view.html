@@ -11,6 +11,10 @@
                        do NOT include them in this HTML file (as one might think) but instead list them in the manifest
                        file included in the Webble Dev Pack-->
 
+<!--IMPORTANT NOTE 3: Additional elements like custom forms etc should be listed below the main element, and wrapped in
+						a script tag as an AngularJS ng-template as shown in the commented example below.-->
+
+
 <!--For AngularJS power the outer element must include 'ng-controller' which point to the controller function as it is
 named in the controllers file-->
 
@@ -22,3 +26,37 @@ named in the controllers file-->
 </div>
 
 <!--=================================================================================================================-->
+
+
+
+<!--************** Custom Form Example **************-->
+<!--==============================================================-->
+<!--
+<script type="text/ng-template" id="custom-form.html">
+	<div id="custom-form" class="container-fluid padcontent">
+
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+			</div>
+			<div class="col-xs-9"><h4 class="formTitle" translate>Event Action Manager</h4></div>
+		</div>
+
+		<div class="dividerLineAbove">
+			<div class="row" style="padding-left: 14px; padding-right: 14px;">
+			</div>
+
+		</div>
+	</div>
+
+	<div class="dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-12" style="height: 30px;">
+				<span style="color: #95c2ff; font-weight: normal; padding-left: 20px;">{{propMsgs.info | translate}}</span>
+			</div>
+		</div>
+	</div>
+	</div>
+</script>
+-->
