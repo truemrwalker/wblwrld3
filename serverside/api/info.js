@@ -56,7 +56,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		});
 	});
 
-	app.put('/api/info/committed', function (req, res) {
+	app.post('/api/info/committed', function (req, res) {
 
 		console.log("--> START COMMITTED:\n", req.body, "\nEND COMMITTED <--");
 		res.status(200).send(gettext("OK"));
