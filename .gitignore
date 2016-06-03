@@ -12,3 +12,4 @@ app/bower_components
 .ntvs_analysis.dat
 obj
 .vs
+*.sdf

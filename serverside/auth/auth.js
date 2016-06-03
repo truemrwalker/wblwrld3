@@ -56,42 +56,42 @@ module.exports = function(app, config, mongoose, gettext) {
 	// Return a promise
 	//
 	function doLogin(err, req, user) {
-        
-        return new Promise(function (resolve, reject) {
+		
+		return new Promise(function (resolve, reject) {
 
-            if (err)
-                reject(err);
-            else if (!user._sec || !user._sec.account_status)
-                reject(new util.RestError(gettext("Account incomplete"), 403));
-            else if (user._sec.account_status === 'suspended')
-                reject(new util.RestError(gettext("Account suspended"), 403));
-            else if (user._sec.account_status === 'deleted')
-                reject(new util.RestError(gettext("Account deleted"), 403));
-            else if (req.user)
-                resolve(user.getSafeProps());
-            else {
-                
-                if (user._sec.account_status === 'inactive') {
-                    
-                    user._sec.account_status = 'ok';
-                    user.save(); // Don't need to wait for this to finish -- not so important
-                }
-                
-                req.login(user, function (err) {
-                    
-                    if (err)
-                        reject(new util.RestError(gettext("Please try again later")));
-                    else {
-                        
-                        if (req.body.rememberMe)
-                            req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-                        
-                        app.emit('auth:login', req.sessionID, req.session);
-                        resolve(user.getSafeProps());
-                    }
-                });
-            }
-        });
+			if (err)
+				reject(err);
+			else if (!user._sec || !user._sec.account_status)
+				reject(new util.RestError(gettext("Account incomplete"), 403));
+			else if (user._sec.account_status === 'suspended')
+				reject(new util.RestError(gettext("Account suspended"), 403));
+			else if (user._sec.account_status === 'deleted')
+				reject(new util.RestError(gettext("Account deleted"), 403));
+			else if (req.user)
+				resolve(user.getSafeProps());
+			else {
+				
+				if (user._sec.account_status === 'inactive') {
+					
+					user._sec.account_status = 'ok';
+					user.save(); // Don't need to wait for this to finish -- not so important
+				}
+				
+				req.login(user, function (err) {
+					
+					if (err)
+						reject(new util.RestError(gettext("Please try again later")));
+					else {
+						
+						if (req.body.rememberMe)
+							req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+						
+						app.emit('auth:login', req.sessionID, req.session);
+						resolve(user.getSafeProps());
+					}
+				});
+			}
+		});
 	}
 
 	//******************************************************************
@@ -121,36 +121,34 @@ module.exports = function(app, config, mongoose, gettext) {
 	//
 	function doneLocal (err, req, res, user) {
 
-		doLogin(err, req, user)
-			.then(function(userJson) {
-				res.json(userJson);
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			}).done();
+		doLogin(err, req, user).then(function (userJson) {
+			res.json(userJson);
+		}).catch(function (err) {
+			util.resSendError(res, err);
+		});
 	}
 
 	function doneExternal(err, req, res, user) {
 
-		doLogin(err, req, user)
-			.catch(function(e) {
-				console.log("AUTH ERROR:", e);
-			})
-			.finally(function() {
-
-				// Close the window (still under consideration) --
-				// This should be the standard negotiation protocol for the client-side reactions
-				//
-				res.send('<script>window.close();</script>');
-			}).done();
+		doLogin(err, req, user).catch(function (e) {
+			console.log("AUTH ERROR:", e);
+		}).finally(function () {
+			
+			// Close the window (still under consideration) --
+			// This should be the standard negotiation protocol for the client-side reactions
+			//
+			res.send('<script>window.close();</script>');
+		});
 	}
 
-	// Specific 'Login' authentication methods
+	// Explicitly specify and initialize supported authentication methods
 	//
 	require('./providers/local')(app, config, gettext, passport, User, doneLocal);
 	require('./providers/twitter')(app, config, gettext, passport, User, doneExternal);
 	require('./providers/facebook')(app, config, gettext, passport, User, doneExternal);
 	require('./providers/google')(app, config, gettext, passport, User, doneExternal);
+	require('./providers/evernote')(app, config, gettext, passport, User, doneExternal);
+	require('./providers/github')(app, config, gettext, passport, User, doneExternal);
 
 	////////////////////////////////////////////////////////////////////
 	// User-specific functions
@@ -201,12 +199,12 @@ module.exports = function(app, config, mongoose, gettext) {
 			// Save user and logout
 			//
 			req.user.save().then(function () {
-                return doLogout(req);
-            }).then(function () {
-                res.status(200).send(gettext("Successfully logged out"));
-            }).catch(function (err) {
-                util.resSendError(res, err);
-            }).done();
+				return doLogout(req);
+			}).then(function () {
+				res.status(200).send(gettext("Successfully logged out"));
+			}).catch(function (err) {
+				util.resSendError(res, err);
+			}).done();
 
 		}
 		else

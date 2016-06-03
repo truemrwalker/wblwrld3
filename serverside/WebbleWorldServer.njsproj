@@ -13,13 +13,14 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <StartWebBrowser>True</StartWebBrowser>
-    <Environment>PORT=7000
-SERVER_BEHIND_REVERSE_PROXY=1</Environment>
+    <Environment>PORT=7000</Environment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="secretsdb.json" />
+    <Compile Include="auth\providers\evernote.js" />
+    <Compile Include="auth\providers\github.js" />
     <Compile Include="config.js" />
     <Compile Include="control\machine.js" />
     <Compile Include="files\autosync.js" />

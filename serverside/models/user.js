@@ -33,107 +33,124 @@ module.exports = function(app, config, mongoose, gettext) {
 	// Define the schema:
 	//
 	var UserSchema = new mongoose.Schema({
-
+		
 		// Properties provided by the user or resolved from other connected accounts
 		name: {
 			first: { type: String, required: true, trim: true },
 			middle: { type: String, required: false, trim: true },
 			last: { type: String, required: true, trim: true }
 		},
-
+		
 		username: { type: String, required: false, trim: true, index: { unique: true, sparse: true } },
-		email: { type: String, required: true, trim: true, lowercase: true, index: { unique: true } },
 
+		email: { type: String, required: true, trim: true, lowercase: true, index: { unique: true } },		
 		email_alts: [{ type: String, trim: true, lowercase: true }],
-
+		
 		languages : [String],
-
+		
 		website_urls: [String],
 		image_urls: [String],
-
+		
 		description: String,
-
-		gender:  { type: String, enum: ['male', 'female'] },
+		
+		gender: { type: String, enum: ['male', 'female'] },
 		date_born: { type: Date, required: false },
-
+		
 		notif: {
 			platform: Boolean,
 			modify: Boolean,
 			share: Boolean
 		},
-
+		
 		_tasks: [{
-			text: String,
-			kind: { type: String, enum: [ 'message', 'confirm', 'yesno' ], default: 'message' },
-
-			date_created: { type: Date, required: true, default: Date.now },
-			date_updated: { type: Date, required: true, default: Date.now },
-			date_due: { type: Date },
-
-			url: String,
-			op: { type: String, enum: [ 'head', 'get', 'post', 'put', 'delete' ] },
-			payload: mongoose.Schema.Types.Mixed
-		}],
-
+				text: String,
+				kind: { type: String, enum: ['message', 'confirm', 'yesno'], default: 'message' },
+				
+				date_created: { type: Date, required: true, default: Date.now },
+				date_updated: { type: Date, required: true, default: Date.now },
+				date_due: { type: Date },
+				
+				url: String,
+				op: { type: String, enum: ['head', 'get', 'post', 'put', 'delete'] },
+				payload: mongoose.Schema.Types.Mixed
+			}],
+		
 		_sec: {
-
+			
 			// The status and role of the account
 			account_status: { type: String, enum: ['verified', 'ok', 'inactive', 'fakemail', 'suspended', 'deleted'], default: 'ok' },
-
+			
 			role: { type: String, enum: ['adm', 'dev', 'usr'], required: true, default: 'dev' },
-
+			
 			// Security-oriented variables
 			cert: String,
-
+			
 			groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
 			trusts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
-
+			
 			// Keep log
 			date_joined: { type: Date, required: true, default: Date.now },
 			date_updated: { type: Date, required: false, default: Date.now },
-
-			captains_log: [ { time: Date, event: String } ]
+			
+			captains_log: [{ time: Date, event: String }]
 		},
-
+		
 		_auth: {
-
+			
 			keys: [{
-				realm: { type: String, trim: true, required: true },
-				resource: { type: String, trim: true, required: true },
-				access_key: { type: String, required: true }
-			}],
-
+					realm: { type: String, trim: true, required: true },
+					resource: { type: String, trim: true, required: true },
+					access_key: { type: String, required: true }
+				}],
+			
 			providers: [{ type: String, enum: ['local', 'twitter', 'facebook', 'google'] }],
-
+			
 			local: {
-
+				
 				// Private fields for auth_provider == 'local'
-				hash: { type: String, required: false},
-				salt: { type: String, required: false},
+				hash: { type: String, required: false },
+				salt: { type: String, required: false },
 				forgot: { type: Number, required: true, min: 0, max: 5, default: 0 }
 			},
-
+			
 			twitter: {
-
+				
 				// Private fields for auth_provider == 'twitter'
 				id: { type: Number, required: false, index: { unique: true, sparse: true } },
 				username: { type: String, required: false },
 				token: { type: String, required: false },
 				secret: { type: String, required: false }
 			},
-
+			
 			facebook: {
-
+				
 				// Private fields for auth_provider == 'facebook'
 				id: { type: Number, required: false, index: { unique: true, sparse: true } },
 				username: { type: String, required: false },
 				token: { type: String, required: false },
 				refresh: { type: String, required: false }
 			},
-
+			
 			google: {
-
-				// Private fields for auth_provider == 'facebook'
+				
+				// Private fields for auth_provider == 'google'
+				id: { type: String, required: false, index: { unique: true, sparse: true } },
+				access_token: { type: String, required: false },
+				refresh_token: { type: String, required: false }
+			},
+			
+			evernote: {
+				
+				token: { type: String, required: false },
+				note_store_url: { type: String, required: false },
+				user_id: { type: String, required: false, index: { unique: true, sparse: true } },
+				expires: { type: Number },
+				web_api_url_prefix: { type: String, required: false },
+				linked_app_notebook_selected: { type: Boolean, required: false }
+			},
+			
+			github: {
+				
 				id: { type: String, required: false, index: { unique: true, sparse: true } },
 				access_token: { type: String, required: false },
 				refresh_token: { type: String, required: false }
@@ -156,11 +173,11 @@ module.exports = function(app, config, mongoose, gettext) {
 				ret.notif = {};
 
 			ret.notif.pending = ret._tasks; // ret._tasks not doc._tasks to use the transformed version            
-            ret.notif.pending.forEach(function (n) {
+			ret.notif.pending.forEach(function (n) {
 
-                n.id = n._id;
-                delete n._id;
-            });
+				n.id = n._id;
+				delete n._id;
+			});
 
 			ret.role = doc._sec.role;
 			ret.date_joined = doc._sec.date_joined;
@@ -243,37 +260,37 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	// Define additional methods for securely storing password info
 	//
-    UserSchema.methods.setPasswordAsync = function (password) {
-        
-        var self = this;
-        return Promise.try(function () {
+	UserSchema.methods.setPasswordAsync = function (password) {
+		
+		var self = this;
+		return Promise.try(function () {
 
-            if (!password)
-                throw new Error(gettext("Password is empty"));
+			if (!password)
+				throw new Error(gettext("Password is empty"));
 
-            return crypto.randomBytesAsync(32).then(function (buf) {
+			return crypto.randomBytesAsync(32).then(function (buf) {
 
-                var salt = buf.toString('hex');
-                return crypto.pbkdf2Async(password, salt, 25000, 512).then(function (hashRaw) {
+				var salt = buf.toString('hex');
+				return crypto.pbkdf2Async(password, salt, 25000, 512).then(function (hashRaw) {
 
-                    self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
-                    self._auth.local.salt = salt;
-                    self._auth.local.forgot = 0;
-                    return self;
-                });
-            });
-        });
-    };
-    
-    UserSchema.methods.checkPasswordAsync = function (password) {
+					self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
+					self._auth.local.salt = salt;
+					self._auth.local.forgot = 0;
+					return self;
+				});
+			});
+		});
+	};
+	
+	UserSchema.methods.checkPasswordAsync = function (password) {
 
-        var self = this;
-        return crypto.pbkdf2Async(password, self._auth.local.salt, 25000, 512).then(function (hashRaw) {
-            
-            var hash = new Buffer(hashRaw, 'binary').toString('hex');            
-            return (hash === self._auth.local.hash) ? self : null;
-        });
-    };
+		var self = this;
+		return crypto.pbkdf2Async(password, self._auth.local.salt, 25000, 512).then(function (hashRaw) {
+			
+			var hash = new Buffer(hashRaw, 'binary').toString('hex');            
+			return (hash === self._auth.local.hash) ? self : null;
+		});
+	};
 
 	// Introspective stuff
 	//

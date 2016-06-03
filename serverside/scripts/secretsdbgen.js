@@ -32,6 +32,6 @@ var homeDir = process.env.LOCALAPPDATA || process.env.HOME || process.env.HOMEPA
 var secretsFileUnencrypted = path.join(homeDir, "wblwrld3", "secretsdb.json");
 var secretsFileEncrypted = path.join(homeDir, "wblwrld3", "secretsdb.ejson");
 
-var hash = crypt.createHash(fs.readFileSync('../config.js', { encoding: 'utf8' }).replace(/\r\n/g, '\n'));
+var hash = crypt.createHash(fs.readFileSync('../secretsdb.json', { encoding: 'utf8' }).replace(/\r\n/g, '\n'));
 var contents = crypt.encryptTextSync(fs.readFileSync(secretsFileUnencrypted, { encoding: 'utf8' }), hash);
 fs.writeFileSync(secretsFileEncrypted, contents, { encoding: 'utf8' });

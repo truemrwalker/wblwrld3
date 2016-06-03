@@ -28,34 +28,34 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
-    var authError = new Error("Facebook Auth Error", "auth-facebook.js");
+	var authError = new Error("Facebook Auth Error", "auth-facebook.js");
 
-    ////////////////////////////////////////////////////////////////////
-    // Utility functions
-    //
-    function mergeFacebookProfile(user, token, refresh, profile) {
+	////////////////////////////////////////////////////////////////////
+	// Utility functions
+	//
+	function mergeFacebookProfile(user, token, refresh, profile) {
 
-        user.name.first = user.name.first || profile.name.givenName;
-        user.name.last = user.name.last || profile.name.familyName;
+		user.name.first = user.name.first || profile.name.givenName;
+		user.name.last = user.name.last || profile.name.familyName;
 
-        user.gender = profile.gender;
+		user.gender = profile.gender;
 
-        var currEmail = profile.username + '@facebook.com';
-        if (!user.email || user.email[0] == '@')
-            user.email = currEmail;
-        if (currEmail != user.email && user.email_alts.indexOf(currEmail) == -1)
-            user.email_alts.push(currEmail);
+		var currEmail = profile.username + '@facebook.com';
+		if (!user.email || user.email[0] == '@')
+			user.email = currEmail;
+		if (currEmail != user.email && user.email_alts.indexOf(currEmail) == -1)
+			user.email_alts.push(currEmail);
 
-        if (user.website_urls.indexOf(profile.profileUrl) == -1)
-            user.website_urls.push(profile.profileUrl);
+		if (user.website_urls.indexOf(profile.profileUrl) == -1)
+			user.website_urls.push(profile.profileUrl);
 
-        user._auth.providers.push('facebook');
+		user._auth.providers.push('facebook');
 
-        user._auth.facebook.id = profile.id;
-        user._auth.facebook.username = profile.username;
-        user._auth.facebook.token = token;
-        user._auth.facebook.refresh = refresh;
-    }
+		user._auth.facebook.id = profile.id;
+		user._auth.facebook.username = profile.username;
+		user._auth.facebook.token = token;
+		user._auth.facebook.refresh = refresh;
+	}
 
 	////////////////////////////////////////////////////////////////////
 	// Sayonara, if not configured
@@ -63,75 +63,75 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 	if (!config.FACEBOOK_APP_ID || !config.FACEBOOK_APP_SECRET)
 		return console.log("Auth: Facebook login is not configured and so it will be disabled");
 
-    ////////////////////////////////////////////////////////////////////
-    // Setup strategy
-    //
-    passport.use(new FacebookStrategy({
-            clientID: config.FACEBOOK_APP_ID,
-            clientSecret: config.FACEBOOK_APP_SECRET,
-            callbackURL: config.SERVER_URL_PUBLIC + '/auth/facebook/callback'
-        },
-        function(accessToken, refreshToken, profile, done) {
+	////////////////////////////////////////////////////////////////////
+	// Setup strategy
+	//
+	passport.use(new FacebookStrategy({
+			clientID: config.FACEBOOK_APP_ID,
+			clientSecret: config.FACEBOOK_APP_SECRET,
+			callbackURL: config.SERVER_URL_PUBLIC + '/auth/facebook/callback'
+		},
+		function(accessToken, refreshToken, profile, done) {
 
-            User.findOne({ "_auth.facebook.id": profile.id }, function(err, user) {
+			User.findOne({ "_auth.facebook.id": profile.id }, function(err, user) {
 
-                if (err)
-                    done(err);
-                else
-                    done(null, user, { token: accessToken, refresh: refreshToken, profile: profile });
-            });
-        }
-    ));
+				if (err)
+					done(err);
+				else
+					done(null, user, { token: accessToken, refresh: refreshToken, profile: profile });
+			});
+		}
+	));
 
-    app.get('/auth/facebook', passport.authenticate('facebook'));
+	app.get('/auth/facebook', passport.authenticate('facebook'));
 
-    app.get('/auth/facebook/callback', function(req, res) {
+	app.get('/auth/facebook/callback', function(req, res) {
 
-        passport.authenticate('facebook', function(err, user, info) {
+		passport.authenticate('facebook', function(err, user, info) {
 
-            if (err)
-                doneAuth(err, req, res, gettext("Error during authentication - please try again later"));
-            else if (!info || !info.profile)
-                doneAuth(authError, req, res, info && info.message ? info.message : gettext("Could not authenticate"));
-            else if (req.user) { //---> Just connect account with current one
+			if (err)
+				doneAuth(err, req, res, gettext("Error during authentication - please try again later"));
+			else if (!info || !info.profile)
+				doneAuth(authError, req, res, info && info.message ? info.message : gettext("Could not authenticate"));
+			else if (req.user) { //---> Just connect account with current one
 
-                if (user) // WTF? -- it's probably already connected
-                    doneAuth(authError, req, res, gettext("Account is already connected to Facebook"));
-                else {
-                    mergeFacebookProfile(req.user, info.token, info.refresh, info.profile);
+				if (user) // WTF? -- it's probably already connected
+					doneAuth(authError, req, res, gettext("Account is already connected to Facebook"));
+				else {
+					mergeFacebookProfile(req.user, info.token, info.refresh, info.profile);
 
-                    req.user.save(function(err) {
+					req.user.save(function(err) {
 
-                        if (err)
-                            doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
-                        else
-                            doneAuth(null, req, res, req.user, true);
-                    });
-                }
-            }
-            else if (!user) { //---> Register & login
+						if (err)
+							doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
+						else
+							doneAuth(null, req, res, req.user, true);
+					});
+				}
+			}
+			else if (!user) { //---> Register & login
 
-                User.findOne({ email: info.profile.username + '@facebook.com' }, function(err, user) {
+				User.findOne({ email: info.profile.username + '@facebook.com' }, function(err, user) {
 
-                    if (err)
-                        doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
-                    else {
-                        var newUser = user || new User();
-                        mergeFacebookProfile(newUser,  info.token, info.refresh, info.profile);
+					if (err)
+						doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
+					else {
+						var newUser = user || new User();
+						mergeFacebookProfile(newUser,  info.token, info.refresh, info.profile);
 
-                        newUser.save(function(err) {
+						newUser.save(function(err) {
 
-                            if (err)
-                                doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
-                            else
-	                            doneAuth(null, req, res, newUser);
-                        });
-                    }
-                });
-            }
-            else //---> Just login
-	            doneAuth(null, req, res, user);
+							if (err)
+								doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
+							else
+								doneAuth(null, req, res, newUser);
+						});
+					}
+				});
+			}
+			else //---> Just login
+				doneAuth(null, req, res, user);
 
-        })(req, res);
-    });
+		})(req, res);
+	});
 };

@@ -29,33 +29,33 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 
 module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
-    var authError = new Error("Twitter Auth Error", "auth-twitter.js");
+	var authError = new Error("Twitter Auth Error", "auth-twitter.js");
 
-    ////////////////////////////////////////////////////////////////////
-    // Utility functions
-    //
-    function mergeTwitterProfile(user, token, tokenSecret, profile) {
+	////////////////////////////////////////////////////////////////////
+	// Utility functions
+	//
+	function mergeTwitterProfile(user, token, tokenSecret, profile) {
 
-        if (!user.name.first || !user.name.last)
-            user.name.full = profile.displayName;
+		if (!user.name.first || !user.name.last)
+			user.name.full = profile.displayName;
 
-        user.email = user.email || '@' + profile.username;
-        user.language = user.language || profile._json.lang || 'en';
+		user.email = user.email || '@' + profile.username;
+		user.language = user.language || profile._json.lang || 'en';
 
-        if (profile._json.url)
-            user.website_urls.push(profile._json.url);
-        if (profile._json.profile_image_url_https)
-            user.image_urls.push(profile._json.profile_image_url_https);
+		if (profile._json.url)
+			user.website_urls.push(profile._json.url);
+		if (profile._json.profile_image_url_https)
+			user.image_urls.push(profile._json.profile_image_url_https);
 
-        user.description = user.description || profile._json.description;
+		user.description = user.description || profile._json.description;
 
-        user._auth.providers.push('twitter');
+		user._auth.providers.push('twitter');
 
-        user._auth.twitter.id = profile.id;
-        user._auth.twitter.username = profile.username;
-        user._auth.twitter.token = token;
-        user._auth.twitter.secret = tokenSecret;
-    }
+		user._auth.twitter.id = profile.id;
+		user._auth.twitter.username = profile.username;
+		user._auth.twitter.token = token;
+		user._auth.twitter.secret = tokenSecret;
+	}
 
 	////////////////////////////////////////////////////////////////////
 	// Sayonara, if not configured
@@ -64,72 +64,72 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		return console.log("Auth: Twitter login is not configured and so it will be disabled");
 
 	////////////////////////////////////////////////////////////////////
-    // Setup strategy
-    //
-    passport.use(new TwitterStrategy({
-            sessionKey: config.SESSION_KEY,
-            consumerKey: config.TWITTER_CONSUMER_KEY,
-            consumerSecret: config.TWITTER_CONSUMER_SECRET,
-            callbackURL: config.SERVER_URL_PUBLIC + "/auth/twitter/callback"
-        },
-        function(token, tokenSecret, profile, done) {
+	// Setup strategy
+	//
+	passport.use(new TwitterStrategy({
+			sessionKey: config.SESSION_KEY,
+			consumerKey: config.TWITTER_CONSUMER_KEY,
+			consumerSecret: config.TWITTER_CONSUMER_SECRET,
+			callbackURL: config.SERVER_URL_PUBLIC + "/auth/twitter/callback"
+		},
+		function(token, tokenSecret, profile, done) {
 
-            User.findOne({ "_auth.twitter.id": profile.id }, function(err, user) {
+			User.findOne({ "_auth.twitter.id": profile.id }, function(err, user) {
 
-                if (err)
-                    done(err);
-                else
-                    done(null, user, { token: token, tokenSecret: tokenSecret, profile: profile });
-            });
-        }
-    ));
+				if (err)
+					done(err);
+				else
+					done(null, user, { token: token, tokenSecret: tokenSecret, profile: profile });
+			});
+		}
+	));
 
-    ////////////////////////////////////////////////////////////////////
-    // Auth logic
-    //
-    app.get('/auth/twitter', passport.authenticate('twitter'));
+	////////////////////////////////////////////////////////////////////
+	// Auth logic
+	//
+	app.get('/auth/twitter', passport.authenticate('twitter'));
 
 
-    app.get('/auth/twitter/callback', function(req, res) {
+	app.get('/auth/twitter/callback', function(req, res) {
 
-        passport.authenticate('twitter', function (err, user, info) {
+		passport.authenticate('twitter', function (err, user, info) {
 
-            if (err)
-                doneAuth(err, req, res, gettext("Error during authentication - please try again later"));
-            else if (!info || !info.profile)
-                doneAuth(authError, req, res, info && info.message ? info.message : gettext("Could not authenticate"));
-            else if (req.user) { //---> Just connect account with current one
+			if (err)
+				doneAuth(err, req, res, gettext("Error during authentication - please try again later"));
+			else if (!info || !info.profile)
+				doneAuth(authError, req, res, info && info.message ? info.message : gettext("Could not authenticate"));
+			else if (req.user) { //---> Just connect account with current one
 
-                if (user) // WTF? -- it's probably already connected
-                    doneAuth(authError, req, res, gettext("Account is already connected to Twitter account"));
-                else {
-                    mergeTwitterProfile(req.user, info.token, info.tokenSecret, info.profile);
+				if (user) // WTF? -- it's probably already connected
+					doneAuth(authError, req, res, gettext("Account is already connected to Twitter account"));
+				else {
+					mergeTwitterProfile(req.user, info.token, info.tokenSecret, info.profile);
 
-                    req.user.save(function(err) {
+					req.user.save(function(err) {
 
-                        if (err)
-                            doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
-                        else
-                            doneAuth(null, req, res, req.user, true);
-                    });
-                }
-            }
-            else if (!user) { //---> Register & login
+						if (err)
+							doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
+						else
+							doneAuth(null, req, res, req.user, true);
+					});
+				}
+			}
+			else if (!user) { //---> Register & login
 
-                var newUser = new User();
-                mergeTwitterProfile(newUser, info.token, info.tokenSecret, info.profile);
+				var newUser = new User();
+				mergeTwitterProfile(newUser, info.token, info.tokenSecret, info.profile);
 
-                newUser.save(function(err) {
+				newUser.save(function(err) {
 
-                    if (err)
-                        doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
-                    else
-                        doneAuth(null, req, res, newUser);
-                });
-            }
-            else //---> Just login
-                doneAuth(null, req, res, user);
+					if (err)
+						doneAuth(err, req, res, gettext("There's some error at our server - please try again later"));
+					else
+						doneAuth(null, req, res, newUser);
+				});
+			}
+			else //---> Just login
+				doneAuth(null, req, res, user);
 
-        })(req, res);
-    });
+		})(req, res);
+	});
 };

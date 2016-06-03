@@ -31,12 +31,12 @@ console.time("startup");
 
 function reportStartupError(err) {
 
-    console.log("Error:", err.message);
-    process.exit(1);
+	console.log("Error:", err.message);
+	process.exit(1);
 }
 
 function reportStartupSuccess() {
-    console.timeEnd("startup");
+	console.timeEnd("startup");
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -57,77 +57,70 @@ var config = require('./config');
 var gettext = function(str) { return str; };
 
 ////////////////////////////////////////////////////////////////////////
-// Create mongoose, connect to the db and start the servers
+// Connect to db and initialize app in parallel (to save a little time)
 //
 var mongoose = require('mongoose');
-
-dbutil.connect(mongoose, config.MONGODB_URL).then(serverEntryPoint)
-    .then(reportStartupSuccess, reportStartupError);
-
-////////////////////////////////////////////////////////////////////////
-// In parallel with the above, create and initialize the application
-//
 var app = express();
 
-(function (app) {
+Promise.all([
 
-    var bodyParser = require('body-parser');
-    var session = require('express-session');
-    var MongoStore = require('connect-mongo')(session);
-    
-    // 1. First part of middleware initialization
-    //
-    app.use(bodyParser.json({ limit: '10mb' }));
-    
-    // We want to save this in app
-    var sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
-    app.set('sessionStore', sessionStore);
-    
-    // trust first proxy, so that despite "secure: true" cookies are set over HTTP when behind proxy
-    app.set('trust proxy', 1);
-    
-    // Set up the session-specific parameters
-    app.use(session({
-        proxy: config.SERVER_BEHIND_REVERSE_PROXY,
-        secret: config.SESSION_SECRET,
-        key: config.SESSION_KEY,
-        cookie: { httpOnly: true, secure: true },
-        store: sessionStore,
-        saveUninitialized: true, // https://github.com/expressjs/session
-        resave: false
-    }));
-    
-    // 2. Configure database models and set up routes
-    //
-    return loader.executeAllScripts('models', app, config, mongoose, gettext).then(function () {
-        
-        // Setup the authentication token
-        var auth = require('./auth/auth')(app, config, mongoose, gettext);
-        
-        // Load all modules that define the web server's routes
-        return Promise.all([
-            loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth),
-            loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth),
-        ]);
+	dbutil.connect(mongoose, config.MONGODB_URL),
 
-    // 3. Second part of middleware initialization (after having had set up routes)
-    //
-    }).then(function () {
-        
-        if (!config.SERVER_BEHIND_REVERSE_PROXY) {
-            
-            // If we're not behind a proxy we also want to serve static stuff
-            var serveStatic = require('serve-static');
-            app.use(serveStatic(config.APP_ROOT_DIR));
-        }
-    });
+	Promise.try(function () {
 
-})(app).then(reportStartupSuccess, reportStartupError);
+		var bodyParser = require('body-parser');
+		var session = require('express-session');
+		var MongoStore = require('connect-mongo')(session);
+		
+		// 1. First part of middleware initialization
+		//
+		app.use(bodyParser.json({ limit: '10mb' }));
+		
+		// We want to save this in app
+		var sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
+		app.set('sessionStore', sessionStore);
+		
+		// trust first proxy, so that despite "secure: true" cookies are set over HTTP when behind proxy
+		app.set('trust proxy', 1);
+		
+		// Set up the session-specific parameters
+		app.use(session({
+			proxy: config.SERVER_BEHIND_REVERSE_PROXY,
+			secret: config.SESSION_SECRET,
+			key: config.SESSION_KEY,
+			cookie: { httpOnly: true, secure: true },
+			store: sessionStore,
+			saveUninitialized: true, // https://github.com/expressjs/session
+			resave: false
+		}));
+		
+		// 2. Configure database models and set up routes
+		//
+		return loader.executeAllScripts('models', app, config, mongoose, gettext).then(function () {
+			
+			// Setup the authentication token
+			var auth = require('./auth/auth')(app, config, mongoose, gettext);
+			
+			// Load all modules that define the web server's routes
+			return Promise.all([
+				loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth),
+				loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth),
+			]);
 
-////////////////////////////////////////////////////////////////////////
-// The main() function of this process
-//
-function serverEntryPoint() {
+		// 3. Second part of middleware initialization (after having had set up routes)
+		//
+		}).then(function () {
+			
+			if (!config.SERVER_BEHIND_REVERSE_PROXY) {
+				
+				// If we're not behind a proxy we also want to serve static stuff
+				var serveStatic = require('serve-static');
+				app.use(serveStatic(config.APP_ROOT_DIR));
+			}
+		});
+	}),
+
+]).then(function () {
 
 	switch (config.DEPLOYMENT) {
 
@@ -147,55 +140,56 @@ function serverEntryPoint() {
 		default:
 			return Promise.try(startAllServers);
 	}
-}
+
+}).then(reportStartupSuccess, reportStartupError);
 
 ////////////////////////////////////////////////////////////////////////
 // Starts the http and https servers on the appropriate endpoints
 //
 function startAppServer() {
-    
-    if (!config.SERVER_BEHIND_REVERSE_PROXY) {
-        
-        if (config.SERVER_PORT != config.SERVER_PORT_PUBLIC) {
-            
-            var redirectApp = express();
-            redirectApp.use(function (req, res) { // we don't need to call next()
-                res.redirect(301, config.SERVER_URL_PUBLIC + req.path);
-            });
-            http.createServer(redirectApp).listen(config.SERVER_PORT);
-        }
-        
-        var fs = require('fs');
-        
-        var options = {
-            ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
-            key: fs.readFileSync(config.SERVER_KEY),
-            cert: fs.readFileSync(config.SERVER_CERT),
-            passphrase: config.SERVER_PASSPHRASE || undefined
-        };
-        var appServer = require('https').createServer(options, app);
-        appServer.listen(config.SERVER_PORT_PUBLIC);
-        return appServer;
-    }
-    else {
-        
-        var appServer = http.createServer(app);
-        appServer.listen(config.SERVER_PORT);
-        return appServer;
-    }
+	
+	if (!config.SERVER_BEHIND_REVERSE_PROXY) {
+		
+		if (config.SERVER_PORT != config.SERVER_PORT_PUBLIC) {
+			
+			var redirectApp = express();
+			redirectApp.use(function (req, res) { // we don't need to call next()
+				res.redirect(301, config.SERVER_URL_PUBLIC + req.path);
+			});
+			http.createServer(redirectApp).listen(config.SERVER_PORT);
+		}
+		
+		var fs = require('fs');
+		
+		var options = {
+			ca: config.SERVER_CA && util.transform_(config.SERVER_CA.split(','), fs.readFileSync),
+			key: fs.readFileSync(config.SERVER_KEY),
+			cert: fs.readFileSync(config.SERVER_CERT),
+			passphrase: config.SERVER_PASSPHRASE || undefined
+		};
+		var appServer = require('https').createServer(options, app);
+		appServer.listen(config.SERVER_PORT_PUBLIC);
+		return appServer;
+	}
+	else {
+		
+		var appServer = http.createServer(app);
+		appServer.listen(config.SERVER_PORT);
+		return appServer;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Starts the socket server (for real-time message dispatching)
 //
 function initSocketServer(webServer) {
-    
-    // Start under endpoint for easier reverse proxy configuration
-    var io = require('socket.io')(webServer).of('/socket.io/endpt');
-    var socketAuth = require('./auth/auth-socket')(app, config, mongoose, gettext, io);
-    
-    // Load all real-time modules
-    return loader.executeAllScripts('realtime', app, config, mongoose, gettext, [], io, socketAuth);
+	
+	// Start under endpoint for easier reverse proxy configuration
+	var io = require('socket.io')(webServer).of('/socket.io/endpt');
+	var socketAuth = require('./auth/auth-socket')(app, config, mongoose, gettext, io);
+	
+	// Load all real-time modules
+	return loader.executeAllScripts('realtime', app, config, mongoose, gettext, [], io, socketAuth);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -204,17 +198,17 @@ function initSocketServer(webServer) {
 function initControlServer(webServer) {
 
 	// -- removed because zmq package doesn't compile on Ubuntu
-    //var ctrl = require('./control/machine')(app, config, mongoose, gettext, webServer);
+	//var ctrl = require('./control/machine')(app, config, mongoose, gettext, webServer);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Start all servers
 //
 function startAllServers() {
-    
-    var server = startAppServer();
-    initSocketServer(server);
-    initControlServer(server);
-    
-    console.log("[OK] Server public endpoint:", config.SERVER_URL_PUBLIC, "[" + config.SERVER_URL + "]");
+	
+	var server = startAppServer();
+	initSocketServer(server);
+	initControlServer(server);
+	
+	console.log("[OK] Server public endpoint:", config.SERVER_URL_PUBLIC, "[" + config.SERVER_URL + "]");
 }
