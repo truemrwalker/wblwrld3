@@ -35,6 +35,9 @@
     <Compile Include="scripts\mongoshell.js" />
     <Compile Include="scripts\mongoshellgen.js" />
     <Compile Include="scripts\updateheader.js" />
+    <Content Include="deploy\mongodb.yml" />
+    <Content Include="deploy\deployment.yml" />
+    <Content Include="deploy\service.yml" />
     <Content Include="scripts\bootstrap.bat" />
     <Content Include="scripts\bootstrap.sh" />
     <Content Include="scripts\header.txt" />
@@ -44,7 +47,6 @@
     <Content Include="server\conf\nginx_default.conf" />
     <Content Include="server\conf\nginx_windows.conf" />
     <Content Include="docker\docker-build.sh" />
-    <Content Include="docker\docker-compose.yml" />
     <Content Include="docker\docker-run.sh" />
     <Content Include="docker\Dockerfile" />
     <Content Include="docker_autonomous\docker-build.sh" />
@@ -68,6 +70,7 @@
     <Content Include="server\iptables.sh" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="deploy\" />
     <Folder Include="docker\" />
     <Folder Include="docker_autonomous\" />
     <Folder Include="scripts\" />

@@ -1,0 +1,41 @@
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongodb-single
+  labels:
+    pod: mongodb-single
+spec:
+    containers:
+    - name: mongodb-single
+      image: mongo:latest
+      imagePullPolicy: Always
+      ports:
+      - name: mongo
+        containerPort: 27017
+        hostPort: 27017
+      volumeMounts:
+      - name: mongo-persistent-storage
+        mountPath: /data/db
+    volumes:
+    - name: mongo-persistent-storage
+      iscsi:
+        targetPortal: 133.87.133.216:3260
+        iqn: kubernetes-iscsi-disk.local.cluster:storage.sys0
+        lun: 0
+        fsType: ext4
+        readOnly: false
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    pod: mongodb-single
