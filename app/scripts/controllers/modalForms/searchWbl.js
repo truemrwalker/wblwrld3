@@ -157,6 +157,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     // On click at one of the suggested search words, fire a search using that word.
     //========================================================================================
     $scope.makeAutoSearch = function(whatSearchTxt){
+		$scope.formItems.searchStr = whatSearchTxt;
         $scope.search(true, whatSearchTxt);
     };
     //========================================================================================
@@ -282,8 +283,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
                     wbl['rateShow'] = true;
-					//wbl['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + wbl.webble.defid;
-					//wbl['socialMediaModelName'] = 'Cool Webble, ' + wbl.webble.displayname + ', found in Webble World. Check it out!';
                 }
 
                 $scope.formItems.searchResult = $scope.formItems.searchResult.concat(resp.data);
@@ -409,8 +408,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                 mru['selectColor'] = 'transparent';
                 mru.rating = parseInt(mru.rating);
                 mru['rateShow'] = true;
-				//mru['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + mru.webble.defid;
-				//mru['socialMediaModelName'] = 'Cool Webble, ' + mru.webble.displayname + ', found in Webble World. Check it out!';
             }
 
             $scope.formItems.searchResult = resp.data;
@@ -514,8 +511,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
                     wbl['rateShow'] = true;
-					//wbl['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + wbl.webble.defid;
-					//wbl['socialMediaModelName'] = 'Cool Webble, ' + wbl.webble.displayname + ', found in Webble World. Check it out!';
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
@@ -546,8 +541,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                         wbl['selectColor'] = 'transparent';
                         wbl.rating = parseInt(wbl.rating);
                         wbl['rateShow'] = true;
-						//wbl['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + wbl.webble.defid;
-						//wbl['socialMediaModelName'] = 'Cool Webble, ' + wbl.webble.displayname + ', found in Webble World. Check it out!';
                     }
 
                     $scope.formItems.searchResult = resp.data;
@@ -574,19 +567,14 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     };
     //========================================================================================
 
-
-    //========================================================================================
-    // Rate This
-    // Opens a modal window which lets the user rate the chosen Webble and comment on it.
-    //========================================================================================
-    $scope.rateThis = function(wbl){
-        $scope.thePlatform.openForm(Enum.aopForms.rateWbl, {wblDefId: wbl.webble.defid, wblDefName: wbl.webble.displayname}, function(done){
-            if(done != null){
-                wbl['rateShow'] = false;
-            }
-        });
-    };
-    //========================================================================================
+	//========================================================================================
+	// View Comments
+	// Opens a modal window which lets the user read all other users rating and comments.
+	//========================================================================================
+	$scope.viewComments = function(wbl){
+		$scope.thePlatform.openForm(Enum.aopForms.viewWblRatingAndComments, {wblDefId: wbl.defid, wblDefName: wbl.displayname}, null);
+	};
+	//========================================================================================
 
 
     //========================================================================================

@@ -38,36 +38,53 @@
 <div class="container-fluid padcontent" data-formclass="wblwrldform-main">
 
     <div class="row">
-        <div class="col-xs-12"><h4 class="formTitle" translate>Rate This Webble</h4></div>
+        <div class="col-xs-12"><h4 class="formTitle" translate>User Ratings & Comments</h4></div>
     </div>
 
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-12">
-                <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;">Webble: <b>{{formItems.wblDefName}}</b></span>
-                <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
+                <span style="color: darkred; font-size: 1.4em; font-weight: bold; padding-bottom: -20px;">{{formItems.wblDefName}}</span>
+                <hr style="border-color: darkred; height: 1px; margin: 0 0 1px 0; padding: 0;">
             </div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Your Rating:</span></div>
-            <div class="col-xs-8"><div star-rating rating-value="formItems.rating" max="formItems.maxRate"></div></div>
-        </div>
+		<div class="row col-xs-12 keepTheDistanceBelow" ng-style="{'height': formItems.formHeight}" style="overflow: auto;">
+			<div class="row col-xs-12" ng-repeat="r in ratings">
+				<div class="row">
+					<div class="col-xs-4" style="padding-top: 1px;">
+						<div>
+							<img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(r.rating, $index)}}" style="margin-left: -1px; width: 20px; height: 20px;">
+						</div>
+					</div>
+					<div class="col-xs-8" style="padding-top: 2px;">
+						<div>
+							<span>[{{r.rating}}] <b>{{getRateText(r.rating)}}</b> ...by <i>{{r.author}}</i> ({{r.date | date:'yyyy-MM-dd'}})</span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12" style="padding-top: 7px;">
+						<div>
+							<span>{{r.body}}</span>
+						</div>
+					</div>
+				</div>
+				<hr style="border-color: #a9a9a9; height: 2px; margin: 22px 0 0 0; padding: 0; border-style: ridge;">
+			</div>
+		</div>
 
         <div class="row keepTheDistanceBelow">
-            <div class="col-xs-4"><span class="formTitle" translate>Comment:</span></div>
-            <div class="col-xs-8"><textarea class="formitem" ng-model="formItems.comment" rows="4"></textarea></div>
         </div>
     </div>
 
     <div class="dividerLineAbove">
         <div class="row">
-            <div class="col-xs-8" ng-show="formItems.errorMsg != ''">
-                <span style="color: red; font-weight: bold;">{{formItems.errorMsg | translate}}</span>
+            <div class="col-xs-8">
+                <span ng-show="formItems.errorMsg != ''" style="color: red; font-weight: bold;">{{formItems.errorMsg | translate}}</span>
             </div>
-            <div class="col-xs-4">
-                <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-                <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Send</button>
+            <div class="col-xs-4" style="text-align: right;">
+                <button ng-click="close('close')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
             </div>
         </div>
     </div>

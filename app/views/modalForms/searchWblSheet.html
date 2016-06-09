@@ -104,7 +104,7 @@
                 <span style="font-size: 22px; font-weight: bold; margin-left: 5px;">{{wblMeta.webble.displayname}}</span>
             </div>
 			<div class="col-xs-5">
-                <span style="font-size: 14px; font-weight: lighter; font-style: italic;">[{{wblMeta.webble.author}}]</span>
+                <span style="font-size: 14px; font-weight: lighter; font-style: italic;" ng-click="makeAutoSearch(wblMeta.webble.author)">[{{wblMeta.webble.author}}]</span>
             </div>
 		    <div class="col-xs-2">
 				<button name="{{wblMeta.webble.defid}}" ng-click="loadWebble(wblMeta.webble.defid);" class="btn btn-primary btn-xs" translate>Load</button>
@@ -133,11 +133,16 @@
             <div class="col-xs-3"  style="padding-top: 10px;">
                 <span style="font-size: 12px; font-weight: bold;" translate>User Ratings:</span>
             </div>
-            <div class="col-xs-6" style="padding-top: 10px;">
+            <div class="col-xs-4" style="padding-top: 10px;">
                 <div>
                     <img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(wblMeta.rating, $index)}}" title="{{star | translate}}" style="margin-left: -1px; width: 20px; height: 20px;">
                 </div>
             </div>
+			<div class="col-xs-2" style="padding-top: 10px;">
+				<div>
+					<button ng-show="wblMeta.rating_count > 0" ng-click="viewComments(wblMeta.webble);" class="btn btn-warning btn-xs" translate>Comments</button>
+				</div>
+			</div>
 
             <div class="col-xs-3"  style="padding-top: 4px;">
 

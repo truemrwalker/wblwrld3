@@ -3523,6 +3523,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 wblDefData: function(){ return content; }
             };
         }
+		else if(whatForm == Enum.aopForms.viewWblRatingAndComments){
+			modalOptions.templateUrl = 'views/modalForms/viewRateCommentsWblSheet.html';
+			modalOptions.controller = 'viewRateCommentsWblSheetCtrl';
+			modalOptions.resolve = {
+				wblDefData: function(){ return content; }
+			};
+			modalOptions.size = 'lg';
+		}
         else if(whatForm == Enum.aopForms.wblSearch){
             modalOptions.templateUrl = 'views/modalForms/searchWblSheet.html';
             modalOptions.controller = 'searchWblSheetCtrl';

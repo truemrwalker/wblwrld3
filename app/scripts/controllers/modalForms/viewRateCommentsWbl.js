@@ -32,26 +32,21 @@
 'use strict';
 
 //====================================================================================================================
-// ABOUT WEBBLE WORLD FORM CONTROLLER
-// This controls the Platforms About form
+// WEBBLE SLOT CONNECTION FORM CONTROLLER
+// This controls the Webbles slot connection form
 //====================================================================================================================
-ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstance, $log, wblData, gettext, dbService, Enum) {
+ww3Controllers.controller('viewRateCommentsWblSheetCtrl', function ($scope, $modalInstance, $log, gettext, dbService, wblDefData) {
 
     //=== PROPERTIES ================================================================
+    $scope.wblDefId = wblDefData.wblDefId;
 
-    $scope.formData = wblData;
-	var wblDefMetaData = $scope.formData.wblPlatformScope.getWebbleDefsMetaDataMemory();
-
-    $scope.tooltip = {
-        displayname: gettext("This is the currently chosen display name for this Webble Instance, may be changed in properties"),
-        instanceid: gettext("This is the session instance id for this particular Webble"),
-        defid: gettext("This is the name of the Webble definition this Webble was created from"),
-        author: gettext("This is the user name of the author for this Webble definition"),
-        description: gettext("This is the description of this Webble Definition"),
-        keywords: gettext("This is the keywords selected for this Webble Definition"),
-        templateid: gettext("This is the name of the template this Webble is created from. If you click the 'Create Sandbox Copy' button you create an identical copy of this Webble template (HTML5 code) and place it in your sandbox template editor for developing your own version based on this."),
-        templaterevision: gettext("This is the revision number of the template being used")
+    $scope.formItems = {
+        wblDefName: wblDefData.wblDefName,
+		formHeight: ($(document).height() * 0.75) + "px",
+        errorMsg: ''
     };
+
+	$scope.ratings = [];
 
 	$scope.textParts = {
 		starRatingTxt: [
@@ -69,9 +64,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 		rateTxtVoters: gettext("votes")
 	};
 
-
     //=== EVENT HANDLERS =====================================================================
-
 
 
     //*****************************************************************************************************************
@@ -83,21 +76,6 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     //*****************************************************************************************************************
     //=== PUBLIC FUNCTIONS ============================================================================================
     //*****************************************************************************************************************
-
-    //========================================================================================
-    // Adjust Tooltip Placement By Device Width
-    // the placement of the tooltip is by default at the bottom, but with smaller devices in
-    // some rare cases that should be set to right instead.
-    //========================================================================================
-    $scope.adjustTooltipPlacementByDeviceWidth = function(){
-        if($(document).width() < 410){
-            return 'right';
-        }
-        else{
-            return 'left';
-        }
-    };
-    //========================================================================================
 
 	//========================================================================================
 	// Get Star Img
@@ -116,37 +94,6 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 
 
 	//========================================================================================
-	// Rate This
-	// Opens a modal window which lets the user rate the chosen Webble and comment on it.
-	//========================================================================================
-	$scope.rateThis = function(wbl){
-		$scope.formData.wblPlatformScope.openForm(Enum.aopForms.rateWbl, {wblDefId: wbl.defid, wblDefName: wbl.displayname}, function(done){
-			if(done != null){
-				wbl['rateShow'] = false;
-				dbService.getWebbleDef(wbl.defid).then(function(data) {
-					$scope.formData.rating = data.rating;
-					$scope.formData.ratingCount = data.rating_count;
-				},function(eMsg){
-					$log.log("Rating data not available from server: " + eMsg);
-				});
-			}
-		});
-	};
-	//========================================================================================
-
-
-	//========================================================================================
-	// View Comments
-	// Opens a modal window which lets the user read all other users rating and comments.
-	//========================================================================================
-	$scope.viewComments = function(wbl){
-		$scope.formData.wblPlatformScope.openForm(Enum.aopForms.viewWblRatingAndComments, {wblDefId: wbl.defid, wblDefName: wbl.displayname}, null);
-	};
-	//========================================================================================
-
-
-
-	//========================================================================================
 	// Get Rate Text
 	// Returns a the text that comes with the selected rating.
 	//========================================================================================
@@ -162,26 +109,13 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 	//========================================================================================
 
 
-    //========================================================================================
-    // Make Copy
-    // Makes a template copy for the selected Webble and puts in the users sandbox.
-    //========================================================================================
-    $scope.makeCopy = function (templateId) {
-        dbService.copyPublishedTemplateAsMyUnpublishedTemplate(templateId).then(function(data){
-            $scope.formData.wblPlatformScope.showQIM(gettext("Template code copied to your Template Editor"), undefined, undefined, undefined, '#c7fcff');
-        },function(eMsg){
-            $scope.errorMsg = eMsg;
-        });
-    };
-    //========================================================================================
-
 
     //========================================================================================
     // Close
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close(null);
+		$modalInstance.close(null);
     };
     //========================================================================================
 
@@ -190,18 +124,9 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
-	$scope.formData['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + $scope.formData.defid;
-	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
-	$scope.formData['rateShow'] = true;
-
-	if($scope.formData.rating == 0 && $scope.formData.ratingCount == 0){
-		dbService.getWebbleDef($scope.formData.defid).then(function(data) {
-			$scope.formData.rating = data.rating;
-			$scope.formData.ratingCount = data.rating_count;
-		},function(eMsg){
-			$log.log("Rating data not available from server: " + eMsg);
-		});
-	}
+	dbService.getWblRate($scope.wblDefId).then(function (ratings) {
+		$scope.ratings = ratings;
+	});
 
 
 });
