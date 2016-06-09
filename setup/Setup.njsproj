@@ -36,8 +36,7 @@
     <Compile Include="scripts\mongoshellgen.js" />
     <Compile Include="scripts\updateheader.js" />
     <Content Include="deploy\mongodb.yml" />
-    <Content Include="deploy\deployment.yml" />
-    <Content Include="deploy\service.yml" />
+    <Content Include="deploy\backend.yml" />
     <Content Include="scripts\bootstrap.bat" />
     <Content Include="scripts\bootstrap.sh" />
     <Content Include="scripts\header.txt" />

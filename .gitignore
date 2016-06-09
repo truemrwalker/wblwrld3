@@ -7,7 +7,6 @@ app/bower_components
 .idea
 .DS_Store
 *.log
-/Dockerfile
 /tmpuploads
 .ntvs_analysis.dat
 obj

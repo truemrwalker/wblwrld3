@@ -97,10 +97,10 @@ module.exports = (function() {
 	////////////////////////////////////////////////////////////////////
 	// Allow third party env variables to override config values
 	//
-	if (process.env.DB_NAME && process.env.DB_PORT) {
+	if (process.env.KUBERNETES_SERVICE_HOST) {
 
-		config.MONGODB_HOST = process.env.DB_PORT_27017_TCP_ADDR;
-		config.MONGODB_PORT = parseInt(process.env.DB_PORT_27017_TCP_PORT, 10);
+		config.MONGODB_HOST = process.env.MONGO_SERVICE_HOST;
+		config.MONGODB_PORT = parseInt(process.env.MONGO_SERVICE_PORT, 10);
 	}
 	
 	if (process.env.PORT)
