@@ -1461,11 +1461,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                         $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.unbundle, target: $scope.getInstanceId()});
                         $scope.setEmitLockEnabled(true);
                     }
+					var listOfBundleChildren = [];
                     for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants($scope.theView)[i]; i++){
                         bcWbl.scope().setIsBundled(false);
+						if(bcWbl.scope().theWblMetadata['templateid'] != $scope.theView.scope().theWblMetadata['templateid']){
+							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
+						}
                     }
                     while(theChildren_.length > 0){
-                        var theKid = theChildren_[0];
                         var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
                         $scope.setPlatformDoNotSaveUndoEnabled(true);
                         theChildren_[0].scope().peel();
@@ -1474,6 +1477,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     $scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: $scope.createWblDef(true)}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
                     $scope.setPlatformDoNotSaveUndoEnabled(true);
                     $scope.requestDeleteWebble($scope.theView, false);
+					$scope.updateListOfUntrustedWebbles(listOfBundleChildren);
                     $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false); $scope.setEmitLockEnabled(false);}, 100);
                 }
             }

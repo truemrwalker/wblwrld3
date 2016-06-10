@@ -83,6 +83,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.setVCVVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){vcvVisibility_ = newVal;}else{vcvVisibility_ = 'none';}};
 	var appViewOpen = true;
 	var templateRevisionBehavior_ = 0;
+	var untrustedWblsBehavior_ = 1;
     //-------------------------------
 
 
@@ -314,13 +315,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getEmitLockEnabled = function(){ return emitLockEnabled_; };
     $scope.setEmitLockEnabled = function(emitLockState){ emitLockEnabled_ = emitLockState; };
     var hasBeenUpdated_ = false;
-    var trustedParameterWasUndefined = false;
 	var dontAskJustDoIt = false;
 
     //Trust related variables
     var listOfUntrustedWbls_ = [];
+	var listOfTrustedWbls_ = [];
     $scope.getIsUntrustedWblsExisting = function(){return (listOfUntrustedWbls_.length > 0)};
     // $scope.getListAsStringOfUniqueUntrustedWbls() Found further below returns a list of unique untrusted Webbles currently loaded
+	var hasAlreadyAsked = false;
 
     // A set of flags for rescuing weird touch event behavior
     $scope.touchRescuePlatformFlags = {
@@ -1039,6 +1041,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				if(storedPlatformSettings.templateRevisionBehavior != undefined){
 					templateRevisionBehavior_ = storedPlatformSettings.templateRevisionBehavior;
 				}
+				if(storedPlatformSettings.untrustedWblsBehavior != undefined){
+					untrustedWblsBehavior_ = storedPlatformSettings.untrustedWblsBehavior;
+				}
             }
             else{
                 $log.log('No stored platform settings object found for the user [' + $scope.user.email + '].');
@@ -1340,7 +1345,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 	//========================================================================================
 	// Force Reset Download Flags And Memories
-	// This method resets all flags and memoriy variables by force due to failed and aborted
+	// This method resets all flags and memory variables by force due to failed and aborted
 	// attempt to load a Webble.
 	//========================================================================================
 	var forceResetDownloadFlagsAndMemories = function(){
@@ -1382,10 +1387,22 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var webblesToInsert = jsonQuery.allValByKey(whatWblDef, 'webble');
         noOfNewWebbles_ = webblesToInsert.length;
 
-        if(whatWblDef.is_verified && whatWblDef.is_trusted == false){
+        if(whatWblDef.is_verified && whatWblDef.is_trusted === false){
             listOfUntrustedWbls_.push(whatWblDef.webble.defid);
         }
-        if(whatWblDef.is_trusted == undefined){ trustedParameterWasUndefined = true; }
+		else if(whatWblDef.is_verified && whatWblDef.is_trusted === true){
+			listOfTrustedWbls_.push(whatWblDef.webble.defid);
+		}
+        if(whatWblDef.is_trusted == undefined){
+			var webbleDefIsPreviouslyTrusted = false;
+			for (var i = 0, tw; tw = listOfTrustedWbls_[i]; i++){
+				if (tw == whatWblDef.webble.defid){
+					webbleDefIsPreviouslyTrusted = true;
+					break;
+				}
+			}
+			if (!webbleDefIsPreviouslyTrusted){ listOfUntrustedWbls_.push(whatWblDef.webble.defid); }
+		}
 
         if(currWS_){
             for(var i = 0; i < webblesToInsert.length; i++){
@@ -1441,10 +1458,32 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if(data['webble'] != undefined){
             if(data['webble']['defid'] != whatWblDefId){
                 $log.error('The Webble Definition file was somehow not formatted correctly so therefore Webble loading was canceled.');
+				$scope.waiting(false);
             }
             else{
-				webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
-				$scope.loadWebbleFromDef(data, whatCallBackMethod);
+				if(!data['is_trusted'] && untrustedWblsBehavior_ != Enum.availableOnePicks_untrustedWebblesBehavior.allowAll && (!$scope.getIsUntrustedWblsExisting() || untrustedWblsBehavior_ == Enum.availableOnePicks_untrustedWebblesBehavior.askEveryTime)){
+					if(untrustedWblsBehavior_ == Enum.availableOnePicks_untrustedWebblesBehavior.neverAllow){
+						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Untrusted Webbles Allowed"), content: gettext("You are attempting to load an untrusted Webble, which according to your platform settings are not allowed and the operation will therefore immediately be canceled.")}, null);
+						forceResetDownloadFlagsAndMemories();
+						if($scope.getActiveWebbles().length == 0){
+							$scope.cleanActiveWS();
+						}
+					}
+					else {
+						var modalInstance = $modal.open({templateUrl: 'views/modalForms/allowNonTrustedSomething.html', windowClass: 'modal-wblwrldform small'});
+						modalInstance.result.then(function () {
+							webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
+							$scope.loadWebbleFromDef(data, whatCallBackMethod);
+						}, function () {
+							$scope.waiting(false);
+						});
+						hasAlreadyAsked = true;
+					}
+				}
+				else{
+					webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
+					$scope.loadWebbleFromDef(data, whatCallBackMethod);
+				}
             }
         }
         else{
@@ -1659,8 +1698,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			$scope.globalByPassFlags.byPassBlockingPeelProtection = false;
 
 			var targetInstanceId = target.scope().getInstanceId();
+			var targetDefId = target.scope().theWblMetadata['defid'];
 			var targetIndex;
-			var updatedUntrustList = []
 
 			$scope.fireWWEventListener(Enum.availableWWEvents.deleted, {targetId: targetInstanceId, timestamp: (new Date()).getTime()});
 
@@ -1678,16 +1717,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					else{
 						targetIndex = i;
 					}
-
-					for(var n = 0; n < listOfUntrustedWbls_.length; n++){
-						if(listOfUntrustedWbls_[n] == aw.scope().theWblMetadata['defid']){
-							updatedUntrustList.push(listOfUntrustedWbls_[n]);
-							break;
-						}
-					}
 				}
 			}
-			listOfUntrustedWbls_ = updatedUntrustList;
 
 			// Unregister all css slot watches in the webble for proper clean-up
 			for(var slot in target.scope().getSlots()){
@@ -1707,6 +1738,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 				wwEventListeners_[event] = newList;
 			}
+
+
+			var untrustIndex = -1;
+			for(var i = 0; i < listOfUntrustedWbls_.length; i++){
+				if(listOfUntrustedWbls_[i] == targetDefId){
+					untrustIndex = i;
+					break;
+				}
+			}
+			if(untrustIndex != -1){ listOfUntrustedWbls_.splice(i,1); }
 
 			$scope.getCurrWS().webbles.splice(targetIndex, 1);
 			target.parent().remove();
@@ -1984,7 +2025,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             popupEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.PopupInfoEnabled) != 0,
             autoBehaviorEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
 			loggingEnabled: $scope.isLoggingEnabled,
-			templateRevisionBehavior: templateRevisionBehavior_
+			templateRevisionBehavior: templateRevisionBehavior_,
+			untrustedWblsBehavior: untrustedWblsBehavior_
         };
     };
     //========================================================================================
@@ -2018,7 +2060,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				localStorageService.add('isLoggingEnabled', $scope.isLoggingEnabled.toString());
 			}
 
-			templateRevisionBehavior_ = returnData.templateRevisionBehavior
+			templateRevisionBehavior_ = returnData.templateRevisionBehavior;
+			untrustedWblsBehavior_ = returnData.untrustedWblsBehavior;
 
             $scope.saveUserSettings(false);
         }
@@ -2259,7 +2302,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     'autoBehaviorEnabled': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
                     'systemMenuVisibility': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled) != 0,
                     'recentWebble': recentWebble_,
-					'templateRevisionBehavior': templateRevisionBehavior_
+					'templateRevisionBehavior': templateRevisionBehavior_,
+					'untrustedWblsBehavior': untrustedWblsBehavior_
                 };
             }
             localStorageService.add(rootPathName + wwConsts.storedPlatformSettingsPathLastName, JSON.stringify(platformProps));
@@ -2499,68 +2543,114 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
 
 
-
 	//========================================================================================
     // Load From Definition File
     // This method loads a webble from a JSON definition provided as a parameter.
     //========================================================================================
     $scope.loadWebbleFromDef = function(whatWblDef, whatCallbackMethod){
-        if(whatWblDef){
-			if(webbleCreationInProcess){
-				webblesWaitingToBeLoaded.push({wblDef: whatWblDef, callBack: whatCallbackMethod});
-				return;
+		if(whatWblDef){
+			if((listOfUntrustedWbls_.length == 0 || untrustedWblsBehavior_ >= Enum.availableOnePicks_untrustedWebblesBehavior.askEveryTime) && !hasAlreadyAsked){
+				hasAlreadyAsked = false;
+				var listOfWebblesToTrustCheck = [whatWblDef.webble.defid];
+				dbService.verifyWebbles(listOfWebblesToTrustCheck).then(function(listOfConfirmedTrust){
+					if((listOfConfirmedTrust.length == 0 || listOfConfirmedTrust[0] == false) && untrustedWblsBehavior_ > Enum.availableOnePicks_untrustedWebblesBehavior.allowAll){
+						if(untrustedWblsBehavior_ == Enum.availableOnePicks_untrustedWebblesBehavior.neverAllow){
+							$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Untrusted Webbles Allowed"), content: gettext("You are attempting to load an untrusted Webble, which according to your platform settings are not allowed and the operation will therefore immediately be canceled.")}, null);
+							forceResetDownloadFlagsAndMemories();
+							if($scope.getActiveWebbles().length == 0){
+								$scope.cleanActiveWS();
+							}
+						}
+						else{
+							var modalInstance = $modal.open({templateUrl: 'views/modalForms/allowNonTrustedSomething.html', windowClass: 'modal-wblwrldform small'});
+							modalInstance.result.then(function () {
+								loadWebbleFromDef_AfterTrustCheck(whatWblDef, whatCallbackMethod);
+							}, function () {
+								forceResetDownloadFlagsAndMemories();
+								if($scope.getActiveWebbles().length == 0){
+									$scope.cleanActiveWS();
+								}
+							});
+						}
+					}
+					else{
+						loadWebbleFromDef_AfterTrustCheck(whatWblDef, whatCallbackMethod);
+					}
+				},function(eMsg){
+					$scope.serviceError(eMsg);
+				});
 			}
-			webbleCreationInProcess =  true;
-
-            if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-                $scope.onlineTransmit({id: currWS_.id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.loadWbl, wblDef: whatWblDef});
-            }
-
-            if(!$scope.waiting()){
-                $scope.waiting(true);
-                $timeout(updateWorkSurfce, 100);
-            }
-            pendingCallbackMethod_ = whatCallbackMethod;
-            recentWebble_ = whatWblDef;
-            $scope.saveUserSettings(true);
-
-            // Find the template files and the template name of each webble within the def file.
-            var webbleAtomsList = jsonQuery.allValByKey(whatWblDef, 'webble');
-            var containingNewWblTemplates = [];
-
-            // Make a list of templates never before loaded
-            for(var i = 0; i < webbleAtomsList.length; i++){
-                var existAlready = false;
-
-                for (var t = 0; t < webbleTemplates_.length; t++){
-                    if (webbleAtomsList[i]['templateid'] == webbleTemplates_[t]['templateid'] && webbleAtomsList[i]['templaterevision'] == webbleTemplates_[t]['templaterevision']){
-                        existAlready = true;
-                        break;
-                    }
-                }
-                for(var n = 0; n < containingNewWblTemplates.length; n++) {
-                    if(containingNewWblTemplates[n]['templateid'] == webbleAtomsList[i]['templateid'] && containingNewWblTemplates[n]['templaterevision'] == webbleAtomsList[i]['templaterevision']){
-                        existAlready = true;
-                        break;
-                    }
-                }
-                if(!existAlready){
-                    containingNewWblTemplates.push({templateid: webbleAtomsList[i]['templateid'], templaterevision: webbleAtomsList[i]['templaterevision']});
-                }
-            }
-
-            if (containingNewWblTemplates.length == 0){
-                insertWebble(whatWblDef);
-            }
-            else{
-                noOfNewTemplates_ = containingNewWblTemplates.length;
-                for(var i = 0; i < containingNewWblTemplates.length; i++){
-					prepareDownloadWblTemplate(containingNewWblTemplates[i]['templateid'], containingNewWblTemplates[i]['templaterevision'], whatWblDef);
-                }
-            }
-        }
+			else{
+				loadWebbleFromDef_AfterTrustCheck(whatWblDef, whatCallbackMethod);
+			}
+		}
+		hasAlreadyAsked = false;
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Load From Definition File
+	// This method loads a webble from a JSON definition provided as a parameter.
+	//========================================================================================
+	var loadWebbleFromDef_AfterTrustCheck = function(whatWblDef, whatCallbackMethod){
+		if(webbleCreationInProcess){
+			webblesWaitingToBeLoaded.push({wblDef: whatWblDef, callBack: whatCallbackMethod});
+			return;
+		}
+		webbleCreationInProcess =  true;
+
+		if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
+			$scope.onlineTransmit({id: currWS_.id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.loadWbl, wblDef: whatWblDef});
+		}
+
+		if(!$scope.waiting()){
+			$scope.waiting(true);
+			$timeout(updateWorkSurfce, 100);
+		}
+		pendingCallbackMethod_ = whatCallbackMethod;
+		recentWebble_ = whatWblDef;
+		$scope.saveUserSettings(true);
+
+		// Find the template files and the template name of each webble within the def file.
+		var webbleAtomsList = jsonQuery.allValByKey(whatWblDef, 'webble');
+		var containingNewWblTemplates = [];
+
+		// Make a list of templates never before loaded
+		for(var i = 0; i < webbleAtomsList.length; i++){
+			var existAlready = false;
+
+			for (var t = 0; t < webbleTemplates_.length; t++){
+				if (webbleAtomsList[i]['templateid'] == webbleTemplates_[t]['templateid'] && webbleAtomsList[i]['templaterevision'] == webbleTemplates_[t]['templaterevision']){
+					existAlready = true;
+					break;
+				}
+			}
+			for(var n = 0; n < containingNewWblTemplates.length; n++) {
+				if(containingNewWblTemplates[n]['templateid'] == webbleAtomsList[i]['templateid'] && containingNewWblTemplates[n]['templaterevision'] == webbleAtomsList[i]['templaterevision']){
+					existAlready = true;
+					break;
+				}
+			}
+			if(!existAlready){
+				containingNewWblTemplates.push({templateid: webbleAtomsList[i]['templateid'], templaterevision: webbleAtomsList[i]['templaterevision']});
+			}
+		}
+
+		if (containingNewWblTemplates.length == 0){
+			insertWebble(whatWblDef);
+		}
+		else{
+			noOfNewTemplates_ = containingNewWblTemplates.length;
+			for(var i = 0; i < containingNewWblTemplates.length; i++){
+				prepareDownloadWblTemplate(containingNewWblTemplates[i]['templateid'], containingNewWblTemplates[i]['templaterevision'], whatWblDef);
+			}
+		}
+	};
+	//========================================================================================
+
+
+
 
 
     //========================================================================================
@@ -2738,45 +2828,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 longtermrelationConnHistory_ = [];
                 $scope.setEmitLockEnabled(false);
 				dontAskJustDoIt = false;
-
-                // Check for trust in webbles delivered via a Workspace
-                if(listOfUntrustedWbls_.length == 0 && trustedParameterWasUndefined){
-                    var listOfWebblesToTrustCheck = []
-                    for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-                        var alreadyInList = false;
-                        for(var n = 0; n < listOfWebblesToTrustCheck.length; n++){
-                            if(listOfWebblesToTrustCheck[n] == aw.scope().theWblMetadata['templateid']){
-                                alreadyInList = true;
-                                break;
-                            }
-                        }
-                        if(!alreadyInList){
-                            listOfWebblesToTrustCheck.push(aw.scope().theWblMetadata['templateid']);
-                        }
-                    }
-
-                    dbService.verifyWebbles(listOfWebblesToTrustCheck).then(function(listOfConfirmedTrust){
-                        var listOfUntrustedWblTemplates = [];
-                        for(var i = 0; i < listOfConfirmedTrust.length; i++){
-                            if(!listOfConfirmedTrust[i]){
-                                listOfUntrustedWblTemplates.push(listOfWebblesToTrustCheck[i]);
-                            }
-                        }
-
-                        var newListOfUntrustedWbls = [];
-                        for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-                            for(var k = 0; k < listOfUntrustedWblTemplates.length; k++){
-                                if(aw.scope().theWblMetadata['templateid'] == listOfUntrustedWblTemplates[k]){
-                                    newListOfUntrustedWbls.push(listOfUntrustedWblTemplates[k]);
-                                }
-                            }
-                        }
-                        listOfUntrustedWbls_ = newListOfUntrustedWbls;
-                    },function(eMsg){
-                        $scope.serviceError(eMsg);
-                    });
-                }
-                trustedParameterWasUndefined = false;
                 $scope.waiting(false);
 
 				if(!webbleCreationInProcess && webblesWaitingToBeLoaded.length > 0){
@@ -3018,8 +3069,54 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
 	//========================================================================================
-	// Get List Of Unique Untrusted Wbls
-	// This method creates a list of unique Untrusted Webbles.
+	// Update list of untrusted Webbles
+	// This method checks within all active Webbles whether any template id from the provided
+	// list of webble templates exists, and if so check if they are trusted or not, and if
+	// not add them to the untrusted webble list.
+	//========================================================================================
+	$scope.updateListOfUntrustedWebbles = function(wblTmpltList){
+		var listOfWebblesToTrustCheck = [];
+		for(var i = 0, ubWbl; ubWbl = wblTmpltList[i]; i++){
+			var alreadyInList = false;
+			for(var n = 0; n < listOfWebblesToTrustCheck.length; n++){
+				if(listOfWebblesToTrustCheck[n] == ubWbl){
+					alreadyInList = true;
+					break;
+				}
+			}
+			if(!alreadyInList){
+				listOfWebblesToTrustCheck.push(ubWbl);
+			}
+		}
+
+		dbService.verifyWebbles(listOfWebblesToTrustCheck).then(function(listOfConfirmedTrust){
+			var listOfUntrustedWblTemplates = [];
+			for(var i = 0; i < listOfConfirmedTrust.length; i++){
+				if(!listOfConfirmedTrust[i]){
+					listOfUntrustedWblTemplates.push(listOfWebblesToTrustCheck[i]);
+				}
+			}
+
+			var newListOfUntrustedWbls = [];
+			for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+				for(var k = 0; k < listOfUntrustedWblTemplates.length; k++){
+					if(aw.scope().theWblMetadata['defid'] == listOfUntrustedWblTemplates[k]){
+						newListOfUntrustedWbls.push(listOfUntrustedWblTemplates[k]);
+					}
+				}
+			}
+			listOfUntrustedWbls_ = newListOfUntrustedWbls;
+		},function(eMsg){
+			$scope.serviceError(eMsg);
+		});
+	};
+	//========================================================================================
+
+
+
+	//========================================================================================
+	// Get List Of Unique Sandbox Webbles as String
+	// This method creates a list of unique sandbox Webbles.
 	//========================================================================================
 	$scope.getListAsStringOfLoadedSandboxWebbles = function(){
 		var uniqueLoadedSandboxList = [], uniqueLoadedSandboxListAsStr = '';
@@ -3047,7 +3144,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
     //========================================================================================
-    // Get List Of Unique Untrusted Wbls
+    // Get List Of Unique Untrusted Webbles as String
     // This method creates a list of unique Untrusted Webbles.
     //========================================================================================
     $scope.getListAsStringOfUniqueUntrustedWbls = function(){

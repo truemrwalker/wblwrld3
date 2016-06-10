@@ -199,6 +199,20 @@ ww3Services.factory('Enum', function (gettext) {
 			autoKeep:  gettext("Automatically keep current older")
 		},
 
+		availableOnePicks_untrustedWebblesBehavior: {
+			allowAll: 0,
+			askFirstTime:  1,
+			askEveryTime:  2,
+			neverAllow:  3
+		},
+
+		availableOnePicks_untrustedWebblesBehaviorDisplayText: {
+			allowAll: gettext("Always Allow All"),
+			askFirstTime:  gettext("Ask For First"),
+			askEveryTime:  gettext("Ask For Everyone"),
+			neverAllow:  gettext("Never Allow Any")
+		},
+
         // The different available form input types used to interact with webble properties and similar
         aopInputTypes: {
             Undefined: 0,

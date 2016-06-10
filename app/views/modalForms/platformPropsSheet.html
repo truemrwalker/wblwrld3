@@ -101,6 +101,15 @@
 		</div>
 	</div>
 
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-4"><span class="formTitle" translate>Untrusted Webbles Behavior:</span></div>
+			<div class="col-xs-5"><select class="formitem" ng-model="formItems.untrustedWblsBehavior" ng-options="uwbehavior.key as uwbehavior.val for uwbehavior in untrustedWblsBehaviorOptions"></select></div>
+			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.untrustedWblsBehavior}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-2"></div>
+		</div>
+	</div>
+
     <div class="dividerLineAbove">
         <div class="row">
             <div class="col-xs-12">

@@ -68,8 +68,8 @@
     </div>
 
     <div class="row keepTheDistanceBelow">
-        <div class="col-xs-2"><span style="font-size: 10px;" translate>Sorted By: </span></div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
+			<span style="font-size: 10px;" translate>Sorted By: </span>
             <select id="sortBy" class="formitem" ng-model="formItems.sortedBy" style="font-size: 10px;" ng-change="reSort()">
                 <option value="name" translate>Name</option>
                 <option value="rate" translate selected>Rating</option>
@@ -77,11 +77,13 @@
                 <option value="date" translate>Last Updated</option>
             </select>
         </div>
-        <div class="col-xs-3">
-            <span style="margin-left: 10px; font-size: 10px;" translate>Reversed</span>
+        <div class="col-xs-6">
+            <span style="margin-left: 1px; font-size: 10px;" translate>Reversed</span>
             <input id="reverseSort" class="formitem" type="checkbox" ng-model="formItems.isReversed" ng-change="toggleReverse()" />
+			<span style="margin-left: 10px; font-size: 10px;" translate>hide untrusted</span>
+			<input id="hideUntrusted" class="formitem" type="checkbox" ng-model="formItems.hideUntrusted" />
         </div>
-        <div class="col-xs-5">
+        <div class="col-xs-3">
             <pager class="pagination-sm" total-items="formItems.totalItems" ng-model="formItems.currentPage" items-per-page="formItems.itemsPerPage" style="margin-top: 0; margin-bottom: 0" ng-change="pageSelect();"
                    num-pages="formItems.numPages" previous-text="&lsaquo;&lsaquo; {{textParts.prev | translate}}" next-text="{{textParts.next | translate}} &rsaquo;&rsaquo;"></pager>
         </div>
@@ -94,7 +96,7 @@
         </div>
     </div>
 
-    <div id="itemBox" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)" ng-click="selectWbl($index);"
+    <div id="itemBox" ng-hide="formItems.hideUntrusted && !wblMeta.is_trusted" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)" ng-click="selectWbl($index);"
          ng-dblclick="close('submit');" ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">
 
 		<div class="row" style="padding-bottom: 5px;">

@@ -48,6 +48,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         sortedBy: 'rate',
         maxRate: 10,
         isReversed: true,
+		hideUntrusted: false,
         searchResult: [],
         typeAheadResult: [],
         pageViewResult: [],
