@@ -194,17 +194,19 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
 	$scope.formData['rateShow'] = true;
 
-	if(($scope.formData.rating == 0 && $scope.formData.ratingCount == 0) || $scope.formData.image == "images/notFound.png"){
+	if(($scope.formData.rating == 0 && $scope.formData.ratingCount == 0) || ($scope.formData.image == "images/notFound.png" || $scope.formData.image == "")){
 		dbService.getWebbleDef($scope.formData.defid).then(function(data) {
 			if($scope.formData.rating == 0 && $scope.formData.ratingCount == 0){
 				$scope.formData.rating = data.rating;
 				$scope.formData.ratingCount = data.rating_count;
 			}
-			if($scope.formData.image == "images/notFound.png" && data.webble.image != "" && data.webble.image != "images/notFound.png"){
-				$scope.formData.image = data.webble.image;
-			}
-			else{
-				$scope.formData.image = "images/icons/No_Image_Available.png";
+			if($scope.formData.image == "images/notFound.png" || $scope.formData.image == ""){
+				if(data.webble.image != "" && data.webble.image != "images/notFound.png"){
+					$scope.formData.image = data.webble.image;
+				}
+				else{
+					$scope.formData.image = "images/icons/No_Image_Available.png";
+				}
 			}
 		},function(eMsg){
 			$log.log("Rating data not available from server: " + eMsg);
