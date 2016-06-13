@@ -97,7 +97,7 @@
     </div>
 
     <div id="itemBox" ng-hide="formItems.hideUntrusted && !wblMeta.is_trusted" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)" ng-click="selectWbl($index);"
-         ng-dblclick="close('submit');" ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">
+          ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">         <!--ng-dblclick="close('submit');" Removed due to double effect with hm-double-tap-->
 
 		<div class="row" style="padding-bottom: 5px;">
             <div class="col-xs-5">

@@ -1393,7 +1393,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		else if(whatWblDef.is_verified && whatWblDef.is_trusted === true){
 			listOfTrustedWbls_.push(whatWblDef.webble.defid);
 		}
-        if(whatWblDef.is_trusted == undefined){
+        if(whatWblDef.is_verified && whatWblDef.is_trusted == undefined){
 			var webbleDefIsPreviouslyTrusted = false;
 			for (var i = 0, tw; tw = listOfTrustedWbls_[i]; i++){
 				if (tw == whatWblDef.webble.defid){
@@ -1461,7 +1461,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				$scope.waiting(false);
             }
             else{
-				if(!data['is_trusted'] && untrustedWblsBehavior_ != Enum.availableOnePicks_untrustedWebblesBehavior.allowAll && (!$scope.getIsUntrustedWblsExisting() || untrustedWblsBehavior_ == Enum.availableOnePicks_untrustedWebblesBehavior.askEveryTime)){
+				if($scope.user != undefined && !data['is_trusted'] && untrustedWblsBehavior_ != Enum.availableOnePicks_untrustedWebblesBehavior.allowAll && (!$scope.getIsUntrustedWblsExisting() || untrustedWblsBehavior_ == Enum.availableOnePicks_untrustedWebblesBehavior.askEveryTime)){
 					if(untrustedWblsBehavior_ == Enum.availableOnePicks_untrustedWebblesBehavior.neverAllow){
 						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Untrusted Webbles Allowed"), content: gettext("You are attempting to load an untrusted Webble, which according to your platform settings are not allowed and the operation will therefore immediately be canceled.")}, null);
 						forceResetDownloadFlagsAndMemories();
@@ -2549,7 +2549,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     $scope.loadWebbleFromDef = function(whatWblDef, whatCallbackMethod){
 		if(whatWblDef){
-			if((listOfUntrustedWbls_.length == 0 || untrustedWblsBehavior_ >= Enum.availableOnePicks_untrustedWebblesBehavior.askEveryTime) && !hasAlreadyAsked){
+			if($scope.user != undefined && (listOfUntrustedWbls_.length == 0 || untrustedWblsBehavior_ >= Enum.availableOnePicks_untrustedWebblesBehavior.askEveryTime) && !hasAlreadyAsked){
 				hasAlreadyAsked = false;
 				var listOfWebblesToTrustCheck = [whatWblDef.webble.defid];
 				dbService.verifyWebbles(listOfWebblesToTrustCheck).then(function(listOfConfirmedTrust){
