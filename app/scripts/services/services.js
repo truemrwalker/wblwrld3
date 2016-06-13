@@ -1096,7 +1096,6 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
                 {"sublink_itemName": "savewsas", "title": gettext("Save As"), "shortcut": "(Alt+Shift+S)", "visibility_enabled": true},
                 {"sublink_itemName": "sharews", "title": gettext("Share"), "shortcut": "(Alt+J)", "visibility_enabled": true},
                 {"sublink_itemName": "deletews", "title": gettext("Delete"), "shortcut": "(Alt+X)", "visibility_enabled": true}
-                //{"sublink_itemName": "printws", "title": gettext("Print"), "shortcut": "(Alt+Shift+P)", "visibility_enabled": true}
             ]},
         {"itemName": "webbles", "title": gettext("Webbles"), "description": "", "visibility_enabled": true,
             "sublinks": [

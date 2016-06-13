@@ -4155,55 +4155,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if(sublink == 'printws' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'P')){
-            if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
-                if(workSurfaceElement_){
-                    autoGenImageFrame = angular.element(document.createElement("div"));
-                    autoGenImageFrame.attr('id', 'autoGenImageFrame');
-                    var allWbls = $scope.getActiveWebbles();
-                    var ltrb = {l: 10000, t: 10000, r: 0, b: 0};
-                    for(var i = 0, wbl; wbl = allWbls[i]; i++){
-                        var wblLTPos = $scope.getWblAbsPosInPixels(wbl);
-                        var wblLTRB = {l: wblLTPos.x, t: wblLTPos.y, r: wblLTPos.x + Math.round(getUnits(wbl.parent()[0], 'width').pixel), b: wblLTPos.y + Math.round(getUnits(wbl.parent()[0], 'height').pixel)};
-                        if(wblLTRB.l < ltrb.l){
-                            ltrb.l = wblLTRB.l;
-                        }
-                        if(wblLTRB.t < ltrb.t){
-                            ltrb.t = wblLTRB.t;
-                        }
-                        if(wblLTRB.r > ltrb.r){
-                            ltrb.r = wblLTRB.r;
-                        }
-                        if(wblLTRB.b > ltrb.b){
-                            ltrb.b = wblLTRB.b;
-                        }
-                    }
-
-                    $scope.getWSE().append(autoGenImageFrame);
-                    autoGenImageFrame.css('background-color', 'transparent');
-                    autoGenImageFrame.css('position', 'absolute');
-                    autoGenImageFrame.css('left', ltrb.l);
-                    autoGenImageFrame.css('top', ltrb.t);
-                    autoGenImageFrame.css('width', (ltrb.r - ltrb.l + 7));
-                    autoGenImageFrame.css('height', (ltrb.b - ltrb.t + 7));
-
-                    for(var i = 0, wbl; wbl = allWbls[i]; i++){
-                        var wblLTPos = $scope.getWblAbsPosInPixels(wbl);
-                        wbl.parent().clone().css('left', (wblLTPos.x - ltrb.l)).css('top', (wblLTPos.y - ltrb.t)).prependTo(autoGenImageFrame);
-                    }
-
-                    workSurfaceElement_.find('#connViz').clone().css('left', 0 - ltrb.l).css('top', 0 - ltrb.t).prependTo(autoGenImageFrame);
-
-                    var WinPrint = window.open('', '', 'letf=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
-                    WinPrint.document.write(autoGenImageFrame[0].innerHTML);
-                    WinPrint.document.close();
-                    WinPrint.focus();
-                    WinPrint.print();
-                    WinPrint.close();
-                    $scope.getWSE().find('#autoGenImageFrame').remove();
-                }
-            }
-        }
 
         //==== WEBBLES ============================
 
