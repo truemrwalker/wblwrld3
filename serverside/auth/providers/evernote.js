@@ -111,7 +111,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
 	}, function (token, tokenSecret, profile, done) {
 		
-		user.findone({ "_auth.evernote.user_id": profile.id }, function (err, user) {
+		User.findOne({ "_auth.evernote.user_id": profile.id }, function (err, user) {
 			
 		    if (err)
 		        done(err);
