@@ -4179,6 +4179,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 if(currWS_ && currWS_.name != ''){
                     if($scope.user && $scope.user.username){
+						$scope.waiting(true);
                         dbService.saveWorkspace(getWSDef($scope.user.username)).then(function(data){
                             if(data.id){
                                 currWS_.id = data.id;
@@ -4203,8 +4204,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                                 $scope.getAvailableWorkspaces().push(data);
                             }
 
+							$scope.waiting(false);
                             $scope.showQIM(gettext("Workspace Saved"));
                         },function(eMsg){
+							$scope.waiting(false);
                             $scope.serviceError(eMsg);
                         });
                     }
