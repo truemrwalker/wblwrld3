@@ -40,6 +40,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     //=== PROPERTIES ================================================================
     $scope.thePlatform = platformScope;
 
+	$scope.fff = [];//["KTH", "Hokudai", "IKEA", "Fujitsu"];
+
     // Form content needed for proper processing
     $scope.formItems = {
         noOfExistingWbls: '',
@@ -527,6 +529,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 
                 $scope.formItems.pageViewResult = $scope.formItems.searchResult;
 
+				$log.log($scope.formItems.searchResult);
+
                 if($scope.formItems.pageViewResult.length > 0){
                     $scope.selectWbl(0);
                 }
@@ -607,6 +611,29 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         }
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Rate This
+	// Opens a modal window which lets the user rate the chosen Webble and comment on it.
+	//========================================================================================
+	$scope.rateThis = function(wbl){
+		$scope.thePlatform.openForm(Enum.aopForms.rateWbl, {wblDefId: wbl.webble.defid, wblDefName: wbl.webble.displayname}, function(done){
+			if(done != null){
+				dbService.getWebbleDef(wbl.webble.defid).then(function(data) {
+					for(var i = 0, w; w = $scope.formItems.pageViewResult[i]; i++){
+						if(w.webble.defid == wbl.webble.defid){
+							w.rating = data.rating;
+							w.rating_count = data.rating_count;
+						}
+					}
+				},function(eMsg){
+					$log.log("Rating data not available from server: " + eMsg);
+				});
+			}
+		});
+	};
+	//========================================================================================
 
 
     //========================================================================================
