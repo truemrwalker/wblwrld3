@@ -1426,7 +1426,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 $scope.requestPublishWebble($scope.theView);
             }
             else{
-                $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Webble Attempt Failed"), content: gettext("This Webble included is protected from publishing and therefore this operation is canceled.")}, null);
+                $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Webble Attempt Failed"), content: gettext("This Webble (or one related) is protected from publishing and therefore this operation is canceled.")}, null);
             }
         }
         //=======================================================================================
@@ -1468,13 +1468,26 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
 						}
                     }
+
+					for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants($scope.theView)[i]; i++){
+						bcWbl.scope().setIsBundled(false);
+						if(bcWbl.scope().theWblMetadata['templateid'] != $scope.theView.scope().theWblMetadata['templateid']){
+							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
+							var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
+							$scope.setPlatformDoNotSaveUndoEnabled(true);
+							bcWbl.scope().peel();
+							$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(prevValue);}, 1);
+						}
+					}
+
                     while(theChildren_.length > 0){
                         var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
                         $scope.setPlatformDoNotSaveUndoEnabled(true);
                         theChildren_[0].scope().peel();
                         $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(prevValue);}, 1);
                     }
-                    $scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: $scope.createWblDef(true)}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
+
+					$scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: $scope.createWblDef(true)}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
                     $scope.setPlatformDoNotSaveUndoEnabled(true);
                     $scope.requestDeleteWebble($scope.theView, false);
 					$scope.updateListOfUntrustedWebbles(listOfBundleChildren);
@@ -1567,6 +1580,17 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			$scope.openForm(Enum.aopForms.editCustInteractObj, $scope.theView, function(retVal){
 				// No need to do anything here (retval is either true or null and none is a bad thing)
 			});
+		}
+		//=======================================================================================
+
+		//=== EXPORT ==========================================================================
+		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Export)){
+			if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.EXPORT, 10)) == 0){
+				$scope.requestExportWebble($scope.theView);
+			}
+			else{
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Export Webble Attempt Failed"), content: gettext("This Webble (or one related) is protected from exporting and therefore this operation is canceled.")}, null);
+			}
 		}
 		//=======================================================================================
 

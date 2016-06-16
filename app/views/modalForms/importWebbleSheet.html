@@ -33,27 +33,34 @@
 -->
 
 <!--====================================================================================================================
-// HTML View for Allow non-trusted Confirmation Form
+// HTML View for Import Webble Form
 //===================================================================================================================-->
 <div class="container-fluid padcontent" data-formclass="wblwrldform-main">
 
     <div class="row">
-        <div class="col-xs-8"><h4 class="formTitle" translate>Load Non-Trusted Webble?</h4></div>
+        <div class="col-xs-4">
+            <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+            <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Import</button>
+        </div>
+        <div class="col-xs-8"><h4 class="formTitle" translate>Import Webble</h4></div>
     </div>
 
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row">
-            <div class="col-xs-12" translate>
-                You are about to load a Webble outside your circle of trust, do you really wanna allow that?
+            <div class="col-xs-4"><span class="formTitle" translate>Local File:</span></div>
+            <div class="col-xs-7">
+                <form id="localFileFormContainer">
+                    <input id="localFile" type="file" onchange="angular.element(this).scope().localFileChanged(this)">
+                </form>
             </div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.localFile | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 
     <div class="dividerLineAbove">
         <div class="row">
-            <div class="col-xs-12" style="text-align: right;">
-                <button class="btn btn-default" ng-click="$close()" style="margin: 0 3px 3px 0;" translate>Yes</button>
-                <button class="btn btn-default" ng-click="$dismiss()" style="margin-bottom: 3px;" translate>No</button>
+            <div class="col-xs-12">
+                <span style="color: red; font-weight: bold;">{{errorMsg | translate}}</span>
             </div>
         </div>
     </div>

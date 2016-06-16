@@ -161,7 +161,13 @@ ww3Controllers.controller('protectSheetCtrl', function ($scope, $modalInstance, 
           label: gettext("Bundle Locking Not Allowed:"),
           value: (parseInt(theWblProtection, 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) != 0,
           tooltip: gettext("When this is checked the Webble can still be individually dragged and moved even though it is a part of a bundle")
-        }
+        },
+		{
+			key: 'EXPORT',
+			label: gettext("Export Not Allowed:"),
+			value: (parseInt(theWblProtection, 10) & parseInt(Enum.bitFlags_WebbleProtection.EXPORT, 10)) != 0,
+			tooltip: gettext("When this is checked the Webble cannot be exported")
+		}
     ];
 
     // Form validation error message

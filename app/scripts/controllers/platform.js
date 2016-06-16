@@ -286,7 +286,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Image container element for auto generated images
     var autoGenImageFrame;
 
-    // The start time of application usage
+	// memory variable to remember which Webble was recently main selected (in case we have to unselect it for a while)
+	var lastMainSelectedWbl = undefined;
+
+	// memory variable to remember the name of a chosen Webble, as we enter the Export-form and use after submission
+	var WblNameOfPossibleExport_ = "";
+
+	// The start time of application usage
     var applicationStartTime_ = new Date();
 
     //Temporary watches used in special situations
@@ -456,7 +462,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var hasUserChanged = ($scope.user == undefined || $scope.user.email != user.email);
         $scope.user = user;
 
-		if (hasUserChanged && $scope.getActiveWebbles().length > 0){ quickSaveWSInternal(); webbleDefs_ = []; webbleTemplates_ = []; pleaseQuickLoadInternalSavedWS = true;}
+		//if (hasUserChanged && $scope.getActiveWebbles().length > 0){ quickSaveWSInternal(); webbleDefs_ = []; webbleTemplates_ = []; pleaseQuickLoadInternalSavedWS = true;}
 
         // Set user platform settings if that is not blocked by overrides
         if (!wblwrldSystemOverrideSettings.ignore_UserSettings && hasUserChanged){
@@ -1387,13 +1393,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var webblesToInsert = jsonQuery.allValByKey(whatWblDef, 'webble');
         noOfNewWebbles_ = webblesToInsert.length;
 
+		// make sure to list trusted and untrusted webbles properly
         if(whatWblDef.is_verified && whatWblDef.is_trusted === false){
             listOfUntrustedWbls_.push(whatWblDef.webble.defid);
         }
 		else if(whatWblDef.is_verified && whatWblDef.is_trusted === true){
 			listOfTrustedWbls_.push(whatWblDef.webble.defid);
 		}
-        if(whatWblDef.is_verified && whatWblDef.is_trusted == undefined){
+        if(whatWblDef.is_trusted == undefined){
 			var webbleDefIsPreviouslyTrusted = false;
 			for (var i = 0, tw; tw = listOfTrustedWbls_[i]; i++){
 				if (tw == whatWblDef.webble.defid){
@@ -1993,8 +2000,69 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			$scope.waiting(false);
 			$scope.showQIM(gettext("Webble Successfully Published"));
         }
+		if(lastMainSelectedWbl != undefined){ lastMainSelectedWbl.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsMainClicked); lastMainSelectedWbl = undefined; }
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Get Export Webble Content
+	// Gets the content to fill this form properly
+	//========================================================================================
+	var getExportWebbleContent = function(theWbl, allDescendents){
+		var theWblDef = theWbl.scope().createWblDef(true);
+		var theWblTemplateList = [];
+		for(var i = 0, w; w = allDescendents[i]; i++){
+			var theSandboxId = null;
+			if(w.scope().theWblMetadata['templateid'] != "bundleTemplate"){
+				for(var n = 0, sbw; sbw = availableSandboxWebbles_[n]; n++){
+					if(sbw.webble.templateid == w.scope().theWblMetadata['templateid']){
+						theSandboxId = sbw.id;
+					}
+				}
+			}
+
+			var templateInfo = {templateId: w.scope().theWblMetadata['templateid'], templateRevision: w.scope().theWblMetadata['templaterevision'], sandboxId: theSandboxId};
+			if(templateInfo.sandboxId != undefined){templateInfo.templateRevision = 0}
+			var alreadyExist = false;
+			for(var n = 0; n < theWblTemplateList.length; n++){
+				if(templateInfo.templateId == theWblTemplateList[n].templateId && templateInfo.templateRevision == theWblTemplateList[n].templateRevision && templateInfo.sandboxId == theSandboxId){
+					alreadyExist = true;
+					break;
+				}
+			}
+			if(!alreadyExist){
+				theWblTemplateList.push(templateInfo)
+			}
+		}
+
+		WblNameOfPossibleExport_ = theWblDef.webble.defid;
+		return {
+			wblDef: theWblDef,
+			wblTemplateList: theWblTemplateList,
+			platformScope: $scope
+		};
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Export Webble Returned
+	// Manages the return data from this form when submitted
+	//========================================================================================
+	var exportWebbleReturned = function(returnData){
+		if(returnData){
+			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Exporting Webble is Under Development"), content: gettext("This Feature is not yet fully implemented, but as soon as it is you will find it here.")}, null);
+			return;
+
+			//Might need to be edited when we get a real export file from the server... but for now we treat it as JSON and text.
+			var blob = new Blob([JSON.stringify(returnData)], {type: "text/plain;charset=utf-8"});
+			saveAs(blob, WblNameOfPossibleExport_ + ".war");
+			WblNameOfPossibleExport_ = "";
+			$scope.showQIM(gettext("Webble Successfully Exported to your local computer's browser download folder."));
+		}
+	};
+	//========================================================================================
 
 
     //========================================================================================
@@ -2012,6 +2080,30 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Import Webble Returned
+	// Manages the return data from this form when submitted
+	//========================================================================================
+	var importWebbleReturned = function(returnData){
+		if(returnData){
+			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Importing Webble is Under Development"), content: gettext("This Feature is not yet fully implemented, but as soon as it is you will find it here.")}, null);
+			return;
+
+			//Possible returnData reading and further and deeper validity confirmation
+
+			$scope.waiting(true);
+			dbService.importWebble(returnData).then(function(data){
+				$scope.waiting(false);
+				$scope.loadWebbleFromDef(data);
+			},function(eMsg){
+				$scope.waiting(false);
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Import Failed"), content: eMsg}, null);
+			});
+		}
+	};
+	//========================================================================================
 
 
     //========================================================================================
@@ -2881,7 +2973,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // the screen or the specified position.
     //========================================================================================
     $scope.showQIM = function(qimText, qimTime, qimSize, qimPos, qimColor){
-        var showTime = 2000;
+        var showTime = 2500;
         var calcQIMSize = {w: 250, h: 100};
         $scope.qimTxt = qimText;
         if(qimSize && qimSize.w && qimSize.h){
@@ -3394,6 +3486,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     }
                 }
 
+				if(whatWbl.scope().getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){ lastMainSelectedWbl = whatWbl; }
                 $scope.resetSelections();
                 $timeout(function(){$scope.openForm(Enum.aopForms.publishWebble, getPublishWebbleContent(whatWbl), publishWebbleReturned);}, 100);
             }
@@ -3406,6 +3499,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
     };
     //========================================================================================
+
+
+    //========================================================================================
+	// Export Webble
+	// This method Exports a Webble and all its needed templates (incl code files) to a
+	// webble code package file which can be imported to any other Webble World platform.
+	//========================================================================================
+	$scope.requestExportWebble = function(whatWbl){
+		var allDescendents = $scope.getAllDescendants(whatWbl);
+		for(var i = 0, w; w = allDescendents[i]; i++){
+			if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.EXPORT, 10)) !== 0){
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Export Webble Attempt Failed"), content: gettext("One or more of the Webbles included in the Export attempt is protected from export and therefore this operation is canceled.")}, null);
+				return false;
+			}
+		}
+		$timeout(function(){$scope.openForm(Enum.aopForms.exportWebble, getExportWebbleContent(whatWbl, allDescendents), exportWebbleReturned);}, 100);
+	};
+	//========================================================================================
 
 
     //========================================================================================
@@ -3590,6 +3701,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 formContent: function(){ return content; }
             };
         }
+		else if(whatForm == Enum.aopForms.exportWebble){
+			modalOptions.templateUrl = 'views/modalForms/exportWebbleSheet.html';
+			modalOptions.controller = 'exportWebbleSheetCtrl';
+			modalOptions.resolve = {
+				formContent: function(){ return content; }
+			};
+		}
         else if(whatForm == Enum.aopForms.bundle){
             modalOptions.templateUrl = 'views/modalForms/bundleSheet.html';
             modalOptions.controller = 'bundleSheetCtrl';
@@ -3601,6 +3719,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             modalOptions.templateUrl = 'views/modalForms/loadWebbleSheet.html';
             modalOptions.controller = 'loadWebbleSheetCtrl';
         }
+		else if(whatForm == Enum.aopForms.importWebble){
+			modalOptions.templateUrl = 'views/modalForms/importWebbleSheet.html';
+			modalOptions.controller = 'importWebbleSheetCtrl';
+		}
         else if(whatForm == Enum.aopForms.platformProps){
             modalOptions.templateUrl = 'views/modalForms/platformPropsSheet.html';
             modalOptions.controller = 'platformPropsSheetCtrl';
@@ -4163,18 +4285,23 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.openForm(Enum.aopForms.wblSearch, $scope, null);
             }
         }
+		else if(sublink == 'recentwbl' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'R')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
+				if (recentWebble_){
+					$scope.loadWebbleFromDef(recentWebble_, null);
+				}
+			}
+		}
         else if(sublink == 'loadwbl' || (whatKeys.theAltKey && whatKeys.theKey == 'L')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 $scope.openForm(Enum.aopForms.loadWebble, null, loadWebbleReturned);
             }
         }
-        else if(sublink == 'recentwbl' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'R')){
-            if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
-                if (recentWebble_){
-                    $scope.loadWebbleFromDef(recentWebble_, null);
-                }
-            }
-        }
+		else if(sublink == 'impwbl' || (whatKeys.theAltKey && whatKeys.theKey == 'I')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
+				$scope.openForm(Enum.aopForms.importWebble, null, importWebbleReturned);
+			}
+		}
         else if(sublink == 'pub' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'P')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 var selectedWbls = $scope.getSelectedWebbles();
@@ -4186,6 +4313,17 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
+		else if(sublink == 'expwbl' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'E')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
+				var selectedWbls = $scope.getSelectedWebbles();
+				if(selectedWbls.length == 1){
+					$scope.requestExportWebble(selectedWbls[0]);
+				}
+				else{
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Cannot do that..."), content: gettextCatalog.getString("This operation only works with one selected Webble at a time, and you have") + ' ' + selectedWbls.length + ' ' + gettextCatalog.getString("Webbles selected.")}, null);
+				}
+			}
+		}
         else if(sublink == 'upload' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'U')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 locationPathChangeRequest = '/templates';
@@ -4259,12 +4397,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if(sublink == 'wblprops' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'E')){
+        else if(sublink == 'wblprops' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'K')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 $scope.setMWPVisibility('inline-block');
             }
         }
-        else if(sublink == 'platformprops' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'E')){
+        else if(sublink == 'platformprops' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'K')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 $scope.openForm(Enum.aopForms.platformProps, getPlatformPropsContent(), platformPropsReturned);
             }
@@ -4281,7 +4419,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if(sublink == 'wsinfo' || (whatKeys.theAltKey && whatKeys.theKey == 'I')){
+        else if(sublink == 'wsinfo' || (whatKeys.theAltKey && whatKeys.theKey == 'W')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 var appTime = ((((new Date()).getTime() - applicationStartTime_.getTime())/1000)/60).toFixed(2);
                 $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Webble World Platform Information"), content:

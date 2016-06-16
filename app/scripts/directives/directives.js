@@ -987,6 +987,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                     addCustomSlots: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.AddCustomSlots),
 									EditCustomMenuItems: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomMenuItems),
 									EditCustomInteractionObjects: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomInteractionObjects),
+									export: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Export),
                                     about: getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.About)
                                 };
 
@@ -999,6 +1000,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                 if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.DELETE, 10)) == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.delete)){
                                     theWblCM[dmi.delete] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.Delete};
                                 }
+
                                 if(theActiveTrigger.scope().getParent()){
 									var parentDisconnectAllowed = (parseInt(theActiveTrigger.scope().getParent().scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.CHILD_DISCONNECT, 10));
                                     if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT, 10)) == 0 && parentDisconnectAllowed == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.revokeParent)){
@@ -1044,6 +1046,9 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
 								}
 								if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.EditCustomInteractionObjects)){
 									theWblCM[dmi.EditCustomInteractionObjects] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.EditCustomInteractionObjects};
+								}
+								if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.EXPORT, 10)) == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.export)){
+									theWblCM[dmi.export] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.Export};
 								}
                                 if(!theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.about)){
                                     theWblCM[dmi.about] = {name: Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.About};

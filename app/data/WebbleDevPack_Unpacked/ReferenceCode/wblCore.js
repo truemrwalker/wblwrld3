@@ -35,7 +35,7 @@
 // WEBBLE CORE CONTROLLER
 // This is the controller for the core of a webble
 //====================================================================================================================
-ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy) {
+ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, gettextCatalog, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy) {
 
 	//=== WEBBLE CORE PROPERTIES ================================================================
 	// Unique instance Id
@@ -400,11 +400,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			isShared: undefined,
 			isCustom: undefined,
 			notification: '',
-			inputType: Enum.aopInputTypes.TextBox
+			inputType: Enum.aopInputTypes.TextBox,
+			originalValType: ''
 		});
 
 		angular.forEach(theSlots_, function (value, key) {
 			if(value.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
+				var isDate = false;
 				var tmp = {};
 				var metadata = value.getMetaData() != undefined ? value.getMetaData() : {};
 				var theValue = value.getValue();
@@ -419,14 +421,19 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 				// Set prop form 'is Custom made'
 				tmp['isCustom'] = value.getIsCustomMade();
 
+				// Set prop form 'original Value Type'
+				tmp['originalValType'] = value.getOriginalType();
+
 				// Set prop form display name
 				tmp['name'] = value.getDisplayName();
 
 				// adjust numerical values with a more handsome number of decimals
-				var valueParts = valMod.getValUnitSeparated(theValue, true);
-				if(valueParts[0].toString() != 'NaN' && !metadata['noFloatValRound']){
-					if(mathy.countDecimals(valueParts[0]) > 2){
-						theValue = valueParts[0].toFixed(2) + valueParts[1];
+				if(value.getOriginalType() != 'object' && value.getOriginalType() != 'array'){
+					var valueParts = valMod.getValUnitSeparated(theValue, true);
+					if(valueParts[0].toString() != 'NaN' && !metadata['noFloatValRound']){
+						if(mathy.countDecimals(valueParts[0]) > 2){
+							theValue = valueParts[0].toFixed(2) + valueParts[1];
+						}
 					}
 				}
 
@@ -437,7 +444,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 				else if(theValue.toString().toLowerCase() == 'true' || theValue.toString().toLowerCase() == 'false'){
 					tmp['value'] = (theValue.toString().toLowerCase() == 'true');
 				}
-				else if((!isNaN(theValue) && metadata.inputType != Enum.aopInputTypes.DatePick)
+				else if(value.getOriginalType() != 'array' && (!isNaN(theValue) && metadata.inputType != Enum.aopInputTypes.DatePick)
 					|| ($.isArray(theValue) && (((metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size) && theValue.length == 2) || metadata.inputType == Enum.aopInputTypes.MultiListBox || metadata.inputType == Enum.aopInputTypes.MultiCheckBox))
 					|| ($.isArray(theValue) && metadata['comboBoxContent'] && metadata['comboBoxContent'].length > 0)){
 					tmp['value'] = theValue;
@@ -445,7 +452,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 				else if(metadata.inputType == Enum.aopInputTypes.DatePick){
 					tmp['value'] = dateFilter(new Date(theValue), 'yyyy-MM-dd');
 				}
-				else if(theValue == '[object Object]' || $.isArray(theValue)){
+				else if(value.getOriginalType() == 'object' || value.getOriginalType() == 'array'){
+					tmp['isArrObj'] = true;
 					tmp['value'] = JSON.stringify(theValue);
 				}
 				else{
@@ -588,7 +596,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 								if (theSlots_[slot].getValue() != p.value && p.disabledSettings < Enum.SlotDisablingState.PropertyEditing){
 									var itsOk = true;
 									if(theParent_ && (slot == 'root:left' || slot == 'root:top') && p.value.toString().search('%') != -1){
-										$log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles i relation to the whole document, therefore this will change for {0} slot not be applied',[slot]));
+										$log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]));
 										itsOk = false;
 									}
 
@@ -604,14 +612,35 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 									}
 
 									if(itsOk){
-										if($.isArray(p.value)){
-											if(theSlots_[slot].getValue().toString() != p.value.toString()){
-												theSlotsToSet[slot] = p.value;
+										var metadata = theSlots_[slot].getMetaData();
+										if(metadata != null && (metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size)){
+											if(JSON.stringify(theSlots_[slot].getValue()) == JSON.stringify(p.value)){
+												itsOk = false;
+											}
+										}
+									}
+
+									if(itsOk){
+										if(p.originalValType == 'object' || p.originalValType == 'array') {
+											if(JSON.stringify(theSlots_[slot].getValue()) != p.value){
+												var jsonParsedVal;
+												try{
+													jsonParsedVal = JSON.parse(p.value);
+												}
+												catch(e){
+													if(p.originalValType == 'object'){
+														jsonParsedVal = JSON.parse("{}");
+													}
+													else{
+														jsonParsedVal = new Array();
+													}
+												}
+												theSlotsToSet[slot] = jsonParsedVal;
 											}
 										}
 										else{
-											theSlotsToSet[slot] = valMod.parse(p.value);
-											//theSlotsToSet[slot] = p.value;
+											//theSlotsToSet[slot] = valMod.parse(p.value);
+											theSlotsToSet[slot] = p.value;
 										}
 									}
 								}
@@ -642,8 +671,18 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 	// message form.
 	//========================================================================================
 	var getAboutWblContent = function(){
+		var wblDefMetaData = $scope.getWebbleDefsMetaDataMemory()[$scope.theWblMetadata['defid']];
+		if(wblDefMetaData == undefined){ wblDefMetaData = {rating: 0, ratingCount: 0, image: '', created: undefined, updated: undefined, isShared: false, isTrusted: false, isVerified: false}; }
 		return {
 			displayname: $scope.theWblMetadata['displayname'],
+			image: wblDefMetaData.image != "" ? wblDefMetaData.image : $scope.theWblMetadata['image'],
+			rating: wblDefMetaData.rating,
+			ratingCount: wblDefMetaData.ratingCount,
+			created: wblDefMetaData.created,
+			updated: wblDefMetaData.updated,
+			isShared: wblDefMetaData.isShared,
+			isTrusted: wblDefMetaData.isTrusted,
+			isVerified: wblDefMetaData.isVerified,
 			instanceid: $scope.getInstanceId(),
 			defid: $scope.theWblMetadata['defid'],
 			author: $scope.theWblMetadata['author'],
@@ -1387,7 +1426,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 				$scope.requestPublishWebble($scope.theView);
 			}
 			else{
-				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Webble Attempt Failed"), content: gettext("This Webble included is protected from publishing and therefore this operation is canceled.")}, null);
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Webble Attempt Failed"), content: gettext("This Webble (or one related) is protected from publishing and therefore this operation is canceled.")}, null);
 			}
 		}
 		//=======================================================================================
@@ -1422,19 +1461,36 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 						$scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.unbundle, target: $scope.getInstanceId()});
 						$scope.setEmitLockEnabled(true);
 					}
+					var listOfBundleChildren = [];
 					for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants($scope.theView)[i]; i++){
 						bcWbl.scope().setIsBundled(false);
+						if(bcWbl.scope().theWblMetadata['templateid'] != $scope.theView.scope().theWblMetadata['templateid']){
+							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
+						}
 					}
+
+					for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants($scope.theView)[i]; i++){
+						bcWbl.scope().setIsBundled(false);
+						if(bcWbl.scope().theWblMetadata['templateid'] != $scope.theView.scope().theWblMetadata['templateid']){
+							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
+							var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
+							$scope.setPlatformDoNotSaveUndoEnabled(true);
+							bcWbl.scope().peel();
+							$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(prevValue);}, 1);
+						}
+					}
+
 					while(theChildren_.length > 0){
-						var theKid = theChildren_[0];
 						var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
 						$scope.setPlatformDoNotSaveUndoEnabled(true);
 						theChildren_[0].scope().peel();
 						$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(prevValue);}, 1);
 					}
+
 					$scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: $scope.createWblDef(true)}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
 					$scope.setPlatformDoNotSaveUndoEnabled(true);
 					$scope.requestDeleteWebble($scope.theView, false);
+					$scope.updateListOfUntrustedWebbles(listOfBundleChildren);
 					$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false); $scope.setEmitLockEnabled(false);}, 100);
 				}
 			}
@@ -1461,7 +1517,51 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.AddCustomSlots)){
 			$scope.openForm(Enum.aopForms.addCustSlot, $scope.theView, function(retVal){
 				if(!retVal){
-					$log.log('Custom slot was not added successfully');
+					$log.log('Custom slot was canceled or not added successfully');
+				}
+				else{
+					for(var i = 0, selWbl; selWbl = $scope.getSelectedWebbles()[i]; i++ ){
+						if(selWbl.scope().getInstanceId() != $scope.getInstanceId()){
+							var sltElmnt = undefined;
+							if(retVal.getElementPntr() != undefined && retVal.getCategory() == 'custom-css'){
+								var elementId = '#' + retVal.getName().substr(0, retVal.getName().indexOf(':'));
+								var theElmnt = selWbl.scope().theView.parent().find(elementId);
+								if(elementId == '#root'){
+									theElmnt = selWbl.scope().theView.parent();
+								}
+								sltElmnt = theElmnt;
+								if(retVal.getName() == 'root:transition'){
+									var sn = retVal.getName(), sv = retVal.getValue();
+									$timeout(function(){$scope.setStyle(theElmnt, sn, sv);});
+								}
+								else{
+									$scope.setStyle(theElmnt, retVal.getName(), retVal.getValue());
+								}
+								if(sltElmnt.length == 0){sltElmnt = null};
+							}
+							else if(retVal.getCategory() == 'custom-merged' && retVal.getValue().length > 0){
+								for(var i = 0, slotname; slotname = retVal.getValue()[i]; i++){
+									if(selWbl.scope().gimme(slotname) == null){
+										sltElmnt = null
+										break;
+									}
+								}
+							}
+
+							if(sltElmnt !== null){
+								var theNewSlot = new Slot(retVal.getName(),
+									retVal.getValue(),
+									retVal.getDisplayName(),
+									retVal.getDisplayDescription(),
+									retVal.getCategory(),
+									undefined,
+									sltElmnt
+								);
+								theNewSlot.setIsCustomMade(true);
+								selWbl.scope().addSlot(theNewSlot);
+							}
+						}
+					}
 				}
 			});
 		}
@@ -1480,6 +1580,17 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			$scope.openForm(Enum.aopForms.editCustInteractObj, $scope.theView, function(retVal){
 				// No need to do anything here (retval is either true or null and none is a bad thing)
 			});
+		}
+		//=======================================================================================
+
+		//=== EXPORT ==========================================================================
+		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Export)){
+			if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.EXPORT, 10)) == 0){
+				$scope.requestExportWebble($scope.theView);
+			}
+			else{
+				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Export Webble Attempt Failed"), content: gettext("This Webble (or one related) is protected from exporting and therefore this operation is canceled.")}, null);
+			}
 		}
 		//=======================================================================================
 
@@ -1679,14 +1790,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			localStorageService.add('TutInfoAssignParent', true);
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Assign Parent"), size: 'lg', content:
 			'<p>' +
-			gettext("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
-			gettext("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
-			gettext("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
+			gettextCatalog.getString("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
+			gettextCatalog.getString("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
+			gettextCatalog.getString("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
 			'</p>' +
 			'<p>' +
-			gettext("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettext("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
-			gettext("This way you get a much better overview which is parent to which.") + "&nbsp;" +
-			gettext("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
+			gettextCatalog.getString("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettextCatalog.getString("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
+			gettextCatalog.getString("This way you get a much better overview which is parent to which.") + "&nbsp;" +
+			gettextCatalog.getString("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
 			'</p>' +
 			'<div style="display: block; margin-left: auto; margin-right: auto; width: 640px;">' +
 			'<img src="../../images/tutorInfo/parentChildConn.png" style="display: block; margin-right: 20px; width: 300px; float: left" />' +
@@ -2526,8 +2637,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 			return result;
 		}
 
-		if(!$scope.getParent() && (slotName == 'root:left' || slotName == 'root:top') && parseInt(slotValue) < 0){
-			slotValue = 0;
+		if(slotName == 'root:left' || slotName == 'root:top'){
+			if((!$scope.getParent() && parseInt(slotValue) < 0) || slotValue == "auto"){ slotValue = 0; }
 		}
 
 		if (slotName in theSlots_){
@@ -2571,7 +2682,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
 			// Tell children a slot change have happened
 			for(var i = 0, c; c = theChildren_[i]; i++){
-				c.scope().update(slotName);
+				if(c.scope() != undefined){
+					c.scope().update(slotName);
+				}
 			}
 		}
 
