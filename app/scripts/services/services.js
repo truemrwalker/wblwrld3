@@ -1132,6 +1132,7 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
             "sublinks": [
                 {"sublink_itemName": "toggleconn", "title": gettext("Toggle Connection View"), "shortcut": "(Alt+Num9)", "visibility_enabled": true},
                 {"sublink_itemName": "wsinfo", "title": gettext("Active Workspace Info"), "shortcut": "(Alt+W)", "visibility_enabled": true},
+				{"sublink_itemName": "shortcutinfo", "title": gettext("Shortcut Keys Info"), "shortcut": "(Alt+F1)", "visibility_enabled": true},
                 {"sublink_itemName": "fullscrn", "title": gettext("Toggle Fullscreen"), "shortcut": "(Alt+F)", "visibility_enabled": true}
             ]},
         {"itemName": "help", "title": gettext("Help"), "description": "", "visibility_enabled": true,

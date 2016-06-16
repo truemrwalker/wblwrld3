@@ -2535,6 +2535,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         // remove any webble selection
         $scope.unselectAllWebbles();
+
+		if(isFormOpen_){
+			$log.log("qwsdfrffg");
+		}
     };
     //========================================================================================
 
@@ -3955,7 +3959,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
         //==== NON-MENU KEYBOARD ============================
-        if (sublink == 'altf1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1')){
+        if (sublink == 'shortcutinfo' || (whatKeys.theAltKey && whatKeys.theKey == 'F1')){
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Non-Menu Shortcut Keys"), content:
 					'<strong>Alt+F1</strong>:' + gettextCatalog.getString("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
 					'<strong>Alt+F2</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
