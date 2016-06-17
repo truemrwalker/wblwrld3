@@ -84,6 +84,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var appViewOpen = true;
 	var templateRevisionBehavior_ = 0;
 	var untrustedWblsBehavior_ = 1;
+	var slimWblBrowserEnabled_ = false;
+	$scope.getSlimWblBrowserEnabled = function(){return slimWblBrowserEnabled_;};
     //-------------------------------
 
 
@@ -313,6 +315,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var webblesWaitingToBeLoaded = [];
 	var downloadingManifestLibs = false;
 	var pleaseQuickLoadInternalSavedWS = false;
+	var isDraggingWblBrowserItem = false;
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -1049,6 +1052,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 				if(storedPlatformSettings.untrustedWblsBehavior != undefined){
 					untrustedWblsBehavior_ = storedPlatformSettings.untrustedWblsBehavior;
+				}
+				if(storedPlatformSettings.slimWblBrowserEnabled != undefined){
+					slimWblBrowserEnabled_ = storedPlatformSettings.slimWblBrowserEnabled;
 				}
             }
             else{
@@ -2117,6 +2123,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             popupEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.PopupInfoEnabled) != 0,
             autoBehaviorEnabled: (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
 			loggingEnabled: $scope.isLoggingEnabled,
+			slimWblBrowserEnabled: slimWblBrowserEnabled_,
 			templateRevisionBehavior: templateRevisionBehavior_,
 			untrustedWblsBehavior: untrustedWblsBehavior_
         };
@@ -2154,6 +2161,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			templateRevisionBehavior_ = returnData.templateRevisionBehavior;
 			untrustedWblsBehavior_ = returnData.untrustedWblsBehavior;
+			slimWblBrowserEnabled_ = returnData.slimWblBrowserEnabled;
 
             $scope.saveUserSettings(false);
         }
@@ -2395,7 +2403,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     'systemMenuVisibility': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled) != 0,
                     'recentWebble': recentWebble_,
 					'templateRevisionBehavior': templateRevisionBehavior_,
-					'untrustedWblsBehavior': untrustedWblsBehavior_
+					'untrustedWblsBehavior': untrustedWblsBehavior_,
+					'slimWblBrowserEnabled': slimWblBrowserEnabled_
                 };
             }
             localStorageService.add(rootPathName + wwConsts.storedPlatformSettingsPathLastName, JSON.stringify(platformProps));
@@ -2535,10 +2544,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         // remove any webble selection
         $scope.unselectAllWebbles();
-
-		if(isFormOpen_){
-			$log.log("qwsdfrffg");
-		}
     };
     //========================================================================================
 
@@ -3599,7 +3604,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.openForm = function(whatForm, content, callbackFunc){
         var modalOptions = {};
 
-        if(content == undefined || content == null){
+		if(content == undefined || content == null){
             content = [];
         }
 
@@ -3761,6 +3766,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 platformScope: function(){ return content; }
             };
             modalOptions.size = 'lg';
+			//modalOptions.backdrop = 'static';
         }
         else if(whatForm == Enum.aopForms.about){
             modalOptions.templateUrl = 'views/modalForms/about.html';

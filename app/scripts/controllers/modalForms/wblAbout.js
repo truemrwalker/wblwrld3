@@ -213,5 +213,14 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 		});
 	}
 
+	dbService.getWblRate($scope.formData.defid).then(function (ratings) {
+		for(var i = 0; i < ratings.length; i++){
+			if($scope.formData.wblPlatformScope.user.username == ratings[i].author){
+				$scope.formData['rateShow'] = false;
+				break;
+			}
+		}
+	});
+
 });
 //======================================================================================================================

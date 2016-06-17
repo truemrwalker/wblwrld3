@@ -68,11 +68,14 @@ ww3Directives.directive('dragdropMetadata', function($log) {
                     return $('<div><img style="width: 50px; height: 40px; border: 1px solid #000000;" src="' + attrs['dragdropMetadata'] + '" /></div>');
                 },
                 opacity: 0.9,
-                zIndex: 10000000
+                zIndex: 10000000,
+				start: function(event, ui){
+					scope.thePlatform.isDraggingWblBrowserItem = true;
+				}
             });
 
             var formGotItFirst = false;
-            $('.modal-wblwrldform').droppable({
+            $('.wblwrldform-main').droppable({
                 drop: function( event, ui ) {
                     formGotItFirst = true;
                 }
@@ -81,8 +84,8 @@ ww3Directives.directive('dragdropMetadata', function($log) {
             $('.modal-backdrop').droppable({
                 drop: function( event, ui ) {
                     if(!formGotItFirst){
-                        if(ui.draggable.attr('id')){
-                            scope.thePlatform.downloadWebbleDef(ui.draggable.attr('id'));
+                        if(ui.draggable.attr('name')){
+                            scope.thePlatform.downloadWebbleDef(ui.draggable.attr('name'));
                             scope.thePlatform.waiting(false);
                         }
                     }
@@ -127,8 +130,7 @@ ww3Directives.directive('sortable', function() {
 
 
 //=================================================================================
-// Makes (automatically) a $modal window draggable and resizable
-// CURRENTLY NOT USED ANYWHERE
+// Makes a Webble World style Modal window
 //=================================================================================
 ww3Directives.directive('modalWindow', function($log, localStorageService){
     return {

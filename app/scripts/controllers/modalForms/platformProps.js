@@ -54,7 +54,8 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
         autoBehaviorEnabled: gettext("If this is unchecked, Webble will no longer try to auto connects default slots etc."),
 		loggingEnabled: gettext("If this is checked, log texts will be written to the JavaScript console for development support [$log.log()], if unckecked all log commands in the code will be ignored."),
 		templateRevisionBehavior: gettext("This allows the user to define the automatic behavior for the system when a requested version of a Webble Template exists as a newer version as well. Upgrade or not."),
-		untrustedWblsBehavior: gettext("This allows the user to define the automatic behavior for the system when a trying to load a Webble which is untrusted; allow it automatically, ask first time, ask every time or never allow.")
+		untrustedWblsBehavior: gettext("This allows the user to define the automatic behavior for the system when a trying to load a Webble which is untrusted; allow it automatically, ask first time, ask every time or never allow."),
+		slimWblBrowserEnabled: gettext("If this is checked, the Webble browser will only show Webble name and trust level in the browser and hide all other info, unless the user single-clicks the Webble in question twice.")
     };
 
     // Form validation error message
