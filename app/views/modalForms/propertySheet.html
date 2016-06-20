@@ -162,7 +162,7 @@
             <div ng-switch-when="17">
                 <img ng-src="{{item.value}}" style="max-height: 150px; max-width: 100%; height: auto; width: auto; vertical-align: top;" />
                 <input id="inputImage_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localImgFileChanged(this)"><br>
-                <textarea class="formitem" ng-model="item.value" rows="2" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px"></textarea>
+				<input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
                 <span style="width: 95%; min-width: 180px; color: red">{{item.notification | translate}}</span>
             </div>
 
@@ -170,12 +170,12 @@
             <div ng-switch-when="18">
                 <audio controls src="{{item.value}}"></audio>
 				<input id="inputAudio_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localAudioFileChanged(this)"><br>
-				<input class="formitem" maxlength="500" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
+				<input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
             </div>
 
             <!--VideoPick-->
             <div ng-switch-when="19">
-                <input class="formitem" maxlength="500" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
                 <video width="200" height="auto" controls src="{{item.value}}" style="vertical-align: top; width: 210px;"></video>
 				<input id="inputVideo_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localVideoFileChanged(this)"><br>
             </div>

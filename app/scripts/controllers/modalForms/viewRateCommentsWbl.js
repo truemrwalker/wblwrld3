@@ -42,7 +42,7 @@ ww3Controllers.controller('viewRateCommentsWblSheetCtrl', function ($scope, $mod
 
     $scope.formItems = {
         wblDefName: wblDefData.wblDefName,
-		formHeight: ($(document).height() * 0.75) + "px",
+		formMaxHeight: ($(document).height() * 0.75) + "px",
         errorMsg: ''
     };
 

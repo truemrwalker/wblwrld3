@@ -35,7 +35,7 @@
 <!--====================================================================================================================
 // HTML View for Browse and Search for Webbles (online) Form
 //===================================================================================================================-->
-<div class="container-fluid padcontent" data-formclass="wblwrldform-main" ng-enter="loadSelected();" ng-arrow-keys="arrowKeyPressed">
+<div class="container-fluid padcontent" data-formclass="wblwrldform-main" ng-enter="loadSelected();" ng-arrow-keys="arrowKeyPressed" ng-escape="close('cancel');">
 
     <div class="row keepTheDistanceBelow">
         <div class="col-xs-2">
@@ -68,8 +68,8 @@
     </div>
 
     <div class="row keepTheDistanceBelow">
-        <div class="col-xs-2"><span style="font-size: 10px;" translate>Sorted By: </span></div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
+			<span style="font-size: 10px;" translate>Sorted By: </span>
             <select id="sortBy" class="formitem" ng-model="formItems.sortedBy" style="font-size: 10px;" ng-change="reSort()">
                 <option value="name" translate>Name</option>
                 <option value="rate" translate selected>Rating</option>
@@ -77,11 +77,16 @@
                 <option value="date" translate>Last Updated</option>
             </select>
         </div>
-        <div class="col-xs-3">
-            <span style="margin-left: 10px; font-size: 10px;" translate>Reversed</span>
+        <div class="col-xs-6">
+            <span style="margin-left: 1px; font-size: 10px;" translate>Reversed</span>
             <input id="reverseSort" class="formitem" type="checkbox" ng-model="formItems.isReversed" ng-change="toggleReverse()" />
+			<span style="margin-left: 10px; font-size: 10px;" translate>hide untrusted</span>
+			<input id="hideUntrusted" class="formitem" type="checkbox" ng-model="formItems.hideUntrusted" />
+			<span style="margin-left: 10px; font-size: 10px;" translate>Slim Display</span>
+			<input id="slimEnabled" class="formitem" type="checkbox" ng-model="formItems.slimEnabled" ng-change="toggleSlimEnabled()"/>
         </div>
-        <div class="col-xs-5">
+        <div class="col-xs-3">
+			<span ng-show="formItems.numPages > 1" style="margin-top: 3px; margin-right: 7px; font-weight: bold; font-size: 14px; float: left">{{formItems.currentPage}}/{{formItems.numPages}}</span>
             <pager class="pagination-sm" total-items="formItems.totalItems" ng-model="formItems.currentPage" items-per-page="formItems.itemsPerPage" style="margin-top: 0; margin-bottom: 0" ng-change="pageSelect();"
                    num-pages="formItems.numPages" previous-text="&lsaquo;&lsaquo; {{textParts.prev | translate}}" next-text="{{textParts.next | translate}} &rsaquo;&rsaquo;"></pager>
         </div>
@@ -94,17 +99,14 @@
         </div>
     </div>
 
-    <div id="itemBox" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)" ng-click="selectWbl($index);"
-         ng-dblclick="close('submit');" ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;">
+    <div id="itemBox" ng-hide="formItems.hideUntrusted && !wblMeta.is_trusted" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)"
+          ng-style="{'background-color': wblMeta.selectColor}" hm-double-tap="close('submit');" hm-tap="selectWbl($index);" style="border-bottom: 3px dashed #808080;" name="{{wblMeta.webble.defid}}" dragdrop-metadata="{{wblMeta.webble.image}}">         <!--ng-dblclick="close('submit');"  And ng-click="selectWbl($index);"  Removed due to double effect with hm-double-tap and hm-tap-->
 
 		<div class="row" style="padding-bottom: 5px;">
-            <div class="col-xs-5">
+            <div class="col-xs-10">
                 <img ng-show="wblMeta.is_trusted" src="images/icons/TrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.haveTrustIconInfo | translate}}">
                 <img ng-show="!wblMeta.is_trusted" src="images/icons/UntrustedBig.png" style="height: 30px; width: auto;" tooltip-placement="right" tooltip="{{textParts.noTrustIconInfo | translate}}">
                 <span style="font-size: 22px; font-weight: bold; margin-left: 5px;">{{wblMeta.webble.displayname}}</span>
-            </div>
-			<div class="col-xs-5">
-                <span style="font-size: 14px; font-weight: lighter; font-style: italic;" ng-click="makeAutoSearch(wblMeta.webble.author)">[{{wblMeta.webble.author}}]</span>
             </div>
 		    <div class="col-xs-2">
 				<button name="{{wblMeta.webble.defid}}" ng-click="loadWebble(wblMeta.webble.defid);" class="btn btn-primary btn-xs" translate>Load</button>
@@ -112,8 +114,19 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-xs-3" id="{{wblMeta.webble.defid}}" dragdrop-metadata="{{wblMeta.webble.image}}">
+		<div class="row" style="padding-bottom: 5px;" ng-hide="wblMeta.slimEnabled">
+			<div class="col-xs-12">
+				<span style="font-size: 14px; font-weight: bold;">Created By:
+					<span style="font-style: italic; font-weight: normal; color: #0000ff;" ng-click="makeAutoSearch(wblMeta.webble.author)">{{wblMeta.webble.author}}</span>
+					<span>&nbsp;&nbsp;&nbsp;Publisher: </span>
+					<span ng-show="wblMeta.webble.publisher && wblMeta.webble.publisher.length > 0" style="font-style: italic; font-weight: normal; color: #0000ff;" ng-repeat="pubItem in wblMeta.webble.publisher" ng-click="makeAutoSearch(pubItem)">{{pubItem}} </span>
+					<span ng-hide="wblMeta.webble.publisher && wblMeta.webble.publisher.length > 0" style="font-style: italic; font-weight: normal;" translate=""><!--Not Specified-->N/A</span>
+				</span>
+			</div>
+		</div>
+
+        <div class="row" ng-hide="wblMeta.slimEnabled">
+            <div class="col-xs-3">
                 <img class="img-responsive" id="image_{{$index}}" ng-src="{{wblMeta.webble.image}}" style="border: 1px solid #000000;">
             </div>
             <div class="col-xs-3">
@@ -134,7 +147,7 @@
                 <span style="font-size: 12px; font-weight: bold;" translate>User Ratings:</span>
             </div>
             <div class="col-xs-4" style="padding-top: 10px;">
-                <div>
+                <div ng-click="rateThis(wblMeta)">
                     <img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(wblMeta.rating, $index)}}" title="{{star | translate}}" style="margin-left: -1px; width: 20px; height: 20px;">
                 </div>
             </div>
@@ -154,14 +167,23 @@
             </div>
         </div>
 
-        <div class="row" style="padding-top: 5px;">
+        <div class="row" style="padding: 10px 0 10px 0;" ng-hide="wblMeta.slimEnabled">
             <div class="col-xs-12">
-                <span style="font-size: 12px; font-weight: normal;">{{wblMeta.webble.description | translate}}</span>
+                <span style="font-size: 14px; font-weight: normal;">{{wblMeta.webble.description | translate}}</span>
             </div>
         </div>
     </div>
 
     <div class="dividerLineAbove">
+		<div class="row keepTheDistanceBelow" ng-show="formItems.totalItems > formItems.itemsPerPage">
+			<div class="col-xs-9">
+			</div>
+			<div class="col-xs-3">
+				<span style="margin-top: 3px; margin-right: 7px; font-weight: bold; font-size: 14px; float: left">{{formItems.currentPage}}/{{formItems.numPages}}</span>
+				<pager class="pagination-sm" total-items="formItems.totalItems" ng-model="formItems.currentPage" items-per-page="formItems.itemsPerPage" style="margin-top: 0; margin-bottom: 0" ng-change="pageSelect();"
+					   num-pages="formItems.numPages" previous-text="&lsaquo;&lsaquo; {{textParts.prev | translate}}" next-text="{{textParts.next | translate}} &rsaquo;&rsaquo;"></pager>
+			</div>
+		</div>
         <div class="row">
             <div class="col-xs-12">
                 <span style="color: red; font-weight: bold;">{{errorMsg | translate}}</span>

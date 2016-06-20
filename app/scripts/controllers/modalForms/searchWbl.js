@@ -48,6 +48,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         sortedBy: 'rate',
         maxRate: 10,
         isReversed: true,
+		hideUntrusted: false,
         searchResult: [],
         typeAheadResult: [],
         pageViewResult: [],
@@ -57,7 +58,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         searchStrResult: '',
         totalItems: 0,
         currentPage: 1,
-        itemsPerPage: 25
+        itemsPerPage: 25,
+		slimEnabled: $scope.thePlatform.getSlimWblBrowserEnabled()
     };
 
     $scope.textParts = {
@@ -92,8 +94,21 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     // help props
     var latestSearchStr = '';
     var locationSearchWSMemo;
+	var buttonWasClicked = false;
 
     //=== EVENT HANDLERS =====================================================================
+
+	//========================================================================================
+	// On Event Modal Closing
+	// Checking if the user is currently dragging and dropping a Webble, and if so, do not
+	// close the browser because of backdrop click.
+	//========================================================================================
+	$scope.$on('modal.closing', function(event, reason, closed) {
+		if ($scope.thePlatform.isDraggingWblBrowserItem) {
+			event.preventDefault();
+			$scope.thePlatform.isDraggingWblBrowserItem = false;
+		}
+	});
 
 
     //========================================================================================
@@ -131,7 +146,12 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 
 					$scope.formItems.pageViewResult[nextSelectedPageViewItem].selectColor = '#FFDB58';
 					$scope.formItems.selectedWbl = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + nextSelectedPageViewItem;
-					$('.modal').scrollTop(230 * nextSelectedPageViewItem);
+					if($scope.formItems.slimEnabled){
+						$('.modal').scrollTop(30 * nextSelectedPageViewItem);
+					}
+					else{
+						$('.modal').scrollTop(230 * nextSelectedPageViewItem);
+					}
 				}
 			}
 			else{
@@ -168,22 +188,40 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     // On click at one of the Webbles it becomes selected
     //========================================================================================
     $scope.selectWbl = function(wblListIndex){
-        for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
-            wbl['selectColor'] = 'transparent';
-        }
-        $scope.formItems.pageViewResult[wblListIndex].selectColor = '#FFDB58';
-        $scope.formItems.selectedWbl = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + wblListIndex;
+		if(!buttonWasClicked){
+			var isAlreadySelected = ($scope.formItems.pageViewResult[wblListIndex].selectColor == '#FFDB58') ? true : false;
+			var oneWasAlreadyOpen = false;
+			for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
+				wbl['selectColor'] = 'transparent';
+				if($scope.formItems.slimEnabled){
+					if(wbl['slimEnabled'] == false){oneWasAlreadyOpen = true;}
+					if(isAlreadySelected && i == wblListIndex){
+						wbl['slimEnabled'] = !wbl['slimEnabled'];
+					}
+					else{
+						wbl['slimEnabled'] = true;
+					}
+				}
+			}
+			if($scope.formItems.slimEnabled && oneWasAlreadyOpen && !isAlreadySelected){
+				$scope.formItems.pageViewResult[wblListIndex].slimEnabled = !$scope.formItems.pageViewResult[wblListIndex].slimEnabled;
+			}
 
-        if(!locationSearchWSMemo){
-            var pathQuery = $location.search();
-            if(pathQuery.workspace){
-                locationSearchWSMemo = pathQuery.workspace;
-                $location.search('workspace', null);
-            }
-        }
+			$scope.formItems.pageViewResult[wblListIndex].selectColor = '#FFDB58';
+			$scope.formItems.selectedWbl = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + wblListIndex;
 
-        $location.search('webble', $scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid);
-		$('button[name="' + $scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid + '"]').focus();
+			if(!locationSearchWSMemo){
+				var pathQuery = $location.search();
+				if(pathQuery.workspace){
+					locationSearchWSMemo = pathQuery.workspace;
+					$location.search('workspace', null);
+				}
+			}
+
+			$location.search('webble', $scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid);
+			$('button[name="' + $scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid + '"]').focus();
+		}
+		buttonWasClicked = false;
     };
     //========================================================================================
 
@@ -264,6 +302,18 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     //========================================================================================
 
 
+	//========================================================================================
+	// Toggle Slim Enabled
+	// makes the display list of each Webble show more or less information.
+	//========================================================================================
+	$scope.toggleSlimEnabled = function(){
+		for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
+			wbl['slimEnabled'] = $scope.formItems.slimEnabled;
+		}
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Page Select
     // When user selects a page this event handler is fired to go and get the items for that
@@ -282,7 +332,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                 for(var i = 0, wbl; wbl = resp.data[i]; i++){
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
-                    wbl['rateShow'] = true;
+					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
                 }
 
                 $scope.formItems.searchResult = $scope.formItems.searchResult.concat(resp.data);
@@ -303,6 +353,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         else{
             $scope.formItems.pageViewResult = $scope.formItems.searchResult.slice(start, (start + $scope.formItems.itemsPerPage));
         }
+		$('.modal').scrollTop(0);
     };
     //========================================================================================
 
@@ -407,7 +458,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
             for(var i = 0, mru; mru = resp.data[i]; i++){
                 mru['selectColor'] = 'transparent';
                 mru.rating = parseInt(mru.rating);
-                mru['rateShow'] = true;
+				mru['slimEnabled'] = $scope.formItems.slimEnabled;
             }
 
             $scope.formItems.searchResult = resp.data;
@@ -510,7 +561,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                 for(var i = 0, wbl; wbl = $scope.formItems.typeAheadResult[i]; i++){
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
-                    wbl['rateShow'] = true;
+					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
@@ -526,6 +577,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 
                 $scope.formItems.pageViewResult = $scope.formItems.searchResult;
 
+				$log.log($scope.formItems.searchResult);
+
                 if($scope.formItems.pageViewResult.length > 0){
                     $scope.selectWbl(0);
                 }
@@ -540,7 +593,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     for(var i = 0, wbl; wbl = resp.data[i]; i++){
                         wbl['selectColor'] = 'transparent';
                         wbl.rating = parseInt(wbl.rating);
-                        wbl['rateShow'] = true;
+						wbl['slimEnabled'] = $scope.formItems.slimEnabled;
                     }
 
                     $scope.formItems.searchResult = resp.data;
@@ -608,6 +661,29 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     //========================================================================================
 
 
+	//========================================================================================
+	// Rate This
+	// Opens a modal window which lets the user rate the chosen Webble and comment on it.
+	//========================================================================================
+	$scope.rateThis = function(wbl){
+		$scope.thePlatform.openForm(Enum.aopForms.rateWbl, {wblDefId: wbl.webble.defid, wblDefName: wbl.webble.displayname}, function(done){
+			if(done != null){
+				dbService.getWebbleDef(wbl.webble.defid).then(function(data) {
+					for(var i = 0, w; w = $scope.formItems.pageViewResult[i]; i++){
+						if(w.webble.defid == wbl.webble.defid){
+							w.rating = data.rating;
+							w.rating_count = data.rating_count;
+						}
+					}
+				},function(eMsg){
+					$log.log("Rating data not available from server: " + eMsg);
+				});
+			}
+		});
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Close
     // Closes the modal form and send the resulting content back to the creator
@@ -615,11 +691,13 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     $scope.close = function (result) {
         $scope.errorMsg = '';
         if (result == 'submit') {
+			buttonWasClicked = true;
             if($scope.formItems.selectedWbl >= 0){
                 $scope.thePlatform.downloadWebbleDef($scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid);
             }
         }
         else if (result == 'delete') {
+			buttonWasClicked = true;
             var modalInstance = $modal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
 
             modalInstance.result.then(function () {
@@ -650,6 +728,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 	// When Load button is pressed the Webble for that button will be loaded
 	//========================================================================================
 	$scope.loadWebble = function (webbleDefId) {
+		buttonWasClicked = true;
 		$scope.thePlatform.downloadWebbleDef(webbleDefId);
 	};
 	//========================================================================================

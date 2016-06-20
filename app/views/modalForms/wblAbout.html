@@ -53,19 +53,18 @@
 
 		<div class="row keepTheDistanceBelow">
 			<div class="col-xs-3" style="padding-top: 10px;">
-				<div>
+				<div ng-click="rateThis(formData)">
 					<img ng-repeat="star in textParts.starRatingTxt" ng-src="{{getStarImg(formData.rating, $index)}}" title="{{star | translate}}" style="margin-left: -1px; width: 20px; height: 20px;">
 				</div>
 			</div>
 			<div class="col-xs-4" style="padding-top: 11px;">
 				<div>
-					<span style="font-weight: bold;">{{getRateText(formData.rating)}}({{formData.rating | number:2}}) [{{formData.ratingCount}} {{textParts.rateTxtVoters | translate}}]</span>
+					<span style="font-weight: bold;">{{getRateText(formData.rating)}}({{formData.rating | number:2}}) [{{formData.ratingCount}} {{textParts.rateTxtVoters | translate}}] </span><span ng-hide="formData.rateShow" style="color: forestgreen; font-weight: bold;" translate> *Rated*</span>
 				</div>
 			</div>
 			<div class="col-xs-3" style="padding-top: 11px;" >
-				<button ng-show="formData.rateShow" ng-click="rateThis(formData)" class="btn btn-info btn-xs" translate>Rate</button>
-				<span ng-hide="formData.rateShow" style="color: forestgreen;" translate>Rated</span>
 				<button ng-show="formData.ratingCount > 0" ng-click="viewComments(formData)" class="btn btn-warning btn-xs" translate>View Comments</button>
+				<button ng-show="formData.rateShow" ng-click="rateThis(formData)" class="btn btn-info btn-xs" translate>Rate</button>
 			</div>
 		</div>
 

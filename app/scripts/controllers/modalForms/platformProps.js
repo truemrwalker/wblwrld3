@@ -43,6 +43,7 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
     $scope.formItems = platformProps;
     $scope.execModeOptions = [];
 	$scope.templateRevisionBehaviorOptions = [];
+	$scope.untrustedWblsBehaviorOptions = [];
     $scope.browser = BrowserDetect.browser;
 
     // Information tooltip texts
@@ -52,7 +53,9 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
         popupEnabled: gettext("If this is unchecked, some of the more tutorial-like and repetetive informative Message popups will be disabled."),
         autoBehaviorEnabled: gettext("If this is unchecked, Webble will no longer try to auto connects default slots etc."),
 		loggingEnabled: gettext("If this is checked, log texts will be written to the JavaScript console for development support [$log.log()], if unckecked all log commands in the code will be ignored."),
-		templateRevisionBehavior: gettext("This allows the user to define the automatic behavior for the system when a requested version of a Webble Template exists as a newer version as well. Upgrade or not.")
+		templateRevisionBehavior: gettext("This allows the user to define the automatic behavior for the system when a requested version of a Webble Template exists as a newer version as well. Upgrade or not."),
+		untrustedWblsBehavior: gettext("This allows the user to define the automatic behavior for the system when a trying to load a Webble which is untrusted; allow it automatically, ask first time, ask every time or never allow."),
+		slimWblBrowserEnabled: gettext("If this is checked, the Webble browser will only show Webble name and trust level in the browser and hide all other info, unless the user single-clicks the Webble in question twice.")
     };
 
     // Form validation error message
@@ -115,6 +118,12 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
 	index = 0;
 	for(var behavior in Enum.availableOnePicks_templateRevisionBehaviorDisplayText){
 		$scope.templateRevisionBehaviorOptions.push({key: index, val: Enum.availableOnePicks_templateRevisionBehaviorDisplayText[behavior]});
+		index++;
+	}
+
+	index = 0;
+	for(var behavior in Enum.availableOnePicks_untrustedWebblesBehaviorDisplayText){
+		$scope.untrustedWblsBehaviorOptions.push({key: index, val: Enum.availableOnePicks_untrustedWebblesBehaviorDisplayText[behavior]});
 		index++;
 	}
 });

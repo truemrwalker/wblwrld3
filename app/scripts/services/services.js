@@ -76,7 +76,9 @@ ww3Services.factory('Enum', function (gettext) {
             shareWorkspaces: 20,
 			editCustMenuItems: 21,
 			editCustInteractObj: 22,
-			viewWblRatingAndComments: 23
+			viewWblRatingAndComments: 23,
+			exportWebble: 24,
+			importWebble: 25
         },
 
         //Available undo operations
@@ -145,7 +147,8 @@ ww3Services.factory('Enum', function (gettext) {
             AddCustomSlots: 13,
 			EditCustomMenuItems: 14,
 			EditCustomInteractionObjects: 15,
-            About: 16
+			Export: 16,
+            About: 17
         },
 
 		// Default menu choices Name Texts
@@ -165,6 +168,7 @@ ww3Services.factory('Enum', function (gettext) {
 			AddCustomSlots: gettext("Add Custom Slots"),
 			EditCustomMenuItems: gettext("Custom Menu Items"),
 			EditCustomInteractionObjects: gettext("Custom Interaction Objects"),
+			Export: gettext("Export"),
 			About: gettext("About (share, rate etc.)")
 		},
 
@@ -197,6 +201,20 @@ ww3Services.factory('Enum', function (gettext) {
 			askEverytime: gettext("Ask everytime"),
 			autoUpdate:  gettext("Automatically upgrade to newer"),
 			autoKeep:  gettext("Automatically keep current older")
+		},
+
+		availableOnePicks_untrustedWebblesBehavior: {
+			allowAll: 0,
+			askFirstTime:  1,
+			askEveryTime:  2,
+			neverAllow:  3
+		},
+
+		availableOnePicks_untrustedWebblesBehaviorDisplayText: {
+			allowAll: gettext("Always Allow All"),
+			askFirstTime:  gettext("Ask For First"),
+			askEveryTime:  gettext("Ask For Everyone"),
+			neverAllow:  gettext("Never Allow Any")
 		},
 
         // The different available form input types used to interact with webble properties and similar
@@ -316,7 +334,8 @@ ww3Services.factory('Enum', function (gettext) {
             POPUP_MENU: 65536,                  //Popup Menu is not allowed
             NON_DEV_HIDDEN: 131072,             //Is not Visible unless in developer mode
             DRAG_CLONE: 262144,                 //Dragged Clone is not allowed (slot pos immediately updated)
-            BUNDLE_LOCKED: 524288              //Locking and trapping a Webble from being dragged inside a bundle is not allowed
+            BUNDLE_LOCKED: 524288,              //Locking and trapping a Webble from being dragged inside a bundle is not allowed
+			EXPORT: 1048576              		//Export is not allowed
         },
 
 		availableWWEvents: {
@@ -1082,15 +1101,16 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
                 {"sublink_itemName": "savewsas", "title": gettext("Save As"), "shortcut": "(Alt+Shift+S)", "visibility_enabled": true},
                 {"sublink_itemName": "sharews", "title": gettext("Share"), "shortcut": "(Alt+J)", "visibility_enabled": true},
                 {"sublink_itemName": "deletews", "title": gettext("Delete"), "shortcut": "(Alt+X)", "visibility_enabled": true}
-                //{"sublink_itemName": "printws", "title": gettext("Print"), "shortcut": "(Alt+Shift+P)", "visibility_enabled": true}
             ]},
         {"itemName": "webbles", "title": gettext("Webbles"), "description": "", "visibility_enabled": true,
             "sublinks": [
                 {"sublink_itemName": "browse", "title": gettext("Browser"), "shortcut": "(Alt+B)", "visibility_enabled": true},
                 {"sublink_itemName": "divider", "title": "---", "visibility_enabled": true},
+				{"sublink_itemName": "recentwbl", "title": gettext("Recent"), "shortcut": "(Alt+R)", "visibility_enabled": true},
                 {"sublink_itemName": "loadwbl", "title": gettext("Load"), "shortcut": "(Alt+L)", "visibility_enabled": true},
-                {"sublink_itemName": "recentwbl", "title": gettext("Recent"), "shortcut": "(Alt+R)", "visibility_enabled": true},
+				{"sublink_itemName": "impwbl", "title": gettext("Import"), "shortcut": "(Alt+I)", "visibility_enabled": true},
                 {"sublink_itemName": "pub", "title": gettext("Publish"), "shortcut": "(Alt+P)", "visibility_enabled": true},
+				{"sublink_itemName": "expwbl", "title": gettext("Export"), "shortcut": "(Alt+E)", "visibility_enabled": true},
                 {"sublink_itemName": "divider", "title": "---", "visibility_enabled": true},
                 {"sublink_itemName": "upload", "title": gettext("Template Editor"), "shortcut": "(Alt+U)", "visibility_enabled": true}
             ]},
@@ -1104,14 +1124,15 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
                 {"sublink_itemName": "sharedduplicate", "title": gettext("Shared Duplicate"), "shortcut": "(Alt+Shift+D)", "visibility_enabled": true},
                 {"sublink_itemName": "bundle", "title": gettext("Bundle"), "shortcut": "(Alt+Shift+B)", "visibility_enabled": true},
                 {"sublink_itemName": "delete", "title": gettext("Delete"), "shortcut": "(Alt+Del | Ctrl+Del)", "visibility_enabled": true},
-                {"sublink_itemName": "wblprops", "title": gettext("Multi Webble Properties"), "shortcut": "(Alt+E)", "visibility_enabled": true},
+                {"sublink_itemName": "wblprops", "title": gettext("Multi Webble Properties"), "shortcut": "(Alt+K)", "visibility_enabled": true},
                 {"sublink_itemName": "divider", "title": "---", "visibility_enabled": true},
-                {"sublink_itemName": "platformprops", "title": gettext("Platform Properties"), "shortcut": "(Alt+Shift+E)", "visibility_enabled": true}
+                {"sublink_itemName": "platformprops", "title": gettext("Platform Properties"), "shortcut": "(Alt+Shift+K)", "visibility_enabled": true}
             ]},
         {"itemName": "view", "title": gettext("View"), "description": "", "visibility_enabled": true,
             "sublinks": [
                 {"sublink_itemName": "toggleconn", "title": gettext("Toggle Connection View"), "shortcut": "(Alt+Num9)", "visibility_enabled": true},
-                {"sublink_itemName": "wsinfo", "title": gettext("Active Workspace Info"), "shortcut": "(Alt+I)", "visibility_enabled": true},
+                {"sublink_itemName": "wsinfo", "title": gettext("Active Workspace Info"), "shortcut": "(Alt+W)", "visibility_enabled": true},
+				{"sublink_itemName": "shortcutinfo", "title": gettext("Shortcut Keys Info"), "shortcut": "(Alt+F1)", "visibility_enabled": true},
                 {"sublink_itemName": "fullscrn", "title": gettext("Toggle Fullscreen"), "shortcut": "(Alt+F)", "visibility_enabled": true}
             ]},
         {"itemName": "help", "title": gettext("Help"), "description": "", "visibility_enabled": true,
@@ -1294,6 +1315,32 @@ ww3Services.factory('dbService', function($log, $http, webService, getFakeData) 
                 return webService.get('', getFakeData.anyFakeData(wblUrl));
             }
         },
+
+		/**
+		 *   "FAKE" PLACEHOLDER SERVICE FOR EXPORT WEBBLE (currently returns a webble def as temp-holder return data)
+		 */
+		exportWebble: function(wblDef, wblTemplateList) {
+			if(wwDef.WEBSERVICE_ENABLED){
+				var verify = undefined;
+				return webService.get('/api/webbles/' + encodeURIComponent(wblDef.webble.defid) + (verify ? '?verify=1' : ''));
+			}
+			else{
+				return webService.get('', getFakeData.anyFakeData(wblDef));
+			}
+		},
+
+		/**
+		 *   "FAKE" PLACEHOLDER SERVICE FOR IMPORT WEBBLE (currently returns a clock webble def as temp-holder return data)
+		 */
+		importWebble: function(wblExpImpPack) {
+			if(wwDef.WEBSERVICE_ENABLED){
+				var verify = undefined;
+				return webService.get('/api/webbles/' + encodeURIComponent("clock") + (verify ? '?verify=1' : ''));
+			}
+			else{
+				return webService.get('', getFakeData.anyFakeData(wblDef));
+			}
+		},
 
 	    /**
 	     * Publishes a webble and makes it available for anybody to GET.

@@ -38,9 +38,6 @@ function ($scope, gettext, authService, userPrefs, confirm, wwConsts) {
 	 * Initializes the "providers" and "languages" of the controller
 	 */
 	function updateScopeData() {
-
-		console.log($scope.user);
-
 		var i;
 
 		// Update authentication providers
