@@ -52,6 +52,9 @@
 		"grunt": "latest",
 		"grunt-angular-gettext" : "latest",
 
+		"load-grunt-tasks": "latest",
+		"time-grunt": "latest",
+
 		"grunt-usemin": "latest",
 		"grunt-svgmin": "latest",
 		"grunt-rev": "latest",
