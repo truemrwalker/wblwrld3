@@ -107,6 +107,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         logging: gettext("Debug Logging On")
     };
     $scope.langChangeTooltipTxt = '';
+	$scope.flagImageFound = true;
+	$scope.imgError = function(){$scope.flagImageFound = false;}
     //-------------------------------
 
 
@@ -3975,6 +3977,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>Alt+F6</strong>:' + gettextCatalog.getString("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
 					'<strong>F8 (Alt+F8)</strong>:' + gettextCatalog.getString("Quick Load A Fundamental Webble.") + '<br>' +
 					'<strong>F9 (Alt+F9)</strong>:' + gettextCatalog.getString("Quick Toggles between System Language and English.") + '<br>' +
+					'<strong>F10 (Alt+F10)</strong>:' + gettextCatalog.getString("Open System Language Select Form") + '<br>' +
 					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode.") + '<br>' +
 					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
 					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
@@ -4041,15 +4044,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 if(gettextCatalog.currentLanguage.search('en') == -1){
                     gettextCatalog.currentLanguage = 'en';
                     $scope.langChangeTooltipTxt = $filter('nativeString')($scope.getSysLanguage());
+					$scope.flagImageFound = true;
                 }
                 else if($scope.getSysLanguage().search(gettextCatalog.currentLanguage) == -1){
                     gettextCatalog.currentLanguage = $scope.getSysLanguage() || 'en';
                     $scope.langChangeTooltipTxt = "Change Language";
+					$scope.flagImageFound = true;
                 }
             }
         }
         else if (sublink == 'altf10' || (whatKeys.theAltKey && whatKeys.theKey == 'F10'))
         {
+			var beforeLang = gettextCatalog.currentLanguage;
             $scope.openForm(Enum.aopForms.langChange, null, function(){
                 if(gettextCatalog.currentLanguage.search('en') == -1){
                     $scope.langChangeTooltipTxt = $filter('nativeString')($scope.getSysLanguage());
@@ -4060,6 +4066,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 else{
                     $scope.langChangeTooltipTxt = "";
                 }
+				if(beforeLang != gettextCatalog.currentLanguage){ $scope.flagImageFound = true; }
             });
         }
         else if(sublink == 'altshiftpagedown' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theShiftKey && whatKeys.theKey == 'PageDown')){

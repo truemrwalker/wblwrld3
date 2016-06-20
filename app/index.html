@@ -281,12 +281,18 @@
 					</li>
 				</ul>
 
-                <!--Right side info of current language and weather logging is enabled-->
-                <ul class="nav navbar-nav navbar-right disable-select">
-                    <li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}">{{getCurrentLanguage() | nativeName}}</a></li>
-                </ul>
+				<!--Right side quick icon to go to platform settings-->
+				<ul class="nav navbar-nav navbar-right disable-select">
+					<li><a href="" ng-click="executeMenuSelection('platformprops', null);" tooltip-placement="bottom" tooltip="{{menuItems[2].sublinks[10].title}}"><img src="images/icons/gearicon_sm.png" style="margin-left: -15px; margin-right: -13px; width: 23px;"/></a></li>
+				</ul>
 
-                <!--User login-->
+				<!--Right side info of current language and weather logging is enabled-->
+				<ul class="nav navbar-nav navbar-right disable-select">
+					<li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}"><span ng-hide="flagImageFound">{{getCurrentLanguage() | nativeName}}</span><img ng-show="flagImageFound" onError="angular.element(this).scope().imgError();" ng-src="images/icons/langFlags/{{getCurrentLanguage()}}.png" style="margin-bottom: -10px; margin-top: -10px; width: 30px;"/></a></li>
+				</ul>
+
+
+				<!--User login-->
                 <ul class="nav navbar-nav navbar-right disable-select" data-ng-show="!user">
                     <li><a href="" ng-click="signup()" translate>Sign Up</a></li>
                     <li><a href="" ng-click="login()" translate>Login</a></li>
