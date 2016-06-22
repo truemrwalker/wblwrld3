@@ -35,17 +35,21 @@
 // WEBBLE PROPERTIES FORM CONTROLLER
 // This controls the Webbles slot and property form
 //====================================================================================================================
-ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettext) {
+ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext) {
 
     //=== PROPERTIES ================================================================
 
     $scope.defCats = ['metadata'];
-    $scope.defCatStrings = { metadata: gettext("Internal") };
-    $scope.defCatStrings[templateId] = templateId;
-    $scope.defCatStrings['css_' + templateId] = gettext("CSS Related") + ' (' + templateId + ')';
-    $scope.defCatStrings['css_root'] = gettext("CSS Related") + ' (root)';
-    $scope.defCatStrings['custom'] = gettext("Custom");
-    $scope.defCatStrings['custom-css'] = gettext("Custom") + " " + gettext("CSS Related");
+    $scope.defCatStrings = { metadata: {p1: gettext("Internal"), p2: ""}};
+    $scope.defCatStrings[templateId] = {p1: "", p2: templateId};
+    //$scope.defCatStrings['css_' + templateId] = gettext("CSS Related") + ' (' + templateId + ')';
+	$scope.defCatStrings['css_' + templateId] = {p1: gettext("CSS Related"), p2: '(' + templateId + ')'};
+    //$scope.defCatStrings['css_root'] = gettext("CSS Related") + ' (root)';
+	$scope.defCatStrings['css_root'] = {p1: gettext("CSS Related"), p2: '(root)'};
+    //$scope.defCatStrings['custom'] = gettext("Custom");
+	$scope.defCatStrings['custom'] = {p1: gettext("Custom"), p2: ""};
+    //$scope.defCatStrings['custom-css'] = gettext("Custom") + " " + gettext("CSS Related");
+	$scope.defCatStrings['custom-css'] = {p1: gettext("Custom"), p2: gettext("CSS Related")};
 
     $scope.props = props;
     $scope.propsCats = [];
@@ -157,7 +161,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 	// Gives the user the chance to quickly get a slotname stored in the clipboard.
 	//========================================================================================
 	$scope.copyToClipboard = function(slotName){
-		window.prompt("Copy to clipboard: Ctrl+C, Enter", slotName);
+		window.prompt(gettextCatalog.getString("Copy to clipboard") + ": Ctrl+C, Enter", slotName);
 	};
 	//========================================================================================
 

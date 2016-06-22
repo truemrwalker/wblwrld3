@@ -53,10 +53,11 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     // Information tooltip texts
     $scope.infoTooltip = {
         wblDispName: gettext("This is the current display name of the main parent Webble to be exported."),
-        templateList: gettext("These are the included Webble templates whose code files will be included in the export packaged, described by template Id, revision no and if it is sandbox or not.")    };
+        templateList: gettext("These are the included Webble templates whose code files will be included in the export packaged, described by template Id, revision no and if it is sandbox or not.")
+	};
 
     // Form validation error message
-    $scope.errorMsg = 'This Feature is not yet fully implemented, but as soon as it is you will find it here.';
+    $scope.errorMsg = gettext("This Feature is not yet fully implemented, but as soon as it is you will find it here.");
 
 
 

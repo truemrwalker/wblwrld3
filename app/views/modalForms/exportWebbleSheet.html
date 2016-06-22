@@ -47,13 +47,13 @@
 
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row keepTheDistanceBelow">
-			<div class="col-xs-11"><span class="formitem" style="font-size: 17px;" translate>{{formItems.wblDispName}}</span></div>
+			<div class="col-xs-11"><span class="formitem" style="font-size: 17px;">{{formItems.wblDispName}}</span></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.wblDispName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow minorDividerLineAbove">
             <div class="col-xs-3"><span class="formTitle" translate>Included Webble Templates:</span></div>
-			<div class="col-xs-8"><span class="formitem" style="font-weight: normal;"  ng-repeat="templateItem in formItems.templateList" translate>★ {{templateItem.templateId}} (ver. {{templateItem.templateRevision}}) <span ng-show="templateItem.sandboxId != null" style="font-style: italic;">[Sandbox]</span></br></span></div>
+			<div class="col-xs-8"><span class="formitem" style="font-weight: normal;"  ng-repeat="templateItem in formItems.templateList">★ {{templateItem.templateId}} (ver. {{templateItem.templateRevision}}) <span ng-show="templateItem.sandboxId != null" style="font-style: italic;">[Sandbox]</span></br></span></div>
 			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.templateList | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
@@ -61,7 +61,7 @@
     <div class="dividerLineAbove">
         <div class="row">
             <div class="col-xs-12">
-                <span style="color: red; font-weight: bold;">{{errorMsg}}</span>
+                <span style="color: red; font-weight: bold;">{{errorMsg | translate}}</span>
             </div>
         </div>
     </div>

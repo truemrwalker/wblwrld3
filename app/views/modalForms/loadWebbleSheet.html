@@ -73,14 +73,15 @@
             <div class="col-xs-4"><span class="formTitle" translate>Local File:</span></div>
             <div class="col-xs-7">
                 <form id="localFileFormContainer">
-                    <input id="localFile" type="file" onchange="angular.element(this).scope().localFileChanged(this)">
+					<label for="localFile"> <span class="btn btn-default btn-sm" translate>Choose File</span></label><span>&nbsp;</span><span>{{formItems.selectedLocalFileName | translate}}</span>
+                    <input id="localFile" name="localFile" type="file" onchange="angular.element(this).scope().localFileChanged(this)" style="visibility: hidden;">
                 </form>
             </div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.localFile | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 
-    <div class="dividerLineAbove">
+    <div class="dividerLineAbove" style="margin-top: -30px;">
         <div class="row">
             <div class="col-xs-12">
                 <span style="color: red; font-weight: bold;">{{errorMsg | translate}}</span>

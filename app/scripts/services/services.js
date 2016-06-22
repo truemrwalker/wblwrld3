@@ -405,8 +405,7 @@ ww3Services.factory('wwConsts', ['colorService', function(colorService) {
             {code: "ru", NativeName: "русский", EnglishName: "Russian", ChangeStr: "Изменить язык"},
             {code: "he", NativeName: "עברית", EnglishName: "Hebrew", ChangeStr: "שנה שפה"},
             {code: "el", NativeName: "Ελληνικά", EnglishName: "Greek", ChangeStr: "Αλλαγή γλώσσας"},
-            {code: "es", NativeName: "Español", EnglishName: "Spanish", ChangeStr: "Cambiar el idioma"},
-            {code: "no", NativeName: "Norsk", EnglishName: "Norwegian", ChangeStr: "Endre språket"}
+            {code: "es", NativeName: "Español", EnglishName: "Spanish", ChangeStr: "Cambiar el idioma"}
         ],
         bundleContainerWblDef: {
             "webble": {

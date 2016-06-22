@@ -42,14 +42,14 @@
             <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
             <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
         </div>
-        <div class="col-xs-8"><h4 class="formTitle" translate>Properties</h4></div>
+        <div class="col-xs-8"><h3 class="formTitle" style="margin-top: -1px;" translate>Properties</h3></div>
     </div>
 
     <div class="keepTheDistanceBelow" ng-repeat="cat in propsCats">
     <div class="row">
         <div class="col-xs-12">
-            <span style="color: darkred; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" ng-show="isDefCat(cat)">{{ defCatStrings[cat] | translate}}</span>
-            <span style="color: darkred; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" ng-hide="isDefCat(cat) && !defCatStrings[cat]"><span translate>Slots:</span> {{defCatStrings[cat]}}</span>
+            <span style="color: darkred; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" ng-show="isDefCat(cat)">{{ defCatStrings[cat].p1 | translate}}</span>
+            <span style="color: darkred; font-size: 1.1em; font-weight: normal; padding-bottom: -20px;" ng-hide="isDefCat(cat) && !defCatStrings[cat]"><span translate>Slots:</span> {{defCatStrings[cat].p1 | translate}} {{defCatStrings[cat].p2 | translate}}</span>
             <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
         </div>
     </div>
@@ -187,7 +187,7 @@
             </div>
         </div>
         <div class="col-xs-1" ng-show="item.isShared != undefined" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{isSharedTooltipInfo | translate}}"><input class="formitem" type="checkbox" ng-model="item.isShared" /></div>
-        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{item.desc}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{item.desc | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         <!--<div class="col-xs-1" ng-show="item.cat.search('custom') != -1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>-->
         <div class="col-xs-1" ng-show="item.isCustom" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
     </div>

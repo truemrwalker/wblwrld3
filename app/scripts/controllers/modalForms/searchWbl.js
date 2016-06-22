@@ -54,7 +54,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         pageViewResult: [],
         selectedWbl: -1,
         currentUser: ($scope.thePlatform.user != undefined && $scope.thePlatform.user.username) ? $scope.thePlatform.user.username : 'guest',
-        searchCriteria: '',
+		searchCriteriaVariable: '',
+		searchCriteriaStatic: '',
         searchStrResult: '',
         totalItems: 0,
         currentPage: 1,
@@ -66,9 +67,9 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         searchBoxTitle: gettext("Search"),
         noOfWebblesTxt: gettext("The Number of Available Webbles Right Now:"),
         notAvailable: 'N/A',
-        resultTitle: gettext("Result: "),
+        resultTitle: gettext("Result:"),
         suggestionTxt: gettext("A variety of Webbles that might be of interest."),
-        searchResultTxt: gettext("found by free text search of all fields containing search string "),
+        searchResultTxt: gettext("found by free text search of all fields containing search string"),
         starRatingTxt: [
             gettext("Terrible"),
             gettext("Very Bad"),
@@ -84,7 +85,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         rateTxtVoters: gettext("votes"),
         next: gettext("Next"),
         prev: gettext("Previous"),
-        noTrustIconInfo: gettext("This Webble is developed by a group or individual ouside your circle of trust."),
+        noTrustIconInfo: gettext("This Webble is developed by a group or individual outside your circle of trust."),
         haveTrustIconInfo: gettext("This Webble is developed by a group inside your circle of trust.")
     };
 
@@ -339,11 +340,13 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 
                 if($scope.formItems.searchResult.length == ($scope.formItems['numPages'] * $scope.formItems.itemsPerPage)){
                     $scope.formItems.totalItems = $scope.formItems.searchResult.length + $scope.formItems.itemsPerPage + 1;
-                    $scope.formItems.searchCriteria = $scope.formItems.searchResult.length + '+ ' + $scope.textParts.searchResultTxt;
+                    $scope.formItems.searchCriteriaVariable = $scope.formItems.searchResult.length + '+ ';
+					$scope.formItems.searchCriteriaStatic = $scope.textParts.searchResultTxt;
                 }
                 else if(resp.data.length < $scope.formItems.itemsPerPage && page == ($scope.formItems['numPages'] - 1)){
                     $scope.formItems.totalItems = $scope.formItems.searchResult.length;
-                    $scope.formItems.searchCriteria = $scope.formItems.searchResult.length + ' ' + $scope.textParts.searchResultTxt;
+					$scope.formItems.searchCriteriaVariable = $scope.formItems.searchResult.length + ' ';
+					$scope.formItems.searchCriteriaStatic = $scope.textParts.searchResultTxt;
                 }
 
                 $scope.formItems.pageViewResult = resp.data;
@@ -447,18 +450,42 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
     //========================================================================================
 
 
+	//========================================================================================
+	// Get Aperitif Webbles
+	// Get a small list of high ranked webbles for pleasing display.
+	//========================================================================================
+	var getKeywordsList =  function(whatKeywordsString) {
+		var keywordsList = [];
+		if(whatKeywordsString.search(';') != -1){
+			keywordsList = whatKeywordsString.split(';');
+		}
+		else if(whatKeywordsString.search(',') != -1){
+			keywordsList = whatKeywordsString.split(',');
+		}
+		else if(whatKeywordsString.search(' ') != -1){
+			keywordsList = whatKeywordsString.split(' ');
+		}
+		else{
+			keywordsList.push(whatKeywordsString);
+		}
+		return keywordsList;
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Get Aperitif Webbles
     // Get a small list of high ranked webbles for pleasing display.
     //========================================================================================
     var getAperitifWebbles =  function() {
         return $http.get('/api/webbles?limit=' + Math.floor($scope.formItems.itemsPerPage / 2)  + '&orderby=-rating' + '&verify=1').then(function(resp){
-            $scope.formItems.searchCriteria = $scope.textParts.suggestionTxt;
+			$scope.formItems.searchCriteriaStatic = $scope.textParts.suggestionTxt;
 
             for(var i = 0, mru; mru = resp.data[i]; i++){
                 mru['selectColor'] = 'transparent';
                 mru.rating = parseInt(mru.rating);
 				mru['slimEnabled'] = $scope.formItems.slimEnabled;
+				mru['keywordsList'] = getKeywordsList(mru.webble.keywords);
             }
 
             $scope.formItems.searchResult = resp.data;
@@ -556,23 +583,24 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         if(searchStrToUse != ''){
             latestSearchStr = searchStrToUse;
             if($scope.formItems.typeAheadResult.length > 0 && $scope.formItems.typeAheadResult.length <= $scope.formItems.itemsPerPage && !forceDBQuery){
-                $scope.formItems.searchCriteria = $scope.textParts.searchResultTxt;
+				$scope.formItems.searchCriteriaStatic = $scope.textParts.searchResultTxt;
                 $scope.formItems.searchStrResult = '"' + latestSearchStr + '"';
                 for(var i = 0, wbl; wbl = $scope.formItems.typeAheadResult[i]; i++){
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
 					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
+					wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
 
                 if($scope.formItems.searchResult.length == $scope.formItems.itemsPerPage){
                     $scope.formItems.totalItems = $scope.formItems.searchResult.length + $scope.formItems.itemsPerPage + 1;
-                    $scope.formItems.searchCriteria = $scope.formItems.itemsPerPage + '+ ' + $scope.formItems.searchCriteria;
+					$scope.formItems.searchCriteriaVariable = $scope.formItems.itemsPerPage + '+ ';
                 }
                 else{
                     $scope.formItems.totalItems = $scope.formItems.searchResult.length;
-                    $scope.formItems.searchCriteria = $scope.formItems.searchResult.length + ' ' + $scope.formItems.searchCriteria;
+					$scope.formItems.searchCriteriaVariable = $scope.formItems.searchResult.length + ' ';
                 }
 
                 $scope.formItems.pageViewResult = $scope.formItems.searchResult;
@@ -588,12 +616,13 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
             }
             else{
                 return $http.get('/api/webbles?limit=' + $scope.formItems.itemsPerPage + '&orderby=' + getSortStr() + '&q=' + latestSearchStr + '&verify=1').then(function(resp){
-                    $scope.formItems.searchCriteria = $scope.textParts.searchResultTxt;
+					$scope.formItems.searchCriteriaStatic = $scope.textParts.searchResultTxt;
                     $scope.formItems.searchStrResult = '"' + latestSearchStr + '"';
                     for(var i = 0, wbl; wbl = resp.data[i]; i++){
                         wbl['selectColor'] = 'transparent';
                         wbl.rating = parseInt(wbl.rating);
 						wbl['slimEnabled'] = $scope.formItems.slimEnabled;
+						wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
                     }
 
                     $scope.formItems.searchResult = resp.data;
@@ -601,11 +630,11 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 
                     if($scope.formItems.searchResult.length == $scope.formItems.itemsPerPage){
                         $scope.formItems.totalItems = $scope.formItems.searchResult.length + $scope.formItems.itemsPerPage + 1;
-                        $scope.formItems.searchCriteria = $scope.formItems.itemsPerPage + '+ ' + $scope.formItems.searchCriteria;
+						$scope.formItems.searchCriteriaVariable = $scope.formItems.itemsPerPage + '+ ';
                     }
                     else{
                         $scope.formItems.totalItems = $scope.formItems.searchResult.length;
-                        $scope.formItems.searchCriteria = $scope.formItems.searchResult.length + ' ' + $scope.formItems.searchCriteria;
+						$scope.formItems.searchCriteriaVariable = $scope.formItems.searchResult.length + ' ';
                     }
 
                     $scope.formItems.pageViewResult = $scope.formItems.searchResult;

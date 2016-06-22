@@ -38,7 +38,7 @@
 <div class="container-fluid padcontent" data-formclass="wblwrldform-main">
 
     <div class="row keepTheDistanceBelow">
-		<div class="col-xs-8"><span style="font-size: 28px; font-weight: bold;" translate>{{formData.displayname}}</span></div>
+		<div class="col-xs-8"><span style="font-size: 28px; font-weight: bold;">{{formData.displayname}}</span></div>
 	</div>
 
     <div class="keepTheDistanceBelow dividerLineAbove">
@@ -59,7 +59,7 @@
 			</div>
 			<div class="col-xs-4" style="padding-top: 11px;">
 				<div>
-					<span style="font-weight: bold;">{{getRateText(formData.rating)}}({{formData.rating | number:2}}) [{{formData.ratingCount}} {{textParts.rateTxtVoters | translate}}] </span><span ng-hide="formData.rateShow" style="color: forestgreen; font-weight: bold;" translate> *Rated*</span>
+					<span style="font-weight: bold;">{{getRateText(formData.rating) | translate}}({{formData.rating | number:2}}) [{{formData.ratingCount}} {{textParts.rateTxtVoters | translate}}] </span><span ng-hide="formData.rateShow" style="color: forestgreen; font-weight: bold;"> *<span translate>Rated</span>*</span>
 				</div>
 			</div>
 			<div class="col-xs-3" style="padding-top: 11px;" >

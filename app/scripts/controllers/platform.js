@@ -139,7 +139,15 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	};
 	$scope.socialMedia = {
 		Url: "https://wws.meme.hokudai.ac.jp/",
-		Text: "Webble World, meme media object tool for building and using Webble applications"
+		Text: gettext("Webble World, meme media object tool for building and using Webble applications")
+	};
+	$scope.userMenuTxts = {
+		signUp: gettext("Sign Up"),
+		login: gettext("Login"),
+		profileSettings: gettext("Profile Settings"),
+		groups: gettext("Groups"),
+		adminsDen: gettext("Admin's Den"),
+		logout: gettext("Logout")
 	};
     //-------------------------------
 
@@ -528,10 +536,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 if(theWbl){
                     theWbl.scope().set(here.slotName, here.slotValue);
                     if(here.slotName == 'root:left' || here.slotName == 'root:top'){
-                        $scope.showQIM((here.user + ' ' + gettext("moved webble") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
+                        $scope.showQIM((here.user + ' ' + gettextCatalog.getString("moved webble") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
                     }
                     else{
-                        $scope.showQIM((here.user + ' ' + gettext("set slot") + ' "' + here.slotName + '" ' + gettext("to") + ' ' + here.slotValue + ' ' + gettext("for webble") + ' [' + here.slotValue + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos.replace('px', ''))});
+                        $scope.showQIM((here.user + ' ' + gettextCatalog.getString("set slot") + ' "' + here.slotName + '" ' + gettextCatalog.getString("to") + ' ' + here.slotValue + ' ' + gettextCatalog.getString("for webble") + ' [' + here.slotValue + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos.replace('px', ''))});
                     }
                 }
             }
@@ -555,14 +563,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 var theWbl = $scope.getWebbleByInstanceId(here.target);
                 if(theWbl){
                     theWbl.scope().peel();
-                    $scope.showQIM((here.user + ' ' + gettext("peeled webble") + ' [' + here.target + '] ' + gettext("from its parent")), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
+                    $scope.showQIM((here.user + ' ' + gettextCatalog.getString("peeled webble") + ' [' + here.target + '] ' + gettextCatalog.getString("from its parent")), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
                 }
             }
             else if(here.op == Enum.transmitOps.connSlots){
                 var theWbl = $scope.getWebbleByInstanceId(here.target);
                 if(theWbl){
                     theWbl.scope().connectSlots(here.parentSlot, here.childSlot, here.directions);
-                    $scope.showQIM((here.user + ' ' + gettext("connected child slot") + ' "' + here.childSlot + '" ' + gettext("with parent slot") + ' "' + here.parentSlot + '" ' + gettext("for webble") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
+                    $scope.showQIM((here.user + ' ' + gettextCatalog.getString("connected child slot") + ' "' + here.childSlot + '" ' + gettextCatalog.getString("with parent slot") + ' "' + here.parentSlot + '" ' + gettextCatalog.getString("for webble") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
                 }
             }
             else if(here.op == Enum.transmitOps.addCustSlot){
@@ -597,14 +605,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         theWbl.scope().setStyle(theElmnt, theNewSlot.getName(), theNewSlot.getValue());
                     }
                     theWbl.scope().addSlot(theNewSlot);
-                    $scope.showQIM((here.user + ' ' + gettext("created custom slot") + ' "' + here.slot.name + '" ' + gettext("for webble") + ' [' + here.target + '] ' + gettext("with value") + ' ' + here.slot.value), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
+                    $scope.showQIM((here.user + ' ' + gettextCatalog.getString("created custom slot") + ' "' + here.slot.name + '" ' + gettextCatalog.getString("for webble") + ' [' + here.target + '] ' + gettextCatalog.getString("with value") + ' ' + here.slot.value), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
                 }
             }
             else if(here.op == Enum.transmitOps.removeCustSlot){
                 var theWbl = $scope.getWebbleByInstanceId(here.target);
                 if(theWbl){
                     theWbl.scope().removeSlot(here.slotname);
-                    $scope.showQIM((here.user + ' ' + gettext("deleted custom slot") + ' "' + here.slotname + '" ' + gettext("for webble") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
+                    $scope.showQIM((here.user + ' ' + gettextCatalog.getString("deleted custom slot") + ' "' + here.slotname + '" ' + gettextCatalog.getString("for webble") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});
                 }
             }
             else if(here.op == Enum.transmitOps.bundle){
@@ -612,7 +620,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 var bundleContentStr = here.bundleData;
                 bundleDef['webble']['private'] = {bundlecontent: bundleContentStr, creatingbundle: true};
                 $scope.loadWebbleFromDef(bundleDef, $scope.connectBundleContent);
-                $timeout(function(){$scope.showQIM((here.user + ' ' + gettext("bundled a bunch of webbles")), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});}, 400);
+                $timeout(function(){$scope.showQIM((here.user + ' ' + gettextCatalog.getString("bundled a bunch of webbles")), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});}, 400);
             }
             else if(here.op == Enum.transmitOps.unbundle){
                 var theWbl = $scope.getWebbleByInstanceId(here.target);
@@ -631,7 +639,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     $scope.setPlatformDoNotSaveUndoEnabled(true);
                     $scope.requestDeleteWebble(theWbl.scope().theView);
                     $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 100);
-                    $timeout(function(){$scope.showQIM((here.user + ' ' + gettext("unbundled the bundle with id") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});}, 200);
+                    $timeout(function(){$scope.showQIM((here.user + ' ' + gettextCatalog.getString("unbundled the bundle with id") + ' [' + here.target + ']'), undefined, undefined, {x: 0, y: parseInt($scope.wsTopPos)});}, 200);
                 }
             }
             else if(here.op == Enum.transmitOps.getCurrentChanges){
@@ -856,8 +864,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         });
 
+
         $scope.$watch(function(){ return parseInt($('#mainmenu').css('height')); }, function(newValue, oldValue) {
             if(!isNaN(newValue) && newValue > 0){
+				if(newValue > 500 && ((((new Date()).getTime() - applicationStartTime_.getTime())/1000)/60).toFixed(6) < 0.03){ $log.log("Odd attempt by the main menu to set workspace top pos to extreme value has just been thwarted"); return; }
                 $scope.wsTopPos = newValue + 'px';
             }
         });
@@ -3981,8 +3991,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode.") + '<br>' +
 					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
 					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
-					'<strong>Arrow Keys</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
-					'<strong>Alt (in "Development" mode)</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>'}
+					'<strong>' + gettextCatalog.getString("Arrow Keys") + '</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
+					'<strong>Alt (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>'}
 			);
         }
 		//Toggle Main Menu visibility

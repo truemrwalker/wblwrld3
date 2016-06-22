@@ -45,9 +45,9 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 		interactObjs: [],
 		thisWblSlots: [],
 		thisWblSlotsPlus: [],
-		mouseEventTypes: ['Default', 'Mouse Click', 'Mouse Move'],
-		customActions: ['None', 'Default', 'Change Slot'],
-		multiActions: ['Done', 'And']
+		mouseEventTypes: [gettext("Default"), gettext("Mouse Click"), gettext("Mouse Move")],
+		customActions: [gettext("None"), gettext("Default"), gettext("Change Slot")],
+		multiActions: [gettext("Done"), gettext("And")]
 	};
 
 
@@ -83,7 +83,7 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 		if(!isInit){
 			if($scope.formItems.interactObjs[index].mouseEvType == 'Default'){
 				$scope.formItems.interactObjs[index].mouseEvType = '';
-				thisWbl.scope().showQIM("Custom Interaction Objects cannot be set to Default!", 2500);
+				thisWbl.scope().showQIM(gettext("Custom Interaction Objects cannot be set to Default!"), 2500);
 			}
 		}
 	};
@@ -98,7 +98,7 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 		if(!isInit){
 			if($scope.formItems.interactObjs[index].action == 'Default'){
 				$scope.formItems.interactObjs[index].action = 'None';
-				thisWbl.scope().showQIM("Custom Interaction Objects cannot be set to Default!", 2500);
+				thisWbl.scope().showQIM(gettext("Custom Interaction Objects cannot be set to Default!"), 2500);
 			}
 			if($scope.formItems.interactObjs[index].action == 'None'){
 				$scope.formItems.interactObjs[index].actionPack = [];
