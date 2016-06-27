@@ -626,7 +626,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 var theWbl = $scope.getWebbleByInstanceId(here.target);
                 if(theWbl){
                     for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants(theWbl.scope().theView)[i]; i++){
-                        bcWbl.scope().setIsBundled(false);
+						bcWbl.scope().setIsBundled(bcWbl.scope().getIsBundled() - 1);
                     }
                     while(theWbl.scope().getChildren().length > 0){
                         var theKid = theWbl.scope().getChildren()[0];
@@ -1674,7 +1674,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 currState.op = Enum.undoOps.unbundle;
                 currState.target = undefined;
                 for(var i = 0, bcWbl; bcWbl = target.scope().getAllDescendants(target)[i]; i++){
-                    bcWbl.scope().setIsBundled(false);
+                    bcWbl.scope().setIsBundled(bcWbl.scope().getIsBundled() - 1);
                 }
                 while(target.scope().getChildren().length > 0){
                     target.scope().getChildren()[0].scope().peel();
@@ -3169,7 +3169,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     $scope.getBundleMaster = function(whatWebble){
         var bundleMaster = undefined;
-        if(whatWebble.scope().getIsBundled()){
+        if(whatWebble.scope().getIsBundled() > 0){
             bundleMaster = $scope.getBundleMaster(whatWebble.scope().getParent());
         }
         else if(whatWebble.scope().theWblMetadata['templateid'] == 'bundleTemplate'){

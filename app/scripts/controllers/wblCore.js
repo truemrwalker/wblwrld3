@@ -112,9 +112,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     $scope.getIsCreatingModelSharee = function(){ return isCreatingModelSharee_; };
 
     // Flag to indicate if this Webble is bundled or not
-    var isBundled_ = false;
+    var isBundled_ = 0;
     $scope.getIsBundled = function(){ return isBundled_; };
-    $scope.setIsBundled = function(newBundleState){ isBundled_ = newBundleState; };
+    $scope.setIsBundled = function(newBundleState){ if(newBundleState >= 0){isBundled_ = newBundleState;}else{isBundled_ = 0;} };
 
     // This property keeps track of any protection setting this webble is currently using
     var theProtectionSetting_ = Enum.bitFlags_WebbleProtection.NO;
@@ -192,7 +192,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     $scope.dblTapEventHandler = function (event) {
         if($(event.target).scope().getInstanceId() == $scope.getInstanceId()){
             if($scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer){
-                if(!$scope.touchRescueFlags.doubleTapTemporarelyDisabled && !isBundled_){
+                if(!$scope.touchRescueFlags.doubleTapTemporarelyDisabled && isBundled_ == 0){
                     $scope.touchRescueFlags.doubleTapTemporarelyDisabled = true;
                     if($scope.getSelectionState() != Enum.availableOnePicks_SelectTypes.AsNotSelected){
                         $scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
@@ -212,7 +212,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     event.stopPropagation();
                     $timeout(function(){$scope.touchRescueFlags.doubleTapTemporarelyDisabled = false;}, 500);
                 }
-                else if(isBundled_){
+                else if(isBundled_ > 0){
                     $scope.touchRescueFlags.doubleTapTemporarelyDisabled = true;
                     var bndlMstr = $scope.getBundleMaster($scope.theView);
 
@@ -1463,22 +1463,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     }
 					var listOfBundleChildren = [];
                     for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants($scope.theView)[i]; i++){
-                        bcWbl.scope().setIsBundled(false);
+						bcWbl.scope().setIsBundled(bcWbl.scope().getIsBundled() - 1);
 						if(bcWbl.scope().theWblMetadata['templateid'] != $scope.theView.scope().theWblMetadata['templateid']){
 							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
 						}
                     }
-
-					for(var i = 0, bcWbl; bcWbl = $scope.getAllDescendants($scope.theView)[i]; i++){
-						bcWbl.scope().setIsBundled(false);
-						if(bcWbl.scope().theWblMetadata['templateid'] != $scope.theView.scope().theWblMetadata['templateid']){
-							listOfBundleChildren.push(bcWbl.scope().theWblMetadata['defid']);
-							var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
-							$scope.setPlatformDoNotSaveUndoEnabled(true);
-							bcWbl.scope().peel();
-							$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(prevValue);}, 1);
-						}
-					}
 
                     while(theChildren_.length > 0){
                         var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
@@ -2023,7 +2012,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
                         aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
                         if(aw.scope().getInstanceId() != $scope.getInstanceId()){
-                            var isBundleChild = (aw.scope().theWblMetadata['templateid'] != 'bundleTemplate' && aw.scope().getIsBundled());
+                            var isBundleChild = (aw.scope().theWblMetadata['templateid'] != 'bundleTemplate' && aw.scope().getIsBundled() > 0);
                             var wasRelative = false;
                             for(var n = 0, fm; fm = $scope.getAllDescendants($scope.theView)[n]; n++){
                                 if (fm.scope().getInstanceId() == aw.scope().getInstanceId()){

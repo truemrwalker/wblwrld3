@@ -548,7 +548,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
 
                     // Create a watch for isBundled
                     scope.$watch(function(){return scope.getIsBundled();}, function(newVal, oldVal) {
-                            if(newVal == true){
+                            if(newVal > 0){
                                 if((parseInt(scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                                     element.draggable('disable');
                                     element.unbind('vmousedown', mouseDownEventHandler);
@@ -966,7 +966,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                     build: function($trigger, e){
                         var xOffSet = 10;
                         var theActiveTrigger = $trigger;
-                        if(theActiveTrigger.scope().getIsBundled() == true && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
+                        if(theActiveTrigger.scope().getIsBundled() > 0 && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                             theActiveTrigger = scope.getBundleMaster(theActiveTrigger);
                         }
                         var theWblCM = {};
@@ -1020,7 +1020,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                                 if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PROPERTY, 10)) == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.props)){
                                     theWblCM[dmi.props] = {name: gettextCatalog.getString(Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.Props)};
                                 }
-                                if(!(theActiveTrigger.scope().getIsBundled() || theActiveTrigger.scope().theWblMetadata['templateid'] == 'bundleTemplate')){
+                                if(!(theActiveTrigger.scope().getIsBundled() > 0 || theActiveTrigger.scope().theWblMetadata['templateid'] == 'bundleTemplate')){
                                     if((parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE, 10)) == 0 && !theActiveTrigger.scope().isPopupMenuItemDisabled(dmi.bundle)){
                                         theWblCM[dmi.bundle] = {name: gettextCatalog.getString(Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt.Bundle)};
                                     }
@@ -1090,7 +1090,7 @@ ww3Directives.directive('webblePlatform', function ($log, Enum, getKeyByValue, g
                         return {
                             callback: function(key, opt){
                                 var theActiveTrigger = opt.$trigger;
-                                if(theActiveTrigger.scope().getIsBundled() == true && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
+                                if(theActiveTrigger.scope().getIsBundled() > 0 && (parseInt(theActiveTrigger.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.BUNDLE_LOCKED, 10)) == 0){
                                     theActiveTrigger = scope.getBundleMaster(theActiveTrigger);
                                 }
                                 theActiveTrigger.scope().activateMenuItem(key);
