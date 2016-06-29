@@ -16,7 +16,14 @@ named in the controllers file-->
 
 <!--EXAMPLE VIEW - With controller pointer, custom directive, Slot usage, translate filter and directive, plus custom Filter... for your reference-->
 <div id="logicGate" class="logicGateHolder" ng-controller="logicGateCtrl">
-  <img id="gateImage" class="theGate" ng-src="{{imgSrc}}" style="height: auto;" />
+	<img id="gateImage" class="theGate" ng-src="{{gateVals.imgSrc}}" style="height: auto;" />
+	<div id="lineDrawingArea"></div>
+	<div ng-show="gimme('showInOutVals')">
+		<span style="position: absolute;  font-size: 12px; top: 10px; left: 90px;">{{gimme("output")}}</span>
+		<input type="text" ng-model="gateVals.in1" style="position: absolute; font-size: 12px; text-align: center; height: 17px; width: 14px; top: -4px; left: 2px;" ng-change="updateSlot('input_1');" />
+		<input ng-show="gimme('gateType') != 'PLAIN_IN' && gimme('gateType') != 'NOT'" type="text" ng-model="gateVals.in2" style="position: absolute; font-size: 12px; text-align: center; height: 17px; width: 14px; top: 37px; left: 2px;" ng-change="updateSlot('input_2');" />
+	</div>
+	<div id="{{'redPoint' + getInstanceId()}}"></div>
 </div>
 
 <!--=================================================================================================================-->

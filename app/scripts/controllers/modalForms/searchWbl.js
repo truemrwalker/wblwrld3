@@ -605,8 +605,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
 
                 $scope.formItems.pageViewResult = $scope.formItems.searchResult;
 
-				$log.log($scope.formItems.searchResult);
-
                 if($scope.formItems.pageViewResult.length > 0){
                     $scope.selectWbl(0);
                 }

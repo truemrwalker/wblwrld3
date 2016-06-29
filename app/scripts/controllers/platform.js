@@ -2348,6 +2348,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				$log.log('it seems we have been managing event handlers for more than ' + (20 * unqueueingStartTimeCounter) + ' seconds now, so maybe something has locked itself in a loop and cannot stop. Maybe you should consider reloading the page...')
 				unqueueingStartTimeCounter++;
 				unqueueingStartTime = (new Date()).getTime();
+				if(unqueueingStartTimeCounter >= 3){
+					queueOfHandlersToBeTriggered = [];
+					$log.log("We killed the Event Listener loop becuse something went wrong... a webble has some bug and fire to many events");
+				}
 			}
 
 			var theCallbackObject = queueOfHandlersToBeTriggered.shift();
