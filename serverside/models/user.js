@@ -271,7 +271,7 @@ module.exports = function(app, config, mongoose, gettext) {
 			return crypto.randomBytesAsync(32).then(function (buf) {
 
 				var salt = buf.toString('hex');
-				return crypto.pbkdf2Async(password, salt, 25000, 512).then(function (hashRaw) {
+				return crypto.pbkdf2Async(password, salt, 25000, 512, 'sha1').then(function (hashRaw) { // TODO: use 'sha512'
 
 					self._auth.local.hash = new Buffer(hashRaw, 'binary').toString('hex');
 					self._auth.local.salt = salt;
@@ -285,7 +285,7 @@ module.exports = function(app, config, mongoose, gettext) {
 	UserSchema.methods.checkPasswordAsync = function (password) {
 
 		var self = this;
-		return crypto.pbkdf2Async(password, self._auth.local.salt, 25000, 512).then(function (hashRaw) {
+		return crypto.pbkdf2Async(password, self._auth.local.salt, 25000, 512, 'sha1').then(function (hashRaw) { // TODO: use 'sha512'
 			
 			var hash = new Buffer(hashRaw, 'binary').toString('hex');            
 			return (hash === self._auth.local.hash) ? self : null;

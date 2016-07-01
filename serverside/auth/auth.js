@@ -25,7 +25,10 @@
 //
 var Promise = require("bluebird");
 
+var path = require('path');
 var passport = require('passport');
+
+var xfs = require('../lib/xfs');
 var util = require('../lib/util');
 
 module.exports = function(app, config, mongoose, gettext) {
@@ -141,14 +144,14 @@ module.exports = function(app, config, mongoose, gettext) {
 		});
 	}
 
-	// Explicitly specify and initialize supported authentication methods
-	//
-	require('./providers/local')(app, config, gettext, passport, User, doneLocal);
-	require('./providers/twitter')(app, config, gettext, passport, User, doneExternal);
-	require('./providers/facebook')(app, config, gettext, passport, User, doneExternal);
-	require('./providers/google')(app, config, gettext, passport, User, doneExternal);
-	require('./providers/evernote')(app, config, gettext, passport, User, doneExternal);
-	require('./providers/github')(app, config, gettext, passport, User, doneExternal);
+	// Try to initialize all the supported authentication methods
+    //
+    var providersPath = path.join(__dirname, "providers");
+    xfs.getAllFilesSync(providersPath, ".js", 1).forEach(function (f) {
+
+        require(path.join(providersPath, f))(app, config, gettext, passport, User, 
+            (f == "local.js" ? doneLocal : doneExternal));
+    });
 
 	////////////////////////////////////////////////////////////////////
 	// User-specific functions

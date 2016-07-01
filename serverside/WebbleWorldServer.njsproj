@@ -19,7 +19,6 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="secretsdb.json" />
-    <Compile Include="auth\providers\evernote.js" />
     <Compile Include="auth\providers\github.js" />
     <Compile Include="config.js" />
     <Compile Include="control\machine.js" />

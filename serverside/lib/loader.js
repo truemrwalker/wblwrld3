@@ -33,22 +33,23 @@ var xfs = require('./xfs');
 //
 function filterAndhandleInorderScripts(allScripts, specificLoadOrderList, handlerCallback, initialValue) {
 	
-	if (specificLoadOrderList && specificLoadOrderList.length > 1) {
+	if (specificLoadOrderList && specificLoadOrderList.length > 0) {
 		
 		return specificLoadOrderList.reduce(function (previousValue, script) {
 			
 			var index = allScripts.indexOf(script);
 			
 			if (index != -1) {
-				
+                
 				allScripts.splice(index, 1);
 				return handlerCallback(previousValue, script);
 			}
 			return previousValue;
 
 		}, initialValue);
-	}
-	return initialValue;
+    }
+    else
+	    return initialValue;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -58,17 +59,17 @@ module.exports.executeAllScripts = function (scriptDir, app, config, mongoose, g
 	
 	if (!path.isAbsolute(scriptDir))
 		scriptDir = path.join(__dirname, "..", scriptDir);
+    
+    function handleScript(result, script) {
 
+        return result.then(function () {
+            return require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1);
+        });
+    }
 	return xfs.getAllFiles(scriptDir, ".js", 1).then(function (allScripts) {
 		
-		return filterAndhandleInorderScripts(allScripts, specificLoadOrderList, function (prevPromise, script) {
-			return prevPromise.then(function () {
-				return require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1);
-			});
-		}, Promise.resolve()).then(function () {
-			return Promise.all(allScripts.map(function (script) {
-				return require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1);
-			}));
+		return filterAndhandleInorderScripts(allScripts, specificLoadOrderList, handleScript, Promise.resolve()).then(function () {
+			return allScripts.reduce(handleScript, Promise.resolve());
 		});
 	});
 };
@@ -79,15 +80,13 @@ module.exports.executeAllScriptsSync = function (scriptDir, app, config, mongoos
 	
 	if (!path.isAbsolute(scriptDir))
 		scriptDir = path.join(__dirname, "..", scriptDir);
+    
+    function handleScript(result, script) {
 
+        result.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
+        return result;
+    }
 	var allScripts = xfs.getAllFilesSync(scriptDir, ".js", 1);
-	var results = [];
-
-	filterAndhandleInorderScripts(allScripts, specificLoadOrderList, function (result, script) {
-		results.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
-	});
-	allScripts.forEach(function (script) {
-		results.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
-	});
-	return results;
+    var results = filterAndhandleInorderScripts(allScripts, specificLoadOrderList, handleScript, []);
+    return allScripts.reduce(handleScript, results);
 };

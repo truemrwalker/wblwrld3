@@ -46,7 +46,6 @@ var Promise = require("bluebird");
 
 var express = require('express');
 var http = require('http');
-var path = require('path');
 
 var util = require('./lib/util');
 var dbutil = require('./lib/dbutil');
@@ -71,7 +70,7 @@ Promise.all([
 		var bodyParser = require('body-parser');
 		var session = require('express-session');
 		var MongoStore = require('connect-mongo')(session);
-		
+
 		// 1. First part of middleware initialization
 		//
 		app.use(bodyParser.json({ limit: '10mb' }));
@@ -95,29 +94,27 @@ Promise.all([
 		}));
 		
 		// 2. Configure database models and set up routes
-		//
-		return loader.executeAllScripts('models', app, config, mongoose, gettext).then(function () {
-			
-			// Setup the authentication token
-			var auth = require('./auth/auth')(app, config, mongoose, gettext);
-			
-			// Load all modules that define the web server's routes
-			return Promise.all([
-				loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth),
-				loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth),
-			]);
+        //
+        loader.executeAllScriptsSync('models', app, config, mongoose, gettext);
 
-		// 3. Second part of middleware initialization (after having had set up routes)
-		//
-		}).then(function () {
+		// Setup the authentication token
+		var auth = require('./auth/auth')(app, config, mongoose, gettext);
 			
-			if (!config.SERVER_BEHIND_REVERSE_PROXY) {
-				
-				// If we're not behind a proxy we also want to serve static stuff
-				var serveStatic = require('serve-static');
-				app.use(serveStatic(config.APP_ROOT_DIR));
-			}
-		});
+		// Load all modules that define the web server's routes
+        return Promise.all([
+            loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth),
+            loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth),
+        ]).then(function () {
+            
+            // 3. Second part of middleware initialization (after having had set up routes)
+            //			
+            if (!config.SERVER_BEHIND_REVERSE_PROXY) {
+                
+                // If we're not behind a proxy we also want to serve static stuff
+                var serveStatic = require('serve-static');
+                app.use(serveStatic(config.APP_ROOT_DIR));
+            }
+        });
 	}),
 
 ]).then(function () {
