@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum, gettext, localStorageService) {
+wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum, gettext, isEmpty, localStorageService) {
 
     //=== PROPERTIES ====================================================================
     $scope.canvasSize = {
@@ -38,6 +38,12 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
             }
         ]
     };
+
+	var emptyChart = {
+		labels : [],
+		datasets : [
+		]
+	};
 
     var exampleDataPieLike = {
         "dataset":[
@@ -165,7 +171,12 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
     // Draws the chart as specified
     //========================================================================================
     var drawChart = function(chartData, chartType){
-        if(ctx){
+		if(isEmpty(chartData)){
+			chartData = emptyChart;
+			$log.log("Empty Data");
+		}
+
+		if(ctx){
             if(!chartData.datasets && !chartData.dataset){
                 chartData = JSON.parse(chartData);
             }

@@ -41,7 +41,9 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
 
     // Form content needed for proper processing
     $scope.formItems = {
-        selectedLocalFile: undefined
+        selectedLocalFile: undefined,
+		selectedLocalFileName: '',
+		noFileChosenTxt: gettext("No file chosen")
     };
 
     // Information tooltip texts
@@ -50,7 +52,7 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
     };
 
     // Form validation error message
-    $scope.errorMsg = 'This Feature is not yet fully implemented, but as soon as it is you will find it here.';
+    $scope.errorMsg = gettext("This Feature is not yet fully implemented, but as soon as it is you will find it here.");
 
 
     //=== EVENT HANDLERS =====================================================================
@@ -67,7 +69,7 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
             var fileExt = input.files[0].name.substr(input.files[0].name.lastIndexOf('.')).toLowerCase();
 
             if(fileExt == '.war'){
-
+				$scope.formItems.selectedLocalFileName = input.files[0].name;
 				//Possible file reading and validity confirmation
 				var reader = new FileReader();
 				reader.onload = function (e) {
@@ -80,6 +82,7 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
                 $scope.formItems.selectedLocalFile = undefined;
                 $('#localFileFormContainer')[0].reset();
                 $scope.errorMsg = gettext("Webble-packages for import are saved as *.war files, and that was not a *.war file and will therefore not import any Webble obviously");
+				$scope.formItems.selectedLocalFileName = $scope.formItems.noFileChosenTxt;
                 if(!$scope.$$phase){ $scope.$apply(); }
             }
         }
@@ -135,5 +138,6 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
+	$scope.formItems.selectedLocalFileName = $scope.formItems.noFileChosenTxt;
 });
 //======================================================================================================================

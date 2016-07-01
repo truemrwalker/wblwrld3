@@ -44,7 +44,9 @@ ww3Controllers.controller('platformLangPickSheetCtrl', function ($scope, $modalI
 
     // Information tooltip texts
     $scope.infoTooltips = {
-        langPick: gettext("Avialable languages for Webble World") + " " + wwDef.WWVERSION +". " + gettext("Currently selected is the language you picked or your prefered language in your user profile or the language of your browser, or English."),
+        langPick1: gettext("Avialable languages for Webble World"),
+		langPick2: " " + wwDef.WWVERSION +". ",
+		langPick3: gettext("Currently selected is the language you picked or your prefered language in your user profile or the language of your browser, or English."),
         engSubmit: 'Submit',
         engCancel: 'Cancel'
     };

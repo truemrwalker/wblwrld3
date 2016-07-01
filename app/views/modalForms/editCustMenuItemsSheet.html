@@ -73,7 +73,7 @@
 			<div class="col-xs-12">
 				<img ng-src="{{formItems.defMenuItemsOpenBtnImg}}" style="width: 20px;" ng-click="toggleDefMenuOpen()">
 				<span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Default Menu Items</span>
-				<div tooltip-placement="left" tooltip="{{tooltip.dmi}}" style="float: right; margin-right: 10px;"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em; text-align: right;">?</span></div>
+				<div tooltip-placement="left" tooltip="{{tooltip.dmi | translate}}" style="float: right; margin-right: 10px;"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em; text-align: right;">?</span></div>
 				<hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0; clear: right;">
 			</div>
 		</div>
@@ -102,7 +102,7 @@
 			<div class="col-xs-12">
 				<img ng-src="{{formItems.defMenuItemsOpenBtnImg}}" style="width: 20px;" ng-click="toggleCustMenuOpen()">
 				<span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" translate>Custom Menu Item</span>
-				<div tooltip-placement="left" tooltip="{{tooltip.cmi}}" style="float: right; margin-right: 10px;"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em; text-align: right;">?</span></div>
+				<div tooltip-placement="left" tooltip="{{tooltip.cmi | translate}}" style="float: right; margin-right: 10px;"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em; text-align: right;">?</span></div>
 				<hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
 			</div>
 		</div>
@@ -115,13 +115,13 @@
 				<input class="formitem" type="text" ng-model="dmi.name">
 			</div>
 			<div class="col-xs-4">
-				<select class="formitem" ng-model="dmi.action" ng-options="ca for ca in formItems.customActions" ng-change="enableActionPack($index)"></select>
+				<select class="formitem" ng-model="dmi.action" ng-options="ca | translate for ca  in formItems.customActions" ng-change="enableActionPack($index)"></select>
 				<div ng-show="dmi.action != 'None'">
 					<div style="margin-top: -15px;" ng-repeat="ap in formItems.custMenuItems[$index].actionPack" >
 						</br><select class="formitem" ng-model="ap.slot" ng-options="slot.id as slot.name for slot in formItems.thisWblSlots"></select>
 						<br ng-if="ap.slot != ''"><textarea id="formulaBox_{{$parent.$index}}_{{$index}}" ng-show="ap.slot != ''" class="formitem" ng-model="ap.formula" rows="2" style="width: 100%;"></textarea>
 						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="slotpick.id as slotpick.name for slotpick in formItems.thisWblSlots" ng-model="ap.selectedSlotForBox" ng-change="placeSlotInBox($parent.$index, $index)"></select>
-						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="sa for sa in formItems.multiActions" ng-model="ap.selectedMultiAction" ng-change="maybeWantMoreAction($parent.$index, $index)"></select>
+						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="sa | translate for sa in formItems.multiActions" ng-model="ap.selectedMultiAction" ng-change="maybeWantMoreAction($parent.$index, $index)"></select>
 					</div>
 				</div>
 			</div>

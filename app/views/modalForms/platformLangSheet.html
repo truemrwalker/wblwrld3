@@ -45,13 +45,67 @@
         <div class="col-xs-8"><h4 class="formTitle" translate>Platform Language</h4></div>
     </div>
 
-    <div class="keepTheDistanceBelow dividerLineAbove">
+    <div class="keepTheDistanceBelow dividerLineAbove dividerLineBelow">
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Current Language:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="formItems.selectedLanguage" ng-options="lang.key as lang.val for lang in formItems.langOptions"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.langPick | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.langPick1 | translate}}{{infoTooltips.langPick2 | translate}}{{infoTooltips.langPick3 | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
+
+	<div class="dividerLineAbove" style="margin-top: 30px;">
+		<div class="row">
+			<div class="col-xs-12"><span class="formTitle" translate>Help Us Translate</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal;" translate>If your language is not available or incomplete or inaccurate, please download the Webble World language files and help us translate the platform.</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal;" translate>We use PoEdit for translations and if you want to join us in that work we recommend that you download the freeware version of PoEdit and use that when translating Webble World texts. PoEdit can be downloaded from <a style="font-weight: bold;" href="https://poedit.net/download" target="_blank">here</a>.</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal;" translate>The current texts and language files are all conveniently zipped into a downloadable package that you can get from <a style="font-weight: bold;" href="https://localhost:7443/data/TranslationPack.zip">here</a>.</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal;" translate>When you are finished with a translation of a specific language, please <a style="font-weight: bold;" href="mailto:mkuwahara@meme.hokudai.ac.jp?subject=Translation Support Provided">e-mail</a> the language file ([language id].po) to us and we will integrate it into the Webble World platform as soon as the translation as been validated.</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal;" translate>The creator of every accepted translation will get his/her name added to the platform credits list in the 'About' section.</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal;" translate>Thank you for your help!</span></div>
+		</div>
+	</div>
+
+	<div>
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: bold;">/Micke Kuwahara</span></div>
+		</div>
+	</div>
+
+	<div class="keepTheDistanceBelow">
+		<div class="row">
+			<div class="col-xs-12"><span class="formitem" style="font-weight: normal; font-style: italic;" translate>[Lead System Engineer at Webble World 3 Development Team]</span></div>
+		</div>
+	</div>
 
     <div class="dividerLineAbove">
         <div class="row">

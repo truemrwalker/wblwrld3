@@ -83,7 +83,7 @@ wblwrld3App.controller('bundleContainerCtrl', function($scope, $log, Slot, gette
         // make the bundleContentString into a reference object
         for(var i = 0, bcs; bcs = bundleContentStr[i]; i++){
             var theWbl = $scope.getWebbleByInstanceId(bcs.wbl);
-            theWbl.scope().setIsBundled(true);
+            theWbl.scope().setIsBundled(theWbl.scope().getIsBundled() + 1);
             var slots = [];
             for(var n = 0, s; s = bcs.slots[n]; n++){
                 var reducedSlotName = s.lastIndexOf('_') != -1 ? s.substr(0, s.lastIndexOf('_')) : s;

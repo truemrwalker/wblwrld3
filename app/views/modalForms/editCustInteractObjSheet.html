@@ -114,18 +114,18 @@
 				<input class="formitem" type="text" ng-model="io.tooltip" ng-disabled="io.action == 'Default'">
 			</div>
 			<div class="col-xs-2">
-				<select class="formitem" ng-model="io.action" ng-options="ca for ca in formItems.customActions" ng-change="enableActionPack($index)" ng-disabled="io.action == 'Default'" ng-style="{'background-color': (io.action == 'Default' ? '#e8e8e8' : '#ffffff')}"></select>
+				<select class="formitem" ng-model="io.action" ng-options="ca | translate for ca in formItems.customActions" ng-change="enableActionPack($index)" ng-disabled="io.action == 'Default'" ng-style="{'background-color': (io.action == 'Default' ? '#e8e8e8' : '#ffffff')}"></select>
 				<div ng-show="(io.action == 'Change Slot')">
 					<div style="margin-top: -15px;" ng-repeat="ap in formItems.interactObjs[$index].actionPack" >
 						</br><select class="formitem" ng-model="ap.slot" ng-options="slot.id as slot.name for slot in formItems.thisWblSlots"></select>
 						<br ng-if="ap.slot != ''"><textarea id="formulaBox_{{$parent.$index}}_{{$index}}" ng-show="ap.slot != ''" class="formitem" ng-model="ap.formula" rows="2" style="width: 100%;"></textarea>
 						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="slotpick.id as slotpick.name for slotpick in formItems.thisWblSlotsPlus" ng-model="ap.selectedSlotForBox" ng-change="placeSlotInBox($parent.$index, $index)"></select>
-						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="sa for sa in formItems.multiActions" ng-model="ap.selectedMultiAction" ng-change="maybeWantMoreAction($parent.$index, $index)"></select>
+						<br ng-if="ap.slot != ''"><select ng-show="ap.slot != ''" class="formitem" ng-options="sa | translate for sa in formItems.multiActions" ng-model="ap.selectedMultiAction" ng-change="maybeWantMoreAction($parent.$index, $index)"></select>
 					</div>
 				</div>
 			</div>
 			<div class="col-xs-2">
-				<select class="formitem" ng-model="io.mouseEvType" ng-options="met for met in formItems.mouseEventTypes" ng-change="checkIfOptionIsAllowed($index)" ng-disabled="io.action == 'Default'" ng-style="{'background-color': (io.action == 'Default' ? '#e8e8e8' : '#ffffff')}"></select>
+				<select class="formitem" ng-model="io.mouseEvType" ng-options="met | translate for met in formItems.mouseEventTypes" ng-change="checkIfOptionIsAllowed($index)" ng-disabled="io.action == 'Default'" ng-style="{'background-color': (io.action == 'Default' ? '#e8e8e8' : '#ffffff')}"></select>
 			</div>
 			<div class="col-xs-1" style="text-align: center;">
 				<input class="formitem" style="width: 18px; height: 18px;" type="checkbox" ng-model="io.enabled" ng-disabled="io.name == 'AssignParent'">

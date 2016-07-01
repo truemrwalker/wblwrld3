@@ -44,9 +44,9 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 	$scope.formItems = {
 		defMenuItems: [],
 		custMenuItems: [],
-		customActions: ['None', 'Change Slot'],
+		customActions: [gettext("None"), gettext("Change Slot")],
 		thisWblSlots: [],
-		multiActions: ['Done', 'And'],
+		multiActions: [gettext("Done"), gettext("And")],
 		defMenuItemsOpen: 'none',
 		defMenuItemsOpenBtnImg: 'images/icons/pullDownArrow.png',
 		custMenuItemsOpen: 'block',

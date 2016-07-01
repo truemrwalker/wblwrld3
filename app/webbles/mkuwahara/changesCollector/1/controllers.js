@@ -89,12 +89,27 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 					$scope.set('specialSymbols', "");
 				}
 			}
+			else if(eventData.slotName == 'mainMenuEnabled'){
+				var isMainMenuEnabled = ((parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10));
+				if(isMainMenuEnabled != eventData.slotValue){
+					$timeout(function(){$scope.executeMenuSelection('altf2');});
+				}
+			}
 		});
 
 		$scope.addSlot(new Slot('mouseEventsEnabled',
 			true,
 			'Mouse & Keyboard Events Enabled',
 			'Turns on or off the event listeners for mouse and keyboard events such as mouse move, mouse button down, key down etc.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
+		$scope.addSlot(new Slot('mainMenuEnabled',
+			((parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)),
+			'Main Menu Enabled',
+			'Turns on or off (and shows current status of) the visibility for the top most main menu of Webble World.',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -358,6 +373,13 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 			undefined
 		));
 		$scope.getSlot("geoLocationLong").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+
+		$scope.$watch(function(){
+			return (parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10); }, function(newValue, oldValue) {
+				if(newValue != $scope.gimme("mainMenuEnabled")){
+					$scope.set("mainMenuEnabled", newValue);
+				}
+		});
 
 		$(window).bind("resize", onResize);
 		$timeout(function(){

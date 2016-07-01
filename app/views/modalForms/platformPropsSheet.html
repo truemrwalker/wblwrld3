@@ -48,8 +48,8 @@
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Platform Execution Mode:</span></div>
-            <div class="col-xs-5"><select class="formitem" ng-model="formItems.currentExecutionMode" ng-options="mode.key as mode.val for mode in execModeOptions"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.currentExecutionMode}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-5"><select class="formitem" ng-model="formItems.currentExecutionMode" ng-options="mode.key as mode.val | translate for mode in execModeOptions"></select></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.currentExecutionMode | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
         </div>
     </div>
@@ -61,7 +61,7 @@
                 <input type="color" ng-model="formItems.platformBkgColor" style="width: 30px; height: 24px; float:left;" />
                 <input class="formitem" type="text" ng-model="formItems.platformBkgColor" style="width: 100px; min-width: 80px; float:left;" />
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.platformBkgColor}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.platformBkgColor | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
         </div>
     </div>
@@ -78,7 +78,7 @@
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Auto Behavior Enabled:</span></div>
             <div class="col-xs-5"><input class="formitem" type="checkbox" ng-model="formItems.autoBehaviorEnabled" style="padding-right: 20px;" /></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.autoBehaviorEnabled}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.autoBehaviorEnabled | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
         </div>
     </div>
@@ -87,7 +87,7 @@
 		<div class="row">
 			<div class="col-xs-4"><span class="formTitle" translate>Logging Enabled:</span></div>
 			<div class="col-xs-5"><input class="formitem" type="checkbox" ng-model="formItems.loggingEnabled" style="padding-right: 20px;" /></div>
-			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.loggingEnabled}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.loggingEnabled | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
 		</div>
 	</div>
@@ -96,7 +96,7 @@
 		<div class="row">
 			<div class="col-xs-4"><span class="formTitle" translate>Slim Clutter-free Webble Browser Enabled:</span></div>
 			<div class="col-xs-5"><input class="formitem" type="checkbox" ng-model="formItems.slimWblBrowserEnabled" style="padding-right: 20px;" /></div>
-			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.slimWblBrowserEnabled}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.slimWblBrowserEnabled | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
 		</div>
 	</div>
@@ -104,8 +104,8 @@
 	<div class="keepTheDistanceBelow">
 		<div class="row">
 			<div class="col-xs-4"><span class="formTitle" translate>New Template Revision Behavior:</span></div>
-			<div class="col-xs-5"><select class="formitem" ng-model="formItems.templateRevisionBehavior" ng-options="behavior.key as behavior.val for behavior in templateRevisionBehaviorOptions"></select></div>
-			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.templateRevisionBehavior}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-5"><select class="formitem" ng-model="formItems.templateRevisionBehavior" ng-options="behavior.key as behavior.val | translate for behavior in templateRevisionBehaviorOptions"></select></div>
+			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.templateRevisionBehavior | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
 		</div>
 	</div>
@@ -113,8 +113,8 @@
 	<div class="keepTheDistanceBelow">
 		<div class="row">
 			<div class="col-xs-4"><span class="formTitle" translate>Untrusted Webbles Behavior:</span></div>
-			<div class="col-xs-5"><select class="formitem" ng-model="formItems.untrustedWblsBehavior" ng-options="uwbehavior.key as uwbehavior.val for uwbehavior in untrustedWblsBehaviorOptions"></select></div>
-			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.untrustedWblsBehavior}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-5"><select class="formitem" ng-model="formItems.untrustedWblsBehavior" ng-options="uwbehavior.key as uwbehavior.val | translate for uwbehavior in untrustedWblsBehaviorOptions"></select></div>
+			<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.untrustedWblsBehavior | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			<div class="col-xs-2"></div>
 		</div>
 	</div>

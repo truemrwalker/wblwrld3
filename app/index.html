@@ -281,21 +281,28 @@
 					</li>
 				</ul>
 
-				<!--Right side quick icon to go to platform settings-->
-				<ul class="nav navbar-nav navbar-right disable-select">
-					<li><a href="" ng-click="executeMenuSelection('platformprops', null);" tooltip-placement="bottom" tooltip="{{menuItems[2].sublinks[10].title}}"><img src="images/icons/gearicon_sm.png" style="margin-left: -15px; margin-right: -13px; width: 23px;"/></a></li>
-				</ul>
 
-				<!--Right side info of current language and weather logging is enabled-->
+				<!--Right side bar-->
 				<ul class="nav navbar-nav navbar-right disable-select">
-					<li><a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}"><span ng-hide="flagImageFound">{{getCurrentLanguage() | nativeName}}</span><img ng-show="flagImageFound" onError="angular.element(this).scope().imgError();" ng-src="images/icons/langFlags/{{getCurrentLanguage()}}.png" style="margin-bottom: -10px; margin-top: -10px; width: 30px;"/></a></li>
+					<!--Right side info of current language and weather logging is enabled-->
+					<li>
+						<a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" tooltip="{{langChangeTooltipTxt}}">
+							<span ng-hide="flagImageFound">{{getCurrentLanguage() | nativeName}}</span>
+							<img ng-show="flagImageFound" onError="angular.element(this).scope().imgError();" ng-src="images/icons/langFlags/{{getCurrentLanguage()}}.png" style="width: 25px; height: 25px;"/>
+						</a>
+					</li>
+					<!--Right side quick icon to go to platform settings-->
+					<li>
+						<a href="" ng-click="executeMenuSelection('platformprops', null);" tooltip-placement="left" tooltip="{{menuItems[2].sublinks[10].title | translate}}">
+							<img src="images/icons/gearicon_sm.png" style="margin-left: -15px; margin-right: -13px; width: 20px; height: 20px;"/>
+						</a>
+					</li>
 				</ul>
-
 
 				<!--User login-->
                 <ul class="nav navbar-nav navbar-right disable-select" data-ng-show="!user">
-                    <li><a href="" ng-click="signup()" translate>Sign Up</a></li>
-                    <li><a href="" ng-click="login()" translate>Login</a></li>
+                    <li><a href="" ng-click="signup()">{{userMenuTxts.signUp | translate}}</a></li>
+                    <li><a href="" ng-click="login()">{{userMenuTxts.login | translate}}</a></li>
                 </ul>
 
                 <!--User info-->
@@ -305,12 +312,12 @@
                         <ul class="dropdown-menu">
                             <li ng-show="user.notif.pending.length" ng-repeat="n in user.notif.pending track by $index"><a href="" ng-click="executeMenuSelection('notif')"><p class="text-notif"><span class="fa fa-info-circle"></span> {{n.text}}</p></a></li>
                             <li ng-show="user.notif.pending.length" role="presentation" class="divider"></li>
-                            <li><a href="#/profile" ng-click="executeMenuSelection('profile')"><span translate>Profile Settings</span></a></li>
-                            <li><a href="#/groups" ng-click="executeMenuSelection('groups')"><span translate>Groups</span></a></li>
+                            <li><a href="#/profile" ng-click="executeMenuSelection('profile')"><span>{{userMenuTxts.profileSettings | translate}}</span></a></li>
+                            <li><a href="#/groups" ng-click="executeMenuSelection('groups')"><span>{{userMenuTxts.groups | translate}}</span></a></li>
                             <li role="presentation" class="divider" ng-if="user.role=='adm'"></li>
-                            <li><a href="#/adm" ng-if="user.role=='adm'" ng-click="executeMenuSelection('adm')"><span translate>Admin's Den</span></a></li>
+                            <li><a href="#/adm" ng-if="user.role=='adm'" ng-click="executeMenuSelection('adm')"><span>{{userMenuTxts.adminsDen | translate}}</span></a></li>
                             <li role="presentation" class="divider"></li>
-                            <li><a href="" ng-click="executeMenuSelection('logout');"><span class="fa fa-sign-out"></span> <span translate>Logout</span></a></li>
+                            <li><a href="" ng-click="executeMenuSelection('logout');"><span class="fa fa-sign-out"></span> <span>{{userMenuTxts.logout | translate}}</span></a></li>
                         </ul>
                     </li>
                 </ul>

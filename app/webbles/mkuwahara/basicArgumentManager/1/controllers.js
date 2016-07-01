@@ -48,6 +48,9 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
 			else if(eventData.slotName == 'displayMode'){
 				showIt(eventData.slotValue);
 			}
+			else if(eventData.slotName == 'preserveQuotationMarks'){
+				doCalc();
+			}
 
 			var found = false;
 			for(var i = 0; i < argSlots.length; i++){
@@ -105,6 +108,15 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
 
+		$scope.addSlot(new Slot('preserveQuotationMarks',
+			false,
+			'Preserve Quotation Marks Enabled',
+			'If the is checked any quotation marks (\") in the final string will be Preserved and not be considered only to be a string holder.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
         $scope.setDefaultSlot('result');
 
         $scope.$watch(function(){return $scope.theWblMetadata['displayname'];}, function(newVal, oldVal) {
@@ -136,7 +148,14 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
         }
 
         template = template.replace(/[\$]+/g, '');
-        template = template.replace(/[\"]+/g, '');
+
+		if($scope.gimme("preserveQuotationMarks")){
+			template = template.replace(/[\"]+/g, '\"');
+		}
+		else{
+			template = template.replace(/[\"]+/g, '');
+		}
+
         if(allIsNum && templateStrings.length == 0){
 			try{
 				theRes = eval(template).toString();

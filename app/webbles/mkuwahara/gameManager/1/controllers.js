@@ -73,10 +73,6 @@ wblwrld3App.controller('gameManagerCtrl', function($scope, $log, Slot, Enum) {
 
 		//$scope.theView.parent().draggable('option', 'cancel', '#squareTxt');
         //$scope.theView.parent().find('#squareTxt').bind('contextmenu',function(){ return false; });
-
-		$scope.$watch(function(){return $scope.gimme('msg');}, function(newVal, oldVal) {
-
-        }, true);
     };
     //===================================================================================
 
