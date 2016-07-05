@@ -1,0 +1,33 @@
+---
+image: docker:git
+
+services:
+- docker:dind
+
+stages:
+- build
+- test
+- deploy
+
+variables:
+  DOCKER_REGISTRY: registry.gitlab.com
+  DOCKER_IMAGE: registry.gitlab.com/giannis/hokudai-wws
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY
+
+job_build:
+  stage: build
+  script:
+    - docker build -t $DOCKER_IMAGE .
+    - docker push $DOCKER_IMAGE
+
+job_runtests:
+  stage: test
+  script:
+    - echo "Success"
+
+job_deploy:
+  stage: deploy
+  script:
+    - 'curl -H "Content-Type: application/json" -X POST -d ''{"project":"hokudai-wws"}'' https://wws.meme.hokudai.ac.jp/api/info/committed'

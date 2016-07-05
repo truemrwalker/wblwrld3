@@ -12,3 +12,4 @@ app/bower_components
 obj
 .vs
 *.sdf
+typings/
