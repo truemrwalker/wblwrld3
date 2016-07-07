@@ -2360,7 +2360,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		while(queueOfHandlersToBeTriggered.length > 0){
 			if(unqueueUntriggeredHandlersModal && timeKeeper != undefined && ((new Date()).getTime() - timeKeeper) > 2000){
 				timeKeeper = (new Date()).getTime();
-				$timeout(function(){ unqueueUntriggeredHandlers(timeKeeper); }, 300);
+				$timeout(function(){ unqueueUntriggeredHandlers(timeKeeper); }, 500);
 				return;
 			}
 
@@ -2392,7 +2392,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					timeKeeper = undefined
 					unqueueUntriggeredHandlersModal.dismiss();
 				}
-				$timeout(function(){ unqueueUntriggeredHandlers(timeKeeper); }, 300);
+				$timeout(function(){ unqueueUntriggeredHandlers(timeKeeper); }, 500);
 				return;
 			}
 

@@ -45,6 +45,75 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 	};
 
 	// Default Options
+	var defaultVisualizationOptions = {
+		title: {
+			display: null,
+			position: null,
+			fullWidth: null,
+			fontSize: null,
+			fontFamily: null,
+			fontColor: null,
+			fontStyle: null,
+			padding: null,
+			text: null
+		},
+		legend: {
+			display: null,
+			position: null,
+			fullWidth: null,
+			onClick: null,
+			labels: {
+				boxWidth: null,
+				fontSize: null,
+				fontStyle: null,
+				fontColor: null,
+				fontFamily: null,
+				padding: null
+			}
+		},
+		tooltips: {
+			enabled: null,
+			custom: null,
+			mode: null,
+			backgroundColor: null,
+			titleFontFamily: null,
+			titleFontSize: null,
+			titleFontStyle: null,
+			titleFontColor: null,
+			titleSpacing: null,
+			titleMarginBottom: null,
+			bodyFontFamily: null,
+			bodyFontSize: null,
+			bodyFontStyle: null,
+			bodyFontColor: null,
+			bodySpacing: null,
+			footerFontFamily: null,
+			footerFontSize: null,
+			footerFontStyle: null,
+			footerFontColor: null,
+			footerSpacing: null,
+			footerMarginTop: null,
+			xPadding: null,
+			yPadding: null,
+			caretSize: null,
+			cornerRadius: null,
+			multiKeyBackground: null,
+			callbacks: {
+				beforeTitle: null,
+				title: null,
+				afterTitle: null,
+				beforeBody: null,
+				beforeLabel: null,
+				label: null,
+				afterLabel: null,
+				afterBody: null,
+				beforeFooter: null,
+				footer: null,
+				afterFooter: null
+			}
+		}
+	};
+
 	var defaultScaleOptions = {
 		xAxes: [{
 			type: null, //Options: "category", "linear", "logarithmic", "time", "radialLinear"
@@ -130,74 +199,74 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		events: ["mousemove", "mouseout", "click", "touchstart", "touchmove", "touchend"],
 		onClick: null,
 		legendCallback: function (chart) { },
-		title: {
-			display: false,
-			position: 'top',
-			fullWidth: true,
-			fontSize: 12,
-			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-			fontColor: "#666",
-			fontStyle: 'bold',
-			padding: 10,
-			text: ''
-		},
-		legend: {
-			display: true,
-			position: 'top',
-			fullWidth: true,
-			onClick: function (event, legendItem) {
-			},
-			labels: {
-				boxWidth: 40,
-				fontSize: 12,
-				fontStyle: "normal",
-				fontColor: "#666",
-				fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-				padding: 10,
-				generateLabels: function(chart) { }
-			}
-		},
-		tooltips: {
-			enabled: true,
-			custom: null,
-			mode: 'single',
-			backgroundColor: 'rgba(0,0,0,0.8)',
-			titleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-			titleFontSize: 12,
-			titleFontStyle: "bold",
-			titleFontColor: "#fff",
-			titleSpacing: 2,
-			titleMarginBottom: 6,
-			bodyFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-			bodyFontSize: 12,
-			bodyFontStyle: "normal",
-			bodyFontColor: "#fff",
-			bodySpacing: 2,
-			footerFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-			footerFontSize: 12,
-			footerFontStyle: "bold",
-			footerFontColor: "#fff",
-			footerSpacing: 2,
-			footerMarginTop: 6,
-			xPadding: 6,
-			yPadding: 6,
-			caretSize: 5,
-			cornerRadius: 6,
-			multiKeyBackground: "#fff",
-			callbacks: {
-				beforeTitle: [],
-				title: [],
-				afterTitle: [],
-				beforeBody: [],
-				beforeLabel: "",
-				label: "",
-				afterLabel: "",
-				afterBody: [],
-				beforeFooter: [],
-				footer: [],
-				afterFooter: []
-			}
-		},
+		//title: {
+		//	display: false,
+		//	position: 'top',
+		//	fullWidth: true,
+		//	fontSize: 12,
+		//	fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//	fontColor: "#666",
+		//	fontStyle: 'bold',
+		//	padding: 10,
+		//	text: ''
+		//},
+		//legend: {
+		//	display: true,
+		//	position: 'top',
+		//	fullWidth: true,
+		//	onClick: function (event, legendItem) {
+		//	},
+		//	labels: {
+		//		boxWidth: 40,
+		//		fontSize: 12,
+		//		fontStyle: "normal",
+		//		fontColor: "#666",
+		//		fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//		padding: 10,
+		//		generateLabels: function(chart) { }
+		//	}
+		//},
+		//tooltips: {
+		//	enabled: true,
+		//	custom: null,
+		//	mode: 'single',
+		//	backgroundColor: 'rgba(0,0,0,0.8)',
+		//	titleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//	titleFontSize: 12,
+		//	titleFontStyle: "bold",
+		//	titleFontColor: "#fff",
+		//	titleSpacing: 2,
+		//	titleMarginBottom: 6,
+		//	bodyFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//	bodyFontSize: 12,
+		//	bodyFontStyle: "normal",
+		//	bodyFontColor: "#fff",
+		//	bodySpacing: 2,
+		//	footerFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//	footerFontSize: 12,
+		//	footerFontStyle: "bold",
+		//	footerFontColor: "#fff",
+		//	footerSpacing: 2,
+		//	footerMarginTop: 6,
+		//	xPadding: 6,
+		//	yPadding: 6,
+		//	caretSize: 5,
+		//	cornerRadius: 6,
+		//	multiKeyBackground: "#fff",
+		//	callbacks: {
+		//		beforeTitle: [],
+		//		title: [],
+		//		afterTitle: [],
+		//		beforeBody: [],
+		//		beforeLabel: "",
+		//		label: "",
+		//		afterLabel: "",
+		//		afterBody: [],
+		//		beforeFooter: [],
+		//		footer: [],
+		//		afterFooter: []
+		//	}
+		//},
 		hover: {
 			mode: 'single',
 			animationDuration: 400,
@@ -242,252 +311,116 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 				borderColor: 'rgba(0,0,0,0.1)',
 				borderSkipped: 'bottom'
 			}
-		},
-		Scales: {
-			xAxes: [{
-				type: "", //Options: "category", "linear", "logarithmic", "time", "radialLinear"
-				display: true,
-				position: "left", //Possible values are 'top', 'left', 'bottom' and 'right'.
-				beforeUpdate: undefined,
-				beforeSetDimensions: undefined,
-				afterSetDimensions: undefined,
-				beforeDataLimits: undefined,
-				afterDataLimits: undefined,
-				beforeBuildTicks: undefined,
-				afterBuildTicks: undefined,
-				beforeTickToLabelConversion: undefined,
-				afterTickToLabelConversion: undefined,
-				beforeCalculateTickRotation: undefined,
-				afterCalculateTickRotation: undefined,
-				beforeFit: undefined,
-				afterFit: undefined,
-				afterUpdate: undefined,
-				gridLines: {
-					display: true,
-					color: "rgba(0, 0, 0, 0.1)",
-					lineWidth: 1,
-					drawBorder: true,
-					drawOnChartArea: true,
-					drawTicks: true,
-					tickMarkLength: 10,
-					zeroLineWidth: 1,
-					zeroLineColor: "rgba(0, 0, 0, 0.25)",
-					offsetGridLines: false
-				},
-				scaleLabel: {
-					display: false,
-					labelString: "",
-					fontColor: "#666",
-					fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-					fontSize: 12,
-					fontStyle: "normal"
-				},
-				ticks: {
-					autoSkip: true,
-					callback: function(value) { return '' + value; },
-					display: true,
-					fontColor: "#666",
-					fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-					fontSize: 12,
-					fontStyle: "normal",
-					labelOffset: 0,
-					maxRotation: 90,
-					minRotation: 0,
-					mirror: false,
-					padding: 10,
-					reverse: false,
-					beginAtZero: true,
-					min: 0,
-					max: 100,
-					maxTicksLimit: 11,
-					stepSize: 1,
-					suggestedMax: 100,
-					suggestedMin: 0,
-					// Below only available with Radar and Polar
-					backdropColor: 'rgba(255, 255, 255, 0.75)',
-					backdropPaddingX: 2,
-					backdropPaddingY: 2,
-					showLabelBackdrop: true
-				},
-				time: { // X-Axis Only
-					displayFormats: {
-						millisecond: 'SSS [ms]',
-						second: 'h:mm:ss a',
-						minute: 'h:mm:ss a',
-						hour: 'MMM D, hA',
-						day: 'll',
-						week: 'll',
-						month: 'MMM YYYY',
-						quarter: '[Q]Q - YYYY',
-						year: 'YYYY'
-					},
-					isoWeekday: false,
-					max: (new Date()).getTime(),
-					min: (new Date()).getTime(),
-					parser: "", // Can also be function
-					round: "",
-					tooltipFormat: '',
-					unit: "", // options: "millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year"
-					unitStepSize: 1
-				},
-				// Radar And Polar Only
-				lineArc: false,
-				angleLines: {
-					display: true,
-					color: 'rgba(0, 0, 0, 0.1)',
-					lineWidth: 1
-				},
-				pointLabels: {  // only apply if lineArc is false.
-					callback: undefined,
-					fontColor: '#666',
-					fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-					fontSize: 10,
-					fontStyle: 'normal'
-				}
-			}],
-			yAxes: [{
-
-			}]
-		}
+		}//,
+		//Scales: {
+		//	xAxes: [{
+		//		type: "", //Options: "category", "linear", "logarithmic", "time", "radialLinear"
+		//		display: true,
+		//		position: "left", //Possible values are 'top', 'left', 'bottom' and 'right'.
+		//		beforeUpdate: undefined,
+		//		beforeSetDimensions: undefined,
+		//		afterSetDimensions: undefined,
+		//		beforeDataLimits: undefined,
+		//		afterDataLimits: undefined,
+		//		beforeBuildTicks: undefined,
+		//		afterBuildTicks: undefined,
+		//		beforeTickToLabelConversion: undefined,
+		//		afterTickToLabelConversion: undefined,
+		//		beforeCalculateTickRotation: undefined,
+		//		afterCalculateTickRotation: undefined,
+		//		beforeFit: undefined,
+		//		afterFit: undefined,
+		//		afterUpdate: undefined,
+		//		gridLines: {
+		//			display: true,
+		//			color: "rgba(0, 0, 0, 0.1)",
+		//			lineWidth: 1,
+		//			drawBorder: true,
+		//			drawOnChartArea: true,
+		//			drawTicks: true,
+		//			tickMarkLength: 10,
+		//			zeroLineWidth: 1,
+		//			zeroLineColor: "rgba(0, 0, 0, 0.25)",
+		//			offsetGridLines: false
+		//		},
+		//		scaleLabel: {
+		//			display: false,
+		//			labelString: "",
+		//			fontColor: "#666",
+		//			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//			fontSize: 12,
+		//			fontStyle: "normal"
+		//		},
+		//		ticks: {
+		//			autoSkip: true,
+		//			callback: function(value) { return '' + value; },
+		//			display: true,
+		//			fontColor: "#666",
+		//			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//			fontSize: 12,
+		//			fontStyle: "normal",
+		//			labelOffset: 0,
+		//			maxRotation: 90,
+		//			minRotation: 0,
+		//			mirror: false,
+		//			padding: 10,
+		//			reverse: false,
+		//			beginAtZero: true,
+		//			min: 0,
+		//			max: 100,
+		//			maxTicksLimit: 11,
+		//			stepSize: 1,
+		//			suggestedMax: 100,
+		//			suggestedMin: 0,
+		//			// Below only available with Radar and Polar
+		//			backdropColor: 'rgba(255, 255, 255, 0.75)',
+		//			backdropPaddingX: 2,
+		//			backdropPaddingY: 2,
+		//			showLabelBackdrop: true
+		//		},
+		//		time: { // X-Axis Only
+		//			displayFormats: {
+		//				millisecond: 'SSS [ms]',
+		//				second: 'h:mm:ss a',
+		//				minute: 'h:mm:ss a',
+		//				hour: 'MMM D, hA',
+		//				day: 'll',
+		//				week: 'll',
+		//				month: 'MMM YYYY',
+		//				quarter: '[Q]Q - YYYY',
+		//				year: 'YYYY'
+		//			},
+		//			isoWeekday: false,
+		//			max: (new Date()).getTime(),
+		//			min: (new Date()).getTime(),
+		//			parser: "", // Can also be function
+		//			round: "",
+		//			tooltipFormat: '',
+		//			unit: "", // options: "millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year"
+		//			unitStepSize: 1
+		//		},
+		//		// Radar And Polar Only
+		//		lineArc: false,
+		//		angleLines: {
+		//			display: true,
+		//			color: 'rgba(0, 0, 0, 0.1)',
+		//			lineWidth: 1
+		//		},
+		//		pointLabels: {  // only apply if lineArc is false.
+		//			callback: undefined,
+		//			fontColor: '#666',
+		//			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+		//			fontSize: 10,
+		//			fontStyle: 'normal'
+		//		}
+		//	}],
+		//	yAxes: [{
+        //
+		//	}]
+		//}
 	};
 
-
-
-
-
-
-    // GLOBAL CHART OPTIONS
-
-	//Chart.defaults.global.defaultColor = 'rgb(0, 0, 0, 0.1)';
-	//Chart.defaults.global.defaultFontColor = '#666';
-	//Chart.defaults.global.defaultFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-	//Chart.defaults.global.defaultFontSize = 12;
-	//Chart.defaults.global.defaultFontStyle = 'normal';
-	//Chart.defaults.global.responsive = true;
-	//Chart.defaults.global.responsiveAnimationDuration = 0;
-	//Chart.defaults.global.maintainAspectRatio = true;
-	//Chart.defaults.global.events = ["mousemove", "mouseout", "click", "touchstart", "touchmove", "touchend"];
-	//Chart.defaults.global.onClick = null;
-	//Chart.defaults.global.legendCallback = function (chart) { };
-	//Chart.defaults.global.title.display = false;
-	//Chart.defaults.global.title.position = 'top';
-	//Chart.defaults.global.title.fullWidth = true;
-	//Chart.defaults.global.title.fontSize = 12;
-	//Chart.defaults.global.title.fontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-	//Chart.defaults.global.title.fontColor = "#666";
-	//Chart.defaults.global.title.fontStyle = 'bold';
-	//Chart.defaults.global.title.padding = 10;
-	//Chart.defaults.global.title.text = '';
-	//Chart.defaults.global.legend.display = true;
-	//Chart.defaults.global.legend.position = 'top';
-	//Chart.defaults.global.legend.fullWidth = true;
-	//Chart.defaults.global.legend.onClick = function(event, legendItem) {};
-	//Chart.defaults.global.legend.labels = {};
-	//Chart.defaults.global.legend.labels.boxWidth = 40;
-	//Chart.defaults.global.legend.labels.fontSize = 12;
-	//Chart.defaults.global.legend.labels.fontStyle = "normal";
-	//Chart.defaults.global.legend.labels.fontColor = "#666";
-	//Chart.defaults.global.legend.labels.fontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-	//Chart.defaults.global.legend.labels.padding = 10;
-	//Chart.defaults.global.legend.labels.generateLabels = function(chart) { };
-	//Chart.defaults.global.tooltips.enabled = true;
-	//Chart.defaults.global.tooltips.custom = null;
-	//Chart.defaults.global.tooltips.mode = 'single';
-	//Chart.defaults.global.tooltips.backgroundColor = 'rgba(0,0,0,0.8)';
-	//Chart.defaults.global.tooltips.titleFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-	//Chart.defaults.global.tooltips.titleFontSize = 12;
-	//Chart.defaults.global.tooltips.titleFontStyle = "bold";
-	//Chart.defaults.global.tooltips.titleFontColor = "#fff";
-	//Chart.defaults.global.tooltips.titleSpacing = 2;
-	//Chart.defaults.global.tooltips.titleMarginBottom = 6;
-	//Chart.defaults.global.tooltips.bodyFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-	//Chart.defaults.global.tooltips.bodyFontSize = 12;
-	//Chart.defaults.global.tooltips.bodyFontStyle = "normal";
-	//Chart.defaults.global.tooltips.bodyFontColor = "#fff";
-	//Chart.defaults.global.tooltips.bodySpacing = 2;
-	//Chart.defaults.global.tooltips.footerFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-	//Chart.defaults.global.tooltips.footerFontSize = 12;
-	//Chart.defaults.global.tooltips.footerFontStyle = "bold";
-	//Chart.defaults.global.tooltips.footerFontColor = "#fff";
-	//Chart.defaults.global.tooltips.footerSpacing = 2;
-	//Chart.defaults.global.tooltips.footerMarginTop = 6;
-	//Chart.defaults.global.tooltips.xPadding = 6;
-	//Chart.defaults.global.tooltips.yPadding = 6;
-	//Chart.defaults.global.tooltips.caretSize = 5;
-	//Chart.defaults.global.tooltips.cornerRadius = 6;
-	//Chart.defaults.global.tooltips.multiKeyBackground = "#fff";
-	//Chart.defaults.global.tooltips.callbacks = {};
-	//Chart.defaults.global.tooltips.callbacks.beforeTitle = [];
-	//Chart.defaults.global.tooltips.callbacks.title = [];
-	//Chart.defaults.global.tooltips.callbacks.afterTitle = [];
-	//Chart.defaults.global.tooltips.callbacks.beforeBody = [];
-	//Chart.defaults.global.tooltips.callbacks.beforeLabel = "";
-	//Chart.defaults.global.tooltips.callbacks.label = "";
-	//Chart.defaults.global.tooltips.callbacks.afterLabel = "";
-	//Chart.defaults.global.tooltips.callbacks.afterBody = [];
-	//Chart.defaults.global.tooltips.callbacks.beforeFooter = [];
-	//Chart.defaults.global.tooltips.callbacks.footer = [];
-	//Chart.defaults.global.tooltips.callbacks.afterFooter = [];
-	//Chart.defaults.global.hover.mode = 'single';
-	//Chart.defaults.global.hover.animationDuration = 400;
-	//Chart.defaults.global.hover.onHover = null;
-	//Chart.defaults.global.animation.duration = 1000;
-	//Chart.defaults.global.animation.easing = "easeOutQuart";
-	//Chart.defaults.global.animation.onProgress = null;
-	//Chart.defaults.global.animation.onComplete = null;
-	//Chart.defaults.global.elements.arc.backgroundColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.arc.borderColor = '#fff';
-	//Chart.defaults.global.elements.arc.borderWidth = 2;
-	//Chart.defaults.global.elements.line.tension = 0.4;
-	//Chart.defaults.global.elements.line.backgroundColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.line.borderWidth = 3;
-	//Chart.defaults.global.elements.line.borderColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.line.borderCapStyle = 'butt';
-	//Chart.defaults.global.elements.line.borderDash = [];
-	//Chart.defaults.global.elements.line.borderDashOffset = 0.0;
-	//Chart.defaults.global.elements.line.borderJoinStyle = 'miter';
-	//Chart.defaults.global.elements.line.fill = true;
-	//Chart.defaults.global.elements.point.radius = 3;
-	//Chart.defaults.global.elements.point.pointStyle = 'circle';
-	//Chart.defaults.global.elements.point.backgroundColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.point.borderWidth = 1;
-	//Chart.defaults.global.elements.point.borderColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.point.hitRadius = 1;
-	//Chart.defaults.global.elements.point.hoverRadius = 4;
-	//Chart.defaults.global.elements.point.hoverBorderWidth = 1;
-	//Chart.defaults.global.elements.rectangle.backgroundColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.rectangle.borderWidth = 0;
-	//Chart.defaults.global.elements.rectangle.borderColor = 'rgba(0,0,0,0.1)';
-	//Chart.defaults.global.elements.rectangle.borderSkipped = 'bottom';
-	//Chart.defaults.line.showLines = true;
-	//Chart.defaults.bar.hover.mode =	"label";
-	//Chart.defaults.bar.scales.xAxes = [{ type: "Category", display:	true, id: "x-axis-0", stacked: false, categoryPercentage: 0.8, barPercentage: 0.9, gridLines: {offsetGridLines: true}}];
-	//Chart.defaults.bar.scales.yAxes	[{ type: "linear", display: true, id: "y-axis-0", stacked: false }];
-	//Chart.defaults.horizontalBar.hover.mode =	"label";
-	//Chart.defaults.horizontalBar.scales.xAxes = [{ type: "linear", display: true, id: "y-axis-0", stacked: false, position: "bottom" }];
-	//Chart.defaults.horizontalBar.scales.yAxes = [{ type: "Category", display:	true, id: "x-axis-0", stacked: false, categoryPercentage: 0.8, barPercentage: 0.9, gridLines: {offsetGridLines: true}, position: "left"}];
-	//Chart.defaults.radar.scale = { type: "radialLinear" };
-	//Chart.defaults.radar.elements.line = { lineTension: 0 };
-	//Chart.defaults.polarArea.scale = { type: "", lineArc: true };
-	//Chart.defaults.polarArea.animation = { animateRotate: true, animateScale: true };
-	//Chart.defaults.polarArea.legend = { labels: { generateLabels: function(data) {} }, onClick: function(event, legendItem) {} };
-	//Chart.defaults.polarArea.legendCallback = function(chart){};
-	//Chart.defaults.doughnut.cutoutPercentage = 50;
-	//Chart.defaults.doughnut.rotation = -0.5 * Math.PI;
-	//Chart.defaults.doughnut.circumference = 2 * Math.PI;
-	//Chart.defaults.doughnut.animation = { animateRotate: true, animateScale: false };
-	//Chart.defaults.doughnut.legend = { labels: { generateLabels: function(chart) {} }, onClick: function(event, legendItem) {} };
-	//Chart.defaults.pie.cutoutPercentage = 0;
-	//Chart.defaults.pie.rotation = -0.5 * Math.PI;
-	//Chart.defaults.pie.circumference = 2 * Math.PI;
-	//Chart.defaults.pie.animation = { animateRotate: true, animateScale: false };
-	//Chart.defaults.pie.legend = { labels: { generateLabels: function(chart) {} }, onClick: function(event, legendItem) {} };
-
-
-	//Add to advanced option slot
-	//Chart.defaults.global.elements.rectangle.borderSkipped = 'top';
-
-
+	var gradient;
 
 	//=== EVENT HANDLERS ================================================================
 
@@ -524,6 +457,14 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			else if(eventData.slotName == 'xAxisSettings' || eventData.slotName == 'yAxisSettings'){
 				if(isEmpty(eventData.slotValue)){
 					$scope.set(eventData.slotName, ((eventData.slotName == 'xAxisSettings') ? defaultScaleOptions.xAxes[0] : defaultScaleOptions.yAxes[0]));
+				}
+				else{
+					$timeout(function(){ drawChart(); });
+				}
+			}
+			else if(eventData.slotName == 'visualizationOptions'){
+				if(isEmpty(eventData.slotValue)){
+					$scope.set("visualizationOptions", defaultVisualizationOptions);
 				}
 				else{
 					$timeout(function(){ drawChart(); });
@@ -631,8 +572,8 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		//Chart Type Specific Slots
 		$scope.addSlot(new Slot('chartSettings',
 			defaultChartSettings,
-			"Line Chart Settings",
-			"A set of Line chart specific settings, which can be set either as is or by referencing slot names as a string (encapsulated by dollar signs (\"$SLOTNAME$\")). \nA third alternative is to create a slot with the same name as the setting targeted and it will then use that slot value instead and ignore the specific setting value. \n\nIf set to empty the slot resets to default. \n\n[borderJoinStyle Options: 'round', 'bevel' or 'miter']. \n[pointStyle Options: (array is OK) 'circle', 'triangle', 'rect', 'rectRot', 'cross', 'crossRot', 'star', 'line', or 'dash'].",
+			"Chart Settings",
+			"A set of chart specific settings, which can be set either as is or by referencing slot names as a string (encapsulated by dollar signs (\"$SLOTNAME$\")). \nA third alternative is to create a slot with the same name as the setting targeted and it will then use that slot value instead and ignore the specific setting value. \n\nIf set to empty the slot resets to default. \n\n[borderJoinStyle Options: 'round', 'bevel' or 'miter']. \n[pointStyle Options: (array is OK) 'circle', 'triangle', 'rect', 'rectRot', 'cross', 'crossRot', 'star', 'line', or 'dash'].",
 			"Chart Type Specific",
 			undefined,
 			undefined
@@ -664,6 +605,15 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			defaultScaleOptions.yAxes[0],
 			"Advanced Y-Axis Settings",
 			"A set of Y-Axis specific settings for the more advanced users, which can be set either as is or by referencing slot names as a string (encapsulated by dollar signs (\"$SLOTNAME$\")). \nA third alternative is to create a slot with the same name as the setting targeted and it will then use that slot value instead and ignore the specific setting value. \n\nIf set to empty the slot resets to default. \n\nFor the hardcore users familiar to the chart.js api who miss any option, just add it and it will be applied. (functions must be strings)",
+			"Advanced Chart Settings",
+			undefined,
+			undefined
+		));
+
+		$scope.addSlot(new Slot('visualizationOptions',
+			defaultVisualizationOptions,
+			"Advanced Visualization Settings",
+			"A set of visualization settings for the more advanced users, which can be set either as is or by referencing slot names as a string (encapsulated by dollar signs (\"$SLOTNAME$\")). \nA third alternative is to create a slot with the same name as the setting targeted and it will then use that slot value instead and ignore the specific setting value. \n\nIf set to empty the slot resets to default. \n\nFor the hardcore users familiar to the chart.js api who miss any option, just add it and it will be applied. (functions must be strings)",
 			"Advanced Chart Settings",
 			undefined,
 			undefined
@@ -752,6 +702,25 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		if($scope.gimme("hoverBkgColor") != ""){ dataSetObj.hoverBackgroundColor = $scope.gimme("hoverBkgColor"); }
 		if($scope.gimme("hoverBorderColor") != ""){ dataSetObj.hoverBorderColor = $scope.gimme("hoverBorderColor"); }
 
+
+		//var canvasElement = ctx[0].getContext('2d');
+		//gradient = canvasElement.createLinearGradient(0, 0, 0, 450);
+		//gradient.addColorStop(0, '#0000ff');
+		//gradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.25)');
+		//gradient.addColorStop(1, 'rgba(0, 0, 255, 0)');
+
+		//$scope.gimme("datasetBkgColors")[0]
+		//if(dataSetObj.backgroundColor.length)
+
+		var bkgColors = $scope.gimme("datasetBkgColors");
+		for(var i = 0; i < bkgColors.length; i++){
+
+		}
+
+
+
+		$log.log(dataSetObj.backgroundColor.length);
+
 		var whichSetting = "chartSettings", whichDefSetting = defaultChartSettings;
 		if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.line) || chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.scatterPlot)){
 			if($scope.gimme("datasetBkgColors").length > 1){ dataSetObj.backgroundColor = $scope.gimme("datasetBkgColors")[0]; }
@@ -800,14 +769,12 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 	// Creates a option object based on user settings and chart type
 	//========================================================================================
 	var createOptions = function(chartType){
-		var chartOptions = {};
+		var chartOptions = { title: {}, legend: {}, tooltips: {} };
 
-		if(isEmpty($scope.gimme("chartData"))){
-			chartOptions.responsive = true;
-		}
-		else{
-			chartOptions.responsive = true;
+		if(!isEmpty($scope.gimme("chartData"))){
 			chartOptions.maintainAspectRatio = false;
+
+			// Scales X-Axis & Y-Axis Options
 			chartOptions.scales = { xAxes: [{}], yAxes: [{}] };
 			var axisSlots = ['xAxisSettings', 'yAxisSettings'];
 			for(var i = 0; i < axisSlots.length; i++){
@@ -860,6 +827,136 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 					}
 				}
 			}
+
+			// Visualization Related Options
+			var slot_VisualizationSettings = $scope.gimme("visualizationOptions");
+			var visAreas = ['title', 'legend', 'tooltips'];
+			for(var i = 0; i < visAreas.length; i++){
+				var collectedVisAreaSettings = {};
+				for(var innerItem in slot_VisualizationSettings[visAreas[i]]){
+					if(collectedVisAreaSettings[visAreas[i]] == undefined){ collectedVisAreaSettings[visAreas[i]] = {}; }
+					if(typeof slot_VisualizationSettings[visAreas[i]][innerItem] == 'object' && slot_VisualizationSettings[visAreas[i]][innerItem] != null){
+						for(var mostInnerItem in slot_VisualizationSettings[visAreas[i]][innerItem]){
+							if(collectedVisAreaSettings[visAreas[i]][innerItem] == undefined){ collectedVisAreaSettings[visAreas[i]][innerItem] = {}; }
+							if(slot_VisualizationSettings[visAreas[i]][innerItem][mostInnerItem] != null){
+								// $SLOTNAME$ ?
+								var slotValue = getSlotValueFromPossibleDollarNameString(String(slot_VisualizationSettings[visAreas[i]][innerItem][mostInnerItem]));
+								if(slotValue != undefined){ collectedVisAreaSettings[visAreas[i]][innerItem][mostInnerItem] = slotValue; }
+
+								// Internal Value
+								if(collectedVisAreaSettings[visAreas[i]][innerItem][mostInnerItem] == undefined){
+									collectedVisAreaSettings[visAreas[i]][innerItem][mostInnerItem] = slot_VisualizationSettings[visAreas[i]][innerItem][mostInnerItem];
+								}
+
+								// $gimme(SLOTNAME) ?
+								var slotValue = $scope.gimme(mostInnerItem);
+								if(slotValue != undefined){
+									collectedVisAreaSettings[visAreas[i]][innerItem][mostInnerItem] = slotValue;
+								}
+							}
+						}
+					}
+					else{
+						if(slot_VisualizationSettings[visAreas[i]][innerItem] != null){
+							// $SLOTNAME$ ?
+							var slotValue = getSlotValueFromPossibleDollarNameString(String(slot_VisualizationSettings[visAreas[i]][innerItem]));
+							if(slotValue != undefined){ collectedVisAreaSettings[visAreas[i]][innerItem] = slotValue; }
+
+							// Internal Value
+							if(collectedVisAreaSettings[visAreas[i]][innerItem] == undefined){
+								collectedVisAreaSettings[visAreas[i]][innerItem] = slot_VisualizationSettings[visAreas[i]][innerItem];
+							}
+
+							// $gimme(SLOTNAME) ?
+							var slotValue = $scope.gimme(innerItem);
+							if(slotValue != undefined){
+								collectedVisAreaSettings[visAreas[i]][innerItem] = slotValue;
+							}
+						}
+
+					}
+				}
+
+				if(!isEmpty(collectedVisAreaSettings)){
+					chartOptions[visAreas[i]] = collectedVisAreaSettings[visAreas[i]];
+				}
+			}
+
+
+			/*var defaultVisualizationOptions = {
+				title: {
+					display: null,
+					position: null,
+					fullWidth: null,
+					fontSize: null,
+					fontFamily: null,
+					fontColor: null,
+					fontStyle: null,
+					padding: null,
+					text: null
+				},
+				legend: {
+					display: null,
+					position: null,
+					fullWidth: null,
+					onClick: null,
+					labels: {
+						boxWidth: null,
+						fontSize: null,
+						fontStyle: null,
+						fontColor: null,
+						fontFamily: null,
+						padding: null,
+						generateLabels: null
+					}
+				},
+				tooltips: {
+					enabled: null,
+					custom: null,
+					mode: null,
+					backgroundColor: null,
+					titleFontFamily: null,
+					titleFontSize: null,
+					titleFontStyle: null,
+					titleFontColor: null,
+					titleSpacing: null,
+					titleMarginBottom: null,
+					bodyFontFamily: null,
+					bodyFontSize: null,
+					bodyFontStyle: null,
+					bodyFontColor: null,
+					bodySpacing: null,
+					footerFontFamily: null,
+					footerFontSize: null,
+					footerFontStyle: null,
+					footerFontColor: null,
+					footerSpacing: null,
+					footerMarginTop: null,
+					xPadding: null,
+					yPadding: null,
+					caretSize: null,
+					cornerRadius: null,
+					multiKeyBackground: null,
+					callbacks: {
+						beforeTitle: null,
+						title: null,
+						afterTitle: null,
+						beforeBody: null,
+						beforeLabel: null,
+						label: null,
+						afterLabel: null,
+						afterBody: null,
+						beforeFooter: null,
+						footer: null,
+						afterFooter: null
+					}
+				}
+			};*/
+
+
+
+
+
 
 			if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.line)){ //Line
 				Chart.defaults.line.showLines = $scope.gimme("showLines");

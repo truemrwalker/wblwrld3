@@ -646,7 +646,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
                                     if(itsOk){
 										if(p.originalValType == 'object' || p.originalValType == 'array') {
-											if(JSON.stringify(theSlots_[slot].getValue(), $scope.dynJSFuncStringify) != p.value){
+											if(JSON.stringify(theSlots_[slot].getValue(), $scope.dynJSFuncStringify, 1) != p.value){
 												var jsonParsedVal;
 												try{
 													jsonParsedVal = JSON.parse(p.value, $scope.dynJSFuncParse);
