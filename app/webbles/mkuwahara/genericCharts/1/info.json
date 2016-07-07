@@ -1,0 +1,8 @@
+{
+    "name": "Generic Charts",
+    "description": "This is a generic charts webble that allows to display all sorts of data in various eye pleasing ways",
+    "keywords": "data chart graph bar pie plot line area circle",
+    "author": "truemrwalker",
+	"image": "images/wbls/chart_js.png",
+	"noautogen": true
+}

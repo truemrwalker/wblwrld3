@@ -1,0 +1,8 @@
+{
+    "name": "BasePad Webble",
+    "description": "This is a so called 'Base Pad' that will host and sometimes manipulate and alter its Webble children's behavior and more. There are many different settings within this Webble on how the child control should be applied.",
+    "keywords": "",
+    "author": "truemrwalker",
+    "image": "images/wbls/basepad.png",
+    "noautogen": true
+}

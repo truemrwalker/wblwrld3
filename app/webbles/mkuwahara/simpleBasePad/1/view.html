@@ -1,0 +1,24 @@
+<!--====================================================================================================================
+// View for Base Pad for Webble World v3.0 (2013)
+// Created By: TrueMrWalker
+//===================================================================================================================-->
+
+<!--IMPORTANT NOTE: Only have one div (or other containing element) in the outer area as the one and only main container
+                    for all elements that might follow (or not)
+                    <div>[Other Content]</div>-->
+
+<!--IMPORTANT NOTE 2: If you wish to include your own libraries and files, either from CDN or uploaded to the template
+                       do NOT include them in this HTML file (as one might think) but instead list them in the manifest
+                       file included in the Webble Dev Pack-->
+
+<!--For AngularJS power the outer element must include 'ng-controller' which point to the controller function as it is
+named in the controllers file-->
+
+<!--EXAMPLE VIEW - With controller pointer, custom directive, Slot usage, translate filter and directive, plus custom Filter... for your reference-->
+<div id="basePadFoundation" class="basePadFoundation" ng-controller="simpleBasePadCtrl" fundamental-mouse-hover-reaction>
+    <!--The content of your Webble is all up to you... do what needs to be done... go wild if needed-->
+    <span style="font-size: 11px;" translate>Content:</span>
+    <span id="squareTxt" class="fundamental_txt">{{gimme('msg') | translate | starMe}}</span>
+</div>
+
+<!--=================================================================================================================-->

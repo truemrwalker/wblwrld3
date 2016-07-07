@@ -1,0 +1,33 @@
+/*/=====================================================================================================================
+// Styles for Charts for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Classes === /*/
+
+.chartHolder{
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    padding: 10px;
+	width: 400px;
+	height: 400px;
+}
+
+.theChart {
+	background-color: #ffffff;
+	height: 100% !important;
+}
+
+.noChartInfoText {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	font-weight: 700;
+	font-size: 16px;
+	min-width: 130px;
+	min-height: 100px;
+}
+
+/*/ === END: Classes === /*/
+
+/*====================================================================================================================*/

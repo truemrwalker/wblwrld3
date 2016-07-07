@@ -94,6 +94,8 @@ ww3Controllers.controller('VisualConnViewCtrl', function ($scope, $log, gettext,
                 var cSlot = aw.scope().getSelectedSlot();
                 var pSlot = aw.scope().getConnectedSlot();
                 var path = 'M' + cPos.x + ',' + cPos.y + ' L' + mPos.x + ',' + mPos.y + ' L' + pPos.x + ',' + pPos.y;
+				var cTxtLength = (cSlot.length > 12) ? (cSlot.length * 11) : ((cSlot.length > 0) ? (cSlot.length * 15) : 20);
+				var pTxtLength = (pSlot.length > 12) ? (pSlot.length * 11) : ((pSlot.length > 0) ? (pSlot.length * 15) : 20);
 
                 var slotConnDir = aw.scope().getSlotConnDir();
                 if(slotConnDir.send && slotConnDir.receive){ midMarker = '#markerDblArrow'; }
@@ -122,24 +124,24 @@ ww3Controllers.controller('VisualConnViewCtrl', function ($scope, $log, gettext,
                 }
 
 				if((cPos.x - pPos.x) > 0){
-					cPosTxtOffset.x = -20;
-					pPosTxtOffset.x = 20;
+					cPosTxtOffset.x = -40;
+					pPosTxtOffset.x = 40;
 				}
 				else{
-					cPosTxtOffset.x = 20;
-					pPosTxtOffset.x = -20;
+					cPosTxtOffset.x = 40;
+					pPosTxtOffset.x = -40;
 				}
 
 				if((cPos.y - pPos.y) > 0){
 					cPosTxtOffset.y = -20;
-					pPosTxtOffset.y = -20;
+					pPosTxtOffset.y = -40;
 				}
 				else{
 					cPosTxtOffset.y = 20;
-					pPosTxtOffset.y = 20;
+					pPosTxtOffset.y = 40;
 				}
 
-                validConnList.push({cPos: cPos, pPos: pPos, path: path, cSlot: cSlot, pSlot: pSlot, startMarker: startMarker, endMarker: endMarker, midMarker: midMarker, cPosTxtOffset: cPosTxtOffset, pPosTxtOffset: pPosTxtOffset});
+                validConnList.push({cPos: cPos, pPos: pPos, path: path, cSlot: cSlot, pSlot: pSlot, startMarker: startMarker, endMarker: endMarker, midMarker: midMarker, cPosTxtOffset: cPosTxtOffset, pPosTxtOffset: pPosTxtOffset, cTxtLength: cTxtLength, pTxtLength: pTxtLength});
             }
         }
 

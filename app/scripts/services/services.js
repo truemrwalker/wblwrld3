@@ -387,6 +387,24 @@ ww3Services.factory('wwConsts', ['colorService', function(colorService) {
             {name: "lightpink", value: colorService.rgbToHex(216, 191, 216)},
             {name: "olive", value: colorService.rgbToHex(128, 128, 0)}
         ],
+		lightPalette: [
+			{name: "wblWrldYellow", value: "#FFF68F"},
+			{name: "pink", value: "#FFC0CB"},
+			{name: "LightSalmon", value: "#FFA07A"},
+			{name: "Coral", value: "#FF7F50"},
+			{name: "BurlyWood", value: "#DEB887"},
+			{name: "Chocolate", value: "#D2691E"},
+			{name: "LightSkyBlue", value: "#87CEFA"},
+			{name: "Aquamarine", value: "#7FFFD4"},
+			{name: "PaleGreen", value: "#98FB98"},
+			{name: "Plum", value: "#DDA0DD"},
+			{name: "MistyRose", value: "#FFE4E1"},
+			{name: "LightCyan", value: "#E0FFFF"},
+			{name: "Silver", value: "#C0C0C0"},
+			{name: "PeachPuff", value: "#FFDAB9"},
+			{name: "LightSteelBlue", value: "#B0C4DE"},
+			{name: "Tomato", value: "#FF6347"}
+		],
         elementTransformations: [
             "RotateTransform",
             "SkewTransform",
@@ -1969,7 +1987,25 @@ ww3Services.factory('jsonQuery', [function() {
                 }
             }
             return objects;
-        }
+        },
+		allObjValuesAsArray: function(obj) {
+			var objArr = [];
+			for (var i in obj) {
+				objArr.push(obj[i]);
+			}
+			return objArr;
+		},
+		getArrayIndexByObjValue: function(obj, val) {
+			var objValArr = [];
+			for (var i in obj) { objValArr.push(obj[i]); }
+
+			for(var i = 0; i < objValArr.length; i++) {
+				if(objValArr[i] == val) {
+					return i;
+				}
+			}
+			return undefined;
+		}
     }
 }]);
 //=================================================================================
@@ -2116,36 +2152,6 @@ ww3Services.factory('valMod', function($log, localStorageService) {
                 if(!isNaN(theVal)){
                     theVal = theVal + 'px';
                 }
-            }
-            return theVal;
-        },
-        stringify: function(theVal) {
-            if($.isArray(theVal)){
-                theVal = '[' + theVal.toString() + ']';
-            }
-            else{
-                try {
-                    var tempVal = JSON.stringify(theVal);
-
-                    if(tempVal.toString().search('hashKey') != -1){
-                        theVal = angular.toJson(theVal);
-                    }
-                    else{
-                        theVal = tempVal
-                    }
-                } catch(err) { /*Don't need to do any catching, just ignore the failed attempt and return the original value*/ }
-            }
-            return theVal;
-        },
-        parse: function(theVal) {
-            if(theVal[0] == '[' && theVal[theVal.length-1] == ']'){
-                theVal = theVal.replace('[', '').replace(']', '').split(',');
-            }
-            else{
-                try {
-                    theVal = JSON.parse(theVal);
-
-                } catch(err) { /*Don't need to do any catching, just ignore the failed attempt and return the original value*/ }
             }
             return theVal;
         },
