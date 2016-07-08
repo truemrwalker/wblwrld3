@@ -657,73 +657,25 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 													}
 													else{
 														var newArray = new Array();
+														var workStr = p.value.replace(/\s/g,'');
+														var isNestedArray = (workStr.replace(/[^\[]/g, "").length >= 2);
+														var isUnevenClosure = ((workStr.replace(/[^\[]/g, "").length != workStr.replace(/[^\]]/g, "").length) || (workStr.replace(/[^\{]/g, "").length != workStr.replace(/[^\}]/g, "").length))
 
-														if(!((p.value.split("[")).length != (p.value.split("]")).length || (p.value.split("{")).length != (p.value.split("}")).length || ((p.value.split("\"")).length - 1) % 2 != 0 || ((p.value.split("'")).length - 1) % 2 != 0)){
-															var nestedArrayDraft = p.value.split('['), nestedArrayReady = [];
-															if(nestedArrayDraft.length > 2 ){
-																for(var k = 0; k < nestedArrayDraft.length; k++){
-																	if(nestedArrayDraft[k].length > 0){
-																		nestedArrayDraft[k] = nestedArrayDraft[k].replace("],", "");
-																		nestedArrayDraft[k] = nestedArrayDraft[k].replace("]", "");
+														if(!isUnevenClosure){
+															if(isNestedArray){
+																var workStrStrippedClean = (workStr.replace(/\"/g, "")).replace(/\'/g, "");
+																var splittedWorkStr = workStrStrippedClean.split("],[");
+																for(var k = 0; k < splittedWorkStr.length; k++){
+																	if(k > 0){ splittedWorkStr[k] = "[" + splittedWorkStr[k] }
+																	else if(splittedWorkStr[k][0] == '['){ splittedWorkStr[k] = splittedWorkStr[k].substr(1, splittedWorkStr[k].length - 1); }
+																	if(k < (splittedWorkStr.length -1)){ splittedWorkStr[k] += "]" }
+																	else if(splittedWorkStr[k][splittedWorkStr[k].length - 1] == ']'){ splittedWorkStr[k] = splittedWorkStr[k].substr(0, splittedWorkStr[k].length - 1); }
 
-																		var nestedArraySegment = [];
-																		if (nestedArrayDraft[k].search(',') != -1) { nestedArraySegment = nestedArrayDraft[k].split(','); }
-																		for(var n = 0; n < nestedArraySegment.length; n++){
-																			if(!isNaN(nestedArraySegment[n])){
-																				nestedArraySegment[n] = parseInt(nestedArraySegment[n]);
-																			}
-																		}
-
-																		if(nestedArraySegment.length > 0){
-																			nestedArrayReady.push(nestedArraySegment);
-																		}
-																	}
+																	newArray.push(valMod.fixBrokenArrStrToProperArray(splittedWorkStr[k]));
 																}
-																newArray = nestedArrayReady;
 															}
 															else{
-																var workStr = p.value.replace(/\s/g,'');
-																var jsonObjectsExist = (workStr.search("},{") != -1);
-																if(jsonObjectsExist){
-																	var splittedWorkStr = workStr.split("},{")
-																	for(var k = 0; k < splittedWorkStr.length; k++){
-																		if(k > 0){
-																			splittedWorkStr[k] = "{" + splittedWorkStr[k]
-																		}
-																		else if(splittedWorkStr[k][0] == '['){
-																			splittedWorkStr[k] = splittedWorkStr[k].substr(1, splittedWorkStr[k].length - 1);
-																		}
-
-																		if(k < (splittedWorkStr.length -1)){
-																			splittedWorkStr[k] += "}"
-																		}
-																		else if(splittedWorkStr[k][splittedWorkStr[k].length - 1] == ']'){
-																			splittedWorkStr[k] = splittedWorkStr[k].substr(0, splittedWorkStr[k].length - 1);
-																		}
-
-																		splittedWorkStr[k] = splittedWorkStr[k].replace(/{/g,"{\"");
-																		splittedWorkStr[k] = splittedWorkStr[k].replace(/,/g,",\"");
-																		splittedWorkStr[k] = splittedWorkStr[k].replace(/:/g,"\":");
-
-																		try{
-																			splittedWorkStr[k] = JSON.parse(splittedWorkStr[k], $scope.dynJSFuncParse);
-																		}
-																		catch(e){ jsonObjectsExist = false; break; }
-																	}
-																	if(jsonObjectsExist){
-																		newArray = splittedWorkStr;
-																	}
-																}
-																else{
-																	var commaSeparatedValuesExist = (p.value.search(',') != -1);
-																	if (commaSeparatedValuesExist) { newArray = p.value.split(','); }
-																	for(var n = 0; n < newArray.length; n++){
-																		if(!isNaN(newArray[n])){
-																			newArray[n] = parseInt(newArray[n]);
-																		}
-																	}
-																	if (p.value.length > 0 && !commaSeparatedValuesExist) { newArray.push(String(p.value)); }
-																}
+																newArray = valMod.fixBrokenArrStrToProperArray((workStr.replace(/\"/g, "")).replace(/\'/g, ""));
 															}
 														}
 														jsonParsedVal = newArray;

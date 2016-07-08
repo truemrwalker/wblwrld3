@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal, Slot, Enum, isEmpty, jsonQuery, isExist) {
+wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal, $window, Slot, Enum, isEmpty, jsonQuery, isExist) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -15,10 +15,23 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		theChart: ['background-color']
     };
 
+	//TODO: Array of custom menu item keys and display names
+	//$scope.customMenu = [{itemId: '[MENU ITEM ID]', itemTxt: '[MENU ITEM DISPLAY TEXT]'}];
+	// EXAMPLE:
+	$scope.customMenu = [{itemId: 'empty', itemTxt: 'Reset to Empty Chart'}, {itemId: 'example', itemTxt: 'Reset to Example Chart'}, {itemId: 'chartJsDocs', itemTxt: 'Chart.js Docs'}];
+
 	var chartTypes = { line: 'Line', scatterPlot: 'Scatter Plot', bar: 'Bar - Vertical', horizontalBar: 'Bar - Horizontal', radar: 'Radar', polarArea: 'Polar', pie: 'Pie', doughnut: 'Doughnut' };
 	var lastDrawTime = 0;
 	var ctx;
+	var canvasElement;
 	var theChart;
+	var gradient;
+
+	// background images
+	var bkgImgs = [];
+	var imgUrls = [];
+	var bkgImgsLoadedCounter = 0;
+	var readyToDrawImages = false;
 
 	// Empty Chart
 	var emptyChart = { labels: [], datasets: [{ label: "Empty Dataset", data: [] }] };
@@ -113,7 +126,6 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			}
 		}
 	};
-
 	var defaultScaleOptions = {
 		xAxes: [{
 			type: null, //Options: "category", "linear", "logarithmic", "time", "radialLinear"
@@ -191,236 +203,46 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			}
 		}]
 	};
-
-	var fullChartOptionsObj = {
-		responsive: true,
-		responsiveAnimationDuration: 0,
-		maintainAspectRatio: true,
-		events: ["mousemove", "mouseout", "click", "touchstart", "touchmove", "touchend"],
+	var defaultAdvancedOptions = {
 		onClick: null,
-		legendCallback: function (chart) { },
-		//title: {
-		//	display: false,
-		//	position: 'top',
-		//	fullWidth: true,
-		//	fontSize: 12,
-		//	fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//	fontColor: "#666",
-		//	fontStyle: 'bold',
-		//	padding: 10,
-		//	text: ''
-		//},
-		//legend: {
-		//	display: true,
-		//	position: 'top',
-		//	fullWidth: true,
-		//	onClick: function (event, legendItem) {
-		//	},
-		//	labels: {
-		//		boxWidth: 40,
-		//		fontSize: 12,
-		//		fontStyle: "normal",
-		//		fontColor: "#666",
-		//		fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//		padding: 10,
-		//		generateLabels: function(chart) { }
-		//	}
-		//},
-		//tooltips: {
-		//	enabled: true,
-		//	custom: null,
-		//	mode: 'single',
-		//	backgroundColor: 'rgba(0,0,0,0.8)',
-		//	titleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//	titleFontSize: 12,
-		//	titleFontStyle: "bold",
-		//	titleFontColor: "#fff",
-		//	titleSpacing: 2,
-		//	titleMarginBottom: 6,
-		//	bodyFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//	bodyFontSize: 12,
-		//	bodyFontStyle: "normal",
-		//	bodyFontColor: "#fff",
-		//	bodySpacing: 2,
-		//	footerFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//	footerFontSize: 12,
-		//	footerFontStyle: "bold",
-		//	footerFontColor: "#fff",
-		//	footerSpacing: 2,
-		//	footerMarginTop: 6,
-		//	xPadding: 6,
-		//	yPadding: 6,
-		//	caretSize: 5,
-		//	cornerRadius: 6,
-		//	multiKeyBackground: "#fff",
-		//	callbacks: {
-		//		beforeTitle: [],
-		//		title: [],
-		//		afterTitle: [],
-		//		beforeBody: [],
-		//		beforeLabel: "",
-		//		label: "",
-		//		afterLabel: "",
-		//		afterBody: [],
-		//		beforeFooter: [],
-		//		footer: [],
-		//		afterFooter: []
-		//	}
-		//},
 		hover: {
-			mode: 'single',
-			animationDuration: 400,
+			mode: null,
+			animationDuration: null,
 			onHover: null
 		},
 		animation: {
-			duration: 1000,
-			easing: "easeOutQuart",
+			duration: null,
+			easing: null,
 			onProgress: null,
 			onComplete: null
-		},
-		elements: {
-			arc: {
-				backgroundColor: 'rgba(0,0,0,0.1)',
-				borderColor: '#fff',
-				borderWidth: 2
-			},
-			line: {
-				tension: 0.4,
-				backgroundColor: 'rgba(0,0,0,0.1)',
-				borderWidth: 3,
-				borderColor: 'rgba(0,0,0,0.1)',
-				borderCapStyle: 'butt',
-				borderDash: [],
-				borderDashOffset: 0.0,
-				borderJoinStyle: 'miter',
-				fill: false
-			},
-			point: {
-				radius: 3,
-				pointStyle: 'circle',
-				backgroundColor: 'rgba(0,0,0,0.1)',
-				borderWidth: 1,
-				borderColor: 'rgba(0,0,0,0.1)',
-				hitRadius: 1,
-				hoverRadius: 4,
-				hoverBorderWidth: 1
-			},
-			rectangle: {
-				backgroundColor: 'rgba(0,0,0,0.1)',
-				borderWidth: 0,
-				borderColor: 'rgba(0,0,0,0.1)',
-				borderSkipped: 'bottom'
-			}
-		}//,
-		//Scales: {
-		//	xAxes: [{
-		//		type: "", //Options: "category", "linear", "logarithmic", "time", "radialLinear"
-		//		display: true,
-		//		position: "left", //Possible values are 'top', 'left', 'bottom' and 'right'.
-		//		beforeUpdate: undefined,
-		//		beforeSetDimensions: undefined,
-		//		afterSetDimensions: undefined,
-		//		beforeDataLimits: undefined,
-		//		afterDataLimits: undefined,
-		//		beforeBuildTicks: undefined,
-		//		afterBuildTicks: undefined,
-		//		beforeTickToLabelConversion: undefined,
-		//		afterTickToLabelConversion: undefined,
-		//		beforeCalculateTickRotation: undefined,
-		//		afterCalculateTickRotation: undefined,
-		//		beforeFit: undefined,
-		//		afterFit: undefined,
-		//		afterUpdate: undefined,
-		//		gridLines: {
-		//			display: true,
-		//			color: "rgba(0, 0, 0, 0.1)",
-		//			lineWidth: 1,
-		//			drawBorder: true,
-		//			drawOnChartArea: true,
-		//			drawTicks: true,
-		//			tickMarkLength: 10,
-		//			zeroLineWidth: 1,
-		//			zeroLineColor: "rgba(0, 0, 0, 0.25)",
-		//			offsetGridLines: false
-		//		},
-		//		scaleLabel: {
-		//			display: false,
-		//			labelString: "",
-		//			fontColor: "#666",
-		//			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//			fontSize: 12,
-		//			fontStyle: "normal"
-		//		},
-		//		ticks: {
-		//			autoSkip: true,
-		//			callback: function(value) { return '' + value; },
-		//			display: true,
-		//			fontColor: "#666",
-		//			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//			fontSize: 12,
-		//			fontStyle: "normal",
-		//			labelOffset: 0,
-		//			maxRotation: 90,
-		//			minRotation: 0,
-		//			mirror: false,
-		//			padding: 10,
-		//			reverse: false,
-		//			beginAtZero: true,
-		//			min: 0,
-		//			max: 100,
-		//			maxTicksLimit: 11,
-		//			stepSize: 1,
-		//			suggestedMax: 100,
-		//			suggestedMin: 0,
-		//			// Below only available with Radar and Polar
-		//			backdropColor: 'rgba(255, 255, 255, 0.75)',
-		//			backdropPaddingX: 2,
-		//			backdropPaddingY: 2,
-		//			showLabelBackdrop: true
-		//		},
-		//		time: { // X-Axis Only
-		//			displayFormats: {
-		//				millisecond: 'SSS [ms]',
-		//				second: 'h:mm:ss a',
-		//				minute: 'h:mm:ss a',
-		//				hour: 'MMM D, hA',
-		//				day: 'll',
-		//				week: 'll',
-		//				month: 'MMM YYYY',
-		//				quarter: '[Q]Q - YYYY',
-		//				year: 'YYYY'
-		//			},
-		//			isoWeekday: false,
-		//			max: (new Date()).getTime(),
-		//			min: (new Date()).getTime(),
-		//			parser: "", // Can also be function
-		//			round: "",
-		//			tooltipFormat: '',
-		//			unit: "", // options: "millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year"
-		//			unitStepSize: 1
-		//		},
-		//		// Radar And Polar Only
-		//		lineArc: false,
-		//		angleLines: {
-		//			display: true,
-		//			color: 'rgba(0, 0, 0, 0.1)',
-		//			lineWidth: 1
-		//		},
-		//		pointLabels: {  // only apply if lineArc is false.
-		//			callback: undefined,
-		//			fontColor: '#666',
-		//			fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-		//			fontSize: 10,
-		//			fontStyle: 'normal'
-		//		}
-		//	}],
-		//	yAxes: [{
-        //
-		//	}]
-		//}
+		}
 	};
 
-	var gradient;
+	// chart example data
+	var exampleChart = {
+		dataValueLabels: ["January","February","March","April","May","June"],
+		chartData: [16,32,64,17,98,44],
+		datasetLabels: ["My Score"],
+		datasetBkgColors: [
+			'rgba(255, 99, 132, 0.2)',
+			'rgba(54, 162, 235, 0.2)',
+			'rgba(255, 206, 86, 0.2)',
+			'rgba(75, 192, 192, 0.2)',
+			'rgba(153, 102, 255, 0.2)',
+			'rgba(255, 159, 64, 0.2)'
+		],
+		datasetBorderColors: [
+			'rgba(255,99,132,1)',
+			'rgba(54, 162, 235, 1)',
+			'rgba(255, 206, 86, 1)',
+			'rgba(75, 192, 192, 1)',
+			'rgba(153, 102, 255, 1)',
+			'rgba(255, 159, 64, 1)'
+		],
+		datasetBorderWidth: 2
+	};
+
+
 
 	//=== EVENT HANDLERS ================================================================
 
@@ -432,6 +254,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
         ctx = $scope.theView.parent().find("#theChart");
+		canvasElement = ctx[0].getContext('2d');
 
         $scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			if(eventData.slotName == 'chartType'){
@@ -445,7 +268,54 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 				}
 				$timeout(function(){ drawChart(); });
 			}
-
+			else if(eventData.slotName == 'gradientBkgColorArea'){
+				var isOk = false;
+				if(Array.isArray(eventData.slotValue) && !isEmpty(eventData.slotValue)){
+					isOk = true;
+					for(var i = 0; i < eventData.slotValue.length; i++){
+						if(Array.isArray(eventData.slotValue[i])){
+							for(var k = 0; k < eventData.slotValue[i].length; k++){
+								if(eventData.slotValue[i][k].x == undefined || eventData.slotValue[i][k].y == undefined){
+									isOk = false;
+									break;
+								}
+							}
+						}
+						else if(eventData.slotValue[i].x == undefined || eventData.slotValue[i].y == undefined){
+							isOk = false;
+							break;
+						}
+					}
+				}
+				if(!isOk){
+					$scope.set("gradientBkgColorArea", [{x: 0, y: 0}, {x: 0, y: 600}]);
+				}
+				else{
+					$timeout(function(){ drawChart(); });
+				}
+			}
+			else if(eventData.slotName == 'patternBkgImage'){
+				bkgImgs = [];
+				bkgImgsLoadedCounter = 0;
+				if(!isEmpty(eventData.slotValue)){
+					imgUrls = eventData.slotValue;
+					for (var i = 0; i < imgUrls.length; i++) {
+						var img = new Image();
+						img.onload = function() {
+							++bkgImgsLoadedCounter;
+							if (bkgImgsLoadedCounter >= imgUrls.length) {
+								readyToDrawImages = true;
+								$timeout(function(){ drawChart(); });
+							}
+						};
+						img.src = imgUrls[i];
+						bkgImgs.push(img);
+					}
+				}
+				else{
+					$timeout(function(){ drawChart(); });
+				}
+			}
 			else if(eventData.slotName == 'chartSettings'){
 				if(isEmpty(eventData.slotValue)){
 					$scope.set("chartSettings", defaultChartSettings);
@@ -470,6 +340,14 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 					$timeout(function(){ drawChart(); });
 				}
 			}
+			else if(eventData.slotName == 'advancedRareOptions'){
+				if(isEmpty(eventData.slotValue)){
+					$scope.set("advancedRareOptions", defaultAdvancedOptions);
+				}
+				else{
+					$timeout(function(){ drawChart(); });
+				}
+			}
 			else{
 				if(eventData.slotName.search("root") == -1) {
 					if($scope.getSlot('yAxisSettings')) {  //If all slots have been created
@@ -489,7 +367,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
         ));
 
 		$scope.addSlot(new Slot('dataValueLabels',
-			[],
+			(!(theInitWblDef.private && theInitWblDef.private.isNotNewBorn)) ? exampleChart.dataValueLabels : [],
 			"Data Value Labels",
 			"A list of labels for each data point (should therefore be as long as the data list)",
 			$scope.theWblMetadata['templateid'],
@@ -498,7 +376,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		));
 
 		$scope.addSlot(new Slot('chartData',
-			[],
+			(!(theInitWblDef.private && theInitWblDef.private.isNotNewBorn)) ? exampleChart.chartData : [],
 			"Data",
 			"The array of data (encapsulated with []) (or a nested array of multiple datasets) that is used to draw this chart",
 			$scope.theWblMetadata['templateid'],
@@ -507,7 +385,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		));
 
 		$scope.addSlot(new Slot('datasetLabels',
-			[],
+			(!(theInitWblDef.private && theInitWblDef.private.isNotNewBorn)) ? exampleChart.datasetLabels : [],
 			"Dataset Labels",
 			"An array of dataset labels (strings inside quotation marks \" \") \n(equal in amount and same order as the dataset data). \nIf there is only one dataset, only one label is needed",
 			$scope.theWblMetadata['templateid'],
@@ -516,16 +394,16 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		));
 
 		$scope.addSlot(new Slot('datasetBkgColors',
-			[],
+			(!(theInitWblDef.private && theInitWblDef.private.isNotNewBorn)) ? exampleChart.datasetBkgColors : [],
 			"Dataset Background Colors",
-			"An array of dataset background colors \n(Quotation marked strings in any color format (for example: \"#ffffff\" \"rgba(255,67,250, 0.5)\")) \n(One value is used globaly, multiple is used for each data point in the same order as the dataset data)",
+			"An array of dataset background colors \n(Quotation marked strings in any color format (for example: \"#ffffff\" \"rgba(255,67,250, 0.5)\")) \n(One value is used globaly, multiple is used for each data point in the same order as the dataset data)\n\nIf one color is represented by an array of colors, a gradient will be used",
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
 		));
 
 		$scope.addSlot(new Slot('datasetBorderColors',
-			[],
+			(!(theInitWblDef.private && theInitWblDef.private.isNotNewBorn)) ? exampleChart.datasetBorderColors : [],
 			"Dataset Border Colors",
 			"An array of dataset border colors \n(Quotation marked strings in any color format (for example: \"#ffffff\" \"rgba(255,67,250, 0.5)\")) \n(One value is used globaly, multiple is used for each data point in the same order as the dataset data)",
 			$scope.theWblMetadata['templateid'],
@@ -534,7 +412,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		));
 
 		$scope.addSlot(new Slot('datasetBorderWidth',
-			[],
+			(!(theInitWblDef.private && theInitWblDef.private.isNotNewBorn)) ? exampleChart.datasetBorderWidth : [],
 			"Dataset Border Width",
 			"An array of dataset border widths \n(Quotation marked strings in any color format (for example: \"#ffffff\" \"rgba(255,67,250, 0.5)\")) \n(One value is used globaly, multiple is used for each data point in the same order as the dataset data)",
 			$scope.theWblMetadata['templateid'],
@@ -569,12 +447,30 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			undefined
 		));
 
+		$scope.addSlot(new Slot('gradientBkgColorArea',
+			[{x: 0, y: 0}, {x: 0, y: 600}],
+			"Gradient Color Area",
+			"The start point and end point for the gradient background color fill effect. Can be a nested array of multiple start and end points.",
+			"Advanced Fill Effects",
+			undefined,
+			undefined
+		));
+
+		$scope.addSlot(new Slot('patternBkgImage',
+			[],
+			"Background Fill Image",
+			"The image for the background pattern fill effect. Can be an array of multiple images.",
+			"Advanced Fill Effects",
+			undefined,
+			undefined
+		));
+
 		//Chart Type Specific Slots
 		$scope.addSlot(new Slot('chartSettings',
 			defaultChartSettings,
 			"Chart Settings",
 			"A set of chart specific settings, which can be set either as is or by referencing slot names as a string (encapsulated by dollar signs (\"$SLOTNAME$\")). \nA third alternative is to create a slot with the same name as the setting targeted and it will then use that slot value instead and ignore the specific setting value. \n\nIf set to empty the slot resets to default. \n\n[borderJoinStyle Options: 'round', 'bevel' or 'miter']. \n[pointStyle Options: (array is OK) 'circle', 'triangle', 'rect', 'rectRot', 'cross', 'crossRot', 'star', 'line', or 'dash'].",
-			"Chart Type Specific",
+			"Basic Chart Settings",
 			undefined,
 			undefined
 		));
@@ -583,7 +479,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			true,
 			"Show Lines",
 			"Enables if the Line between the points should be drawn or not",
-			"Chart Type Specific",
+			"Basic Chart Settings",
 			undefined,
 			undefined
 		));
@@ -619,6 +515,15 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			undefined
 		));
 
+		$scope.addSlot(new Slot('advancedRareOptions',
+			defaultAdvancedOptions,
+			"Advanced Rare Settings",
+			"A set of left-over more unusually needed settings for the much more advanced users, which can be set either as is or by referencing slot names as a string (encapsulated by dollar signs (\"$SLOTNAME$\")). \nA third alternative is to create a slot with the same name as the setting targeted and it will then use that slot value instead and ignore the specific setting value. \n\nIf set to empty the slot resets to default. \n\nFor the hardcore users familiar to the chart.js api who miss any option, just add it and it will be applied. (functions must be strings)",
+			"Advanced Chart Settings",
+			{inputType: Enum.aopInputTypes.TextArea},
+			undefined
+		));
+
         $scope.setDefaultSlot('chartData');
         $scope.setResizeSlots('chartHolder:width', 'chartHolder:height');
     };
@@ -630,7 +535,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 	// Draws the chart as specified
 	//========================================================================================
 	var drawChart = function(){
-		if(((new Date()).getTime() - lastDrawTime) < 200){ return; }
+		if(((new Date()).getTime() - lastDrawTime) < 200 && !readyToDrawImages){ return; }
 		var chartData = $scope.gimme('chartData');
 		var chartType = $scope.gimme('chartType');
 		var scatterRequested = false;
@@ -665,11 +570,11 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			if(chartData[0].length != undefined){
 				for(var i = 0; i < chartData.length; i++){
 					var DSLabel =  (dataSetLabels[i] != undefined ? dataSetLabels[i] : "Dataset " + (i+1));
-					dataSets.push(createDatasetObject(chartData[i], chartType, DSLabel));
+					dataSets.push(createDatasetObject(chartData[i], chartType, DSLabel, i));
 				}
 			}
 			else{
-				dataSets.push(createDatasetObject(chartData, chartType, dataSetLabels[0]));//(dataSetLabels[0] != undefined ? dataSetLabels[0] : "Undefined")
+				dataSets.push(createDatasetObject(chartData, chartType, dataSetLabels[0]));
 			}
 
 			chartPack.content = {
@@ -683,48 +588,95 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 	//========================================================================================
 
 
-
 	//========================================================================================
 	// Create Dataset Object
 	// Creates a dataset object based on user settings and chart type
 	//========================================================================================
-	var createDatasetObject = function(datasetData, chartType, datasetLabel){
+	var createDatasetObject = function(datasetData, chartType, datasetLabel, indexOfSets){
+		var thisSetBkgColor = ($scope.gimme("datasetBkgColors").length == 1) ? $scope.gimme("datasetBkgColors")[0] : $scope.gimme("datasetBkgColors");
+		var thisSetBorderColor = ($scope.gimme("datasetBorderColors").length == 1) ? $scope.gimme("datasetBorderColors")[0] : $scope.gimme("datasetBorderColors");
+		var thisSetBorderWidth = ($scope.gimme("datasetBorderWidth").length == 1) ? $scope.gimme("datasetBorderWidth")[0] : $scope.gimme("datasetBorderWidth");
+
+		if(indexOfSets != undefined){
+			thisSetBkgColor = ($scope.gimme("datasetBkgColors")[indexOfSets] != undefined) ? $scope.gimme("datasetBkgColors")[indexOfSets] : "rgba(0,0,0,0.2)"
+			thisSetBorderColor = ($scope.gimme("datasetBorderColors")[indexOfSets] != undefined) ? $scope.gimme("datasetBorderColors")[indexOfSets] : "rgba(0,0,0,1)"
+			thisSetBorderWidth = ($scope.gimme("datasetBorderWidth")[indexOfSets] != undefined) ? $scope.gimme("datasetBorderWidth")[indexOfSets] : 1
+		}
+
 		var dataSetObj = {
 			label: datasetLabel,
 			//xAxisID: "",
 			//yAxisID: "",
-			backgroundColor: ($scope.gimme("datasetBkgColors").length == 1) ? $scope.gimme("datasetBkgColors")[0] : $scope.gimme("datasetBkgColors"),
-			borderColor: ($scope.gimme("datasetBorderColors").length == 1) ? $scope.gimme("datasetBorderColors")[0] : $scope.gimme("datasetBorderColors"),
-			borderWidth: ($scope.gimme("datasetBorderWidth").length == 1) ? $scope.gimme("datasetBorderWidth")[0] : $scope.gimme("datasetBorderWidth"),
+			backgroundColor: thisSetBkgColor,
+			borderColor: thisSetBorderColor,
+			borderWidth: thisSetBorderWidth,
 			hoverBorderWidth: $scope.gimme("hoverBorderWidth"),
 			data: datasetData
 		}
 		if($scope.gimme("hoverBkgColor") != ""){ dataSetObj.hoverBackgroundColor = $scope.gimme("hoverBkgColor"); }
 		if($scope.gimme("hoverBorderColor") != ""){ dataSetObj.hoverBorderColor = $scope.gimme("hoverBorderColor"); }
 
-
-		//var canvasElement = ctx[0].getContext('2d');
-		//gradient = canvasElement.createLinearGradient(0, 0, 0, 450);
-		//gradient.addColorStop(0, '#0000ff');
-		//gradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.25)');
-		//gradient.addColorStop(1, 'rgba(0, 0, 255, 0)');
-
-		//$scope.gimme("datasetBkgColors")[0]
-		//if(dataSetObj.backgroundColor.length)
-
 		var bkgColors = $scope.gimme("datasetBkgColors");
+		var newColorSet = [];
+		var hasGradient = false;
+		var gradientBkgColorArea = $scope.gimme("gradientBkgColorArea");
+		var gradient;
 		for(var i = 0; i < bkgColors.length; i++){
+			if(Array.isArray(bkgColors[i])){
+				if(!Array.isArray(gradientBkgColorArea[0])){
+					gradient = canvasElement.createLinearGradient(gradientBkgColorArea[0].x, gradientBkgColorArea[0].y, gradientBkgColorArea[1].x, gradientBkgColorArea[1].y);
+				}
+				else if(gradientBkgColorArea[i] != undefined){
+					gradient = canvasElement.createLinearGradient(gradientBkgColorArea[i][0].x, gradientBkgColorArea[i][0].y, gradientBkgColorArea[i][1].x, gradientBkgColorArea[i][1].y);
+				}
+				else{
+					gradient = canvasElement.createLinearGradient(gradientBkgColorArea[0][0].x, gradientBkgColorArea[0][0].y, gradientBkgColorArea[0][1].x, gradientBkgColorArea[0][1].y);
+				}
 
+				for(var k = 0; k < bkgColors[i].length; k++){
+					var colorStopPoint = k / (bkgColors[i].length - 1);
+					if(k == 0){ colorStopPoint = 0 }
+					else if(k == (bkgColors[i].length - 1)){ colorStopPoint = 1 }
+					gradient.addColorStop(colorStopPoint , bkgColors[i][k]);
+				}
+				newColorSet.push(gradient);
+				hasGradient = true;
+			}
+			else{
+				newColorSet.push(bkgColors[i]);
+			}
+		}
+		if(hasGradient){
+			dataSetObj.backgroundColor = (newColorSet.length == 1) ? newColorSet[0] : newColorSet;
+			if(indexOfSets != undefined){
+				var defaultGradient = canvasElement.createLinearGradient(0, 0, 0, 450);
+				defaultGradient.addColorStop(0 , "rgba(0,0,0,0.5)");
+				defaultGradient.addColorStop(0.5 , "rgba(0,0,0,0.25)");
+				defaultGradient.addColorStop(1 , "rgba(0,0,0,0)");
+				dataSetObj.backgroundColor = (newColorSet[indexOfSets] != undefined) ? newColorSet[indexOfSets] : defaultGradient;
+			}
 		}
 
-
-
-		$log.log(dataSetObj.backgroundColor.length);
+		if(bkgImgsLoadedCounter > 0 && bkgImgsLoadedCounter >= bkgImgs.length){
+			readyToDrawImages = false;
+			newColorSet = [];
+			for(var i = 0; i < bkgImgs.length; i++){
+				var fillPattern = canvasElement.createPattern(bkgImgs[i], 'repeat');
+				newColorSet.push(fillPattern);
+			}
+			if(newColorSet.length > 0){
+				dataSetObj.backgroundColor = (newColorSet.length == 1) ? newColorSet[0] : newColorSet
+				if(indexOfSets != undefined){
+					dataSetObj.backgroundColor = (newColorSet[indexOfSets] != undefined) ? newColorSet[indexOfSets] : "rgba(0,0,0,0.2)";
+				}
+			}
+		}
 
 		var whichSetting = "chartSettings", whichDefSetting = defaultChartSettings;
 		if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.line) || chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.scatterPlot)){
-			if($scope.gimme("datasetBkgColors").length > 1){ dataSetObj.backgroundColor = $scope.gimme("datasetBkgColors")[0]; }
-			if($scope.gimme("datasetBorderColors").length > 1){ dataSetObj.borderColor = $scope.gimme("datasetBorderColors")[0]; }
+			if(Array.isArray(dataSetObj.backgroundColor)){ dataSetObj.backgroundColor = dataSetObj.backgroundColor[0]; }
+			if(Array.isArray(dataSetObj.borderColor)){ dataSetObj.borderColor = dataSetObj.borderColor[0]; }
+			if(Array.isArray(dataSetObj.borderWidth)){ dataSetObj.borderWidth = dataSetObj.borderWidth[0]; }
 
 			if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.scatterPlot)){
 				var cd = $scope.gimme("chartData");
@@ -882,81 +834,55 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 				}
 			}
 
+			// Advanced Rarely Used Options
+			var slot_AdvRareSettings = $scope.gimme("advancedRareOptions");
+			var collectedAdvRareSettings = {};
+			for(var item in slot_AdvRareSettings){
+				if(typeof slot_AdvRareSettings[item] == 'object' && slot_AdvRareSettings[item] != null){
+					if(collectedAdvRareSettings[item] == undefined){ collectedAdvRareSettings[item] = {}; }
+					for(var innerItem in slot_AdvRareSettings[item]){
+						if(slot_AdvRareSettings[item][innerItem] != null){
+							// $SLOTNAME$ ?
+							var slotValue = getSlotValueFromPossibleDollarNameString(String(slot_AdvRareSettings[item][innerItem]));
+							if(slotValue != undefined){ collectedAdvRareSettings[item][innerItem] = slotValue; }
 
-			/*var defaultVisualizationOptions = {
-				title: {
-					display: null,
-					position: null,
-					fullWidth: null,
-					fontSize: null,
-					fontFamily: null,
-					fontColor: null,
-					fontStyle: null,
-					padding: null,
-					text: null
-				},
-				legend: {
-					display: null,
-					position: null,
-					fullWidth: null,
-					onClick: null,
-					labels: {
-						boxWidth: null,
-						fontSize: null,
-						fontStyle: null,
-						fontColor: null,
-						fontFamily: null,
-						padding: null,
-						generateLabels: null
-					}
-				},
-				tooltips: {
-					enabled: null,
-					custom: null,
-					mode: null,
-					backgroundColor: null,
-					titleFontFamily: null,
-					titleFontSize: null,
-					titleFontStyle: null,
-					titleFontColor: null,
-					titleSpacing: null,
-					titleMarginBottom: null,
-					bodyFontFamily: null,
-					bodyFontSize: null,
-					bodyFontStyle: null,
-					bodyFontColor: null,
-					bodySpacing: null,
-					footerFontFamily: null,
-					footerFontSize: null,
-					footerFontStyle: null,
-					footerFontColor: null,
-					footerSpacing: null,
-					footerMarginTop: null,
-					xPadding: null,
-					yPadding: null,
-					caretSize: null,
-					cornerRadius: null,
-					multiKeyBackground: null,
-					callbacks: {
-						beforeTitle: null,
-						title: null,
-						afterTitle: null,
-						beforeBody: null,
-						beforeLabel: null,
-						label: null,
-						afterLabel: null,
-						afterBody: null,
-						beforeFooter: null,
-						footer: null,
-						afterFooter: null
+							// Internal Value
+							if(collectedAdvRareSettings[item][innerItem] == undefined){
+								collectedAdvRareSettings[item][innerItem] = slot_AdvRareSettings[item][innerItem];
+							}
+
+							// $gimme(SLOTNAME) ?
+							var slotValue = $scope.gimme(innerItem);
+							if(slotValue != undefined){
+								collectedAdvRareSettings[item][innerItem] = slotValue;
+							}
+						}
 					}
 				}
-			};*/
+				else{
+					if(slot_AdvRareSettings[item] != null){
+						// $SLOTNAME$ ?
+						var slotValue = getSlotValueFromPossibleDollarNameString(String(slot_AdvRareSettings[item]));
+						if(slotValue != undefined){ collectedAdvRareSettings[item] = slotValue; }
 
+						// Internal Value
+						if(collectedAdvRareSettings[item] == undefined){
+							collectedAdvRareSettings[item] = slot_AdvRareSettings[item];
+						}
 
-
-
-
+						// $gimme(SLOTNAME) ?
+						var slotValue = $scope.gimme(item);
+						if(slotValue != undefined){
+							collectedAdvRareSettings[item] = slotValue;
+						}
+					}
+				}
+			}
+			if(!isEmpty(collectedAdvRareSettings)){
+				for(var item in collectedAdvRareSettings) {
+					chartOptions[item] = collectedAdvRareSettings[item];
+				}
+			}
 
 			if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.line)){ //Line
 				Chart.defaults.line.showLines = $scope.gimme("showLines");
@@ -965,19 +891,6 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 				Chart.defaults.line.showLines = $scope.gimme("showLines");
 				if(chartOptions.scales.xAxes[0]['type'] == undefined){ chartOptions.scales.xAxes[0]['type'] = 'linear'; }
 				if(chartOptions.scales.xAxes[0]['position'] == undefined){ chartOptions.scales.xAxes[0]['position'] = 'bottom'; }
-			}
-			else if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.bar) || chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.horizontalBar)){ //Vertical or Horizontal Bar
-
-			}
-			else if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.radar)){ //Radar
-
-
-			}
-			else if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.polarArea)){ //Polar
-
-			}
-			else if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.pie) || chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.doughnut)){ //Pie or Doughnut
-
 			}
 		}
 
@@ -1001,6 +914,50 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 	}
 	//========================================================================================
 
+
+	//===================================================================================
+	// Create Custom Webble Definition
+	// Adds a flag to the webble to identify if this webble is created from scratch and
+	// code only or if it came with config file. It is used in order to create a more
+	// eye pleasing chart for first time loaders of this webble
+	//===================================================================================
+	$scope.coreCall_CreateCustomWblDef = function(){
+		var customWblDefPart = {
+			isNotNewBorn: true
+		};
+
+		return customWblDefPart;
+	};
+	//===================================================================================
+
+
+	//===================================================================================
+	// Menu Item Activity Reaction
+	// Manages the custom part of this webbles menu
+	//===================================================================================
+	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
+		if(itemName == $scope.customMenu[0].itemId){  //empty
+			$scope.set("dataValueLabels", []);
+			$scope.set("chartData", []);
+			$scope.set("datasetLabels", []);
+			$scope.set("datasetBkgColors", []);
+			$scope.set("datasetBorderColors", []);
+			$scope.set("datasetBorderWidth", []);
+		}
+		else if(itemName == $scope.customMenu[1].itemId){  //example
+			$scope.set("dataValueLabels", exampleChart.dataValueLabels);
+			$scope.set("chartData", exampleChart.chartData);
+			$scope.set("datasetLabels", exampleChart.datasetLabels);
+			$scope.set("datasetBkgColors", exampleChart.datasetBkgColors);
+			$scope.set("datasetBorderColors", exampleChart.datasetBorderColors);
+			$scope.set("datasetBorderWidth", exampleChart.datasetBorderWidth);
+			$scope.set("chartType", jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.bar));
+		}
+		else if(itemName == $scope.customMenu[2].itemId){  //chartJsDocs
+			$window.open('http://www.chartjs.org', '_blank');
+		}
+	};
+	//===================================================================================
 
 
     //=== CTRL MAIN CODE ======================================================================

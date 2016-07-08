@@ -35,7 +35,7 @@
 // WEBBLE PROPERTIES FORM CONTROLLER
 // This controls the Webbles slot and property form
 //====================================================================================================================
-ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext) {
+ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext, valMod) {
 
     //=== PROPERTIES ================================================================
 
@@ -302,12 +302,14 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 	//========================================================================================
 
 
+
 	//========================================================================================
 	// Show More Readable
 	// Opens a modal window to display the slots descriptive information in a more readable
 	// and user friendly way.
 	//========================================================================================
 	$scope.showMoreReadable = function(slot){
+		var htmlAdaptedText = valMod.urlify(slot.desc);
 		var titleTxt = slot.name + " (" + slot.key + ")";
 		var contentTxt = '<h4>' + gettextCatalog.getString("Slot Description") + '</h4>' +
 			'<div style="font-size: 15px;">' +
@@ -317,7 +319,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 				'<p style="border-bottom: 1px dotted black;"></p>' +
 				'<p>' +
 					'<span style="font-weight: bolder; text-decoration: underline;">' + gettextCatalog.getString("Description") + '</span>:</br>' +
-					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + slot.desc + '</span>' +
+					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + htmlAdaptedText + '</span>' +
 				'</p>' +
 				'<p style="border-bottom: 1px dotted black;"></p>' +
 				'<p>' +

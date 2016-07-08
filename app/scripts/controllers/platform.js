@@ -2359,6 +2359,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 		while(queueOfHandlersToBeTriggered.length > 0){
 			if(unqueueUntriggeredHandlersModal && timeKeeper != undefined && ((new Date()).getTime() - timeKeeper) > 2000){
+				$log.log('Still processing event que... If you want to quit waiting, just reload the browser tab.');
 				timeKeeper = (new Date()).getTime();
 				$timeout(function(){ unqueueUntriggeredHandlers(timeKeeper); }, 500);
 				return;
@@ -2366,7 +2367,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			if(((new Date()).getTime() - unqueueingStartTime) > 20000){
 				$log.log('We have been managing event handlers for more than ' + (20 * unqueueingStartTimeCounter) + ' seconds now, and we are still not finished... Please be patient.')
-				if(!unqueueUntriggeredHandlersModal && unqueueingStartTimeCounter != 3){
+				if(!unqueueUntriggeredHandlersModal && unqueueingStartTimeCounter != 3 && !$scope.isLoggingEnabled){
 					$scope.showQIM(gettext("We have been managing event handlers for more than") + " " + (20 * unqueueingStartTimeCounter) + " " + gettext("seconds now, and we are still not finished...") + "\n\n" + gettext("Please be patient."), 1000000, {w: 300, h: 130}, undefined, wwConsts.lightPalette[(unqueueingStartTimeCounter - 1) % wwConsts.lightPalette.length].value);
 				}
 				unqueueingStartTimeCounter++;
@@ -2375,17 +2376,19 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				if(unqueueingStartTimeCounter == 4){
 					$('.quickInfoBox').hide(); $scope.qimVisibility = false;
 					timeKeeper = (new Date()).getTime();
-					unqueueUntriggeredHandlersModal = $modal.open({templateUrl: 'views/modalForms/longTimeWaitingKillPerhaps.html', windowClass: 'modal-wblwrldform small'});
-					unqueueUntriggeredHandlersModal.result.then(function () {
-						$scope.showQIM(gettext("You killed the Webble processing and might now continue working, but don't blame us if any of the unfinished Webbles do not work as you expect. :-)"), 4500, {w: 300, h: 100}, undefined, wwConsts.lightPalette[0].value);
-						queueOfHandlersToBeTriggered = [];
-						unqueueUntriggeredHandlersModal = undefined;
-					}, function () {
-						if(queueOfHandlersToBeTriggered.length > 0){
-							$scope.showQIM(gettext("We have been managing event handlers for more than") + " " + (20 * (unqueueingStartTimeCounter - 1)) + " " + gettext("seconds now, and we are still not finished...") + "\n\n" + gettext("Please be patient."), 1000000, {w: 300, h: 130}, undefined, wwConsts.lightPalette[(unqueueingStartTimeCounter - 2) % wwConsts.lightPalette.length].value);
-						}
-						unqueueUntriggeredHandlersModal = undefined;
-					});
+					if(!$scope.isLoggingEnabled){
+						unqueueUntriggeredHandlersModal = $modal.open({templateUrl: 'views/modalForms/longTimeWaitingKillPerhaps.html', windowClass: 'modal-wblwrldform small'});
+						unqueueUntriggeredHandlersModal.result.then(function () {
+							$scope.showQIM(gettext("You killed the Webble processing and might now continue working, but don't blame us if any of the unfinished Webbles do not work as you expect. :-)"), 4500, {w: 300, h: 100}, undefined, wwConsts.lightPalette[0].value);
+							queueOfHandlersToBeTriggered = [];
+							unqueueUntriggeredHandlersModal = undefined;
+						}, function () {
+							if(queueOfHandlersToBeTriggered.length > 0){
+								$scope.showQIM(gettext("We have been managing event handlers for more than") + " " + (20 * (unqueueingStartTimeCounter - 1)) + " " + gettext("seconds now, and we are still not finished...") + "\n\n" + gettext("Please be patient."), 1000000, {w: 300, h: 130}, undefined, wwConsts.lightPalette[(unqueueingStartTimeCounter - 2) % wwConsts.lightPalette.length].value);
+							}
+							unqueueUntriggeredHandlersModal = undefined;
+						});
+					}
 				}
 
 				if(unqueueUntriggeredHandlersModal && unqueueingStartTimeCounter == 6){
@@ -2401,10 +2404,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				theCallbackObject.cb(theCallbackObject.ed);
 			}
 
-			if(queueOfHandlersToBeTriggered.length == 0){
+			if(queueOfHandlersToBeTriggered.length == 0 && ((new Date()).getTime() - unqueueingStartTime) > 30000){
 				if(unqueueUntriggeredHandlersModal || $scope.qimVisibility){
 					if(unqueueUntriggeredHandlersModal) { unqueueUntriggeredHandlersModal.dismiss(); }
-					$scope.showQIM(gettext("Sorry for the delay, but now we are done. \n\n Enjoy your stay!"), 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
+					$log.log('Currently Finished processing events... The platform is all yours.')
+					if(!$scope.isLoggingEnabled){
+						$scope.showQIM(gettext("Sorry for the delay, but now we are done. \n\n Enjoy your stay!"), 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
+					}
 				}
 			}
 		}

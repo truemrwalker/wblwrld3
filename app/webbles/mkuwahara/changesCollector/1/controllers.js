@@ -284,6 +284,15 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 			undefined
 		));
 
+		$scope.addSlot(new Slot('animationEasings',
+			"",
+			'Animation Easings',
+			"Easy access to all avialble animation easings that javascript and css provides. Select the one you want, submit and connect it to some Webble slot for maximum effect. \nFor detailed Information on easings please visit http://easings.net",
+			$scope.theWblMetadata['templateid'],
+			{inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ["easeInSine","easeOutSine","easeInOutSine","easeInQuad","easeOutQuad","easeInOutQuad","easeInCubic","easeOutCubic","easeInOutCubic","easeInQuart","easeOutQuart","easeInOutQuart","easeInQuint","easeOutQuint","easeInOutQuint","easeInExpo","easeOutExpo","easeInOutExpo","easeInCirc","easeOutCirc","easeInOutCirc","easeInBack","easeOutBack","easeInOutBack","easeInElastic","easeOutElastic","easeInOutElastic","easeInBounce","easeOutBounce","easeInOutBounce"]},
+			undefined
+		));
+
 		$scope.addSlot(new Slot('hostCoreUrl',
 			location.host,
 			'Host Core URL',
