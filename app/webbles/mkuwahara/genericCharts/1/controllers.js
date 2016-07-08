@@ -133,6 +133,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			position: null,	//Possible values are 'top', 'left', 'bottom' and 'right'.
 			ticks: {
 				beginAtZero: null,
+				callback: null,
 				min: null,
 				max: null,
 				display: null,
@@ -174,6 +175,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			position: null,	//Possible values are 'top', 'left', 'bottom' and 'right'.
 			ticks: {
 				beginAtZero: null,
+				callback: null,
 				min: null,
 				max: null,
 				display: null,
