@@ -67,7 +67,7 @@ wblwrld3App.controller('bundleContainerCtrl', function($scope, $log, Slot, gette
     // After all bundle content descendants are loaded properly this method takes care of
     // adjusting, configure and setup the Bundle master to work as intended.
     //===================================================================================
-    var configBundleMaster = function(bundleContentStr, isCreating, valMod){
+    var configBundleMaster = function(bundleContentStr, isCreating){
         // if the bundleContentStr contains oldids we must first rectify that
         if(isCreating == undefined){
             for(var i = 0, bcs; bcs = bundleContentStr[i]; i++){

@@ -146,6 +146,26 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     $scope.getResizeSlots = function(){return resizeSlots_;};
     $scope.setResizeSlots = function(widthSlotName, heightSlotName){resizeSlots_ = {width: widthSlotName, height: heightSlotName};};
 
+	// A Parser and Stringifiers for managing values that are functions or contain functions
+	$scope.dynJSFuncParse = function(key, value) { if(value && (typeof value === 'string') && value.indexOf("function") === 0){ return new Function('return ' + value)(); } return value; };
+	$scope.dynJSFuncStringify = function (key, value) { if(typeof value === "function"){ return String(value); } return value; };
+	$scope.dynJSFuncStringifyAdvanced = function (key, value) {
+		if(typeof value === "function"){
+			return String(value);
+		}
+		else if(typeof value === "object" && Object.prototype.toString.call( value ) !== '[object Array]' && !isEmpty(value) ){
+			var jsonObjStr = JSON.stringify(value, $scope.dynJSFuncStringify);
+			var jsonObj = JSON.parse(jsonObjStr, function(key, value) {
+				if(value && (typeof value === 'string') && value.indexOf("function") === 0){
+					return String(value);
+				}
+				return value;
+			});
+			return jsonObj;
+		}
+		return value;
+	};
+
     // A function provided by the webble directory that allow us to sett css values to selected elements
     $scope.setStyle = undefined;
 
@@ -454,7 +474,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 }
 				else if(value.getOriginalType() == 'object' || value.getOriginalType() == 'array'){
 					tmp['isArrObj'] = true;
-					tmp['value'] = JSON.stringify(theValue);
+					tmp['value'] = JSON.stringify(theValue, $scope.dynJSFuncStringify, 1);
+				}
+				else if(value.getOriginalType() == 'function'){
+					tmp['value'] = String(theValue);
 				}
                 else{
                     tmp['value'] = theValue;
@@ -597,6 +620,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                                     var itsOk = true;
                                     if(theParent_ && (slot == 'root:left' || slot == 'root:top') && p.value.toString().search('%') != -1){
                                         $log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]));
+										$scope.showQIM($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]), 4000, {w: 250, h: 90});
                                         itsOk = false;
                                     }
 
@@ -622,24 +646,48 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
                                     if(itsOk){
 										if(p.originalValType == 'object' || p.originalValType == 'array') {
-											if(JSON.stringify(theSlots_[slot].getValue()) != p.value){
+											if(JSON.stringify(theSlots_[slot].getValue(), $scope.dynJSFuncStringify, 1) != p.value){
 												var jsonParsedVal;
 												try{
-													jsonParsedVal = JSON.parse(p.value);
+													jsonParsedVal = JSON.parse(p.value, $scope.dynJSFuncParse);
 												}
 												catch(e){
 													if(p.originalValType == 'object'){
 														jsonParsedVal = JSON.parse("{}");
 													}
 													else{
-														jsonParsedVal = new Array();
+														var newArray = new Array();
+														var workStr = p.value.replace(/\s/g,'');
+														var isNestedArray = (workStr.replace(/[^\[]/g, "").length >= 2);
+														var isUnevenClosure = ((workStr.replace(/[^\[]/g, "").length != workStr.replace(/[^\]]/g, "").length) || (workStr.replace(/[^\{]/g, "").length != workStr.replace(/[^\}]/g, "").length))
+
+														if(!isUnevenClosure){
+															if(isNestedArray){
+																var workStrStrippedClean = (workStr.replace(/\"/g, "")).replace(/\'/g, "");
+																var splittedWorkStr = workStrStrippedClean.split("],[");
+																for(var k = 0; k < splittedWorkStr.length; k++){
+																	if(k > 0){ splittedWorkStr[k] = "[" + splittedWorkStr[k] }
+																	else if(splittedWorkStr[k][0] == '['){ splittedWorkStr[k] = splittedWorkStr[k].substr(1, splittedWorkStr[k].length - 1); }
+																	if(k < (splittedWorkStr.length -1)){ splittedWorkStr[k] += "]" }
+																	else if(splittedWorkStr[k][splittedWorkStr[k].length - 1] == ']'){ splittedWorkStr[k] = splittedWorkStr[k].substr(0, splittedWorkStr[k].length - 1); }
+
+																	newArray.push(valMod.fixBrokenArrStrToProperArray(splittedWorkStr[k]));
+																}
+															}
+															else{
+																newArray = valMod.fixBrokenArrStrToProperArray((workStr.replace(/\"/g, "")).replace(/\'/g, ""));
+															}
+														}
+														jsonParsedVal = newArray;
 													}
 												}
 												theSlotsToSet[slot] = jsonParsedVal;
 											}
 										}
+										else if(p.originalValType == 'function') {
+											theSlotsToSet[slot] = $scope.dynJSFuncParse(p.key, p.value);
+										}
 										else{
-										    //theSlotsToSet[slot] = valMod.parse(p.value);
 										    theSlotsToSet[slot] = p.value;
 										}
                                     }
@@ -1109,7 +1157,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 					toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), slotVal);
 				}
 				else{
-					toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), JSON.stringify(slotVal));
+					toBeCalculated = toBeCalculated.replace(('[' + slotStr  +']'), JSON.stringify(slotVal, $scope.dynJSFuncStringify));
 				}
 			}
 
@@ -1617,7 +1665,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             theInitiationState_ = bitflags.on(theInitiationState_, Enum.bitFlags_InitStates.InitBegun);
 
             // Stores the wbl def object describing this webble
-            var theWblDef_ = JSON.parse(whatWblDef);
+            var theWblDef_ = JSON.parse(whatWblDef, $scope.dynJSFuncParse);
 
             // Give the platform some init data needed for reassembling relationships
             $scope.AddUDD({newInstanceId: $scope.getInstanceId(), initWblDef: theWblDef_});
@@ -2245,7 +2293,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             slotsForWblDef.push({
                 "name": slot,
                 "category": theSlots_[slot].getCategory(),
-                "value": theSlots_[slot].getValue(),
+                "value": $scope.dynJSFuncStringifyAdvanced(slot, theSlots_[slot].getValue()),
                 "metadata": theSlots_[slot].getMetaData()
             });
         }

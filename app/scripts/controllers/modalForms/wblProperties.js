@@ -35,7 +35,7 @@
 // WEBBLE PROPERTIES FORM CONTROLLER
 // This controls the Webbles slot and property form
 //====================================================================================================================
-ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext) {
+ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext, valMod) {
 
     //=== PROPERTIES ================================================================
 
@@ -57,7 +57,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
     $scope.deleteTooltipInfo = gettext("If you want to delete this custom slot, click here.");
     $scope.isSharedTooltipInfo = gettext("This Webble has shared model duplicates which it shares selected slots with");
 
-    $scope.infoMsg = '';
+    $scope.infoMsg = 'Hover the Question mark to get a description of the slot or click it to open a more readable form of the same.';
 
     $scope.it = Enum.aopInputTypes;
     var testPropType = {itemKey: '', typeIsSet: false};
@@ -135,16 +135,11 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
             }
         }
 
-
-        for(var n = 0; n < unsortedCats.length; n++){
-            $scope.defCatStrings[unsortedCats[n].toString()] = unsortedCats[n];
-        }
-
-        if(unsortedCats.length > 0){
-            var nonSlotProp = sortedCats.splice(0, 1);
-            sortedCats = unsortedCats.concat(sortedCats);
-            sortedCats.unshift(nonSlotProp);
-        }
+		var splicePoint = 2;
+		for(var n = 0; n < unsortedCats.length; n++){
+			$scope.defCatStrings[unsortedCats[n].toString()] = {p1: unsortedCats[n], p2: ""};
+			sortedCats.splice(splicePoint++, 0, unsortedCats[n]);
+		}
 
         return sortedCats;
     };
@@ -303,6 +298,48 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 
 			reader.readAsDataURL(input.files[0]);
 		}
+	};
+	//========================================================================================
+
+
+
+	//========================================================================================
+	// Show More Readable
+	// Opens a modal window to display the slots descriptive information in a more readable
+	// and user friendly way.
+	//========================================================================================
+	$scope.showMoreReadable = function(slot){
+		var htmlAdaptedText = valMod.urlify(slot.desc);
+		var titleTxt = slot.name + " (" + slot.key + ")";
+		var contentTxt = '<h4>' + gettextCatalog.getString("Slot Description") + '</h4>' +
+			'<div style="font-size: 15px;">' +
+				'<p>' +
+					'<span style="font-weight: bolder; text-decoration: underline;">' + gettextCatalog.getString("Category") + '</span>' + ':&nbsp;' + slot.cat +
+				'</p>' +
+				'<p style="border-bottom: 1px dotted black;"></p>' +
+				'<p>' +
+					'<span style="font-weight: bolder; text-decoration: underline;">' + gettextCatalog.getString("Description") + '</span>:</br>' +
+					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + htmlAdaptedText + '</span>' +
+				'</p>' +
+				'<p style="border-bottom: 1px dotted black;"></p>' +
+				'<p>' +
+					'<span style="font-weight: bolder; text-decoration: underline;">' + gettextCatalog.getString("Value:") + '</span></br>' +
+					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap; font-size: 12px; min-width: 98%; max-height: 200px; overflow-y: auto;">' + slot.value + '</span>' +
+				'</p>' +
+			'</div>';
+
+		var modalOptions = {
+			templateUrl: 'views/modalForms/infoMsg.html',
+			controller: 'infoMsgCtrl',
+			windowClass: 'modal-wblwrldform small',
+			resolve: {
+				infoTitle: function () { return titleTxt; },
+				infoContent: function () { return contentTxt; }
+			},
+			size: 'md'
+		};
+
+		var modalInstance = $modal.open(modalOptions);
 	};
 	//========================================================================================
 

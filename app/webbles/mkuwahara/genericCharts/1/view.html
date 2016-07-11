@@ -1,0 +1,39 @@
+<!--====================================================================================================================
+// View for Charts for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+
+<div id="chartHolder" class="chartHolder" ng-controller="GenChartsCtrl">
+    <canvas id="theChart" class="theChart"></canvas>
+</div>
+
+<!--=================================================================================================================-->
+
+
+<!--************** Ask if data should be converted **************-->
+<!--==============================================================-->
+
+<script type="text/ng-template" id="askDataConversion-form.html">
+	<div id="askDataConversion-form" class="container-fluid padcontent"  data-formclass="wblwrldform-main">
+		<div class="row">
+			<div class="col-xs-8"><h4 class="formTitle">Data ill formatted</h4></div>
+		</div>
+
+		<div class="keepTheDistanceBelow dividerLineAbove">
+			<div class="row">
+				<div class="col-xs-12" style="font-size: 14px;">The Scatter Plot Chart Expect the data to contain an x and y value for each data point. e.g. [{x:0, y:0}, {x:1, y:1}]. Do you want me to convert the current data into that form?</div>
+			</div>
+		</div>
+
+		<div class="dividerLineAbove">
+			<div class="row">
+				<div class="col-xs-12" style="text-align: right;">
+					<button class="btn btn-success" ng-click="$close()" style="margin: 0 3px 3px 0;" translate>Yes</button>
+					<button class="btn btn-danger" ng-click="$dismiss()" style="margin-bottom: 3px;" translate>No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!--==============================================================-->

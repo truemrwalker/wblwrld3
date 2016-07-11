@@ -150,22 +150,6 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
     //===================================================================================
 
 
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-        var customWblDefPart = {
-
-        };
-
-        return customWblDefPart;
-    };
-    //===================================================================================
-
-
     //========================================================================================
     // Draw Chart
     // Draws the chart as specified

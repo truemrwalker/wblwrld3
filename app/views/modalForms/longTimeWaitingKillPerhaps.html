@@ -33,17 +33,22 @@
 -->
 
 <!--====================================================================================================================
-// HTML View for Information Message Form
+// HTML View for Allow non-trusted Confirmation Form
 //===================================================================================================================-->
 <div class="container-fluid padcontent" data-formclass="wblwrldform-main">
 
     <div class="row">
-        <div class="col-xs-12"><h3 class="formTitle">{{title | translate}}</h3></div>
+        <div class="col-xs-12"><h3 class="formTitle" style="font-weight: bolder;" translate>Webble Processing Still going on and takes a bit longer than usual...</h3></div>
     </div>
 
     <div class="keepTheDistanceBelow dividerLineAbove">
         <div class="row">
-            <div class="col-xs-12" ng-bind-html='content | translate'>
+            <div class="col-xs-12" style="font-size: 14px;" translate>
+                <b>There is a large amount of calculations and slot value processing going on at the moment and maybe even for a while longer...</b> <br><br>
+				If you are tired of waiting and want to abandon the future reward for your patience or you think there might even be something wrong with any of the Webbles, stuck in some loop or so, just press the 'Kill' button. <br><br>
+				<i>(But be aware that killing the process might leave the Webble useless and undone)</i><br><br>
+				But if you are glad to wait a bit longer, then just click 'Wait' or do nothing at all and the Webbles will go on with its business and hopefully be finished in a bit.<br><br>
+				Thanks for your patience and understanding.
             </div>
         </div>
     </div>
@@ -51,7 +56,8 @@
     <div class="dividerLineAbove">
         <div class="row">
             <div class="col-xs-12" style="text-align: right;">
-                <button class="btn btn-default" ng-click="close('ok')" translate>Ok</button>
+                <button class="btn btn-default" ng-click="$close()" style="margin: 0 3px 3px 0;" translate>Kill</button>
+                <button class="btn btn-default" ng-click="$dismiss()" style="margin-bottom: 3px;" translate>Wait</button>
             </div>
         </div>
     </div>

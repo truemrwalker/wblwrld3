@@ -387,6 +387,24 @@ ww3Services.factory('wwConsts', ['colorService', function(colorService) {
             {name: "lightpink", value: colorService.rgbToHex(216, 191, 216)},
             {name: "olive", value: colorService.rgbToHex(128, 128, 0)}
         ],
+		lightPalette: [
+			{name: "wblWrldYellow", value: "#FFF68F"},
+			{name: "pink", value: "#FFC0CB"},
+			{name: "LightSalmon", value: "#FFA07A"},
+			{name: "Coral", value: "#FF7F50"},
+			{name: "BurlyWood", value: "#DEB887"},
+			{name: "Chocolate", value: "#D2691E"},
+			{name: "LightSkyBlue", value: "#87CEFA"},
+			{name: "Aquamarine", value: "#7FFFD4"},
+			{name: "PaleGreen", value: "#98FB98"},
+			{name: "Plum", value: "#DDA0DD"},
+			{name: "MistyRose", value: "#FFE4E1"},
+			{name: "LightCyan", value: "#E0FFFF"},
+			{name: "Silver", value: "#C0C0C0"},
+			{name: "PeachPuff", value: "#FFDAB9"},
+			{name: "LightSteelBlue", value: "#B0C4DE"},
+			{name: "Tomato", value: "#FF6347"}
+		],
         elementTransformations: [
             "RotateTransform",
             "SkewTransform",
@@ -1969,7 +1987,25 @@ ww3Services.factory('jsonQuery', [function() {
                 }
             }
             return objects;
-        }
+        },
+		allObjValuesAsArray: function(obj) {
+			var objArr = [];
+			for (var i in obj) {
+				objArr.push(obj[i]);
+			}
+			return objArr;
+		},
+		getArrayIndexByObjValue: function(obj, val) {
+			var objValArr = [];
+			for (var i in obj) { objValArr.push(obj[i]); }
+
+			for(var i = 0; i < objValArr.length; i++) {
+				if(objValArr[i] == val) {
+					return i;
+				}
+			}
+			return undefined;
+		}
     }
 }]);
 //=================================================================================
@@ -2111,41 +2147,12 @@ ww3Services.factory('valMod', function($log, localStorageService) {
                 return ['', ''];
             }
         },
+		//add a 'px' behind a value if needed
         addPxMaybe: function(theName, theVal) {
             if(theName.search('top') != -1 || theName.search('left') != -1 || theName.search('font-size') != -1 || theName.search('width') != -1 || theName.search('height') != -1){
                 if(!isNaN(theVal)){
                     theVal = theVal + 'px';
                 }
-            }
-            return theVal;
-        },
-        stringify: function(theVal) {
-            if($.isArray(theVal)){
-                theVal = '[' + theVal.toString() + ']';
-            }
-            else{
-                try {
-                    var tempVal = JSON.stringify(theVal);
-
-                    if(tempVal.toString().search('hashKey') != -1){
-                        theVal = angular.toJson(theVal);
-                    }
-                    else{
-                        theVal = tempVal
-                    }
-                } catch(err) { /*Don't need to do any catching, just ignore the failed attempt and return the original value*/ }
-            }
-            return theVal;
-        },
-        parse: function(theVal) {
-            if(theVal[0] == '[' && theVal[theVal.length-1] == ']'){
-                theVal = theVal.replace('[', '').replace(']', '').split(',');
-            }
-            else{
-                try {
-                    theVal = JSON.parse(theVal);
-
-                } catch(err) { /*Don't need to do any catching, just ignore the failed attempt and return the original value*/ }
             }
             return theVal;
         },
@@ -2167,6 +2174,81 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 			}
 
 			return newFormatedDate;
+		},
+		//Gets a string which failed being parsed as an array, tries to fix and mend it and create a proper array from it, or if not returns an empty array.
+		fixBrokenArrStrToProperArray: function(strToFix) {
+			var newArray = [];
+			var workStr = strToFix.replace(/\s/g,'');
+			var workStrStrippedClean = (workStr.replace(/\"/g, "")).replace(/\'/g, "");
+			if(workStrStrippedClean[0] == '['){ workStrStrippedClean = workStrStrippedClean.substr(1, workStrStrippedClean.length - 1); }
+			if(workStrStrippedClean[workStrStrippedClean.length - 1] == ']'){ workStrStrippedClean = workStrStrippedClean.substr(0, workStrStrippedClean.length - 1); }
+
+			var jsonObjectsExist = (workStrStrippedClean.search("},{") != -1);
+			if(jsonObjectsExist){
+				var splittedWorkStr = workStrStrippedClean.split("},{");
+				for(var k = 0; k < splittedWorkStr.length; k++){
+					if(k > 0){ splittedWorkStr[k] = "{" + splittedWorkStr[k] }
+					else if(splittedWorkStr[k][0] == '['){ splittedWorkStr[k] = splittedWorkStr[k].substr(1, splittedWorkStr[k].length - 1); }
+					if(k < (splittedWorkStr.length -1)){ splittedWorkStr[k] += "}" }
+					else if(splittedWorkStr[k][splittedWorkStr[k].length - 1] == ']'){ splittedWorkStr[k] = splittedWorkStr[k].substr(0, splittedWorkStr[k].length - 1); }
+
+					var splittedWorkStrFurtherDeep = splittedWorkStr[k].split(",");
+					var newObj = {};
+					if(splittedWorkStrFurtherDeep.length > 1){
+						for(var t = 0; t < splittedWorkStrFurtherDeep.length; t++){
+							if(t == 0){ splittedWorkStrFurtherDeep[t] = splittedWorkStrFurtherDeep[t].substr(1); }
+							if(t == (splittedWorkStrFurtherDeep.length - 1)){ splittedWorkStrFurtherDeep[t] = splittedWorkStrFurtherDeep[t].substr(0, splittedWorkStrFurtherDeep[t].length - 1); }
+
+							var splittedWorkStrDeepest = splittedWorkStrFurtherDeep[t].split(":");
+							var noKey = "", noValue = "";
+							for(var m = 0; m < splittedWorkStrDeepest.length; m++){
+								if(m == 0){ noKey = String(splittedWorkStrDeepest[m]); }
+								if(m == 1){
+									noValue = splittedWorkStrDeepest[m];
+									if(!isNaN(noValue)){ noValue = parseInt(noValue); }
+									else if(noValue.toString() === "true" || noValue.toString() === "false"){ noValue = (noValue === "true"); }
+									else{ noValue = String(noValue); }
+								}
+							}
+							newObj[noKey] = noValue;
+						}
+						splittedWorkStr[k] = newObj;
+					}
+					else{
+						var splittedWorkStrDeepest = splittedWorkStrFurtherDeep[0].split(":");
+						var noKey = "", noValue = "";
+						for(var m = 0; m < splittedWorkStrDeepest.length; m++){
+							if(m == 0){ noKey = String(splittedWorkStrDeepest[m].substr(1)); }
+							if(m == 1){
+								noValue = splittedWorkStrDeepest[m].substr(0, splittedWorkStrDeepest[m].length - 1);
+								if(!isNaN(noValue)){ noValue = parseInt(noValue); }
+								else if(noValue.toString() === "true" || noValue.toString() === "false"){ noValue = (noValue === "true"); }
+								else{ noValue = String(noValue); }
+							}
+						}
+						newObj[noKey] = noValue;
+						splittedWorkStr[k] = newObj;
+					}
+				}
+				newArray = splittedWorkStr;
+			}
+			else{
+				var commaSeparatedValuesExist = (workStrStrippedClean.search(',') != -1);
+				if (commaSeparatedValuesExist) { newArray = workStrStrippedClean.split(','); }
+				for(var n = 0; n < newArray.length; n++){
+					if(!isNaN(newArray[n])){ newArray[n] = parseInt(newArray[n]); }
+					else if(newArray[n].toString() === "true" || newArray[n].toString() === "false"){ newArray[n] = (newArray[n] === "true"); }
+					else{ newArray[n] = String(newArray[n]); }
+				}
+				if (workStrStrippedClean.length > 0 && !commaSeparatedValuesExist) { newArray.push(String(workStrStrippedClean)); }
+			}
+
+			return newArray;
+		},
+		//Adds html link tag around html addresses found inside provided text and returns the new and improved version
+		urlify: function(text) {
+			var urlRegex = /(https?:\/\/[^\s]+)/g;
+			return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>')
 		}
     }
 });

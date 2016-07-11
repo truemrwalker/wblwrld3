@@ -102,7 +102,12 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $modal, $time
             if(fileExtension == '.json'){
                 var reader = new FileReader();
                 reader.onload = function(e) {
-                    var theWebbleDef = JSON.parse(e.target.result);
+                    var theWebbleDef = JSON.parse(e.target.result, function(key, value) {
+						if(value && (typeof value === 'string') && value.indexOf("function") === 0){
+							return String(value);
+						}
+						return value;
+					});
                     if(theWebbleDef['webble'] != undefined){
                         $scope.loadWebbleFromDef(theWebbleDef, null);
                     }

@@ -190,6 +190,7 @@ span.formitem {
     font-weight: bold;
     text-align: center;
     padding: 5px;
+	white-space: pre-wrap;
 }
 /*/ === END: Quick Info Message Box Classes === /*/
 

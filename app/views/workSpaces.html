@@ -112,11 +112,13 @@
             marker-end: url({{arrow.endMarker}});
             marker-mid: url({{arrow.midMarker}});" />
 
-            <text ng-attr-x="{{arrow.cPos.x + arrow.cPosTxtOffset.x}}" ng-attr-y="{{arrow.cPos.y + arrow.cPosTxtOffset.y}}" stroke="black" stroke-width="1" style="font-weight: bolder; font-size: 18px; font-family: Arial, sans-serif" fill="#ff0000">
+			<rect fill="#F9FFD7" stroke="black" stroke-width="1" ng-attr-width="{{arrow.cTxtLength}}" height="22" ng-attr-x="{{arrow.cPos.x + arrow.cPosTxtOffset.x - 4}}" ng-attr-y="{{arrow.cPos.y + arrow.cPosTxtOffset.y - 15}}"/>
+            <text ng-attr-x="{{arrow.cPos.x + arrow.cPosTxtOffset.x}}" ng-attr-y="{{arrow.cPos.y + arrow.cPosTxtOffset.y}}" stroke="black" stroke-width="0" style="font-weight: bolder; font-size: 18px; font-family: Arial, sans-serif;" fill="#000000">
                 {{arrow.cSlot}}
             </text>
 
-            <text ng-attr-x="{{arrow.pPos.x + arrow.pPosTxtOffset.x}}" ng-attr-y="{{arrow.pPos.y - arrow.pPosTxtOffset.y}}" stroke="black" stroke-width="1" style="font-weight: bolder; font-size: 18px; font-family: Arial, sans-serif;" fill="#ff0000">
+			<rect fill="#F9FFD7" stroke="black" stroke-width="1" ng-attr-width="{{arrow.pTxtLength}}" height="22" ng-attr-x="{{arrow.pPos.x + arrow.pPosTxtOffset.x - 4}}" ng-attr-y="{{arrow.pPos.y - arrow.pPosTxtOffset.y - 16}}"/>
+            <text ng-attr-x="{{arrow.pPos.x + arrow.pPosTxtOffset.x}}" ng-attr-y="{{arrow.pPos.y - arrow.pPosTxtOffset.y}}" stroke="black" stroke-width="0" style="font-weight: bolder; font-size: 18px; font-family: Arial, sans-serif;" fill="#000000">
                 {{arrow.pSlot}}
             </text>
          </g>
