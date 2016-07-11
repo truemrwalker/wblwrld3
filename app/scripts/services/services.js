@@ -2176,6 +2176,68 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 			return newFormatedDate;
 		},
 		//Gets a string which failed being parsed as an array, tries to fix and mend it and create a proper array from it, or if not returns an empty array.
+		fixBrokenObjStrToProperObject: function(strToFix) {
+			var newObj = {};
+			var workStr = strToFix.replace(/\s/g,'');
+			var workStrStrippedClean = (workStr.replace(/\"/g, "")).replace(/\'/g, "");
+
+			if(workStrStrippedClean[0] == '{' && workStrStrippedClean[workStrStrippedClean.length - 1] == '}'){
+				workStrStrippedClean = workStrStrippedClean.substr(1, workStrStrippedClean.length - 1);
+				workStrStrippedClean = workStrStrippedClean.substr(0, workStrStrippedClean.length - 1);
+
+				var strBlocks = [];
+				var strBlock = "";
+				var arrBracketCounter = 0;
+				var objBracketCounter = 0;
+				for(var n = 0; n < workStrStrippedClean.length; n++){
+					if(workStrStrippedClean[n] == '['){ arrBracketCounter++ }
+					if(workStrStrippedClean[n] == ']'){ arrBracketCounter-- }
+					if(workStrStrippedClean[n] == '{'){ objBracketCounter++ }
+					if(workStrStrippedClean[n] == '}'){ objBracketCounter-- }
+
+					if(workStrStrippedClean[n] == ',' && arrBracketCounter == 0 && objBracketCounter == 0){
+						strBlocks.push(strBlock);
+						strBlock = "";
+					}
+					else{
+						strBlock += workStrStrippedClean[n];
+					}
+				}
+				strBlocks.push(strBlock);
+
+
+				var key = "";
+				for(var i = 0; i < strBlocks.length; i++){
+					for(var n = 0; n < strBlocks[i].length; n++){
+						if(strBlocks[i][n] == ':'){
+							strBlocks[i] = [key, strBlocks[i].substr(n+1)];
+							key = "";
+							break;
+						}
+						else{
+							key += strBlocks[i][n];
+						}
+					}
+				}
+
+				for(var n = 0; n < strBlocks.length; n++){
+					var kvpValStr = strBlocks[n][1].toString();
+					var kvpValue;
+					if(!isNaN(strBlocks[n][1])){ kvpValue = parseFloat(strBlocks[n][1]); }
+					else if(kvpValStr === "true" || kvpValStr === "false"){ kvpValue = (strBlocks[n][1] === "true"); }
+					else if(kvpValStr[0] == "[" && kvpValStr[kvpValStr.length - 1] == "]"){
+						kvpValue = this.fixBrokenArrStrToProperArray(kvpValStr);
+					}
+					else if(kvpValStr[0] == "{" && kvpValStr[kvpValStr.length - 1] == "}"){
+						kvpValue = this.fixBrokenObjStrToProperObject(kvpValStr);
+					}
+					else{ kvpValue = String(strBlocks[n][1]); }
+					newObj[strBlocks[n][0]] = kvpValue;
+				}
+			}
+			return newObj;
+		},
+		//Gets a string which failed being parsed as an array, tries to fix and mend it and create a proper array from it, or if not returns an empty array.
 		fixBrokenArrStrToProperArray: function(strToFix) {
 			var newArray = [];
 			var workStr = strToFix.replace(/\s/g,'');
@@ -2205,7 +2267,7 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 								if(m == 0){ noKey = String(splittedWorkStrDeepest[m]); }
 								if(m == 1){
 									noValue = splittedWorkStrDeepest[m];
-									if(!isNaN(noValue)){ noValue = parseInt(noValue); }
+									if(!isNaN(noValue)){ noValue = parseFloat(noValue); }
 									else if(noValue.toString() === "true" || noValue.toString() === "false"){ noValue = (noValue === "true"); }
 									else{ noValue = String(noValue); }
 								}
@@ -2221,7 +2283,7 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 							if(m == 0){ noKey = String(splittedWorkStrDeepest[m].substr(1)); }
 							if(m == 1){
 								noValue = splittedWorkStrDeepest[m].substr(0, splittedWorkStrDeepest[m].length - 1);
-								if(!isNaN(noValue)){ noValue = parseInt(noValue); }
+								if(!isNaN(noValue)){ noValue = parseFloat(noValue); }
 								else if(noValue.toString() === "true" || noValue.toString() === "false"){ noValue = (noValue === "true"); }
 								else{ noValue = String(noValue); }
 							}
@@ -2236,7 +2298,7 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 				var commaSeparatedValuesExist = (workStrStrippedClean.search(',') != -1);
 				if (commaSeparatedValuesExist) { newArray = workStrStrippedClean.split(','); }
 				for(var n = 0; n < newArray.length; n++){
-					if(!isNaN(newArray[n])){ newArray[n] = parseInt(newArray[n]); }
+					if(!isNaN(newArray[n])){ newArray[n] = parseFloat(newArray[n]); }
 					else if(newArray[n].toString() === "true" || newArray[n].toString() === "false"){ newArray[n] = (newArray[n] === "true"); }
 					else{ newArray[n] = String(newArray[n]); }
 				}

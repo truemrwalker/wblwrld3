@@ -309,7 +309,6 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 	// and user friendly way.
 	//========================================================================================
 	$scope.showMoreReadable = function(slot){
-		var htmlAdaptedText = valMod.urlify(slot.desc);
 		var titleTxt = slot.name + " (" + slot.key + ")";
 		var contentTxt = '<h4>' + gettextCatalog.getString("Slot Description") + '</h4>' +
 			'<div style="font-size: 15px;">' +
@@ -319,7 +318,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 				'<p style="border-bottom: 1px dotted black;"></p>' +
 				'<p>' +
 					'<span style="font-weight: bolder; text-decoration: underline;">' + gettextCatalog.getString("Description") + '</span>:</br>' +
-					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + htmlAdaptedText + '</span>' +
+					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + valMod.urlify(slot.desc) + '</span>' +
 				'</p>' +
 				'<p style="border-bottom: 1px dotted black;"></p>' +
 				'<p>' +

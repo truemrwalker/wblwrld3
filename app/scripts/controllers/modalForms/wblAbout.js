@@ -35,12 +35,13 @@
 // ABOUT WEBBLE WORLD FORM CONTROLLER
 // This controls the Platforms About form
 //====================================================================================================================
-ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstance, $log, wblData, gettext, dbService, Enum) {
+ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstance, $log, wblData, gettext, dbService, Enum, isEmpty, valMod) {
 
     //=== PROPERTIES ================================================================
 
     $scope.formData = wblData;
 	var wblDefMetaData = $scope.formData.wblPlatformScope.getWebbleDefsMetaDataMemory();
+	var updateData = null;
 
     $scope.tooltip = {
         displayname: gettext("This is the currently chosen display name for this Webble Instance, may be changed in properties"),
@@ -181,7 +182,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close(null);
+        $modalInstance.close(updateData);
     };
     //========================================================================================
 
@@ -193,25 +194,49 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 	$scope.formData['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + $scope.formData.defid;
 	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
 	$scope.formData['rateShow'] = true;
+	$scope.formData.description = valMod.urlify($scope.formData.description);
 
-	if(($scope.formData.rating == 0 && $scope.formData.ratingCount == 0) || ($scope.formData.image == "images/notFound.png" || $scope.formData.image == "")){
-		dbService.getWebbleDef($scope.formData.defid).then(function(data) {
-			if($scope.formData.rating == 0 && $scope.formData.ratingCount == 0){
-				$scope.formData.rating = data.rating;
-				$scope.formData.ratingCount = data.rating_count;
+	dbService.getWebbleDef($scope.formData.defid).then(function(data) {
+		if($scope.formData.rating == 0 && $scope.formData.ratingCount == 0){
+			$scope.formData.rating = data.rating;
+			$scope.formData.ratingCount = data.rating_count;
+		}
+		if($scope.formData.image == "images/notFound.png" || $scope.formData.image == ""){
+			if(data.webble.image != "" && data.webble.image != "images/notFound.png"){
+				$scope.formData.image = data.webble.image;
 			}
-			if($scope.formData.image == "images/notFound.png" || $scope.formData.image == ""){
-				if(data.webble.image != "" && data.webble.image != "images/notFound.png"){
-					$scope.formData.image = data.webble.image;
-				}
-				else{
-					$scope.formData.image = "images/icons/No_Image_Available.png";
-				}
+			else{
+				$scope.formData.image = "images/icons/No_Image_Available.png";
 			}
-		},function(eMsg){
-			$log.log("Rating data not available from server: " + eMsg);
-		});
-	}
+		}
+
+		if($scope.formData.templaterevision == data.webble.templaterevision){
+			var updateObj = {};
+			if($scope.formData.displayname != data.webble.displayname){
+				$scope.formData.displayname = data.webble.displayname;
+				updateObj['displayname'] = data.webble.displayname;
+			}
+			if($scope.formData.author != data.webble.author){
+				$scope.formData.author = data.webble.author;
+				updateObj['author'] = data.webble.author;
+			}
+			if($scope.formData.description != data.webble.description){
+				$scope.formData.description = data.webble.description;
+				$scope.formData.description = valMod.urlify($scope.formData.description);
+				updateObj['description'] = data.webble.description;
+			}
+			if($scope.formData.keywords != data.webble.keywords){
+				$scope.formData.keywords = data.webble.keywords;
+				updateObj['keywords'] = data.webble.keywords;
+			}
+
+			if(!isEmpty(updateObj)){
+				updateData = updateObj;
+			}
+		}
+	},function(eMsg){
+		$log.log("Webble data not available from server: " + eMsg);
+	});
 
 	dbService.getWblRate($scope.formData.defid).then(function (ratings) {
 		for(var i = 0; i < ratings.length; i++){
