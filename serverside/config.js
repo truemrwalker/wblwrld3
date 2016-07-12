@@ -60,6 +60,11 @@ module.exports = (function() {
 		APP_ROOT_DIR: path.join(__dirname, '../app'),
 
 		// DB and session settings
+        REDIS_PATH: null,
+        REDIS_HOST: '127.0.0.1',
+        REDIS_PORT: 6379,
+        REDIS_PASS: sec.get('redis_password'),
+
 		MONGODB_DB_NAME: "wblwrld3",
 		MONGODB_DB_USERNAME: sec.get('mongo_db_username'),
 		MONGODB_DB_PASSWORD: sec.get('mongo_db_password'),

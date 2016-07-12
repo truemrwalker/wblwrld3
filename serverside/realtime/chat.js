@@ -30,26 +30,26 @@ var Promise = require("bluebird");
 //
 module.exports = function(app, config, mongoose, gettext, io, auth) {
 
-    io.on('connection', function (socket) {
+    app.locals.sub.subscribe('chat');
 
-	    socket.on('chat:started', function () {
-		    socket.join('chat');
-	    });
-	    socket.on('chat:ended', function () {
-		    socket.leave('chat');
-	    });
+    app.locals.sub.on('message', function (channel, dataString) {
 
-        socket.on('chat:message', function (data) {
+        if (channel !== 'chat')
+            return;
 
-	        data.date = Date.now();
-            socket.broadcast.to('chat').emit('chat:message', data);
-        });
-
-        socket.on('disconnect', function () {
-
-	        // Nothing to do for now
-        });
-
+        var data = JSON.parse(dataString);
+        data.date = Date.now();
+        io.to('chat').emit('chat:message', data);
     });
 
+    // app.locals.sub.unsubscribe('chat');
+
+    io.on('connection', function (socket) {
+
+        socket.on('chat:started', () => socket.join('chat'));
+        socket.on('chat:ended', () => socket.leave('chat'));
+        socket.on('chat:message', (data) => app.locals.pub.publish('chat', JSON.stringify(data)));
+
+        socket.on('disconnect', () => { }); // Nothing to do for now
+    });
 };

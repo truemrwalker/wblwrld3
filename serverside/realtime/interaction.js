@@ -30,6 +30,17 @@ var Promise = require("bluebird");
 //
 module.exports = function(app, config, mongoose, gettext, io, auth) {
 
+    app.locals.sub.subscribe('interaction');
+
+    app.locals.sub.on('message', function (channel, dataString) {
+
+        if (channel !== 'interaction')
+            return;
+
+        var data = JSON.parse(dataString);
+        io.to(data.id).emit(data.event, data);
+    });
+
     io.on('connection', function (socket) {
 
 	    // Starting stopping and checkpointing id-based interaction
@@ -45,23 +56,14 @@ module.exports = function(app, config, mongoose, gettext, io, auth) {
 	    // Data should have a field called ID that refers to the coresponding
 	    // id-based interaction. Again, usually the ID is the id of the workspace
 	    //
-	    socket.on('interaction:info', function (data) {
+        function emit(event, data) {
 
-		    socket.broadcast.to(data.id).emit('interaction:info', data);
-	    });
-	    socket.on('interaction:move', function (data) {
-
-		    socket.broadcast.to(data.id).emit('interaction:move', data);
-        });
-	    socket.on('interaction:save', function (data) {
-
-		    socket.broadcast.to(data.id).emit('interaction:save', data);
-	    });
-	    socket.on('interaction:comm', function (data) {
-
-		    socket.broadcast.to(data.id).emit('interaction:comm', data);
-	    });
-
+            data.event = event;
+            app.locals.pub.publish('interaction', JSON.stringify(data));
+        }
+        socket.on('interaction:info', data => emit('interaction:info', data));
+        socket.on('interaction:move', data => emit('interaction:move', data));
+        socket.on('interaction:save', data => emit('interaction:save', data));
+        socket.on('interaction:comm', data => emit('interaction:comm', data));
     });
-
 };

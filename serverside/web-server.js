@@ -42,7 +42,7 @@ function reportStartupSuccess() {
 ////////////////////////////////////////////////////////////////////////
 // Load essential modules
 //
-var Promise = require("bluebird");
+var Promise = require('bluebird');
 
 var express = require('express');
 var http = require('http');
@@ -76,9 +76,8 @@ Promise.all([
 		app.use(bodyParser.json({ limit: '10mb' }));
 		
 		// We want to save this in app
-		var sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
-		app.set('sessionStore', sessionStore);
-		
+        app.locals.sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
+
 		// trust first proxy, so that despite "secure: true" cookies are set over HTTP when behind proxy
 		app.set('trust proxy', 1);
 		
@@ -88,7 +87,7 @@ Promise.all([
 			secret: config.SESSION_SECRET,
 			key: config.SESSION_KEY,
 			cookie: { httpOnly: true, secure: true },
-			store: sessionStore,
+            store: app.locals.sessionStore,
 			saveUninitialized: true, // https://github.com/expressjs/session
 			resave: false
 		}));
@@ -184,9 +183,9 @@ function initSocketServer(webServer) {
 	// Start under endpoint for easier reverse proxy configuration
 	var io = require('socket.io')(webServer).of('/socket.io/endpt');
 	var socketAuth = require('./auth/auth-socket')(app, config, mongoose, gettext, io);
-	
+
 	// Load all real-time modules
-	return loader.executeAllScripts('realtime', app, config, mongoose, gettext, [], io, socketAuth);
+	return loader.executeAllScripts('realtime', app, config, mongoose, gettext, ['pubsub.js'], io, socketAuth);
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -52,11 +52,29 @@ function ($scope, $timeout, gettext, authService, socket, $rootScope) {
 				elem.scrollTop = elem.scrollHeight;
 		}, 100);
 	}
-	function getAvatarUrl() {
+
+    function getAvatarUrl() {
 
 		return $scope.user && $scope.user.image_urls.length ?
 			$scope.user.image_urls[0] : 'images/generic_avatar.png';
 	}
+
+    function getUserName() {
+
+        if (!$scope.user)
+            return gettext("Anonymous Coward");
+
+        return $scope.user.username || $scope.user.name.first;
+    }
+
+    function processReceivedMessage(msg) {
+
+        if ($scope.user && $scope.user.username === msg.from) {
+            msg.from = gettext("me");
+            msg.me = true;
+        }
+        return msg;
+    }
 
 	////////////////////////////////////////////////////////////////////
 	// functions
@@ -70,14 +88,14 @@ function ($scope, $timeout, gettext, authService, socket, $rootScope) {
 
 			socket.emit('chat:message', {
 
-				text: text,
-				from: $scope.user ? $scope.user.name.first : gettext("Anonymous Coward"),
+                text: text,
+                from: getUserName(),
 				img: getAvatarUrl()
 			});
 
-			$scope.messages.push({
-				text: text, from: gettext("me"), img: getAvatarUrl(), date: Date.now(), me: true
-			});
+			//$scope.messages.push({
+			//	text: text, from: gettext("me"), img: getAvatarUrl(), date: Date.now(), me: true
+			//});
 			scrollToEnd();
 		}
 	};
@@ -87,7 +105,7 @@ function ($scope, $timeout, gettext, authService, socket, $rootScope) {
 	//
 	socket.on('chat:message', function (msg) {
 
-		$scope.messages.push(msg);
+        $scope.messages.push(processReceivedMessage(msg));
 		scrollToEnd();
 	});
 

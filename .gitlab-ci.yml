@@ -30,4 +30,4 @@ job_runtests:
 job_deploy:
   stage: deploy
   script:
-    - 'curl -H "Content-Type: application/json" -X POST -d ''{"project":"hokudai-wws"}'' https://wws.meme.hokudai.ac.jp/api/info/committed'
+    - 'curl -X GET http://dev.meme.hokudai.ac.jp/wws-deploy'

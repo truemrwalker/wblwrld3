@@ -31,8 +31,8 @@ var parser = require('cookie-parser');
 
 module.exports = function(app, config, mongoose, gettext, io) {
 
-	var User = mongoose.model('User');
-	var sessionStore = app.get('sessionStore');
+    var User = mongoose.model('User');
+    var sessionStore = app.locals.sessionStore;
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions

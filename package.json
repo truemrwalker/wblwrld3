@@ -29,6 +29,7 @@
 		"gridfs-stream": "latest",
 		"connect-mongo": "latest",
 		"tar-stream": "latest",
+		"redis" : "latest",
 
 		"passport": "latest",
 		"passport-local": "latest",
