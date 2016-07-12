@@ -318,7 +318,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 				'<p style="border-bottom: 1px dotted black;"></p>' +
 				'<p>' +
 					'<span style="font-weight: bolder; text-decoration: underline;">' + gettextCatalog.getString("Description") + '</span>:</br>' +
-					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + valMod.urlify(slot.desc) + '</span>' +
+					'<span style="display: inline-block; padding-top: 7px; padding-left: 7px; white-space: pre-wrap;">' + valMod.urlifyWithImages(slot.desc) + '</span>' +
 				'</p>' +
 				'<p style="border-bottom: 1px dotted black;"></p>' +
 				'<p>' +
@@ -395,6 +395,10 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
     $scope.propsCats = getAllCats();
+
+	for(var i = 0, slot; slot = props[i]; i++){
+		slot['tooltipDesc'] = valMod.SlimTextFromLinksAndHtml(slot.desc);
+	}
 });
 //======================================================================================================================
 

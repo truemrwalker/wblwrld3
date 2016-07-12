@@ -15,7 +15,7 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
     };
 
     $scope.stylesToSlots = {
-        sliderGrabber: ['background-color', 'border', 'padding', 'width', 'height']
+        sliderGrabber: ['background-color', 'border', 'width', 'height']
     };
 
     //=== EVENT HANDLERS ================================================================
@@ -38,12 +38,22 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
     $scope.coreCall_Init = function(theInitWblDef){
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-			var newVal = eventData.slotValue;
-			var nv = parseFloat(newVal);
-			if(!isNaN(nv) && nv != $scope.data.currVal){
-				$scope.data.currVal = nv;
+			if(eventData.slotName == 'currentValue'){
+				var newVal = eventData.slotValue;
+				var nv = parseFloat(newVal);
+				if(!isNaN(nv) && nv != $scope.data.currVal){
+					$scope.data.currVal = nv;
+				}
 			}
-		}, undefined, 'currentValue');
+			else if(eventData.slotName == 'displayCurrentValue'){
+				if(eventData.slotValue == true && parseInt($scope.gimme("sliderGrabber:height")) < 60){
+					$scope.set("sliderGrabber:height", 60);
+				}
+				else{
+					$scope.set("sliderGrabber:height", 40);
+				}
+			}
+		});
 
         $scope.addSlot(new Slot('minValue',
             0,
@@ -80,6 +90,15 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
             undefined,
             undefined
         ));
+
+		$scope.addSlot(new Slot('displayCurrentValue',
+			true,
+			'Display Current Value',
+			'If the current value should be displayed above the slider or not',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
         $scope.setDefaultSlot('currentValue');
         $scope.setResizeSlots('sliderGrabber:width', 'sliderGrabber:height');

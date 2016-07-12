@@ -1065,6 +1065,7 @@ ww3Services.factory('strCatcher', function(gettext) {
 ww3Services.factory('appPaths', [function() {
     return {
         currentAppUriCore: document.URL.replace('#/app', ''),
+		currentAppUriCoreNoQuery: document.URL.substr(0, document.URL.indexOf("#/app")),
         webbleAccessPath: 'api/webbles/',
         webbleDocRelPath: 'docs/WebbleWorld3Manual.pdf',
         webbleDevPackRelPath: 'data/WebbleWorldDevelopersPack.zip',
@@ -2242,75 +2243,80 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 			var newArray = [];
 			var workStr = strToFix.replace(/\s/g,'');
 			var workStrStrippedClean = (workStr.replace(/\"/g, "")).replace(/\'/g, "");
-			if(workStrStrippedClean[0] == '['){ workStrStrippedClean = workStrStrippedClean.substr(1, workStrStrippedClean.length - 1); }
+			if(workStrStrippedClean[0] == '['){ workStrStrippedClean = workStrStrippedClean.substr(1); }
 			if(workStrStrippedClean[workStrStrippedClean.length - 1] == ']'){ workStrStrippedClean = workStrStrippedClean.substr(0, workStrStrippedClean.length - 1); }
 
-			var jsonObjectsExist = (workStrStrippedClean.search("},{") != -1);
-			if(jsonObjectsExist){
-				var splittedWorkStr = workStrStrippedClean.split("},{");
-				for(var k = 0; k < splittedWorkStr.length; k++){
-					if(k > 0){ splittedWorkStr[k] = "{" + splittedWorkStr[k] }
-					else if(splittedWorkStr[k][0] == '['){ splittedWorkStr[k] = splittedWorkStr[k].substr(1, splittedWorkStr[k].length - 1); }
-					if(k < (splittedWorkStr.length -1)){ splittedWorkStr[k] += "}" }
-					else if(splittedWorkStr[k][splittedWorkStr[k].length - 1] == ']'){ splittedWorkStr[k] = splittedWorkStr[k].substr(0, splittedWorkStr[k].length - 1); }
+			if(workStrStrippedClean.length > 0){
+				var strBlocks = [];
+				var strBlock = "";
+				var arrBracketCounter = 0;
+				var objBracketCounter = 0;
+				for(var n = 0; n < workStrStrippedClean.length; n++){
+					if(workStrStrippedClean[n] == '['){ arrBracketCounter++ }
+					if(workStrStrippedClean[n] == ']'){ arrBracketCounter-- }
+					if(workStrStrippedClean[n] == '{'){ objBracketCounter++ }
+					if(workStrStrippedClean[n] == '}'){ objBracketCounter-- }
 
-					var splittedWorkStrFurtherDeep = splittedWorkStr[k].split(",");
-					var newObj = {};
-					if(splittedWorkStrFurtherDeep.length > 1){
-						for(var t = 0; t < splittedWorkStrFurtherDeep.length; t++){
-							if(t == 0){ splittedWorkStrFurtherDeep[t] = splittedWorkStrFurtherDeep[t].substr(1); }
-							if(t == (splittedWorkStrFurtherDeep.length - 1)){ splittedWorkStrFurtherDeep[t] = splittedWorkStrFurtherDeep[t].substr(0, splittedWorkStrFurtherDeep[t].length - 1); }
-
-							var splittedWorkStrDeepest = splittedWorkStrFurtherDeep[t].split(":");
-							var noKey = "", noValue = "";
-							for(var m = 0; m < splittedWorkStrDeepest.length; m++){
-								if(m == 0){ noKey = String(splittedWorkStrDeepest[m]); }
-								if(m == 1){
-									noValue = splittedWorkStrDeepest[m];
-									if(!isNaN(noValue)){ noValue = parseFloat(noValue); }
-									else if(noValue.toString() === "true" || noValue.toString() === "false"){ noValue = (noValue === "true"); }
-									else{ noValue = String(noValue); }
-								}
-							}
-							newObj[noKey] = noValue;
-						}
-						splittedWorkStr[k] = newObj;
+					if(workStrStrippedClean[n] == ',' && arrBracketCounter == 0 && objBracketCounter == 0){
+						strBlocks.push(strBlock);
+						strBlock = "";
 					}
 					else{
-						var splittedWorkStrDeepest = splittedWorkStrFurtherDeep[0].split(":");
-						var noKey = "", noValue = "";
-						for(var m = 0; m < splittedWorkStrDeepest.length; m++){
-							if(m == 0){ noKey = String(splittedWorkStrDeepest[m].substr(1)); }
-							if(m == 1){
-								noValue = splittedWorkStrDeepest[m].substr(0, splittedWorkStrDeepest[m].length - 1);
-								if(!isNaN(noValue)){ noValue = parseFloat(noValue); }
-								else if(noValue.toString() === "true" || noValue.toString() === "false"){ noValue = (noValue === "true"); }
-								else{ noValue = String(noValue); }
-							}
-						}
-						newObj[noKey] = noValue;
-						splittedWorkStr[k] = newObj;
+						strBlock += workStrStrippedClean[n];
 					}
 				}
-				newArray = splittedWorkStr;
-			}
-			else{
-				var commaSeparatedValuesExist = (workStrStrippedClean.search(',') != -1);
-				if (commaSeparatedValuesExist) { newArray = workStrStrippedClean.split(','); }
-				for(var n = 0; n < newArray.length; n++){
-					if(!isNaN(newArray[n])){ newArray[n] = parseFloat(newArray[n]); }
-					else if(newArray[n].toString() === "true" || newArray[n].toString() === "false"){ newArray[n] = (newArray[n] === "true"); }
-					else{ newArray[n] = String(newArray[n]); }
-				}
-				if (workStrStrippedClean.length > 0 && !commaSeparatedValuesExist) { newArray.push(String(workStrStrippedClean)); }
-			}
+				strBlocks.push(strBlock);
 
+				for(var i = 0; i < strBlocks.length; i++){
+					var arrItemStr = strBlocks[i].toString();
+					var arrItemValue;
+					if(!isNaN(arrItemStr)){ arrItemValue = parseFloat(arrItemStr); }
+					else if(arrItemStr === "true" || arrItemStr === "false"){ arrItemValue = (arrItemStr === "true"); }
+					else if(arrItemStr[0] == "[" && arrItemStr[arrItemStr.length - 1] == "]"){
+						arrItemValue = this.fixBrokenArrStrToProperArray(arrItemStr);
+					}
+					else if(arrItemStr[0] == "{" && arrItemStr[arrItemStr.length - 1] == "}"){
+						arrItemValue = this.fixBrokenObjStrToProperObject(arrItemStr);
+					}
+					else{ arrItemValue = arrItemStr; }
+					newArray.push(arrItemValue);
+				}
+			}
 			return newArray;
 		},
 		//Adds html link tag around html addresses found inside provided text and returns the new and improved version
 		urlify: function(text) {
 			var urlRegex = /(https?:\/\/[^\s]+)/g;
 			return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>')
+		},
+		//Adds html link tag around html addresses found inside provided text and create img tags for links that are images and returns the new and improved version
+		urlifyWithImages: function(text) {
+			var imageRegex = /\.(png|jpg|jpeg|gif)$/;
+			text = text.replace(/(\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])/gim,
+				function(str) {
+					if (str.match(imageRegex)) {
+						return('<img style="max-width: 500px" src="' + str + '" />');
+					} else {
+						return('<a href="' + str + '" target="_blank">' + str + '</a>');
+					}
+				});
+
+			return text;
+		},
+		//Remove all links and replace them with indo about their existance and also removes all html tags in the text and returns the new and improved version
+		SlimTextFromLinksAndHtml: function(text) {
+			var imageRegex = /\.(png|jpg|jpeg|gif)$/;
+			text = text.replace(/(\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])/gim,
+				function(str) {
+					if (str.match(imageRegex)) {
+						return('[IMAGE]');
+					} else {
+						return('[LINK]');
+					}
+				});
+
+			text = text.replace(/(<([^>]+)>)/ig,"");
+			return text;
 		}
     }
 });

@@ -4,6 +4,11 @@
 //===================================================================================================================-->
 
 <div id="sliderGrabber" class="sliderGrabber container-fluid" ng-controller="sliderWebbleCtrl">
+	<div class="row" ng-show="gimme('displayCurrentValue')">
+		<div class="col-xs-12" style="text-align: center;">
+			<span>{{data.currVal}}</span>
+		</div>
+	</div>
     <div class="row">
         <div class="col-xs-2" style="text-align: right;">
             <span>{{gimme('minValue')}}</span>

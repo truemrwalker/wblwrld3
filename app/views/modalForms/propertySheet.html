@@ -187,7 +187,7 @@
             </div>
         </div>
         <div class="col-xs-1" ng-show="item.isShared != undefined" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{isSharedTooltipInfo | translate}}"><input class="formitem" type="checkbox" ng-model="item.isShared" /></div>
-        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{item.desc | translate}}" ng-click="showMoreReadable(item);"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{item.tooltipDesc | translate}}" ng-click="showMoreReadable(item);"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         <div class="col-xs-1" ng-show="item.isCustom" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
     </div>
 </div>

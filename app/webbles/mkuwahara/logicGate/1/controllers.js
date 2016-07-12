@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, Enum, appPaths) {
 
     //=== PROPERTIES ====================================================================
 	$scope.customMenu = [
@@ -103,7 +103,7 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, E
 								possibleInput = "input_1";
 								possibleParent.scope().theView.parent().find(RPElemId).first().html("<div style='position: absolute; background-color: #ff0000; width: 10px; height: 10px; border-radius: 5px; left: 2px; top: 10px;'></div>");
 							}
-							else if(possibleParent.scope().gimme("gateType") != "PLAIN_IN" && possibleParent.scope().gimme("gateType") != "NOT"){
+							else if(possibleParent.scope().gimme("gateType") != "PLAIN_IN_OUT" && possibleParent.scope().gimme("gateType") != "NOT"){
 								possibleInput = "input_2";
 								possibleParent.scope().theView.parent().find(RPElemId).first().html("<div style='position: absolute; background-color: #ff0000; width: 10px; height: 10px; border-radius: 5px; left: 2px; top: 30px;'></div>");
 							}
@@ -148,6 +148,7 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, E
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			var newVal = eventData.slotValue;
 			if(eventData.slotName == 'gateType'){
+				if(newVal == "PLAIN_IN"){ newVal = "PLAIN_IN_OUT"; }
 				$scope.gateVals.imgSrc = internalFilesPath + '/images/' + newVal + '.png';
 				calcOut();
 			}
@@ -222,9 +223,9 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, E
         $scope.addSlot(new Slot('gateType',
             'AND',
             'The Gate Type',
-            'The type of gate used',
+            'The type of gate used.\n\n<b>Visual Gate Description</b>\n ' + appPaths.currentAppUriCoreNoQuery + internalFilesPath + '/images/visualLogic.jpg',
             $scope.theWblMetadata['templateid'],
-            {inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR', 'XNOR', 'PLAIN_IN']},
+            {inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR', 'XNOR', 'PLAIN_IN_OUT']},
             undefined
         ));
 
@@ -323,7 +324,7 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, E
               out = 1;
             }
             break;
-		  case 'PLAIN_IN':
+		  case 'PLAIN_IN_OUT':
 			out = in1;
 			break;
         }

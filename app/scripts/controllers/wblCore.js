@@ -686,11 +686,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 																	else if(splittedWorkStr[k][0] == '['){ splittedWorkStr[k] = splittedWorkStr[k].substr(1, splittedWorkStr[k].length - 1); }
 																	if(k < (splittedWorkStr.length -1)){ splittedWorkStr[k] += "]" }
 																	else if(splittedWorkStr[k][splittedWorkStr[k].length - 1] == ']'){ splittedWorkStr[k] = splittedWorkStr[k].substr(0, splittedWorkStr[k].length - 1); }
-
 																	newArray.push(valMod.fixBrokenArrStrToProperArray(splittedWorkStr[k]));
 																}
 															}
 															else{
+
 																newArray = valMod.fixBrokenArrStrToProperArray((workStr.replace(/\"/g, "")).replace(/\'/g, ""));
 															}
 														}
@@ -2713,6 +2713,33 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
             // in unit sensitive css values we make sure there is a unit, otherwise we add pixel (px) as the unit
             slotValue = valMod.addPxMaybe(slotName, slotValue);
+
+			//if the value in is json or array and the slot being set is of string type... make sure a conversion is made to keep the integrity of the data
+			if(typeof slotValue === 'object' && theSlot.getOriginalType() === 'string'){
+				if(Object.prototype.toString.call( slotValue ) === '[object Array]') {
+					slotValue = {"slotValue": slotValue};
+					slotValue = JSON.stringify(slotValue, $scope.dynJSFuncStringify);
+					slotValue = slotValue.substr(slotValue.indexOf(':') + 1, slotValue.length - slotValue.indexOf(':') - 2);
+				}
+				else{
+					slotValue = JSON.stringify(slotValue, $scope.dynJSFuncStringify);
+				}
+			}
+
+			if(typeof slotValue === 'string'){
+				if(theSlot.getOriginalType() === 'object'){
+					try{
+						slotValue = JSON.parse(slotValue, $scope.dynJSFuncParse);
+					}
+					catch(e){
+						slotValue = valMod.fixBrokenObjStrToProperObject(slotValue);
+					}
+
+				}
+				else if(theSlot.getOriginalType() === 'array'){
+					slotValue = valMod.fixBrokenArrStrToProperArray(slotValue);
+				}
+			}
 
             // ...and then if the data differs from current, set the slot, as well as its timestamp and the ctrl variable
             if (theSlot.getValue() !== slotValue)

@@ -194,7 +194,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 	$scope.formData['socialMediaUrl'] = 'https://wws.meme.hokudai.ac.jp/#app?webble=' + $scope.formData.defid;
 	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
 	$scope.formData['rateShow'] = true;
-	$scope.formData.description = valMod.urlify($scope.formData.description);
+	$scope.formData.description = valMod.urlifyWithImages($scope.formData.description);
 
 	dbService.getWebbleDef($scope.formData.defid).then(function(data) {
 		if($scope.formData.rating == 0 && $scope.formData.ratingCount == 0){
@@ -222,7 +222,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
 			}
 			if($scope.formData.description != data.webble.description){
 				$scope.formData.description = data.webble.description;
-				$scope.formData.description = valMod.urlify($scope.formData.description);
+				$scope.formData.description = valMod.urlifyWithImages($scope.formData.description);
 				updateObj['description'] = data.webble.description;
 			}
 			if($scope.formData.keywords != data.webble.keywords){

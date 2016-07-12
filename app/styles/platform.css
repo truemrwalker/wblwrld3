@@ -520,6 +520,10 @@ ul.rating {
 }
 
 
+.tooltip-inner {
+	white-space: pre-wrap;
+}
+
 
 /*/ === END: Webble Core Classes === /*/
 
