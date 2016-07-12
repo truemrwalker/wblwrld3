@@ -62,7 +62,9 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	function buildFromTemplate(w, info) {
 
-		w._owner = null;
+        w._updated = Date.now();
+
+        w._owner = null;
 		w._sec.groups = [];
 
 		w.mergeWithInfoObject(info);
@@ -71,15 +73,15 @@ module.exports = function(app, config, mongoose, gettext) {
 		var pubgroup = info.group;
 
 		return Promise.resolve([owner && User.findOne({$or: [{email: owner}, {username: owner}]}).exec(),
-				pubgroup && Group.findOne({$or: [{email: pubgroup}, {name: pubgroup}]}).exec()]).spread(function (user, group) {
-            
-            if (user)
-                w._owner = user._id;
-            if (group)
-                w._sec.groups.push(group._id);
-            
-            return w.save();
-        });
+            pubgroup && Group.findOne({ $or: [{ email: pubgroup }, { name: pubgroup }] }).exec()]).spread(function (user, group) {
+
+                if (user)
+                    w._owner = user._id;
+                if (group)
+                    w._sec.groups.push(group._id);
+
+                return w.save();
+            });
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -140,11 +142,13 @@ module.exports = function(app, config, mongoose, gettext) {
                         
                         t = w.getInfoObject();
                         t.ver = ver;
+                        t.file = infoFile;
                         
                         fs.writeFileSync(infoFile, JSON.stringify(t), { encoding: 'utf8' });
                     }
-                    
-                    if (w.webble.templaterevision !== t.ver)
+
+                    var stats = fs.statSync(t.file);
+                    if (w.webble.templaterevision !== t.ver || stats.mtime > w._updated)
                         promises.push(buildFromTemplate(w, t));
                 }
                 delete webbleTemplates[w.webble.defid]; // Finished working with this template
