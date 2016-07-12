@@ -431,9 +431,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 var metadata = value.getMetaData() != undefined ? value.getMetaData() : {};
                 var theValue = value.getValue();
 
-                if(theValue === undefined){
-                    theValue = '';
-                }
+                if(theValue === undefined){ theValue = ''; }
+				if(theValue === null){ theValue = 'NULL'; }
 
                 // Set prop form key
                 tmp['key'] = key;
@@ -474,16 +473,32 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 }
 				else if(value.getOriginalType() == 'object' || value.getOriginalType() == 'array'){
 					tmp['isArrObj'] = true;
-					tmp['value'] = JSON.stringify(theValue, $scope.dynJSFuncStringify, 1);
+					if(theValue != 'NULL'){
+						tmp['value'] = JSON.stringify(theValue, $scope.dynJSFuncStringify, 1);
+					}
+					else{
+						tmp['value'] = theValue;
+					}
+
 				}
 				else if(value.getOriginalType() == 'function'){
 					tmp['value'] = String(theValue);
 				}
                 else{
-                    tmp['value'] = theValue;
-                    if(key.search('font-family') != -1){
-                        tmp['value'] = tmp['value'].toString().replace(/"/g, '').replace(/'/g, '').toLowerCase();
-                    }
+					if(theValue.length > 0 && theValue[0] == '{' && theValue[theValue.length -1] == '}'){
+						try{
+							tmp['value'] = JSON.stringify(JSON.parse(theValue, $scope.dynJSFuncParse), $scope.dynJSFuncStringify, 1);
+						}
+						catch(e){
+							tmp['value'] = theValue;
+						}
+					}
+					else{
+						tmp['value'] = theValue;
+						if(key.search('font-family') != -1){
+							tmp['value'] = tmp['value'].toString().replace(/"/g, '').replace(/'/g, '').toLowerCase();
+						}
+					}
                 }
 
                 // Set prop form category and description
@@ -653,7 +668,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 												}
 												catch(e){
 													if(p.originalValType == 'object'){
-														jsonParsedVal = JSON.parse("{}");
+														//jsonParsedVal = valMod.fixBrokenObjStrToProperObject(p.value);
+														jsonParsedVal = {};
 													}
 													else{
 														var newArray = new Array();
@@ -1633,7 +1649,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
         //=== ABOUT ===========================================================================
         else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.About)){
-            $scope.openForm(Enum.aopForms.wblAbout, getAboutWblContent(), null);
+            $scope.openForm(Enum.aopForms.wblAbout, getAboutWblContent(), function(updateData){
+				if(updateData != null){
+					for(var upd in updateData){
+						$scope.theWblMetadata[upd] = updateData[upd];
+					}
+				}
+			});
         }
         //=======================================================================================
 

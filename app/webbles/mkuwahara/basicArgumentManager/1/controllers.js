@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, Enum, valMod) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -90,14 +90,24 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
         ));
 
         $scope.addSlot(new Slot('result',
-            '',
-            'Result',
-            'This is the result of the calculation of the argument using the template formula.',
+			"",
+            'Result (as text)',
+            'This is the result of the calculation of the argument using the template formula. stored as a text string',
             $scope.theWblMetadata['templateid'],
             {inputType: Enum.aopInputTypes.TextBox},
             undefined
         ));
         $scope.getSlot('result').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+
+		$scope.addSlot(new Slot('resultAsObject',
+			null,
+			'Result (as JSON or Array)',
+			'This is the result of the calculation of the argument using the template formula. stored as a json object or array(if possible, otherwise null)',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+		$scope.getSlot('resultAsObject').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
         $scope.addSlot(new Slot('displayMode',
             1,
@@ -160,13 +170,38 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
 			try{
 				theRes = eval(template).toString();
 			}catch(err) {
-				theRes = "ERROR: "+err;
+				theRes = template;
 			}
         }
         else{
             template = template.replace(/[\+]+/g, '');
             theRes = template;
         }
+
+		var resultAsJson;
+		try{
+			resultAsJson = JSON.parse(template, $scope.dynJSFuncParse);
+			if(resultAsJson != undefined && JSON.stringify(resultAsJson, $scope.dynJSFuncStringify()) != JSON.stringify($scope.gimme("resultAsObject"), $scope.dynJSFuncStringify())) {
+				$scope.set('resultAsObject', resultAsJson);
+			}
+		}
+		catch(e){
+			template = template.replace(/\s/g,'');
+			if(template != undefined && template[0] == '{' && template[template.length - 1] == '}'){
+				var newObj = valMod.fixBrokenObjStrToProperObject(template);
+				$scope.set('resultAsObject', newObj);
+			}
+			else if(template != undefined && template[0] == '[' && template[template.length - 1] == ']'){
+				var newArray = valMod.fixBrokenArrStrToProperArray(template);
+				if(newArray.length > 0){
+					$scope.set('resultAsObject', newArray);
+				}
+				else{
+					$scope.set('resultAsObject', null);
+				}
+			}
+		}
+
         $scope.set('result', theRes);
         var dm = $scope.gimme('displayMode');
         if(dm == 1){ showIt(dm); }

@@ -76,7 +76,7 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $modalInst
         newDefId: gettext("This is the name you want your Webble to be identified by (unless you will use the current name and replace that Webble with this new one)"),
         saveTarget: gettext("Here you decide weather to publish this Webble online to the public server or only locally to your computer"),
         currDisplayName: gettext("This is a user friendly display name used by this Webble instance, your new Webble will use this value as its default display name"),
-        currDesc: gettext("This is the description of this Webble as will be shown after publish"),
+        currDesc: gettext("This is the description of this Webble as will be shown after publish. Any URL links will become clickable. If the knowledge exist one may also use HTML tags and CSS to pimp up the text further if that is of any need."),
         currKeywords: gettext("These are the descriptive keywords this Webble will be more easly searched and found by"),
         imgView: gettext("This is the image that is representing this Webble in search engines"),
         imgTypeSelect: gettext("Using the auto generated image is recomended but if you prefer a custom image that is possible."),

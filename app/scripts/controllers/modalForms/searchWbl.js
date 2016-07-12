@@ -35,7 +35,7 @@
 // SEARCH WEBBLE FORM CONTROLLER
 // This controls the form for browsing and searching for Webbles online
 //====================================================================================================================
-ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $modalInstance, $modal, $log, $http, $location, $timeout, dbService, gettext, Enum, platformScope, jsonQuery, appPaths) {
+ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $modalInstance, $modal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope, jsonQuery, appPaths) {
 
     //=== PROPERTIES ================================================================
     $scope.thePlatform = platformScope;
@@ -334,6 +334,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     wbl['selectColor'] = 'transparent';
                     wbl.rating = parseInt(wbl.rating);
 					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
+					wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
+					wbl.webble.description = valMod.urlify(wbl.webble.description);
                 }
 
                 $scope.formItems.searchResult = $scope.formItems.searchResult.concat(resp.data);
@@ -486,6 +488,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                 mru.rating = parseInt(mru.rating);
 				mru['slimEnabled'] = $scope.formItems.slimEnabled;
 				mru['keywordsList'] = getKeywordsList(mru.webble.keywords);
+				mru.webble.description = valMod.urlify(mru.webble.description);
             }
 
             $scope.formItems.searchResult = resp.data;
@@ -590,6 +593,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                     wbl.rating = parseInt(wbl.rating);
 					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 					wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
+					wbl.webble.description = valMod.urlify(wbl.webble.description);
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
@@ -621,6 +625,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
                         wbl.rating = parseInt(wbl.rating);
 						wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 						wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
+						wbl.webble.description = valMod.urlify(wbl.webble.description);
                     }
 
                     $scope.formItems.searchResult = resp.data;
