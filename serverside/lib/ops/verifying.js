@@ -41,7 +41,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			throw new util.RestError(gettext("Requested object does not exist", 404));
 	}
 
-	function verifyGroupRecursively(trustVector, groupId) {
+	function verifyGroupRecursively(trustVector, groupId, groupNameCache) {
 
 		if (!groupId)
 			return Promise.resolve(false);
@@ -51,14 +51,16 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 			return Group.findById(groupId).exec().then(function(grp) {
 
-				if (!grp)
-					return false;
-				else
-					return verifyGroupRecursively(trustVector, grp._sec.groups[0]); // For now only single parents supported
+                if (!grp)
+                    return false;
 
-			}, function(err) {
-				return false;
-			});
+                groupNameCache[grp._id.toString()] = grp.name;
+
+                // For now only single parents supported
+                //
+                return verifyGroupRecursively(trustVector, grp._sec.groups[0], groupNameCache);
+
+			}).catchReturn(false);
 		}
 	}
 
@@ -83,39 +85,41 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                     return util.transform(objs, function () { return false; });
                 else {
                     
-                    var results = [];
                     var cache = {}; // Store already calculated results for pruning
+                    var groupNameCache = {}; // Store group names that we've seen so far
                     
-                    objs.forEach(function (obj) {
-                        
+                    var results = objs.map(function(obj) {
+
                         var groups = obj._sec.groups;
                         
                         if (!groups)
-                            results.push(false);
-                        else if (util.any(groups, function (g) { return cache[g.toString()]; }))
-                            results.push(true);
-                        else if (util.all(groups, function (g) { return cache[g.toString()] !== undefined; }))
-                            results.push(false);
+                            return false;
+                        else if (util.any(groups, g => cache[g.toString()]))
+                            return true;
+                        else if (util.all(groups, g => cache[g.toString()] !== undefined))
+                            return false;
                         else {
-                            
+
                             var promises = [];
                             groups.forEach(function (g) {
-                                
+
                                 if (cache[g.toString()] === undefined) {
-                                    
-                                    promises.push(verifyGroupRecursively(trustVector, g).then(function (result) {
-                                        return (cache[g.toString] = result);
-                                    }));
+
+                                    promises.push(verifyGroupRecursively(trustVector, g, groupNameCache)
+                                        .then(r => (cache[g.toString] = r)));
                                 }
                             });
-                            
+
                             if (promises.length == 0) // This can never happen mate!
                                 throw new util.RestError(gettext("Halo!"));
-                            
-                            results.push(Promise.all(promises).then(util.anyTrue));
+
+                            return Promise.all(promises).then(util.anyTrue);
                         }
                     });
-                    return Promise.all(results);
+
+                    return Promise.all(results).then(function (trusts) {
+                        return { trusts: trusts, group_cache: groupNameCache };
+                    });
                 }
             });
 		},

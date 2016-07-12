@@ -40,8 +40,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-    function normalizeWebble(w, isVerified, isTrusted) {
-        return w.getNormalizedObject(null, isVerified, isTrusted);
+    function normalizeWebble(w, isVerified, isTrusted, groupNameCache) {
+
+        var result = w.getNormalizedObject(null, isVerified, isTrusted);
+
+        if (groupNameCache && w._sec.groups)
+            result.groups = w._sec.groups.map(gId => groupNameCache[gId.toString()] || "Hidden");
+
+        return result;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -78,59 +84,48 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		    });
 	    }
 	    else {
-		    console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-		    Webble.find(query.conditions,
-			    '-webble.protectflags -webble.modelsharees -webble.slotdata -webble.children -webble.private',
-			    query.options,
-				function(err, results) {
+		    //console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-					if (err)
-						res.status(500).send(gettext("Could not retrieve webbles"));
-				    else if (!results)
-						res.status(500).send(gettext("There are not any webbles"));
-					else if (req.query.verify && req.query.verify === '1' && req.user) {
+		    Webble.find(query.conditions, '-webble.protectflags -webble.modelsharees -webble.slotdata -webble.children -webble.private',
+                query.options).exec().then(function (results) {
 
-						verifyOps.verify(req, results)
-							.then(function(verResults) {
+                    if (!results)
+                        throw new util.RestError(gettext("There are not any webbles"));
 
-								if (results.length != verResults.length)
-									res.json(util.transform_(results, normalizeWebble));
-								else {
+                    if (req.query.verify && req.query.verify === '1' && req.user) {
 
-									for (var i = 0; i < results.length; ++i)
-										results[i] = normalizeWebble(results[i], true, verResults[i]);
+                        return verifyOps.verify(req, results).then(function (verResult) {
 
-									res.json(results);
-								}
-							})
-							.catch(function(err) {
+                            if (results.length != verResult.trusts.length)
+                                res.json(util.transform_(results, normalizeWebble));
+                            else {
 
-								console.error("ERR:::----:::", err, "STACK:", err.stack);
-								res.status(500).send(gettext("Could not retrieve webbles"));
-							})
-							.done();
-					}
-					else
-						res.json(util.transform_(results, normalizeWebble));
-				});
+                                for (var i = 0; i < results.length; ++i)
+                                    results[i] = normalizeWebble(results[i], true, verResult.trusts[i], verResult.group_cache);
+
+                                res.json(results);
+                            }
+                        });
+                    }
+                    else
+                        res.json(util.transform_(results, normalizeWebble));
+
+                }).catch(err => util.resSendError(res, err, gettext("Could not retrieve webbles")));
 	    }
     });
 
 	app.get('/api/mywebbles', auth.usr, function (req, res) {
 
 		Webble.find({$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]},
-			'-webble.protectflags -webble.modelsharees -webble.slotdata -webble.children -webble.private').exec().then(function (webbles) {
-            
-            if (!webbles)
-                throw new util.RestError(gettext("Cannot retrieve webbles"));
-            
-            res.json(util.transform_(webbles, normalizeWebble));
+            '-webble.protectflags -webble.modelsharees -webble.slotdata -webble.children -webble.private').exec().then(function (webbles) {
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+                if (!webbles)
+                    throw new util.RestError(gettext("Cannot retrieve webbles"));
 
+                res.json(util.transform_(webbles, normalizeWebble));
+
+            }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -151,14 +146,11 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		        if (req.query.verify) {
 
-			        verifyOps.verify(req, webble)
-				        .then(function(results) {
-					        res.json(normalizeWebble(webble, true, results[0]));
-				        })
-				        .catch(function(err) {
-					        res.status(500).send(gettext("Could not retrieve webbles"));
-				        })
-				        .done();
+                    verifyOps.verify(req, webble).then(function (result) {
+                        res.json(normalizeWebble(webble, true, result.trusts[0], result.group_cache));
+                    }).catch(function (err) {
+                        res.status(500).send(gettext("Could not retrieve webbles"));
+                    });
 			    }
 				else
 			        res.json(normalizeWebble(webble));
@@ -192,30 +184,28 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			res.status(500).send(gettext("Webble definition not sent correctly"));
 		else {
 
-			publishingOps.publish(req, Webble.findOne({ "webble.defid": req.params.id }), function() {
+            publishingOps.publish(req, Webble.findOne({ "webble.defid": req.params.id }), function () {
 
-				return new Webble();
+                return new Webble();
 
-			}, function(webble) {
+            }, function (webble) {
 
-				if (webble.webble.templateid == webble.webble.defid)
-					throw new util.RestError(gettext("Update the template directly"), 403);
+                if (webble.webble.templateid == webble.webble.defid)
+                    throw new util.RestError(gettext("Update the template directly"), 403);
 
-				webble.webble.defid = req.params.id; // just in case...
-				webble.mergeWithObject(req.body.webble);
+                webble.webble.defid = req.params.id; // just in case...
+                webble.mergeWithObject(req.body.webble);
 
-				if (!webble.webble.author)
-					webble.webble.author = req.user.username || req.user.name.full;
+                if (!webble.webble.author)
+                    webble.webble.author = req.user.username || req.user.name.full;
 
-				return webble;
-			})
-				.then(function(webble) {
-					res.json(normalizeWebble(webble)); // Everything OK
-				})
-				.catch(function (err) {
-					util.resSendError(res, err, gettext("could not modify webble"));
-				})
-				.done();
+                return webble;
+
+            }).then(function (webble) {
+                res.json(normalizeWebble(webble)); // Everything OK
+            }).catch(function (err) {
+                util.resSendError(res, err, gettext("could not modify webble"));
+            });
 		}
     });
 
@@ -223,14 +213,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.delete('/api/webbles/:id', auth.usr, function(req, res) {
 
-		publishingOps.unpublish(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function() {
-				res.status(200).send(gettext("Successfully deleted"));
-			})
-			.catch(function (err) {
-				util.resSendError(res, err, gettext("Cannot delete this webble"));
-			})
-			.done();
+        publishingOps.unpublish(req, Webble.findOne({ "webble.defid": req.params.id })).then(function () {
+            res.status(200).send(gettext("Successfully deleted"));
+        }).catch(err => util.resSendError(res, err, gettext("Cannot delete this webble")));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -240,38 +225,23 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/webbles/:id/share', auth.usr, function(req, res) {
 
-		sharingOps.updateContributors(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function(users) {
-				res.json(users);
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        sharingOps.updateContributors(req, Webble.findOne({ "webble.defid": req.params.id })).then(function (users) {
+            res.json(users);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/webbles/:id/share', auth.usr, function(req, res) {
 
-		sharingOps.getContributors(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function(users) {
-				res.json(users);
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        sharingOps.getContributors(req, Webble.findOne({ "webble.defid": req.params.id })).then(function (users) {
+            res.json(users);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/webbles/:id/share', auth.usr, function(req, res) {
 
-		sharingOps.clearContributors(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function() {
-				res.status(200).send(gettext("Successfully deleted")); // Everything OK
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        sharingOps.clearContributors(req, Webble.findOne({ "webble.defid": req.params.id })).then(function () {
+            res.status(200).send(gettext("Successfully deleted")); // Everything OK
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -281,38 +251,23 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/webbles/:id/rating', auth.usr, function(req, res) {
 
-		ratingOps.updateRatings(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function() {
-				res.status(200).send(gettext("Successfully rated"));
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        ratingOps.updateRatings(req, Webble.findOne({ "webble.defid": req.params.id })).then(function () {
+            res.status(200).send(gettext("Successfully rated"));
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/webbles/:id/rating', auth.non, function(req, res) {
 
-		ratingOps.getRatings(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function(ratings) {
-				res.json(ratings);
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        ratingOps.getRatings(req, Webble.findOne({ "webble.defid": req.params.id })).then(function (ratings) {
+            res.json(ratings);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/webbles/:id/rating', auth.usr, function(req, res) {
 
-		ratingOps.clearRatings(req, Webble.findOne({ "webble.defid": req.params.id }))
-			.then(function() {
-				res.status(200).send(gettext("Successfully cleared")); // Everything OK
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        ratingOps.clearRatings(req, Webble.findOne({ "webble.defid": req.params.id })).then(function () {
+            res.status(200).send(gettext("Successfully cleared")); // Everything OK
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -320,28 +275,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	app.get('/api/webbles/:id/verify', auth.usr, function(req, res) {
 
-		 verifyOps.verify(req, Webble.findOne({ "webble.defid": req.params.id }, '-webble'))
-       .then(function(results) {
-				 res.json(results[0]);
-			 })
-			 .catch(function (err) {
-				 util.resSendError(res, err);
-			 })
-			 .done();
+        verifyOps.verify(req, Webble.findOne({ "webble.defid": req.params.id }, '-webble')).then(function (result) {
+            res.json(result.trusts[0]);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
 
   app.put('/api/verify/webbles', auth.usr, function(req, res) {
 
-    verifyOps.verify(req, Webble.find({ "webble.defid": { $in: req.body.webbles || [] } }, '-webble'))
-      .then(function(results) {
-        res.json(results);
-      })
-      .catch(function (err) {
-        util.resSendError(res, err);
-      })
-      .done();
+      verifyOps.verify(req, Webble.find({ "webble.defid": { $in: req.body.webbles || [] } }, '-webble')).then(function (result) {
+          res.json(result.trusts);
+      }).catch(err => util.resSendError(res, err));
   });
 
   //******************************************************************
