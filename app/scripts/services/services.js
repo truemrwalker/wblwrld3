@@ -2245,12 +2245,20 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 			var workStrStrippedClean = (workStr.replace(/\"/g, "")).replace(/\'/g, "");
 			if(workStrStrippedClean[0] == '['){ workStrStrippedClean = workStrStrippedClean.substr(1); }
 			if(workStrStrippedClean[workStrStrippedClean.length - 1] == ']'){ workStrStrippedClean = workStrStrippedClean.substr(0, workStrStrippedClean.length - 1); }
+			if(workStrStrippedClean[0] == ';'){ workStrStrippedClean = workStrStrippedClean.substr(1); }
+			if(workStrStrippedClean[workStrStrippedClean.length - 1] == ';'){ workStrStrippedClean = workStrStrippedClean.substr(0, workStrStrippedClean.length - 1); }
 
 			if(workStrStrippedClean.length > 0){
 				var strBlocks = [];
 				var strBlock = "";
 				var arrBracketCounter = 0;
 				var objBracketCounter = 0;
+
+				if(workStrStrippedClean.search(';') != -1){
+					workStrStrippedClean = workStrStrippedClean.replace(/;/g, "],[");
+					workStrStrippedClean = "[" + workStrStrippedClean + "]";
+				}
+
 				for(var n = 0; n < workStrStrippedClean.length; n++){
 					if(workStrStrippedClean[n] == '['){ arrBracketCounter++ }
 					if(workStrStrippedClean[n] == ']'){ arrBracketCounter-- }
