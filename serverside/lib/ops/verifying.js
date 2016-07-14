@@ -76,15 +76,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (objs) {
                 ensureObjectValid(req, objs);
-                
+
                 if (!(objs instanceof Array)) // Sometimes we want to verify just one object
                     objs = [objs];
                 
                 var trustVector = req.user && req.user._sec.trusts;
                 if (!trustVector || trustVector.length == 0)
-                    return util.transform(objs, function () { return false; });
+                    return { trusts: objs.map(o => false), group_cache: {} };
                 else {
-                    
+
                     var cache = {}; // Store already calculated results for pruning
                     var groupNameCache = {}; // Store group names that we've seen so far
                     
