@@ -7,7 +7,7 @@
 // SLIDER WEBBLE CONTROLLER
 // This is the Main controller for the Slider Webble Template
 //=======================================================================================
-wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.data = {
@@ -18,7 +18,11 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot
         sliderGrabber: ['background-color', 'border', 'width', 'height']
     };
 
-	$scope.device = BrowserDetect.device;
+	$scope.formProps = {
+		isMobileDevice: false
+	};
+
+	var JQUISliderForMobileDevices;
 
     //=== EVENT HANDLERS ================================================================
 
@@ -38,9 +42,18 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot
     // *Create Value watchers for slots and other values
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+		var device = BrowserDetect.device;
+		if(device == "Android" || device == "iPad" || device == "iPhone/iPod" || device == "BlackBerry" || device == "IE Mobile"){
+			$scope.formProps.isMobileDevice = true;
+		}
 
-
-
+		if($scope.formProps.isMobileDevice){
+			JQUISliderForMobileDevices = $scope.theView.parent().find("#rangeSliderJQ");
+			JQUISliderForMobileDevices.slider();
+			JQUISliderForMobileDevices.on( "slide", function(event, ui){
+				$scope.set('currentValue', JQUISliderForMobileDevices.slider( "value"));
+			});
+		}
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			if(eventData.slotName == 'currentValue'){
@@ -48,6 +61,7 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot
 				var nv = parseFloat(newVal);
 				if(!isNaN(nv) && nv != $scope.data.currVal){
 					$scope.data.currVal = nv;
+					if(!$scope.$$phase){ $scope.$apply(); }
 				}
 			}
 			else if(eventData.slotName == 'displayCurrentValue'){
@@ -58,7 +72,24 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot
 					$scope.set("sliderGrabber:height", 40);
 				}
 			}
+
+			//For JQuery UI Slider used with mobile devices
+			if($scope.formProps.isMobileDevice){
+				if(eventData.slotName == 'minValue'){
+					JQUISliderForMobileDevices.slider( "option", "min", eventData.slotValue );
+				}
+				else if(eventData.slotName == 'maxValue'){
+					JQUISliderForMobileDevices.slider( "option", "max", eventData.slotValue );
+				}
+				else if(eventData.slotName == 'stepValue'){
+					JQUISliderForMobileDevices.slider( "option", "step", eventData.slotValue );
+				}
+				else if(eventData.slotName == 'currentValue'){
+					JQUISliderForMobileDevices.slider( "value", eventData.slotValue );
+				}
+			}
 		});
+
 
         $scope.addSlot(new Slot('minValue',
             0,
@@ -114,15 +145,6 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot
                 $scope.set('currentValue', nv);
             }
         }, true);
-
-
-
-		$( "#rangeSliderJQ" ).slider();
-
-		$timeout(function(){$( "#rangeSliderJQ" ).slider( "destroy" );}, 15000);
-
-
-
     };
     //===================================================================================
 

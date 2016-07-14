@@ -6,12 +6,16 @@
 /*/ === BEGIN: SLIDER Webble Classes === /*/
 
 .sliderGrabber{
-    width: 280px;
-    height: 40px;
+	width: 280px;
+	height: 40px;
     background-color: transparent;
     border: 1px solid #a9a9a9;
 	display: inline-block;
     padding-top: 5px;
+}
+
+.rangeSlider{
+
 }
 
 /*/ === END: Fundamental Classes === /*/

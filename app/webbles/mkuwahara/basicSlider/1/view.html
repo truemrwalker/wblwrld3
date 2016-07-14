@@ -6,19 +6,19 @@
 <div id="sliderGrabber" class="sliderGrabber container-fluid" ng-controller="sliderWebbleCtrl">
 	<div class="row" ng-show="gimme('displayCurrentValue')">
 		<div class="col-xs-12" style="text-align: center;">
-			<span>{{data.currVal}}</span>
+			<div ng-style="{'-webkit-transform': 'rotate('+(gimme('root:transform-rotate') * -1)+'deg)', 'transform': 'rotate('+(gimme('root:transform-rotate') * -1)+'deg)'}"><span>{{data.currVal}}</span></div>
 		</div>
 	</div>
     <div class="row">
         <div class="col-xs-2" style="text-align: right;">
-            <span>{{gimme('minValue')}}</span>
+			<div ng-style="{'-webkit-transform': 'rotate('+(gimme('root:transform-rotate') * -1)+'deg)', 'transform': 'rotate('+(gimme('root:transform-rotate') * -1)+'deg)'}"><span>{{gimme('minValue')}}</span></div>
         </div>
         <div class="col-xs-8">
-			<div id="rangeSliderJQ"></div>
-            <input id="rangeSlider" class="rangeSlider" type="range" min="{{gimme('minValue')}}" max="{{gimme('maxValue')}}" step="{{gimme('stepValue')}}" ng-model="data.currVal">
+			<div ng-show="formProps.isMobileDevice" id="rangeSliderJQ"></div>
+            <input ng-hide="formProps.isMobileDevice" id="rangeSlider" class="rangeSlider" type="range" min="{{gimme('minValue')}}" max="{{gimme('maxValue')}}" step="{{gimme('stepValue')}}" ng-model="data.currVal">
         </div>
         <div class="col-xs-2">
-            <span>{{gimme('maxValue')}}</span>
+            <div ng-style="{'-webkit-transform': 'rotate('+(gimme('root:transform-rotate') * -1)+'deg)', 'transform': 'rotate('+(gimme('root:transform-rotate') * -1)+'deg)'}"><span>{{gimme('maxValue')}}</span></div>
         </div>
     </div>
 
