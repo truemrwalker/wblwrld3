@@ -373,6 +373,16 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 		));
 		$scope.getSlot("currentDevice").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
+		$scope.addSlot(new Slot('NavigaterUserAgent',
+			navigator.userAgent,
+			'Navigator User Agent',
+			'the exact content of the method call for navigator.userAgent as displayed on this device.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+		$scope.getSlot("NavigaterUserAgent").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+
 		$scope.addSlot(new Slot('geoLocationLat',
 			0,
 			'Geo Location Latitude',
