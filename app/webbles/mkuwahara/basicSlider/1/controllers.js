@@ -7,7 +7,7 @@
 // SLIDER WEBBLE CONTROLLER
 // This is the Main controller for the Slider Webble Template
 //=======================================================================================
-wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.data = {
@@ -122,7 +122,7 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot
 		$( "#rangeSliderJQ" ).slider();
 
 		//$log.log($scope.device);
-		$timeout(function(){alert($scope.device);})
+		$timeout(function(){alert(navigator.userAgent);})
 
 		$timeout(function(){$( "#rangeSliderJQ" ).slider( "destroy" );}, 15000);
 
