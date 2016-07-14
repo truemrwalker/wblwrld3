@@ -83,7 +83,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.setVCVVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){vcvVisibility_ = newVal;}else{vcvVisibility_ = 'none';}};
 	var appViewOpen = true;
 	var templateRevisionBehavior_ = 0;
-	var untrustedWblsBehavior_ = 1;
+	var untrustedWblsBehavior_ = 0;
 	var slimWblBrowserEnabled_ = false;
 	$scope.getSlimWblBrowserEnabled = function(){return slimWblBrowserEnabled_;};
     //-------------------------------
@@ -487,8 +487,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.$on('auth:login', function(event, user) {
         var hasUserChanged = ($scope.user == undefined || $scope.user.email != user.email);
         $scope.user = user;
-
-		//if (hasUserChanged && $scope.getActiveWebbles().length > 0){ quickSaveWSInternal(); webbleDefs_ = []; webbleTemplates_ = []; pleaseQuickLoadInternalSavedWS = true;}
+		untrustedWblsBehavior_ = 1; // default behavior for logged in users
 
         // Set user platform settings if that is not blocked by overrides
         if (!wblwrldSystemOverrideSettings.ignore_UserSettings && hasUserChanged){
@@ -521,16 +520,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     // Live Online Interaction Event-handlers (for shared workspaces)
     //========================================================================================
-    var onInfo = function(here, there) {
-    };
-    //-----------------------------------------------------------
-    var onDraw = function(here, there) {
-    };
-    //-----------------------------------------------------------
-    var onSave = function(here, there) {
-    };
+    var onInfo = function(here, there) { }; //NOT USED
+    var onDraw = function(here, there) { }; //NOT USED
+    var onSave = function(here, there) { }; //NOT USED
     //-----------------------------------------------------------
     var onComm = function(here, there) {
+
+		$log.log(here);
+		$log.log(there);
+
+		$log.log("Sorry, but Online Communication between shared workspaces are temporarily out of function");
+
+		return;
         if (here) {
             //Lock
             $scope.setEmitLockEnabled(true);
@@ -789,6 +790,20 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         else if(wblwrldSystemOverrideSettings.autoLoadedWebblePath != ''){
             $scope.loadWblFromURL(appPaths.currentAppUriCore + appPaths.webbleAccessPath + wblwrldSystemOverrideSettings.autoLoadedWebblePath, null);
         }
+		if(wblwrldSystemOverrideSettings.templateRevisionBehavior >= 0 && wblwrldSystemOverrideSettings.templateRevisionBehavior <= 2){
+			templateRevisionBehavior_ = wblwrldSystemOverrideSettings.templateRevisionBehavior;
+		}
+		if(wblwrldSystemOverrideSettings.untrustedWblsBehavior >= 0 && wblwrldSystemOverrideSettings.untrustedWblsBehavior <= 3){
+			untrustedWblsBehavior_ = wblwrldSystemOverrideSettings.untrustedWblsBehavior;
+		}
+		if(wblwrldSystemOverrideSettings.slimWblBrowserEnabled != ""){
+			if(wblwrldSystemOverrideSettings.slimWblBrowserEnabled == 'true'){
+				slimWblBrowserEnabled_ = true;
+			}
+			else if(wblwrldSystemOverrideSettings.slimWblBrowserEnabled == 'false'){
+				slimWblBrowserEnabled_ = false;
+			}
+		}
 
         // Configure quick language change button if needed
         if(gettextCatalog.currentLanguage.search('en') == -1){
@@ -1725,7 +1740,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var deleteWbl = function(target, callbackFunc){
 		if(target == undefined){ target = (victimsOfDeletion_.length > 0) ? victimsOfDeletion_.pop() : null; }
 
-		if(target != null){
+		if(target != null && target != undefined){
 			if(target.scope().theWblMetadata['templateid'] == 'bundleTemplate'){
 				target.scope().killBundleSlotWatches();
 			}
@@ -1800,7 +1815,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
     };
     //========================================================================================
-	var almostdeadAlready_ = [];
+
 
     //========================================================================================
     // Connect Child Parent
@@ -2519,10 +2534,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if(currWS_ && currWS_.is_shared){
             liveOnlineInteractionEnabled_ = false;
             socket.emit('interaction:ended', currWS_.id);
-
-            socket.removeListener('interaction:info', onInfo);
-            socket.removeListener('interaction:move', onDraw);
-            socket.removeListener('interaction:save', onSave);
             socket.removeListener('interaction:comm', onComm);
             $log.log('Live Online Interaction for shared workspace turned OFF');
         }
@@ -2585,10 +2596,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if(wsDef.is_shared){
             $timeout(function(){
                 socket.emit('interaction:started', wsDef.id);
-
-                socket.addListener('interaction:info', onInfo);
-                socket.addListener('interaction:move', onDraw);
-                socket.addListener('interaction:save', onSave);
                 socket.addListener('interaction:comm', onComm);
                 liveOnlineInteractionEnabled_ = true;
                 $log.log('Live Online Interaction for shared workspace turned ON');
@@ -3075,12 +3082,35 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         if(qimColor){
-            $('.quickInfoBox').css('background-color', qimColor);
-            $('.quickInfoBox').css('background', '-webkit-linear-gradient(' + qimColor + ', ' + qimColor + ')');
-            $('.quickInfoBox').css('background', '-moz-linear-gradient(' + qimColor + ', ' + qimColor + ')');
-            $('.quickInfoBox').css('background', '-ms-linear-gradient(' + qimColor + ', ' + qimColor + ')');
-            $('.quickInfoBox').css('background', '-o-linear-gradient(' + qimColor + ', ' + qimColor + ')');
+			if($.isArray(qimColor)){
+				var gradColorStr = ""
+				for(var i = 0; i < qimColor.length; i++){
+					if(i > 0){ gradColorStr += ", " }
+					gradColorStr += qimColor[i];
+				}
+				$('.quickInfoBox').css('background-color', qimColor[0]);
+				if(qimColor.length > 1){
+					$('.quickInfoBox').css('background', '-webkit-linear-gradient(left top, ' + gradColorStr + ')');
+					$('.quickInfoBox').css('background', '-moz-linear-gradient(left top, ' + gradColorStr + ')');
+					$('.quickInfoBox').css('background', '-ms-linear-gradient(left, ' + gradColorStr + ')');
+					$('.quickInfoBox').css('background', '-o-linear-gradient(left, ' + gradColorStr + ')');
+				}
+				else{
+					$('.quickInfoBox').css('background', qimColor[0]);
+				}
+			}
+			else{
+				$('.quickInfoBox').css('background-color', qimColor);
+				$('.quickInfoBox').css('background', qimColor);
+			}
         }
+		else if($('.quickInfoBox').css('background-color') != "#fff68f"){
+			$('.quickInfoBox').css('background-color', "#fff68f");
+			$('.quickInfoBox').css('background', '-webkit-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673');
+			$('.quickInfoBox').css('background', '-moz-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673');
+			$('.quickInfoBox').css('background', '-ms-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673');
+			$('.quickInfoBox').css('background', '-o-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673');
+		}
 
         $scope.qimVisibility = true;
         $('.quickInfoBox').fadeIn(200);
@@ -4218,10 +4248,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                             $scope.setEmitLockEnabled(true);
                             liveOnlineInteractionEnabled_ = false;
                             socket.emit('interaction:ended', currWS_.id);
-
-                            socket.removeListener('interaction:info', onInfo);
-                            socket.removeListener('interaction:move', onDraw);
-                            socket.removeListener('interaction:save', onSave);
                             socket.removeListener('interaction:comm', onComm);
                             $log.log('Live Online Interaction for shared workspace turned OFF');
                         }

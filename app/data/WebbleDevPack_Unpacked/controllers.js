@@ -145,7 +145,7 @@ wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enu
         $scope.addSlot(new Slot('msg',                  // Name
             gettext("Hi"),                              // Value
             'Message',                                  // Display Name
-            'Text displayed on the Webble',             // Description
+            'Text displayed on the Webble',             // Description (One can use \n for new line here as well as add links to both images and URLs as well as adding html and css, all to improve the text)
             $scope.theWblMetadata['templateid'],        // Category (common to set to the template id)
             undefined,                                  // Metadata... an object that may contain whatever or just be
                                                         // left undefined.

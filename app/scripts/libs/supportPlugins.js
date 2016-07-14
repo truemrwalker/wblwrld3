@@ -205,6 +205,7 @@ var BrowserDetect = {
             || this.searchVersion(navigator.appVersion)
             || "an unknown version";
         this.OS = this.searchString(this.dataOS) || "an unknown OS";
+		this.device = this.searchString(this.dataDevice) || "Custom PC";
     },
     searchString: function (data) {
         for (var i=0;i<data.length;i++)	{
@@ -311,8 +312,39 @@ var BrowserDetect = {
             subString: "Linux",
             identity: "Linux"
         }
-    ]
-
+    ],
+	dataDevice : [
+		{
+			string: navigator.userAgent,
+			subString: "Android",
+			identity: "Android"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "BlackBerry",
+			identity: "BlackBerry"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "iPhone",
+			identity: "iPhone/iPod"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "iPad",
+			identity: "iPad"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "IEMobile",
+			identity: "IE Mobile"
+		},
+		{
+			string: navigator.platform,
+			subString: "Mac",
+			identity: "Mac"
+		}
+	]
 };
 BrowserDetect.init();
 //========================================================================================================

@@ -7,7 +7,7 @@
 // SLIDER WEBBLE CONTROLLER
 // This is the Main controller for the Slider Webble Template
 //=======================================================================================
-wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
+wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.data = {
@@ -17,6 +17,8 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
     $scope.stylesToSlots = {
         sliderGrabber: ['background-color', 'border', 'width', 'height']
     };
+
+	$scope.device = BrowserDetect.device;
 
     //=== EVENT HANDLERS ================================================================
 
@@ -36,6 +38,9 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
     // *Create Value watchers for slots and other values
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+
+
+
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			if(eventData.slotName == 'currentValue'){
@@ -109,6 +114,20 @@ wblwrld3App.controller('sliderWebbleCtrl', function($scope, $log, Slot, Enum) {
                 $scope.set('currentValue', nv);
             }
         }, true);
+
+
+
+
+		//"range-touch.min.js"
+		$( "#rangeSliderJQ" ).slider();
+
+		//$log.log($scope.device);
+		$timeout(function(){alert($scope.device);})
+
+		$timeout(function(){$( "#rangeSliderJQ" ).slider( "destroy" );}, 15000);
+
+
+
     };
     //===================================================================================
 

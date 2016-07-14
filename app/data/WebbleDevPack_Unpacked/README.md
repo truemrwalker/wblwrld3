@@ -32,7 +32,7 @@ $scope, the core can be reached to get following methods and data:
 
     // All metadata that this webble need to hold about itself
     $scope.theWblMetadata;
-    Those available from core are 'defid' (difinition id when last published), 'templateid' (id of the template used),
+    Those available from core are 'defid' (definition id when last published), 'templateid' (id of the template used),
     'templaterevision' (the current revision of the that template being used), 'author' (the user name who published
     this Webble), 'displayname' (the user friendly name of this Webble instance as of the time of publishing (inherited
     by default from its definition) and not perhaps the current one, 'description' (an 'author' written text to describe
@@ -161,7 +161,7 @@ $scope, the core can be reached to get following methods and data:
     $scope.getRotateSlot();
     $scope.setRotateSlot(rotateSlotName);
 
-    // Tells us if the Webble are visible or not (true or false)
+    // Tells us if the Webble are visible or not (true or false) and a set for changing that.
     $scope.getWblVisibilty();
     $scope.setWblVisibilty(newVal);
 
@@ -313,6 +313,10 @@ system and specific Webbles:
     // Publish Webble, saves and publish Webble definition to a specified place somewhere (server or local). Includes
     // form input requiremnets from user.
     $scope.requestPublishWebble(whatWbl);
+    
+    // Exports a Webble and all its needed templates (incl code files) to a webble code package file which can be 
+    // imported to any other Webble World platform.
+    $scope.requestExportWebble(whatWbl);
 
     // Request Delete Webble, deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when job is done)
     $scope.requestDeleteWebble(target, callbackFunc);
@@ -324,13 +328,14 @@ system and specific Webbles:
     $scope.requestAssignParent(target);
 
     // Shows the Quick Info Message box with the specicified text for either 2 seconds or the specified time of either
-    // default size or the specified size at either the center of the screen or the specified position.
-    $scope.showQIM(qimText, qimTime, qimSize, qimPos);
+    // default size or the specified size at either the center of the screen or the specified position using either 
+    // default color or the specified color (which can be an array of colors for gradient effect).
+    $scope.showQIM(qimText, qimTime, qimSize, qimPos, qimColor);
 
     // Open Form, Creates and opens a modal form window for a specific use that can be used to edit or consume any data.
     // For more details of available forms see SERVICES aopForms.
     // For Custom simple message popups please use Enum.aopForms.infoMsg form with a content parameter config as such:
-    // {title: 'title text', content: 'body text'}.
+    // {title: 'title text', content: 'body text'}. (Content can also contain html and css)
     // The Webble-template builder can provide his own form html, controller and style class and call this method with
     // an empty name and include whats needed in the content parameter configured as such:
     // Array [{templateUrl: "absolute or relative path to form html file", controller: "Name of the controller method",
@@ -366,11 +371,14 @@ system and specific Webbles:
     $scope.strFormatFltr("string with parameters, like {0} and {1} inside it", [parameter0, parameter1]);
 
     // Returns the default language (code) of the browser
-    $scope.getSysLanguage = function() { return sysLanguage.toLowerCase(); }
+    $scope.getSysLanguage();
 
     // Returns the current language (code) being used by the Webble World Platform
-    $scope.getCurrentLanguage = function(){ return gettextCatalog.currentLanguage; };
+    $scope.getCurrentLanguage();
 
+	// Informs if there is a Webble World form currently open or not
+	$scope.getIsFormOpen();
+		
     // Flags for some specific keyboard keys, weather they are currently pressed or not
     $scope.altKeyIsDown = false;
     $scope.shiftKeyIsDown = false;
@@ -378,6 +386,13 @@ system and specific Webbles:
     
     // Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
     $scope.setWaitingServiceDeactivationState(newState);
+        
+    // If debugging and one want to display a text in the menu section where debug enabled is displayed, one can use this variable
+    $scope.debugValue.txt
+    
+    // Quick way to retrieve or set the current background color of the platform. 
+    $scope.getPlatformBkgColor();
+    $scope.setPlatformBkgColor(newPlatformBkgColor);
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -465,6 +480,11 @@ the directive name as instructed either as a tag attribute or class name:
 In the SERVICES can be found multiple help functions and support methods along with various providers av data of all
 sorts. The ones that could be of interest for a Webble-template developer, except the ones he/she would create
 themselves inside the template are the following:
+
+
+//ADD SOCKET EMIT
+// ADD BROWSER DETECT   BrowserDetect.browser //.version //.OS //.device
+
 
     //Available Platform states
     Enum.availablePlatformPotentials

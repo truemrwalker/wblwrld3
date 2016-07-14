@@ -354,7 +354,7 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 		$scope.getSlot("currentBrowser").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
 		$scope.addSlot(new Slot('currentOS',
-			navigator.platform,
+			BrowserDetect.OS,
 			'Current OS',
 			'the OS platform which the current browser is compiled for',
 			$scope.theWblMetadata['templateid'],
@@ -362,6 +362,16 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 			undefined
 		));
 		$scope.getSlot("currentOS").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+
+		$scope.addSlot(new Slot('currentDevice',
+			BrowserDetect.device,
+			'Current Device',
+			'the Device which the current browser is running on',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+		$scope.getSlot("currentDevice").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 
 		$scope.addSlot(new Slot('geoLocationLat',
 			0,

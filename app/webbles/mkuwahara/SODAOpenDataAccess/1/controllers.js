@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, Slot, Enum, dbService, $timeout) {
+wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, $timeout, socket) {
 
     //=== PROPERTIES ====================================================================
 
@@ -20,10 +20,11 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, Slot, Enum, dbS
         //SoClDisplay:['width', 'font-family', 'font-size', 'font-weight']
     };
 
-    //$scope.customMenu = [
-    //  {itemId: 'info', itemTxt: 'How does this work?'},
-    //  {itemId: 'createParam', itemTxt: 'Create Service Parameter Slot'}
-    //];
+    $scope.customMenu = [
+      	{itemId: 'speak', itemTxt: 'Speak'},
+		{itemId: 'scream', itemTxt: 'Scream'},
+      //{itemId: 'createParam', itemTxt: 'Create Service Parameter Slot'}
+    ];
 
     //var mnkOpenDataDisplay, initiationDone;
 	//var RestCallMethods = ['GET', 'POST', 'PUT', 'DELETE'];
@@ -42,6 +43,8 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, Slot, Enum, dbS
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
 		//mnkOpenDataDisplay = $scope.theView.parent().find("#mnkOpenDataDisplay");
+
+		socket.emit('interaction:started', "hassebasse");
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			var newVal = eventData.slotValue;
@@ -368,6 +371,15 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, Slot, Enum, dbS
     // If this function is empty and unused it can safely be deleted.
     //===================================================================================
     $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
+		if(itemName == $scope.customMenu[0].itemId) {  //info
+			socket.emit('interaction:comm', {id: "hassebasse", msg: "varulv"});
+		}
+		else if(itemName == $scope.customMenu[1].itemId) {  //info
+			socket.emit('interaction:comm', {id: "hassebasse", msg: "fitta"});
+		}
+
+
+
         //if(itemName == $scope.customMenu[0].itemId){  //info
         //  $scope.openForm(Enum.aopForms.infoMsg, {title: 'How to Use SODA Open Data Webble', content: ""
         //    //"<p>The first you need to do is of course to type in the url of the service you are using in the " +
