@@ -399,20 +399,23 @@ system and specific Webbles:
 The WORKSPACE is the area where the Webbles resides and are modified and/or used. It contains mainly internal methods,
 but a few useful help functions exists.
 
-    // The Bubble Text object can be used to display short info at specific locations. The following methods are
-    // available to manipulate that.
+    // The Bubble Text object can be used to display short info at specific locations, mainly Webbles. The following 
+    // methods are available to manipulate that.
     $scope.getBubbleTxt();
     $scope.setBubbleTxt(newTxt);
     $scope.getBubbleTxtVisibility();
     $scope.setBubbleTxtPos(newPos);
-    $scope.setBubbleTxtVisibility(newVisibilityState, howLong); //state is true or false and howLong is time in milliseconds
+    $scope.setBubbleTxtVisibility(newVisibilityState, howLong); //state is true or false and how long is time in milliseconds
+    
+    // Fast access to get the current height of the work surface area as a css value with 'px' at the end
+     $scope.getSurfaceHeight();
 
 -----------------------------------------------------------------------------------------------------------------
 
 The INTERACTION OBJECT is those small balls that each Webble has on the border when "Main" selected. There are 12
 avialable around the border, but by default only 3-4 are activated. The Webble-template developer may configure and
 activate (or deactivate) freely any of those for its own need. In the Webble-template the developer most easy just
-define a Interaction object array object and all is set up automaticly, but if the need for fine grain power exist,
+define a Interaction object array object and all is set up automatically, but if the need for fine grain power exist,
 then this is what is available:
 
     // The Color of the Interaction Object
@@ -451,29 +454,20 @@ AngularJS DIRECTIVES can be very powerful and we recommend the Webble-template d
 Webbles, but there are a few simple ones already available in the platform core that can be easily used too. Just apply
 the directive name as instructed either as a tag attribute or class name:
 
-    // Makes an element draggable (Attribute or Class)
-    'draggable' [optional: 'draggable="{options}"' ]
+    // Makes an element draggable (JQuery style) (Attribute or Class)
+    draggable [optional: draggable="{options}" ]
 
-    // Makes an element resizable (Attribute or Class)
-    'resizable' [optional: 'resizable="{options}"' ]
+    // Makes an element resizable (JQuery style) (Attribute or Class)
+    resizable [ optional: 'resizable="{options}" ]
 
-    // Makes an element sortable (Attribute or Class)
-    'sortable' [optional: 'sortable="{options}"' ]
-
-    // If enter key is pressed then fire the provided attribute method (Attribute)
-     'ng-enter="myFunction();"'
-
-     // If up or down key is pressed then fire the provided attribute method
-     'ngArrowKeys="myFunction();"'
+    // Makes an element sortable (JQuery style) (Attribute or Class)
+    sortable [ optional: 'sortable="{options}" ]
 
     // make sure the select tags 'size' value can be set dynamically.
-    'ng-size"{{value}}"'
+    ng-size"{{value}}"
 
-    // Resize the element to the same size as the current window size
-    'fullspread'
-
-    // Listens to and setup management for Mouse Wheel events
-    'msd-wheel="onEventHandler_MouseWheel($event, $delta);"'
+    // Resize the element's width to the same size as the current window size
+    fullspread
 
 -----------------------------------------------------------------------------------------------------------------
 

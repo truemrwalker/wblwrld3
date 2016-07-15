@@ -130,7 +130,7 @@ ww3Directives.directive('sortable', function() {
 
 
 //=================================================================================
-// Makes a Webble World style Modal window
+// Makes a Bootstrap Modal window looking Webble World style-like
 //=================================================================================
 ww3Directives.directive('modalWindow', function($log, localStorageService){
     return {
@@ -1151,6 +1151,7 @@ ww3Directives.directive('ngEscape', function () {
 ww3Directives.directive('ngArrowKeys', function () {
     return function (scope, element, attrs) {
         element.bind("keydown", function (event) {
+			console.log("inside 2");
             if(event.which === 37 || event.which === 38 || event.which === 39 || event.which === 40) {
                 scope.$apply(function (){
                     scope.$eval(attrs['ngArrowKeys'] + '(' + event.which + ');');
@@ -1217,56 +1218,3 @@ ww3Directives.directive('fullspread', function ($window, $parse) {
     }
 });
 //=================================================================================
-
-
-//=================================================================================
-// Listens to and setup management for Mouse Wheel events
-//=================================================================================
-ww3Directives.directive('msdWheel', ['$parse', function($parse){
-    return {
-        restrict: 'A, C',
-        link: function(scope, element, attr) {
-            var expr = $parse(attr['msdWheel']),
-                fn = function(event, delta, deltaX, deltaY){
-                    scope.$apply(function(){
-                        expr(scope, {
-                            $event: event,
-                            $delta: delta,
-                            $deltaX: deltaX,
-                            $deltaY: deltaY
-                        });
-                    });
-                },
-                hamster;
-
-            if (typeof Hamster === 'undefined') {
-                // fallback to standard wheel event
-                element.bind('wheel', function(event){
-                    scope.$apply(function() {
-                        expr(scope, {
-                            $event: event
-                        });
-                    });
-                });
-                return;
-            }
-
-            // don't create multiple Hamster instances per element
-            if (!(hamster = element.data('hamster'))) {
-                hamster = Hamster(element[0]);
-                element.data('hamster', hamster);
-            }
-
-            // bind Hamster wheel event
-            hamster.wheel(fn);
-
-            // unbind Hamster wheel event
-            scope.$on('$destroy', function(){
-                hamster.unwheel(fn);
-            });
-        }
-    };
-}]);
-//=================================================================================
-
-

@@ -38,10 +38,6 @@
 ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $modal, $timeout, $rootScope, $location, wwConsts, dbService, localStorageService, Enum, bitflags, gettext){
 
     //=== PROPERTIES ================================================================
-    //---Edit Workspace Name control props--------------------
-    var editMemory = '';
-    $scope.allowedEditMode = true;
-
     //---Bubble Text props--------------------
     var bubbleTxt_ = '';
     $scope.getBubbleTxt = function(){return bubbleTxt_;};

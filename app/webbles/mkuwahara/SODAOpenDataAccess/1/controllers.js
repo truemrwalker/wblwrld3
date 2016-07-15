@@ -37,6 +37,10 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot,
 
     //=== METHODS & FUNCTIONS ===========================================================
 
+
+
+
+
     //===================================================================================
     // Webble template Initialization
 
@@ -45,6 +49,8 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot,
 		//mnkOpenDataDisplay = $scope.theView.parent().find("#mnkOpenDataDisplay");
 
 		socket.emit('interaction:started', "hassebasse");
+
+
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			var newVal = eventData.slotValue;

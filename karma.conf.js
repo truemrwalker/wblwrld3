@@ -24,7 +24,6 @@ module.exports = function(config) {
         'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
         'app/bower_components/angular-ui/build/angular-ui.js',
         'app/scripts/modules/localStorageModule.js',
-        'app/scripts/libs/hamster.js',
         'app/scripts/libs/supportPlugins.js',
         'app/overrideSettings.js',
         'app/scripts/*.js',

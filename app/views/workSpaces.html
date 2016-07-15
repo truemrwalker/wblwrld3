@@ -41,7 +41,7 @@
     <!--THIS IS THE BUBBLE INFO-->
     <div class="bubbleInfo" ng-class="putBelow" ng-show="getBubbleTxtVisibility()" style="z-index: 10000;" ng-style="{'left': getBubbleTxtPos().x, 'top': getBubbleTxtPos().y}">{{getBubbleTxt() | translate}}</div>
 
-    <!--<div style="float: right; margin-top: 3px; margin-right: 3px;">-->
+	<!--THESE ARE ICONS FOR INFORMING USER OF CURRENT WORKSPACE STATE-->
     <div style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
         <img src="images/icons/untrusted.png" ng-show="getIsUntrustedWblsExisting()" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
 		<br>

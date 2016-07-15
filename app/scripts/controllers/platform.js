@@ -2474,7 +2474,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 var org_pp = localStorageService.get(rootPathName + wwConsts.storedPlatformSettingsPathLastName);
                 if(org_pp){
                     platformProps = JSON.parse(org_pp);
-
                     platformProps['recentWebble'] = recentWebble_;
                     platformProps['recentWS'] = recentWS_;
                 }
@@ -2490,6 +2489,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     'autoBehaviorEnabled': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
                     'systemMenuVisibility': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled) != 0,
                     'recentWebble': recentWebble_,
+					'recentWS': recentWS_,
 					'templateRevisionBehavior': templateRevisionBehavior_,
 					'untrustedWblsBehavior': untrustedWblsBehavior_,
 					'slimWblBrowserEnabled': slimWblBrowserEnabled_
@@ -2547,6 +2547,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             creator: wsDef.creator,
             is_shared: wsDef.is_shared
         };
+		recentWS_ = wsDef.id;
 
         if(wsDef.webbles){
             if(wsDef.webbles.length > 0){
@@ -2602,7 +2603,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.onlineTransmit({id: currWS_.id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.getCurrentChanges});
                 $timeout(function(){hasBeenUpdated_ = true;}, 5000);
             }, 500);
-
         }
     };
     //========================================================================================
@@ -2657,7 +2657,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					if(!pendingWS){
 						$scope.insertWS({id: undefined, name: '', creator: '', is_shared: false});
 					}
-                    recentWS_ = undefined;
                     $scope.saveUserSettings(true);
                     if(locationPathChangeRequest != ''){
                         var thePathToGo = locationPathChangeRequest;
@@ -2679,7 +2678,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
 			$scope.globalByPassFlags.byPassBlockingDeleteProtection = false;
 			$scope.insertWS({id: undefined, name: '', creator: '', is_shared: false});
-			recentWS_ = undefined;
 			$scope.saveUserSettings(true);
             $scope.waiting(false);
         }
@@ -4020,7 +4018,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if(selectedWS == availableWorkspaces_[i].name){
                 $scope.setEmitLockEnabled(true);
                 $scope.insertWS(availableWorkspaces_[i]);
-                recentWS_ = selectedWS;
                 $scope.saveUserSettings(true);
                 break;
             }
@@ -4183,12 +4180,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             localStorageService.clearAll();
             $log.info('All cookies and local storage data was just cleared.');
         }
-        else if (sublink == 'esc' || (whatKeys.theKey == 'Esc'))
-        {
+        else if (sublink == 'esc' || (whatKeys.theKey == 'Esc')){
             $scope.resetSelections();
         }
-        else if ((sublink == 'leftarrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Left Arrow')))
-        {
+        else if ((sublink == 'leftarrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Left Arrow'))) {
             for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
                 if (aw.scope().getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){
                     var valUnit = valMod.getValUnitSeparated(aw.scope().gimme('root:left'));
@@ -4196,8 +4191,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if ((sublink == 'rightarrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Right Arrow')))
-        {
+        else if ((sublink == 'rightarrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Right Arrow'))) {
             for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
                 if (aw.scope().getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){
                     var valUnit = valMod.getValUnitSeparated(aw.scope().gimme('root:left'));
@@ -4205,8 +4199,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if ((sublink == 'uparrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Up Arrow')))
-        {
+        else if ((sublink == 'uparrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Up Arrow'))) {
             for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
                 if (aw.scope().getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){
                     var valUnit = valMod.getValUnitSeparated(aw.scope().gimme('root:top'));
@@ -4214,8 +4207,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if ((sublink == 'downarrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Down Arrow')))
-        {
+        else if ((sublink == 'downarrow' || ((whatKeys.theAltKey || whatKeys.theCtrlKey) && whatKeys.theKey == 'Down Arrow'))) {
             for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
                 if (aw.scope().getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){
                     var valUnit = valMod.getValUnitSeparated(aw.scope().gimme('root:top'));
@@ -4226,12 +4218,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         //==== NON-MENU TOUCH GESTURES (On WorkSurface)============================
 
-        else if (sublink == 'gestSwipeDown') //Show Main Menu visibility
-        {
+        else if (sublink == 'gestSwipeDown') { //Show Main Menu visibility
             platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
         }
-        else if (sublink == 'gestSwipeUp') //Hide Main Menu visibility
-        {
+        else if (sublink == 'gestSwipeUp') {//Hide Main Menu visibility
             platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
         }
 
@@ -4275,7 +4265,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                                             $scope.insertWS(availableWorkspaces_[i]);
                                         }
                                     }
-                                    recentWS_ = selectedWS;
                                     $scope.saveUserSettings(true);
                                 }
                             });
@@ -4643,12 +4632,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 actionWasExecuted = false;
 
                 //Easter egg check
-                if (appViewOpen && !whatKeys.theAltKey && whatKeys.theKey != null && whatKeys.theKey != '')
-                {
+                if (appViewOpen && !whatKeys.theAltKey && whatKeys.theKey != null && whatKeys.theKey != ''){
                     var specialIndex = -1;
                     soFarWord_ += whatKeys.theKey.toString();
-                    for (var i = 0; i < eeWord_.length; i++)
-                    {
+                    for (var i = 0; i < eeWord_.length; i++) {
                         if (soFarWord_.toLowerCase() == eeWord_[i].substring(0, soFarWord_.length).toLowerCase()){
                             specialIndex = i;
                             break;
