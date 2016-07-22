@@ -138,11 +138,12 @@ wblwrld3App.controller('bundleContainerCtrl', function($scope, $log, Slot, gette
                     ));
                 }
                 $scope.getSlot(slotName)['bundleTarget'] = bc.wbl;
+				$scope.getSlot(slotName).setDoNotIncludeInUndo(slot.getDoNotIncludeInUndo());
                 bundleSlots.push($scope.getSlot(slotName));
             }
         }
 
-        $scope.addUndo({op: Enum.undoOps.bundle, target: $scope.getInstanceId(), execData: []}, !$scope.getPlatformDoNotSaveUndoEnabled());
+        $scope.addUndo({op: Enum.undoOps.bundle, target: $scope.getInstanceId(), execData: []});
 
         bundleSlotSetupIndex = 0;
         createBundleSlotWatches();

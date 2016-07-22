@@ -35,7 +35,7 @@
 // WEBBLE CORE CONTROLLER
 // This is the controller for the core of a webble
 //====================================================================================================================
-ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, gettextCatalog, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy) {
+ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, gettextCatalog, socket, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy, isExist) {
 
     //=== WEBBLE CORE PROPERTIES ================================================================
     // Unique instance Id
@@ -193,13 +193,20 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // A set of useful flags for finding special needs and regulations
     $scope.wblStateFlags = {
         pasteByUser: false,
-		customIOTarget: null
+		customIOTarget: null,
+		readyToStoreUndos: false
     };
 
     // A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
     var onGoingTimeOuts = {};
 
+	// A list of active online rooms this Webble is currently signe on to
+	var activeOnlineRooms = [];
 
+	// Some memory variables used to remember things for later
+	var keepInMind = {
+		currentSharedModelSlotsSettings: {}
+	}
 
     //=== EVENT HANDLERS =====================================================================
 
@@ -335,7 +342,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             connSlot = 'none';
         }
 
-        content.push(childSlots, parentSlots, {csName: selSlot, psName: connSlot, mcData: mcSlotData_}, slotConnDir_);
+        content.push(childSlots, parentSlots, {csName: selSlot, psName: connSlot, mcData: mcSlotData_}, angular.copy(slotConnDir_));
 
         return content;
     };
@@ -515,6 +522,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
                 // Set prop form is model shared
                 tmp['isShared'] = value['isShared'];
+				keepInMind.currentSharedModelSlotsSettings[key] = value['isShared'];
 
                 // Set notification to blank, for use inside prop form to inform user of item value problems
                 tmp['notification'] = '';
@@ -604,9 +612,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
                 //Shared Model slot update (if such exist)
                 if(modelSharees_.length > 0){
+					var slotsAreShared = {};
                     for(var slot in theSlots_){
                         for(var i = 0, p; p = formProps[i]; i++){
                             if(slot == p.key){
+								slotsAreShared[slot] = p.isShared;
                                 if(p.isShared != undefined && theSlots_[slot]['isShared'] != p.isShared){
                                     theSlots_[slot]['isShared'] = p.isShared;
                                     for(var n = 0, ms; ms = modelSharees_[n]; n++){
@@ -620,6 +630,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                             }
                         }
                     }
+
+					if(JSON.stringify(slotsAreShared) != JSON.stringify(keepInMind.currentSharedModelSlotsSettings) ){
+						$scope.addUndo({op: Enum.undoOps.sharedModelDuplicateSettings, target: $scope.getInstanceId(), execData: [{sas: keepInMind.currentSharedModelSlotsSettings}]});
+					}
                 }
 
                 for(var i = 0, p; p = formProps[i]; i++){
@@ -656,6 +670,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 											if(JSON.stringify(theSlots_[slot].getValue()) == JSON.stringify(p.value)){
 												itsOk = false;
 											}
+										}
+									}
+
+									if(itsOk && slot.search('font-family') != -1){
+										var cleanLowerCaseSlotOrgValue = (theSlots_[slot].getValue().replace(/\"/g, "")).replace(/\'/g, "").toLowerCase();
+										if(cleanLowerCaseSlotOrgValue == p.value.toLowerCase()){
+											itsOk = false;
 										}
 									}
 
@@ -943,7 +964,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         var posWithUnit = {x: valMod.getValUnitSeparated($scope.gimme('root:left')), y: valMod.getValUnitSeparated($scope.gimme('root:top'))};
         var cssPosInUnit = {x: getUnits($scope.theView.parent()[0], 'left')[getUnitMap(posWithUnit.x[1])], y: getUnits($scope.theView.parent()[0], 'top')[getUnitMap(posWithUnit.y[1])]};
 
+		$scope.BlockNextAddUndo();
         $scope.set('root:left', cssPosInUnit.x.toFixed(2) + posWithUnit.x[1]);
+		$scope.BlockNextAddUndo();
         $scope.set('root:top', cssPosInUnit.y.toFixed(2) + posWithUnit.y[1]);
     };
     //========================================================================================
@@ -1231,12 +1254,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 							$scope.getPlatformElement().unbind('vmousemove');
 							$scope.getPlatformElement().unbind('vmouseup');
 							$scope.wblStateFlags.customIOTarget = null;
-							$timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 200);
 						});
 
 						$scope.getPlatformElement().bind('vmousemove', function(event){
 							event.preventDefault();
-							$scope.setPlatformDoNotSaveUndoEnabled(true);
 							for (var j = 0, ap; ap = $scope.wblStateFlags.customIOTarget.actionPack[j]; j++) {
 								$scope.set(ap.slot, getCalculatedValue(ap.formula, event));
 							}
@@ -1298,18 +1319,18 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             //=== Rotate ==================================
             else if (targetName == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.Rotate)){
                 theLastPos_ = {x: event.clientX, y: event.clientY};
-                $scope.addUndo({op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: rotateSlot_, slotvalue: $scope.gimme(rotateSlot_)}]}, true);
+				$scope.addUndo({op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: rotateSlot_, slotvalue: $scope.gimme(rotateSlot_)}]});
 
                 $scope.getPlatformElement().bind('vmouseup', function(event){
                     $scope.getPlatformElement().unbind('vmousemove');
                     $scope.getPlatformElement().unbind('vmouseup');
-                    $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 200);
+					$scope.UnblockAddUndo();
                 });
 
                 $scope.getPlatformElement().bind('vmousemove', function(event){
+					$scope.BlockAddUndo();
                     event.preventDefault();
                     // Set the angle slots
-                    $scope.setPlatformDoNotSaveUndoEnabled(true);
                     $scope.set(rotateSlot_, parseFloat($scope.gimme(rotateSlot_)) + ((event.clientX - theLastPos_.x)));
                     theLastPos_ = {x: event.clientX, y: event.clientY};
                 });
@@ -1320,18 +1341,18 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             else if (targetName == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.Rescale)){
                 if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.RESIZE, 10)) == 0){
                     theLastPos_ = {x: event.clientX, y: event.clientY};
-                    $scope.addUndo({op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: 'root:transform-scale', slotvalue: $scope.gimme('root:transform-scale')}]}, true);
+                    $scope.addUndo({op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: 'root:transform-scale', slotvalue: $scope.gimme('root:transform-scale')}]});
 
                     $scope.getPlatformElement().bind('vmouseup', function(event){
                         $scope.getPlatformElement().unbind('vmousemove');
                         $scope.getPlatformElement().unbind('vmouseup');
-                        $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 200);
+						$scope.UnblockAddUndo();
                     });
 
                     $scope.getPlatformElement().bind('vmousemove', function(event){
+						$scope.BlockAddUndo();
                         // Set the scale slot
                         var scale = $scope.gimme('root:transform-scale');
-                        $scope.setPlatformDoNotSaveUndoEnabled(true);
                         $scope.set('root:transform-scale', [parseFloat((parseFloat(scale[0]) + ((event.clientX - theLastPos_.x) * 0.01)).toFixed(2)), parseFloat((parseFloat(scale[1]) + ((event.clientY - theLastPos_.y) * 0.01)).toFixed(2))]);
                         theLastPos_ = {x: event.clientX, y: event.clientY};
                     });
@@ -1352,7 +1373,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             else if (targetName == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.Resize)){
                 if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.RESIZE, 10)) == 0){
                     if(resizeSlots_.width && resizeSlots_.height){
-                        $scope.addUndo({op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: resizeSlots_.width, slotvalue: $scope.gimme(resizeSlots_.width)}, {slotname: resizeSlots_.height, slotvalue: $scope.gimme(resizeSlots_.height)}]}, true);
+                        $scope.addUndo({op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: resizeSlots_.width, slotvalue: $scope.gimme(resizeSlots_.width)}, {slotname: resizeSlots_.height, slotvalue: $scope.gimme(resizeSlots_.height)}]});
+
                         theLastPos_ = {x: event.clientX, y: event.clientY};
                         var theSlotElements = {w: $scope.getSlot(resizeSlots_.width).getElementPntr(), h: $scope.getSlot(resizeSlots_.height).getElementPntr()};
                         var orgSize = {w: getUnits(theSlotElements.w[0], 'width').pixel, h: getUnits(theSlotElements.h[0], 'height').pixel};
@@ -1364,10 +1386,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                             helpElement.remove();
                             $scope.getPlatformElement().unbind('vmousemove');
                             $scope.getPlatformElement().unbind('vmouseup');
-                            $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 200);
+							$scope.UnblockAddUndo();
                         });
 
                         $scope.getPlatformElement().bind('vmousemove', function(event){
+							$scope.BlockAddUndo();
                             helpElement.css('width', orgSize.w + (event.clientX - theLastPos_.x));
                             helpElement.css('height', orgSize.h + (event.clientY - theLastPos_.y));
                             var valUnitSize = {w: valMod.getValUnitSeparated($scope.gimme(resizeSlots_.width)), h: valMod.getValUnitSeparated($scope.gimme(resizeSlots_.height))};
@@ -1380,9 +1403,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                                 cssSize.h = 0;
                                 valUnitSize.h[1] = 'px'
                             }
-                            $scope.setPlatformDoNotSaveUndoEnabled(true);
                             $scope.set(resizeSlots_.width, cssSize.w.toFixed(2) + valUnitSize.w[1]);
-                            $scope.setPlatformDoNotSaveUndoEnabled(true);
                             $scope.set(resizeSlots_.height, cssSize.h.toFixed(2) + valUnitSize.h[1]);
                         });
                     }
@@ -1521,8 +1542,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.Unbundle)){
             if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.UNBUNDLE, 10)) == 0){
                 if($scope.theWblMetadata['templateid'] == 'bundleTemplate'){
-                    if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-                        $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.unbundle, target: $scope.getInstanceId()});
+                    if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+						socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.unbundle, target: $scope.getInstanceId()});
                         $scope.setEmitLockEnabled(true);
                     }
 					var listOfBundleChildren = [];
@@ -1534,17 +1555,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     }
 
                     while(theChildren_.length > 0){
-                        var prevValue = $scope.getPlatformDoNotSaveUndoEnabled();
-                        $scope.setPlatformDoNotSaveUndoEnabled(true);
                         theChildren_[0].scope().peel();
-                        $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(prevValue);}, 1);
                     }
 
-					$scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: $scope.createWblDef(true)}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
-                    $scope.setPlatformDoNotSaveUndoEnabled(true);
+					$scope.addUndo({op: Enum.undoOps.unbundle, target: undefined, execData: [{wblDef: $scope.createWblDef(true)}]});
                     $scope.requestDeleteWebble($scope.theView, false);
 					$scope.updateListOfUntrustedWebbles(listOfBundleChildren);
-                    $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false); $scope.setEmitLockEnabled(false);}, 100);
+                    $timeout(function(){ $scope.setEmitLockEnabled(false);}, 100);
                 }
             }
             else{
@@ -1623,7 +1640,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 		//=== EDIT CUSTOM MENU ITEMS ===========================================================================
 		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomMenuItems)){
 			$scope.openForm(Enum.aopForms.editCustMenuItems, $scope.theView, function(retVal){
-				// No need to do anything here (retval is either true or null and none is a bad thing)
+				if(retVal != null){
+					if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+						socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setCustomMenu, target: $scope.getInstanceId(), customMenu: retVal});
+					}
+				}
 			});
 		}
 		//=======================================================================================
@@ -1631,7 +1652,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 		//=== EDIT CUSTOM INTERACTION OBJECTS ===========================================================================
 		else if (itemName == getKeyByValue(Enum.availableOnePicks_DefaultWebbleMenuTargets, Enum.availableOnePicks_DefaultWebbleMenuTargets.EditCustomInteractionObjects)){
 			$scope.openForm(Enum.aopForms.editCustInteractObj, $scope.theView, function(retVal){
-				// No need to do anything here (retval is either true or null and none is a bad thing)
+				if(retVal != null){
+					if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+						socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setCustomIO, target: $scope.getInstanceId(), theIO: retVal});
+					}
+				}
 			});
 		}
 		//=======================================================================================
@@ -1819,7 +1844,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     //========================================================================================
 
 
-
 	//========================================================================================
 	// Register Webble World Event Listener
 	// Register an event listener for a specific event for a specific target (self, other or
@@ -1837,6 +1861,51 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 	}
 	//========================================================================================
 
+
+	//========================================================================================
+	// Register Online Data Listener
+	// This method lets the webble join a uniquely identified online data broadcasting virtual
+	// room for sending and receiving messages via the server online to other users.
+	//========================================================================================
+	$scope.registerOnlineDataListener = function(msgRoomId, eventHandler, excludeSelf){
+		if(isExist.valueInArray(activeOnlineRooms, msgRoomId)){
+			$log.log("This Webble has already registered participation for the online room " + msgRoomId + " and will therefore not do it again");
+		}
+		else{
+			activeOnlineRooms.push(msgRoomId);
+			$scope.registerOnlineMsgRoomListener(instanceId_, msgRoomId, eventHandler, excludeSelf);
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Unregister Online Data Listener
+	// This method lets the webble leave a uniquely identified online data broadcasting virtual
+	// room used for sending and receiving messages.
+	//========================================================================================
+	$scope.unregisterOnlineDataListener = function(whatRoom){
+		$scope.unregisterOnlineMsgRoomListener(instanceId_, whatRoom);
+		valMod.findAndRemoveValueInArray(activeOnlineRooms, whatRoom);
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Send Online Data
+	// This method lets the webble sends data over the internet via the Webble server to any
+	// other webble and user online that is currently listening. It only works if the user
+	// has previously registered a online room.
+	//========================================================================================
+	$scope.sendOnlineData = function(whatRoom, whatData){
+		if(isExist.valueInArray(activeOnlineRooms, whatRoom)){
+			$scope.sendOnlineMsg(whatRoom, whatData);
+		}
+		else{
+			$log.log("This Webble has not registered participation for the online room " + whatRoom + " and can therefore not send any messages to it");
+		}
+	}
+	//========================================================================================
 
 
     //========================================================================================
@@ -1897,6 +1966,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method sets this webbles protection code value.
     //========================================================================================
     $scope.setProtection = function(protectionCode){
+		if($scope.wblStateFlags.readyToStoreUndos){$scope.addUndo({op: Enum.undoOps.setProtection, target: $scope.getInstanceId(), execData: [{currProtection: theProtectionSetting_}]});}
+		if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+			socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setProtection, target: $scope.getInstanceId(), protectionSetting: protectionCode});
+		}
+
         theProtectionSetting_ = protectionCode;
 
         if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_CONNECT, 10)) == 0){
@@ -1998,11 +2072,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method connects a parent conn slot found by name with this Webbles selected slot.
     //========================================================================================
     $scope.connectSlots = function(parentSlot, childSlot, directions, doNotBotherAdjustingStuff){
-        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-            $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.connSlots, target: $scope.getInstanceId(), parentSlot: parentSlot, childSlot: childSlot, directions: directions});
+        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+			socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.connSlots, target: $scope.getInstanceId(), parentSlot: parentSlot, childSlot: childSlot, directions: directions});
         }
 
-        $scope.addUndo({op: Enum.undoOps.connSlots, target: $scope.getInstanceId(), execData: [{connslot: theConnectedSlot_, selectslot: theSelectedSlot_, slotdir: slotConnDir_}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
+		if($scope.wblStateFlags.readyToStoreUndos){ $scope.addUndo({op: Enum.undoOps.connSlots, target: $scope.getInstanceId(), execData: [{connslot: theConnectedSlot_, selectslot: theSelectedSlot_, slotdir: slotConnDir_}]}); }
         theConnectedSlot_ = parentSlot != 'none' ? parentSlot : '';
         theSelectedSlot_ = childSlot != 'none' ? childSlot : '';
         slotConnDir_ = directions;
@@ -2050,83 +2124,86 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method sets this webbles selection state
     //========================================================================================
     $scope.setSelectionState = function(newSelectionState){
-        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-            $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setSelectState, target: $scope.getInstanceId(), selectState: newSelectionState});
-        }
+		if($scope.getSelectionState() != newSelectionState){
+			// Make sure shared workspaces are informed
+			if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+				socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setSelectState, target: $scope.getInstanceId(), selectState: newSelectionState});
+			}
 
-        if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.SELECTED, 10)) == 0 || ($scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && $scope.altKeyIsDown)){
-            // If set to selected
-            if (newSelectionState != Enum.availableOnePicks_SelectTypes.AsNotSelected){
-                // Create a border around the webble
-                $scope.activateBorder(true);
+			if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.SELECTED, 10)) == 0 || ($scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer && $scope.altKeyIsDown)){
+				// If set to selected
+				if (newSelectionState != Enum.availableOnePicks_SelectTypes.AsNotSelected){
+					// Create a border around the webble
+					$scope.activateBorder(true);
 
-                // If it was main clicked also create interaction buttons and display name
-                if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsMainClicked){
+					// If it was main clicked also create interaction buttons and display name
+					if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsMainClicked){
 
-                    if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.INTERACTION_OBJECTS, 10)) == 0){
-                        interactionObjContainerVisibilty_ = true;
-                    }
+						if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.INTERACTION_OBJECTS, 10)) == 0){
+							interactionObjContainerVisibilty_ = true;
+						}
 
-                    // Display the webble's name
-                    if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.NON_DEV_HIDDEN, 10)) == 0){
-                        if ((parseInt(theWebbleSettingFlags_, 10) & parseInt(Enum.bitFlags_WebbleConfigs.NoBubble, 10)) == 0){
-                            $scope.setBubbleTxt($scope.getWebbleFullName());
-                            var absPos = $scope.getWblAbsPosInPixels($scope.theView);
-                            $scope.setBubbleTxtPos({x: absPos.x, y: absPos.y}, $scope.theView);
-                            $scope.setBubbleTxtVisibility(true, 3000);
-                        }
-                    }
-                }
+						// Display the webble's name
+						if((parseInt(theProtectionSetting_, 10) & parseInt(Enum.bitFlags_WebbleProtection.NON_DEV_HIDDEN, 10)) == 0){
+							if ((parseInt(theWebbleSettingFlags_, 10) & parseInt(Enum.bitFlags_WebbleConfigs.NoBubble, 10)) == 0){
+								$scope.setBubbleTxt($scope.getWebbleFullName());
+								var absPos = $scope.getWblAbsPosInPixels($scope.theView);
+								$scope.setBubbleTxtPos({x: absPos.x, y: absPos.y}, $scope.theView);
+								$scope.setBubbleTxtVisibility(true, 3000);
+							}
+						}
+					}
 
-                if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsWaitingForParent){
-                    for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-                        aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
-                        if(aw.scope().getInstanceId() != $scope.getInstanceId()){
-                            var isBundleChild = (aw.scope().theWblMetadata['templateid'] != 'bundleTemplate' && aw.scope().getIsBundled() > 0);
-                            var wasRelative = false;
-                            for(var n = 0, fm; fm = $scope.getAllDescendants($scope.theView)[n]; n++){
-                                if (fm.scope().getInstanceId() == aw.scope().getInstanceId()){
-                                    wasRelative = true;
-                                    break;
-                                }
-                            }
+					if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsWaitingForParent){
+						for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+							aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
+							if(aw.scope().getInstanceId() != $scope.getInstanceId()){
+								var isBundleChild = (aw.scope().theWblMetadata['templateid'] != 'bundleTemplate' && aw.scope().getIsBundled() > 0);
+								var wasRelative = false;
+								for(var n = 0, fm; fm = $scope.getAllDescendants($scope.theView)[n]; n++){
+									if (fm.scope().getInstanceId() == aw.scope().getInstanceId()){
+										wasRelative = true;
+										break;
+									}
+								}
 
-                            if(!wasRelative && !isBundleChild){
-                                aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsWaitingForChild);
-                            }
-                        }
-                    }
-                    $scope.activateBorder(true, 'gold', undefined, undefined, true);
-                }
+								if(!wasRelative && !isBundleChild){
+									aw.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsWaitingForChild);
+								}
+							}
+						}
+						$scope.activateBorder(true, 'gold', undefined, undefined, true);
+					}
 
-                if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsWaitingForChild){
-                    $scope.activateBorder(true, 'lightblue', undefined, undefined, true);
-                }
+					if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsWaitingForChild){
+						$scope.activateBorder(true, 'lightblue', undefined, undefined, true);
+					}
 
-                if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsNewChild){
-                    $scope.activateBorder(true, 'pink', undefined, undefined, true);
-                }
+					if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsNewChild){
+						$scope.activateBorder(true, 'pink', undefined, undefined, true);
+					}
 
-                if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsNewParent){
-                    $scope.activateBorder(true, 'darkred', undefined, undefined, true);
-                }
-            }
-            // If set to unselected
-            else{
-                // Clear away border and buttons
-                interactionObjContainerVisibilty_ = false;
-                $scope.activateBorder(false);
-            }
+					if (newSelectionState == Enum.availableOnePicks_SelectTypes.AsNewParent){
+						$scope.activateBorder(true, 'darkred', undefined, undefined, true);
+					}
+				}
+				// If set to unselected
+				else{
+					// Clear away border and buttons
+					interactionObjContainerVisibilty_ = false;
+					$scope.activateBorder(false);
+				}
 
-            // Set select status
-            theSelectState_ = newSelectionState;
-        }
-        else{
-            if (theSelectState_ == Enum.availableOnePicks_SelectTypes.AsNotSelected){
-                $scope.activateBorder(false);
-                interactionObjContainerVisibilty_ = false;
-            }
-        }
+				// Set select status
+				theSelectState_ = newSelectionState;
+			}
+			else{
+				if (theSelectState_ == Enum.availableOnePicks_SelectTypes.AsNotSelected){
+					$scope.activateBorder(false);
+					interactionObjContainerVisibilty_ = false;
+				}
+			}
+		}
     };
     //========================================================================================
 
@@ -2177,12 +2254,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
         if (whatSlot != null && !(whatSlot.getName() in theSlots_)){
             whatSlot.setValue(valMod.addPxMaybe(whatSlot.getName(), whatSlot.getValue()));
 
-            if(whatSlot.getIsCustomMade()){
-                $scope.addUndo({op: Enum.undoOps.addCustSlot, target: $scope.getInstanceId(), execData: [{slotname: whatSlot.getName()}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
-                if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-                    $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.addCustSlot, target: $scope.getInstanceId(), slot: {name: whatSlot.getName(), value: whatSlot.getValue(), displayName: whatSlot.getDisplayName(), desc: whatSlot.getDisplayDescription(), cat: whatSlot.getCategory(), metadata: whatSlot.getMetaData(), elPntr: (whatSlot.getElementPntr() != undefined)}});
-                }
+            if(whatSlot.getIsCustomMade() || whatSlot.getName() == "customContextMenu" || whatSlot.getName() == "customInteractionObjects"){
+				if($scope.wblStateFlags.readyToStoreUndos){ $scope.addUndo({op: Enum.undoOps.addCustSlot, target: $scope.getInstanceId(), execData: [{slotname: whatSlot.getName()}]}); }
             }
+			if(whatSlot.getIsCustomMade()){
+				if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+					socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.addCustSlot, target: $scope.getInstanceId(), slot: {name: whatSlot.getName(), value: whatSlot.getValue(), displayName: whatSlot.getDisplayName(), desc: whatSlot.getDisplayDescription(), cat: whatSlot.getCategory(), metadata: whatSlot.getMetaData(), elPntr: (whatSlot.getElementPntr() != undefined)}});
+				}
+			}
 
             theSlots_[whatSlot.getName()] = whatSlot;
 
@@ -2207,7 +2286,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                     }
 
                     if (oldVal && newVal && (newVal !== oldVal)) {
-                        $scope.setPlatformDoNotSaveUndoEnabled(true);
                         var transDur = parseInt(whatSlot.getElementPntr().css('transition-duration'));
                         if(whatSlot.getElementPntr().css('transition-duration').search('ms') == -1){
                           transDur = transDur * 1000;
@@ -2266,7 +2344,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                                 }
                             }
                         }
-                        $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 300);
                     }
                 }, true);
             }
@@ -2398,7 +2475,12 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // that they can share their slots at all time.
     //========================================================================================
     $scope.connectSharedModel = function(sharedModelCandidate){
-        isCreatingModelSharee_ = false;
+		$scope.addUndo({op: Enum.undoOps.loadWbl, target: sharedModelCandidate.wbl.scope().getInstanceId(), execData: [{oldid: sharedModelCandidate.wbl.scope().theWblMetadata['instanceid'], SMM: $scope.getInstanceId()}]});
+		if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+			socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.sharedModelDuplicate, target: $scope.getInstanceId(), SMC: sharedModelCandidate.wbl.scope().getInstanceId()});
+		}
+
+		isCreatingModelSharee_ = false;
         for(var i = 0, ms; ms = modelSharees_[i]; i++){
             sharedModelCandidate.wbl.scope().getModelSharees().push(ms);
             ms.scope().getModelSharees().push(sharedModelCandidate.wbl);
@@ -2515,8 +2597,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method connects this webble to a parent webble provided as a parameter
     //========================================================================================
     $scope.paste = function(parent, doNotBotherAdjustingStuff){
-        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-            $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.pasteWbl, child: $scope.getInstanceId(), parent: parent.scope().getInstanceId()});
+        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+			socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.pasteWbl, child: $scope.getInstanceId(), parent: parent.scope().getInstanceId()});
         }
 
         // If no parent is assigned yet...
@@ -2539,9 +2621,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 					return false;
 				}
 			}
-            $scope.addUndo({op: Enum.undoOps.pasteWbl, target: $scope.getInstanceId(), execData: []}, !$scope.getPlatformDoNotSaveUndoEnabled());
-			var insideUndoRedo = true;
-			if(!$scope.getPlatformDoNotSaveUndoEnabled()){ insideUndoRedo = false; $scope.setPlatformDoNotSaveUndoEnabled(true); }
+			if($scope.wblStateFlags.readyToStoreUndos){ $scope.addUndo({op: Enum.undoOps.pasteWbl, target: $scope.getInstanceId(), execData: []}); }
 
             theParent_ = parent;
             theParent_.scope().addChild($scope.theView);
@@ -2555,8 +2635,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
             theParent_.scope().getChildContainer().append($scope.theView.parent());
 			if(!doNotBotherAdjustingStuff){ adjustPositionInRelationToParent(false); }
-
-            if(!insideUndoRedo){ $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 300); }
 
             var io = $scope.getInteractionObjectByName(getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.AssignParent));
             if (io){ io.scope().setIsEnabled(false); }
@@ -2603,8 +2681,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     // This method removes the parent for this child and make it an orphan again.
     //========================================================================================
     $scope.peel = function(doNotBotherAdjustingStuff){
-        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-            $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.peelWbl, target: $scope.getInstanceId()});
+        if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+			socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.peelWbl, target: $scope.getInstanceId()});
         }
 
         if (theParent_ != undefined){
@@ -2621,19 +2699,12 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 
 			if(!doNotBotherAdjustingStuff){
 				$scope.getWSE().append($scope.theView.parent());
-				var insideUndoRedo = true;
-				if(!$scope.getPlatformDoNotSaveUndoEnabled()){
-					insideUndoRedo = false;
-					$scope.setPlatformDoNotSaveUndoEnabled(true);
-				}
 				adjustPositionInRelationToParent(true);
 				var io = $scope.getInteractionObjectByName(getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.AssignParent));
 				if (io){ io.scope().setIsEnabled(true); }
 			}
 
-            if(!insideUndoRedo){ $timeout(function(){$scope.setPlatformDoNotSaveUndoEnabled(false);}, 300); }
-
-            $scope.addUndo({op: Enum.undoOps.peelWbl, target: $scope.getInstanceId(), execData: [{parent: theParent_.scope().getInstanceId()}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
+			if($scope.wblStateFlags.readyToStoreUndos){ $scope.addUndo({op: Enum.undoOps.peelWbl, target: $scope.getInstanceId(), execData: [{parent: theParent_.scope().getInstanceId()}]}); }
             theParent_.scope().removeChild($scope.theView);
             var lostParentId = theParent_.scope().getInstanceId();
             theParent_ = undefined;
@@ -2658,12 +2729,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 theSlots_[whatSlotName].cssValWatch();
             }
 
-            if(theSlots_[whatSlotName].getIsCustomMade()){
-                $scope.addUndo({op: Enum.undoOps.removeCustSlot, target: $scope.getInstanceId(), execData: [{slotname: theSlots_[whatSlotName].getName(), slotvalue: theSlots_[whatSlotName].getValue(), slotcat: theSlots_[whatSlotName].getCategory()}]}, !$scope.getPlatformDoNotSaveUndoEnabled());
-                if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-                    $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.removeCustSlot, target: $scope.getInstanceId(), slotname: theSlots_[whatSlotName].getName()});
-                }
+            if(theSlots_[whatSlotName].getIsCustomMade() || whatSlotName == "customContextMenu" || whatSlotName == "customInteractionObjects"){
+				if($scope.wblStateFlags.readyToStoreUndos){ $scope.addUndo({op: Enum.undoOps.removeCustSlot, target: $scope.getInstanceId(), execData: [{slotname: theSlots_[whatSlotName].getName(), slotvalue: theSlots_[whatSlotName].getValue(), slotcat: theSlots_[whatSlotName].getCategory()}]}); }
             }
+			if(theSlots_[whatSlotName].getIsCustomMade()){
+				if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+					socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.removeCustSlot, target: $scope.getInstanceId(), slotname: theSlots_[whatSlotName].getName()});
+				}
+			}
 
             delete theSlots_[whatSlotName];
         }
@@ -2677,7 +2750,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     //= The method then returns a bit flag value to tell how the set process succeeded.
     //========================================================================================
     $scope.set = function(slotName, slotValue){
-
         var result = Enum.bitFlags_SlotManipulations.NonExisting;
         var theSlot;
         var prevState;
@@ -2747,16 +2819,21 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
                 if(onGoingTimeOuts[slotName] != undefined){$timeout.cancel(onGoingTimeOuts[slotName]); onGoingTimeOuts[slotName] = undefined;}
                 prevState = {op: Enum.undoOps.setSlot, target: $scope.getInstanceId(), execData: [{slotname: slotName, slotvalue: theSlot.getValue()}]};
                 theSlot.setTimestamp();
+				theSlot.setTimestampMemory();
                 theSlot.setValue(slotValue);
                 result = bitflags.on(result, Enum.bitFlags_SlotManipulations.ValueChanged);
             }
         }
 
         if((parseInt(result, 10) & parseInt(Enum.bitFlags_SlotManipulations.ValueChanged, 10)) !== 0){
-            if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled()){
-                $scope.onlineTransmit({id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setSlot, target: $scope.getInstanceId(), slotName: slotName, slotValue: slotValue});
+            if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
+				socket.emit('interaction:comm', {id: $scope.getCurrWS().id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.setSlot, target: $scope.getInstanceId(), slotName: slotName, slotValue: slotValue});
             }
-            $scope.addUndo(prevState, !$scope.getPlatformDoNotSaveUndoEnabled());
+
+			// Slots that are set are stored in undo memory, as long as it is not being set to often, than we only add the value every 5 seconds
+			if(theSlot.getTimestampMemory().length <= 1 || ((theSlot.getTimestampMemory()[0] - theSlot.getTimestampMemory()[theSlot.getTimestampMemory().length - 1]) > 5)){
+				if($scope.wblStateFlags.readyToStoreUndos && !theSlot.getDoNotIncludeInUndo()){ $scope.addUndo(prevState); }
+			}
 
             modelSharedUpdate(slotName, slotValue);
             slotValueChanged(slotName);

@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, $timeout, socket) {
+wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, $timeout) {
 
     //=== PROPERTIES ====================================================================
 
@@ -48,7 +48,11 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot,
     $scope.coreCall_Init = function(theInitWblDef){
 		//mnkOpenDataDisplay = $scope.theView.parent().find("#mnkOpenDataDisplay");
 
-		socket.emit('interaction:started', "hassebasse");
+
+
+		$scope.registerOnlineDataListener("hassebasse");
+
+
 
 
 
@@ -378,10 +382,10 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot,
     //===================================================================================
     $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
 		if(itemName == $scope.customMenu[0].itemId) {  //info
-			socket.emit('interaction:comm', {id: "hassebasse", msg: "varulv"});
+			$scope.sendOnlineData("hassebasse", "Korkskruv");
 		}
 		else if(itemName == $scope.customMenu[1].itemId) {  //info
-			socket.emit('interaction:comm', {id: "hassebasse", msg: "fitta"});
+			$scope.sendOnlineData("hassebasse", "Visa fittan!");
 		}
 
 

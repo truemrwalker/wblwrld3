@@ -8,7 +8,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, cleanupService, gettextCatalog, gettext, dbService, socket) {
+wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, cleanupService, gettextCatalog, gettext, dbService) {
     // $scope is needed for angularjs to work properly and should not be removed. Slot is a Webble World
     // available Service and is needed for any form of Slot manipulation inside this template and should neither be
     // removed.
@@ -111,21 +111,10 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, c
     //=== EVENT HANDLERS ================================================================
 
 
-	var onSomeComm = function(here, there) {
-		if (here) {
-			//Lock
-
-
-			if(here.msg == 'fitta'){
-				$log.log('Dont speak to me like that!');
-			}
-			else{
-				$log.log(here.msg + ' is unknown transmit operation');
-			}
-
-			//Unlock
-
-		}
+	var onSomeComm = function(data, username) {
+		$log.log("Data Arrived:");
+		$log.log(data);
+		$log.log("sent by " + username);
 	};
 
 
@@ -145,8 +134,18 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, c
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
 
-			socket.emit('interaction:started', "hassebasse");
-			socket.addListener('interaction:comm', onSomeComm);
+
+
+
+		$scope.registerOnlineDataListener("hassebasse", onSomeComm);
+
+
+
+
+
+
+
+
 
           //TODO: If you have images and other resources uploaded in your webble template folder, and need to access them with a relative path, just call the getTemplatePath() function as shown below
           //TODO: to get the correct location for this Webble and its resource files

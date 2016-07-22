@@ -43,32 +43,26 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
         }
 
         if($scope.gimme('hour') != now.getHours()){
-            $scope.setPlatformDoNotSaveUndoEnabled(true);
             $scope.set('hour', now.getHours());
         }
 
         var decVal = (now.getHours() + (now.getMinutes() / 60)).toFixed(2);
         if($scope.gimme('hourDecimal') != decVal){
-            $scope.setPlatformDoNotSaveUndoEnabled(true);
             $scope.set('hourDecimal', parseFloat(decVal));
         }
 
         if($scope.gimme('minute') != now.getMinutes()){
-            $scope.setPlatformDoNotSaveUndoEnabled(true);
             $scope.set('minute', now.getMinutes());
         }
 
         if($scope.gimme('second') != now.getSeconds()){
-            $scope.setPlatformDoNotSaveUndoEnabled(true);
             $scope.set('second', now.getSeconds());
         }
 
-        $scope.setPlatformDoNotSaveUndoEnabled(true);
         $scope.set('millisecond', now.getMilliseconds());
 
         var newTime = addZero($scope.gimme('hour')) + ':' + addZero($scope.gimme('minute')) + ':' + addZero($scope.gimme('second'));
         if($scope.gimme('currTime') != newTime){
-            $scope.setPlatformDoNotSaveUndoEnabled(true);
             $scope.set('currTime', newTime);
         }
 
@@ -100,6 +94,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('currTime').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('currTime').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('currDate',
             '',
@@ -110,6 +105,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('currDate').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('currDate').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('hour',
             0,
@@ -120,6 +116,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('hour').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('hour').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('hourDecimal',
             0,
@@ -130,6 +127,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('hourDecimal').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('hourDecimal').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('minute',
             0,
@@ -140,6 +138,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('minute').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('minute').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('second',
             0,
@@ -150,6 +149,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('second').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('second').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('millisecond',
             0,
@@ -160,6 +160,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('millisecond').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('millisecond').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('year',
             1970,
@@ -170,6 +171,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('year').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('year').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('month',
             1,
@@ -180,6 +182,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('month').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('month').setDoNotIncludeInUndo(true);
 
         $scope.addSlot(new Slot('day',
             1,
@@ -190,6 +193,7 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
             undefined
         ));
         $scope.getSlot('day').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+		$scope.getSlot('day').setDoNotIncludeInUndo(true);
 
         $scope.getSlot('timeTxt:font-family').setMetaData({comboBoxContent: [ 'digital_dreamregular' ]});
         $scope.setDefaultSlot('currTime');

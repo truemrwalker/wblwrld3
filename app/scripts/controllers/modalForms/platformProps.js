@@ -55,7 +55,8 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
 		loggingEnabled: gettext("If this is checked, log texts will be written to the JavaScript console for development support [$log.log()], if unckecked all log commands in the code will be ignored."),
 		templateRevisionBehavior: gettext("This allows the user to define the automatic behavior for the system when a requested version of a Webble Template exists as a newer version as well. Upgrade or not."),
 		untrustedWblsBehavior: gettext("This allows the user to define the automatic behavior for the system when a trying to load a Webble which is untrusted; allow it automatically, ask first time, ask every time or never allow."),
-		slimWblBrowserEnabled: gettext("If this is checked, the Webble browser will only show Webble name and trust level in the browser and hide all other info, unless the user single-clicks the Webble in question twice.")
+		slimWblBrowserEnabled: gettext("If this is checked, the Webble browser will only show Webble name and trust level in the browser and hide all other info, unless the user single-clicks the Webble in question twice."),
+		sharedWS_NoQIM_Enabled: gettext("If this is checked, there will be no messages displayed when external changes are made by other users in a current open shared workspace.")
     };
 
     // Form validation error message

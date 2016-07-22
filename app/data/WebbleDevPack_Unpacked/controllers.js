@@ -169,10 +169,13 @@ wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enu
         //TODO: ranging between None (default), PropertyEditing, PropertyVisibility and ConnectionVisibility(basically invisible)
         //$scope.getSlot([SLOT NAME]).setDisabledSetting(Enum.SlotDisablingState.[SELECTED ACCESS STATE]);
 
+		//TODO: If you want the slot to be ignored by the systems undo memory (for various reasons, like for example its values change
+		//TODO: often or is independent of user interaction) then you can turn that on (or off) for the slot in question
+		//$scope.getSlot([SLOT NAME]).setDoNotIncludeInUndo(true);
+
         //NOTE: if you have strings in your code you want translated when language change, provide the translations
         //      in the area appointed above in the property section and wrap the string in a gettext() call or use
         //      'translate' filter in the view file
-
 
         //TODO: If you want to find your custom font families in the property dropdown list, add their main names as an array in lowercase to the metadata comboBoxContent object.
         //TODO: If you skip this you can still type by hand any font loaded into the system

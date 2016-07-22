@@ -213,6 +213,25 @@ $scope, the core can be reached to get following methods and data:
 		mainMenuExecuted: 		    Returning Data: {targetId: null[=UNSPECIFIED], menuId: [menu sublink id], timestamp: [a chronological timestamp value]}
 		wblMenuExecuted: 	        Returning Data: {targetId: [Instance Id for the Webble executing menu], menuId: [menu item name], timestamp: [a chronological timestamp value]}
 	};
+	
+	// Register Online Data Listener
+    // Lets the webble join a uniquely identified online data broadcasting virtual room for sending and receiving 
+    // messages via the server online to other users. One must provide a unique id for the message area, an event 
+    // handler method that receives all incoming messages for that room and optional if one wish to exclude the current 
+    // user in the message dispatching  
+    $scope.registerOnlineDataListener(msgRoomId, eventHandler, excludeSelf);
+    
+    // Unregister Online Data Listener
+    // Lets the webble leave a uniquely identified online data broadcasting virtual room used for sending and receiving 
+    // messages at their own will. This is an optional method. The system will clean up by itself if the Webbles disappears.
+    $scope.unregisterOnlineDataListener(whatRoom);
+    
+    // Send Online Data
+    // Lets the webble sends data over the internet via the Webble server to any other webble and user online that is 
+    // currently listening. It only works if the user has previously registered an online room. the webble must provide 
+    // the room id to which the data is being sent and the of course the data which can be anything json approved.
+    $scope.sendOnlineData(whatRoom, whatData);
+    
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -246,7 +265,12 @@ system and specific Webbles:
     // If one have a slot or Webble operation one does not want to be a part of the undo stack then set this to true
     // just before calling the slot set or operation call. (set it back to false is not needed since the system reset
     // that on its own)
-    $scope.setPlatformDoNotSaveUndoEnabled(enableState);
+    $scope.BlockNextAddUndo();
+    
+    // If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true
+    // just before calling starting the process and call the unblock method to return to normal mode again
+    $scope.BlockAddUndo();
+    $scope.UnblockAddUndo();
 
     // A set of flags for rescuing weird touch event behavior
     $scope.touchRescuePlatformFlags = {
@@ -296,6 +320,10 @@ system and specific Webbles:
 
     // Get Webble Center Position, calculates the specified webbles absolute center position within the work surface.
     $scope.getWebbleCenterPos(whatWebble);
+    
+    // Get the top parent for a specific Webble and returns it. If no top parent exist the webble itself is returned 
+    // (since it is obviously the top)
+    $scope.getTopParent(whatWebble);
 
     // Get All Ancestors, finds all ancestors (parents and parents parents etc) of the defined webble and returns the list.
     $scope.getAllAncestors(whatWebble);
@@ -327,10 +355,11 @@ system and specific Webbles:
     // usually calls the Webble Core's paste() method instead.
     $scope.requestAssignParent(target);
 
-    // Shows the Quick Info Message box with the specicified text for either 2 seconds or the specified time of either
+    // Shows the Quick Info Message box with the specified text for either 2.5 seconds or the specified time of either
     // default size or the specified size at either the center of the screen or the specified position using either 
-    // default color or the specified color (which can be an array of colors for gradient effect).
-    $scope.showQIM(qimText, qimTime, qimSize, qimPos, qimColor);
+    // default color or the specified color (which can be an array of colors for gradient effect). 
+    // If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed.
+    $scope.showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance);
 
     // Open Form, Creates and opens a modal form window for a specific use that can be used to edit or consume any data.
     // For more details of available forms see SERVICES aopForms.
@@ -472,13 +501,9 @@ the directive name as instructed either as a tag attribute or class name:
 -----------------------------------------------------------------------------------------------------------------
 
 In the SERVICES can be found multiple help functions and support methods along with various providers av data of all
-sorts. The ones that could be of interest for a Webble-template developer, except the ones he/she would create
+sorts. If one want to use a service in a Webble the name of the service must be included at the top of the controller 
+function declaration (e.g. Enum or wwConst etc.). The ones that could be of interest for a Webble-template developer, except the ones he/she would create
 themselves inside the template are the following:
-
-
-//ADD SOCKET EMIT
-// ADD BROWSER DETECT   BrowserDetect.browser //.version //.OS //.device
-
 
     //Available Platform states
     Enum.availablePlatformPotentials
@@ -488,15 +513,16 @@ themselves inside the template are the following:
     Enum.aopForms
     { userReg: 0, wblProps: 1, slotConn: 2, protect: 3, addCustSlot: 4, infoMsg: 5, langChange: 6, publishWebble: 7,
       loadWebble: 8, saveWorkspace: 9, platformProps: 10, about: 12, wblAbout: 13, wblSearch: 14, faq: 15, bundle: 16,
-      deleteWorkspace: 17, rateWbl: 18, saveWorkspaceAs: 19, shareWorkspaces: 20, editCustMenuItems: 21, editCustInteractObj: 22 }
+      deleteWorkspace: 17, rateWbl: 18, saveWorkspaceAs: 19, shareWorkspaces: 20, editCustMenuItems: 21, editCustInteractObj: 22,
+	  viewWblRatingAndComments: 23, exportWebble: 24, importWebble: 25 }
 
     // Default Interaction objects that all webbles share
     Enum.availableOnePicks_DefaultInteractionObjects
-    { Menu: 0, Rotate: 1, Resize: 2, AssignParent: 3, Rescale: 4 }
+    { Menu: 0, Rotate: 1, Resize: 2, AssignParent: 3 }
 
     // Tooltip Text for default Interaction objects that all webbles share
     Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt
-    { Menu: gettext("Open Menu"), Rotate: gettext("Rotate"), Resize: gettext("Resize"), AssignParent: gettext("Assign Parent"), Rescale: gettext("Rescale") }
+    { Menu: gettext("Open Menu"), Rotate: gettext("Rotate"), Resize: gettext("Resize"), AssignParent: gettext("Assign Parent") }
 
     // Default context menu choices that all webbles share
     Enum.availableOnePicks_DefaultWebbleMenuTargets
@@ -538,11 +564,7 @@ themselves inside the template are the following:
     //Used for webble initation states [Bitwise Flags]
     Enum.bitFlags_InitStates
     { None: 0, InitBegun: 1, InitFinished: 2, ActiveReady: 4, AllDone: 8 }
-
-    //Used for settings and configuraions of the platform environment [Bitwise Flags]
-    Enum.bitFlags_PlatformConfigs
-    { None: 0, PlatformInteractionBlockEnabled: 1, MainMenuVisibilityEnabled: 2, PopupInfoEnabled: 4 }
-
+    
     //Used for keeping track what the platform is doing [Bitwise Flags]
     Enum.bitFlags_PlatformStates
     { None: 0, WaitingForParent: 1, WaitingForAllSelect: 2 }
@@ -551,30 +573,33 @@ themselves inside the template are the following:
     Enum.SlotDisablingState
     { None: 0, PropertyEditing: 1, PropertyVisibility: 2, ConnectionVisibility: 4, AllVisibility: 8 }
 
-    //Slot manipulation result [Bitwise Flags]
-    Enum.bitFlags_SlotManipulations
-    { NonExisting: 0, Exists: 1, ValueChanged: 2 }
-
     // The different types of available webble metadata [Bitwise Flags]
     Enum.bitFlags_WebbleConfigs
     { None: 0, IsMoving: 2, NoBubble: 4 }
 
     // The different protections that can be set on a webble [Bitwise Flags] (See Webble Protection in a live Webble for further details)
     Enum.bitFlags_WebbleProtection
-    { NO: 0, MOVE: 1, RESIZE: 2, DUPLICATE: 4, SHAREDMODELDUPLICATE: 8, DELETE: 16, PUBLISH: 32, PROPERTY: 64,
-      PARENT_CONNECT: 128, CHILD_CONNECT: 256, PARENT_DISCONNECT: 512, CHILD_DISCONNECT: 1024, BUNDLE: 2048,
-      UNBUNDLE: 4096, DEFAULT_MENU: 8192, INTERACTION_OBJECTS: 16384, SELECTED: 32768, POPUP_MENU: 65536,
-      NON_DEV_HIDDEN: 131072, DRAG_CLONE: 262144, BUNDLE_LOCKED: 524288 }
-
+    { NO, MOVE, RESIZE, DUPLICATE, SHAREDMODELDUPLICATE, DELETE, PUBLISH, PROPERTY, PARENT_CONNECT, CHILD_CONNECT, 
+      PARENT_DISCONNECT, CHILD_DISCONNECT, BUNDLE, UNBUNDLE, DEFAULT_MENU, INTERACTION_OBJECTS, SELECTED, POPUP_MENU,
+      NON_DEV_HIDDEN, DRAG_CLONE, BUNDLE_LOCKED, EXPORT }
+                                                              
+    // The different Webble World Events that a Webble can listen to  
+    Enum.availableWWEvents
+    { slotChanged: 0, deleted: 1, duplicated: 2, sharedModelDuplicated: 3, pasted: 4, gotChild: 5, peeled: 6, 
+      lostChild: 7, keyDown: 8, loadingWbl: 9, mainMenuExecuted: 10, wblMenuExecuted: 11 }
+      
     // A service that returns useful constant values
     wwConsts.palette
+    wwConsts.lightPalette
     wwConsts.elementTransformations
     wwConsts.languages
+    wwConsts.defaultFontFamilies
 
     // Color hex and RGB value converter service.
     colorService.rgbToHex(R,G,B);
     colorService.rgbStrToHex(rgbStr);
     colorService.hexToRGB(hex);
+    colorService.hexToRGBAStr(hex)
 
     // String Catcher returns a proper string for name and description of CSS attributes
     strCatcher.cssAttrNames
@@ -582,19 +607,6 @@ themselves inside the template are the following:
 
     // Is Safe Font Family, tests if the provided font name is a safe and known one.
     isSafeFontFamily(fontFamilyNameToTest);
-
-    // Service that returns needed name and id values for the menu items and sub items.
-    menuItemsFactoryService.menuItems
-    {"workspace",
-        "newws", "openws", "savews", "savewsas", "sharews", "deletews", "printws",
-     "webble",
-        "browse", "loadwbl", "recentwbl", "pub", "upload"
-     "edit",
-        "undo", "redo", "selectall", "deselectall", "duplicate", "sharedduplicate", "bundle", "delete", "wblprops", "platformprops",
-     "view",
-        "toggleconn", "wsinfo", "fullscrn",
-     "help",
-        "docs", "faq", "openchat", "support", "devpack", "bugreport", "about" }
 
     // Service that calls for personal API access keys for a specific realm and resource previously stored in current user's user profile.
     dbService.getMyAccessKey(realm, resource).then(
@@ -629,6 +641,7 @@ themselves inside the template are the following:
     // isExist, A service that checks if something exist somewhere. For example if a specific value exists in a 
     // specific array.
     isExist.valueInArray(theArray, theValue);
+    isExist.valueInArrayOfObj(theArray, theValue, theObjKey);
 
     // Is Valid Style Value, tests that a specified style value within a specified style setting is a valid option.
     isValidStyleValue(styleToTest, possibleStyleValue);
@@ -636,6 +649,8 @@ themselves inside the template are the following:
     // JSON Query, a collection of functions to query a json object.
     jsonQuery.allValByKey(obj, key);
     jsonQuery.allObjWithKey(obj, key);
+    jsonQuery.allObjValuesAsArray(obj);
+    jsonQuery.getArrayIndexByObjValue(obj, val);
 
     // Get Timestamp, creates a unix like time stamp value.
     getTimestamp();
@@ -657,6 +672,8 @@ themselves inside the template are the following:
         [slotInstance].resetTimestamp();
         [slotInstance].setTimestamp();
         [slotInstance].setCustomTimestamp(newTimestampValue);
+        [slotInstance].getTimestampMemory();
+        [slotInstance].setTimestampMemory();
         [slotInstance].getElementPntr();
         [slotInstance].setElementPntr(newElementPntr);
         [slotInstance].getDisplayName();
@@ -667,29 +684,37 @@ themselves inside the template are the following:
         [slotInstance].getMetaData();
         [slotInstance].setMetaData(newMetaData);
         [slotInstance].getDisabledSetting();
-        [slotInstance].setDisabledSetting(newDisabledSetting);
+        [slotInstance].setDisabledSetting(newDisabledSetting);        
+        [slotInstance].getDoNotIncludeInUndo();
+        [slotInstance].setDoNotIncludeInUndo(newDoNotIncludeInUndo);        
         [slotInstance].getIsCustomMade();
         [slotInstance].setIsCustomMade(customMadeState);
+        [slotInstance].getOriginalType();
 
-    // Value Modifier and Separator, a collection of functions that modify or separate values
+    // Value Modifier and Separator, a collection of functions that modify or separate values or fix values that was not in correct format
     valMod.getValUnitSeparated(theValue);       //for css values with units
-    valMod.addPxMaybe(theName, theVal);         //for css values who requires a unit
-    valMod.stringify(theVal);                   //to string from object
-    valMod.parse(theVal);                       //from string to object
+    valMod.addPxMaybe(theName, theVal);         //for css values who requires a unit    
     valMod.getFormatedDate(inDate);				//Formats and return a javascript date to the iso format yyyy-mm-dd.
+    valMod.fixBrokenObjStrToProperObject(strToFix);   	//Gets a string which failed being parsed as a json object, tries to fix and mend it and create a proper object from it, or if not returns an empty object.
+    valMod.fixBrokenArrStrToProperArray(strToFix);		//Gets a string which failed being parsed as an array, tries to fix and mend it and create a proper array from it, or if not returns an empty array.
+    valMod.urlify(text);                  		//Adds html link tag around html addresses found inside provided text and returns the new and improved version
+    valMod.urlifyWithImages(text);              //Adds html link tag around html addresses found inside provided text and create img tags for links that are images and returns the new and improved version
+    valMod.SlimTextFromLinksAndHtml(text);      //Remove all links and replace them with ifdo about their existance and also removes all html tags in the text and returns the new and improved version
+    valMod.findAndRemoveValueInArray(theArray, theValue); 	//Iterates through an array and if the specified value is found it is removed and the array is returned
 
     // Is Empty, checks weather an object is empty (in every way that may be).
     isEmpty(obj);
 
     // A collection of math support functions
-    mathy.countDecimals(theValue);
-    mathy.getRotationDegrees(jquery-element);
+    mathy.countDecimals(theValue);				//Returns the number of decimals in a float number
+    mathy.getRotationDegrees(jquery-element);  	//Get rotation in degrees of a specified jquery element
+    mathy.monthDiff(date 1, date 2)				//returns the number of months between two dates
 });
 //=================================================================================
 
 -----------------------------------------------------------------------------------------------------------------
 
-With AngularJS FILTERS one can alter and modify any value in many pwerful ways with ease and speed and is recommended to
+With AngularJS FILTERS one can alter and modify any value in many powerful ways with ease and speed and is recommended to
 be created and used within the Webble-template itself, but the platform has a few available too, that might be useful:
 
     // takes a language code and turn it into the readable native name of that language
@@ -709,9 +734,10 @@ be created and used within the Webble-template itself, but the platform has a fe
 
 Extra functions that is within the system and can be used by any Webble developer
 
-    Detecting the current browser, version and OS
-    USAGE EXAMPLE
-    var browser = BrowserDetect.browser;
-    if(browser == 'Chrome'){
-
-    }
+	// Detecting the current browser, version and OS
+    // USAGE EXAMPLE
+    var thisMachine = BrowserDetect;
+    if(thisMachine.browser == "Chrome"){ /* Do Something */ }
+    if(thisMachine.version == "12.5"){ /* Do Something */ }
+    if(thisMachine.OS == "Windows"){ /* Do Something */ }
+    if(thisMachine.device == "iPad"){ /* Do Something */ }

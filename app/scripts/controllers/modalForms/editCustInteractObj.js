@@ -180,7 +180,7 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 			// Store the customizations in a slot
 			if(thisWbl.scope().gimme('customInteractionObjects') == null){
 				thisWbl.scope().addSlot(new Slot('customInteractionObjects',
-					{},
+					[],
 					'Custom Interaction Objects',
 					'Data for customizing the Webblw Interaction Objects',
 					'wblIntrnlCstm',
@@ -224,7 +224,7 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 			}
 			thisWbl.scope().getSlot('customInteractionObjects').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 
-			$modalInstance.close(true);
+			$modalInstance.close($scope.formItems.interactObjs);
 		}
 		else{
 			$modalInstance.close(null);

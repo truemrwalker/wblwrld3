@@ -235,7 +235,7 @@ wblwrld3App.controller('freeHandDrawingCtrl', function($scope, $log, $timeout, S
         for(var i = 0; i <  theImgData.length; i++){
             var rgbColor = colorService.hexToRGB(theImgData[i].color);
             ctx.strokeStyle = "rgba(" + rgbColor.r + "," + rgbColor.g + "," + rgbColor.b + "," + parseFloat(theImgData[i].opacity) + ")";
-            ctx.lineWidth = theImgData[i].size;
+            ctx.lineWidth = parseInt(theImgData[i].size);
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
             var thePnts = theImgData[i].points;

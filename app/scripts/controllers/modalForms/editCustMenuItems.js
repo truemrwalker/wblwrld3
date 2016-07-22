@@ -264,7 +264,7 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $modal
 				}
 			}
 
-			$modalInstance.close(true);
+			$modalInstance.close({dmi: $scope.formItems.defMenuItems, cmi: $scope.formItems.custMenuItems});
 		}
 		else{
 			$modalInstance.close(null);

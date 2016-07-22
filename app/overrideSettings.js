@@ -58,6 +58,7 @@ var wblwrldSystemOverrideSettings = {
 	templateRevisionBehavior: -1,       // on the form numerical 0 - 2 (where each number stands for... 0: askEverytime, 1: autoUpdate, or 2: autoKeep)
 	untrustedWblsBehavior: -1,       	// on the form numerical 0 - 3 (where each number stands for... 0: allowAll, 1: askFirstTime, 2: askEveryTime or 3: neverAllow)
 	slimWblBrowserEnabled: "",       	// on the form "true" or "false"
+	sharedWS_NoQIM_Enabled: "",       	// on the form "true" or "false"
 
     // Functionality Related
     requestedPlatformPotential: -1,     // Platform Potential Control (-1=Ignore, 0=None (no menu) , 1=Slim (basically only ABOUT), 2=Limited (No Webservice related menu items), 3=Full (All Menu Items), 4=Custom (not implemented))

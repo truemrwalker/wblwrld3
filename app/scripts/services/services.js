@@ -92,14 +92,15 @@ ww3Services.factory('Enum', function (gettext) {
             addCustSlot: 6,
             removeCustSlot: 7,
             bundle: 8,
-            unbundle: 9
+            unbundle: 9,
+			sharedModelDuplicateSettings: 10,
+			setProtection: 11
         },
 
         //Available online transmit operations
         transmitOps: {
             setSlot: 0,
             setSelectState: 1,
-            unselectWbls: 2,
             loadWbl: 3,
             deleteWbl: 4,
             pasteWbl: 5,
@@ -109,7 +110,11 @@ ww3Services.factory('Enum', function (gettext) {
             removeCustSlot: 9,
             bundle: 10,
             unbundle: 11,
-            getCurrentChanges: 12
+            getCurrentChanges: 12,
+			sharedModelDuplicate: 13,
+			setProtection: 14,
+			setCustomMenu: 15,
+			setCustomIO: 16
         },
 
         // Default Interaction objects that all webbles share
@@ -1864,13 +1869,23 @@ ww3Services.factory('isExist', [function() {
       valueInArray: function(theArray, theValue) {
           var doesExist = false;
           for (var i = 0; i < theArray.length; i++) {
-              if(theArray[i] == theValue){
+              if(theArray[i] === theValue){
                   doesExist = true;
                   break;
               }
           }
           return doesExist;
-      }
+      },
+	  valueInArrayOfObj: function(theArray, theValue, theObjKey) {
+		  var doesExist = false;
+		  for (var i = 0; i < theArray.length; i++) {
+			  if(theArray[i][theObjKey] === theValue){
+				  doesExist = true;
+				  break;
+			  }
+		  }
+		  return doesExist;
+	  }
   }
 }]);
 //=================================================================================
@@ -2047,10 +2062,16 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         this.setCategory = function(newCat){category_ = newCat;};
 
         var timestamp_ = 0;
+		var timestampMemory_ = [];
         this.getTimestamp = function(){return timestamp_;};
         this.resetTimestamp = function(){timestamp_ = 0;};
-        this.setTimestamp = function(){timestamp_ = getTimestamp();};
+        this.setTimestamp = function(){ timestamp_ = getTimestamp(); };
         this.setCustomTimestamp = function(newTimestampValue){timestamp_ = newTimestampValue;};
+		this.getTimestampMemory = function(){ return timestampMemory_; };
+		this.setTimestampMemory = function(){
+			timestampMemory_.push(timestamp_);
+			if(timestampMemory_.length >= 2 && ((timestampMemory_[timestampMemory_.length - 1] - timestampMemory_[timestampMemory_.length - 2]) > 1)){ timestampMemory_ = []; }
+		};
 
         var elementPntr_ = undefined;
         this.getElementPntr = function(){return elementPntr_;};
@@ -2072,6 +2093,10 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
         var disabledSettings_ = Enum.SlotDisablingState.None;
         this.getDisabledSetting = function() {return disabledSettings_;};
         this.setDisabledSetting = function(newDisabledSetting){disabledSettings_ = newDisabledSetting;};
+
+		var doNotIncludeInUndo_ = false;
+		this.getDoNotIncludeInUndo = function() {return doNotIncludeInUndo_;};
+		this.setDoNotIncludeInUndo = function(newDoNotIncludeInUndo){doNotIncludeInUndo_ = newDoNotIncludeInUndo;};
 
         var isCustomMade_ = false;
         this.getIsCustomMade = function(){return isCustomMade_;};
@@ -2325,6 +2350,18 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 
 			text = text.replace(/(<([^>]+)>)/ig,"");
 			return text;
+		},
+		//Iterates through an array and if the specified value is found it is removed and the array is returned
+		findAndRemoveValueInArray: function(theArray, theValue) {
+			var killSpot = -1;
+			for (var i = 0; i < theArray.length; i++) {
+				if(theArray[i] === theValue){
+					killSpot = i;
+					break;
+				}
+			}
+			if(killSpot != -1){ theArray.splice(killSpot, 1); }
+			return theArray;
 		}
     }
 });
@@ -2364,12 +2401,14 @@ ww3Services.factory('isEmpty', function($log) {
 //=================================================================================
 ww3Services.factory('mathy', function($log, localStorageService) {
     return {
+		//Returns the number of decimals in a float number
         countDecimals: function(theValue){
             if (!isNaN(theValue) && (theValue % 1) != 0){
                 return theValue.toString().split(".")[1].length;
             }
             return 0;
         },
+		//Get rotation in degrees
         getRotationDegrees: function(obj) {
             var matrix = obj.css("-webkit-transform") ||
                 obj.css("-moz-transform")    ||
@@ -2389,6 +2428,7 @@ ww3Services.factory('mathy', function($log, localStorageService) {
 
             return (angle < 0) ? angle +=360 : angle;
         },
+		//returns the number of months between two dates
 		monthDiff: function(d1, d2){
 			var months;
 			months = (d2.getFullYear() - d1.getFullYear()) * 12;

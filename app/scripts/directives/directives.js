@@ -579,7 +579,8 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                             return  scope.ctrlKeyIsDown;
                         },
                         start: function(event, ui){
-                            scope.getCurrWSUndoMemory().unshift({op: Enum.undoOps.setSlot, target: scope.getInstanceId(), execData: [{slotname: 'root:left', slotvalue: scope.gimme('root:left')}, {slotname: 'root:top', slotvalue: scope.gimme('root:top')}]});
+							scope.addUndo({op: Enum.undoOps.setSlot, target: scope.getInstanceId(), execData: [{slotname: 'root:left', slotvalue: scope.gimme('root:left')}, {slotname: 'root:top', slotvalue: scope.gimme('root:top')}]});
+							scope.BlockAddUndo();
                             if(scope.altKeyIsDown && element.draggable('option', 'helper') == 'original' && element.scope().getSelectionState() != Enum.availableOnePicks_SelectTypes.AsMainClicked){
                                 scope.requestWebbleSelection(element.scope().theView);
                             }
@@ -597,7 +598,6 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                             if(element.draggable('option', 'helper') == 'original'){
                                 scope.theView.css('cursor', 'pointer');
                                 tempMemory['zindex'] = element.scope().gimme('root:z-index');
-                                scope.setPlatformDoNotSaveUndoEnabled(true);
                                 element.css('z-index', '20000');
                             }
                             else{
@@ -642,7 +642,6 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                                 ui.helper.css('cursor', 'arrow');
                                 var valUnitPos = {x: valMod.getValUnitSeparated(scope.gimme('root:left')), y: valMod.getValUnitSeparated(scope.gimme('root:top'))};
                                 var cssPos = {x: getUnits(ui.helper[0], 'left')[getUnitMap(valUnitPos.x[1])], y: getUnits(ui.helper[0], 'top')[getUnitMap(valUnitPos.y[1])]};
-                                scope.setPlatformDoNotSaveUndoEnabled(true);
                                 scope.set('root:left', cssPos.x.toFixed(2) + valUnitPos.x[1]);
 
                                 if(valUnitPos.y[1] == '%'){
@@ -650,10 +649,10 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                                     var currentPixelValue = getUnits(ui.helper[0], 'top').pixel;
                                     cssPos.y = (currentPixelValue / containerHeight) * 100;
                                 }
-                                scope.setPlatformDoNotSaveUndoEnabled(true);
                                 scope.set('root:top', cssPos.y.toFixed(2) + valUnitPos.y[1]);
                             }
-                            $timeout(function(){scope.setPlatformDoNotSaveUndoEnabled(false);}, 200);
+							scope.UnblockAddUndo();
+							if(!scope.$$phase){ scope.$apply(); }
                         },
                         drag: function(event, ui){
                             if((parseInt(scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.MOVE, 10)) !== 0 || scope.touchRescueFlags.interactionObjectActivated){
@@ -1151,7 +1150,6 @@ ww3Directives.directive('ngEscape', function () {
 ww3Directives.directive('ngArrowKeys', function () {
     return function (scope, element, attrs) {
         element.bind("keydown", function (event) {
-			console.log("inside 2");
             if(event.which === 37 || event.which === 38 || event.which === 39 || event.which === 40) {
                 scope.$apply(function (){
                     scope.$eval(attrs['ngArrowKeys'] + '(' + event.which + ');');

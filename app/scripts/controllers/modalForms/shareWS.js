@@ -169,7 +169,7 @@ ww3Controllers.controller('shareWSSheetCtrl', function ($scope, $modalInstance, 
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close(null);
+        $modalInstance.close($scope.formItems.wsCollaborators);
     };
     //========================================================================================
 
