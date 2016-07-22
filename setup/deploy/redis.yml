@@ -1,0 +1,29 @@
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-single
+  labels:
+    pod: redis-single
+spec:
+    containers:
+    - name: redis-single
+      image: redis:latest
+      imagePullPolicy: Always
+      ports:
+      - name: redis
+        containerPort: 6379
+        hostPort: 6379
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    pod: redis-single

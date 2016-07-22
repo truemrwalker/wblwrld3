@@ -61,7 +61,7 @@ var gettext = function(str) { return str; };
 var mongoose = require('mongoose');
 var app = express();
 
-Promise.all([
+Promise.join([
 
 	dbutil.connect(mongoose, config.MONGODB_URL),
 
@@ -192,9 +192,7 @@ function initSocketServer(webServer) {
 // Starts the control server (for intra server communication)
 //
 function initControlServer(webServer) {
-
-	// -- removed because zmq package doesn't compile on Ubuntu
-	//var ctrl = require('./control/machine')(app, config, mongoose, gettext, webServer);
+    return loader.executeAllScripts('control', app, config, mongoose, gettext);
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -62,7 +62,7 @@ module.exports.executeAllScripts = function (scriptDir, app, config, mongoose, g
     
     function handleScript(result, script) {
 
-        return result.then(function () {
+        return script.charAt(0) === '_' ? result : result.then(function () {
             return require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1);
         });
     }
@@ -83,7 +83,8 @@ module.exports.executeAllScriptsSync = function (scriptDir, app, config, mongoos
     
     function handleScript(result, script) {
 
-        result.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
+        if (script.charAt(0) !== '_')
+            result.push(require(path.join(scriptDir, script))(app, config, mongoose, gettext, extraArg0, extraArg1));
         return result;
     }
 	var allScripts = xfs.getAllFilesSync(scriptDir, ".js", 1);
