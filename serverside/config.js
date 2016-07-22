@@ -65,6 +65,12 @@ module.exports = (function() {
         REDIS_PORT: 6379,
         REDIS_PASS: sec.get('redis_password'),
 
+        DISQUE_PATH: null,
+        DISQUE_HOST: '127.0.0.1',
+        DISQUE_PORT: 7711,
+        DISQUE_PASS: sec.get('disque_password'),
+        DISQUE_MAIN_JOBQ: 'all.jobs',
+
 		MONGODB_DB_NAME: "wblwrld3",
 		MONGODB_DB_USERNAME: sec.get('mongo_db_username'),
 		MONGODB_DB_PASSWORD: sec.get('mongo_db_password'),
@@ -105,7 +111,10 @@ module.exports = (function() {
 	if (process.env.KUBERNETES_SERVICE_HOST) {
 
 		config.MONGODB_HOST = process.env.MONGO_SERVICE_HOST;
-		config.MONGODB_PORT = parseInt(process.env.MONGO_SERVICE_PORT, 10);
+        config.MONGODB_PORT = parseInt(process.env.MONGO_SERVICE_PORT, 10);
+
+        config.REDIS_HOST = process.env.REDIS_SERVICE_HOST;
+        config.REDIS_PORT = parseInt(process.env.REDIS_SERVICE_PORT, 10);
 	}
 	
 	if (process.env.PORT)
