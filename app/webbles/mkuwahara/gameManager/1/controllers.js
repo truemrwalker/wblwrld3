@@ -11,7 +11,7 @@
 //       javascript function collection file, but the developer would then miss out on
 //       all nice AngularJS developers possibilities.
 //=======================================================================================
-wblwrld3App.controller('gameManagerCtrl', function($scope, $log, Slot, Enum) {
+wblwrld3App.controller('gameManagerCtrl', function($scope, $log, Slot, Enum, cleanupService) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {

@@ -1774,19 +1774,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // previous undone.
     //========================================================================================
     var executeUndoRedo = function(isRedo){
-
-		$log.log($scope.getCurrWSUndoMemory());
-
         var theOpList, theOp; var actionDirectionStr = "Undid";
         if(!isRedo){ theOpList = $scope.getCurrWSUndoMemory(); }
         else{ theOpList = $scope.getCurrWSRedoMemory(); actionDirectionStr = "Redid";}
 
-        if(theOpList.length > 0){
-            theOp = theOpList.shift();
-        }
-        else{ return; }
-
-		$log.log(theOp);
+        if(theOpList.length > 0){ theOp = theOpList.shift(); } else{ return; }
 
         var target = theOp.target != undefined ? $scope.getWebbleByInstanceId(theOp.target) : undefined;
         var data = theOp.execData;

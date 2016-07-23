@@ -218,8 +218,16 @@ $scope, the core can be reached to get following methods and data:
     // Lets the webble join a uniquely identified online data broadcasting virtual room for sending and receiving 
     // messages via the server online to other users. One must provide a unique id for the message area, an event 
     // handler method that receives all incoming messages for that room and optional if one wish to exclude the current 
-    // user in the message dispatching  
+    // user in the message dispatching.
     $scope.registerOnlineDataListener(msgRoomId, eventHandler, excludeSelf);
+
+    // The callback eventHandler for incoming messages provided when registering (above) will be sent the incoming data
+    // as the first parameter and the sending user as the second
+    // USAGE EXAMPLE
+    var onOnlineDataArrive = function(data, username) {
+        $log.log(data);
+        $log.log("data sent by " + username);
+    };
     
     // Unregister Online Data Listener
     // Lets the webble leave a uniquely identified online data broadcasting virtual room used for sending and receiving 

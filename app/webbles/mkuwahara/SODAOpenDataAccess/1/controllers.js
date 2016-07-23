@@ -22,8 +22,8 @@ wblwrld3App.controller('mnkOpenDataCtrl', function($scope, $log, $timeout, Slot,
 
     $scope.customMenu = [
       	{itemId: 'speak', itemTxt: 'Speak'},
-		{itemId: 'scream', itemTxt: 'Scream'},
-      //{itemId: 'createParam', itemTxt: 'Create Service Parameter Slot'}
+		{itemId: 'scream', itemTxt: 'Scream'}
+        //{itemId: 'createParam', itemTxt: 'Create Service Parameter Slot'}
     ];
 
     //var mnkOpenDataDisplay, initiationDone;
