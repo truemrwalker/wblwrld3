@@ -589,7 +589,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					$scope.requestDeleteWebble(theWbl);
 				}
 				$timeout(function(){ if(!sharedWS_NoQIM_Enabled_){$scope.showQIM(('(' + data.user + ') ' + gettextCatalog.getString("deleted webble ") + '[' + wblName + ']'), 4000, undefined, {x: 0, y: parseInt($scope.wsTopPos)});} });
-				$log.log("came to delete");
             }
             else if(data.op == Enum.transmitOps.pasteWbl){
                 var theChild = $scope.getWebbleByInstanceId(data.child);
@@ -1866,12 +1865,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.requestDeleteWebble(target);
                 currState.execData = currStateData;
                 $timeout(function(){ $scope.UnblockAddUndo(); });
-				$log.log(actionDirectionStr + " a webble created");
+                if(!isRedo){$log.log(actionDirectionStr + " a webble created");}else{$log.log(actionDirectionStr + " a webble previously deleted");}
                 break;
             case Enum.undoOps.deleteWbl:
 				$scope.BlockAddUndo();
                 currState.op = Enum.undoOps.loadWbl;
-				$log.log(data[0].wbldef);
                 $scope.loadWebbleFromDef(data[0].wbldef, function(wblData){
                     theOp.target = wblData.wbl.scope().getInstanceId();
                     currState.execData = currStateData.push({oldid: wblData.oldInstanceId, SMM: data[0].SMM});
@@ -1879,9 +1877,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					if(data[0].SMM){
 						$scope.getWebbleByInstanceId(data[0].SMM).scope().connectSharedModel(wblData);
 					}
+                    if(!isRedo){ $scope.getCurrWSRedoMemory().unshift(currState); } else{ $scope.getCurrWSUndoMemory().unshift(currState); }
                 });
                 $timeout(function(){ $scope.UnblockAddUndo(); });
-				$log.log(actionDirectionStr + " a webble deletion.");
+                if(!isRedo){$log.log(actionDirectionStr + " a webble deletion");}else{$log.log(actionDirectionStr + " a deletion of a webble previously created");}
                 break;
             case Enum.undoOps.pasteWbl:
                 if(!target){ return; }
@@ -2009,11 +2008,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				break;
         }
 
-        if(!isRedo){
-            $scope.getCurrWSRedoMemory().unshift(currState);
-        }
-        else{
-            $scope.getCurrWSUndoMemory().unshift(currState);
+        if(theOp.op != Enum.undoOps.deleteWbl){
+            if(!isRedo){
+                $scope.getCurrWSRedoMemory().unshift(currState);
+            }
+            else{
+                $scope.getCurrWSUndoMemory().unshift(currState);
+            }
         }
     };
     //========================================================================================
