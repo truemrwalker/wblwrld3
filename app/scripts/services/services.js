@@ -1866,25 +1866,39 @@ ww3Services.factory('getKeyByValue', [function() {
 //=================================================================================
 ww3Services.factory('isExist', [function() {
   return {
-      valueInArray: function(theArray, theValue) {
+      valueInArray: function(theArray, theValue, retAsIndex) {
           var doesExist = false;
+		  var index = -1;
           for (var i = 0; i < theArray.length; i++) {
               if(theArray[i] === theValue){
+				  index = i;
                   doesExist = true;
                   break;
               }
           }
-          return doesExist;
+		  return (retAsIndex ? index : doesExist);
       },
-	  valueInArrayOfObj: function(theArray, theValue, theObjKey) {
+	  valueInArrayOfObj: function(theArray, theValue, theObjKey, retAsIndex) {
 		  var doesExist = false;
+		  var index = -1;
 		  for (var i = 0; i < theArray.length; i++) {
-			  if(theArray[i][theObjKey] === theValue){
+			  var theArrayValue = theArray[i];
+			  if(Object.prototype.toString.call( theObjKey ) === '[object Array]') {
+				  for (var n = 0; n < theObjKey.length; n++) {
+					  theArrayValue = theArrayValue[theObjKey[n]];
+				  }
+			  }
+			  else{
+				  theArrayValue = theArrayValue[theObjKey];
+			  }
+
+			  if(theArrayValue == theValue){
+				  index = i;
 				  doesExist = true;
 				  break;
 			  }
 		  }
-		  return doesExist;
+		  return (retAsIndex ? index : doesExist);
 	  }
   }
 }]);
@@ -2044,7 +2058,7 @@ ww3Services.factory('getTimestamp', function() {
 // Slot (class service)
 // This is an object instance provider for the class concept of 'Slot'
 //=================================================================================
-ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue) {
+ww3Services.factory('Slot', function(Enum, getTimestamp, isValidEnumValue) {
     //CONSTRUCTOR
     function Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr){
         //Properties
@@ -2145,7 +2159,7 @@ ww3Services.factory('Slot', function($log, Enum, getTimestamp, isValidEnumValue)
 // Value Modifier and Separator
 // A collection of functions that modify or separate values
 //=================================================================================
-ww3Services.factory('valMod', function($log, localStorageService) {
+ww3Services.factory('valMod', function(localStorageService) {
     return {
         getValUnitSeparated: function(theValue, noPxAddon){
             if(theValue != undefined){
@@ -2196,7 +2210,7 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 				newFormatedDate = inDate.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
 			}
 			else{
-				$log.log("Date must be of proper format, preferably Iso standard yyyy-mm-dd");
+				console.log("Date must be of proper format, preferably Iso standard yyyy-mm-dd");
 			}
 
 			return newFormatedDate;
@@ -2372,7 +2386,7 @@ ww3Services.factory('valMod', function($log, localStorageService) {
 // Is Empty
 // Checks weather an object is empty (in every way that may be).
 //=========================================================================================
-ww3Services.factory('isEmpty', function($log) {
+ww3Services.factory('isEmpty', function() {
     return function(obj){
         // null and undefined are "empty"
         if (obj == null) return true;
@@ -2399,7 +2413,7 @@ ww3Services.factory('isEmpty', function($log) {
 // Mathy
 // A collection of math support functions
 //=================================================================================
-ww3Services.factory('mathy', function($log, localStorageService) {
+ww3Services.factory('mathy', function(localStorageService) {
     return {
 		//Returns the number of decimals in a float number
         countDecimals: function(theValue){

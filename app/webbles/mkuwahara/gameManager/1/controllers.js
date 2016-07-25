@@ -29,6 +29,47 @@ wblwrld3App.controller('gameManagerCtrl', function($scope, $log, Slot, Enum, cle
     //var internalFilesPath;
 
 
+
+	/*
+	 , isExist, valMod
+	 var keysDown = [];
+	 $scope.registerWWEventListener(Enum.availableWWEvents.keyDown, function(eventData){
+	 if(!eventData.key.released){
+	 var orgLen = keysDown.length;
+	 if(eventData.key.code >= 37 && eventData.key.code <= 40){
+	 if(!isExist.valueInArray(keysDown, eventData.key.code)){
+	 keysDown.push(eventData.key.code);
+	 }
+	 }
+	 if(orgLen == 0 && keysDown.length != 0){ $timeout(move, 1); }
+	 }
+	 else{
+	 if(eventData.key.code >= 37 && eventData.key.code <= 40){
+	 valMod.findAndRemoveValueInArray(keysDown,eventData.key.code);
+	 }
+	 }
+	 });
+
+	 var move = function(){
+	 if(keysDown.length != 0){
+	 var horiz = 0, verti = 0, step = 1;
+	 for(var i = 0; i < keysDown.length; i++){
+	 if(keysDown[i] == 39){ horiz += step; }
+	 else if(keysDown[i] == 37){ horiz -= step; }
+	 else if(keysDown[i] == 40){ verti += step; }
+	 else if(keysDown[i] == 38){ verti -= step; }
+	 }
+
+	 if(horiz != 0){ $scope.set("root:left", parseInt($scope.gimme("root:left")) + horiz); }
+	 if(verti != 0){ $scope.set("root:top", parseInt($scope.gimme("root:top")) + verti); }
+
+	 $timeout(move, 1);
+	 }
+	 };
+	* */
+
+
+
     //=== EVENT HANDLERS ================================================================
 
 

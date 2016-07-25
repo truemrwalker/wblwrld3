@@ -647,9 +647,10 @@ themselves inside the template are the following:
     isValidEnumValue(enumToTest, valueToTest);
     
     // isExist, A service that checks if something exist somewhere. For example if a specific value exists in a 
-    // specific array.
-    isExist.valueInArray(theArray, theValue);
-    isExist.valueInArrayOfObj(theArray, theValue, theObjKey);
+    // specific array. valueInArrayOfObj can take an array of keys for nested objects. Both service methods can return 
+    // the index of the find instead of just true or false if retAsIndex is set to true
+    isExist.valueInArray(theArray, theValue, retAsIndex);
+    isExist.valueInArrayOfObj(theArray, theValue, theObjKey, retAsIndex);
 
     // Is Valid Style Value, tests that a specified style value within a specified style setting is a valid option.
     isValidStyleValue(styleToTest, possibleStyleValue);

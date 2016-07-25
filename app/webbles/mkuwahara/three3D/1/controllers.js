@@ -745,23 +745,6 @@ wblwrld3App.controller('threeDCtrl', function($scope, $log, $timeout, Slot, Enum
     };
     //========================================================================================
 
-    // TODO: POSSIBLE OVERRIDING WEBBLE CORE METHODS WITH CUSTOM PARTS
-    //========================================================================================
-    // In 99% of all Webble development there is probably no need to insert custom code inside
-    // a Webble core function or in any way override Webble core behavior, but the possibility
-    // exists as shown below if special circumstance and needs arise.
-    //========================================================================================
-//    $scope.[NEW METHOD NAME] = $scope.$parent.[PARENT METHOD]   //Assign the Webble core method to a template method caller
-//
-//    $scope.$parent.[PARENT METHOD] = function([PARAMETERS]){    //Assign a new custom method to th Webble Core
-//        [CUSTOM CODE HERE]
-//
-//        $scope.[NEW METHOD NAME]();                             //Call the original function, in order to not break expected behavior
-//
-//        [MORE CUSTOM CODE HERE]
-//    }
-    //========================================================================================
-
 
 
     //=== CTRL MAIN CODE ======================================================================

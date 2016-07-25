@@ -2942,7 +2942,7 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $modalInstance, S
         }
         else if(boxIndex == 13){  // 'Keyboard Key'
             if($scope.formProps.previousSelectedDependencies.selectedTarget == 'Platform' && $scope.formProps.currentSelected == $scope.lists.platformEventItems[6]){
-                $scope.formProps.infoMsg = 'Arrow keys: Left = 37, Up = 38, Right = 39, Down = 40. Type ## (double hash) characters after the key, if you want to catch when the key is released instead(only ## catch any key)';
+                $scope.formProps.infoMsg = 'Arrow keys: Left = 37, Up = 38, Right = 39, Down = 40. Type ## (double hash) characters after the key, if you want to catch when the key is released instead(only ## catch any key). This Webble is NOT suitable for time critical events needed for e.g. a platform game. Use game related webbles in those cases.';
                 wasFound = true;
             }
         }

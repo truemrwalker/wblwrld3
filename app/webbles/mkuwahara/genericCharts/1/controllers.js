@@ -15,9 +15,6 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 		theChart: ['background-color']
     };
 
-	//TODO: Array of custom menu item keys and display names
-	//$scope.customMenu = [{itemId: '[MENU ITEM ID]', itemTxt: '[MENU ITEM DISPLAY TEXT]'}];
-	// EXAMPLE:
 	$scope.customMenu = [{itemId: 'empty', itemTxt: 'Reset to Empty Chart'}, {itemId: 'example', itemTxt: 'Reset to Example Chart'}, {itemId: 'chartJsDocs', itemTxt: 'Chart.js Docs'}];
 
 	var chartTypes = { line: 'Line', scatterPlot: 'Scatter Plot', bar: 'Bar - Vertical', horizontalBar: 'Bar - Horizontal', radar: 'Radar', polarArea: 'Polar', pie: 'Pie', doughnut: 'Doughnut' };

@@ -259,7 +259,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getPlatformSettingsFlags = function(){return platformSettingsFlags_};
 
     // The name or the JSON def object of the last inserted webble def... for future fast retrieval
-    var recentWebble_ = undefined;
+    var recentWebble_ = [];
 
     // When duplicating Webbles 'en masse' this little list keeps track of where we are in the process.
     var pendingWebbleDuplees_ = [];
@@ -347,6 +347,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var downloadingManifestLibs = false;
 	var pleaseQuickLoadInternalSavedWS = false;
 	var isDraggingWblBrowserItem = false;
+
+	// Flags that keeps track of platform states
+	var waitingForNumberKey_ = 0;
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -437,6 +440,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     //=== EVENT HANDLERS =====================================================================
 
+
     //========================================================================================
     // Catch and react on key down events
     //========================================================================================
@@ -470,6 +474,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 		if($event.keyCode == 13 && isFormOpen_ && platformAccessedMI){
 			platformAccessedMI.close();
+			platformAccessedMI = undefined;
+		}
+
+		// Quick way to load one of a list of recent Webbles
+		if(waitingForNumberKey_ > 0){
+			if($event.keyCode >= 49 && $event.keyCode <= 57 || $event.keyCode >= 97 && $event.keyCode <= 105){
+				var index = (($event.keyCode < 97) ? $event.keyCode : ($event.keyCode - 48)) - 49;
+				if(index < recentWebble_.length){
+					$scope.loadWebbleFromDef(recentWebble_[index], null);
+					if(!$scope.shiftKeyIsDown){
+						waitingForNumberKey_ = 0;
+						if(isFormOpen_ && platformAccessedMI){
+							platformAccessedMI.close();
+							platformAccessedMI = undefined;
+						}
+					}
+				}
+			}
 		}
     };
     //========================================================================================
@@ -1260,7 +1282,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
                     }
                 }
-                recentWebble_ = storedPlatformSettings.recentWebble != undefined ? storedPlatformSettings.recentWebble : recentWebble_;
+                recentWebble_ = storedPlatformSettings.recentWebble != undefined ? (Object.prototype.toString.call(storedPlatformSettings.recentWebble) !== '[object Array]' ? storedPlatformSettings.recentWebble = [storedPlatformSettings.recentWebble] : storedPlatformSettings.recentWebble) : recentWebble_;
 				if($location.search().workspace == undefined){
 					recentWS_ = storedPlatformSettings.recentWS != undefined ? storedPlatformSettings.recentWS : recentWS_;
 				}
@@ -1327,6 +1349,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         }
         else if(whatPlatformPropName == 'recentWebble'){
+			if(Object.prototype.toString.call( whatPlatformPropValue ) !== '[object Array]') { whatPlatformPropValue = [whatPlatformPropValue]; }
             recentWebble_ = whatPlatformPropValue;
         }
         else if(whatPlatformPropName == 'recentWS'){
@@ -1865,21 +1888,20 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.requestDeleteWebble(target);
                 currState.execData = currStateData;
                 $timeout(function(){ $scope.UnblockAddUndo(); });
-                if(!isRedo){$log.log(actionDirectionStr + " a webble created");}else{$log.log(actionDirectionStr + " a webble previously deleted");}
+                if(!isRedo){$log.log(actionDirectionStr + " a webble created");}else{$log.log(actionDirectionStr + " a webble deletion");}
                 break;
             case Enum.undoOps.deleteWbl:
 				$scope.BlockAddUndo();
-                currState.op = Enum.undoOps.loadWbl;
+				var smmData = data[0].SMM;
+				var opDirIsRedo = isRedo;
                 $scope.loadWebbleFromDef(data[0].wbldef, function(wblData){
-                    theOp.target = wblData.wbl.scope().getInstanceId();
-                    currState.execData = currStateData.push({oldid: wblData.oldInstanceId, SMM: data[0].SMM});
-                    updateUndoRedoList(wblData.oldInstanceId, theOp.target);
-					if(data[0].SMM){
-						$scope.getWebbleByInstanceId(data[0].SMM).scope().connectSharedModel(wblData);
-					}
-                    if(!isRedo){ $scope.getCurrWSRedoMemory().unshift(currState); } else{ $scope.getCurrWSUndoMemory().unshift(currState); }
+					var target = wblData.wbl.scope().getInstanceId();
+					var currState = {op: Enum.undoOps.loadWbl, target: target, execData: [{oldid: wblData.oldInstanceId, SMM: smmData}]};
+                    updateUndoRedoList(wblData.oldInstanceId, target);
+					if(smmData){ $scope.getWebbleByInstanceId(smmData).scope().connectSharedModel(wblData); }
+					$timeout(function(){ $scope.UnblockAddUndo(); });
+                    if(!opDirIsRedo){ $scope.getCurrWSRedoMemory().unshift(currState); } else{ $scope.getCurrWSUndoMemory().unshift(currState); }
                 });
-                $timeout(function(){ $scope.UnblockAddUndo(); });
                 if(!isRedo){$log.log(actionDirectionStr + " a webble deletion");}else{$log.log(actionDirectionStr + " a deletion of a webble previously created");}
                 break;
             case Enum.undoOps.pasteWbl:
@@ -3152,7 +3174,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			$timeout(updateWorkSurfce, 100);
 		}
 		pendingCallbackMethod_ = whatCallbackMethod;
-		recentWebble_ = whatWblDef;
+		var insideRecentList = isExist.valueInArrayOfObj(recentWebble_, whatWblDef.webble.defid, ['webble', 'defid'], true);
+		if(insideRecentList >= 0){ recentWebble_.splice(insideRecentList, 1); }
+		recentWebble_.unshift(whatWblDef);
+		if(recentWebble_.length > 5){ recentWebble_.pop(); }
 		$scope.saveUserSettings(true);
 
 		// Find the template files and the template name of each webble within the def file.
@@ -4284,17 +4309,19 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         isFormOpen_ = true;
         var modalInstance = $modal.open(modalOptions);
-
+		modalInstance.opened.then(function() { if(whatForm == Enum.aopForms.infoMsg){ platformAccessedMI = modalInstance; } });
         modalInstance.result.then(function (returnValue) {
             if(callbackFunc != undefined && callbackFunc != null){
                 callbackFunc(returnValue);
             }
             isFormOpen_ = false;
+			platformAccessedMI = undefined;
         }, function () {
             if(callbackFunc != undefined && callbackFunc != null){
                 callbackFunc();
             }
             isFormOpen_ = false;
+			platformAccessedMI = undefined;
         });
     };
     //========================================================================================
@@ -4810,8 +4837,21 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 		else if(sublink == 'recentwbl' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'R')){
 			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
-				if (recentWebble_){
-					$scope.loadWebbleFromDef(recentWebble_, null);
+				if (recentWebble_.length > 0){
+					if(recentWebble_.length > 1){
+						var content = "<b>Press the number key of the Webble wanted.. </br>(Hold SHIFT to press multiple times):</b></br></br>";
+						for(var rw = 0; rw < recentWebble_.length; rw++){
+							content += (rw + 1) + ": " + recentWebble_[rw].webble.displayname + "</br>";
+						}
+						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Load Recent Webble"), content: content/*gettext("You do not have any saved workspaces available to open. You must create some first.")*/}, function(){ waitingForNumberKey_ = 0; });
+						$timeout(function(){ waitingForNumberKey_ = recentWebble_.length });
+					}
+					else{
+						$scope.loadWebbleFromDef(recentWebble_[0], null);
+					}
+				}
+				else{
+					$scope.showQIM(gettext("No Recently loaded Webbles stored"));
 				}
 			}
 		}
