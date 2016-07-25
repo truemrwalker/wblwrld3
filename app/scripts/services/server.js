@@ -32,10 +32,7 @@ ww3Services.factory('server', ['$http', '$q', function($http, $q) {
 	return {
 
 		updateApplication: function () {
-			return $http.put('/api/adm/server/updateapp');
-		},
-		restartServer: function () {
-			return $http.put('/api/adm/server/restart');
+            return $http.get('http://dev.meme.hokudai.ac.jp/wws-deploy');
 		},
 		ping: function() {
 			return $http.get('/api/info/availability');

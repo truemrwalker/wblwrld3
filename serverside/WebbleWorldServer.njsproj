@@ -21,7 +21,7 @@
     <Content Include="secretsdb.json" />
     <Compile Include="auth\providers\github.js" />
     <Compile Include="config.js" />
-    <Compile Include="control\machine.js" />
+    <Compile Include="control\_machine.js" />
     <Compile Include="files\autosync.js" />
     <Compile Include="models\machine.js" />
     <Compile Include="models\message.js" />
@@ -62,7 +62,7 @@
     <Compile Include="models\workspace.js" />
     <Compile Include="realtime\chat.js" />
     <Compile Include="realtime\interaction.js" />
-    <Compile Include="api\adm\server.js" />
+    <Compile Include="api\adm\_server.js" />
     <Compile Include="api\adm\users.js" />
     <Compile Include="api\dev\templates.js" />
     <Compile Include="api\dev\webbles.js" />
