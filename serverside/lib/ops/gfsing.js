@@ -74,15 +74,16 @@ module.exports = function (app, config, mongoose, gettext, auth) {
             });
             req.pipe(busboy);
         });
-	}
+    }
+
+    let getRelativeUrl = (from, to) => path.sep == '/' ? path.relative(from, to)
+        : path.relative(from, to).replace(/\\/g, '/');
+
 	function getFiles(targetPath, ownerId) {
 		
 		return gfs.getFiles(targetPath, ownerId).then(function (files) {
-			
-			return util.transform_(files, function (f) {
-				return f.metadata.filename;
-			});
-		}).catch(function () { return [] });
+            return util.transform_(files, f => getRelativeUrl(targetPath, f.filename));
+		}).catchReturn([]);
 	}
 	function removeFiles(targetPath, ownerId) {
 		return gfs.deleteFiles(targetPath, ownerId);
@@ -337,7 +338,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 					info.ver = targetVer;
 					
 					obj.mergeWithInfoObject(info);
-					return obj.save().then(function () { return obj; });
+					return obj.save().thenReturn(obj);
 				});
 			});
 		},
@@ -382,7 +383,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 						info.modified = Date.now();
 						
 						obj.mergeWithInfoObject(info);
-						return obj.save().then(function () { return obj; });
+                        return obj.save().thenReturn(obj);
 					}
 				});
 			});

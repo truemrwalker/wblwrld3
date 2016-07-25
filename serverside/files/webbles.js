@@ -52,25 +52,22 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		//var directory = path.dirname(fullPath);
 		//var filename = path.basename(fullPath);
 
-		getFileWithPath(fullPath)
-			.then(function(fileEntry) {
+        return getFileWithPath(fullPath).then(function (fileEntry) {
 
-				if (!fileEntry)
-					res.status(404).end();
-				else {
+            if (!fileEntry)
+                res.status(404).end();
+            else {
 
-					res.set('Content-Type', fileEntry.contentType);
-					res.set('Content-Length', fileEntry.length);
-					res.set('Cache-Control', "max-age=3600");
+                res.set('Content-Type', fileEntry.contentType);
+                res.set('Content-Length', fileEntry.length);
+                res.set('Cache-Control', "max-age=3600");
 
-					return gfs.downloadFromFileEntry(res, fileEntry);
-				}
-			})
-			.catch(function(err) {
+                return gfs.downloadFromFileEntry(res, fileEntry);
+            }
+        }).catch(function (err) {
 
-				console.log(err);
-				res.status(404).end();
-			})
-			.done();
-	});
+            console.log(err);
+            res.status(404).end();
+        });
+    });
 };

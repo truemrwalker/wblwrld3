@@ -130,7 +130,7 @@ module.exports.GFS = function (mongoose) {
         var self = this;
         var newFilename = genFn(toDirectory, fileEntry.metadata.filename);
 
-        self.getFileWithPath(newFilename).then(function (oldFile) {
+        return self.getFileWithPath(newFilename).then(function (oldFile) {
 
             return update({ _id: fileEntry._id }, {
                 '$set': {

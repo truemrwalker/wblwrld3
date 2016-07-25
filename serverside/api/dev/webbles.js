@@ -44,7 +44,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	// Utility functions
 	//
 	function normalizeWebble(w, files) {
-        return w.getNormalizedObject(files);
+
+        var obj = w.getNormalizedObject(files);
+
+        obj.id = w._id;
+        obj.is_dev = true;
+        return obj;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -52,46 +57,40 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     //
 	var fsOps = require('../../lib/ops/gfsing')(app, config, mongoose, gettext, auth);
 
-	app.get('/api/dev/webbles', auth.dev, function (req, res) {
+    app.get('/api/dev/webbles', auth.dev, function (req, res) {
 
-		DevWebble.find({$or: [{ _owner: req.user._id }, { _owner: null }]}).exec().then(function (webbles) {
-            
+        return DevWebble.find({ $or: [{ _owner: req.user._id }, { _owner: null }] }).exec().then(function (webbles) {
+
             if (!webbles)
                 throw new util.RestError(gettext("Cannot retrieve webbles"));
-            
+
             return Promise.all(util.transform_(webbles, function (w) {
-                
-                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-						.then(function (files) {
+
+                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString())).then(function (files) {
                     return normalizeWebble(w, files);
                 });
             }));
 
-        }).then(function (webbles) {
-            res.json(webbles); // Oh-Kay
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
-	});
+        }).then(webbles => res.json(webbles))
+            .catch(err => util.resSendError(res, err));
+    });
 
 	app.get('/api/dev/webbles/:id', auth.non, function(req, res) {
 
-		DevWebble.findById(mongoose.Types.ObjectId(req.params.id), function (err, webble) {
+		return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function(webble) {
 
-			if (err)
-				res.status(500).send(gettext("Could not retrieve webbles"));
-			else if (!webble)
-				res.status(500).send(gettext("Webble does not exist"));
-			else {
+			if (!webble)
+                throw new util.RestError(gettext("Webble does not exist"));
 
-				// Allow webbles to be loaded from different domains:
-				res.header("Access-Control-Allow-Origin", "*");
-				res.header("Access-Control-Allow-Headers", "X-Requested-With");
+			// Allow webbles to be loaded from different domains:
+			res.header("Access-Control-Allow-Origin", "*");
+			res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
-				res.json(normalizeWebble(webble, []));
-			}
-		});
+            return fsOps.associatedFiles(req, webble, path.join(devWebbleDir, webble._id.toString())).then(function (files) {
+                res.json(normalizeWebble(webble, files));
+            });
+
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -108,7 +107,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			_owner: req.user._id
 		});
 
-		newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
+		return newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
             
             return fsOps.associateFiles(req,
 					savedDoc,
@@ -116,36 +115,33 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 					function () { return 0; });
 
         }).then(function (w) {
-            
-            return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-					.then(function (files) {
+
+            return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString())).then(function (files) {
                 res.json(normalizeWebble(w, files)); // Everything's peachy
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
 
 	app.post('/api/dev/webbles/:defid', auth.dev, function(req, res) {
 
-		Webble.findOne({ "webble.defid": req.params.defid }).exec().then(function (fromW) {
-            
+        return Webble.findOne({ "webble.defid": req.params.defid }).exec().then(function (fromW) {
+
             if (!fromW)
                 throw new util.RestError(gettext("Requested object does not exist", 404));
-            
+
             if (!fromW.isUserAuthorizedForOperation(req.user, 'copy'))
                 throw new util.RestError(gettext("This object cannot be copied"), 403);
-            
+
             var newWebble = new DevWebble({
                 webble: {
                     defid: req.params.defid,
                     templateid: req.params.defid,
                     templaterevision: 0,
                     author: req.user.username || req.user.name.full,
-                    
+
                     image: fromW.webble.image,
                     displayname: fromW.webble.displayname,
                     description: fromW.webble.description,
@@ -153,23 +149,20 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 },
                 _owner: req.user._id
             });
-            
-            newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
-                
+
+            return newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
+
                 return fsOps.copyFiles(req, fromW, savedDoc,
-							path.join(webbleDir, req.params.defid), path.join(devWebbleDir, savedDoc._id.toString()));
+                    path.join(webbleDir, req.params.defid), path.join(devWebbleDir, savedDoc._id.toString()));
 
             }).then(function (w) {
-                
-                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-							.then(function (files) {
+
+                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString())).then(function (files) {
                     res.json(normalizeWebble(w, files)); // Everything's peachy
                 });
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+        }).catch(err => util.resSendError(res, err));
 
 	});
 
@@ -178,15 +171,11 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	app.get('/api/dev/webbles/:id/files', auth.dev, function(req, res) {
 
-		fsOps.associatedFiles(req,
+		return fsOps.associatedFiles(req,
 				DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
-				path.join(devWebbleDir, req.params.id))
-			.then(function(files) {
-				res.json(files); // Everything's peachy
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			}).done();
+                path.join(devWebbleDir, req.params.id))
+            .then(files => res.json(files))
+            .catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -195,75 +184,53 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		var pathPrefix = path.join(devWebbleDir, req.params.id);
 
-		fsOps.associateFiles(req,
-			DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
-			pathPrefix,
-			function(w) { return 0; })
-			.then(function(webble) {
+		return fsOps.associateFiles(req,
+			    DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
+                pathPrefix, w => 0)
+            .then(function (webble) {
 
-				return fsOps.associatedFiles(req, webble, pathPrefix).then(function(files) {
-					res.json(normalizeWebble(webble, files)); // Everything's peachy
-				});
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			}).done();
+                return fsOps.associatedFiles(req, webble, pathPrefix).then(function (files) {
+                    res.json(normalizeWebble(webble, files)); // Everything's peachy
+                });
+
+            }).catch(err => util.resSendError(res, err));
     });
 
 	//******************************************************************
 
 	app.delete('/api/dev/webbles/:id/files', auth.dev, function(req, res) {
 
-		fsOps.disassociateFiles(req,
-			DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
-			path.join(devWebbleDir, req.params.id),
-			function(w) {
-				return 0;
-			})
-			.then(function(webble) {
-				res.json(normalizeWebble(webble, [])); // Everything's peachy
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			}).done();
+		return fsOps.disassociateFiles(req,
+			    DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
+			    path.join(devWebbleDir, req.params.id), w => 0)
+            .then(webble => res.json(normalizeWebble(webble, [])))
+            .catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
 
 	app.get('/api/dev/webbles/:id/files/*', auth.dev, function(req, res) {
 
-		fsOps.getFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
-			path.join(devWebbleDir, req.params.id))
-			.then(function(file) {
-				res.json(file); // Everything's peachy
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			}).done();
+		return fsOps.getFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
+                path.join(devWebbleDir, req.params.id))
+            .then(file => res.json(file))
+            .catch(err => util.resSendError(res, err));
 	});
 
 	app.put('/api/dev/webbles/:id/files/*', auth.dev, function(req, res) {
 
-		fsOps.updateFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
-			path.join(devWebbleDir, req.params.id))
-			.then(function(file) {
-				res.json(file); // Everything's peachy
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			}).done();
+		return fsOps.updateFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
+			    path.join(devWebbleDir, req.params.id))
+            .then(file => res.json(file))
+            .catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/dev/webbles/:id/files/*', auth.dev, function(req, res) {
 
-		fsOps.deleteFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
-			path.join(devWebbleDir, req.params.id))
-			.then(function(file) {
-				res.json(file); // Everything's peachy
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			}).done();
+		return fsOps.deleteFile(req, DevWebble.findById(mongoose.Types.ObjectId(req.params.id)),
+    			path.join(devWebbleDir, req.params.id))
+            .then(file => res.json(file))
+            .catch(err => util.resSendError(res, err));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -273,7 +240,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/dev/webbles/:id/publish', auth.dev, function(req, res) {
 
-		DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (fromW) {
+		return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (fromW) {
             
             if (!fromW || !fromW.isUserAuthorized(req.user))
                 throw new util.RestError(gettext("Webble does not exist"), 404);
@@ -281,58 +248,54 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             var defid = fromW.webble.defid;
             
             return publishingOps.publish(req, Webble.findOne({ "webble.defid": defid }), function () {
-                
+
                 return new Webble({
                     webble: { templateid: defid },
                     _owner: req.user._id
                 });
 
             }, function (toW) {
-                
+
                 if (toW.webble.templateid != defid)
                     throw new util.RestError(gettext("The target webble is not a template"), 403);
-                
+
                 var info = fromW.getInfoObject();
                 info.ver = toW.webble.templaterevision + 1;
                 toW.mergeWithInfoObject(info);
-                
+
                 console.log("Target Webble Reported version:", info.ver - 1, "and it will be bumped up to version:", info.ver);
-                
+
                 if (req.body.webble) {
-                    
+
                     // We manage these - protect accidental overwriting
                     //
                     delete req.body.webble.defid;
                     delete req.body.webble.templateid;
                     delete req.body.webble.templaterevision;
-                    
+
                     delete req.body.webble.protectflags;
                     delete req.body.webble.modelsharees;
                     delete req.body.webble.slotdata;
                     delete req.body.webble.private;
                     delete req.body.webble.children;
-                    
+
                     toW.mergeWithObject(req.body.webble);
                 }
-                
+
                 if (!toW.webble.author)
                     toW.webble.author = req.user.username || req.user.name.full;
-                
+
                 return toW;
 
             }).then(function (toW) {
-                
+
                 return fsOps.reassociateFiles(req, fromW, toW,
-							path.join(devWebbleDir, req.params.id),
-							path.join(webbleDir, defid));
+                    path.join(devWebbleDir, req.params.id),
+                    path.join(webbleDir, defid));
 
-            }).then(function (webble) {
-                res.json(normalizeWebble(webble, null)); // Everything's rosy
-            });
+            }).then(webble => res.json(normalizeWebble(webble, null)));
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************

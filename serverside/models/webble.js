@@ -186,12 +186,7 @@ module.exports = function(app, config, mongoose, gettext) {
         obj.is_verified = !!isVerified;
         obj.is_trusted = !!isTrusted;
 
-        if (files) {
-            
-            obj.id = this._id;
-            obj.is_dev = true;
-            obj.files = files;
-        }
+        obj.files = files;
         return obj;
     };
 
