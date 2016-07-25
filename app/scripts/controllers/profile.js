@@ -139,6 +139,15 @@ function ($scope, gettext, authService, userPrefs, confirm, wwConsts) {
 	else
 		updateScopeData();
 
+    // Profile/user info initializations and settings
+    //
+    $scope.datePickerOptions = {
+        showWeeks: false,
+        //minDate: new Date(1930, 1, 1),
+        //maxDate: new Date(2010, 1, 1),
+        initDate: new Date($scope.user.date_born.toString())
+    };
+
 	// Groups and trusts
 	//
 	$scope.groups = null;

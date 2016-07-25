@@ -32,13 +32,13 @@
 @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
 -->
 <div class="padcontent" ng-hide="busyMessage">
-    <tabset>
+    <uib-tabset>
 
         <!-- Login Tab -->
         <!------------------------------------------------------------->
 
-        <tab>
-            <tab-heading><i class="fa fa-unlock"></i> <span translate>Login</span></tab-heading>
+        <uib-tab>
+            <uib-tab-heading><i class="fa fa-unlock"></i> <span translate>Login</span></uib-tab-heading>
 
             <h1 translate>Login</h1>
 
@@ -73,7 +73,7 @@
                 </div>
             </form>
 
-            <alert type="danger"  ng-show="serverErrorMessage || (loginForm.$invalid && loginForm.email.$dirty && loginForm.password.$dirty)">
+            <uib-alert type="danger"  ng-show="serverErrorMessage || (loginForm.$invalid && loginForm.email.$dirty && loginForm.password.$dirty)">
                 <strong translate>Please correct the following errors:</strong>
                 <ul style="margin-left:20px; margin-top:5px;">
                     <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
@@ -82,7 +82,7 @@
                     <li ng-show="loginForm.email.$error.email" translate>Email is not valid</li>
                     <li ng-show="loginForm.password.$error.required" translate>Password is required</li>
                 </ul>
-            </alert>
+            </uib-alert>
 
             <hr/>
             <p translate>Or login using one of your social accounts:</p>
@@ -92,13 +92,13 @@
                 <a href="" ng-click="formLogin('google')" class="btn btn-default"><i class="fa fa-google-plus-square"></i> Google</a>
             </div>
             <a href="" ng-click="showPasswordResetTab=true" class="btn-link btn-small" translate>Forgot your Password?</a>
-        </tab>
+        </uib-tab>
 
         <!-- Register (Signup) Tab -->
         <!------------------------------------------------------------->
 
-        <tab active="activateRegisterTab">
-            <tab-heading><i class="fa fa-plus"></i> <span translate>Sign Up</span></tab-heading>
+        <uib-tab active="activateRegisterTab">
+            <uib-tab-heading><i class="fa fa-plus"></i> <span translate>Sign Up</span></uib-tab-heading>
 
             <h1 translate>Sign Up</h1>
 
@@ -158,7 +158,7 @@
                     </div>
                 </div>
 
-                <alert type="danger" ng-show="serverErrorMessage || (registerForm.$invalid && registerForm.name.$dirty && registerForm.email.$dirty && registerForm.password.$dirty && registerForm.confirmPassword.$dirty)">
+                <uib-alert type="danger" ng-show="serverErrorMessage || (registerForm.$invalid && registerForm.name.$dirty && registerForm.email.$dirty && registerForm.password.$dirty && registerForm.confirmPassword.$dirty)">
                     <strong translate>Please correct the following errors:</strong>
                     <ul style="margin-left:20px; margin-top:5px;">
                         <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
@@ -175,16 +175,16 @@
 
                         <li ng-show="registerForm.confirmPassword.$error.confirmValue" translate>Passwords do not match</li>
                     </ul>
-                </alert>
+                </uib-alert>
 
             </form>
-        </tab>
+        </uib-tab>
 
         <!-- Password Reset Tab -->
         <!------------------------------------------------------------->
 
-        <tab ng-show="showPasswordResetTab" active="showPasswordResetTab">
-            <tab-heading><i class="fa fa-key"></i> <span translate>Reset Password</span></tab-heading>
+        <uib-tab ng-show="showPasswordResetTab" active="showPasswordResetTab">
+            <uib-tab-heading><i class="fa fa-key"></i> <span translate>Reset Password</span></uib-tab-heading>
 
             <h2 translate>Reset Password</h2>
 
@@ -204,7 +204,7 @@
                     </div>
                 </div>
 
-                <alert type="danger" ng-show="serverErrorMessage || (resetPasswordForm.$invalid && resetPasswordForm.email.$dirty)">
+                <uib-alert type="danger" ng-show="serverErrorMessage || (resetPasswordForm.$invalid && resetPasswordForm.email.$dirty)">
                     <strong translate>Please correct the following errors:</strong>
                     <ul style="margin-left:20px; margin-top:5px;">
                         <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
@@ -212,16 +212,16 @@
                         <li ng-show="resetPasswordForm.email.$error.required" translate>Email is required</li>
                         <li ng-show="resetPasswordForm.email.$error.email" translate>Email is not valid</li>
                     </ul>
-                </alert>
+                </uib-alert>
 
-                <alert type="success"  ng-show="serverSuccessMessage">
+                <uib-alert type="success"  ng-show="serverSuccessMessage">
                     {{serverSuccessMessage|translate}}
-                </alert>
+                </uib-alert>
 
             </form>
-        </tab>
+        </uib-tab>
 
-    </tabset>
+    </uib-tabset>
 </div>
 
 <!--------------------------------------------------------------------->
