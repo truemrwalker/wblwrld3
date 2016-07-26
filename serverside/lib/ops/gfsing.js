@@ -46,8 +46,8 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 		
 		if (!obj)
 			throw new util.RestError(gettext("Requested object does not exist", 404));
-		
-		if (!obj.isUserOwner(req.user) && !readonly)
+
+        if (!readonly && (!req.user || !obj.isUserOwner(req.user)))
 			throw new util.RestError(gettext("You are not the owner of the requested object"), 403);
 		
 		if (obj.webble.defid !== obj.webble.templateid)
@@ -301,7 +301,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 			
 			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
 				
-				ensureObjectValid(req, obj);
+				ensureObjectValid(req, obj, true);
 				
 				return exportFiles(pack, targetPathPrefix, obj.getInfoObject()).then(function () { return obj; });
 			});
@@ -348,7 +348,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 		associatedFiles: function (req, query, targetPathPrefix) {
 			
 			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
-				ensureObjectValid(req, obj);
+				ensureObjectValid(req, obj, true);
 				
 				var targetVer = obj.getInfoObject().ver;
 				var targetPath = path.join(targetPathPrefix, targetVer.toString());
