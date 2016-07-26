@@ -38,17 +38,17 @@
 
     <orgchart chart-data="chartData" on-select="onGroupSelected(selectedItem)"></orgchart>
 
-    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg|translate}}</uib-alert>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg|translate}}</alert>
 
     <!-- Group Actions tab -->
     <!----------------------------------------------------------------->
 
-    <uib-tabset class="padcontent">
+    <tabset class="padcontent">
 
         <!-- Selected Group Information -->
         <!------------------------------------------------------------->
-        <uib-tab active="tabs.info">
-            <uib-tab-heading><i class="fa fa-info-circle"></i> <span translate>Information</span></uib-tab-heading>
+        <tab active="tabs.info">
+            <tab-heading><i class="fa fa-info-circle"></i> <span translate>Information</span></tab-heading>
 
             <div class="container-fluid padcontent">
 
@@ -82,17 +82,17 @@
                 </div>
 
             </div>
-        </uib-tab>
+        </tab>
 
         <!-- Create New Group or Edit Current Group -->
         <!------------------------------------------------------------->
 
-        <uib-tab active="tabs.newedit" ng-show="editable" disabled="(myGroups && !selectedGroup) || selectedGroup.readonly">
+        <tab active="tabs.newedit" ng-show="editable" disabled="(myGroups && !selectedGroup) || selectedGroup.readonly">
 
-            <uib-tab-heading>
+            <tab-heading>
                 <div ng-hide="selectedGroupEdit"><i class="fa fa-plus"></i> <span translate>New Group</span></div>
                 <div ng-show="selectedGroupEdit"><i class="fa fa-edit"></i> <span translate>Edit Group</span></div>
-            </uib-tab-heading>
+            </tab-heading>
 
             <form name="addGroupForm" novalidate ng-submit="createOrModifyGroup()" class="form-horizontal padcontent" autocomplete="off">
                 <div class="form-group">
@@ -187,23 +187,23 @@
                 </div>
 
             </form>
-        </uib-tab>
+        </tab>
 
         <!-- Just toggle New/Edit -->
         <!------------------------------------------------------------->
 
-        <uib-tab ng-show="editable" ng-click="toggleSelectedGroupEdit() || (tabs.newedit=true)" disabled="!selectedGroup || selectedGroup.readonly">
-            <uib-tab-heading>
+        <tab ng-show="editable" ng-click="toggleSelectedGroupEdit() || (tabs.newedit=true)" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading>
                 <div ng-show="selectedGroupEdit"><i class="fa fa-plus"></i> <span translate>New Group</span></div>
                 <div ng-hide="selectedGroupEdit"><i class="fa fa-edit"></i> <span translate>Edit Group</span></div>
-            </uib-tab-heading>
-        </uib-tab>
+            </tab-heading>
+        </tab>
 
         <!-- Add Users -->
         <!------------------------------------------------------------->
 
-        <uib-tab active="tabs.users" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
-            <uib-tab-heading><i class="fa fa-users"></i> <span translate>Add Users</span></uib-tab-heading>
+        <tab active="tabs.users" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-users"></i> <span translate>Add Users</span></tab-heading>
 
             <form name="addUserForm" novalidate class="form-horizontal padcontent" autocomplete="off">
 
@@ -236,13 +236,13 @@
                 </div>
 
             </form>
-        </uib-tab>
+        </tab>
 
         <!-- Delete Group -->
         <!------------------------------------------------------------->
 
-        <uib-tab active="tabs.delete" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
-            <uib-tab-heading><i class="fa fa-trash-o"></i> <span translate>Delete Group</span></uib-tab-heading>
+        <tab active="tabs.delete" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-trash-o"></i> <span translate>Delete Group</span></tab-heading>
 
             <form name="deleteUserForm" novalidate class="form-horizontal padcontent" autocomplete="off">
 
@@ -251,13 +251,13 @@
                 </button>
 
             </form>
-        </uib-tab>
+        </tab>
 
         <!-- Published Objects -->
         <!------------------------------------------------------------->
 
-        <uib-tab active="tabs.published" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
-            <uib-tab-heading><i class="fa fa-files-o"></i> <span translate>Published Objects</span></uib-tab-heading>
+        <tab active="tabs.published" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-files-o"></i> <span translate>Published Objects</span></tab-heading>
 
             <form name="updatePublishedObjectsForm" novalidate class="form-horizontal padcontent" autocomplete="off">
 
@@ -277,18 +277,18 @@
                 </div>
 
             </form>
-        </uib-tab>
+        </tab>
 
         <!-- Licence (API) Keys -->
         <!------------------------------------------------------------->
 
-        <uib-tab active="tabs.licenses" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
-            <uib-tab-heading><i class="fa fa-key"></i> <span translate>Licenses</span></uib-tab-heading>
+        <tab active="tabs.licenses" ng-show="editable" disabled="!selectedGroup || selectedGroup.readonly">
+            <tab-heading><i class="fa fa-key"></i> <span translate>Licenses</span></tab-heading>
 
             <license-key-editor key-holder="selectedGroup" is-group="true"></license-key-editor>
-        </uib-tab>
+        </tab>
 
-    </uib-tabset>
+    </tabset>
 
     <!--
 

@@ -40,11 +40,11 @@
         <h1 translate>Template Editor</h1>
 
 <!--
-        <uib-tabset>
-            <uib-tab>
-                <uib-tab-heading><i class="fa fa-info-circle"></i> <span translate>Information</span></tab-heading>
-            </uib-tab>
-        </uib-tabset>
+        <tabset>
+            <tab>
+                <tab-heading><i class="fa fa-info-circle"></i> <span translate>Information</span></tab-heading>
+            </tab>
+        </tabset>
 -->
 
         <div class="form-group">
@@ -116,7 +116,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<uib-alert type="danger" ng-show="serverErrorMessage || (templateForm.$invalid && templateForm.id.$dirty && templateForm.name.$dirty && templateForm.description.$dirty)">
+				<alert type="danger" ng-show="serverErrorMessage || (templateForm.$invalid && templateForm.id.$dirty && templateForm.name.$dirty && templateForm.description.$dirty)">
 					<strong translate>Please correct the following errors:</strong>
 					<ul style="margin-left:20px; margin-top:5px;">
 						<li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
@@ -124,7 +124,7 @@
 						<li ng-show="templateForm.name.$invalid" translate>Please provide a valid name for the template</li>
 						<li ng-show="templateForm.description.$invalid" translate>Please provide a valid description for the template</li>
 					</ul>
-				</uib-alert>
+				</alert>
 			</div>
 
 			<div class="form-group">

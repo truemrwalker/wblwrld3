@@ -53,13 +53,13 @@
 	<!-- Administrative Actions tab -->
 	<!----------------------------------------------------------------->
 
-	<uib-tabset class="padcontent" ng-hide="updating">
+	<tabset class="padcontent" ng-hide="updating">
 
 		<!-- Server management -->
 		<!------------------------------------------------------------->
 
-		<uib-tab active="tabs.server">
-			<uib-tab-heading><i class="fa fa-automobile"></i> <span translate>Server Management</span></uib-tab-heading>
+		<tab active="tabs.server">
+			<tab-heading><i class="fa fa-automobile"></i> <span translate>Server Management</span></tab-heading>
 
 			<form nonvalidate class="padcontent">
 
@@ -77,13 +77,13 @@
 				</div>
 
 			</form>
-		</uib-tab>
+		</tab>
 
 		<!-- User management -->
 		<!------------------------------------------------------------->
 
-		<uib-tab active="tabs.users">
-			<uib-tab-heading><i class="fa fa-users"></i> <span translate>User Accounts</span></uib-tab-heading>
+		<tab active="tabs.users">
+			<tab-heading><i class="fa fa-users"></i> <span translate>User Accounts</span></tab-heading>
 
 			<div class="container-fluid padcontent">
 
@@ -99,13 +99,13 @@
 				</div>
 
 			</div>
-		</uib-tab>
+		</tab>
 
 		<!-- Session management -->
 		<!------------------------------------------------------------->
 
-		<uib-tab active="tabs.sessions">
-			<uib-tab-heading><i class="fa fa-sign-in"></i> <span translate>Active Sessions</span></uib-tab-heading>
+		<tab active="tabs.sessions">
+			<tab-heading><i class="fa fa-sign-in"></i> <span translate>Active Sessions</span></tab-heading>
 
 			<div class="container-fluid padcontent">
 
@@ -118,8 +118,8 @@
 				</div>
 
 			</div>
-		</uib-tab>
+		</tab>
 
-	</uib-tabset>
+	</tabset>
 
 </div>
