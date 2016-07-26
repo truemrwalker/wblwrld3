@@ -1259,7 +1259,7 @@ ww3Services.factory('webService', ['$http', '$q', '$log', 'appPaths', function($
 // Database interaction Service.
 // Makes a service call for retrieving DB data of specified type.
 //=================================================================================
-ww3Services.factory('dbService', function($log, $http, webService, getFakeData) {
+ww3Services.factory('dbService', function($log, $http, $upload, webService, getFakeData) {
     return {
         doDBAvailabilityTest: function() {
             if(wwDef.WEBSERVICE_ENABLED){
@@ -1344,8 +1344,8 @@ ww3Services.factory('dbService', function($log, $http, webService, getFakeData) 
 		 */
 		exportWebble: function(wblDef, wblTemplateList) {
 			if(wwDef.WEBSERVICE_ENABLED){
-				var verify = undefined;
-				return webService.get('/api/webbles/' + encodeURIComponent(wblDef.webble.defid) + (verify ? '?verify=1' : ''));
+                var verify = undefined;
+                return webService.post('/api/export/webbles', { webble: wblDef, templates: wblTemplateList });
 			}
 			else{
 				return webService.get('', getFakeData.anyFakeData(wblDef));
@@ -1357,8 +1357,13 @@ ww3Services.factory('dbService', function($log, $http, webService, getFakeData) 
 		 */
 		importWebble: function(wblExpImpPack) {
 			if(wwDef.WEBSERVICE_ENABLED){
-				var verify = undefined;
-				return webService.get('/api/webbles/' + encodeURIComponent("clock") + (verify ? '?verify=1' : ''));
+
+                return $upload.upload({
+                    url: '/api/import/webbles',
+                    method: 'POST',
+                    data: {},
+                    file: wblExpImpPack
+                });
 			}
 			else{
 				return webService.get('', getFakeData.anyFakeData(wblDef));

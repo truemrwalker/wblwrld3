@@ -44,17 +44,13 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-    function normalizeDevWebble(w, files) {
+    function normalizeDevWebble(w) {
 
-        var obj = w.getNormalizedObject(files);
+        var obj = w.getNormalizedObject(w.files);
 
         obj.id = w._id;
         obj.is_dev = true;
         return obj;
-    }
-
-    function normalizeWebble(w, files) {
-        return w.getNormalizedObject(files);
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -62,36 +58,20 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	//
     var fsOps = require('../lib/ops/gfsing')(app, config, mongoose, gettext, auth);
 
-    function exportWebble(req, res, webble, dir, id) {
+    function exportWebble(req, res, webbleDef, webbleTemplates, dir, idGetter) {
 
         var pack = tar.pack();
 
-        return fsOps.exportFiles(req, webble, path.join(dir, id), pack).then(function (w) {
-
-            pack.finalize();
-
-            res.writeHead(200, {
-                'Content-Description': 'Webble Archive: ' + w.webble.displayname,
-                'Content-Disposition': 'inline; filename="' + w.webble.defid + '.war"',
-                'Content-Type': 'application/octet-stream',
-                //'Content-Length': pack.size
-            });
-            pack.pipe(res);
-
-        }).catch(err => util.resSendError(res, err));
-    }
-
-    function exportWebbles(req, res, webbles, dir, idGetter) {
-
-        var pack = tar.pack();
+        if (webbleDef)
+            pack.entry({ name: '_webbleDef.json' }, JSON.stringify(webbleDef));
 
         return Promise.try(function () {
 
-            if (!webbles)
+            if (!webbleTemplates || !Array.isArray(webbleTemplates))
                 throw new util.RestError(gettext("Cannot retrieve webbles"));
 
             // Sequentially		
-            return webbles.reduce(function (soFar, w) {
+            return webbleTemplates.reduce(function (soFar, w) {
                 return soFar.then(() => fsOps.exportFiles(req, w, path.join(dir, idGetter(w)), pack));
             }, Promise.resolve(null));
 
@@ -109,77 +89,91 @@ module.exports = function (app, config, mongoose, gettext, auth) {
         }).catch(err => util.resSendError(res, err));;
     }
 
+    function importWebble(req, res, is_dev = true) {
+
+        return fsOps.importFiles(req, {}, devWebbleDir,
+            function (tarDir) {
+
+                var query = is_dev ? DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.templateid': tarDir }] })
+                    : Webble.findOne({ "webble.templateid": tarDir });
+
+                return query.exec().then(function (w) {
+
+                    if (w && (!req.body || !req.body.replace))
+                        return { obj: null, pathSuffix: '' };
+                    else if (w)
+                        return { obj: w, pathSuffix: path.join(w._id.toString(), "0") };
+                    else {
+
+                        var newWebble = new DevWebble({
+                            webble: { defid: tarDir, templateid: tarDir },
+                            _owner: req.user._id
+                        });
+
+                        return newWebble.save().then(function (savedDoc) { // We need to save first to get an _id
+                            return { obj: savedDoc, pathSuffix: path.join(savedDoc._id.toString(), "0") };
+                        });
+                    }
+                });
+
+            },
+            function (w, infoObj) {
+
+                w.mergeWithInfoObject(infoObj);
+                return w.save().then(function (savedDoc) { return { obj: savedDoc }; });
+
+            }).then(function (result) {
+
+                if (!is_dev) {
+
+                    let index = util.indexOf(result.others, e => e.name == '_webbleDef.json');
+                    if (index != -1) {
+
+                        let webbleDef = JSON.parse(result.others[index].data);
+                        res.json(webbleDef);
+                    }
+                    else
+                        res.json(null);
+                }
+                else
+                    res.json(util.transform_(result.objs, normalizeDevWebble));
+
+            }).catch(err => util.resSendError(res, err));
+
+    }
+
 	////////////////////////////////////////////////////////////////////
 	// Routes
 	//
-    app.get('/api/takeout/webbles', auth.dev, function (req, res) {
+    app.post('/api/export/webbles', auth.dev, function (req, res) {
 
-        return Webble.find({ _owner: req.user._id }).exec()
-            .then(webbles => exportWebbles(req, res, webbles, webbleDir, w => w.webble.defid));
+        let webbleTemplates = req.body.templates;
+        let webbleDef = req.body.webble;
+
+        return Webble.find({ "webble.templateid": { "$in": webbleTemplates } })
+            .then(webbles => exportWebble(req, res, webbleDef, webbles, webbleDir, w => w.webble.templateid));
     });
 
 	app.get('/api/takeout/devwebbles', auth.dev, function (req, res) {
 
         return DevWebble.find({ _owner: req.user._id }).exec()
-            .then(webbles => exportWebbles(req, res, webbles, devWebbleDir, w => w._id.toString()));
-	});
-	
-    app.get('/api/takeout/devwebbles/:id', auth.dev, function (req, res) {
-
-        return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec()
-            .then(w => exportWebble(req, res, w, devWebbleDir, req.params.id));
+            .then(webbles => exportWebble(req, res, null, webbles, devWebbleDir, w => w._id.toString()));
 	});
 
-    app.get('/api/takeout/webbles/:defid', auth.dev, function (req, res) {
-
-        return Webble.findOne({ "webble.defid": req.params.defid }).exec()
-            .then(w => exportWebble(req, res, w, webbleDir, req.params.defid));
-    });
+//  app.get('/api/takeout/devwebbles/:id', auth.dev, function (req, res) {
+//
+//      return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec()
+//          .then(w => exportWebble(req, res, null, [w], devWebbleDir, w => w._id.toString()));
+//  });
 
 	//******************************************************************
 
-	app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
-        
-        return fsOps.importFiles(req, {}, devWebbleDir, function (tarDir) {
+    app.post('/api/import/webbles', auth.dev, function (req, res) {
+        return importWebble(req, res, false);
+    });
 
-            return DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.templateid': tarDir }] }).exec().then(function (w) {
-
-                if (w && (!req.body || !req.body.replace))
-                    return { obj: null, pathSuffix: '' };
-                else if (w)
-                    return { obj: w, pathSuffix: path.join(w._id.toString(), "0") };
-                else {
-
-                    var newWebble = new DevWebble({
-                        webble: { defid: tarDir, templateid: tarDir },
-                        _owner: req.user._id
-                    });
-
-                    return newWebble.save().then(function (savedDoc) { // We need to save first to get an _id
-                        return { obj: savedDoc, pathSuffix: path.join(savedDoc._id.toString(), "0") };
-                    });
-                }
-            });
-
-        }, function (w, infoObj) {
-
-            w.mergeWithInfoObject(infoObj);
-            return w.save().then(function (savedDoc) { return { obj: savedDoc }; });
-
-        }).then(function (result) {
-
-            return Promise.all(util.transform_(result.objs, function (w) {
-
-                return fsOps.associatedFiles(req, w, path.join(devWebbleDir, w._id.toString()))
-                    .then(files => normalizeDevWebble(w, files));
-            }));
-
-        }).then(webbles => res.json(webbles))
-            .catch(err => util.resSendError(res, err));
-	});
-
-	app.post('/api/takeout/devwebbles/:id', auth.dev, function (req, res) {
-
+    app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
+        return importWebble(req, res);
 	});
 
 };

@@ -135,7 +135,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 			var extract = tar.extract();            
             var targetObj = null, targetPath = null;
 
-            var importResult = { objs: [], targetPath: targetPathPrefix };
+            var importResult = { objs: [], targetPath: targetPathPrefix, other: [] };
 			
 			extract.on('entry', function (header, stream, next) {
 				
@@ -147,16 +147,36 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 					reject();
 				else if (header.type === 'directory') {
 					
-					objGetterAsync(path.basename(header.name)).then(function (result) {
-						
-						targetObj = result.obj;
-						targetPath = path.join(targetPathPrefix, result.pathSuffix);
-						
+					return objGetterAsync(path.basename(header.name)).then(function (result) {
+
+                        if (result && result.obj) {
+
+                            targetObj = result.obj;
+                            targetObj.files = [];
+                            targetPath = path.join(targetPathPrefix, result.pathSuffix);
+                        }
+                        else {
+
+                            targetObj = null;
+                            targetPath = '';
+                        }
+
 						stream.resume(); // Drain the stream just in case
 						next();
 
-					}, reject).done();
-				}
+					}, reject);
+                }
+                else if (header.name.charAt(0) === '_') {
+
+                    let data = '';
+                    stream.on('data', chunk => data += chunk);
+                    stream.on('error', reject);
+                    stream.on('end', function () {
+
+                        importResult.other.push({ name: header.name, data: data });
+                        next();
+                    });
+                }
                 else if (!targetObj || !targetPath) { // Skip the current entry
 
                     stream.on('end', next);
@@ -166,23 +186,25 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 				else if (path.basename(header.name) === 'info.json') {
 					
 					var jsonString = '';
-					stream.on('data', function (chunk) { jsonString += chunk; });
+					stream.on('data', chunk => jsonString += chunk);
 					stream.on('error', reject);
 					stream.on('end', function () {
 						
 						var infoObj = JSON.parse(jsonString);
-                        objSetterAsync(targetObj, infoObj).then(function (result) {
+                        return objSetterAsync(targetObj, infoObj).then(function (result) {
 
                             importResult.objs.push(result.obj);
                             next();
 
-                        }, reject).done();
+                        }, reject);
 					});
 				}
 				else {
 
-					gfs.createWriteStream(targetPath, path.basename(header.name), null, 0).then(function (writeStream) {
-						
+					return gfs.createWriteStream(targetPath, path.basename(header.name), null, 0).then(function (writeStream) {
+
+                        targetObj.files.push(getRelativeUrl(targetObj.webble.templateid, header.name));
+
 						stream.pipe(writeStream);
 						
 						stream.on('end', next); // ready for next entry
@@ -190,11 +212,11 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
 						writeStream.on('error', reject);
 
-					}, reject).done();
+					}, reject);
 				}
 			});
 			
-            extract.on('finish', function () { resolve(importResult); });
+            extract.on('finish', () => resolve(importResult));
 			extract.on('error', reject);
 			tarStream.pipe(extract);
 		});
