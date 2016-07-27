@@ -1339,22 +1339,6 @@ ww3Services.factory('dbService', function($log, $http, $upload, webService, getF
             }
         },
 
-		/**
-		 *   "FAKE" PLACEHOLDER SERVICE FOR EXPORT WEBBLE (currently returns a webble def as temp-holder return data)
-		 */
-		exportWebble: function(wblDef, wblTemplateList) {
-			if(wwDef.WEBSERVICE_ENABLED){
-                var verify = undefined;
-                return webService.post('/api/export/webbles', { webble: wblDef, templates: wblTemplateList });
-			}
-			else{
-				return webService.get('', getFakeData.anyFakeData(wblDef));
-			}
-		},
-
-		/**
-		 *   "FAKE" PLACEHOLDER SERVICE FOR IMPORT WEBBLE (currently returns a clock webble def as temp-holder return data)
-		 */
 		importWebble: function(wblExpImpPack) {
 			if(wwDef.WEBSERVICE_ENABLED){
 

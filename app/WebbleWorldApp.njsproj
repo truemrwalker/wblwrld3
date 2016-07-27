@@ -87,14 +87,18 @@
     <Content Include="views\mediaplayer.html" />
     <Content Include="views\modalForms\about.html" />
     <Content Include="views\modalForms\addCustSlotSheet.html" />
+    <Content Include="views\modalForms\allowNonTrustedSomething.html" />
     <Content Include="views\modalForms\bundleSheet.html" />
     <Content Include="views\modalForms\clearSomething.html" />
     <Content Include="views\modalForms\deleteSomething.html" />
     <Content Include="views\modalForms\editCustInteractObjSheet.html" />
     <Content Include="views\modalForms\editCustMenuItemsSheet.html" />
+    <Content Include="views\modalForms\exportWebbleSheet.html" />
     <Content Include="views\modalForms\faqSheet.html" />
+    <Content Include="views\modalForms\importWebbleSheet.html" />
     <Content Include="views\modalForms\infoMsg.html" />
     <Content Include="views\modalForms\loadWebbleSheet.html" />
+    <Content Include="views\modalForms\longTimeWaitingKillPerhaps.html" />
     <Content Include="views\modalForms\openWSSheet.html" />
     <Content Include="views\modalForms\platformLangSheet.html" />
     <Content Include="views\modalForms\platformPropsSheet.html" />
@@ -106,6 +110,7 @@
     <Content Include="views\modalForms\searchWblSheet.html" />
     <Content Include="views\modalForms\shareWSSheet.html" />
     <Content Include="views\modalForms\slotConnSheet.html" />
+    <Content Include="views\modalForms\viewRateCommentsWblSheet.html" />
     <Content Include="views\modalForms\wblAbout.html" />
     <Content Include="views\modalForms\wblProtectionSheet.html" />
     <Content Include="views\profile.html" />
@@ -184,6 +189,15 @@
   <ItemGroup>
     <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\index.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\controllers\modalForms\exportWebble.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\controllers\modalForms\importWebble.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\controllers\modalForms\viewRateCommentsWbl.js" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

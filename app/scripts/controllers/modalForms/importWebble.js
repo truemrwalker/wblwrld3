@@ -35,7 +35,7 @@
 // IMPORT WEBBLE FORM CONTROLLER
 // This controls the form for uploading Webble template files
 //====================================================================================================================
-ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInstance, $log, gettext, localStorageService) {
+ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInstance, $log, dbService, gettext, localStorageService) {
 
     //=== PROPERTIES ================================================================
 
@@ -67,15 +67,17 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
         $scope.errorMsg = '';
         if (input.files && input.files[0]) {
             var fileExt = input.files[0].name.substr(input.files[0].name.lastIndexOf('.')).toLowerCase();
-
             if(fileExt == '.war'){
-				$scope.formItems.selectedLocalFileName = input.files[0].name;
+                $scope.formItems.selectedLocalFileName = input.files[0].name;
+
+                $scope.formItems.selectedLocalFile = input.files[0];
+
 				//Possible file reading and validity confirmation
-				var reader = new FileReader();
-				reader.onload = function (e) {
-					$scope.formItems.selectedLocalFile = e.target.result;
-				};
-				reader.readAsText(input.files[0]);
+				//var reader = new FileReader();
+				//reader.onload = function (e) {
+				//	$scope.formItems.selectedLocalFile = e.target.result;
+				//};
+				//reader.readAsText(input.files[0]);
 
             }
             else{
@@ -125,6 +127,18 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.close = function (result) {
         $scope.errorMsg = '';
         if (result == 'submit') {
+
+            if ($scope.formItems.selectedLocalFile) {
+
+                return dbService.importWebble($scope.formItems.selectedLocalFile).then(function (resp) {
+
+                    var webbleDef = resp.data;
+
+                    var webbleString = JSON.stringify(webbleDef);
+                    alert(webbleString);
+                });
+            }
+
             $modalInstance.close($scope.formItems.selectedLocalFile);
         }
         else{

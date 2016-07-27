@@ -59,7 +59,7 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     // Form validation error message
     $scope.errorMsg = gettext("This Feature is not yet fully implemented, but as soon as it is you will find it here.");
 
-
+    $scope.exportedArchiveUrl = generateExportWebbleUrl();
 
     //=== EVENT HANDLERS =====================================================================
 
@@ -72,15 +72,11 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     // Export The Webble
     // executes the export operation of the webble to the server.
     //========================================================================================
-    var exportTheWebble = function(){
-		thePlatform.waiting(true);
-        dbService.exportWebble(theWblDef, theWblTemplateList).then(function(data){
-			thePlatform.waiting(false);
-            $modalInstance.close(data);
-        },function(eMsg){
-			thePlatform.waiting(false);
-            $scope.errorMsg = eMsg;
-        });
+
+    function generateExportWebbleUrl() {
+
+        var query = JSON.stringify({ webble: theWblDef, templates: theWblTemplateList });
+        return '/api/export/webbles?' + encodeURIComponent(query);
     };
     //========================================================================================
 
@@ -113,7 +109,6 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.close = function (result) {
         $scope.errorMsg = '';
         if (result == 'submit') {
-			exportTheWebble();
         }
         else{
             $modalInstance.close(null);

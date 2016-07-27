@@ -103,7 +103,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
             
             var busboy = new Busboy({ headers: req.headers });
             var promise = Promise.resolve(null);
-            var importResult = { objs: [], targetPath: targetPathPrefix };
+            var importResult = { objs: [], targetPath: targetPathPrefix, other: [] };
             
             busboy.on('file', function (fieldName, tarStream, filename, encoding, mimeType) {
                 
@@ -118,11 +118,12 @@ module.exports = function (app, config, mongoose, gettext, auth) {
                             }
                             importResult.objs.push(obj);
                         });
+                        result.other.forEach(r => importResult.other.push(r));
                     });
                 });
             });
             busboy.on('finish', function () {
-                promise.then(function () { resolve(importResult); }, reject);
+                promise.then(() => resolve(importResult), reject);
             });
             req.pipe(busboy);
         });
@@ -147,7 +148,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 					reject();
 				else if (header.type === 'directory') {
 					
-					return objGetterAsync(path.basename(header.name)).then(function (result) {
+					objGetterAsync(path.basename(header.name)).then(function (result) {
 
                         if (result && result.obj) {
 
@@ -175,7 +176,8 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
                         importResult.other.push({ name: header.name, data: data });
                         next();
-                    });
+
+                    }, reject);
                 }
                 else if (!targetObj || !targetPath) { // Skip the current entry
 
@@ -184,14 +186,14 @@ module.exports = function (app, config, mongoose, gettext, auth) {
                     stream.resume(); // drain the stream
                 }
 				else if (path.basename(header.name) === 'info.json') {
-					
-					var jsonString = '';
+
+					let jsonString = '';
 					stream.on('data', chunk => jsonString += chunk);
 					stream.on('error', reject);
 					stream.on('end', function () {
 						
-						var infoObj = JSON.parse(jsonString);
-                        return objSetterAsync(targetObj, infoObj).then(function (result) {
+						let infoObj = JSON.parse(jsonString);
+                        objSetterAsync(targetObj, infoObj).then(function (result) {
 
                             importResult.objs.push(result.obj);
                             next();
@@ -201,7 +203,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 				}
 				else {
 
-					return gfs.createWriteStream(targetPath, path.basename(header.name), null, 0).then(function (writeStream) {
+					gfs.createWriteStream(targetPath, path.basename(header.name), null, 0).then(function (writeStream) {
 
                         targetObj.files.push(getRelativeUrl(targetObj.webble.templateid, header.name));
 
