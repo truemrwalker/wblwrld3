@@ -145,7 +145,7 @@ function ($scope, gettext, authService, userPrefs, confirm, wwConsts) {
         showWeeks: false,
         //minDate: new Date(1930, 1, 1),
         //maxDate: new Date(2010, 1, 1),
-        initDate: new Date($scope.user.date_born.toString())
+        initDate: $scope.user.date_born && new Date($scope.user.date_born)
     };
 
 	// Groups and trusts
