@@ -22,7 +22,7 @@
     <Compile Include="auth\providers\github.js" />
     <Compile Include="config.js" />
     <Compile Include="control\_machine.js" />
-    <Compile Include="files\autosync.js" />
+    <Compile Include="control\autosync.js" />
     <Compile Include="models\machine.js" />
     <Compile Include="models\message.js" />
     <Compile Include="realtime\pubsub.js" />

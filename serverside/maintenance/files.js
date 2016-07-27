@@ -43,7 +43,6 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	var rootWebbleDir = config.APP_ROOT_DIR;
 	var webbleDir = path.join(rootWebbleDir, 'webbles');
-	var devWebbleDir = path.join(rootWebbleDir, 'devwebbles');
     
     var backupDir = path.join(config.APP_ROOT_DIR, 'backup');
 
@@ -53,8 +52,9 @@ module.exports = function(app, config, mongoose, gettext) {
 	// Utility functions
     //
     function statIfExists(localFilePath) {
-        return fs.statAsync(localFilePath).catch(function (err) { return null; });
+        return fs.statAsync(localFilePath).catchReturn(null);
     }
+
     function changeMTime(localFilePath, mtime) {        
         return fs.utimesAsync(localFilePath, 0, mtime);
     }
@@ -133,25 +133,51 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	//******************************************************************
 
-	function syncLocalWebbleFile(localDir, remoteDir, filename) {
+	function syncFiles(localDir, remoteDir, localFiles, remoteFiles) {
 
         if (!remoteDir)
             return Promise.reject(new Error("Remote directory is wrong"));
 
+        localFiles = localFiles.filter(lf => lf !== 'info.json');
+        remoteFiles = remoteFiles.filter(rf => rf.metadata.directory === remoteDir);
+
         return getWebbleId(remoteDir).then(function (ownerId) {
-            
-            var localFilePath = path.join(localDir, filename);
-            
-            return Promise.all([statIfExists(localFilePath), gfs.getFile(remoteDir, filename, ownerId)])
-                .spread(function (localStat, remoteFile) {
-                
-                    if (!remoteFile) {
-                    
+
+            var promises = [];
+            localFiles.forEach(function (filename) {
+
+                var remoteFile = null;
+                var index = util.indexOf(remoteFiles, r => r.metadata.filename === filename);
+                if (index !== -1) {
+
+                    remoteFile = remoteFiles[index];
+                    remoteFiles.splice(index, 1);
+                }
+
+                var localFilePath = path.join(localDir, filename);
+                promises.push(statIfExists(localFilePath).then(function (localStat) {
+
+                    if (!localStat && remoteFile) {
+
+                        console.log("WARNING, WARNING: DELETING REMOTE FILE:", remoteFile.filename);
+                        return gfs.deleteFileEntry(remoteFile);
+                    }
+                    else if (!remoteFile) {
+
                         console.log("Uploading:", localFilePath, "->", path.join(remoteDir, filename), "...", localStat.mtime);
                         return gfs.upload(fs.createReadStream(localFilePath), remoteDir, filename, ownerId, localStat && localStat.mtime);
                     }
-                    return syncWebbleFileEntry(localFilePath, localStat, remoteFile);
-                });
+                    else
+                        return syncWebbleFileEntry(localFilePath, localStat, remoteFile);
+                }));
+            });
+
+            remoteFiles.forEach(function (remoteFile) {
+
+                console.log("WARNING, WARNING: DELETING REMOTE FILE:", remoteFile.filename);
+                promises.push(gfs.deleteFileEntry(remoteFile));
+            });
+            return Promise.all(promises);
         });
 	}
 
@@ -168,17 +194,6 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	function syncLocalWebbleFiles(webbleBaseDir) {
 
-		try {
-
-			if (!fs.statSync(webbleBaseDir).isDirectory())
-				return Promise.reject(new Error("Is not a directory"));
-		}
-		catch(e) {
-
-			// This is expected (esp. for devwebbles), so, report success - we've finished!
-			return Promise.resolve(null);
-		}
-
         // Push the tasks to sync the local files
         //
         function processWebbleVersionDir(promises, webbleFilesDir, category, id, version) {
@@ -188,40 +203,41 @@ module.exports = function(app, config, mongoose, gettext) {
                 var remainingPath = path.relative(webbleFilesDir, baseDir);
                 var remoteDir = path.join(category, id, version, remainingPath);
 
-                files.forEach(function (f) {
-
-                    if (f != 'info.json') // Skip info.json files
-                        promises.push(syncLocalWebbleFile(baseDir, remoteDir, f));
-                });
+                promises.push(gfs.getFiles(remoteDir).then(function (remoteFiles) {
+                    return syncFiles(baseDir, remoteDir, files, remoteFiles);
+                }));
             });
         }
 
-        // Scan directories recursively to find webble dirs
-        //
-        var category = path.basename(path.relative(rootWebbleDir, webbleBaseDir));
-        var promises = [];
+        return Promise.try(function () {
 
-        return xfs.walk(webbleBaseDir, function (baseDir, dirs, files) {
-            
-            if (files.length === 0 && !util.allTrue(dirs, util.isStringNumber))
-				return false; // Continue recursing
+            // Scan directories recursively to find webble dirs
+            //
+            var category = path.basename(path.relative(rootWebbleDir, webbleBaseDir));
+            var promises = [];
 
-            if (files.length === 0) { // We are inside a webble dir that has other version dirs
-                
-                var id = path.basename(baseDir);
-                return Promise.all(dirs.map(function (versionDir) {
-                    return processWebbleVersionDir(promises, path.join(baseDir, versionDir), category, id, versionDir);
-                }));
-            }
-            else {
+            return xfs.walk(webbleBaseDir, function (baseDir, dirs, files) {
 
-                var id = path.basename(baseDir), version = "1";
-                return processWebbleVersionDir(promises, baseDir, category, id, version);
-			}
+                if (files.length === 0 && !util.allTrue(dirs, util.isStringNumber))
+                    return false; // Continue recursing
 
-		}).then(function () {
-			return Promise.all(promises);
-		});
+                if (files.length === 0) { // We are inside a webble dir that has other version dirs
+
+                    var id = path.basename(baseDir);
+                    return Promise.all(dirs.map(function (versionDir) {
+                        return processWebbleVersionDir(promises, path.join(baseDir, versionDir), category, id, versionDir);
+                    }));
+                }
+                else {
+
+                    var id = path.basename(baseDir), version = "1";
+                    return processWebbleVersionDir(promises, baseDir, category, id, version);
+                }
+
+            }).then(function () {
+                return Promise.all(promises);
+            });
+        });
 	}
 
 	//******************************************************************
@@ -274,14 +290,8 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
-    return syncLocalWebbleFiles(webbleDir).then(function () {
-        
-        // This is only for backwards compatibility
-        return syncLocalWebbleFiles(devWebbleDir);
-
-    }).then(syncBackupFiles).catch(function (err) {
-        console.error("File Sync Error:", err, "--", err.stack);
-    });
+    return syncLocalWebbleFiles(webbleDir)
+        .then(syncBackupFiles).catch(err => console.error("File Sync Error:", err, "--", err.stack));
 
 	////////////////////////////////////////////////////////////////////
 };

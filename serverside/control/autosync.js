@@ -67,7 +67,7 @@ function startFsMonitor(webbleDir, mongoose) {
 	});
 }
 
-module.exports = function(app, config, mongoose, gettext, auth) {
+module.exports = function (app, config, mongoose, gettext, webServer) {
 	
 	var autoSyncActive = false;
 
@@ -81,12 +81,5 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			console.log("Error enabling file autosync", err);
 		}
 	}
-	
-	app.get('/debug/files/autosync', function (req, res) {
-
-		res.json({
-			status: autoSyncActive			
-		});
-	});
 
 };
