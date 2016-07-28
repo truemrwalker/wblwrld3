@@ -48,7 +48,7 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.formItems = {
         wblDispName: theWblDef.webble.displayname,
         templateList: theWblTemplateList,
-		exportedArchiveUrl: ''
+		exportWebbleData: ''
     };
 
     // Information tooltip texts
@@ -107,7 +107,7 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.close = function (result) {
         $scope.errorMsg = '';
         if (result == 'submit') {
-			//$timeout(function(){ $modalInstance.close(true); }, 500);
+			$timeout(function(){ $modalInstance.close(true); }, 500);
         }
         else{
             $modalInstance.close();

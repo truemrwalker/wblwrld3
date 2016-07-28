@@ -2,6 +2,9 @@
 // If you use (own or 3rd party) files and libraries found from some online repsoitory, store the urls here under the
 // libs item as a list (array) of strings. Include the whole path. Remember comma sign between each item if more than one.
 // The third party file should NOT begin with 'use strict';, or it will not work, if it does, remove it
+// 3rd party files that are stored in the Webble folder does not need to be added to the manifest (as in earlier versions) since they are found
+// anyway in the file folder, UNLESS, the order of the files is of importande, then add those files to the manifest in order to instruct the Webble world
+// system of teh order in which to load files. Manifest files will always load first in the described order before any other Webble files
 // If this file is not used it can be discarded and thrown away and is not needed by the system.
 
 {

@@ -43,11 +43,11 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	var rootWebbleDir = config.APP_ROOT_DIR;
 	var webbleDir = path.join(rootWebbleDir, 'webbles');
-    
+
     var backupDir = path.join(config.APP_ROOT_DIR, 'backup');
 
 	var gfs = new libGfs.GFS(mongoose);
-    
+
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
     //
@@ -55,15 +55,15 @@ module.exports = function(app, config, mongoose, gettext) {
         return fs.statAsync(localFilePath).catchReturn(null);
     }
 
-    function changeMTime(localFilePath, mtime) {        
+    function changeMTime(localFilePath, mtime) {
         return fs.utimesAsync(localFilePath, 0, mtime);
     }
 
     function syncWebbleFileEntry(localFilePath, localStat, remoteFile) {
-        
+
 		var localTime = (localStat && localStat.mtime) || new Date(0);
 		var remoteTime = (remoteFile && remoteFile.metadata && remoteFile.metadata.mtime) || new Date(0);
-        
+
         // This is here just for backwards compatibility
         // remoteTime used to be stored as integer unix timestamps
         //
@@ -73,18 +73,18 @@ module.exports = function(app, config, mongoose, gettext) {
 
         remoteTime.setMilliseconds(0); // Reset the milliseconds because stat values have seconds granularity
         localTime.setMilliseconds(0);
-        
+
 		if (remoteTime < localTime) {
-            
+
             console.log("Sync:", localFilePath, "->", remoteFile.filename, "...", localTime, "->", remoteTime);
             return gfs.uploadToFileEntry(fs.createReadStream(localFilePath), remoteFile, localTime);
 		}
 		else if (localTime < remoteTime) {
-            
+
             console.log("Sync:", remoteFile.filename, "->", localFilePath, "...", remoteTime, "->", localTime);
 
             return statIfExists(path.dirname(localFilePath)).then(function (stat) {
-                
+
                 if (!stat) // what about if !stat.isDirectory() ?
                     return mkdirpAsync(path.dirname(localFilePath));
 
@@ -105,7 +105,7 @@ module.exports = function(app, config, mongoose, gettext) {
         if (getWebbleIdCache.hasOwnProperty(relativeDirectory))
             return getWebbleIdCache[relativeDirectory].then(function (webbleId) { return webbleId; });
 
-        var pathComponents = relativeDirectory.split(path.sep);        
+        var pathComponents = relativeDirectory.split(path.sep);
         if (pathComponents.length < 3)
             return Promise.reject(new Error("Wrong webble relative directory"));
 
@@ -113,7 +113,7 @@ module.exports = function(app, config, mongoose, gettext) {
 
         var promise = Promise.resolve(null);
         if (category == 'devwebbles') {
-            
+
             try {
                 promise = Promise.resolve(DevWebble.findById(mongoose.Types.ObjectId(id)).exec());
             }
@@ -125,8 +125,8 @@ module.exports = function(app, config, mongoose, gettext) {
             promise = Promise.resolve(Webble.findOne({ "webble.defid": id }).exec());
         else
             return Promise.reject(new Error("Cannot recognize webble category"));
-        
-        return getWebbleIdCache[relativeDirectory] = promise.then(function (webble) {            
+
+        return getWebbleIdCache[relativeDirectory] = promise.then(function (webble) {
             return webble && webble._id;
         });
 	}
@@ -182,7 +182,7 @@ module.exports = function(app, config, mongoose, gettext) {
 	}
 
 	function syncRemoteWebbleFile(remoteFileEntry) {
-        
+
         var localFilePath = path.join(backupDir, remoteFileEntry.filename);
 
         return statIfExists(localFilePath).then(function (localStat) {
@@ -243,21 +243,21 @@ module.exports = function(app, config, mongoose, gettext) {
 	//******************************************************************
 
 	function syncBackupFiles() {
-        
+
         // Check and try to fix duplicate files
         var dups = {};
 
         return gfs.listAllFiles().then(function (files) {
-            
+
             return Promise.all(util.transform_(files, function (f) {
-                
+
                 if (!f.filename || !f.metadata) // Just log the error for now - TODO: handle it in the future
                     return console.error("Corrupt file in db:", f._id);
-                
+
                 // Check and try to fix duplicate files
                 //
                 if (dups.hasOwnProperty(f.filename)) {
-                    
+
                     console.error("Terminating duplicate file entry:", f.filename);
                     return gfs.deleteFileEntry(f);
                 }
@@ -269,9 +269,9 @@ module.exports = function(app, config, mongoose, gettext) {
                     return syncRemoteWebbleFile(f);
 
                 return getWebbleId(f.metadata.directory).then(function (ownerId) {
-                    
+
                     if (ownerId) {
-                        
+
                         console.log("Chowned file:", f.filename);
                         return gfs.chownFileEntry(f, ownerId);
                     }

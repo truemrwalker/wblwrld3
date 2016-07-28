@@ -1,6 +1,0 @@
-{
-    "libs": [
-        "soapclient.js",
-        "jquery.autosize.min.js"
-    ]
-}

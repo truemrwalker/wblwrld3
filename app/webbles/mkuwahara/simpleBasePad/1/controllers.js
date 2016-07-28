@@ -131,12 +131,6 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, c
 
 
 
-
-
-
-
-
-
           //TODO: If you have images and other resources uploaded in your webble template folder, and need to access them with a relative path, just call the getTemplatePath() function as shown below
           //TODO: to get the correct location for this Webble and its resource files
           //internalFilesPath = $scope.getTemplatePath($scope.theWblMetadata['templateid'], $scope.theWblMetadata['templaterevision']);

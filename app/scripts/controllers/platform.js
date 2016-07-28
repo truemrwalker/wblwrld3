@@ -82,8 +82,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getVCVVisibility = function(){return vcvVisibility_;};
     $scope.setVCVVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){vcvVisibility_ = newVal;}else{vcvVisibility_ = 'none';}};
 	var appViewOpen = true;
-	var templateRevisionBehavior_ = 0;
-	var untrustedWblsBehavior_ = 0;
+	var templateRevisionBehavior_ = Enum.availableOnePicks_templateRevisionBehaviors.askEverytime;
+	var untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.allowAll;
 	var slimWblBrowserEnabled_ = false;
 	$scope.getSlimWblBrowserEnabled = function(){return slimWblBrowserEnabled_;};
 	var sharedWS_NoQIM_Enabled_ = false;
@@ -158,8 +158,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Is Enabled-Flags
     //-------------------------------
     $scope.isLoggingEnabled = wwGlobals.loggingEnabled;
-    $scope.menuModeEnabled = false;
-    $scope.setMenuModeEnabled = function(newState){$scope.menuModeEnabled = newState};
+    var menuModeEnabled_ = false;
+	$scope.getMenuModeEnabled = function() { return menuModeEnabled_; };
+    $scope.setMenuModeEnabled = function(newState){ if(!hardcoreMenuNonBlock){ menuModeEnabled_ = newState;} };
     var isFormOpen_ = false;
     $scope.getIsFormOpen = function(){ return isFormOpen_;};
     $scope.altKeyIsDown = false;
@@ -171,6 +172,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var blockAllAddUndoUntilWeSayOtherwise_ = false;
 	$scope.BlockAddUndo = function(){ blockAllAddUndoUntilWeSayOtherwise_ = true; };
 	$scope.UnblockAddUndo = function(){ blockAllAddUndoUntilWeSayOtherwise_ = false; };
+	var hardcoreMenuNonBlock = false;
     //-------------------------------
 
 
@@ -227,7 +229,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var prevLoadedManifestLibs = [];
 
     // Current Supported mode level
-    var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.Developer;
+    var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.LowClearanceUser;
     //var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.SuperHighClearanceUser;
     $scope.getCurrentExecutionMode = function(){return currentExecutionMode_;};
     //SET more complex and found further down
@@ -455,7 +457,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             $scope.ctrlKeyIsDown = true;
         }
 
-        if($event.keyCode != 18 && $event.keyCode != 16 && $event.keyCode != 13 && $event.keyCode != 17){
+		if($event.keyCode != 18 && $event.keyCode != 16 && $event.keyCode != 13 && $event.keyCode != 17){
             if($scope.executeMenuSelection('', {theAltKey: $event.altKey, theShiftKey: $event.shiftKey, theCtrlKey: $event.ctrlKey, theKey: fromKeyCode($event.keyCode)})){
                 $event.preventDefault();
             }
@@ -525,6 +527,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.$on('auth:login', function(event, user) {
         var hasUserChanged = ($scope.user == undefined || $scope.user.email != user.email);
         $scope.user = user;
+		untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.askFirstTime;
 
         // Set user platform settings if that is not blocked by overrides
         if (!wblwrldSystemOverrideSettings.ignore_UserSettings && hasUserChanged){
@@ -549,7 +552,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         $scope.cleanActiveWS();
         availableWorkspaces_ = [];
         availableSandboxWebbles_ = [];
-		untrustedWblsBehavior_ = 0;
+		untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.allowAll;
+		currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.LowClearanceUser;
         $scope.getMenuItem('webbles').sublinks = angular.copy(originalWebbleMenu_);
     });
     //========================================================================================
@@ -886,7 +890,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Platform Initial setup
     //========================================================================================
     var platformCtrlSetup = function () {
-
         // make sure we have a platform menu even when deep linking to an area that does not really care for one, but need it
         if($location.path() != '' && $location.path().search('mediaplayer') == -1){
             $scope.setMenuModeEnabled(true);
@@ -1082,7 +1085,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var watchConfiguration = function(){
         // Listen to menu visibility, in order to adjust workspace top alignment
         $scope.$watch(function(){ //noinspection JSBitwiseOperatorUsage
-            return ($scope.menuModeEnabled && (parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10))); }, function(newValue, oldValue) {
+            return ($scope.getMenuModeEnabled() && (parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10))); }, function(newValue, oldValue) {
             if(!newValue){
                 $scope.wsTopPos = '0px';
             }
@@ -1377,14 +1380,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 	var prepareDownloadWblTemplate = function(whatTemplateId, whatTemplateRevision, whatWblDef){
 		if(whatTemplateId != 'bundleTemplate'){
-			var isInSandbox = false;
+			var isInSandbox = null;
 			for(var i = 0; i < availableSandboxWebbles_.length; i++){
 				if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
-					isInSandbox = true;
+					isInSandbox = availableSandboxWebbles_[i];
 					break;
 				}
 			}
-			if(!isInSandbox){
+			if(isInSandbox == null){
 				dbService.getWebbleDef(whatTemplateId).then(function(data) {
 					var wblTemplateFileList = sortFileListInOrderOfLoading(data.files);
 					var topAvailableTemplateVersion = data.webble.templaterevision;
@@ -1414,16 +1417,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
 					}
 				},function(eMsg){
-					var isInSandbox = false;
+					isInSandbox = null;
 					for(var i = 0; i < availableSandboxWebbles_.length; i++){
 						if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
-							isInSandbox = true;
+							isInSandbox = availableSandboxWebbles_[i];
 							break;
 						}
 					}
 
-					if(isInSandbox){
-						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(whatWblDef.files));
+					if(isInSandbox != null){
+						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
 					}
 					else{
 						forceResetDownloadFlagsAndMemories();
@@ -1433,7 +1436,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				});
 			}
 			else{
-				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(whatWblDef.files));
+				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
 			}
 		}
 		else{
@@ -1472,10 +1475,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 							if(data["libs"]){
 								for(var i = 0; i < data["libs"].length;i++){
 									if(!isExist.valueInArray(prevLoadedManifestLibs, data["libs"][i])){
-										if(data["libs"][i].search('http') != -1){
-											wblManifestLibs.push(data["libs"][i]);
-											prevLoadedManifestLibs.push(data["libs"][i]);
+										var urlPath = data["libs"][i];
+										if(data["libs"][i].search('http') == -1){
+											urlPath = corePath + "/" + data["libs"][i];
 										}
+										wblManifestLibs.push(urlPath);
+										prevLoadedManifestLibs.push(urlPath);
 									}
 								}
 							}
@@ -1523,8 +1528,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 	var finalize3rdPartyFileListAndLoadThem = function(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList){
 		for(var i = 0; i < wblTemplateFileList.ext.length;i++){
-			if(!isExist.valueInArray(prevLoadedManifestLibs, wblTemplateFileList.ext[i])){
-				var urlPath = corePath + "/" + wblTemplateFileList.ext[i];
+			var urlPath = corePath + "/" + wblTemplateFileList.ext[i];
+			if(!isExist.valueInArray(prevLoadedManifestLibs, urlPath)){
 				wblManifestLibs.push(urlPath);
 				prevLoadedManifestLibs.push(urlPath);
 			}
@@ -2520,8 +2525,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		if(returnData){
 			if(returnData.webble){
 				loadSandboxWblDefs(function(){
-					$scope.showQIM(gettext("The Webble Package have been imported correctly."));
 					$scope.loadWebbleFromDef(returnData, null);
+					$timeout(function(){ $scope.showQIM(gettext("The Webble Package have been imported correctly.")); });
 				});
 			}
 		}
@@ -3837,10 +3842,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // of the system and its webbles).
     //========================================================================================
     $scope.setExecutionMode = function(whatExecutionModeIndex) {
-        if(whatExecutionModeIndex == null){
-            return;
-        }
-
+        if(whatExecutionModeIndex == null || hardcoreMenuNonBlock){ return; }
         currentExecutionMode_ = whatExecutionModeIndex;
 
         if(currWS_){
@@ -4101,9 +4103,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				return false;
 			}
 		}
-
-		$scope.showQIM(gettext("Export Feature not yet implemented."), 4000);
-		return;
 
 		$timeout(function(){$scope.openForm(Enum.aopForms.exportWebble, getExportWebbleContent(whatWbl, allDescendents), exportWebbleReturned);}, 100);
 	};
@@ -4540,8 +4539,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             return false;
         }
 
-        var actionWasExecuted = true;
-        if(whatKeys == null || $scope.getCurrentExecutionMode() != Enum.availableOnePicks_ExecutionModes.Developer){
+		//Panic Access if Webble World Main Menu has been removed hard by a Webble
+		if(whatKeys != null && whatKeys.theAltKey == true && whatKeys.theCtrlKey == true && whatKeys.theKey == "NUM 0"){
+			$scope.setExecutionMode(0);
+			$scope.setMenuModeEnabled(true);
+			hardcoreMenuNonBlock = true;
+			return true;
+		}
+
+		var actionWasExecuted = true;
+        if(whatKeys == null || $scope.getCurrentExecutionMode() > Enum.availableOnePicks_ExecutionModes.SuperHighClearanceUser){
             whatKeys = {theAltKey: false, theShiftKey: false, theCtrlKey: false, theKey: ''};
         }
 
@@ -4562,7 +4569,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
 					'<strong>Enter</strong>:' + gettextCatalog.getString("In the Webble Browser the Enter Key execute a search or load the selected Webble, and in some other forms the enter key executes a submit, though not in all.") + '<br>' +
 					'<strong>Alt+' + gettextCatalog.getString("Arrow Keys") + '</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
-					'<strong>Alt (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>'}
+					'<strong>Alt (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>' +
+					'<strong>Alt+Ctrl+Num 0</strong>:' + gettextCatalog.getString("In case some Webbles have attempted to lock down the system this 'Panic Feature' returns a lost Webble World Main menu and sets the user to highest level of Developer in order to get back to work.") + '<br>' }
 			);
         }
 		//Toggle Main Menu visibility
@@ -4923,10 +4931,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 		else if(sublink == 'impwbl' || (whatKeys.theAltKey && whatKeys.theKey == 'I')){
 			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
-
-				$scope.showQIM(gettext("Import Feature not yet implemented."), 4000);
-
-				//$scope.openForm(Enum.aopForms.importWebble, null, $scope.importWebbleReturned);
+				$scope.openForm(Enum.aopForms.importWebble, null, $scope.importWebbleReturned);
 			}
 		}
         else if(sublink == 'pub' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'P')){
@@ -5026,7 +5031,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
         else if(sublink == 'wblprops' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'K')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
-                $scope.setMWPVisibility('inline-block');
+				if(mwpVisibility_ == 'none'){
+					mwpVisibility_ = 'inline-block';
+				}
+				else{
+					mwpVisibility_ = 'none';
+				}
             }
         }
         else if(sublink == 'platformprops' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'K')){
@@ -5181,7 +5191,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
-    authService.tryLoginIfSessionActive();
+
+	if(($location.search()).np != "true"){
+		authService.tryLoginIfSessionActive();
+	}
+
     platformCtrlSetup();
+
 });
 //====================================================================================================================
