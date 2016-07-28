@@ -30,6 +30,13 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
     $scope.timer = function(){
         var now = new Date();
 
+		var timeAdjuster = angular.copy($scope.gimme("timeAdjuster"));
+		timeAdjuster[0] = timeAdjuster[0] * 60 * 60 * 1000;
+		timeAdjuster[1] = timeAdjuster[1] * 60 * 1000;
+		timeAdjuster[2] = timeAdjuster[2] * 1000;
+		var timeAdjuster = timeAdjuster[0] + timeAdjuster[1] + timeAdjuster[2] + timeAdjuster[3];
+		if(timeAdjuster != 0){ now = new Date(now.getTime() + timeAdjuster); }
+
         if($scope.gimme('year') != now.getFullYear()){
             $scope.set('year', now.getFullYear());
         }
@@ -84,6 +91,25 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
     // If any initiation needs to be done when the webble is created it is here.
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			var newVal = eventData.slotValue;
+			var newerVal = newVal;
+			for(var i = 0; i < 4; i++){
+				if(newVal.length > i){
+					if(isNaN(newVal[i])){
+						newerVal[i] = 0;
+					}
+				}
+				else{
+					newerVal.push(0);
+				}
+			}
+			if(JSON.stringify(newerVal) != JSON.stringify(newVal)){
+				$scope.set("timeAdjuster", newerVal);
+			}
+
+		}, undefined, "timeAdjuster");
 
         $scope.addSlot(new Slot('currTime',
             '',
@@ -194,6 +220,15 @@ wblwrld3App.controller('timeWebbleCtrl', function($scope, $log, $timeout, Slot, 
         ));
         $scope.getSlot('day').setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
 		$scope.getSlot('day').setDoNotIncludeInUndo(true);
+
+		$scope.addSlot(new Slot('timeAdjuster',
+			[0,0,0,0],
+			'Time Adjuster',
+			'Adjusts the current times hour, minutes, seconds and Milliseconds on the format [h, min, sec, ms]',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
         $scope.getSlot('timeTxt:font-family').setMetaData({comboBoxContent: [ 'digital_dreamregular' ]});
         $scope.setDefaultSlot('currTime');

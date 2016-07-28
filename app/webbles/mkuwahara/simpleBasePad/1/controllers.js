@@ -111,12 +111,6 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, c
     //=== EVENT HANDLERS ================================================================
 
 
-	var onSomeComm = function(data, username) {
-		$log.log("Data Arrived:");
-		$log.log(data);
-		$log.log("sent by " + username);
-	};
-
 
     //=== METHODS & FUNCTIONS ===========================================================
 
@@ -134,10 +128,6 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, Slot, Enum, c
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
 
-
-
-
-		$scope.registerOnlineDataListener("hassebasse", onSomeComm);
 
 
 

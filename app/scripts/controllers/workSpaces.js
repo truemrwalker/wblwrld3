@@ -113,8 +113,13 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $modal, $time
                 };
                 reader.readAsText(file);
             }
+			else if(fileExtension == '.war'){
+				return dbService.importWebble(file).then(function (resp) {
+					$scope.importWebbleReturned(resp.data);
+				});
+			}
             else{
-                $scope.showQIM(gettext("The provided file is not of json type, and will therefore be ignored."));
+                $scope.showQIM(gettext("The provided file is not of any supported type (json (webble def) or war (webble code pack)), and will therefore be ignored."));
             }
         }
     };

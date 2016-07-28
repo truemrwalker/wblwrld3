@@ -52,7 +52,7 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
     };
 
     // Form validation error message
-    $scope.errorMsg = gettext("This Feature is not yet fully implemented, but as soon as it is you will find it here.");
+    $scope.errorMsg = "";
 
 
     //=== EVENT HANDLERS =====================================================================
@@ -69,16 +69,7 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
             var fileExt = input.files[0].name.substr(input.files[0].name.lastIndexOf('.')).toLowerCase();
             if(fileExt == '.war'){
                 $scope.formItems.selectedLocalFileName = input.files[0].name;
-
                 $scope.formItems.selectedLocalFile = input.files[0];
-
-				//Possible file reading and validity confirmation
-				//var reader = new FileReader();
-				//reader.onload = function (e) {
-				//	$scope.formItems.selectedLocalFile = e.target.result;
-				//};
-				//reader.readAsText(input.files[0]);
-
             }
             else{
                 $scope.formItems.selectedLocalFile = undefined;
@@ -127,19 +118,11 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.close = function (result) {
         $scope.errorMsg = '';
         if (result == 'submit') {
-
-            if ($scope.formItems.selectedLocalFile) {
-
+            if ($scope.formItems.selectedLocalFile){
                 return dbService.importWebble($scope.formItems.selectedLocalFile).then(function (resp) {
-
-                    var webbleDef = resp.data;
-
-                    var webbleString = JSON.stringify(webbleDef);
-                    alert(webbleString);
+					$modalInstance.close(resp.data);
                 });
             }
-
-            $modalInstance.close($scope.formItems.selectedLocalFile);
         }
         else{
             $modalInstance.close(null);

@@ -507,7 +507,7 @@ wblwrld3App.controller('soapClientCtrl', function($scope, $log, Slot, Enum, dbSe
 
 
 //=======================================================================================
-// EVENT ACTION MAIN FORM CONTROLLER
+// Add Service Parameter Form Controller
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
 wblwrld3App.controller('addServiceParamForm_Ctrl', function($scope, $log, $modalInstance, $timeout, Slot, Enum, props) {

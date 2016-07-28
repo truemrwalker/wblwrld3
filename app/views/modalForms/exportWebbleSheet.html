@@ -40,7 +40,7 @@
     <div class="row">
         <div class="col-xs-4">
             <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-            <a href="{{exportedArchiveUrl}}" target="_self" class="btn btn-primary" style="margin-bottom: 3px;" translate>Export</a>
+            <a href="{{formItems.exportedArchiveUrl}}" ng-click="close('submit')" target="_self" class="btn btn-primary" style="margin-bottom: 3px;" translate>Export</a>
         </div>
         <div class="col-xs-8"><h4 class="formTitle" translate>Export Webble</h4></div>
     </div>

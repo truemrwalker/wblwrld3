@@ -6,7 +6,7 @@
 /*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
 where you preferably put them.*/
 
-/*/ === BEGIN: Fundamental Classes === /*/
+/*/ === BEGIN: Open Data Classes === /*/
 
 .mnkOpenDataHolder{
     width: auto;
@@ -31,50 +31,28 @@ where you preferably put them.*/
     font-weight: bold;
 }
 
-/*
-.soapWblform-main {
-  */
-/* GRADIENT COLOR *//*
 
-  */
-/* fallback *//*
-
-  background-color: #defae8;
-  */
-/* Safari 5.1+, Chrome 10+ *//*
-
-  */
-/*background: -webkit-linear-gradient(left top, white, mediumpurple 20%, khaki 70%, #cdc673);*//*
-
-  */
-/* Firefox 3.6+ *//*
-
-  */
-/*background: -moz-linear-gradient(left top, white, mediumpurple 20%, khaki 70%, #cdc673);*//*
-
-  */
-/* IE 10 *//*
-
-  */
-/*background: -ms-linear-gradient(left, white, mediumpurple 20%, khaki 70%, #cdc673);*//*
-
-  */
-/* Opera 11.10+ *//*
-
-  */
-/*background: -o-linear-gradient(left, white, mediumpurple 20%, khaki 70%, #cdc673);*//*
-
-
-  border: 2px solid #72bd86;
-  overflow: hidden;
-
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+.moreInfoImg1{
+	display: none;
 }
-*/
+.moreInfoImg2{
+	display: none;
+}
+.showImgBtn1:focus ~ .moreInfoImg1 {
+	display: block;
+}
+.showImgBtn1:focus {
+	font-size: 1px;
+	opacity: 0;
+}
+.showImgBtn2:focus ~ .moreInfoImg2 {
+	display: block;
+}
+.showImgBtn2:focus {
+	font-size: 1px;
+	opacity: 0;
+}
 
-
-/*/ === END: Fundamental Classes === /*/
+/*/ === END: Open Data Classes === /*/
 
 /*====================================================================================================================*/

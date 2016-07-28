@@ -1167,7 +1167,7 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
                 {"sublink_itemName": "support", "title": gettext("Support"), "shortcut": "(Alt+H)", "visibility_enabled": true},
 				{"sublink_itemName": "community", "title": gettext("Developer Community"), "shortcut": "(Alt+Shift+C)", "visibility_enabled": true},
                 {"sublink_itemName": "devpack", "title": gettext("Download Developers Package"), "shortcut": "(Alt+G)", "visibility_enabled": true},
-				{"sublink_itemName": "git", "title": gettext("Webble Platform On GitHub"), "shortcut": "(Alt+Shift+G)", "visibility_enabled": true},
+				{"sublink_itemName": "git", "title": gettext("Webble Platform on GitHub"), "shortcut": "(Alt+Shift+G)", "visibility_enabled": true},
                 {"sublink_itemName": "bugreport", "title": gettext("Report Bug"), "shortcut": "(Alt+Num7)", "visibility_enabled": true},
                 {"sublink_itemName": "about", "title": gettext("About"), "shortcut": "(Alt+Num5)", "visibility_enabled": true}
             ]}
