@@ -39,8 +39,10 @@
 
     <div class="row">
         <div class="col-xs-4">
-            <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-            <a href="{{formItems.exportedArchiveUrl}}" ng-click="close('submit')" target="_self" class="btn btn-primary" style="margin-bottom: 3px;" translate>Export</a>
+            <form action="/api/export/webbles" method="post">
+                <button ng-click="close('cancel')" type="reset" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+                <button download="archive.war" type="submit" name="params" value="{{formItems.exportWebbleData}}" class="btn btn-primary" style="margin-bottom: 3px;" translate>Export</button>
+            </form>
         </div>
         <div class="col-xs-8"><h4 class="formTitle" translate>Export Webble</h4></div>
     </div>

@@ -28,10 +28,9 @@
 // Development webbles API for creating and exposing new templates
 //
 var Promise = require("bluebird");
+var Busboy = require('busboy');
 
 var path = require('path');
-var url = require('url')
-
 var tar = require('tar-stream');
 
 var util = require('../lib/util');
@@ -65,13 +64,13 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
         var pack = tar.pack();
 
-        if (webbleDef)
-            pack.entry({ name: '_webbleDef.json' }, JSON.stringify(webbleDef));
-
         return Promise.try(function () {
 
             if (!webbleTemplates || !Array.isArray(webbleTemplates))
                 throw new util.RestError(gettext("Cannot retrieve webbles"));
+
+            if (webbleDef)
+                pack.entry({ name: '_webbleDef.json' }, JSON.stringify(webbleDef));
 
             // Sequentially
             return webbleTemplates.reduce(function (soFar, w) {
@@ -91,9 +90,10 @@ module.exports = function (app, config, mongoose, gettext, auth) {
                 'Content-Type': 'application/octet-stream'
             });
             pack.pipe(res);
-
-        }).catch(err => util.resSendError(res, err));;
+        });
     }
+
+    //******************************************************************
 
     function importWebble(req, res, is_dev = true) {
 
@@ -143,39 +143,66 @@ module.exports = function (app, config, mongoose, gettext, auth) {
                 }
                 else
                     res.json(util.transform_(result.objs, normalizeDevWebble));
+            });
+    }
 
-            }).catch(err => util.resSendError(res, err));
+    //******************************************************************
 
+    function extractEncodedParams(req) {
+
+        return new Promise(function (resolve, reject) {
+
+            var busboy = new Busboy({ headers: req.headers });
+
+            busboy.on('file', function (fieldName, stream, filename, encoding, mimeType) {
+                // Ignore
+            });
+            busboy.on('field', function (fieldName, value) {
+
+                var obj = JSON.parse(value);
+
+                if (fieldName == 'params')
+                    Object.getOwnPropertyNames(obj).forEach(n => req.body[n] = obj[n]);
+                else               
+                    req.body[fieldName] = JSON.parse(value);
+            });
+            busboy.on('error', reject);
+            busboy.on('finish', resolve);
+            req.pipe(busboy);
+        });
     }
 
 	////////////////////////////////////////////////////////////////////
 	// Routes
 	//
-    app.get('/api/export/webbles', auth.dev, function (req, res) {
+    app.post('/api/export/webbles', auth.dev, function (req, res) {
 
-        return Promise.try(function () {
+        var startPromise = (req.body.templates && req.body.webble) ? Promise.resolve(null)
+            : extractEncodedParams(req);
 
-            let query = url.parse(req.url).query;
-            let body = JSON.parse(decodeURIComponent(query));
+        return startPromise.then(function () {
 
-            let webbleTemplates = body.templates;
-            let webbleDef = body.webble;
+            let webbleTemplates = req.body.templates;
+            let webbleDef = req.body.webble;
 
             let devTemplates = webbleTemplates.filter(t => t.sandboxId);
             let pubTemplates = webbleTemplates.filter(t => !t.sandboxId);
+
             let allTemplates = [];
+            let allTemplatesAppender = t => Array.prototype.push.apply(allTemplates, t);
 
-            return DevWebble.find({ _id: { "$in": devTemplates.map(t => mongoose.Types.ObjectId(t.sandboxId)) } }).exec()
-                .then(t => Array.prototype.push.apply(allTemplates, t))
-                .then(function () {
+            let devWebblesGetter = devTemplates.length == 0 ? Promise.resolve()
+                : DevWebble.find({ _id: { "$in": devTemplates.map(t => mongoose.Types.ObjectId(t.sandboxId)) } }).exec();
 
-                    let idGetter = w => pubTemplates.indexOf(w) != -1 ? w.webble.templateid : w._id.toString();
-                    let dirGetter = w => pubTemplates.indexOf(w) != -1 ? webbleDir : devWebbleDir;
+            let pubWebblesGetter = pubTemplates.length == 0 ? Promise.resolve()
+                : Webble.find({ "webble.defid": { "$in": pubTemplates.map(t => t.templateId) } }).exec();
 
-                    return Webble.find({ "webble.defid": { "$in": pubTemplates.map(t => t.templateid) } }).exec()
-                        .then(t => Array.prototype.push.apply(allTemplates, t))
-                        .then(() => exportWebble(req, res, webbleDef, allTemplates, dirGetter, idGetter));
-                });
+            return devWebblesGetter.then(allTemplatesAppender).then(() => pubWebblesGetter).then(allTemplatesAppender).then(function () {
+
+                let dirGetter = w => util.indexOf(pubTemplates, t => t.templateId == w.webble.templateid) != -1 ? webbleDir : devWebbleDir;
+                let idGetter = w => util.indexOf(pubTemplates, t => t.templateId == w.webble.templateid) != -1 ? w.webble.templateid : w._id.toString();
+                return exportWebble(req, res, webbleDef, allTemplates, dirGetter, idGetter);
+            });
 
         }).catch(err => util.resSendError(res, err));
     });
@@ -183,7 +210,8 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	app.get('/api/takeout/devwebbles', auth.dev, function (req, res) {
 
         return DevWebble.find({ _owner: req.user._id }).exec()
-            .then(webbles => exportWebble(req, res, null, webbles, w => devWebbleDir, w => w._id.toString()));
+            .then(webbles => exportWebble(req, res, null, webbles, w => devWebbleDir, w => w._id.toString()))
+            .catch(err => util.resSendError(res, err));
 	});
 
 //  app.get('/api/takeout/devwebbles/:id', auth.dev, function (req, res) {
@@ -195,11 +223,11 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	//******************************************************************
 
     app.post('/api/import/webbles', auth.dev, function (req, res) {
-        return importWebble(req, res, false);
+        return importWebble(req, res, false).catch(err => util.resSendError(res, err));
     });
 
     app.post('/api/takeout/devwebbles', auth.dev, function (req, res) {
-        return importWebble(req, res);
+        return importWebble(req, res).catch(err => util.resSendError(res, err));
 	});
 
 };

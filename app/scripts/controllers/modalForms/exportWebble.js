@@ -73,9 +73,8 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     // Export The Webble
     // executes the export operation of the webble to the server.
     //========================================================================================
-    var generateExportWebbleUrl = function() {
-        var query = JSON.stringify({ webble: theWblDef, templates: theWblTemplateList });
-        return '/api/export/webbles?' + encodeURIComponent(query);
+    var generateExportWebbleData = function () {
+        return JSON.stringify({ webble: theWblDef, templates: theWblTemplateList });
     };
     //========================================================================================
 
@@ -108,7 +107,7 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.close = function (result) {
         $scope.errorMsg = '';
         if (result == 'submit') {
-			$timeout(function(){ $modalInstance.close(true); }, 500);
+			//$timeout(function(){ $modalInstance.close(true); }, 500);
         }
         else{
             $modalInstance.close();
@@ -121,7 +120,7 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
-	$scope.formItems.exportedArchiveUrl = generateExportWebbleUrl();
+    $scope.formItems.exportWebbleData = generateExportWebbleData();
 
 });
 //======================================================================================================================

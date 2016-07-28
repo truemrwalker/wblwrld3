@@ -1339,6 +1339,15 @@ ww3Services.factory('dbService', function($log, $http, $upload, webService, getF
             }
         },
 
+        exportWebble: function (wblDef, wblTemplateList) {
+            if (wwDef.WEBSERVICE_ENABLED) {
+                return webService.post('/api/export/webbles', { webble: wblDef, templates: wblTemplateList });
+            }
+            else {
+                return webService.get('', getFakeData.anyFakeData(wblDef));
+            }
+        },
+
 		importWebble: function(wblExpImpPack) {
 			if(wwDef.WEBSERVICE_ENABLED){
 
