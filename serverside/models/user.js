@@ -321,7 +321,7 @@ module.exports = function(app, config, mongoose, gettext) {
 	UserSchema.post('save', function(user) {
 
 		// Real-time notification of user changes
-		app.emit('auth:user', user.email);
+		//app.emit('auth:user', user.email);
 	});
 
 	// Compile and return the model:

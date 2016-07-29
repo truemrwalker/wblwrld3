@@ -133,7 +133,7 @@ module.exports = function(app, config, mongoose, gettext, io) {
 
 			if (socket.handshake.sessionID === sessionID) {
 
-				socket.emit('auth:login');
+				//socket.emit('auth:login');
 				socket.handshake.user = session.passport && session.passport.user;
 			}
 		});
@@ -145,20 +145,20 @@ module.exports = function(app, config, mongoose, gettext, io) {
 
 			if (socket.handshake.sessionID === sessionID) {
 
-				socket.emit('auth:logout');
+				//socket.emit('auth:logout');
 				delete socket.handshake.user;
 			}
 		});
 	});
 
-	app.on('auth:user', function(userEmail) {
+	//app.on('auth:user', function(userEmail) {
 
-		forEachAuthenicatedClient(function (socket) {
+	//	forEachAuthenicatedClient(function (socket) {
 
-			if (socket.handshake.user === userEmail)
-				socket.emit('auth:user');
-		});
-	});
+	//		if (socket.handshake.user === userEmail)
+	//			socket.emit('auth:user');
+	//	});
+	//});
 
 	// Define and return the auth directive (middleware)
 	//
