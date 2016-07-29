@@ -34,6 +34,7 @@
   <ItemGroup>
     <Content Include="server\deploy\mongodb.yml" />
     <Content Include="server\deploy\backend.yml" />
+    <Content Include="windows\update.bat" />
     <Content Include="windows\README.txt" />
     <Content Include="windows\start.bat" />
     <Content Include="windows\bootstrap.bat" />

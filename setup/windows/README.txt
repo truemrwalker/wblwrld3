@@ -3,13 +3,15 @@
 ---------------
 
 Install:
+https://git-scm.com/download/win
 https://nodejs.org/en/download/current/
 https://www.mongodb.com/download-center
 
-Download, extract and open the "setup/windows" folder:
-https://codeload.github.com/truemrwalker/wblwrld3/zip/master
+Open a terminal (win+R, cmd), go to the projects directory and type the following command:
+git clone https://github.com/truemrwalker/wblwrld3
 
-Initialize (only first time):
+In the "setup/windows" folder run:
+
 bootstrap.bat
 
 ---------------
