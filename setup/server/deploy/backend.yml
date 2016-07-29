@@ -104,5 +104,5 @@ spec:
     targetPort: 7000
   selector:
     app: hokudai-wws
-  sessionAffinity: None
+  sessionAffinity: ClientIP
   type: LoadBalancer

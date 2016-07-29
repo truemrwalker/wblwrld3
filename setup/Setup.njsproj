@@ -13,7 +13,8 @@
     <ProjectGuid>b6b80904-5547-4050-9d07-aa3edaa9634a</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -31,15 +32,11 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="app.js" />
-    <Compile Include="scripts\mongoshell.js" />
-    <Compile Include="scripts\mongoshellgen.js" />
-    <Compile Include="scripts\updateheader.js" />
-    <Content Include="deploy\mongodb.yml" />
-    <Content Include="deploy\backend.yml" />
-    <Content Include="scripts\bootstrap.bat" />
-    <Content Include="scripts\bootstrap.sh" />
-    <Content Include="scripts\header.txt" />
+    <Content Include="server\deploy\mongodb.yml" />
+    <Content Include="server\deploy\backend.yml" />
+    <Content Include="windows\README.txt" />
+    <Content Include="windows\start.bat" />
+    <Content Include="windows\bootstrap.bat" />
     <Content Include="server\conf\nginx_modular_tk.conf" />
     <Content Include="server\conf\nginx_modular_wws.conf" />
     <Content Include="server\conf\nginx_modular.conf" />
@@ -48,9 +45,9 @@
     <Content Include="docker\docker-build.sh" />
     <Content Include="docker\docker-run.sh" />
     <Content Include="docker\Dockerfile" />
-    <Content Include="docker_autonomous\docker-build.sh" />
-    <Content Include="docker_autonomous\docker-run.sh" />
-    <Content Include="docker_autonomous\Dockerfile" />
+    <Content Include="docker\docker_autonomous\docker-build.sh" />
+    <Content Include="docker\docker_autonomous\docker-run.sh" />
+    <Content Include="docker\docker_autonomous\Dockerfile" />
     <Content Include="server\conf\nginx.conf" />
     <Content Include="server\install\nodejs_latest.sh" />
     <Content Include="server\kernel_modifications.sh" />
@@ -59,30 +56,24 @@
     <Content Include="server\iptables.rules" />
     <Content Include="server\install\mongodb_latest.sh" />
     <Content Include="server\install\nginx_latest.sh" />
-    <Content Include="package.json" />
-    <Content Include="README.md" />
-    <Content Include="scripts_runtime\cron.sh" />
-    <Content Include="scripts_runtime\restartserver.sh" />
-    <Content Include="scripts_runtime\start.sh" />
-    <Content Include="scripts_runtime\updateapp.sh" />
-    <Content Include="scripts_runtime\updateserver.sh" />
+    <Content Include="server\scripts_runtime\cron.sh" />
+    <Content Include="server\scripts_runtime\restartserver.sh" />
+    <Content Include="server\scripts_runtime\start.sh" />
+    <Content Include="server\scripts_runtime\updateapp.sh" />
+    <Content Include="server\scripts_runtime\updateserver.sh" />
     <Content Include="server\iptables.sh" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="deploy\" />
+    <Folder Include="server\deploy\" />
     <Folder Include="docker\" />
-    <Folder Include="docker_autonomous\" />
-    <Folder Include="scripts\" />
+    <Folder Include="docker\docker_autonomous\" />
+    <Folder Include="windows\" />
     <Folder Include="server\conf\" />
     <Folder Include="server\" />
-    <Folder Include="scripts_runtime\" />
+    <Folder Include="server\scripts_runtime\" />
     <Folder Include="server\install\" />
-    <Folder Include="typings\" />
-    <Folder Include="typings\globals\" />
-    <Folder Include="typings\globals\node\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\index.d.ts" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
