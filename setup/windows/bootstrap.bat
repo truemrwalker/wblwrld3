@@ -19,6 +19,9 @@ for /r "C:\Program Files\MongoDB" %%a in (*) do if /i "%%~nxa"=="mongod.exe" set
 
 START /b cmd /c "%MONGOD%" --dbpath=.mongodbdatabase
 
+ECHO Wating for mongodb to start...
+timeout /t 5 /nobreak
+
 @ECHO OFF
 set MONGO=C:\Program Files\MongoDB\Server\3.2\bin\mongo.exe
 for /r "C:\Program Files\MongoDB" %%a in (*) do if /i "%%~nxa"=="mongo.exe" set "MONGO=%%a"
