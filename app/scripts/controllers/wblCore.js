@@ -218,7 +218,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
     //========================================================================================
     $scope.dblTapEventHandler = function (event) {
         if($(event.target).scope().getInstanceId() == $scope.getInstanceId()){
-            if($scope.getCurrentExecutionMode() <= Enum.availableOnePicks_ExecutionModes.SuperHighClearanceUser){
+            if($scope.getCurrentExecutionMode() < Enum.availableOnePicks_ExecutionModes.LowClearanceUser){
                 if(!$scope.touchRescueFlags.doubleTapTemporarelyDisabled && isBundled_ == 0){
                     $scope.touchRescueFlags.doubleTapTemporarelyDisabled = true;
                     if($scope.getSelectionState() != Enum.availableOnePicks_SelectTypes.AsNotSelected){

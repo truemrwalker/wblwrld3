@@ -48,7 +48,10 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     $scope.formItems = {
         wblDispName: theWblDef.webble.displayname,
         templateList: theWblTemplateList,
-		exportWebbleData: ''
+		exportWebbleData: '',
+		closeBtnTxt: 'Cancel',
+		exportBtnTxt: 'Export',
+		exportDisabled: false
     };
 
     // Information tooltip texts
@@ -106,8 +109,12 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
     //========================================================================================
     $scope.close = function (result) {
         $scope.errorMsg = '';
-        if (result == 'submit') {
-			$timeout(function(){ $modalInstance.close(true); }, 500);
+        if (result == 'export') {
+			$timeout(function(){ $scope.formItems.exportDisabled = true; });
+			$timeout(function(){
+				$scope.formItems.exportBtnTxt = "Exported";
+				$scope.formItems.closeBtnTxt= "Close";
+			}, 1000);
         }
         else{
             $modalInstance.close();

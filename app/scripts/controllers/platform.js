@@ -229,7 +229,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var prevLoadedManifestLibs = [];
 
     // Current Supported mode level
-    var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.LowClearanceUser;
+    var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.HighClearanceUser;
     //var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.SuperHighClearanceUser;
     $scope.getCurrentExecutionMode = function(){return currentExecutionMode_;};
     //SET more complex and found further down
@@ -525,14 +525,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     });
     //-----------------------------------------------------------
     $scope.$on('auth:login', function(event, user) {
-        var hasUserChanged = ($scope.user == undefined || $scope.user.email != user.email);
+        var hasUserChanged = ($scope.user == undefined || $scope.user == null || $scope.user.email != user.email);
         $scope.user = user;
-		untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.askFirstTime;
 
         // Set user platform settings if that is not blocked by overrides
         if (!wblwrldSystemOverrideSettings.ignore_UserSettings && hasUserChanged){
             loadUserSettings();
         }
+        else{ untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.askFirstTime; }
 
         if(wblwrldSystemOverrideSettings.sysLang == ''){
             if (gettextCatalog.currentLanguage != user.languages[0]){
@@ -553,7 +553,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         availableWorkspaces_ = [];
         availableSandboxWebbles_ = [];
 		untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.allowAll;
-		currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.LowClearanceUser;
+		currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.HighClearanceUser;
         $scope.getMenuItem('webbles').sublinks = angular.copy(originalWebbleMenu_);
     });
     //========================================================================================
@@ -1589,15 +1589,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     var downloadWblTemplatePartTwo = function(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList){
 		if(wblTemplateFileList.int[0] == appPaths.webbleCSS){
-			$.ajax({url: corePath + appPaths.webbleCSS,
-				success: function(){
-					$('<link rel="stylesheet" type="text/css" href="' + corePath + appPaths.webbleCSS + '" >').appendTo("head");
-				},
-				complete: function(){
-					if(wblTemplateFileList.int[0] == appPaths.webbleCSS){ wblTemplateFileList.int.splice(0, 1); }
-					loadTemplatesInternalJavaScripts(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
-				}
-			});
+			var wblTemplateCSSFile = wblTemplateFileList.int.splice(0, 1);
+			$('<link rel="stylesheet" type="text/css" href="' + corePath + wblTemplateCSSFile + '" >').appendTo("head");
+			loadTemplatesInternalJavaScripts(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
 		}
 		else{
 			loadTemplatesInternalJavaScripts(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);

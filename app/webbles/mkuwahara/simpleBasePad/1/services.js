@@ -13,29 +13,29 @@
 // This Service cleans some common rude words by replacing characters with asterisks or
 // alter them all together.
 //=======================================================================================
-wblwrld3App.service('cleanupService', function() {
-    return function(wordToMaybeClean){
-        var returningWord = wordToMaybeClean;
-
-        if(returningWord.toLowerCase() == 'fuck'){
-            returningWord = 'f**k';
-        }
-        else if(returningWord.toLowerCase() == 'cunt'){
-            returningWord = 'c**t';
-        }
-        else if(returningWord.toLowerCase() == 'bullshit'){
-            returningWord = 'bs';
-        }
-        else if(returningWord.toLowerCase() == 'satan'){
-            returningWord = 'darn';
-        }
-        else if(returningWord.toLowerCase() == 'shit'){
-            returningWord = 'poo';
-        }
-
-        return returningWord;
-    };
-});
+// wblwrld3App.service('cleanupService', function() {
+//     return function(wordToMaybeClean){
+//         var returningWord = wordToMaybeClean;
+//
+//         if(returningWord.toLowerCase() == 'fuck'){
+//             returningWord = 'f**k';
+//         }
+//         else if(returningWord.toLowerCase() == 'cunt'){
+//             returningWord = 'c**t';
+//         }
+//         else if(returningWord.toLowerCase() == 'bullshit'){
+//             returningWord = 'bs';
+//         }
+//         else if(returningWord.toLowerCase() == 'satan'){
+//             returningWord = 'darn';
+//         }
+//         else if(returningWord.toLowerCase() == 'shit'){
+//             returningWord = 'poo';
+//         }
+//
+//         return returningWord;
+//     };
+// });
 //=======================================================================================
 
 //====================================================================================================================

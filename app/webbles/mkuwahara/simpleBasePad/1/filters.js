@@ -12,11 +12,11 @@
 // STAR WRAPPER FILTER
 // This Filter takes a string and put star characters in the beginning and end of it.
 //=======================================================================================
-wblwrld3App.filter( 'starMe', function () {
-    return function (input) {
-        return ('**' + input + '**');
-    }}
-);
+// wblwrld3App.filter( 'starMe', function () {
+//     return function (input) {
+//         return ('**' + input + '**');
+//     }}
+// );
 //=================================================================================
 
 //====================================================================================================================
