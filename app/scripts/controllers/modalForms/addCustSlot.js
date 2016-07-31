@@ -35,7 +35,7 @@
 // ADD CUSTOM SLOT FORM CONTROLLER
 // This controls the Webbles add custom slots form
 //====================================================================================================================
-ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInstance, $log, $timeout, gettext, Slot, wblView, mathy, strCatcher) {
+ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInstance, $log, $timeout, Enum, gettext, Slot, wblView, mathy, strCatcher, getKeyByValue) {
 
     //=== PROPERTIES ================================================================
     var thisWbl = wblView;
@@ -426,6 +426,31 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
     //========================================================================================
 
 
+	//===================================================================================
+	// Assign Resize Custom Slot
+	// If the user creates a width and height slot as custom slot and previously do not
+	// have any webble resize slots then the custom slot will be used.
+	//===================================================================================
+	var assignResizeCustomSlot = function(newCustomSlot){
+		if(!(thisWbl.scope().getResizeSlots().width) && !(thisWbl.scope().getResizeSlots().height)){
+			if(newCustomSlot.getName().search('width') != -1 || newCustomSlot.getName().search('height') != -1){
+				var elementId = newCustomSlot.getName().substr(0, newCustomSlot.getName().indexOf(':'));
+				if(thisWbl.scope().gimme(elementId+":width") && thisWbl.scope().gimme(elementId+":height")){
+					thisWbl.scope().setResizeSlots(elementId+":width", elementId+":width");
+
+					for(var i = 0, io; io = thisWbl.scope().theInteractionObjects[i]; i++){
+						if(io.scope().getName() == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.Resize)){
+							io.scope().setIsEnabled(true);
+							break;
+						}
+					}
+				}
+			}
+		}
+	};
+	//========================================================================================
+
+
     //========================================================================================
     // Close
     // Closes the modal form and send the resulting content back to the creator
@@ -491,6 +516,7 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
                 );
                 theNewSlot.setIsCustomMade(true);
                 thisWbl.scope().addSlot(theNewSlot);
+				assignResizeCustomSlot(theNewSlot);
 
                 $modalInstance.close(theNewSlot);
             }

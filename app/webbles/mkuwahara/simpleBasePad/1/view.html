@@ -3,10 +3,69 @@
 // Created By: TrueMrWalker
 //===================================================================================================================-->
 
-<div id="basePadFoundation" class="basePadFoundation" ng-style="{'text-align': wblStyles.txtAlign, 'line-height': wblStyles.lineHeight}" ng-controller="simpleBasePadCtrl">
-	<!--<div id="childHolder" class="childHolder"></div>-->
-	<span id="basePadTitle" class="basePadTitle" ng-style="{'position': wblStyles.position, 'left': wblStyles.left, 'margin-left': wblStyles.marginLeft}">{{gimme('basePadText')}}</span>
+<div id="basePadFoundation" class="basePadFoundation" ng-style="{'overflow': wblStyles.overflow}" ng-controller="simpleBasePadCtrl">
+	<div id="textHolder" class="textHolder" ng-style="{'text-align': wblStyles.txtAlign, 'line-height': wblStyles.lineHeight}" >
+		<span id="basePadTitle" class="basePadTitle" ng-style="{'position': wblStyles.position, 'left': wblStyles.left, 'margin-left': wblStyles.marginLeft}">{{gimme('basePadText')}}</span>
+	</div>
 
 </div>
 
 <!--=================================================================================================================-->
+
+<!--************** Primary Main Event-Action Form **************-->
+<!--==============================================================-->
+
+<script type="text/ng-template" id="child-slotconn-manager-form.html">
+	<div id="child-slotconn-manager-form" class="container-fluid padcontent"  data-formclass="cscmform-main">
+
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+			</div>
+			<div class="col-xs-9"><h4 class="formTitle" translate>Base-Pad Slot Connection Manager</h4></div>
+		</div>
+
+		<div class="dividerLineAbove">
+			<div class="row" style="padding-left: 14px; padding-right: 14px;">
+
+				<!--<table id="tableroot" class="tableroot">
+					<thead>
+					<tr id="tableheader" class="tableheader">
+						<th><span>Event</span></th>
+						<th><span>Action</span></th>
+					</tr>
+					</thead>
+
+					<tbody>
+					<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in formProps.EAData track by $index">
+						<td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
+							<ul style="padding-left: 20px;">
+								<li ng-click="openEdit('Event', $parent.$index, $index);" ng-repeat="event in row.eventGroup track by $index"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(event.strVal)}}</span></li>
+								<li ng-click="openEdit('Event', $index, -1);"><span class="addNew">+</span></li>
+							</ul>
+						</td>
+						<td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
+							<ul style="padding-left: 20px;">
+								<li ng-click="openEdit('Action', $parent.$index, $index);" ng-repeat="action in row.actionGroup track by $index"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(action.strVal)}}</span></li>
+								<li ng-click="openEdit('Action', $index, -1);"><span class="addNew">+</span></li>
+							</ul>
+						</td>
+					</tr>
+					</tbody>
+				</table>-->
+			</div>
+
+		</div>
+	</div>
+
+	<div class="dividerLineAbove">
+		<div class="row">
+			<div class="col-xs-12" style="height: 30px;">
+				<span style="color: #95c2ff; font-weight: normal; padding-left: 20px;">{{formProps.info | translate}}</span>
+			</div>
+		</div>
+	</div>
+	</div>
+</script>
+<!--==============================================================-->

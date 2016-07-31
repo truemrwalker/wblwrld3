@@ -724,8 +724,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 										else if(p.originalValType == 'function') {
 											theSlotsToSet[slot] = $scope.dynJSFuncParse(p.key, p.value);
 										}
+										else if(p.originalValType == 'vector') {
+											theSlotsToSet[slot] = [(isNaN(p.value[0]) == false) ? parseFloat(p.value[0]) : theSlots_[slot].getValue()[0], (isNaN(p.value[1]) == false) ? parseFloat(p.value[1]) : theSlots_[slot].getValue()[1]];
+										}
+										else if(p.originalValType == 'number' && !isNaN(p.value)) {
+											theSlotsToSet[slot] = parseFloat(p.value);
+										}
 										else{
-										    theSlotsToSet[slot] = p.value;
+											theSlotsToSet[slot] = p.value;
 										}
                                     }
                                 }
@@ -1272,6 +1278,30 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 	//===================================================================================
 
 
+	//===================================================================================
+	// Assign Resize Custom Slot
+	// If the user creates a width and height slot as custom slot and previously do not
+	// have any webble resize slots then the custom slot will be used.
+	//===================================================================================
+	var assignResizeCustomSlot = function(theSelWbl,newCustomSlot){
+		if(!(theSelWbl.scope().getResizeSlots().width) && !(theSelWbl.scope().getResizeSlots().height)){
+			if(newCustomSlot.getName().search('width') != -1 || newCustomSlot.getName().search('height') != -1){
+				var elementId = newCustomSlot.getName().substr(0, newCustomSlot.getName().indexOf(':'));
+				if(theSelWbl.scope().gimme(elementId+":width") && theSelWbl.scope().gimme(elementId+":height")){
+					theSelWbl.scope().setResizeSlots(elementId+":width", elementId+":width");
+
+					for(var i = 0, io; io = theSelWbl.scope().theInteractionObjects[i]; i++){
+						if(io.scope().getName() == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.Resize)){
+							io.scope().setIsEnabled(true);
+							break;
+						}
+					}
+				}
+			}
+		}
+	};
+	//========================================================================================
+
 
     //*****************************************************************************************************************
     //=== PUBLIC FUNCTIONS ============================================================================================
@@ -1629,6 +1659,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
 								);
 								theNewSlot.setIsCustomMade(true);
 								selWbl.scope().addSlot(theNewSlot);
+								assignResizeCustomSlot(selWbl, theNewSlot);
 							}
 						}
 					}
@@ -2728,6 +2759,16 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $tim
             if(theSlots_[whatSlotName].cssValWatch){
                 theSlots_[whatSlotName].cssValWatch();
             }
+
+			if($scope.getResizeSlots().width == whatSlotName || $scope.getResizeSlots().height == whatSlotName){
+				$scope.setResizeSlots(undefined, undefined);
+				for(var i = 0, io; io = $scope.theInteractionObjects[i]; i++){
+					if(io.scope().getName() == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.Resize)){
+						io.scope().setIsEnabled(false);
+						break;
+					}
+				}
+			}
 
             if(theSlots_[whatSlotName].getIsCustomMade() || whatSlotName == "customContextMenu" || whatSlotName == "customInteractionObjects"){
 				if($scope.wblStateFlags.readyToStoreUndos){ $scope.addUndo({op: Enum.undoOps.removeCustSlot, target: $scope.getInstanceId(), execData: [{slotname: theSlots_[whatSlotName].getName(), slotvalue: theSlots_[whatSlotName].getValue(), slotcat: theSlots_[whatSlotName].getCategory()}]}); }
