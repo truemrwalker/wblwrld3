@@ -41,11 +41,13 @@ function($timeout, gettext, confirm, licenseService){
 
 			scope.$watch('holder', function() {
 
+                var holder = scope.holder || {};
+
 				if (scope.isGroup)
-					scope.groupId = scope.holder && scope.holder.id;
+					scope.groupId = holder.id;
 
 				scope.keyData = {};
-				scope.licenses = scope.holder.auth_keys || [];
+				scope.licenses = holder.auth_keys || [];
 				scope.currLicIndex = -1;
 			});
 
