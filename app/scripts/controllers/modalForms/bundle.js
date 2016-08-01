@@ -35,7 +35,7 @@
 // WEBBLE BUNDLING FORM CONTROLLER
 // This controls the Webbles slot and property form
 //====================================================================================================================
-ww3Controllers.controller('bundleSheetCtrl', function ($scope, $modalInstance, $modal, $log, wblsSlots) {
+ww3Controllers.controller('bundleSheetCtrl', function ($scope, $uibModalInstance, $uibModal, $log, wblsSlots) {
 
     //=== PROPERTIES ================================================================
     $scope.formItems = {
@@ -78,10 +78,10 @@ ww3Controllers.controller('bundleSheetCtrl', function ($scope, $modalInstance, $
                 bundleContent.push({wbl: bw.wbl, slots: selectedSlots});
             }
 
-            $modalInstance.close(bundleContent);
+			$uibModalInstance.close(bundleContent);
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

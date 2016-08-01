@@ -56,7 +56,7 @@
                     <label for="local" translate>Local Computer</label>
                 </fieldset>
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.loadTarget | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.loadTarget | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 
@@ -64,7 +64,7 @@
         <div class="row">
             <div class="col-xs-4"><span class="formTitle" translate>Webble URL:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formItems.wblURL"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.wblURL | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.wblURL | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 
@@ -77,7 +77,7 @@
                     <input id="localFile" name="localFile" type="file" onchange="angular.element(this).scope().localFileChanged(this)" style="visibility: hidden;">
                 </form>
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.localFile | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.localFile | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 

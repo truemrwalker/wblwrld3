@@ -56,13 +56,13 @@
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formitem" translate>New Slot Name:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formitem.sa.nsName"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.sa.nsName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.sa.nsName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formitem" translate>Initiation Value:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formitem.sa.nsValue"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.sa.nsValue | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.sa.nsValue | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 
@@ -77,25 +77,25 @@
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formitem" translate>Visual Element:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="formitem.css.selectedElement" ng-options="elm.n for elm in formitem.css.elements" ng-change="elementChange()"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.css.elements | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.css.elements | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="formitem.css.selectedElement.v != 'none'">
             <div class="col-xs-4"><span class="formitem" translate>Visual Element Name:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" disabled ng-model="formitem.css.elementName"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.css.elementName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.css.elementName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="formitem.css.selectedElement.v != 'none'">
             <div class="col-xs-4"><span class="formitem" translate>Visual Element CSS Attribute:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="formitem.css.selectedElementAttribute" ng-options="elmAttr for elmAttr in formitem.css.elementAttribute" ng-change="elementAttributeChange()"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.css.elementAttribute | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.css.elementAttribute | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="formitem.css.selectedElementAttribute != '---'">
             <div class="col-xs-4"><span class="formitem" translate>Slot Full Name:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" disabled ng-model="formitem.css.nsFullName"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.css.nsFullName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.css.nsFullName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 
@@ -110,13 +110,13 @@
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formitem" translate>New Merge-Combo Slot Name:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formitem.merge.nsName"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.merge.nsName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.merge.nsName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formitem" translate>Slots to pick:</span></div>
             <div class="col-xs-7"><select class="formitem" multiple ng-multiple="true" ng-size="{{formitem.merge.slotList.length}}" ng-model="formitem.merge.selectedSlots" ng-options="slot for slot in formitem.merge.slotList"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.merge.slotlist | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.merge.slotlist | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 

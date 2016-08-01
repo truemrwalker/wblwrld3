@@ -35,7 +35,7 @@
 // LOAD WEBBLE FORM CONTROLLER
 // This controls the form for uploading Webble template files
 //====================================================================================================================
-ww3Controllers.controller('loadWebbleSheetCtrl', function ($scope, $modalInstance, $log, gettext, localStorageService) {
+ww3Controllers.controller('loadWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, gettext, localStorageService) {
 
     //=== PROPERTIES ================================================================
 
@@ -158,14 +158,14 @@ ww3Controllers.controller('loadWebbleSheetCtrl', function ($scope, $modalInstanc
         $scope.errorMsg = '';
         if (result == 'submit') {
             if($scope.formItems.selectedLocalFile){
-                $modalInstance.close($scope.formItems.selectedLocalFile);
+				$uibModalInstance.close($scope.formItems.selectedLocalFile);
             }
             else{
-                $modalInstance.close({wblUrl: $scope.formItems.wblURL});
+				$uibModalInstance.close({wblUrl: $scope.formItems.wblURL});
             }
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

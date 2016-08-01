@@ -71,49 +71,49 @@
 		<div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Display Name:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.displayname | translate}}</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.displayname | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.displayname | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Instance Id:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.instanceid | translate}}</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.instanceid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.instanceid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Definition Id:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.defid | translate}}</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.defid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.defid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Definition Author:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.author | translate}}</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.author | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.author | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Definition Description:</span></div>
 			<div class="col-xs-8"><span style="font-weight: normal; white-space: pre-wrap;" ng-bind-html='formData.description | translate'></span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.description | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.description | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Definition Keywords:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.keywords | translate}}</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.keywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.keywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Template ID:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.templateid | translate}}</span><button ng-show="formData.templateid!='bundleTemplate'" style="float: right;" ng-click="makeCopy(formData.templateid);" class="btn btn-primary btn-xs" translate>Create Sandbox Copy</button></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.templateid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.templateid | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Template Revision:</span></div>
             <div class="col-xs-8"><span style="font-weight: normal;">{{formData.templaterevision | translate}}</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{tooltip.templaterevision | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.templaterevision | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
 		<div class="row keepTheDistanceBelow">

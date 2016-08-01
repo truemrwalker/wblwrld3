@@ -35,7 +35,7 @@
 // INFO MESSAGE MODAL POPUP CONTROLLER
 // This controls the the message boxes
 //====================================================================================================================
-ww3Controllers.controller('infoMsgCtrl', function ($scope, $modalInstance, $log, infoTitle, infoContent) {
+ww3Controllers.controller('infoMsgCtrl', function ($scope, $uibModalInstance, $log, infoTitle, infoContent) {
 
     //=== PROPERTIES ================================================================
     $scope.title = infoTitle;
@@ -62,7 +62,7 @@ ww3Controllers.controller('infoMsgCtrl', function ($scope, $modalInstance, $log,
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close(null);
+		$uibModalInstance.close(null);
     };
     //========================================================================================
 

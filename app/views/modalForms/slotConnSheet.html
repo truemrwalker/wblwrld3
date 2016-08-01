@@ -49,18 +49,18 @@
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Child Slot:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="selectedSlots.inChild" ng-options="cslot.key as cslot.name group by cslot.cat for cslot in childSlots" ng-change="updatePossibleMergeComboData()"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.childSlot | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltips.childSlot | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Parent Slot:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="selectedSlots.inParent" ng-options="pslot.key as pslot.name group by pslot.cat for pslot in parentSlots" ng-change="updatePossibleMergeComboData()"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.parentSlot | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltips.parentSlot | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="isMergedComboSlotSelected()">
             <div class="col-xs-11"><span class="formTitle" translate>Merged Combo Slot channels:</span></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.comboSlot | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltips.comboSlot | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="isMergedComboSlotSelected()">
@@ -94,7 +94,7 @@
                 <input id="slotConnReceive" class="formitem" type="checkbox" ng-model="slotConnDir.receive" />
                 <label for="slotConnReceive" translate>Receive</label>
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltips.slotDir | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltips.slotDir | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 

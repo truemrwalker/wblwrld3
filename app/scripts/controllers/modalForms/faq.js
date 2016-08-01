@@ -35,7 +35,7 @@
 // PLATFORM FAQ FORM CONTROLLER
 // This controls the form for managing FAQ
 //====================================================================================================================
-ww3Controllers.controller('faqSheetCtrl', function ($scope, $modalInstance, $log, $modal, gettext, currUser, dbService, Enum) {
+ww3Controllers.controller('faqSheetCtrl', function ($scope, $uibModalInstance, $log, $uibModal, gettext, currUser, dbService, Enum) {
 
     //=== PROPERTIES ================================================================
 
@@ -100,7 +100,7 @@ ww3Controllers.controller('faqSheetCtrl', function ($scope, $modalInstance, $log
     // question, if confirmed then the server is called for question deletion.
     //========================================================================================
     $scope.deleteQ = function(whatFAQ){
-        var modalInstance = $modal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
+        var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
 
         modalInstance.result.then(function () {
             dbService.deleteFAQ(whatFAQ).then(function(data){
@@ -187,7 +187,7 @@ ww3Controllers.controller('faqSheetCtrl', function ($scope, $modalInstance, $log
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close(null);
+		$uibModalInstance.close(null);
     };
     //========================================================================================
 

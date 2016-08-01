@@ -297,7 +297,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 
 		if(isHor && !isVert){
 			for(var i = 0, c; c = indexSortedChildren[i]; i++){
-				if(!c.scope().getResizeSlots().width){ continue; }
+				if(!c.scope().getResizeSlots().width){ displayBubbleText(c, "I do not have any accurate width or height so I will be ignored"); continue; }
 				c.scope().set("root:left", currentLeft);
 				c.scope().set("root:top", padding[1]);
 				c.scope().basePadTracker.pos = [parseInt(c.scope().gimme("root:left")), parseInt(c.scope().gimme("root:top"))];
@@ -306,7 +306,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		}
 		else if(!isHor && isVert){
 			for(var i = 0, c; c = indexSortedChildren[i]; i++){
-				if(!c.scope().getResizeSlots().height){ continue; }
+				if(!c.scope().getResizeSlots().height){ displayBubbleText(c, "I do not have any accurate width or height so I will be ignored"); continue; }
 				c.scope().set("root:top", currentTop);
 				c.scope().set("root:left", padding[0]);
 				c.scope().basePadTracker.pos = [parseInt(c.scope().gimme("root:left")), parseInt(c.scope().gimme("root:top"))];
@@ -316,7 +316,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		else if(isHor && isVert && !isVertPrio){
 			var topCHeight = 0;
 			for(var i = 0, c; c = indexSortedChildren[i]; i++){
-				if(!c.scope().getResizeSlots().width || !c.scope().getResizeSlots().height){ continue; }
+				if(!c.scope().getResizeSlots().width || !c.scope().getResizeSlots().height){ displayBubbleText(c, "I do not have any accurate width or height so I will be ignored"); continue; }
 				if(currentLeft > padding[0] && (currentLeft + parseInt(c.scope().gimme(c.scope().getResizeSlots().width)) > parseInt($scope.gimme("basePadFoundation:width")))){
 					currentLeft = padding[0];
 					currentTop += (topCHeight + padding[1]);
@@ -333,7 +333,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		else if(isHor && isVert && isVertPrio){
 			var topCWidth = 0;
 			for(var i = 0, c; c = indexSortedChildren[i]; i++){
-				if(!c.scope().getResizeSlots().width || !c.scope().getResizeSlots().height){ continue; }
+				if(!c.scope().getResizeSlots().width || !c.scope().getResizeSlots().height){ displayBubbleText(c, "I do not have any accurate width or height so I will be ignored"); continue; }
 				if(currentTop > padding[1] && (currentTop + parseInt(c.scope().gimme(c.scope().getResizeSlots().height)) > parseInt($scope.gimme("basePadFoundation:height")))){
 					currentTop = padding[1];
 					currentLeft += (topCWidth + padding[0]);
@@ -494,6 +494,20 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 	};
 	//========================================================================================
 
+	//========================================================================================
+	// Close Child Slot Conn Manager Form
+	//========================================================================================
+	var displayBubbleText = function(whatWbl, whatTxt){
+		if ((parseInt(whatWbl.scope().getWebbleConfig(), 10) & parseInt(Enum.bitFlags_WebbleConfigs.NoBubble, 10)) == 0){
+			$scope.setBubbleTxt(whatTxt);
+			var absPos = whatWbl.scope().getWblAbsPosInPixels(whatWbl.scope().theView);
+			$scope.setBubbleTxtPos({x: absPos.x, y: absPos.y}, whatWbl.scope().theView);
+			$scope.setBubbleTxtVisibility(true, 3500);
+		}
+	}
+	//========================================================================================
+
+
 
 	//========================================================================================
 	// Close Child Slot Conn Manager Form
@@ -640,7 +654,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 // EVENT ACTION MAIN FORM CONTROLLER
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
-wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $modalInstance, $timeout, Slot, Enum, isEmpty, props) {
+wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance, $timeout, Slot, Enum, isEmpty, props) {
 	$scope.formProps = {
 		data: [],
 		info: "Nothing to say"
@@ -653,10 +667,10 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $modalInstance, $
 	//========================================================================================
 	$scope.close = function (result) {
 		if(result == 'cancel'){
-			$modalInstance.close(null);
+			$uibModalInstance.close(null);
 		}
 		else if(result == 'submit'){
-			$modalInstance.close($scope.formProps.data);
+			$uibModalInstance.close($scope.formProps.data);
 		}
 	};
 	//========================================================================================

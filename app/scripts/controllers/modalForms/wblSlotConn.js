@@ -35,7 +35,7 @@
 // WEBBLE SLOT CONNECTION FORM CONTROLLER
 // This controls the Webbles slot connection form
 //====================================================================================================================
-ww3Controllers.controller('slotConnSheetCtrl', function ($scope, $modalInstance, $log, childSlots, parentSlots, currSelected, slotConnDir, gettext) {
+ww3Controllers.controller('slotConnSheetCtrl', function ($scope, $uibModalInstance, $log, childSlots, parentSlots, currSelected, slotConnDir, gettext) {
 
     //=== PROPERTIES ================================================================
 
@@ -194,10 +194,10 @@ ww3Controllers.controller('slotConnSheetCtrl', function ($scope, $modalInstance,
                 }
             }
 
-            $modalInstance.close([$scope.selectedSlots, $scope.slotConnDir]);
+			$uibModalInstance.close([$scope.selectedSlots, $scope.slotConnDir]);
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

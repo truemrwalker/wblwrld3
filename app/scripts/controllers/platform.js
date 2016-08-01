@@ -38,7 +38,7 @@
 // This is the main controller for the Webble World platform
 //
 //====================================================================================================================
-ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $location, $modal, $log, $q, $http, $route, $filter, $window, $compile, $timeout, localStorageService, gettext, gettextCatalog, Enum, wwConsts, dbService, menuItemsFactoryService, appPaths, bitflags, getKeyByValue, getUrlVars, fromKeyCode, isValidEnumValue, isValidStyleValue, getCSSClassPropValue, jsonQuery, Slot, authService, valMod, socket, strCatcher, isExist, mathy) {    // DEBUG Mode announcement if logging is not commented out, and even with an alert if this is a non-localhost version
+ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $location, $uibModal, $log, $q, $http, $route, $filter, $window, $compile, $timeout, localStorageService, gettext, gettextCatalog, Enum, wwConsts, dbService, menuItemsFactoryService, appPaths, bitflags, getKeyByValue, getUrlVars, fromKeyCode, isValidEnumValue, isValidStyleValue, getCSSClassPropValue, jsonQuery, Slot, authService, valMod, socket, strCatcher, isExist, mathy) {    // DEBUG Mode announcement if logging is not commented out, and even with an alert if this is a non-localhost version
     $log.log('This application currently run in DEBUG mode.');
 
     //=== PLATFORM PROPERTIES =============================================
@@ -1194,7 +1194,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if (authPrompt != null)
             return authPrompt;
 
-        authPrompt = $modal.open({
+        authPrompt = $uibModal.open({
             templateUrl: 'views/login.html',
             backdrop: 'static',
             controller: 'LoginCtrl',
@@ -1804,7 +1804,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						}
 					}
 					else {
-						var modalInstance = $modal.open({templateUrl: 'views/modalForms/allowNonTrustedSomething.html', windowClass: 'modal-wblwrldform small'});
+						var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/allowNonTrustedSomething.html', windowClass: 'modal-wblwrldform small'});
 						modalInstance.result.then(function () {
 							webbleDefMetaDataMemory_[whatWblDefId] = {rating: data.rating, ratingCount: data.rating_count, image: data.webble.image, created: data.created, updated: data.updated, isShared: data.is_shared, isTrusted: data.is_trusted, isVerified: data.is_verified};
 							$scope.loadWebbleFromDef(data, whatCallBackMethod);
@@ -2769,7 +2769,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					$('.quickInfoBox').hide(); $scope.qimVisibility = false;
 					timeKeeper = (new Date()).getTime();
 					if(!$scope.isLoggingEnabled){
-						unqueueUntriggeredHandlersModal = $modal.open({templateUrl: 'views/modalForms/longTimeWaitingKillPerhaps.html', windowClass: 'modal-wblwrldform small'});
+						unqueueUntriggeredHandlersModal = $uibModal.open({templateUrl: 'views/modalForms/longTimeWaitingKillPerhaps.html', windowClass: 'modal-wblwrldform small'});
 						unqueueUntriggeredHandlersModal.result.then(function () {
 							$scope.showQIM(gettext("You killed the Webble processing and might now continue working, but don't blame us if any of the unfinished Webbles do not work as you expect. :-)"), 4500, {w: 300, h: 100}, undefined, wwConsts.lightPalette[0].value);
 							queueOfHandlersToBeTriggered = [];
@@ -3183,7 +3183,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 							}
 						}
 						else{
-							var modalInstance = $modal.open({templateUrl: 'views/modalForms/allowNonTrustedSomething.html', windowClass: 'modal-wblwrldform small'});
+							var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/allowNonTrustedSomething.html', windowClass: 'modal-wblwrldform small'});
 							modalInstance.result.then(function () {
 								loadWebbleFromDef_AfterTrustCheck(whatWblDef, whatCallbackMethod);
 							}, function () {
@@ -4362,7 +4362,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         isFormOpen_ = true;
-        var modalInstance = $modal.open(modalOptions);
+        var modalInstance = $uibModal.open(modalOptions);
 		modalInstance.opened.then(function() { if(whatForm == Enum.aopForms.infoMsg){ platformAccessedMI = modalInstance; } });
         modalInstance.result.then(function (returnValue) {
             if(callbackFunc != undefined && callbackFunc != null){
@@ -4715,7 +4715,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         else if(sublink == 'newws' || (whatKeys.theAltKey && whatKeys.theKey == 'N')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 if(currWS_ && currWS_.webbles. length > 0){
-                    var modalInstance = $modal.open({templateUrl: 'views/modalForms/clearSomething.html', windowClass: 'modal-wblwrldform small'});
+                    var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/clearSomething.html', windowClass: 'modal-wblwrldform small'});
 					modalInstance.opened.then(function() { isFormOpen_ = true; platformAccessedMI = modalInstance; });
                     modalInstance.result.then(function () {
                         $scope.setEmitLockEnabled(true);
@@ -4857,7 +4857,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 if(currWS_ && currWS_.id != undefined){
                     if(currWS_.creator == $scope.user.name.full || currWS_.creator == $scope.user.username){
-                        var modalInstance = $modal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
+                        var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
 
                         modalInstance.result.then(function () {
                             dbService.deleteWS(currWS_.id).then(function(data){
@@ -4876,7 +4876,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     }
                     else{
                         $scope.showQIM(gettext("You Do not own this Workspace, and can therefore not delete it. But you can remove yourself as a Workspace collaborator"), 4000, {w: 250, h: 90});
-                        var modalInstance = $modal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
+                        var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
 
                         modalInstance.result.then(function () {
                             dbService.removeMeAsWSCollaborator(currWS_.id).then(function(data){
@@ -5191,6 +5191,5 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	}
 
     platformCtrlSetup();
-
 });
 //====================================================================================================================

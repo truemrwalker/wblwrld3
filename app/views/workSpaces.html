@@ -43,9 +43,9 @@
 
 	<!--THESE ARE ICONS FOR INFORMING USER OF CURRENT WORKSPACE STATE-->
     <div style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
-        <img src="images/icons/untrusted.png" ng-show="getIsUntrustedWblsExisting()" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
+        <img src="images/icons/untrusted.png" ng-show="getIsUntrustedWblsExisting()" tooltip-placement="left" tooltip-append-to-body="true" uib-tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
 		<br>
-		<img src="images/icons/sandbox.png" ng-show="getIsSandboxPresent()" tooltip-placement="left" tooltip-append-to-body="true" tooltip="{{sandboxPresentIconInfo | translate}} {{getListAsStringOfLoadedSandboxWebbles()}}">
+		<img src="images/icons/sandbox.png" ng-show="getIsSandboxPresent()" tooltip-placement="left" tooltip-append-to-body="true" uib-tooltip="{{sandboxPresentIconInfo | translate}} {{getListAsStringOfLoadedSandboxWebbles()}}">
     </div>
 
     <!--THIS IS A CONTAINER FOR MULTI WEBBLE PROPERTY FORM (RESIZABLE DOES NOT WORK WITH INCLUDE, THEREFORE THE INLINE SOLUTION)-->

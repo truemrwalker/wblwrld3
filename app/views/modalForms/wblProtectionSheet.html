@@ -49,7 +49,7 @@
         <div class="row keepTheDistanceBelow" ng-repeat="prot in wblPrtct" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
             <div class="col-xs-6"><span class="formTitle">{{prot.label | translate}}</span></div>
             <div class="col-xs-5"><input class="formitem" type="checkbox" ng-model="prot.value" style="padding-right: 20px;" /></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{prot.tooltip | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{prot.tooltip | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 

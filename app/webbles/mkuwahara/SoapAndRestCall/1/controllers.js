@@ -510,7 +510,7 @@ wblwrld3App.controller('soapClientCtrl', function($scope, $log, Slot, Enum, dbSe
 // Add Service Parameter Form Controller
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
-wblwrld3App.controller('addServiceParamForm_Ctrl', function($scope, $log, $modalInstance, $timeout, Slot, Enum, props) {
+wblwrld3App.controller('addServiceParamForm_Ctrl', function($scope, $log, $uibModalInstance, $timeout, Slot, Enum, props) {
 
     //=== PROPERTIES ====================================================================
     $scope.formitem = {
@@ -548,10 +548,10 @@ wblwrld3App.controller('addServiceParamForm_Ctrl', function($scope, $log, $modal
     //========================================================================================
     $scope.close = function (result) {
       if(result == 'cancel'){
-        $modalInstance.close(null);
+		  $uibModalInstance.close(null);
       }
       else if(result == 'submit'){
-        $modalInstance.close($scope.formitem.nsName);
+		  $uibModalInstance.close($scope.formitem.nsName);
       }
     };
     //========================================================================================

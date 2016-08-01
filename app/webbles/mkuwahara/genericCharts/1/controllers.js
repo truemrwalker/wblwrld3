@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal, $window, Slot, Enum, isEmpty, jsonQuery, isExist) {
+wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibModal, $window, Slot, Enum, isEmpty, jsonQuery, isExist) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -680,7 +680,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $modal,
 			if(chartType == jsonQuery.getArrayIndexByObjValue(chartTypes, chartTypes.scatterPlot)){
 				var cd = $scope.gimme("chartData");
 				if(!(cd.length > 0 && cd[0].x != undefined  && cd[0].y != undefined)){
-					var modalInstance = $modal.open({templateUrl: 'askDataConversion-form.html', windowClass: 'modal-wblwrldform small'});
+					var modalInstance = $uibModal.open({templateUrl: 'askDataConversion-form.html', windowClass: 'modal-wblwrldform small'});
 					modalInstance.result.then(function () {
 						$timeout(function(){
 							var cd = $scope.gimme("chartData");

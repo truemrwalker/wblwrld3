@@ -35,7 +35,7 @@
 // PUBLISH WEBBLE FORM CONTROLLER
 // This controls the form for uploading Webble template files
 //====================================================================================================================
-ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $modalInstance, $log, $modal, $timeout, dbService, localStorageService, gettext, formContent, jsonQuery) {
+ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, $uibModal, $timeout, dbService, localStorageService, gettext, formContent, jsonQuery) {
 
     //=== PROPERTIES ================================================================
 
@@ -149,7 +149,7 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $modalInst
         }
 
         dbService.publishWebbleDef(theWblDef, groups).then(function(data){
-            $modalInstance.close(returnData);
+			$uibModalInstance.close(returnData);
         },function(eMsg){
             $scope.errorMsg = eMsg;
         });
@@ -171,7 +171,7 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $modalInst
                 publishTheWebble();
             }
             else{
-                $modalInstance.close(returnData);
+				$uibModalInstance.close(returnData);
             }
         },function(eMsg){
             $scope.errorMsg = eMsg;
@@ -285,7 +285,7 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $modalInst
                     publishTheWebble();
                 }
                 else{
-                    var modalInstance = $modal.open({templateUrl: 'views/modalForms/publishSandboxWblsToo.html', windowClass: 'modal-wblwrldform small'});
+                    var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/publishSandboxWblsToo.html', windowClass: 'modal-wblwrldform small'});
 
                     modalInstance.result.then(function () {
                         returnData.sandboxWblPublished = true;
@@ -296,11 +296,11 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $modalInst
             else{
                 var blob = new Blob([JSON.stringify(theWblDef)], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, theWblDef.webble.defid + ".json");
-                $modalInstance.close(returnData);
+				$uibModalInstance.close(returnData);
             }
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

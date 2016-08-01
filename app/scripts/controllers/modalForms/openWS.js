@@ -35,7 +35,7 @@
 // WEBBLE SLOT CONNECTION FORM CONTROLLER
 // This controls the Webbles slot connection form
 //====================================================================================================================
-ww3Controllers.controller('openWSSheetCtrl', function ($scope, $modalInstance, $log, $timeout, gettext, availWS) {
+ww3Controllers.controller('openWSSheetCtrl', function ($scope, $uibModalInstance, $log, $timeout, gettext, availWS) {
 
     //=== PROPERTIES ================================================================
 
@@ -87,10 +87,10 @@ ww3Controllers.controller('openWSSheetCtrl', function ($scope, $modalInstance, $
     //========================================================================================
     $scope.close = function (result) {
         if (result == 'submit') {
-            $modalInstance.close($scope.formItems.selectedWS);
+			$uibModalInstance.close($scope.formItems.selectedWS);
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

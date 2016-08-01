@@ -2248,7 +2248,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
 // EVENT ACTION MAIN FORM CONTROLLER
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
-wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $modalInstance, $timeout, Slot, Enum, props, isEmpty) {
+wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $uibModalInstance, $timeout, Slot, Enum, props, isEmpty) {
     $scope.formProps = {
         EAData: [
         ]
@@ -2465,10 +2465,10 @@ wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $modalInstance, $t
     //========================================================================================
     $scope.close = function (result) {
         if(result == 'cancel'){
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
         else if(result == 'submit'){
-            $modalInstance.close($scope.formProps.EAData);
+			$uibModalInstance.close($scope.formProps.EAData);
         }
     };
     //========================================================================================
@@ -2489,7 +2489,7 @@ wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $modalInstance, $t
 // EVENT ACTION SUB FORM CONTROLLER
 // This is the controller for this Webbles Editing Event / Action Form
 //=======================================================================================
-wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $modalInstance, Slot, Enum, props) {
+wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $uibModalInstance, Slot, Enum, props) {
 
     $scope.formProps = {
         type: props.editType,
@@ -2575,14 +2575,14 @@ wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $modalInstance, S
     //========================================================================================
     $scope.close = function (result) {
         if(result == 'cancel'){
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
         else if(result == 'submit'){
-            $modalInstance.close($scope.formProps);
+			$uibModalInstance.close($scope.formProps);
         }
         else if(result == 'delete'){
             $scope.formProps.targetParams.currentSelected = 'Target Undefined'
-            $modalInstance.close($scope.formProps);
+			$uibModalInstance.close($scope.formProps);
         }
     };
     //========================================================================================
@@ -2600,7 +2600,7 @@ wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $modalInstance, S
 // EVENT ACTION SUB SUB FORM CONTROLLER
 // This is the controller for this Webbles Editing specific items Form
 //=======================================================================================
-wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
 
     $scope.formProps = {
         eaType: props.eaType,
@@ -3219,7 +3219,7 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $modalInstance, S
     //========================================================================================
     $scope.close = function (result) {
         if(result == 'cancel'){
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
         else if(result == 'submit'){
             if($scope.formProps.previousSelectedDependencies.selectedTarget == 'Platform' && $scope.formProps.currentSelected == $scope.lists.platformEventItems[0]){
@@ -3243,7 +3243,7 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $modalInstance, S
                 }
             }
 
-            $modalInstance.close($scope.formProps);
+			$uibModalInstance.close($scope.formProps);
         }
     };
     //========================================================================================

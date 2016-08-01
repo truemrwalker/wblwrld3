@@ -35,7 +35,7 @@
 // WORK SURFACE CONTROLLER (WorkSpacesCtrl)
 // This is the controller for the work surface where workspaces live (which in turn have room for webbles)
 //====================================================================================================================
-ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $modal, $timeout, $rootScope, $location, wwConsts, dbService, localStorageService, Enum, bitflags, gettext){
+ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $uibModal, $timeout, $rootScope, $location, wwConsts, dbService, localStorageService, Enum, bitflags, gettext){
 
     //=== PROPERTIES ================================================================
     //---Bubble Text props--------------------

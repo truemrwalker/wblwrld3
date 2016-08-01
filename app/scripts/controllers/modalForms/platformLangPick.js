@@ -35,7 +35,7 @@
 // PLATFORM PROPERTIES FORM CONTROLLER
 // This controls the form for managing platform properties
 //====================================================================================================================
-ww3Controllers.controller('platformLangPickSheetCtrl', function ($scope, $modalInstance, $log, $filter, gettext, gettextCatalog) {
+ww3Controllers.controller('platformLangPickSheetCtrl', function ($scope, $uibModalInstance, $log, $filter, gettext, gettextCatalog) {
 
     //=== PROPERTIES ================================================================
 
@@ -93,10 +93,10 @@ ww3Controllers.controller('platformLangPickSheetCtrl', function ($scope, $modalI
                 gettextCatalog.currentLanguage = $scope.formItems.selectedLanguage;
             }
 
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

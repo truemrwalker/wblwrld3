@@ -35,7 +35,7 @@
 // EXPORT WEBBLE FORM CONTROLLER
 // This controls the form for exporting Webble to the local computer incl code
 //====================================================================================================================
-ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInstance, $log, $modal, $timeout, dbService, localStorageService, gettext, formContent) {
+ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, $uibModal, $timeout, dbService, localStorageService, gettext, formContent) {
 
     //=== PROPERTIES ================================================================
 
@@ -117,7 +117,7 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $modalInsta
 			}, 1000);
         }
         else{
-            $modalInstance.close();
+			$uibModalInstance.close();
         }
     };
     //========================================================================================

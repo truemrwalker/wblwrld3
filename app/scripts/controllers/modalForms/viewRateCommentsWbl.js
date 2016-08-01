@@ -35,7 +35,7 @@
 // WEBBLE SLOT CONNECTION FORM CONTROLLER
 // This controls the Webbles slot connection form
 //====================================================================================================================
-ww3Controllers.controller('viewRateCommentsWblSheetCtrl', function ($scope, $modalInstance, $log, gettext, dbService, wblDefData) {
+ww3Controllers.controller('viewRateCommentsWblSheetCtrl', function ($scope, $uibModalInstance, $log, gettext, dbService, wblDefData) {
 
     //=== PROPERTIES ================================================================
     $scope.wblDefId = wblDefData.wblDefId;
@@ -115,7 +115,7 @@ ww3Controllers.controller('viewRateCommentsWblSheetCtrl', function ($scope, $mod
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-		$modalInstance.close(null);
+		$uibModalInstance.close(null);
     };
     //========================================================================================
 

@@ -49,13 +49,13 @@
         <div class="row keepTheDistanceBelow" ng-show="formItems.isSameAuthor">
             <div class="col-xs-4"><span class="formTitle" translate>Current Webble Definition ID:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" disabled ng-model="formItems.currDefId"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.currDefId | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currDefId | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>New Webble Definition ID:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formItems.newDefId"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.newDefId | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.newDefId | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
@@ -68,37 +68,37 @@
                     <label for="local" translate>Local Computer</label>
                 </fieldset>
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.saveTarget | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.saveTarget | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Display Name:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formItems.currDisplayName"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.currDisplayName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currDisplayName | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Description:</span></div>
             <div class="col-xs-7"><textarea class="formitem" rows="3" ng-model="formItems.currDesc"></textarea></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.currDesc | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currDesc | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Keywords:</span></div>
             <div class="col-xs-7"><input class="formitem" type="text" ng-model="formItems.currKeywords"></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.currKeywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currKeywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Add Publishing Groups:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="formItems.selectedPubGroups" multiple ng-options="pubGr.name for pubGr in formItems.pubGroups" style="padding-left: 3px; padding-top: 1px; width: 100%"></select></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.currPubGroups | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currPubGroups | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="isOnlineSelected()">
             <div class="col-xs-4"><span class="formTitle" translate>Image View:</span></div>
             <div class="col-xs-7"><img class="img-responsive" id="imgView" ng-src="{{formItems.currImg}}"/></div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.imgView | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.imgView | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="isOnlineSelected()">
@@ -111,7 +111,7 @@
                     <label for="custom" translate>Custom</label>
                 </fieldset>
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.imgTypeSelect | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.imgTypeSelect | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow" ng-show="isOnlineSelected() && isCustomSelected()">
@@ -121,7 +121,7 @@
                     <input id="customFile" type="file" onchange="angular.element(this).scope().localFileChanged(this)">
                 </form>
             </div>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{infoTooltip.imgPick | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.imgPick | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
     </div>
 

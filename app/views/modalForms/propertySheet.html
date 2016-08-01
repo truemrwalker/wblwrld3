@@ -55,7 +55,7 @@
     </div>
 
     <div class="row keepTheDistanceBelow" ng-hide="item.deleteRequest == true || item.disabledSettings == 2" ng-repeat="item in props" ng-if="item.cat == cat" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
-        <div class="col-xs-3" tooltip-placement="right" tooltip="{{item.key;}}" ng-click="copyToClipboard(item.key)"><span class="formTitle">{{item.name | translate}}:</span></div>
+        <div class="col-xs-3" tooltip-placement="right" uib-tooltip="{{item.key;}}" ng-click="copyToClipboard(item.key)"><span class="formTitle">{{item.name | translate}}:</span></div>
 
         <div class="col-xs-6" ng-switch on="item.inputType">
             <!--CheckBox-->
@@ -186,9 +186,9 @@
                 <iframe style="width: 95%; height: 150px;" src="{{item.value}}"></iframe>
             </div>
         </div>
-        <div class="col-xs-1" ng-show="item.isShared != undefined" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{isSharedTooltipInfo | translate}}"><input class="formitem" type="checkbox" ng-model="item.isShared" /></div>
-        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{item.tooltipDesc | translate}}" ng-click="showMoreReadable(item);"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
-        <div class="col-xs-1" ng-show="item.isCustom" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
+        <div class="col-xs-1" ng-show="item.isShared != undefined" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{isSharedTooltipInfo | translate}}"><input class="formitem" type="checkbox" ng-model="item.isShared" /></div>
+        <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{item.tooltipDesc | translate}}" ng-click="showMoreReadable(item);"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+        <div class="col-xs-1" ng-show="item.isCustom" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
     </div>
 </div>
 

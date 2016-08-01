@@ -35,7 +35,7 @@
 // PLATFORM PROPERTIES FORM CONTROLLER
 // This controls the form for managing platform properties
 //====================================================================================================================
-ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInstance, $log, gettext, platformProps, Enum) {
+ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $uibModalInstance, $log, gettext, platformProps, Enum) {
 
     //=== PROPERTIES ================================================================
 
@@ -97,10 +97,10 @@ ww3Controllers.controller('platformPropsSheetCtrl', function ($scope, $modalInst
     //========================================================================================
     $scope.close = function (result) {
         if (result == 'submit') {
-            $modalInstance.close($scope.formItems);
+			$uibModalInstance.close($scope.formItems);
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

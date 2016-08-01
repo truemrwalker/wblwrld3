@@ -35,7 +35,7 @@
 // WEBBLE PROPERTIES FORM CONTROLLER
 // This controls the Webbles slot and property form
 //====================================================================================================================
-ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance, $modal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext, valMod) {
+ww3Controllers.controller('propertySheetCtrl', function ($scope, $uibModalInstance, $uibModal, $log, Enum, templateId, props, colorService, gettextCatalog, gettext, valMod) {
 
     //=== PROPERTIES ================================================================
 
@@ -338,7 +338,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
 			size: 'md'
 		};
 
-		var modalInstance = $modal.open(modalOptions);
+		var modalInstance = $uibModal.open(modalOptions);
 	};
 	//========================================================================================
 
@@ -348,7 +348,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
     // deletes the custom slot which index is provided in the call.
     //========================================================================================
     $scope.deleteSlotRequest = function(propIndex){
-        var modalInstance = $modal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
+        var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
 
         modalInstance.result.then(function () {
             $scope.props[propIndex]['deleteRequest'] = true;
@@ -380,11 +380,11 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $modalInstance,
     $scope.close = function (result) {
         if (result == 'submit') {
             $scope.props['deleteOnly'] = false;
-            $modalInstance.close($scope.props);
+			$uibModalInstance.close($scope.props);
         }
         else{
             $scope.props['deleteOnly'] = true;
-            $modalInstance.close($scope.props);
+			$uibModalInstance.close($scope.props);
         }
     };
     //========================================================================================

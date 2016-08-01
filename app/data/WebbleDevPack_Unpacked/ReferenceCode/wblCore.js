@@ -35,7 +35,7 @@
 // WEBBLE CORE CONTROLLER
 // This is the controller for the core of a webble
 //====================================================================================================================
-ww3Controllers.controller('webbleCoreCtrl', function ($scope, $modal, $log, $timeout, gettextCatalog, socket, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy, isExist) {
+ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $timeout, gettextCatalog, socket, dateFilter, Enum, wwConsts, localStorageService, Slot, bitflags, jsonQuery, isValidStyleValue, getKeyByValue, colorService, valMod, gettext, strCatcher, isEmpty, mathy, isExist) {
 
 	//=== WEBBLE CORE PROPERTIES ================================================================
 	// Unique instance Id

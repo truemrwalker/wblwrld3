@@ -35,7 +35,7 @@
 // ADD CUSTOM SLOT FORM CONTROLLER
 // This controls the Webbles add custom slots form
 //====================================================================================================================
-ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInstance, $log, $timeout, Enum, gettext, Slot, wblView, mathy, strCatcher, getKeyByValue) {
+ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $uibModalInstance, $log, $timeout, Enum, gettext, Slot, wblView, mathy, strCatcher, getKeyByValue) {
 
     //=== PROPERTIES ================================================================
     var thisWbl = wblView;
@@ -518,7 +518,7 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
                 thisWbl.scope().addSlot(theNewSlot);
 				assignResizeCustomSlot(theNewSlot);
 
-                $modalInstance.close(theNewSlot);
+				$uibModalInstance.close(theNewSlot);
             }
             else{
                 $scope.formProps.errorMsgColor = 'red';
@@ -528,7 +528,7 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $modalInst
             }
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

@@ -35,7 +35,7 @@
 // SEARCH WEBBLE FORM CONTROLLER
 // This controls the form for browsing and searching for Webbles online
 //====================================================================================================================
-ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $modalInstance, $modal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope, jsonQuery, appPaths) {
+ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibModalInstance, $uibModal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope, jsonQuery, appPaths) {
 
     //=== PROPERTIES ================================================================
     $scope.thePlatform = platformScope;
@@ -730,7 +730,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
         }
         else if (result == 'delete') {
 			buttonWasClicked = true;
-            var modalInstance = $modal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
+            var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
 
             modalInstance.result.then(function () {
                 dbService.deleteWebbleDef($scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid).then(function(data){
@@ -749,7 +749,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $moda
             if(locationSearchWSMemo != undefined){
                 $location.search('workspace', locationSearchWSMemo);
             }
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

@@ -132,7 +132,7 @@ ww3Directives.directive('sortable', function() {
 //=================================================================================
 // Makes a Bootstrap Modal window looking Webble World style-like
 //=================================================================================
-ww3Directives.directive('modalWindow', function($log, localStorageService){
+ww3Directives.directive('uibModalWindow', function($log, localStorageService){
     return {
         restrict: 'EA',
         link: function(scope, element) {
@@ -475,7 +475,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                     for (var i = 0; i < 12; i++){
                         var io = angular.element(document.createElement("div"));
                         io.addClass('interactionBall');
-                        io.attr('ng-controller', 'InteractionObjectCtrl').attr('ng-class', 'color').attr('tooltip', '{{tooltip}}').attr('tooltip-placement', 'right');
+                        io.attr('ng-controller', 'InteractionObjectCtrl').attr('ng-class', 'color').attr('uib-tooltip', '{{tooltip}}').attr('tooltip-placement', 'right');
                         io.attr('ng-style', '{"left": pos.left, "top": pos.top, "display": display}');
 
                         io.css('position', 'absolute').css('display', 'none');

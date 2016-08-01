@@ -35,7 +35,7 @@
 // ABOUT WEBBLE WORLD FORM CONTROLLER
 // This controls the Platforms About form
 //====================================================================================================================
-ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstance, $log, wblData, gettext, dbService, Enum, isEmpty, valMod) {
+ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, wblData, gettext, dbService, Enum, isEmpty, valMod) {
 
     //=== PROPERTIES ================================================================
 
@@ -182,7 +182,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $modalInstan
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close(updateData);
+		$uibModalInstance.close(updateData);
     };
     //========================================================================================
 

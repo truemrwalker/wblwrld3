@@ -35,7 +35,7 @@
 // ADD CUSTOM SLOT FORM CONTROLLER
 // This controls the Webbles add custom slots form
 //====================================================================================================================
-ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $modalInstance, $log, $timeout, gettext, Slot, wblView, Enum) {
+ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $uibModalInstance, $log, $timeout, gettext, Slot, wblView, Enum) {
 
 	//=== PROPERTIES ================================================================
 	var thisWbl = wblView;
@@ -224,10 +224,10 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $mod
 			}
 			thisWbl.scope().getSlot('customInteractionObjects').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 
-			$modalInstance.close($scope.formItems.interactObjs);
+			$uibModalInstance.close($scope.formItems.interactObjs);
 		}
 		else{
-			$modalInstance.close(null);
+			$uibModalInstance.close(null);
 		}
 	};
 	//========================================================================================

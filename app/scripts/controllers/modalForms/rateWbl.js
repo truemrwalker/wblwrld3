@@ -35,7 +35,7 @@
 // WEBBLE SLOT CONNECTION FORM CONTROLLER
 // This controls the Webbles slot connection form
 //====================================================================================================================
-ww3Controllers.controller('rateWblSheetCtrl', function ($scope, $modalInstance, $log, gettext, dbService, wblDefData) {
+ww3Controllers.controller('rateWblSheetCtrl', function ($scope, $uibModalInstance, $log, gettext, dbService, wblDefData) {
 
     //=== PROPERTIES ================================================================
     $scope.wblDefId = wblDefData.wblDefId;
@@ -72,14 +72,14 @@ ww3Controllers.controller('rateWblSheetCtrl', function ($scope, $modalInstance, 
 
         if (result == 'submit') {
             dbService.setWblRate($scope.wblDefId, $scope.formItems.rating, $scope.formItems.comment).then(function(webbles){
-                $modalInstance.close('submitted');
+				$uibModalInstance.close('submitted');
             },function(eMsg){
                 $scope.formItems.errorMsg = eMsg;
                 if(!$scope.$$phase){ $scope.$apply(); }
             });
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

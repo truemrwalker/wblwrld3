@@ -35,7 +35,7 @@
 // ADD CUSTOM SLOT FORM CONTROLLER
 // This controls the Webbles add custom slots form
 //====================================================================================================================
-ww3Controllers.controller('shareWSSheetCtrl', function ($scope, $modalInstance, $log, $http, gettext, dbService, wsData) {
+ww3Controllers.controller('shareWSSheetCtrl', function ($scope, $uibModalInstance, $log, $http, gettext, dbService, wsData) {
 
     //=== PROPERTIES ================================================================
 
@@ -169,7 +169,7 @@ ww3Controllers.controller('shareWSSheetCtrl', function ($scope, $modalInstance, 
     // Closes the modal form and send the resulting content back to the creator
     //========================================================================================
     $scope.close = function (result) {
-        $modalInstance.close($scope.formItems.wsCollaborators);
+		$uibModalInstance.close($scope.formItems.wsCollaborators);
     };
     //========================================================================================
 

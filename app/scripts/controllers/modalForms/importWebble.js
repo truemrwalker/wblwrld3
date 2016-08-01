@@ -35,7 +35,7 @@
 // IMPORT WEBBLE FORM CONTROLLER
 // This controls the form for uploading Webble template files
 //====================================================================================================================
-ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInstance, $log, dbService, gettext, localStorageService) {
+ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, dbService, gettext, localStorageService) {
 
     //=== PROPERTIES ================================================================
 
@@ -120,12 +120,12 @@ ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $modalInsta
         if (result == 'submit') {
             if ($scope.formItems.selectedLocalFile){
                 return dbService.importWebble($scope.formItems.selectedLocalFile).then(function (resp) {
-					$modalInstance.close(resp.data);
+					$uibModalInstance.close(resp.data);
                 });
             }
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================

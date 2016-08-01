@@ -35,7 +35,7 @@
 // WEBBLE PROTECTIONS FORM CONTROLLER
 // This controls the Webbles protections form
 //====================================================================================================================
-ww3Controllers.controller('protectSheetCtrl', function ($scope, $modalInstance, $log, Enum, bitflags, gettext, protectSettings) {
+ww3Controllers.controller('protectSheetCtrl', function ($scope, $uibModalInstance, $log, Enum, bitflags, gettext, protectSettings) {
 
     //=== PROPERTIES ================================================================
 
@@ -222,10 +222,10 @@ ww3Controllers.controller('protectSheetCtrl', function ($scope, $modalInstance, 
     $scope.close = function (result) {
         if (result == 'submit') {
             applyNewProtection();
-            $modalInstance.close(theWblProtection);
+			$uibModalInstance.close(theWblProtection);
         }
         else{
-            $modalInstance.close(null);
+			$uibModalInstance.close(null);
         }
     };
     //========================================================================================
