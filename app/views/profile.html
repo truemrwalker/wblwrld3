@@ -31,15 +31,15 @@
 -->
 <div class="container-fluid padcontent closeable">
 
-    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg|translate}}</alert>
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg|translate}}</uib-alert>
 
-    <tabset>
+    <uib-tabset>
 
     <!-- Notifications -->
     <!----------------------------------------------------------------->
 
-    <tab active="tabs.notif" select="selectTab('notif')">
-        <tab-heading><i class="fa fa-info-circle"></i> <span translate>Notifications</span> <span class="badge" ng-show="user.notif.pending.length">{{user.notif.pending.length}}</span></tab-heading>
+    <uib-tab active="tabs.notif" select="selectTab('notif')">
+        <uib-tab-heading><i class="fa fa-info-circle"></i> <span translate>Notifications</span> <span class="badge" ng-show="user.notif.pending.length">{{user.notif.pending.length}}</span></uib-tab-heading>
 
         <form novalidate class="form-horizontal padcontent" autocomplete="off">
             <h1 translate>Notifications</h1>
@@ -110,13 +110,13 @@
 
             <p ng-hide="user.notif.pending && user.notif.pending.length" class="well"><span translate>There are not any unhandled notifications :-P</span></p>
         </form>
-    </tab>
+    </uib-tab>
 
     <!-- Account Information -->
     <!----------------------------------------------------------------->
 
-    <tab active="tabs.info" select="selectTab('info')">
-        <tab-heading><i class="fa fa-edit"></i> <span translate>Account Information</span></tab-heading>
+    <uib-tab active="tabs.info" select="selectTab('info')">
+        <uib-tab-heading><i class="fa fa-edit"></i> <span translate>Account Information</span></uib-tab-heading>
 
         <form name="profileForm" novalidate class="form-horizontal padcontent" ng-submit="submitAccountChanges(profileData)" autocomplete="off">
 
@@ -178,7 +178,7 @@
                 <div class="col-xs-6">
                     <p class="input-group">
                         <input id="date_born" name="date_born" type="text" class="form-control" ng-model="profileData.date_born" is-open="pickerOpened" ng-required="false"
-                               datepicker-popup="MMMM dd, yyyy" show-button-bar="false" datepicker-options="datePickerOptions"
+                               uib-datepicker-popup="MMMM dd, yyyy" show-button-bar="false" datepicker-options="datePickerOptions"
                                placeholder="{{ (user.date_born|date:'MMMM dd, yyyy') || '???? ??, ????' }}"/>
 
                         <span class="input-group-btn">
@@ -215,13 +215,13 @@
                 </div>
             </div>
         </form>
-    </tab>
+    </uib-tab>
 
     <!-- Trust and Group Membership -->
     <!----------------------------------------------------------------->
 
-    <tab active="tabs.trust" select="selectTab('trust')">
-        <tab-heading><i class="fa fa-lock"></i> <span translate>Trust</span></tab-heading>
+    <uib-tab active="tabs.trust" select="selectTab('trust')">
+        <uib-tab-heading><i class="fa fa-lock"></i> <span translate>Trust</span></uib-tab-heading>
 
         <form novalidate class="form-horizontal padcontent" autocomplete="off">
 
@@ -309,13 +309,13 @@
             </div>
 
         </form>
-    </tab>
+    </uib-tab>
 
     <!-- Authentication -->
     <!----------------------------------------------------------------->
 
-    <tab active="tabs.auth" select="selectTab('auth')">
-        <tab-heading><i class="fa fa-key"></i> <span translate>Authentication</span></tab-heading>
+    <uib-tab active="tabs.auth" select="selectTab('auth')">
+        <uib-tab-heading><i class="fa fa-key"></i> <span translate>Authentication</span></uib-tab-heading>
 
         <form name="passwordForm" novalidate class="form-horizontal padcontent" ng-submit="submitAccountChanges(passwordData)" autocomplete="off">
 
@@ -367,8 +367,8 @@
             <p translate>You can manage your personal licenses and API keys via the interface below.</p>
             <license-key-editor key-holder="user"></license-key-editor>
         </div>
-    </tab>
+    </uib-tab>
 
-    </tabset>
+    </uib-tabset>
 
 </div>
