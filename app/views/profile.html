@@ -192,8 +192,8 @@
                 <label for="gender" class="control-label col-xs-2" translate>Gender</label>
                 <div class="col-xs-6">
                     <div class="btn-group" id="gender" name="gender" ng-init="profileData.gender=user.gender">
-                        <label class="btn btn-default" ng-model="profileData.gender" btn-radio="'male'" uncheckable><span class="fa fa-male"></span> <span translate>Male</span></label>
-                        <label class="btn btn-default" ng-model="profileData.gender" btn-radio="'female'" uncheckable><span class="fa fa-female"></span> <span translate>Female</span></label>
+                        <label class="btn btn-default" ng-model="profileData.gender" uib-btn-radio="'male'" uncheckable><span class="fa fa-male"></span> <span translate>Male</span></label>
+                        <label class="btn btn-default" ng-model="profileData.gender" uib-btn-radio="'female'" uncheckable><span class="fa fa-female"></span> <span translate>Female</span></label>
                     </div>
                 </div>
             </div>
@@ -238,7 +238,7 @@
                         <strong translate>You are Member of the Following Groups</strong>
                         <hr style="margin:3px;">
                         <ul ng-repeat="g in groups">
-                            <li><a class="btn btn-xs btn-danger" tooltip="{{'Revoke Group Membership'|translate}}" tooltip-placement="right" ng-click="revokeGroupMembership(g)"><span class="fa fa-sign-out"></span></a> <span class="fa fa-group"></span> <span class="label label-info">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}</li>
+                            <li><a class="btn btn-xs btn-danger" uib-tooltip="{{'Revoke Group Membership'|translate}}" tooltip-placement="right" ng-click="revokeGroupMembership(g)"><span class="fa fa-sign-out"></span></a> <span class="fa fa-group"></span> <span class="label label-info">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}</li>
                         </ul>
 
                         <!--
@@ -260,7 +260,7 @@
             <div class="form-group">
                 <div class="col-xs-6">
                     <input type="search" id="group" name="group" class="form-control formitem" ng-model="selectedGroup" placeholder="{{'Find Group...'|translate}}"
-                           typeahead="g as g.name for g in getGroups($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
+						   uib-typeahead="g as g.name for g in getGroups($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
                 </div>
             </div>
 
@@ -299,7 +299,7 @@
                         <strong translate>You Trust the Following Groups</strong>
                         <hr style="margin:3px;">
                         <ul ng-repeat="g in trustGroups">
-                            <li><a class="btn btn-xs btn-danger" tooltip="{{'Revoke Trust'|translate}}" tooltip-placement="right" ng-click="untrustGroup(g)"><span class="fa fa-ban"></span></a> <span class="fa fa-group"></span> <span class="label label-success">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}</li>
+                            <li><a class="btn btn-xs btn-danger" uib-tooltip="{{'Revoke Trust'|translate}}" tooltip-placement="right" ng-click="untrustGroup(g)"><span class="fa fa-ban"></span></a> <span class="fa fa-group"></span> <span class="label label-success">{{g.name}}</span> <span class="fa fa-location-arrow"></span> {{g.address}}</li>
                         </ul>
                     </div>
                     <div ng-show="!trustGroups || trustGroups.length == 0">

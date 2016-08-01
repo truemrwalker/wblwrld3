@@ -26,12 +26,12 @@
  *
  * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
  */
-ww3Services.factory('confirm', ['$rootScope', '$modal', 'gettext', function($rootScope, $modal, gettext) {
+ww3Services.factory('confirm', ['$rootScope', '$uibModal', 'gettext', function($rootScope, $uibModal, gettext) {
 	return {
 
 		show: function(title, message, confirmText, cancelText) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				template: '<div class="modal-header" style="background-color:#333333;"><h3 style="color:#ffffff;" class="modal-title"><span class="fa fa-check-square-o"></span> {{title}}</h3></div>' +
 					'<div class="modal-body"><p style="padding:25px;">{{message}}</p></div>' +
 					'<div class="modal-footer"><button class="btn btn-primary" ng-click="$dismiss()">{{cancelText}}</button>' +

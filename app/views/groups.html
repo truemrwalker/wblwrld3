@@ -148,7 +148,7 @@
 
                     <div class="col-xs-3">
                         <input type="search" id="owner" name="owner" class="form-control formitem" ng-model="groupData.owner" placeholder="{{'Find User...'|translate}}" ng-required="false"
-                               typeahead="u as u.name.full for u in getUsers($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
+							   uib-typeahead="u as u.name.full for u in getUsers($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
                     </div>
 
                     <!--Selected user info-->
@@ -212,7 +212,7 @@
 
                     <div class="col-xs-5">
                         <input type="search" id="user" name="user" class="form-control formitem" ng-model="userToAdd" placeholder="{{'Username or Email...'|translate}}" ng-required="false"
-                               typeahead="u as u.name.full for u in getUsers($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
+							   uib-typeahead="u as u.name.full for u in getUsers($viewValue) | filter:$viewValue | limitTo:20" typeahead-min-length="3" typeahead-wait-ms="200"/>
                     </div>
                 </div>
 
@@ -272,7 +272,7 @@
                 <div ng-show="publishedObjects" class="well">
                     <p><strong translate>The following objects are members of the group</strong>: {{selectedGroup.name}}</p>
                     <p ng-repeat="obj in publishedObjects" style="display: inline;">
-                        <a class="btn btn-xs btn-success" tooltip="{{'Deauthorize Object'|translate}}" tooltip-placement="right" ng-click="deauthorizePublishedObject(obj, $index)"><span class="fa fa-puzzle-piece"></span> {{obj.repr}}</a>
+                        <a class="btn btn-xs btn-success" uib-tooltip="{{'Deauthorize Object'|translate}}" tooltip-placement="right" ng-click="deauthorizePublishedObject(obj, $index)"><span class="fa fa-puzzle-piece"></span> {{obj.repr}}</a>
                     </p>
                 </div>
 
@@ -295,7 +295,7 @@
         <form name="userForm" novalidate ng-submit="userSelected()" class="form-horizontal" autocomplete="off">
 
             <input type="text" class="form-control formitem" ng-model="currUsername" placeholder="{{'Start typing a username' | translate}}"
-                   typeahead="u as u.username for u in getUsers($viewValue) | filter:$viewValue | limitTo:15" typeahead-min-length="1" typeahead-wait-ms="200"/>
+                   uib-typeahead="u as u.username for u in getUsers($viewValue) | filter:$viewValue | limitTo:15" typeahead-min-length="1" typeahead-wait-ms="200"/>
         </form>
 
         <hr>

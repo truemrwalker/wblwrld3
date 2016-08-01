@@ -274,9 +274,8 @@
 .chat-messages {
     background: white;
     padding: 10px;
-    border-radius: 2px;
-    border-top-left-radius: 0;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	border-radius: 0 2px 2px 2px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 .chat-messages p {
     font-size: 0.9rem;

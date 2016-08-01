@@ -98,7 +98,7 @@
 				<label for="id" class="control-label col-xs-2" translate>Id</label>
 				<div class="col-xs-6">
 					<input type="text" id="id" name="id" class="form-control formitem" ng-model="templateData.id" placeholder="{{'Template Id'|translate}}" ng-required="true" ng-minlength="5"
-						   typeahead="t.id for t in queryTemplates($viewValue) | filter:$viewValue | limitTo:20"
+						   uib-typeahead="t.id for t in queryTemplates($viewValue) | filter:$viewValue | limitTo:20"
 						   typeahead-on-select="onSelectQueriedTemplate($item)" typeahead-editable="true" typeahead-min-length="3" typeahead-wait-ms="700" />
 					<p class="help-block" ng-if="enableCopyTemplate"><span translate>You can create a copy of this, already published template or create a new one</span></p>
 				</div>
@@ -218,10 +218,10 @@
                 <thead>
                     <tr>
                         <td>
-                            <div ng-show="!currFileDirty"  class="btn-group dropdown" dropdown is-open="isNewFileDropDownOpen">
-                                <a href class="btn btn-success btn-xs dropdown-toggle" dropdown-toggle><span translate>New File</span> <span class="caret"></span></a>
+                            <div ng-show="!currFileDirty"  class="btn-group dropdown" uib-dropdown is-open="isNewFileDropDownOpen">
+                                <a href class="btn btn-success btn-xs dropdown-toggle" uib-dropdown-toggle><span translate>New File</span> <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li ng-repeat="f in newTemplateFiles | filter:missingFile" tooltip="{{f.help}}" tooltip-placement="right">
+                                    <li ng-repeat="f in newTemplateFiles | filter:missingFile" uib-tooltip="{{f.help}}" tooltip-placement="right">
                                         <a ng-click="isNewFileDropDownOpen = createFile(f.name)">{{f.name}}</a>
                                     </li>
                                 </ul>
