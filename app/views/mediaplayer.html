@@ -38,7 +38,7 @@
 
 <div ng-show="skipVideoBtnVisibility" style="margin: 10px auto; font-weight: bold; font-size: 20px; color: #FF7F50; text-align: center; cursor: pointer;" ng-click="onEventHandler_VideoEnd_RedirectVisitor()" translate>Skip Intro</div>
 
-<video fullspread="0.9" autoplay after-video-played="onEventHandler_VideoEnd_RedirectVisitor();" src="{{videoSrc}}">
+<video fullspread="0.9" autoplay after-video-played="onEventHandler_VideoEnd_RedirectVisitor();" ng-src="{{videoSrc}}">
     <span translate>Your browser does not support the video tag.</span>
 </video>
 

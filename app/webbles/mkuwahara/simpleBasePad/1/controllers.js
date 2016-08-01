@@ -201,7 +201,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 
         $scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){
 			var newChild = $scope.getWebbleByInstanceId(eventData.childId);
-			newChild.scope().basePadTracker = {index: -1, pos: [parseInt(newChild.scope().gimme("root:left")), parseInt(newChild.scope().gimme("root:top"))]}
+			newChild.scope().basePadTracker = {index: -1, pos: [parseInt(newChild.scope().gimme("root:left")), parseInt(newChild.scope().gimme("root:top"))]};
 			var prevIndex = newChild.scope().gimme("basePadChildIndex");
 			if(!prevIndex){
 				newChild.scope().addSlot(new Slot("basePadChildIndex",
@@ -504,7 +504,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 			$scope.setBubbleTxtPos({x: absPos.x, y: absPos.y}, whatWbl.scope().theView);
 			$scope.setBubbleTxtVisibility(true, 3500);
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -516,7 +516,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		if(returnContent != null){
 			//setEAData(returnContent, false);
 		}
-	}
+	};
 	//========================================================================================
 
 

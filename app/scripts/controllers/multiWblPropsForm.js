@@ -131,7 +131,6 @@ ww3Controllers.controller('multiWblPropsFormCtrl', function ($scope, $log, gette
                 finalWblProps = wblProps;
             }
             else{
-                var t;
                 for(var n = 0, wp; wp = wblProps[n]; n++){
                     for(var t = 0, fwp; fwp = finalWblProps[t]; t++){
                         if(wp.key == fwp.key){

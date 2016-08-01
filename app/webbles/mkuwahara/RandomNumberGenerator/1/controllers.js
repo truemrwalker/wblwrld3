@@ -7,7 +7,7 @@
 // RANDOMIZER WEBBLE CONTROLLER
 // This is the Main controller for the RANDOMIZER Webble Template
 //=======================================================================================
-wblwrld3App.controller('randomizerWebbleCtrl', function($scope, $log, Slot, Enum, gettext) {
+wblwrld3App.controller('randomizerWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
 
@@ -105,7 +105,7 @@ wblwrld3App.controller('randomizerWebbleCtrl', function($scope, $log, Slot, Enum
     //========================================================================================
     $scope.randomize = function(){
         $scope.set('randomNumber', Math.floor(Math.random() * (parseInt($scope.gimme('randomMax')) + 1)));
-    }
+    };
     //========================================================================================
 
 

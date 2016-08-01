@@ -71,7 +71,7 @@ wblwrld3App.controller('twitterWblCtrl', function($scope, $log, $timeout, Slot, 
         twitterContainer.html('');
         twitterContainer.html('<a class="twitter-timeline" data-widget-id="' + widId + '" width="' + (parseInt($scope.gimme('twitterContainer:width')) - paddVal) + '" height="' + (parseInt($scope.gimme('twitterContainer:height')) - paddVal) + '">Loading Tweets...</a>');
         twttr.widgets.load(twitterContainer[0]);
-    }
+    };
     //========================================================================================
 
     //=== CTRL MAIN CODE ======================================================================

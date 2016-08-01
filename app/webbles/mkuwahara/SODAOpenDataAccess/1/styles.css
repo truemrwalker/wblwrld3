@@ -20,7 +20,7 @@ where you preferably put them.*/
 
 .mnkOpenDataDisplay{
     width: 400px;
-    font-family: Georgia;
+    font-family: Georgia, "Times New Roman";
     font-size: 12px;
     font-weight: normal;
 }

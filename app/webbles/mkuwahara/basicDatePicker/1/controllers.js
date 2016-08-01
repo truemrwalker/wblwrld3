@@ -164,7 +164,7 @@ wblwrld3App.controller('dateWebbleCtrl', function($scope, $log, Slot, Enum) {
         }
 
         return newFormatedDate;
-    }
+    };
     //===================================================================================
 
 
@@ -184,7 +184,7 @@ wblwrld3App.controller('dateWebbleCtrl', function($scope, $log, Slot, Enum) {
         $scope.set('currentMonthNumeral', currentDate.getMonth()+1);
         $scope.set('currentMonthString', months[currentDate.getMonth()]);
         $scope.set('currentDateNumeral', currentDate.getDate());
-    }
+    };
     //===================================================================================
 
 

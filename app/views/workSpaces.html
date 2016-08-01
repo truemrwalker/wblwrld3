@@ -64,9 +64,9 @@
         </div>
         <div ng-show="propList.length > 0" ng-repeat="prop in propList">
             <span style="font-weight: bold; font-size: 11px; margin: 0 4px;">{{prop.key}}</span>
-            <input ng-if="prop.value.toString().search('data:image') == -1 && !prop.wantLargeTxt" id="{{prop.key}}" type="{{getInputType(prop.key);}}" ng-model="prop.value" style="font-size: 11px; margin: 0 4px;"
+            <input ng-if="prop.value.toString().search('data:image') == -1 && !prop.wantLargeTxt" id="inp_{{prop.key}}" type="{{getInputType(prop.key);}}" ng-model="prop.value" style="font-size: 11px; margin: 0 4px;"
                    ng-style="{'width': inputWidth, 'height': inputHeight}" ng-dblclick="changeBox($event, prop);" hm-double-tap="changeBox($event, prop);">
-            <textarea ng-if="prop.value.toString().search('data:image') != -1 || prop.wantLargeTxt" id="{{prop.key}}" class="formitem" ng-model="prop.value" rows="2" style="font-size: 11px; margin: 0 4px; width: 90%;" ng-dblclick="changeBox($event, prop);"></textarea>
+            <textarea ng-if="prop.value.toString().search('data:image') != -1 || prop.wantLargeTxt" id="txt_{{prop.key}}" class="formitem" ng-model="prop.value" rows="2" style="font-size: 11px; margin: 0 4px; width: 90%;" ng-dblclick="changeBox($event, prop);"></textarea>
         </div>
         <div ng-hide="propList.length > 0">
             <span style="font-weight: bold; font-size: 11px; margin: 0 4px; color: red;" translate>No Webble is selected</span>

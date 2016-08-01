@@ -35,7 +35,7 @@
 // SEARCH WEBBLE FORM CONTROLLER
 // This controls the form for browsing and searching for Webbles online
 //====================================================================================================================
-ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibModalInstance, $uibModal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope, jsonQuery, appPaths) {
+ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibModalInstance, $uibModal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope) {
 
     //=== PROPERTIES ================================================================
     $scope.thePlatform = platformScope;
@@ -110,7 +110,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 			$scope.thePlatform.isDraggingWblBrowserItem = false;
 		}
 	});
-
+	//========================================================================================
 
     //========================================================================================
     // Load Selected
@@ -190,7 +190,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
     //========================================================================================
     $scope.selectWbl = function(wblListIndex){
 		if(!buttonWasClicked){
-			var isAlreadySelected = ($scope.formItems.pageViewResult[wblListIndex].selectColor == '#FFDB58') ? true : false;
+			var isAlreadySelected = ($scope.formItems.pageViewResult[wblListIndex].selectColor == '#FFDB58');
 			var oneWasAlreadyOpen = false;
 			for(var i = 0, wbl; wbl = $scope.formItems.pageViewResult[i]; i++){
 				wbl['selectColor'] = 'transparent';
@@ -499,8 +499,9 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 
             $('#searchBox').focus();
 			$timeout(function(){
-				if(!$('#searchBox').is(':focus')){
-					$('#searchBox').focus();
+				var searchBox = $('#searchBox');
+				if(!searchBox.is(':focus')){
+					searchBox.focus();
 				}
 			}, 1000);
         });

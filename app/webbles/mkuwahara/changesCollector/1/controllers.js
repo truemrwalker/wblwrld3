@@ -20,11 +20,17 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 
 
     //=== EVENT HANDLERS ================================================================
+
+	//===================================================================================
+	// onResize event handler
+	//===================================================================================
 	var onResize = function(e){
 		$scope.set('windowWidth', $(window).width());
 		$scope.set('windowHeight', $(window).height());
 		if(!$scope.$$phase){ $scope.$apply(); }
-	}
+	};
+	//===================================================================================
+
 
     //=== METHODS & FUNCTIONS ===========================================================
 
@@ -36,13 +42,14 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			if(eventData.slotName == 'mouseEventsEnabled'){
 				if(eventData.slotValue == true){
-					$("#workspaceSurface").bind("mousemove.wwplatform", function(e){
+					var workspaceSurface = $("#workspaceSurface");
+					workspaceSurface.bind("mousemove.wwplatform", function(e){
 						var coords = getCrossBrowserElementCoords(e);
 						$scope.set('mouseXPos', coords.x);
 						$scope.set('mouseYPos', coords.y);
 						if(!$scope.$$phase){ $scope.$apply(); }
 					});
-					$("#workspaceSurface").bind("mousedown.wwplatform", function(e){
+					workspaceSurface.bind("mousedown.wwplatform", function(e){
 						var coords = getCrossBrowserElementCoords(e);
 						$scope.set('lastClickPos', coords);
 						$scope.set('numberOfClicks', parseInt($scope.gimme('numberOfClicks')) + 1);
@@ -51,11 +58,11 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 						setClickedWebble(e);
 						if(!$scope.$$phase){ $scope.$apply(); }
 					});
-					$("#workspaceSurface").bind("dblclick.wwplatform", function(e){
+					workspaceSurface.bind("dblclick.wwplatform", function(e){
 						$scope.set('numberOfDblClicks', parseInt($scope.gimme('numberOfDblClicks')) + 1);
 						if(!$scope.$$phase){ $scope.$apply(); }
 					});
-					$("#workspaceSurface").bind('wheel.wwplatform', function(e){
+					workspaceSurface.bind('wheel.wwplatform', function(e){
 						$scope.set('lastScrollDelta', e.originalEvent.wheelDelta);
 						setAckompanyKeys(e);
 						setClickedWebble(e);
@@ -450,7 +457,7 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 		else{
 			$scope.set('clickedWebble', "");
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -461,12 +468,20 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 	//========================================================================================
 	var setAckompanyKeys = function(e) {
 		var clickKeys = "";
-		if(e.altKey){clickKeys += " Alt "};
-		if(e.ctrlKey){clickKeys += " Ctrl "};
-		if(e.shiftKey){clickKeys += " Shift "};
-		if(e.metaKey){clickKeys += " Meta "};
+		if (e.altKey) {
+			clickKeys += " Alt "
+		}
+		if (e.ctrlKey) {
+			clickKeys += " Ctrl "
+		}
+		if (e.shiftKey) {
+			clickKeys += " Shift "
+		}
+		if (e.metaKey) {
+			clickKeys += " Meta "
+		}
 		$scope.set('ackompanyKey', clickKeys);
-	}
+	};
 	//========================================================================================
 
 
@@ -481,7 +496,7 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 		} else {
 			return "Geolocation is not supported by this browser.";
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -629,7 +644,7 @@ wblwrld3App.controller('changesCollectorCtrl', function($scope, $log, $timeout, 
 			if(n==191) return '?';
 		}
 		return '';
-	}
+	};
 	//===================================================================================
 
 

@@ -35,7 +35,7 @@
 // IMPORT WEBBLE FORM CONTROLLER
 // This controls the form for uploading Webble template files
 //====================================================================================================================
-ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, dbService, gettext, localStorageService) {
+ww3Controllers.controller('importWebbleSheetCtrl', function ($scope, $uibModalInstance, $log, dbService, gettext) {
 
     //=== PROPERTIES ================================================================
 

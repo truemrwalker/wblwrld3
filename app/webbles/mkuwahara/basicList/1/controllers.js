@@ -18,7 +18,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
     $scope.theList = {
         items: [],
         currentSelected: ''
-    }
+    };
 
     $scope.formProps = {
         CBDisplayClass: 'checkbox',
@@ -26,7 +26,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
         listHeight: 'auto',
         listOverflow: 'visible',
         listItemMarkerImage: ''
-    }
+    };
 
     var selectChangeBlocked = false;
     var fxList;
@@ -521,7 +521,7 @@ wblwrld3App.controller('listCtrl', function($scope, $log, $timeout, Slot, Enum) 
 	// Adjust Selected Item
 	// Make sure that the current selected index and name are the same after list change
 	//========================================================================================
-	var adjustSelectedItem = function(cbName) {
+	var adjustSelectedItem = function() {
 		var currIndex = $scope.gimme('theSelectedIndex');
 		if(currIndex != -2){
 			selectChangeBlocked = true;

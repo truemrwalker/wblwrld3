@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibModal, $window, Slot, Enum, isEmpty, jsonQuery, isExist) {
+wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibModal, $window, Slot, Enum, isEmpty, jsonQuery) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -537,7 +537,6 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 		if(((new Date()).getTime() - lastDrawTime) < 200 && !readyToDrawImages){ return; }
 		var chartData = $scope.gimme('chartData');
 		var chartType = $scope.gimme('chartType');
-		var scatterRequested = false;
 
 		if(isEmpty($scope.gimme("chartData"))){ chartType = 2; }
 		var chartPack = createChartPack(chartData, chartType);
@@ -552,7 +551,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 			});
 			lastDrawTime = (new Date()).getTime();
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -561,7 +560,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 	// Creates a chart pack object with content json and options based on user settings.
 	//========================================================================================
 	var createChartPack = function(chartData, chartType){
-		var chartPack = {content: emptyChart, options: createOptions(chartType)}
+		var chartPack = {content: emptyChart, options: createOptions(chartType)};
 
 		if(!isEmpty(chartData)){
 			var dataSets = [];
@@ -583,7 +582,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 		}
 
 		return chartPack;
-	}
+	};
 	//========================================================================================
 
 
@@ -597,9 +596,9 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 		var thisSetBorderWidth = ($scope.gimme("datasetBorderWidth").length == 1) ? $scope.gimme("datasetBorderWidth")[0] : $scope.gimme("datasetBorderWidth");
 
 		if(indexOfSets != undefined){
-			thisSetBkgColor = ($scope.gimme("datasetBkgColors")[indexOfSets] != undefined) ? $scope.gimme("datasetBkgColors")[indexOfSets] : "rgba(0,0,0,0.2)"
-			thisSetBorderColor = ($scope.gimme("datasetBorderColors")[indexOfSets] != undefined) ? $scope.gimme("datasetBorderColors")[indexOfSets] : "rgba(0,0,0,1)"
-			thisSetBorderWidth = ($scope.gimme("datasetBorderWidth")[indexOfSets] != undefined) ? $scope.gimme("datasetBorderWidth")[indexOfSets] : 1
+			thisSetBkgColor = ($scope.gimme("datasetBkgColors")[indexOfSets] != undefined) ? $scope.gimme("datasetBkgColors")[indexOfSets] : "rgba(0,0,0,0.2)";
+			thisSetBorderColor = ($scope.gimme("datasetBorderColors")[indexOfSets] != undefined) ? $scope.gimme("datasetBorderColors")[indexOfSets] : "rgba(0,0,0,1)";
+			thisSetBorderWidth = ($scope.gimme("datasetBorderWidth")[indexOfSets] != undefined) ? $scope.gimme("datasetBorderWidth")[indexOfSets] : 1;
 		}
 
 		var dataSetObj = {
@@ -611,7 +610,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 			borderWidth: thisSetBorderWidth,
 			hoverBorderWidth: $scope.gimme("hoverBorderWidth"),
 			data: datasetData
-		}
+		};
 		if($scope.gimme("hoverBkgColor") != ""){ dataSetObj.hoverBackgroundColor = $scope.gimme("hoverBkgColor"); }
 		if($scope.gimme("hoverBorderColor") != ""){ dataSetObj.hoverBorderColor = $scope.gimme("hoverBorderColor"); }
 
@@ -664,7 +663,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 				newColorSet.push(fillPattern);
 			}
 			if(newColorSet.length > 0){
-				dataSetObj.backgroundColor = (newColorSet.length == 1) ? newColorSet[0] : newColorSet
+				dataSetObj.backgroundColor = (newColorSet.length == 1) ? newColorSet[0] : newColorSet;
 				if(indexOfSets != undefined){
 					dataSetObj.backgroundColor = (newColorSet[indexOfSets] != undefined) ? newColorSet[indexOfSets] : "rgba(0,0,0,0.2)";
 				}
@@ -710,7 +709,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 		}
 
 		return dataSetObj;
-	}
+	};
 	//========================================================================================
 
 
@@ -894,7 +893,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 		}
 
 		return chartOptions;
-	}
+	};
 	//========================================================================================
 
 
@@ -910,7 +909,7 @@ wblwrld3App.controller('GenChartsCtrl', function($scope, $log, $timeout, $uibMod
 			slotValue = $scope.gimme(strValue.substr(1, strValue.length - 2));
 		}
 		return slotValue;
-	}
+	};
 	//========================================================================================
 
 

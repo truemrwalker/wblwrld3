@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum, gettext, isEmpty, localStorageService) {
+wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum, gettext, isEmpty) {
 
     //=== PROPERTIES ====================================================================
     $scope.canvasSize = {
@@ -194,7 +194,7 @@ wblwrld3App.controller('ChartsCtrl', function($scope, $log, $timeout, Slot, Enum
                 }
             }
         }
-    }
+    };
     //========================================================================================
 
 

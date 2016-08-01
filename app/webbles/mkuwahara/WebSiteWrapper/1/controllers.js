@@ -32,7 +32,6 @@ wblwrld3App.controller('WebContentWrapperCtrl', function($scope, $log, $timeout,
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
-        var browser = BrowserDetect.browser;
         if(browser == 'Firefox'){
           $('#webContentContainer').attr('sandbox', 'allow-same-origin allow-top-navigation allow-forms allow-scripts');
         }

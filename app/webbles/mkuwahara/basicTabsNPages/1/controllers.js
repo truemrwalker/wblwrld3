@@ -66,12 +66,12 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 	var tabClick = function(e) {
 		e.preventDefault();
 		if ($(this).closest("li").attr("class") == "tnpCurrent"){ //detection for current tab
-			return;
+			// Do nothing
 		}
 		else{
 			activateTabAndContent($(this));
 		}
-	}
+	};
 	//===================================================================================
 
 
@@ -82,18 +82,18 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 	var tabIn = function(e) {
 		e.preventDefault();
 		if ($(this).closest("li").attr("class") == "tnpCurrent"){ //detection for current tab
-			return;
+			//Do Nothing
 		}
 		else{
 			$(e.currentTarget).css('background-color',  $scope.gimme('hoverTabBackgroundColor'));
 			$(e.currentTarget).find('.tnpTabsAfterA').css('background-color',  $scope.gimme('hoverTabBackgroundColor'));
 		}
-	}
-
+	};
+	//--------------------------------------------------------------------------------------
 	var tabOut = function(e) {
 		e.preventDefault();
 		if ($(this).closest("li").attr("class") == "tnpCurrent"){ //detection for current tab
-			return;
+			//Do Nothing
 		}
 		else{
 			var tabIndex = parseInt($(e.currentTarget).attr('name').replace('tab', ''));
@@ -106,7 +106,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 				$(e.currentTarget).find('.tnpTabsAfterA').css('background-color',  $scope.gimme('closedTabBackgroundColor'));
 			}
 		}
-	}
+	};
 	//===================================================================================
 
 
@@ -125,7 +125,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		$scope.setChildContainer(pageTarget);
 		currentCCId = pageTargetId;
 		$scope.set('currentSelectedTab', parseInt(pageTargetId.replace('flipPage', '')));
-	}
+	};
 	//===================================================================================
 
 
@@ -135,8 +135,9 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 	//===================================================================================
 	var pageClick = function(e) {
 		e.preventDefault();
-		if(isMoving){return;};
-
+		if (isMoving) {
+			return;
+		}
 		var pageTarget = $(e.target);
 		var targetId = pageTarget.attr('id');
 
@@ -165,7 +166,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 			flipToRight(pageNo, bookPadding, 0, true);
 		}
-	}
+	};
 	//===================================================================================
 
 
@@ -560,7 +561,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 		// Make sure the Surrounding Holder has the proper height depending on the height of the content area
 		$scope.$watch(function(){return $scope.gimme('tabsContent:height');}, function(newVal, oldVal) {
-			h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
+			var h = newVal.search('%') != -1 ? (parseInt(newVal)/ 100) * $(window).height() : parseInt(newVal);
 			if(!isNaN(h)){
 				setTNPHolderHeight(h);
 				var p1 = parseInt(tnpHolder.css('padding-top')) * 2;
@@ -687,7 +688,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 				}
 			}
 		}
-	}
+	};
 	//===================================================================================
 
 
@@ -996,7 +997,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 		tnpHolder.css('height', (bookHeight + (parseInt(tnpHolder.css('padding')) * 2)) + 'px');
 		tnpHolder.css('width', (bookWidth + (parseInt(tnpHolder.css('padding')) * 2)) + 'px');
-	}
+	};
 	//===================================================================================
 
 
@@ -1006,7 +1007,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 	//===================================================================================
 	var isPageOdd = function(pageNo) {
 		return ( pageNo%2 )
-	}
+	};
 	//===================================================================================
 
 
@@ -1020,7 +1021,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 			var nameList = [];
 			var nameListString = $scope.gimme('tabNames');
-			var separator = ','
+			var separator = ',';
 			if(nameListString.search(';') != -1){
 				nameList = nameListString.split(';');
 				separator = ';';
@@ -1051,7 +1052,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 				}
 			}
 
-			var newNameListStr = ''
+			var newNameListStr = '';
 			for(var i = 0; i < nameList.length; i++){
 				if(newNameListStr != ''){
 					newNameListStr += separator;
@@ -1080,18 +1081,14 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 
 			colorList = [];
 			var colorListString = $scope.gimme('tabBkgColorList');
-			var separator = ','
 			if (colorListString.search(';') != -1) {
 				colorList = colorListString.split(';');
-				separator = ';';
 			}
 			else if (colorListString.search(',') != -1) {
 				colorList = colorListString.split(',');
-				separator = ',';
 			}
 			else if (colorListString.search(' ') != -1) {
 				colorList = colorListString.split(' ');
-				separator = ' ';
 			}
 			else if (colorListString.length > 0) {
 				colorList.push(colorListString);
@@ -1254,7 +1251,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 				currentCCId = 'flipPage' + requestedTab;
 			}
 		}
-	}
+	};
 	//===================================================================================
 
 
@@ -1267,7 +1264,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 			var thisWbl = $scope.getWebbleByInstanceId(c);
 			thisWbl.scope().peel();
 		}
-	}
+	};
 	//===================================================================================
 
 

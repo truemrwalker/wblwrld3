@@ -321,8 +321,8 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $uibModalI
         'word-spacing',
         'word-wrap',
       //  'writing-mode',
-        'z-index',
-    ];
+        'z-index'
+	];
 
     // Form validation error message
     $scope.formProps = {

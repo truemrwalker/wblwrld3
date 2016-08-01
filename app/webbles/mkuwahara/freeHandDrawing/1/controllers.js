@@ -248,7 +248,7 @@ wblwrld3App.controller('freeHandDrawingCtrl', function($scope, $log, $timeout, S
             }
             imgData.push(theImgData[i]);
         }
-    }
+    };
     //========================================================================================
 
 

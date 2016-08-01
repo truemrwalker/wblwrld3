@@ -206,7 +206,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	// Some memory variables used to remember things for later
 	var keepInMind = {
 		currentSharedModelSlotsSettings: {}
-	}
+	};
 
     //=== EVENT HANDLERS =====================================================================
 
@@ -433,7 +433,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
         angular.forEach(theSlots_, function (value, key) {
             if(value.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
-				var isDate = false;
                 var tmp = {};
                 var metadata = value.getMetaData() != undefined ? value.getMetaData() : {};
                 var theValue = value.getValue();
@@ -693,10 +692,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 														jsonParsedVal = {};
 													}
 													else{
-														var newArray = new Array();
+														var newArray = [];
 														var workStr = p.value.replace(/\s/g,'');
 														var isNestedArray = (workStr.replace(/[^\[]/g, "").length >= 2);
-														var isUnevenClosure = ((workStr.replace(/[^\[]/g, "").length != workStr.replace(/[^\]]/g, "").length) || (workStr.replace(/[^\{]/g, "").length != workStr.replace(/[^\}]/g, "").length))
+														var isUnevenClosure = ((workStr.replace(/[^\[]/g, "").length != workStr.replace(/[^\]]/g, "").length) || (workStr.replace(/[^\{]/g, "").length != workStr.replace(/[^\}]/g, "").length));
 
 														if(!isUnevenClosure){
 															if(isNestedArray){
@@ -961,7 +960,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
         var newPos = {x: childAbsPosInPx.x - parentAbsPosInPx.x + childContainerOffset.left, y: childAbsPosInPx.y - parentAbsPosInPx.y + childContainerOffset.top};
         if(isPeeling){
-            var newPos = {x: childAbsPosInPx.x + parentAbsPosInPx.x - childContainerOffset.left, y: childAbsPosInPx.y + parentAbsPosInPx.y - childContainerOffset.top};
+            newPos = {x: childAbsPosInPx.x + parentAbsPosInPx.x - childContainerOffset.left, y: childAbsPosInPx.y + parentAbsPosInPx.y - childContainerOffset.top};
         }
 
         $scope.theView.parent().css('left', newPos.x);
@@ -1212,7 +1211,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		try{ toBeCalculated = eval(toBeCalculated); } catch(err){ }
 
 		return toBeCalculated;
-	}
+	};
 	//========================================================================================
 
 
@@ -1637,12 +1636,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 								else{
 									$scope.setStyle(theElmnt, retVal.getName(), retVal.getValue());
 								}
-								if(sltElmnt.length == 0){sltElmnt = null};
+								if (sltElmnt.length == 0) {
+									sltElmnt = null
+								}
 							}
 							else if(retVal.getCategory() == 'custom-merged' && retVal.getValue().length > 0){
 								for(var i = 0, slotname; slotname = retVal.getValue()[i]; i++){
 									if(selWbl.scope().gimme(slotname) == null){
-										sltElmnt = null
+										sltElmnt = null;
 										break;
 									}
 								}
@@ -1889,7 +1890,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		targetId = (targetId === undefined) ? instanceId_ : targetId;
 		if(eventType == Enum.availableWWEvents.keyDown || eventType == Enum.availableWWEvents.loadingWbl || eventType == Enum.availableWWEvents.mainMenuExecuted){targetId = null}
 		return $scope.regWblWrldListener(instanceId_, eventType, callbackFunc, targetId, targetData);
-	}
+	};
 	//========================================================================================
 
 
@@ -1935,7 +1936,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		else{
 			$log.log("This Webble has not registered participation for the online room " + whatRoom + " and can therefore not send any messages to it");
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -2634,8 +2635,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
         // If no parent is assigned yet...
         if (!theParent_){
-            var noGoodPleasePeel = false;
-
 			if(!doNotBotherAdjustingStuff){
 				if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_CONNECT, 10)) !== 0){
 					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Assign Parent Failed"), content: gettext("This Webble is protected from getting a parent and therefore this operation is canceled.")}, null);
@@ -2906,7 +2905,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		if(slotName == theConnectedSlot_ && slotConnDir_.receive && $scope.gimme(theSelectedSlot_) != theParent_.scope().gimme(theConnectedSlot_)){
 			$scope.set(theSelectedSlot_, theParent_.scope().gimme(theConnectedSlot_));
 		}
-	}
+	};
 	//========================================================================================
 
 

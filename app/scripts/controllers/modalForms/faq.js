@@ -35,7 +35,7 @@
 // PLATFORM FAQ FORM CONTROLLER
 // This controls the form for managing FAQ
 //====================================================================================================================
-ww3Controllers.controller('faqSheetCtrl', function ($scope, $uibModalInstance, $log, $uibModal, gettext, currUser, dbService, Enum) {
+ww3Controllers.controller('faqSheetCtrl', function ($scope, $uibModalInstance, $log, $uibModal, gettext, currUser, dbService) {
 
     //=== PROPERTIES ================================================================
 

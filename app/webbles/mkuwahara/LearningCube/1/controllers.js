@@ -86,7 +86,7 @@ wblwrld3App.controller('learningCubeCtrl', function($scope, $log, Slot, Enum) {
 
   $scope.voffvoff = function(){
     $scope.set('root:left', parseInt($scope.gimme('root:left', 300))+10);
-  }
+  };
 
 
 

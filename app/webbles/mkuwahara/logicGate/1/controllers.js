@@ -94,7 +94,7 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, E
 				if(isDraggingState == 2 && !$scope.getParent()){
 					var nonePPExist = true;
 					for(var i = 0; i < listOfCurrentLGWebbles.length; i++){
-						var mousePos = {x: e.clientX + 100, y: e.clientY - parseInt($scope.wsTopPos)}
+						var mousePos = {x: e.clientX + 100, y: e.clientY - parseInt($scope.wsTopPos)};
 						var RPElemId = "#redPoint" + listOfCurrentLGWebbles[i].wbl.scope().getInstanceId();
 						if(mousePos.x > (listOfCurrentLGWebbles[i].pos.x) && mousePos.x < (listOfCurrentLGWebbles[i].pos.x + 120) && mousePos.y > (listOfCurrentLGWebbles[i].pos.y -10) && mousePos.y < (listOfCurrentLGWebbles[i].pos.y + 60)){
 							nonePPExist = false;
@@ -374,28 +374,28 @@ wblwrld3App.controller('logicGateCtrl', function($scope, $log, $timeout, Slot, E
 		angle = -angle;
 		var length = Math.sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
 
-		var style = ""
-		style += "left:" + (ax) + "px;"
-		style += "top:" + (ay) + "px;"
-		style += "width:" + length + "px;"
-		style += "height:2px;"
-		style += "background-color:black;"
-		style += "position:absolute;"
-		style += "transform:rotate(" + angle + "deg);"
-		style += "-ms-transform:rotate(" + angle + "deg);"
-		style += "transform-origin:0% 0%;"
-		style += "-moz-transform:rotate(" + angle + "deg);"
-		style += "-moz-transform-origin:0% 0%;"
-		style += "-webkit-transform:rotate(" + angle + "deg);"
-		style += "-webkit-transform-origin:0% 0%;"
-		style += "-o-transform:rotate(" + angle + "deg);"
-		style += "-o-transform-origin:0% 0%;"
-		style += "-webkit-box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, .1);"
-		style += "box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, .1);"
-		style += "z-index:99;"
+		var style = "";
+		style += "left:" + (ax) + "px;";
+		style += "top:" + (ay) + "px;";
+		style += "width:" + length + "px;";
+		style += "height:2px;";
+		style += "background-color:black;";
+		style += "position:absolute;";
+		style += "transform:rotate(" + angle + "deg);";
+		style += "-ms-transform:rotate(" + angle + "deg);";
+		style += "transform-origin:0% 0%;";
+		style += "-moz-transform:rotate(" + angle + "deg);";
+		style += "-moz-transform-origin:0% 0%;";
+		style += "-webkit-transform:rotate(" + angle + "deg);";
+		style += "-webkit-transform-origin:0% 0%;";
+		style += "-o-transform:rotate(" + angle + "deg);";
+		style += "-o-transform-origin:0% 0%;";
+		style += "-webkit-box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, .1);";
+		style += "box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, .1);";
+		style += "z-index:99;";
 
 		lineDrawingArea.html("<div style='" + style + "'></div>");
-	}
+	};
 	//========================================================================================
 
 

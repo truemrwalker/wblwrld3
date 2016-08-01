@@ -126,7 +126,7 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $uib
 	$scope.placeSlotInBox = function(pIndex, index){
 		if(!isInit){
 			if($scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox != ''){
-				var slotName = '[' + $scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox + ']'
+				var slotName = '[' + $scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox + ']';
 				var fb = $("#formulaBox_" + pIndex + "_" + index);
 				fb.val(fb.val() + slotName);
 				$scope.formItems.interactObjs[pIndex].actionPack[index].selectedSlotForBox = '';
@@ -190,7 +190,6 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $uib
 			}
 
 			var cio = [];
-			var isUnedited = true;
 			for(var i = 0, fio; fio = $scope.formItems.interactObjs[i]; i++){
 				if(fio.name != ''){
 					var storableAP = [];
@@ -251,7 +250,7 @@ ww3Controllers.controller('editCustInteractObjSheetCtrl', function ($scope, $uib
 	$scope.formItems.thisWblSlotsPlus.push({id: 'mouseDeltaY', name: 'Mouse Vertical Movement Delta'});
 
 	for(var i = 0, io; io = thisWbl.scope().theInteractionObjects[i]; i++) {
-		var actionType = 'None'
+		var actionType = 'None';
 		if(io.scope().getName() == 'Menu' || io.scope().getName() == 'AssignParent' || io.scope().getName() == 'Rotate' || io.scope().getName() == 'Resize' || io.scope().getName() == 'Rescale'){
 			actionType = 'Default';
 		}

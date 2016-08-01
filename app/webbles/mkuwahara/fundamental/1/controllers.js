@@ -2,7 +2,7 @@
 // Controllers for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
 // Created By: truemrwalker
 //======================================================================================================================
-wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, $timeout, Enum, Slot, gettext, getKeyByValue) {
+wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, $timeout, Enum, Slot, gettext) {
 //=======================================================================================
 // FUNDAMENTAL WEBBLE CONTROLLER
 // This is the Main controller for the Fundamental Webble Template

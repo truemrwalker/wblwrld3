@@ -35,7 +35,7 @@
 // INTERACTION OBJECT CONTROLLER (MediaPlayerCtrl)
 // This is the controller for the platform's video playing capabilities (non Webble related)
 //====================================================================================================================
-ww3Controllers.controller('InteractionObjectCtrl', function($scope, $log, Enum, isValidEnumValue){
+ww3Controllers.controller('InteractionObjectCtrl', function($scope){
 
     //=== PROPERTIES ================================================================
     $scope.color = '';

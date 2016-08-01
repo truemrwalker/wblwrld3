@@ -111,7 +111,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     };
     $scope.langChangeTooltipTxt = '';
 	$scope.flagImageFound = true;
-	$scope.imgError = function(){$scope.flagImageFound = false;}
+	$scope.imgError = function(){$scope.flagImageFound = false;};
     //-------------------------------
 
 
@@ -348,7 +348,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var webblesWaitingToBeLoaded = [];
 	var downloadingManifestLibs = false;
 	var pleaseQuickLoadInternalSavedWS = false;
-	var isDraggingWblBrowserItem = false;
 
 	// Flags that keeps track of platform states
 	var waitingForNumberKey_ = 0;
@@ -625,7 +624,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             else if(data.op == Enum.transmitOps.peelWbl){
                 var theWbl = $scope.getWebbleByInstanceId(data.target);
                 if(theWbl){
-					var parentName = theWbl.scope().getParent().scope().theWblMetadata['displayname'] + ' (' + theWbl.scope().getParent().scope().getInstanceId() + ')'
+					var parentName = theWbl.scope().getParent().scope().theWblMetadata['displayname'] + ' (' + theWbl.scope().getParent().scope().getInstanceId() + ')';
                     theWbl.scope().peel();
 					$timeout(function(){ if(!sharedWS_NoQIM_Enabled_){$scope.showQIM(('(' + data.user + ') ' + gettextCatalog.getString("peeled webble ") + '[' + theWbl.scope().theWblMetadata['displayname'] + ' (' + data.target + ')] from its parent [' + parentName + ']'), 4000, undefined, {x: 0, y: parseInt($scope.wsTopPos)}, undefined, true);} });
                 }
@@ -817,7 +816,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					}
 
 					var cio = [];
-					var isUnedited = true;
 					for(var i = 0, fio; fio = data.theIO[i]; i++){
 						if(fio.name != ''){
 							var storableAP = [];
@@ -1234,7 +1232,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				if(callback){ callback(); }
             },
             function (msg) {
-                $log.log("Error while loading list of available sandbox webbles")
+                $log.log("Error while loading list of available sandbox webbles");
                 $log.log(msg);
             }
         );
@@ -1442,7 +1440,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		else{
 			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(["controllers.js", "styles.css", "view.html"]));
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -2074,7 +2072,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				if(!target){ return; }
 				$scope.BlockAddUndo();
 				currState.op = Enum.undoOps.sharedModelDuplicateSettings;
-				var currentSharedModelSlotsSettings = {}
+				var currentSharedModelSlotsSettings = {};
 				for(var slot in target.scope().getSlots()) {
 					currentSharedModelSlotsSettings[slot] = target.scope().getSlot(slot)['isShared'];
 					target.scope().getSlot(slot)['isShared'] = data[0].sas[slot];
@@ -2713,7 +2711,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 			}
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -2724,7 +2722,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// being managed and is not empty then start unqueueing handlers
 	//========================================================================================
 	$scope.fireWWEventListener = function(eventType, eventData){
-		var queueWasEmpty = (queueOfHandlersToBeTriggered.length == 0) ? true : false;
 		var eventKey = getKeyByValue(Enum.availableWWEvents, eventType);
 		for(var i = 0; i < wwEventListeners_[eventKey].length; i++){
 			if(wwEventListeners_[eventKey][i].target === null || eventData.targetId == wwEventListeners_[eventKey][i].target){
@@ -2738,7 +2735,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			unqueueingStartTimeCounter = 1;
 			unqueueUntriggeredHandlers();
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -2758,7 +2755,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			}
 
 			if(((new Date()).getTime() - unqueueingStartTime) > 20000){
-				$log.log('We have been managing event handlers for more than ' + (20 * unqueueingStartTimeCounter) + ' seconds now, and we are still not finished... Please be patient.')
+				$log.log('We have been managing event handlers for more than ' + (20 * unqueueingStartTimeCounter) + ' seconds now, and we are still not finished... Please be patient.');
 				if(!unqueueUntriggeredHandlersModal && unqueueingStartTimeCounter != 3 && !$scope.isLoggingEnabled){
 					$scope.showQIM(gettext("We have been managing event handlers for more than") + " " + (20 * unqueueingStartTimeCounter) + " " + gettext("seconds now, and we are still not finished...") + "\n\n" + gettext("Please be patient."), 1000000, {w: 300, h: 130}, undefined, wwConsts.lightPalette[(unqueueingStartTimeCounter - 1) % wwConsts.lightPalette.length].value);
 				}
@@ -2784,7 +2781,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 
 				if(unqueueUntriggeredHandlersModal && unqueueingStartTimeCounter == 6){
-					timeKeeper = undefined
+					timeKeeper = undefined;
 					unqueueUntriggeredHandlersModal.dismiss();
 				}
 				$timeout(function(){ unqueueUntriggeredHandlers(timeKeeper); }, 500);
@@ -2799,7 +2796,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			if(queueOfHandlersToBeTriggered.length == 0 && ((new Date()).getTime() - unqueueingStartTime) > 30000){
 				if(unqueueUntriggeredHandlersModal || $scope.qimVisibility){
 					if(unqueueUntriggeredHandlersModal) { unqueueUntriggeredHandlersModal.dismiss(); }
-					$log.log('Currently Finished processing events... The platform is all yours.')
+					$log.log('Currently Finished processing events... The platform is all yours.');
 					if(!$scope.isLoggingEnabled){
 						$scope.showQIM(gettext("Sorry for the delay, but now we are done. \n\n Enjoy your stay!"), 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
 					}
@@ -2807,7 +2804,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			}
 		}
 		unqueueingActive = false;
-	}
+	};
 	//========================================================================================
 
 
@@ -2847,7 +2844,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// its online message managing participation.
 	//========================================================================================
 	$scope.unregisterOnlineMsgRoomListener = function(whatWblId, whatRoom){
-		var roomKillList = []
+		var roomKillList = [];
 		for(var i = 0; i < onlineMsgRooms.length; i++){
 			if(whatRoom == undefined || onlineMsgRooms[i].msgRoomId == whatRoom){
 				var newJoinedWblsList = onlineMsgRooms[i].joinedWbls;
@@ -2881,7 +2878,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 	$scope.sendOnlineMsg = function(whatRoom, whatMsg){
 		socket.emit('interaction:info', {id: whatRoom, user: ($scope.user.username ? $scope.user.username : $scope.user.email), msg: whatMsg});
-	}
+	};
 	//========================================================================================
 
 
@@ -3531,41 +3528,42 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             showTime = qimTime;
         }
 
+		var quickInfoBox = $('.quickInfoBox');
         if(qimColor){
 			if($.isArray(qimColor)){
-				var gradColorStr = ""
+				var gradColorStr = "";
 				for(var i = 0; i < qimColor.length; i++){
 					if(i > 0){ gradColorStr += ", " }
 					gradColorStr += qimColor[i];
 				}
-				$('.quickInfoBox').css('background-color', qimColor[0]);
+				quickInfoBox.css('background-color', qimColor[0]);
 				if(qimColor.length > 1){
-					$('.quickInfoBox').css('background', '-webkit-linear-gradient(left top, ' + gradColorStr + ')');
-					$('.quickInfoBox').css('background', '-moz-linear-gradient(left top, ' + gradColorStr + ')');
-					$('.quickInfoBox').css('background', '-ms-linear-gradient(left, ' + gradColorStr + ')');
-					$('.quickInfoBox').css('background', '-o-linear-gradient(left, ' + gradColorStr + ')');
+					quickInfoBox.css('background', '-webkit-linear-gradient(left top, ' + gradColorStr + ')');
+					quickInfoBox.css('background', '-moz-linear-gradient(left top, ' + gradColorStr + ')');
+					quickInfoBox.css('background', '-ms-linear-gradient(left, ' + gradColorStr + ')');
+					quickInfoBox.css('background', '-o-linear-gradient(left, ' + gradColorStr + ')');
 				}
 				else{
-					$('.quickInfoBox').css('background', qimColor[0]);
+					quickInfoBox.css('background', qimColor[0]);
 				}
 			}
 			else{
-				$('.quickInfoBox').css('background-color', qimColor);
-				$('.quickInfoBox').css('background', qimColor);
+				quickInfoBox.css('background-color', qimColor);
+				quickInfoBox.css('background', qimColor);
 			}
         }
-		else if($('.quickInfoBox').css('background-color') != "#fff68f"){
-			$('.quickInfoBox').css('background-color', "#fff68f");
-			$('.quickInfoBox').css('background', '-webkit-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673');
-			$('.quickInfoBox').css('background', '-moz-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673');
-			$('.quickInfoBox').css('background', '-ms-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673');
-			$('.quickInfoBox').css('background', '-o-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673');
+		else if(quickInfoBox.css('background-color') != "#fff68f"){
+			quickInfoBox.css('background-color', "#fff68f");
+			quickInfoBox.css('background', '-webkit-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673');
+			quickInfoBox.css('background', '-moz-linear-gradient(left top, white, #fff68f 20%, khaki 70%, #cdc673');
+			quickInfoBox.css('background', '-ms-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673');
+			quickInfoBox.css('background', '-o-linear-gradient(left, white, #fff68f 20%, khaki 70%, #cdc673');
 		}
 
 		if(qimDominance != undefined && qimDominance == true){ qimDominance_ = true; }
 
         $scope.qimVisibility = true;
-        $('.quickInfoBox').fadeIn(200);
+		quickInfoBox.fadeIn(200);
 		qimTimer_ = $timeout(function(){$('.quickInfoBox').fadeOut(500, function(){ qimDominance_ = false; $scope.qimVisibility = false; qimTimer_ = undefined; })}, showTime);
     };
     //========================================================================================

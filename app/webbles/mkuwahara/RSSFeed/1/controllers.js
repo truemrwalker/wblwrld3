@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum, $timeout) {
+wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -67,10 +67,7 @@ wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum, $timeou
 					}
 				}
 				else{
-					if(isNaN(oldVal)){
-						oldVal = -1;
-					}
-					$scope.set('selectedItemIndex', oldVal)
+					$scope.set('selectedItemIndex', -1)
 				}
 			}
 		});
@@ -268,7 +265,7 @@ wblwrld3App.controller('rssFeedCtrl', function($scope, $log, Slot, Enum, $timeou
                 }
             }
         });
-    }
+    };
     //========================================================================================
 
 

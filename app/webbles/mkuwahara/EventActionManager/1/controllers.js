@@ -370,7 +370,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                 $scope.set('EAData', angular.copy($scope.EAM_WblProps.EAData));
             }
         }
-    }
+    };
     //========================================================================================
 
 
@@ -381,7 +381,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         $timeout.cancel(eventWatchTimer);
 
         $scope.openForm('EAMForm', [{templateUrl: 'event-action-manager-form.html', controller: 'EAMForm_Ctrl', size: 'lg'}, {wblScope: $scope, eaData: $scope.EAM_WblProps.EAData}], closeEAMForm);
-    }
+    };
     //========================================================================================
 
 
@@ -394,7 +394,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         }
 
         eventWatchTimer = $timeout($scope.eventWatcher, parseInt($scope.gimme('eventCheckInterval')));
-    }
+    };
     //========================================================================================
 
 
@@ -445,7 +445,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         if(didChange){
             $scope.set('EAData', $scope.EAM_WblProps.EAData);
         }
-    }
+    };
     //========================================================================================
 
 
@@ -498,7 +498,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                     var theFoundWebbles = [];
                     for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
                         var slotVal = !isNaN(parseInt(aw.scope().gimme(whatParams.p1))) ? parseInt(aw.scope().gimme(whatParams.p1)) : aw.scope().gimme(whatParams.p1);
-                        var compValue = !isNaN(parseInt(whatParams.p3)) ? parseInt(whatParams.p3) : whatParams.p3
+                        var compValue = !isNaN(parseInt(whatParams.p3)) ? parseInt(whatParams.p3) : whatParams.p3;
                         var doesQualify = false;
 
                         switch(whatParams.p2){
@@ -588,7 +588,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
             }
         }
         return theTarget;
-    }
+    };
     //========================================================================================
 
 
@@ -605,7 +605,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
             }
         }
         return tMem;
-    }
+    };
     //========================================================================================
 
 
@@ -625,7 +625,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         if(!didExist){
             whatEvent.targetMemory.push({t: whatTarget, m: whatMem})
         }
-    }
+    };
     //========================================================================================
 
 
@@ -717,7 +717,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         }
 
         return toBeCalculated;
-    }
+    };
     //========================================================================================
 
 
@@ -881,7 +881,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                 }
             }
         }
-    }
+    };
     //========================================================================================
 
 
@@ -1085,7 +1085,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                 }
             }
         }
-    }
+    };
     //========================================================================================
 
 
@@ -1341,12 +1341,12 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
 								if(!isNaN(theSlotVal)){ theSlotVal = parseFloat(theSlotVal); }
 
                                 switch(ev.oParams.p2){
-                                    case '=': eventWasTriggered = (theSlotVal == calcVal ? true : false ); break;
-                                    case '<': eventWasTriggered = (theSlotVal < calcVal ? true : false ); break;
-                                    case '>': eventWasTriggered = (theSlotVal > calcVal ? true : false ); break;
-                                    case '≤': eventWasTriggered = (theSlotVal <= calcVal ? true : false ); break;
-                                    case '≥': eventWasTriggered = (theSlotVal >= calcVal ? true : false ); break;
-                                    case '≠': eventWasTriggered = (theSlotVal != calcVal ? true : false ); break;
+                                    case '=': eventWasTriggered = (theSlotVal == calcVal ); break;
+                                    case '<': eventWasTriggered = (theSlotVal < calcVal ); break;
+                                    case '>': eventWasTriggered = (theSlotVal > calcVal ); break;
+                                    case '≤': eventWasTriggered = (theSlotVal <= calcVal ); break;
+                                    case '≥': eventWasTriggered = (theSlotVal >= calcVal ); break;
+                                    case '≠': eventWasTriggered = (theSlotVal != calcVal ); break;
                                     case '⊆': if(theSlotVal.toString().search(calcVal.toString())){eventWasTriggered = true;} break;
                                     case '⊇': if(calcVal.toString().search(theSlotVal.toString())){eventWasTriggered = true;} break;
                                 }
@@ -1920,7 +1920,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         }
 
         eventWatchTimer = $timeout($scope.eventWatcher, parseInt($scope.gimme('eventCheckInterval')));
-    }
+    };
     //========================================================================================
 
 
@@ -2145,7 +2145,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                 }
             }
         }
-    }
+    };
     //========================================================================================
 
 
@@ -2156,7 +2156,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         if(wblsToLoad.length > 0){
             $scope.downloadWebbleDef(wblsToLoad.splice(0,1), loadWebbleAction);
         }
-    }
+    };
     //========================================================================================
 
 
@@ -2170,7 +2170,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         if(wblsToShareModelDupl.length > 0){
             $scope.getWebbleByInstanceId(wblsToShareModelDupl[0]).scope().sharedModelDuplicate({x: 15, y: 15}, shareModelDuplicationAction);
         }
-    }
+    };
     //========================================================================================
 
 
@@ -2198,7 +2198,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         newEASet.strVal = strRepr;
 
         return newEASet;
-    }
+    };
     //========================================================================================
 
 
@@ -2215,7 +2215,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
         eaSet.strVal = '';
         eaSet.status = -1;
         eaSet = undefined;
-    }
+    };
     //========================================================================================
 
 
@@ -2500,7 +2500,7 @@ wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $uibModalInstance
         booleanBinding: props.eaData != null ? props.eaData.boolBind : 'AND',
         targetParams: props.eaData != null ? {currentSelected: props.eaData.target, currDepSel: props.eaData.tParams.p1, detailSelected: props.eaData.tParams.p2, itemValue: props.eaData.tParams.p3} : {currentSelected: 'Target Undefined'},
         targetItemParams: props.eaData != null ? {currentSelected: props.eaData.operation, detailSelected: props.eaData.oParams.p1, furtherDetailSelected: props.eaData.oParams.p2, itemValue: props.eaData.oParams.p3, currDepSelGr: props.eaData.oParams.p4, currDepSel: props.eaData.oParams.p5} : {currentSelected: 'Item Undefined'}
-    }
+    };
 
 
     //========================================================================================
@@ -2581,7 +2581,7 @@ wblwrld3App.controller('EAMForm2_Ctrl', function($scope, $log, $uibModalInstance
 			$uibModalInstance.close($scope.formProps);
         }
         else if(result == 'delete'){
-            $scope.formProps.targetParams.currentSelected = 'Target Undefined'
+            $scope.formProps.targetParams.currentSelected = 'Target Undefined';
 			$uibModalInstance.close($scope.formProps);
         }
     };
@@ -3119,7 +3119,7 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $uibModalInstance
         if(index == 1){
             for(var i = 0; i < $scope.lists.targetSeekers.length-1; i++){
                 if($scope.lists.targetSeekers[i] == $scope.formProps.currentSelected){
-                    phTxt = $scope.lists.placeHolderTxt[i]
+                    phTxt = $scope.lists.placeHolderTxt[i];
                     break;
                 }
             }
@@ -3209,7 +3209,7 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $uibModalInstance
         }
 
         return wblInstId;
-    }
+    };
     //========================================================================================
 
 
@@ -3225,7 +3225,8 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $uibModalInstance
             if($scope.formProps.previousSelectedDependencies.selectedTarget == 'Platform' && $scope.formProps.currentSelected == $scope.lists.platformEventItems[0]){
 
                 if(!$scope.formProps.currDepSelGr || $scope.formProps.currDepSelGr == ''){
-                    $scope.formProps.currDepSelGr = {left: '0', top: '0', right: parseInt($('#workspaceSurface').css('width')).toString(), bottom: parseInt($('#workspaceSurface').css('height')).toString()};
+					var workspaceSurface = $("#workspaceSurface");
+                    $scope.formProps.currDepSelGr = {left: '0', top: '0', right: parseInt(workspaceSurface.css('width')).toString(), bottom: parseInt(workspaceSurface.css('height')).toString()};
                 }
                 else{
                     if(!$scope.formProps.currDepSelGr.left || $scope.formProps.currDepSelGr.left == ''){

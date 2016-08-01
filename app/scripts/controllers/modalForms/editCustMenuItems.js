@@ -145,7 +145,7 @@ ww3Controllers.controller('editCustMenuItemsSheetCtrl', function ($scope, $uibMo
 	$scope.placeSlotInBox = function(pIndex, index){
 		if(!isInit){
 			if($scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox != ''){
-				var slotName = '[' + $scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox + ']'
+				var slotName = '[' + $scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox + ']';
 				var fb = $("#formulaBox_" + pIndex + "_" + index);
 				fb.val(fb.val() + slotName);
 				$scope.formItems.custMenuItems[pIndex].actionPack[index].selectedSlotForBox = '';

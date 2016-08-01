@@ -60,7 +60,6 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $uibModalInstan
     $scope.infoMsg = 'Hover the Question mark to get a description of the slot or click it to open a more readable form of the same.';
 
     $scope.it = Enum.aopInputTypes;
-    var testPropType = {itemKey: '', typeIsSet: false};
 
 
 
@@ -338,7 +337,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $uibModalInstan
 			size: 'md'
 		};
 
-		var modalInstance = $uibModal.open(modalOptions);
+		$uibModal.open(modalOptions);
 	};
 	//========================================================================================
 

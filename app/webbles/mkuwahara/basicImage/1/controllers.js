@@ -7,7 +7,7 @@
 // IMAGE WEBBLE CONTROLLER
 // This is the Main controller for the Image Webble Template
 //=======================================================================================
-wblwrld3App.controller('imageWebbleCtrl', function($scope, $log, Slot, Enum, gettext) {
+wblwrld3App.controller('imageWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
 

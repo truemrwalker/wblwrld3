@@ -52,7 +52,6 @@ wblwrld3App.controller('argManagerCtrl', function($scope, $log, $timeout, Slot, 
 				doCalc();
 			}
 
-			var found = false;
 			for(var i = 0; i < argSlots.length; i++){
 				if(eventData.slotName.toLowerCase() == argSlots[i].toLowerCase()){
 					doCalc();

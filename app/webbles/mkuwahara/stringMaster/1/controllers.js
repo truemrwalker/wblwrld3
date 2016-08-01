@@ -21,7 +21,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
 
     $scope.htmlContent = {
         displayTxt: ""
-    }
+    };
 
 
     //=== EVENT HANDLERS ================================================================
@@ -314,7 +314,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
         }
 
         $scope.htmlContent.displayTxt = $scope.gimme(theSlotToUse);
-    }
+    };
     //===================================================================================
 
 
@@ -344,7 +344,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
                 }
             }
         }
-    }
+    };
     //===================================================================================
 
 
@@ -356,7 +356,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
         var primStr = $scope.gimme('primaryString').toString();
         var secStr = $scope.gimme('secondaryString').toString();
         $scope.set('joinedString', primStr + secStr);
-    }
+    };
     //===================================================================================
 
 
@@ -370,7 +370,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
         if(index >= 0){
             $scope.set('charInStringAtIndex', primStr[index]);
         }
-    }
+    };
     //===================================================================================
 
 
@@ -385,7 +385,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
             $scope.set('firstIndexOf', primStr.indexOf(strPart));
             $scope.set('lastIndexOf', primStr.lastIndexOf(strPart));
         }
-    }
+    };
     //===================================================================================
 
 
@@ -401,7 +401,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
         if(strOut.length > 0){
             $scope.set('replaceStrResult', primStr.replace(strOut, strIn));
         }
-    }
+    };
     //===================================================================================
 
 
@@ -413,7 +413,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
         var primStr = $scope.gimme('primaryString').toString();
         var splitChar = $scope.gimme('splitChar').toString();
         $scope.set('splitResult', primStr.split(splitChar));
-    }
+    };
     //===================================================================================
 
 
@@ -433,7 +433,7 @@ wblwrld3App.controller('stringMasterCtrl', function($scope, $log, $timeout, Slot
         replaceStrWithOtherStr();
         splitStr();
         updateDisplayValue($scope.gimme('displayedSlot'));
-    }
+    };
     //===================================================================================
 
 

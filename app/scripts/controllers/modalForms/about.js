@@ -35,7 +35,7 @@
 // ABOUT WEBBLE WORLD FORM CONTROLLER
 // This controls the Platforms About form
 //====================================================================================================================
-ww3Controllers.controller('AboutSheetCtrl', function ($scope, $uibModalInstance, $log) {
+ww3Controllers.controller('AboutSheetCtrl', function ($scope, $uibModalInstance) {
 
     //=== PROPERTIES ================================================================
     $scope.version = wwDef.WWVERSION;

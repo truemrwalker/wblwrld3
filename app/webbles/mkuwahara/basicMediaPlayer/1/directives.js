@@ -13,7 +13,7 @@
 // This Directive makes the target react on mouse enter and then find its id defined
 // child and makes its font style italic, and reverse when mouse leave.
 //=======================================================================================
-wblwrld3App.directive('reSizableMediaView', function($log) {
+wblwrld3App.directive('reSizableMediaView', function() {
 	return {
 		restrict:'AC',
 		link: function(scope, element, attrs) {

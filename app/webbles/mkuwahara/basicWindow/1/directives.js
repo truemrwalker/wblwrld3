@@ -8,7 +8,7 @@
 // This directive is specified to create event handlers for the mouse in order to let us
 // resize the width and height of the Webble.
 //=======================================================================================
-wblwrld3App.directive('winWblReSizing', function($log) {
+wblwrld3App.directive('winWblReSizing', function() {
     return {
         restrict:'AC',
         link: function(scope, element, attrs) {
@@ -31,7 +31,7 @@ wblwrld3App.directive('winWblReSizing', function($log) {
 
                     var titleBarHeight = 20;
                     if(!scope.gimme('titleBarVisible')){
-                        var titleBarHeight = 0;
+                        titleBarHeight = 0;
                     }
                     element.parent().find('#winTitleBar').css('width', newWidth + 'px');
                     var winBrdr = element.parent().find('#winBorder');
@@ -54,7 +54,7 @@ wblwrld3App.directive('winWblReSizing', function($log) {
 // This directive is specified to create event handlers for the mouse in order to let us
 // resize the width and height of the Webble.
 //=======================================================================================
-wblwrld3App.directive('childGrabbing', function($log, $timeout, Enum, bitflags) {
+wblwrld3App.directive('childGrabbing', function($log, $timeout) {
     return {
         restrict:'AC',
         link: function(scope, element, attrs) {

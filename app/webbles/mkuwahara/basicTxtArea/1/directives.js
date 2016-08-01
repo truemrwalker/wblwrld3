@@ -9,7 +9,7 @@
 // resize the width of a sibling input tag using the element with this attribute as a
 // handle.
 //=======================================================================================
-wblwrld3App.directive('reSizing', function($log) {
+wblwrld3App.directive('reSizing', function() {
     return {
         restrict:'AC',
         link: function(scope, element, attrs) {

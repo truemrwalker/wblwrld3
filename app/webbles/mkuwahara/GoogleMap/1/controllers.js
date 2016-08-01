@@ -179,7 +179,6 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
     // Create Marker
     //========================================================================================
     var createMarker = function(place) {
-        var placeLoc = place.geometry.location;
         markers.push(new google.maps.Marker({
             map: map,
             position: place.geometry.location
@@ -192,7 +191,7 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
             map.setCenter(markers[index].getPosition());
             map.setZoom(17);
         }));
-    }
+    };
     //========================================================================================
 
 

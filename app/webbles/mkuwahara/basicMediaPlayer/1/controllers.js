@@ -42,7 +42,7 @@ wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, $timeout,
 			$scope.set('currTime', thisTime);
 			lastTime = thisTime;
 		}
-	}
+	};
 	//===================================================================================
 
 
@@ -86,7 +86,9 @@ wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, $timeout,
 				theMediaPlayer.autoplay = autoEnabled;
 				theMediaPlayer.currentTime = playerTimePos;
 				theMediaPlayer.pause();
-				if(!isPaused && theMediaPlayer.paused){ theMediaPlayer.play(); };
+				if (!isPaused && theMediaPlayer.paused) {
+					theMediaPlayer.play();
+				}
 			}
 			else if(eventData.slotName == 'mediaSrc'){
 				if(theMediaPlayer.currentSrc != newVal){

@@ -182,7 +182,7 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
 				if(!isNaN(newVal)){
 					var titleBarHeight = 20;
 					if(!$scope.gimme('titleBarVisible')){
-						var titleBarHeight = 0;
+						titleBarHeight = 0;
 					}
 
 					if(parseInt(winBrdr.css('height')) != (newVal - titleBarHeight)){
@@ -394,7 +394,6 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
     // If any child is deleted make sure the tight connection list is cleaned too.
     //===================================================================================
     var cleanDeleted = function(deadId){
-        var lostChildren = [];
         for(var i = 0; i < winContents.length; i++){
             if(winContents[i].wblId == deadId){
                 winContents[i].moveWatch();
@@ -402,7 +401,7 @@ wblwrld3App.controller('windowContainerCtrl', function($scope, $log, $timeout, S
                 break;
             }
         }
-    }
+    };
     //===================================================================================
 
 

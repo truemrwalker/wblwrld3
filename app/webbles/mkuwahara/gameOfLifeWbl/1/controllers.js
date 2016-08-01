@@ -305,7 +305,7 @@ wblwrld3App.controller('golCtrl', function($scope, $log, $timeout, $rootScope, S
 			{x: l + 40, y: t + 40},
 			{x: l, y: t + 40},
 			{x: l - 40, y: t + 40},
-			{x: l - 40, y: t},
+			{x: l - 40, y: t}
 		];
 
 		return surroundingCellsPos;

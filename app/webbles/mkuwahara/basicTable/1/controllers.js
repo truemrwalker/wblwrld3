@@ -101,7 +101,7 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
     //========================================================================================
     // Close Edit
     //========================================================================================
-    $scope.closeEdit = function(rowIndex, colName){
+    $scope.closeEdit = function(){
         $scope.cellEdit.cellName = "";
     };
     //========================================================================================
