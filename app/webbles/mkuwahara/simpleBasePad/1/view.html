@@ -23,39 +23,35 @@
 				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
 				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
 			</div>
-			<div class="col-xs-9"><h4 class="formTitle" translate>Base-Pad Slot Connection Manager</h4></div>
+			<div class="col-xs-9"><h3 class="formTitle" translate>Base-Pad Slot Connection Manager</h3></div>
 		</div>
 
 		<div class="dividerLineAbove">
-			<div class="row" style="padding-left: 14px; padding-right: 14px;">
-
-				<!--<table id="tableroot" class="tableroot">
-					<thead>
-					<tr id="tableheader" class="tableheader">
-						<th><span>Event</span></th>
-						<th><span>Action</span></th>
-					</tr>
-					</thead>
-
-					<tbody>
-					<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="row in formProps.EAData track by $index">
-						<td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
-							<ul style="padding-left: 20px;">
-								<li ng-click="openEdit('Event', $parent.$index, $index);" ng-repeat="event in row.eventGroup track by $index"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(event.strVal)}}</span></li>
-								<li ng-click="openEdit('Event', $index, -1);"><span class="addNew">+</span></li>
-							</ul>
-						</td>
-						<td ng-style="{'width': getFormHalfWidth(), 'max-width': getFormHalfWidth()}">
-							<ul style="padding-left: 20px;">
-								<li ng-click="openEdit('Action', $parent.$index, $index);" ng-repeat="action in row.actionGroup track by $index"><span style="white-space: pre; word-wrap: break-word;">{{parseForWrap(action.strVal)}}</span></li>
-								<li ng-click="openEdit('Action', $index, -1);"><span class="addNew">+</span></li>
-							</ul>
-						</td>
-					</tr>
-					</tbody>
-				</table>-->
+			<div class="row">
+				<div class="col-xs-12"><h4 style="text-decoration: underline;" class="formTitle" translate>First Webble <span style="font-size: 14px;">({{formProps.wblData.first.name}})</span></h4></div>
 			</div>
 
+			<div class="row keepTheDistanceBelow">
+				<div class="col-xs-3"><span class="formTitle" translate>Connected Slot:</span></div>
+				<div class="col-xs-7"><select class="formitem" ng-model="formProps.wblData.first.selectedSlot" ng-options="slot.key as slot.name group by slot.cat for slot in formProps.wblData.first.slots"></select></div>
+				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots1}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+				<div class="col-xs-1"></div>
+			</div>
+
+			<div class="row" keepTheDistanceBelow>
+				<div class="col-xs-12"><hr style="border-color: dimgrey; display: block; height: 1px; margin: 0 0 3px 0; padding: 0; width: 100%"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12"><h4 style="text-decoration: underline;" class="formTitle" translate>Second Webble <span style="font-size: 14px;">({{formProps.wblData.second.name}})</span></h4></div>
+			</div>
+
+			<div class="row keepTheDistanceBelow">
+				<div class="col-xs-3"><span class="formTitle" translate>Connected Slot:</span></div>
+				<div class="col-xs-7"><select class="formitem" ng-model="formProps.wblData.second.selectedSlot" ng-options="slot.key as slot.name group by slot.cat for slot in formProps.wblData.second.slots"></select></div>
+				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots2}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+				<div class="col-xs-1"></div>
+			</div>
 		</div>
 	</div>
 

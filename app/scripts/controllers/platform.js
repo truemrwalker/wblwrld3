@@ -3508,6 +3508,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.showQIM = function(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance){
 		if(qimDominance_){ return; }
 		if(qimTimer_){ $timeout.cancel(qimTimer_); }
+		if(qimText == "" && qimTime == 0){
+			$('.quickInfoBox').fadeOut(200, function(){ qimDominance_ = false; $scope.qimVisibility = false; qimTimer_ = undefined; });
+			return;
+		}
 
         var showTime = 2500;
         var calcQIMSize = {w: 250, h: 100};

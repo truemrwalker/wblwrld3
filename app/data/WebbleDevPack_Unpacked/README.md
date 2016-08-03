@@ -367,6 +367,7 @@ system and specific Webbles:
     // default size or the specified size at either the center of the screen or the specified position using either 
     // default color or the specified color (which can be an array of colors for gradient effect). 
     // If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed.
+    // If one call the function with empty text and time set to 0, the current QIM message (if any) will immediately close down.
     $scope.showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance);
 
     // Open Form, Creates and opens a modal form window for a specific use that can be used to edit or consume any data.

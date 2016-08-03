@@ -26,9 +26,14 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 
     var textPosOptions = ['Top Left', 'Top Center', 'Top Right', 'Center Left', 'Center Center', 'Center Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'];
 	var clippingOptions = ['None', 'Hidden', 'Scroll'];
+	var slotConnRequestType = {byMenu: 0, byIO: 1};
     var originalWblChildContainer, basePadTitle, basePadFoundation;
 	var indexSortedChildren = [];
 	var blockChildMoveReaction = true;
+	var pendingSlotConn = {
+		first: undefined,
+		target: undefined
+	};
 
     //$scope.customMenu = [{itemId: 'eat', itemTxt: 'Have Lunch'}, {itemId: 'drink', itemTxt: 'Have refreshment'}];
 
@@ -52,6 +57,14 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		originalWblChildContainer = $scope.getChildContainer();
 		basePadTitle = $scope.theView.parent().find("#basePadTitle");
 		basePadFoundation = $scope.theView.parent().find("#basePadFoundation");
+
+		// Create a mouse click event handler
+		basePadFoundation.bind('vmousedown', function(event, ui){
+			if(pendingSlotConn.first != undefined){
+				$scope.showQIM("", 0);
+				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg'}, {newSlotRequest: pendingSlotConn}], closeCSCMForm);
+			}
+		});
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			if(eventData.targetId == $scope.getInstanceId()){
@@ -386,15 +399,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		c.scope().getSlot('ownIOFunc').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 
 		c.scope().theView.scope().coreCall_Event_InteractionObjectActivityReaction = function(event){
-			var thisWbl = $(event.target.offsetParent);
-			var targetName = $(event.target).scope().getName();
-
-			if (targetName == "connectSpaghettiSlots"){
-				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg'}, {wbl: thisWbl}], closeCSCMForm);
-			}
-			if(thisWbl.scope().gimme("ownIOFunc")){
-				thisWbl.scope().gimme("ownIOFunc")(event);
-			}
+			childSlotConnMenuIOExecuted(slotConnRequestType.byIO, $scope.getWebbleByInstanceId($(event.target.offsetParent).scope().getInstanceId()), $(event.target).scope().getName(), event);
 		};
 
 		var ioIndex = 11;
@@ -428,20 +433,42 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		c.scope().getSlot('ownCustomMenuFunc').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 
 		c.scope().theView.scope().coreCall_Event_WblMenuActivityReaction = function(itemName){
-			var thisWbl = $scope.getWebbleByInstanceId($(this)[0].$parent.getInstanceId());
-
-			if(itemName == "connectSpaghettiSlots"){
-				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg'}, {wbl: thisWbl}], closeCSCMForm);
-			}
-
-			if(thisWbl.scope().gimme("ownCustomMenuFunc")){
-				thisWbl.scope().gimme("ownCustomMenuFunc")(itemName);
-			}
+			childSlotConnMenuIOExecuted(slotConnRequestType.byMenu, $scope.getWebbleByInstanceId($(this)[0].$parent.getInstanceId()), itemName);
 		};
 
 		if(!c.scope().customMenu){ c.scope().customMenu = []; }
 		c.scope().customMenu.push({itemId: 'connectSpaghettiSlots', itemTxt: 'Connect Slot'});
 		c.scope().addPopupMenuItemDisabled('ConnectSlots');
+
+		// Create a mouse click event handler
+		c.scope().theView.bind('vmousedown', function(event, ui){
+			if(pendingSlotConn.first != undefined){
+				pendingSlotConn.second = $scope.getWebbleByInstanceId($(event.target).scope().getInstanceId());
+				pendingSlotConn.second.scope().activateBorder(true, "#ff5afb", 3, "dotted", true);
+				$scope.showQIM("", 0);
+				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg'}, {newSlotRequest: pendingSlotConn}], closeCSCMForm);
+			}
+		});
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Child Slot Connection Menu IO Executed
+	//========================================================================================
+	var childSlotConnMenuIOExecuted = function(whatFireType, whatWbl, whatItem, whatIOEvent){
+		if (whatItem == "connectSpaghettiSlots"){
+			pendingSlotConn.first = whatWbl;
+			whatWbl.scope().activateBorder(true, "#ff5afb", 3, "dotted", true);
+			$scope.showQIM("Click target webble to create new Slot connection or click basePad Webble for editing existing connection", 5000);
+		}
+
+		if(whatFireType == slotConnRequestType.byIO && whatWbl.scope().gimme("ownIOFunc")){
+			whatWbl.scope().gimme("ownIOFunc")(whatIOEvent);
+		}
+		else if(whatWbl.scope().gimme("ownCustomMenuFunc")){
+			whatWbl.scope().gimme("ownCustomMenuFunc")(whatItem);
+		}
 	};
 	//========================================================================================
 
@@ -495,7 +522,8 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 	//========================================================================================
 
 	//========================================================================================
-	// Close Child Slot Conn Manager Form
+	// display Bubble text
+	// this method display provided bubble text for the webble provided as parameter.
 	//========================================================================================
 	var displayBubbleText = function(whatWbl, whatTxt){
 		if ((parseInt(whatWbl.scope().getWebbleConfig(), 10) & parseInt(Enum.bitFlags_WebbleConfigs.NoBubble, 10)) == 0){
@@ -516,6 +544,8 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		if(returnContent != null){
 			//setEAData(returnContent, false);
 		}
+		if(pendingSlotConn.first){ pendingSlotConn.first.scope().activateBorder(false); pendingSlotConn.first = undefined; }
+		if(pendingSlotConn.second){ pendingSlotConn.second.scope().activateBorder(false); pendingSlotConn.second = undefined; }
 	};
 	//========================================================================================
 
@@ -650,16 +680,53 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 
 // More Controllers may of course be added here if needed
 //======================================================================================================================
+
 //=======================================================================================
 // EVENT ACTION MAIN FORM CONTROLLER
 // This is the controller for this Webbles Event Action Manager Form
 //=======================================================================================
 wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance, $timeout, Slot, Enum, isEmpty, props) {
+	var slotConnRequestData = props.newSlotRequest;
+
 	$scope.formProps = {
-		data: [],
-		info: "Nothing to say"
+		wblData: {
+			first: {
+				name : slotConnRequestData.first.scope().getWebbleFullName(),
+				slots: [{key: 'none', name: "None", cat: '', val: 'none'}],
+				selectedSlot: "none"
+			},
+			second: {
+				name : slotConnRequestData.second.scope().getWebbleFullName(),
+				slots: [{key: 'none', name: "None", cat: '', val: 'none'}],
+				selectedSlot: "none"
+			}
+		},
+		infoTooltips: {
+			slots1: "Select the slot to cennect for the first Webble",
+			slots2: "Select the slot to cennect for the second Webble"
+		},
+		info: ""
 	};
 
+	// $scope.formProps.wblData.first.name
+	// $scope.formProps.wblData.second.name
+
+
+
+	//========================================================================================
+	// Adjust Tooltip Placement By Device Width
+	// the placement of the tooltip is by default at the bottom, but with smaller devices in
+	// some rare cases that should be set to right instead.
+	//========================================================================================
+	$scope.adjustTooltipPlacementByDeviceWidth = function(){
+		if($(document).width() < 410){
+			return 'right';
+		}
+		else{
+			return 'left';
+		}
+	};
+	//========================================================================================
 
 	//========================================================================================
 	// Close
@@ -677,10 +744,27 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 
 
 	//=== CTRL MAIN CODE ======================================================================
-	//$scope.formProps.data = angular.copy(props.eaData);
+	angular.forEach(slotConnRequestData.first.scope().getSlots(), function (value, key) {
+		if(value.getDisabledSetting() < Enum.SlotDisablingState.ConnectionVisibility){
+			var tmp = {};
+			tmp['key'] = key;
+			tmp['name'] = value.getExtDisplayName();
+			tmp['cat'] = value.getCategory();
+			tmp['val'] = value.getValue();
+			this.push(tmp);
+		}
+	}, $scope.formProps.wblData.first.slots);
 
-	// if($scope.formProps.EAData.length == 0 || ($scope.formProps.EAData[$scope.formProps.EAData.length - 1].eventGroup.length > 0 || $scope.formProps.EAData[$scope.EAData.length - 1].actionGroup.length > 0)){
-	// 	$scope.formProps.EAData.push({eventGroup: [], actionGroup: [], strVal: ''});
-	// }
+	angular.forEach(slotConnRequestData.second.scope().getSlots(), function (value, key) {
+		if(value.getDisabledSetting() < Enum.SlotDisablingState.ConnectionVisibility){
+			var tmp = {};
+			tmp['key'] = key;
+			tmp['name'] = value.getExtDisplayName();
+			tmp['cat'] = value.getCategory();
+			tmp['val'] = value.getValue();
+			this.push(tmp);
+		}
+	}, $scope.formProps.wblData.second.slots);
+
 });
 //=======================================================================================
