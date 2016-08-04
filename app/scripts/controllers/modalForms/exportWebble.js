@@ -111,10 +111,9 @@ ww3Controllers.controller('exportWebbleSheetCtrl', function ($scope, $uibModalIn
         $scope.errorMsg = '';
         if (result == 'export') {
 			$timeout(function(){ $scope.formItems.exportDisabled = true; });
-			$timeout(function(){
-				$scope.formItems.exportBtnTxt = "Exported";
-				$scope.formItems.closeBtnTxt= "Close";
-			}, 1000);
+			$scope.errorMsg = "export-file will be sent from Webble World server as soon as it is packed and ready to go...";
+			$scope.formItems.exportBtnTxt = "Exported";
+			$scope.formItems.closeBtnTxt= "Close";
         }
         else{
 			$uibModalInstance.close();

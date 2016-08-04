@@ -230,7 +230,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     // Current Supported mode level
     var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.HighClearanceUser;
-    //var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.SuperHighClearanceUser;
     $scope.getCurrentExecutionMode = function(){return currentExecutionMode_;};
     //SET more complex and found further down
 
@@ -349,8 +348,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var downloadingManifestLibs = false;
 	var pleaseQuickLoadInternalSavedWS = false;
 
-	// Flags that keeps track of platform states
+	// Flags and short memory trackers that keeps track of platform states
 	var waitingForNumberKey_ = 0;
+	var frozenRecentWblList_ = [];
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -482,10 +482,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		if(waitingForNumberKey_ > 0){
 			if($event.keyCode >= 49 && $event.keyCode <= 57 || $event.keyCode >= 97 && $event.keyCode <= 105){
 				var index = (($event.keyCode < 97) ? $event.keyCode : ($event.keyCode - 48)) - 49;
-				if(index < recentWebble_.length){
-					$scope.loadWebbleFromDef(recentWebble_[index], null);
+				if(index < frozenRecentWblList_.length){
+					$scope.loadWebbleFromDef(frozenRecentWblList_[index], null);
 					if(!$scope.shiftKeyIsDown){
 						waitingForNumberKey_ = 0;
+						frozenRecentWblList_ = [];
 						if(isFormOpen_ && platformAccessedMI){
 							platformAccessedMI.close();
 							platformAccessedMI = undefined;
@@ -4544,7 +4545,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 
 		var actionWasExecuted = true;
-        if(whatKeys == null || $scope.getCurrentExecutionMode() > Enum.availableOnePicks_ExecutionModes.SuperHighClearanceUser){
+        if(whatKeys == null || $scope.getCurrentExecutionMode() > Enum.availableOnePicks_ExecutionModes.MediumClearanceUser){
             whatKeys = {theAltKey: false, theShiftKey: false, theCtrlKey: false, theKey: ''};
         }
 
@@ -4905,10 +4906,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				if (recentWebble_.length > 0){
 					if(recentWebble_.length > 1){
 						var content = "<b>Press the number key of the Webble wanted.. </br>(Hold SHIFT to press multiple times):</b></br></br>";
+						frozenRecentWblList_ = [];
 						for(var rw = 0; rw < recentWebble_.length; rw++){
 							content += (rw + 1) + ": " + recentWebble_[rw].webble.displayname + "</br>";
+							frozenRecentWblList_.push(recentWebble_[rw]);
 						}
-						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Load Recent Webble"), content: content/*gettext("You do not have any saved workspaces available to open. You must create some first.")*/}, function(){ waitingForNumberKey_ = 0; });
+						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Load Recent Webble"), content: content}, function(){ waitingForNumberKey_ = 0; frozenRecentWblList_ = []; });
 						$timeout(function(){ waitingForNumberKey_ = recentWebble_.length });
 					}
 					else{

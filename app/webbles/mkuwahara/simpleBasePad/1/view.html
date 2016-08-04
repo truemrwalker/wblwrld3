@@ -38,6 +38,18 @@
 				<div class="col-xs-1"></div>
 			</div>
 
+			<div class="row keepTheDistanceBelow">
+				<div class="col-xs-3"><span class="formTitle" translate>Connection Directions:</span></div>
+				<div class="col-xs-7">
+					<input id="slotConnSend" class="formitem" type="checkbox" ng-model="formProps.wblData.first.slotConnDir.send" style="padding-right: 20px;" />
+					<label for="slotConnSend" style="margin-top: 5px;" translate>Send</label><br>
+					<input id="slotConnReceive" class="formitem" type="checkbox" ng-model="formProps.wblData.first.slotConnDir.receive" />
+					<label for="slotConnReceive" translate>Receive</label>
+				</div>
+				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slotDir | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+				<div class="col-xs-1"></div>
+			</div>
+
 			<div class="row" keepTheDistanceBelow>
 				<div class="col-xs-12"><hr style="border-color: dimgrey; display: block; height: 1px; margin: 0 0 3px 0; padding: 0; width: 100%"></div>
 			</div>
@@ -52,6 +64,25 @@
 				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots2}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 				<div class="col-xs-1"></div>
 			</div>
+
+			<div class="row">
+				<div class="col-xs-12"><hr style="border-top: 3px double navy; width: 100%"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12"><h4 style="text-decoration: underline;" class="formTitle" translate>Current Active Slot Connections</h4></div>
+			</div>
+
+			<div class="row keepTheDistanceBelow">
+				<div class="col-xs-2"><span class="formTitle" translate>This Webble</span></div>
+				<div class="col-xs-2"><span class="formTitle" translate>and it's slot</span></div>
+				<div class="col-xs-2"><span class="formTitle" translate>Send<br>receive</span></div>
+				<div class="col-xs-2"><span class="formTitle" translate>Other Webble</span></div>
+				<div class="col-xs-2"><span class="formTitle" translate>and that's slot</span></div>
+				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots2}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
+			</div>
+
 		</div>
 	</div>
 

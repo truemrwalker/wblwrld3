@@ -693,7 +693,11 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 			first: {
 				name : slotConnRequestData.first.scope().getWebbleFullName(),
 				slots: [{key: 'none', name: "None", cat: '', val: 'none'}],
-				selectedSlot: "none"
+				selectedSlot: "none",
+				slotConnDir: {
+					send: false,
+					receive: false
+				}
 			},
 			second: {
 				name : slotConnRequestData.second.scope().getWebbleFullName(),
@@ -703,7 +707,8 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 		},
 		infoTooltips: {
 			slots1: "Select the slot to cennect for the first Webble",
-			slots2: "Select the slot to cennect for the second Webble"
+			slots2: "Select the slot to cennect for the second Webble",
+			slotDir: "The directions any change of slot values will be communicated"
 		},
 		info: ""
 	};
