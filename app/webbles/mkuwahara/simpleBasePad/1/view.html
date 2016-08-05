@@ -20,67 +20,81 @@
 
 		<div class="row">
 			<div class="col-xs-3">
-				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+				<button ng-click="close('close')" class="btn btn-default" style="margin: 0 3px 3px 0;">Close</button>
+				<button ng-show="formProps.wblData.first.name != '' && formProps.wblData.second.name != ''" ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;">Add</button>
 			</div>
-			<div class="col-xs-9"><h3 class="formTitle" translate>Base-Pad Slot Connection Manager</h3></div>
+			<div class="col-xs-9"><h3 class="formTitle">Base-Pad Slot Connection Manager</h3></div>
 		</div>
 
-		<div class="dividerLineAbove">
-			<div class="row">
-				<div class="col-xs-12"><h4 style="text-decoration: underline;" class="formTitle" translate>First Webble <span style="font-size: 14px;">({{formProps.wblData.first.name}})</span></h4></div>
-			</div>
-
-			<div class="row keepTheDistanceBelow">
-				<div class="col-xs-3"><span class="formTitle" translate>Connected Slot:</span></div>
-				<div class="col-xs-7"><select class="formitem" ng-model="formProps.wblData.first.selectedSlot" ng-options="slot.key as slot.name group by slot.cat for slot in formProps.wblData.first.slots"></select></div>
-				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots1}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
-				<div class="col-xs-1"></div>
-			</div>
-
-			<div class="row keepTheDistanceBelow">
-				<div class="col-xs-3"><span class="formTitle" translate>Connection Directions:</span></div>
-				<div class="col-xs-7">
-					<input id="slotConnSend" class="formitem" type="checkbox" ng-model="formProps.wblData.first.slotConnDir.send" style="padding-right: 20px;" />
-					<label for="slotConnSend" style="margin-top: 5px;" translate>Send</label><br>
-					<input id="slotConnReceive" class="formitem" type="checkbox" ng-model="formProps.wblData.first.slotConnDir.receive" />
-					<label for="slotConnReceive" translate>Receive</label>
+		<div class="dividerLineAbove" style="-webkit-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;">
+			<div ng-show="formProps.wblData.first.name != '' && formProps.wblData.second.name != ''">
+				<div class="row">
+					<div class="col-xs-12"><span style="text-decoration: underline;"><h4 style="color: #0000FF;" class="formTitle">First Webble <span style="font-size: 14px; color: #000000;">({{formProps.wblData.first.name}})</span></h4></span></div>
 				</div>
-				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slotDir | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
-				<div class="col-xs-1"></div>
-			</div>
 
-			<div class="row" keepTheDistanceBelow>
-				<div class="col-xs-12"><hr style="border-color: dimgrey; display: block; height: 1px; margin: 0 0 3px 0; padding: 0; width: 100%"></div>
+				<div class="row keepTheDistanceBelow">
+					<div class="col-xs-3"><span class="formTitle">Connected Slot:</span></div>
+					<div class="col-xs-7"><select class="formitem" ng-model="formProps.wblData.first.selectedSlot" ng-options="slot.key as slot.name group by slot.cat for slot in formProps.wblData.first.slots"></select></div>
+					<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots1}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+					<div class="col-xs-1"></div>
+				</div>
+
+				<div class="row keepTheDistanceBelow">
+					<div class="col-xs-3"><span class="formTitle">Connection Directions:</span></div>
+					<div class="col-xs-7">
+						<input id="slotConnSend" class="formitem" type="checkbox" ng-model="formProps.wblData.first.slotConnDir.send" style="padding-right: 20px;" />
+						<label for="slotConnSend" style="margin-top: 5px;">Send</label><br>
+						<input id="slotConnReceive" class="formitem" type="checkbox" ng-model="formProps.wblData.first.slotConnDir.receive" />
+						<label for="slotConnReceive">Receive</label>
+					</div>
+					<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slotDir}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+					<div class="col-xs-1"></div>
+				</div>
+
+				<div class="row" keepTheDistanceBelow>
+					<div class="col-xs-12"><hr style="border-color: dimgrey; display: block; height: 1px; margin: 0 0 3px 0; padding: 0; width: 100%"></div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-12"><span style="text-decoration: underline;"><h4 style="color: #ff7f2e;" class="formTitle">Second Webble <span style="font-size: 14px; color: #000000;">({{formProps.wblData.second.name}})</span></h4></span></div>
+				</div>
+
+				<div class="row keepTheDistanceBelow">
+					<div class="col-xs-3"><span class="formTitle">Connected Slot:</span></div>
+					<div class="col-xs-7"><select class="formitem" ng-model="formProps.wblData.second.selectedSlot" ng-options="slot.key as slot.name group by slot.cat for slot in formProps.wblData.second.slots"></select></div>
+					<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots2}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+					<div class="col-xs-1"></div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-12"><hr style="border-top: 3px double navy; width: 100%"></div>
+				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12"><h4 style="text-decoration: underline;" class="formTitle" translate>Second Webble <span style="font-size: 14px;">({{formProps.wblData.second.name}})</span></h4></div>
+				<div class="col-xs-10"><h4 style="text-decoration: underline;" class="formTitle">Current Active Slot Connections</h4></div>
+				<div class="col-xs-2" style="text-align: center;" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slotConns}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
 			</div>
 
-			<div class="row keepTheDistanceBelow">
-				<div class="col-xs-3"><span class="formTitle" translate>Connected Slot:</span></div>
-				<div class="col-xs-7"><select class="formitem" ng-model="formProps.wblData.second.selectedSlot" ng-options="slot.key as slot.name group by slot.cat for slot in formProps.wblData.second.slots"></select></div>
-				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots2}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
-				<div class="col-xs-1"></div>
+			<div ng-show="formProps.asc.length > 0" class="row keepTheDistanceBelow">
+				<div class="col-xs-2"><span class="formTitle" style="text-decoration: underline">1st Webble</span></div>
+				<div class="col-xs-2"><span class="formTitle" style="text-decoration: underline">1st Slot</span></div>
+				<div class="col-xs-2"><span class="formTitle" style="text-decoration: underline">1st Directions</span></div>
+				<div class="col-xs-2"><span class="formTitle" style="text-decoration: underline">2nd Webble</span></div>
+				<div class="col-xs-2"><span class="formTitle" style="text-decoration: underline">2nd Slot</span></div>
 			</div>
 
-			<div class="row">
-				<div class="col-xs-12"><hr style="border-top: 3px double navy; width: 100%"></div>
+			<div ng-hide="formProps.asc.length > 0" class="row keepTheDistanceBelow">
+				<div class="col-xs-12"><span class="formTitle">No slot connections</span></div>
 			</div>
 
-			<div class="row">
-				<div class="col-xs-12"><h4 style="text-decoration: underline;" class="formTitle" translate>Current Active Slot Connections</h4></div>
-			</div>
-
-			<div class="row keepTheDistanceBelow">
-				<div class="col-xs-2"><span class="formTitle" translate>This Webble</span></div>
-				<div class="col-xs-2"><span class="formTitle" translate>and it's slot</span></div>
-				<div class="col-xs-2"><span class="formTitle" translate>Send<br>receive</span></div>
-				<div class="col-xs-2"><span class="formTitle" translate>Other Webble</span></div>
-				<div class="col-xs-2"><span class="formTitle" translate>and that's slot</span></div>
-				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.slots2}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
-				<div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{deleteTooltipInfo | translate}}"><span ng-click="deleteSlotRequest($index);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
+			<div class="row keepTheDistanceBelow" ng-repeat="sc in formProps.asc" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
+				<div class="col-xs-2"><span ng-style="{'color': getWblColor(sc.wbl1Id)}">{{::getWblName(sc.uid, sc.wbl1Id)}}</span></div>
+				<div class="col-xs-2"><span style="word-wrap:break-word;">{{::getAdjSlotName(sc.uid, sc.wbl1Id, sc.wbl1Slot)}}</span></div>
+				<div class="col-xs-2"><span>Send <span ng-show="sc.wbl1Dirs.send" class="formTitle" style="color: #00A000">&#10004;</span><span ng-hide="sc.wbl1Dirs.send" class="formTitle" style="color: red">&#10006;</span><br>receive <span ng-show="sc.wbl1Dirs.receive" class="formTitle" style="color: #00A000">&#10004;</span><span ng-hide="sc.wbl1Dirs.receive" class="formTitle" style="color: red">&#10006;</span></span></div>
+				<div class="col-xs-2"><span ng-style="{'color': getWblColor(sc.wbl2Id)}">{{::getWblName(sc.uid, sc.wbl2Id)}}</span></div>
+				<div class="col-xs-2"><span style="word-wrap:break-word;">{{::getAdjSlotName(sc.uid, sc.wbl2Id, sc.wbl2Slot)}}</span></div>
+				<div class="col-xs-2" style="text-align: center;" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{formProps.infoTooltips.delete}}"><span ng-click="deleteSlotConnRequest(sc.uid);" style="padding-left: 3px; padding-right: 3px; background-color: red; border: 1px solid #0000ff; font-size: 0.9em; color: white;">X</span></div>
 			</div>
 
 		</div>
@@ -89,7 +103,7 @@
 	<div class="dividerLineAbove">
 		<div class="row">
 			<div class="col-xs-12" style="height: 30px;">
-				<span style="color: #95c2ff; font-weight: normal; padding-left: 20px;">{{formProps.info | translate}}</span>
+				<span style="color: #ff2f86; font-weight: bold; padding-left: 20px;">{{formProps.info}}</span>
 			</div>
 		</div>
 	</div>

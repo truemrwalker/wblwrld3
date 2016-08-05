@@ -15,6 +15,9 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		basePadTitle: ['color', 'font-family', 'font-size', 'font-weight']
     };
 
+	$scope.customMenu = [{itemId: 'manageSlotConn', itemTxt: 'Manage Child Slot Connections'}];
+	$scope.addPopupMenuItemDisabled('manageSlotConn');
+
     $scope.wblStyles = {
     	txtAlign: "left",
 		lineHeight: "1em",
@@ -34,12 +37,9 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		first: undefined,
 		target: undefined
 	};
+	var activeSlotConns = [];
+	var oldiesExist = false;
 
-    //$scope.customMenu = [{itemId: 'eat', itemTxt: 'Have Lunch'}, {itemId: 'drink', itemTxt: 'Have refreshment'}];
-
-    //$scope.addPopupMenuItemDisabled('BringFwd');
-    //$scope.removePopupMenuItemDisabled([ITEM-ID]);
-	//$scope.isPopupMenuItemDisabled([ITEM-ID]);
 
     //$scope.customInteractionBalls = [{index: 4, name: 'jump', tooltipTxt: 'Jump Home'}];
 
@@ -62,7 +62,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		basePadFoundation.bind('vmousedown', function(event, ui){
 			if(pendingSlotConn.first != undefined){
 				$scope.showQIM("", 0);
-				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg'}, {newSlotRequest: pendingSlotConn}], closeCSCMForm);
+				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg', backdrop: 'static'}, {newSlotRequest: pendingSlotConn, asc: activeSlotConns}], closeCSCMForm);
 			}
 		});
 
@@ -100,9 +100,12 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 				else if(eventData.slotName == 'enableWildWestSpaghetti'){
 					if(eventData.slotValue){
 						configChildrenForUnrestrictedSlotConn();
+						$scope.removePopupMenuItemDisabled("manageSlotConn");
 					}
 					else{
 						unConfigChildrenForUnrestrictedSlotConn();
+						$scope.addPopupMenuItemDisabled('manageSlotConn');
+						activeSlotConns = [];
 					}
 				}
 			}
@@ -134,6 +137,8 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 							alteredChild.scope().basePadTracker.pos = [parseInt(alteredChild.scope().gimme("root:left")), parseInt(alteredChild.scope().gimme("root:top"))];
 						}
 					}
+
+					childSlotConnComunication();
 				}
 			}
 		}, null);
@@ -211,6 +216,22 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 			undefined
 		));
 
+		if(theInitWblDef.private.childrenSlotConns){
+			for(var i = 0, csc; csc = theInitWblDef.private.childrenSlotConns[i]; i++ ){
+				var oldSlotConn = {
+					uid: csc.uid,
+					wbl1Id: csc.wbl1Id,
+					wbl1Pntr: undefined,
+					wbl1Slot: csc.wbl1Slot,
+					wbl2Id: csc.wbl2Id,
+					wbl2Pntr: undefined,
+					wbl2Slot: csc.wbl2Slot,
+					wbl1Dirs: csc.wbl1Dirs
+				};
+				activeSlotConns.push(oldSlotConn);
+				oldiesExist = true;
+			}
+		}
 
         $scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){
 			var newChild = $scope.getWebbleByInstanceId(eventData.childId);
@@ -412,7 +433,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		}
 
 		c.scope().theInteractionObjects[ioIndex].scope().setName("connectSpaghettiSlots");
-		c.scope().theInteractionObjects[ioIndex].scope().tooltip = "Connect Slot";
+		c.scope().theInteractionObjects[ioIndex].scope().tooltip = "Slot Connection";
 		c.scope().theInteractionObjects[ioIndex].scope().setIsEnabled(true);
 
 		// Create a menu Item for this child
@@ -437,7 +458,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		};
 
 		if(!c.scope().customMenu){ c.scope().customMenu = []; }
-		c.scope().customMenu.push({itemId: 'connectSpaghettiSlots', itemTxt: 'Connect Slot'});
+		c.scope().customMenu.push({itemId: 'connectSpaghettiSlots', itemTxt: 'Slot Connection'});
 		c.scope().addPopupMenuItemDisabled('ConnectSlots');
 
 		// Create a mouse click event handler
@@ -446,9 +467,32 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 				pendingSlotConn.second = $scope.getWebbleByInstanceId($(event.target).scope().getInstanceId());
 				pendingSlotConn.second.scope().activateBorder(true, "#ff5afb", 3, "dotted", true);
 				$scope.showQIM("", 0);
-				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg'}, {newSlotRequest: pendingSlotConn}], closeCSCMForm);
+				$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg', backdrop: 'static'}, {newSlotRequest: pendingSlotConn, asc: activeSlotConns}], closeCSCMForm);
 			}
 		});
+
+		if(oldiesExist){
+			var noOfUndefinedDiscoveries = 0;
+			for(var i = 0; i < activeSlotConns.length; i++){
+				if(activeSlotConns[i].wbl1Pntr == undefined || activeSlotConns[i].wbl2Pntr == undefined){
+					noOfUndefinedDiscoveries++;
+					if(activeSlotConns[i].wbl1Pntr == undefined){
+						if(activeSlotConns[i].wbl1Id == c.scope().theWblMetadata['instanceid']){
+							activeSlotConns[i].wbl1Id = c.scope().getInstanceId();
+							activeSlotConns[i].wbl1Pntr = c;
+						}
+					}
+
+					if(activeSlotConns[i].wbl2Pntr == undefined){
+						if(activeSlotConns[i].wbl2Id == c.scope().theWblMetadata['instanceid']){
+							activeSlotConns[i].wbl2Id = c.scope().getInstanceId();
+							activeSlotConns[i].wbl2Pntr = c;
+						}
+					}
+				}
+			}
+			if(noOfUndefinedDiscoveries == 0){ oldiesExist = false; }
+		}
 	};
 	//========================================================================================
 
@@ -460,7 +504,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 		if (whatItem == "connectSpaghettiSlots"){
 			pendingSlotConn.first = whatWbl;
 			whatWbl.scope().activateBorder(true, "#ff5afb", 3, "dotted", true);
-			$scope.showQIM("Click target webble to create new Slot connection or click basePad Webble for editing existing connection", 5000);
+			$scope.showQIM("Click target webble to create new Slot connection or click basePad Webble for manage/view existing connections", 5000);
 		}
 
 		if(whatFireType == slotConnRequestType.byIO && whatWbl.scope().gimme("ownIOFunc")){
@@ -521,6 +565,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 	};
 	//========================================================================================
 
+
 	//========================================================================================
 	// display Bubble text
 	// this method display provided bubble text for the webble provided as parameter.
@@ -536,13 +581,26 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 	//========================================================================================
 
 
+	//========================================================================================
+	// Execute All Slot Connection Comunication
+	// this method iterates all slot connections and make sure all slots are set ackordingly
+	// and have communicated latest value.
+	//========================================================================================
+	var childSlotConnComunication = function(){
+		for(var i = 0; i < activeSlotConns.length; i++){
+
+		}
+	};
+	//========================================================================================
+
 
 	//========================================================================================
 	// Close Child Slot Conn Manager Form
 	//========================================================================================
 	var closeCSCMForm = function(returnContent){
-		if(returnContent != null){
-			//setEAData(returnContent, false);
+		if(Object.prototype.toString.call( returnContent ) === '[object Array]'){
+			activeSlotConns = returnContent;
+			childSlotConnComunication();
 		}
 		if(pendingSlotConn.first){ pendingSlotConn.first.scope().activateBorder(false); pendingSlotConn.first = undefined; }
 		if(pendingSlotConn.second){ pendingSlotConn.second.scope().activateBorder(false); pendingSlotConn.second = undefined; }
@@ -643,17 +701,9 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
     // If this function is empty and unused it can safely be deleted.
     //===================================================================================
     $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
-        //if(itemName == $scope.customMenu[0].itemId){  //[CUSTOM ITEM NAME]
-        //    [CODE FOR THIS MENU ITEM GOES HERE]
-        //}
-
-        // EXAMPLE:
-        // if(itemName == $scope.customMenu[0].itemId){  //eat
-        //     $log.log('Are you hungry?');
-        // }
-        // else if(itemName == $scope.customMenu[1].itemId){  //drink
-        //     $log.log('Are you thirsty?')
-        // }
+        if(itemName == $scope.customMenu[0].itemId){  //manageSlotConn
+			$scope.openForm('CSCMForm', [{templateUrl: 'child-slotconn-manager-form.html', controller: 'CSCMForm_Ctrl', size: 'lg', backdrop: 'static'}, {newSlotRequest: pendingSlotConn, asc: activeSlotConns}], closeCSCMForm);
+        }
     };
     //===================================================================================
 
@@ -665,8 +715,20 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
     // If this function is empty and unused it can safely be deleted.
     //===================================================================================
     $scope.coreCall_CreateCustomWblDef = function(){
+    	var slimASC = [];
+		for(var i = 0; i < activeSlotConns.length; i++){
+			slimASC.push({
+				uid: activeSlotConns[i].uid,
+				wbl1Id: activeSlotConns[i].wbl1Id,
+				wbl1Slot: activeSlotConns[i].wbl1Slot,
+				wbl2Id: activeSlotConns[i].wbl2Id,
+				wbl2Slot: activeSlotConns[i].wbl2Slot,
+				wbl1Dirs: activeSlotConns[i].wbl1Dirs
+			})
+		}
+
         var customWblDefPart = {
-			noOfChildrenMemory: $scope.getChildren().length
+			childrenSlotConns: slimASC
         };
 
         return customWblDefPart;
@@ -687,11 +749,12 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 //=======================================================================================
 wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance, $timeout, Slot, Enum, isEmpty, props) {
 	var slotConnRequestData = props.newSlotRequest;
+	var activeSlotConns = props.asc;
 
 	$scope.formProps = {
 		wblData: {
 			first: {
-				name : slotConnRequestData.first.scope().getWebbleFullName(),
+				name : (slotConnRequestData.first) ? slotConnRequestData.first.scope().getWebbleFullName() : "",
 				slots: [{key: 'none', name: "None", cat: '', val: 'none'}],
 				selectedSlot: "none",
 				slotConnDir: {
@@ -700,7 +763,7 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 				}
 			},
 			second: {
-				name : slotConnRequestData.second.scope().getWebbleFullName(),
+				name : (slotConnRequestData.second) ? slotConnRequestData.second.scope().getWebbleFullName() : "",
 				slots: [{key: 'none', name: "None", cat: '', val: 'none'}],
 				selectedSlot: "none"
 			}
@@ -708,14 +771,13 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 		infoTooltips: {
 			slots1: "Select the slot to cennect for the first Webble",
 			slots2: "Select the slot to cennect for the second Webble",
-			slotDir: "The directions any change of slot values will be communicated"
+			slotDir: "The directions any change of slot values will be communicated",
+			slotConns: "Current active slot connections, previously created for the Webbles in question (color marked)",
+			delete: "Deletes this slot connection"
 		},
+		asc: [],
 		info: ""
 	};
-
-	// $scope.formProps.wblData.first.name
-	// $scope.formProps.wblData.second.name
-
 
 
 	//========================================================================================
@@ -733,43 +795,160 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 	};
 	//========================================================================================
 
+
+	//========================================================================================
+	// Delete Slot Connection Request
+	// Deletes the slot conn provided as argument.
+	//========================================================================================
+	$scope.deleteSlotConnRequest = function(scuid){
+		for (var i = 0; i < activeSlotConns.length; i++){
+			if(activeSlotConns[i].uid == scuid){
+				activeSlotConns.splice(i, 1);
+				break;
+			}
+		}
+
+		for (var i = 0; i < $scope.formProps.asc.length; i++){
+			if($scope.formProps.asc[i].uid == scuid){
+				$scope.formProps.asc.splice(i, 1);
+				break;
+			}
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Get Webble Color
+	// returns the color of the webble in the slot conn to identify it as 1st or 2nd.
+	//========================================================================================
+	$scope.getWblColor = function(whatWblId){
+		if(slotConnRequestData.first){
+			if(whatWblId == slotConnRequestData.first.scope().getInstanceId()){
+				return "#0000FF";
+			}
+			else if(slotConnRequestData.second && whatWblId == slotConnRequestData.second.scope().getInstanceId()){
+				return "#ff7f2e";
+			}
+			else{
+				return "#000000";
+			}
+		}
+		else{
+			return "#000000";
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Get Webble Name
+	// returns a readable name identifyer of the webble.
+	//========================================================================================
+	$scope.getWblName = function(whatUID, whatWblId){
+		for (var i = 0, asc; asc = $scope.formProps.asc[i]; i++){
+			if(asc.uid == whatUID){
+				if(whatWblId == asc.wbl1Id){
+					return asc.wbl1Pntr.scope().getWebbleFullName();
+				}
+				else{
+					return asc.wbl2Pntr.scope().getWebbleFullName();
+				}
+			}
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Get Adjusted Slot Name
+	// returns a slot name that contains a space character after semicolon (:) in order to
+	// word warp more visually pleasing.
+	//========================================================================================
+	$scope.getAdjSlotName = function(whatUID, whatWblId, whatSlotName){
+		for (var i = 0, asc; asc = $scope.formProps.asc[i]; i++){
+			if(asc.uid == whatUID){
+				if(whatWblId == asc.wbl1Id){
+					return ((asc.wbl1Pntr.scope().getSlot(whatSlotName).getExtDisplayName()).replace(':', ": "));
+				}
+				else{
+					return ((asc.wbl2Pntr.scope().getSlot(whatSlotName).getExtDisplayName()).replace(':', ": "));
+				}
+			}
+		}
+	};
+	//========================================================================================
+
+
 	//========================================================================================
 	// Close
 	// Closes the modal form and send the resulting content back to the creator
 	//========================================================================================
 	$scope.close = function (result) {
-		if(result == 'cancel'){
-			$uibModalInstance.close(null);
+		$scope.formProps.info = "";
+		if(result == 'close'){
+			$uibModalInstance.close(activeSlotConns);
 		}
 		else if(result == 'submit'){
-			$uibModalInstance.close($scope.formProps.data);
+			if($scope.formProps.wblData.first.selectedSlot != "none" && $scope.formProps.wblData.second.selectedSlot != "none" && ($scope.formProps.wblData.first.slotConnDir.send || $scope.formProps.wblData.first.slotConnDir.receive)){
+				var newSlotConn = {
+					uid: new Date().getTime(),
+					wbl1Id: slotConnRequestData.first.scope().getInstanceId(),
+					wbl1Pntr: slotConnRequestData.first,
+					wbl1Slot: $scope.formProps.wblData.first.selectedSlot,
+					wbl2Id: slotConnRequestData.second.scope().getInstanceId(),
+					wbl2Pntr: slotConnRequestData.second,
+					wbl2Slot: $scope.formProps.wblData.second.selectedSlot,
+					wbl1Dirs: { send: $scope.formProps.wblData.first.slotConnDir.send, receive: $scope.formProps.wblData.first.slotConnDir.receive }
+				};
+				activeSlotConns.push(newSlotConn);
+				$scope.formProps.asc.push(newSlotConn);
+				$scope.formProps.wblData.first.selectedSlot = 'none';
+				$scope.formProps.wblData.second.selectedSlot = 'none';
+				$scope.formProps.wblData.first.slotConnDir.send = false;
+				$scope.formProps.wblData.first.slotConnDir.receive = false;
+			}
+			else{
+				$scope.formProps.info = "No proper slot connection configured (missing slots or directions) so we ignore that submit.";
+				$timeout(function(){ $scope.formProps.info = ""; }, 5000);
+			}
 		}
 	};
 	//========================================================================================
 
 
 	//=== CTRL MAIN CODE ======================================================================
-	angular.forEach(slotConnRequestData.first.scope().getSlots(), function (value, key) {
-		if(value.getDisabledSetting() < Enum.SlotDisablingState.ConnectionVisibility){
-			var tmp = {};
-			tmp['key'] = key;
-			tmp['name'] = value.getExtDisplayName();
-			tmp['cat'] = value.getCategory();
-			tmp['val'] = value.getValue();
-			this.push(tmp);
-		}
-	}, $scope.formProps.wblData.first.slots);
+	if(slotConnRequestData.first){
+		angular.forEach(slotConnRequestData.first.scope().getSlots(), function (value, key) {
+			if(value.getDisabledSetting() < Enum.SlotDisablingState.ConnectionVisibility){
+				var tmp = {};
+				tmp['key'] = key;
+				tmp['name'] = value.getExtDisplayName();
+				tmp['cat'] = value.getCategory();
+				tmp['val'] = value.getValue();
+				this.push(tmp);
+			}
+		}, $scope.formProps.wblData.first.slots);
+	}
 
-	angular.forEach(slotConnRequestData.second.scope().getSlots(), function (value, key) {
-		if(value.getDisabledSetting() < Enum.SlotDisablingState.ConnectionVisibility){
-			var tmp = {};
-			tmp['key'] = key;
-			tmp['name'] = value.getExtDisplayName();
-			tmp['cat'] = value.getCategory();
-			tmp['val'] = value.getValue();
-			this.push(tmp);
+	if(slotConnRequestData.second){
+		angular.forEach(slotConnRequestData.second.scope().getSlots(), function (value, key) {
+			if(value.getDisabledSetting() < Enum.SlotDisablingState.ConnectionVisibility){
+				var tmp = {};
+				tmp['key'] = key;
+				tmp['name'] = value.getExtDisplayName();
+				tmp['cat'] = value.getCategory();
+				tmp['val'] = value.getValue();
+				this.push(tmp);
+			}
+		}, $scope.formProps.wblData.second.slots);
+	}
+
+	for (var i = 0; i < activeSlotConns.length; i++){
+		if((activeSlotConns[i].wbl1Pntr != undefined && activeSlotConns[i].wbl2Pntr != undefined) && (slotConnRequestData.first == undefined || activeSlotConns[i].wbl1Id == slotConnRequestData.first.scope().getInstanceId() || activeSlotConns[i].wbl2Id == slotConnRequestData.first.scope().getInstanceId())){
+			$scope.formProps.asc.push(activeSlotConns[i]);
 		}
-	}, $scope.formProps.wblData.second.slots);
+	}
 
 });
 //=======================================================================================

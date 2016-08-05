@@ -4352,12 +4352,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
         else{
             if(content.length && content.length > 1){
-                modalOptions.templateUrl = content[0].templateUrl;
-                modalOptions.controller = content[0].controller;
+                modalOptions.templateUrl = (content[0].templateUrl != undefined) ? content[0].templateUrl : "";
+                modalOptions.controller = (content[0].controller != undefined) ? content[0].controller : undefined;
                 modalOptions.resolve = {
                     props: function(){ return content[1]; }
                 };
-                modalOptions.size = content[0].size;
+                modalOptions.size = (content[0].size != undefined) ? content[0].size : 'md';
+				modalOptions.backdrop = (content[0].backdrop != undefined) ? content[0].backdrop : true;
             }
             else{
                 return;
