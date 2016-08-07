@@ -138,7 +138,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 						}
 					}
 
-					childSlotConnComunication();
+					childSlotConnCommunication(alteredChild, eventData.slotName);
 				}
 			}
 		}, null);
@@ -586,9 +586,26 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 	// this method iterates all slot connections and make sure all slots are set ackordingly
 	// and have communicated latest value.
 	//========================================================================================
-	var childSlotConnComunication = function(){
-		for(var i = 0; i < activeSlotConns.length; i++){
+	var childSlotConnCommunication = function(targetWbl, targetSlot){
+		for(var i = 0, asc; asc = activeSlotConns[i]; i++){
+			if(asc.wbl1Pntr != undefined && asc.wbl2Pntr != undefined){
+				if((targetWbl != undefined && targetSlot != undefined) || (targetWbl == undefined && targetSlot == undefined && asc.isNew == true))
+				if(!targetWbl || (asc.wbl1Id == targetWbl.scope().getInstanceId() || asc.wbl2Id == targetWbl.scope().getInstanceId())){
+					if(!targetSlot || (asc.wbl1Slot == targetSlot || asc.wbl2Slot == targetSlot)){
+						if(asc.wbl1Pntr.scope().gimme(asc.wbl1Slot) != asc.wbl2Pntr.scope().gimme(asc.wbl2Slot)){
+							if(asc.wbl1Dirs.send && (!targetWbl || asc.wbl1Id == targetWbl.scope().getInstanceId()) && (!targetSlot || asc.wbl1Slot == targetSlot)){
+								asc.wbl2Pntr.scope().set(asc.wbl2Slot, asc.wbl1Pntr.scope().gimme(asc.wbl1Slot));
+							}
 
+							if(asc.wbl1Dirs.receive && (!targetWbl || asc.wbl2Id == targetWbl.scope().getInstanceId()) && (!targetSlot || asc.wbl2Slot == targetSlot)){
+								asc.wbl1Pntr.scope().set(asc.wbl1Slot, asc.wbl2Pntr.scope().gimme(asc.wbl2Slot));
+							}
+
+							if(asc.isNew == true){ asc.isNew = undefined; }
+						}
+					}
+				}
+			}
 		}
 	};
 	//========================================================================================
@@ -600,7 +617,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 	var closeCSCMForm = function(returnContent){
 		if(Object.prototype.toString.call( returnContent ) === '[object Array]'){
 			activeSlotConns = returnContent;
-			childSlotConnComunication();
+			childSlotConnCommunication();
 		}
 		if(pendingSlotConn.first){ pendingSlotConn.first.scope().activateBorder(false); pendingSlotConn.first = undefined; }
 		if(pendingSlotConn.second){ pendingSlotConn.second.scope().activateBorder(false); pendingSlotConn.second = undefined; }
@@ -899,7 +916,8 @@ wblwrld3App.controller('CSCMForm_Ctrl', function($scope, $log, $uibModalInstance
 					wbl2Id: slotConnRequestData.second.scope().getInstanceId(),
 					wbl2Pntr: slotConnRequestData.second,
 					wbl2Slot: $scope.formProps.wblData.second.selectedSlot,
-					wbl1Dirs: { send: $scope.formProps.wblData.first.slotConnDir.send, receive: $scope.formProps.wblData.first.slotConnDir.receive }
+					wbl1Dirs: { send: $scope.formProps.wblData.first.slotConnDir.send, receive: $scope.formProps.wblData.first.slotConnDir.receive },
+					isNew: true
 				};
 				activeSlotConns.push(newSlotConn);
 				$scope.formProps.asc.push(newSlotConn);
