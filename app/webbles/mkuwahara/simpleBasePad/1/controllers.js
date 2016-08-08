@@ -216,7 +216,7 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 			undefined
 		));
 
-		if(theInitWblDef.private.childrenSlotConns){
+		if(theInitWblDef.private && theInitWblDef.private.childrenSlotConns){
 			for(var i = 0, csc; csc = theInitWblDef.private.childrenSlotConns[i]; i++ ){
 				var oldSlotConn = {
 					uid: csc.uid,
