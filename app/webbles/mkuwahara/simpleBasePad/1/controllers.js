@@ -128,13 +128,15 @@ wblwrld3App.controller('simpleBasePadCtrl', function($scope, $log, $timeout, Slo
 					else if(!blockChildMoveReaction && (eventData.slotName == 'root:left' || eventData.slotName == 'root:top')){
 						if($scope.gimme("verticalAlignChildren") || $scope.gimme("horizontalAlignChildren")){
 							var newIndex = ((parseInt(alteredChild.scope().gimme(eventData.slotName))- alteredChild.scope().basePadTracker.pos[((eventData.slotName == 'root:left') ? 0 : 1)]) < 0) ? 0 : ($scope.getChildren().length + 1);
-							if(alteredChild.scope().basePadTracker && alteredChild.scope().basePadTracker.index > 0){
+							if(alteredChild && alteredChild.scope().getSlot("basePadChildIndex") && alteredChild.scope().basePadTracker && alteredChild.scope().basePadTracker.index > 0){
 								alteredChild.scope().getSlot("basePadChildIndex").setValue(newIndex);
 								$timeout(function(){ sortChildrenByIndex(); alignChildren(); });
 							}
 						}
 						else{
-							alteredChild.scope().basePadTracker.pos = [parseInt(alteredChild.scope().gimme("root:left")), parseInt(alteredChild.scope().gimme("root:top"))];
+							if(alteredChild){
+								alteredChild.scope().basePadTracker.pos = [parseInt(alteredChild.scope().gimme("root:left")), parseInt(alteredChild.scope().gimme("root:top"))];
+							}
 						}
 					}
 
