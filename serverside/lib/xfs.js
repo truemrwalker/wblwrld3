@@ -102,7 +102,7 @@ function pickFiles(result, extname, baseDir, currDir, files, currRecursionDepth)
 	
 	files.forEach(function (f) {
 		
-		if (path.extname(f) == extname)
+		if (!extname || path.extname(f) == extname)
 			result.push(path.join(relDir, f));
 	});
 	return currRecursionDepth <= 0; // Stop recursing further if condition is true

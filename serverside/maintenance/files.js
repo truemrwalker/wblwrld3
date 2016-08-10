@@ -59,7 +59,7 @@ module.exports = function(app, config, mongoose, gettext) {
         return fs.utimesAsync(localFilePath, 0, mtime);
     }
 
-    function syncWebbleFileEntry(localFilePath, localStat, remoteFile) {
+    function syncWebbleFileEntry(localFilePath, localStat, remoteFile, oneWayToLocal = false) {
 
 		var localTime = (localStat && localStat.mtime) || new Date(0);
 		var remoteTime = (remoteFile && remoteFile.metadata && remoteFile.metadata.mtime) || new Date(0);
@@ -74,7 +74,7 @@ module.exports = function(app, config, mongoose, gettext) {
         remoteTime.setMilliseconds(0); // Reset the milliseconds because stat values have seconds granularity
         localTime.setMilliseconds(0);
 
-		if (remoteTime < localTime) {
+        if (!oneWayToLocal && remoteTime < localTime) {
 
             console.log("Sync:", localFilePath, "->", remoteFile.filename, "...", localTime, "->", remoteTime);
             return gfs.uploadToFileEntry(fs.createReadStream(localFilePath), remoteFile, localTime);
@@ -132,14 +132,15 @@ module.exports = function(app, config, mongoose, gettext) {
 	}
 
 	//******************************************************************
+    // Filenames can contain internal dirs relative to localDir
 
 	function syncFiles(localDir, remoteDir, localFiles, remoteFiles) {
 
         if (!remoteDir)
             return Promise.reject(new Error("Remote directory is wrong"));
 
+        var remoteFilesRelDir = remoteFiles.map(f => path.relative(remoteDir, f.filename));
         localFiles = localFiles.filter(lf => lf !== 'info.json');
-        remoteFiles = remoteFiles.filter(rf => rf.metadata.directory === remoteDir);
 
         return getWebbleId(remoteDir).then(function (ownerId) {
 
@@ -147,11 +148,12 @@ module.exports = function(app, config, mongoose, gettext) {
             localFiles.forEach(function (filename) {
 
                 var remoteFile = null;
-                var index = util.indexOf(remoteFiles, r => r.metadata.filename === filename);
+                var index = util.indexOf(remoteFilesRelDir, r => r === filename);
                 if (index !== -1) {
 
                     remoteFile = remoteFiles[index];
                     remoteFiles.splice(index, 1);
+                    remoteFilesRelDir.splice(index, 1);
                 }
 
                 var localFilePath = path.join(localDir, filename);
@@ -159,13 +161,16 @@ module.exports = function(app, config, mongoose, gettext) {
 
                     if (!localStat && remoteFile) {
 
-                        console.log("WARNING, WARNING: DELETING REMOTE FILE:", remoteFile.filename);
+                        console.log("WARNING: DELETING online file:", remoteFile.filename);
                         return gfs.deleteFileEntry(remoteFile);
                     }
                     else if (!remoteFile) {
 
-                        console.log("Uploading:", localFilePath, "->", path.join(remoteDir, filename), "...", localStat.mtime);
-                        return gfs.upload(fs.createReadStream(localFilePath), remoteDir, filename, ownerId, localStat && localStat.mtime);
+                        var remoteFilePath = path.join(remoteDir, filename);
+                        console.log("Uploading:", localFilePath, "->", remoteFilePath, "...", localStat.mtime);
+
+                        return gfs.upload(fs.createReadStream(localFilePath), path.dirname(remoteFilePath),
+                            path.basename(remoteFilePath), ownerId, localStat && localStat.mtime);
                     }
                     else
                         return syncWebbleFileEntry(localFilePath, localStat, remoteFile);
@@ -174,19 +179,10 @@ module.exports = function(app, config, mongoose, gettext) {
 
             remoteFiles.forEach(function (remoteFile) {
 
-                console.log("WARNING, WARNING: DELETING REMOTE FILE:", remoteFile.filename);
+                console.log("WARNING: DELETING online file:", remoteFile.filename);
                 promises.push(gfs.deleteFileEntry(remoteFile));
             });
             return Promise.all(promises);
-        });
-	}
-
-	function syncRemoteWebbleFile(remoteFileEntry) {
-
-        var localFilePath = path.join(backupDir, remoteFileEntry.filename);
-
-        return statIfExists(localFilePath).then(function (localStat) {
-            return syncWebbleFileEntry(localFilePath, localStat, remoteFileEntry);
         });
 	}
 
@@ -198,13 +194,12 @@ module.exports = function(app, config, mongoose, gettext) {
         //
         function processWebbleVersionDir(promises, webbleFilesDir, category, id, version) {
 
-            return xfs.walk(webbleFilesDir, function (baseDir, dirs, files) {
+            return xfs.getAllFiles(webbleFilesDir, null, 10).then(function (localFiles) {
 
-                var remainingPath = path.relative(webbleFilesDir, baseDir);
-                var remoteDir = path.join(category, id, version, remainingPath);
+                var remoteDir = path.join(category, id, version);
 
                 promises.push(gfs.getFiles(remoteDir).then(function (remoteFiles) {
-                    return syncFiles(baseDir, remoteDir, files, remoteFiles);
+                    return syncFiles(webbleFilesDir, remoteDir, localFiles, remoteFiles);
                 }));
             });
         }
@@ -242,6 +237,15 @@ module.exports = function(app, config, mongoose, gettext) {
 
 	//******************************************************************
 
+    function backupRemoteFile(remoteFileEntry) {
+
+        var localFilePath = path.join(backupDir, remoteFileEntry.filename);
+
+        return statIfExists(localFilePath).then(function (localStat) {
+            return syncWebbleFileEntry(localFilePath, localStat, remoteFileEntry, true);
+        });
+    }
+
 	function syncBackupFiles() {
 
         // Check and try to fix duplicate files
@@ -251,22 +255,21 @@ module.exports = function(app, config, mongoose, gettext) {
 
             return Promise.all(util.transform_(files, function (f) {
 
-                if (!f.filename || !f.metadata) // Just log the error for now - TODO: handle it in the future
-                    return console.error("Corrupt file in db:", f._id);
+                if (!f.filename || !f.metadata) {
 
-                // Check and try to fix duplicate files
-                //
-                if (dups.hasOwnProperty(f.filename)) {
-
-                    console.error("Terminating duplicate file entry:", f.filename);
+                    console.error("WARNING: DELETING corrupt file in db:", f._id);
                     return gfs.deleteFileEntry(f);
                 }
-                else
-                    dups[f.filename] = f;
-                // -- end of check of duplicate files
+                else if (dups.hasOwnProperty(f.filename)) {
+
+                    console.error("WARNING: DELETING duplicate file entry:", f.filename);
+                    return gfs.deleteFileEntry(f);
+                }
+
+                dups[f.filename] = f;
 
                 if (f.metadata._owner)
-                    return syncRemoteWebbleFile(f);
+                    return backupRemoteFile(f);
 
                 return getWebbleId(f.metadata.directory).then(function (ownerId) {
 
@@ -278,7 +281,7 @@ module.exports = function(app, config, mongoose, gettext) {
                     console.log("Orphan file:", f.filename);
 
                 }).then(function () {
-                    return syncRemoteWebbleFile(f);
+                    return backupRemoteFile(f);
                 });
             }));
         });
