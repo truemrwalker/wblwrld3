@@ -209,29 +209,31 @@
     <!-- Rudimentary IDE that displays & can edit the selected template's files -->
     <!----------------------------------------------------------------->
 
-    <h3 ng-show="currTemplateId"><span class="fa fa-edit"></span> <span translate>Edit Template Files</span></h3>
+    <h3 ng-show="currTemplateId"><span class="fa fa-edit"></span> <span translate>Template Editor</span> [{{(currFile || '') + (currFileDirty ? '*' : '')}}]</h3>
 
     <div class="container-fluid" ng-show="currTemplateId">
 
-        <div class="table-responsive table-hover col-md-3">
+        <div class="row">
+            <div ng-show="!currFileDirty" class="btn-group dropdown" uib-dropdown is-open="isNewFileDropDownOpen">
+                <a href class="btn btn-success btn-xs dropdown-toggle" uib-dropdown-toggle><span translate>New File</span> <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="f in newTemplateFiles | filter:missingFile" uib-tooltip="{{f.help}}" tooltip-placement="right">
+                        <a ng-click="isNewFileDropDownOpen = createFile(f.name)">{{f.name}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <a ng-show="!currFileDirty && currFile" class="btn btn-danger btn-xs" ng-click="deleteFile()"><span translate>Delete</span> <i class="fa fa-trash-o"></i></a>
+
+            <a ng-show="currFileDirty" class="btn btn-primary btn-xs" ng-click="saveFile()"><span translate>Save</span> <i class="fa fa-save"></i></a>
+            <a ng-show="currFileDirty" class="btn btn-warning btn-xs" ng-click="discardFileChanges()"><span translate>Discard</span> <i class="fa fa-ban"></i></a>
+        </div>
+
+        <div class="row table-responsive table-hover col-md-3">
             <table class="table">
                 <thead>
                     <tr>
-                        <td>
-                            <div ng-show="!currFileDirty"  class="btn-group dropdown" uib-dropdown is-open="isNewFileDropDownOpen">
-                                <a href class="btn btn-success btn-xs dropdown-toggle" uib-dropdown-toggle><span translate>New File</span> <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li ng-repeat="f in newTemplateFiles | filter:missingFile" uib-tooltip="{{f.help}}" tooltip-placement="right">
-                                        <a ng-click="isNewFileDropDownOpen = createFile(f.name)">{{f.name}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <a ng-show="!currFileDirty && currFile" class="btn btn-danger btn-xs" ng-click="deleteFile()"><span translate>Delete</span> <i class="fa fa-trash-o"></i></a>
-
-                            <a ng-show="currFileDirty" class="btn btn-primary btn-xs" ng-click="saveFile()"><span translate>Save</span> <i class="fa fa-save"></i></a>
-                            <a ng-show="currFileDirty" class="btn btn-warning btn-xs" ng-click="discardFileChanges()"><span translate>Discard</span> <i class="fa fa-ban"></i></a>
-                        </td>
+                        <td><i class="fa fa-file"></i> <b translate>Template Files</b></td>
                     </tr>
                 </thead>
 
