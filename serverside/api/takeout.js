@@ -174,7 +174,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Routes
 	//
-    app.post('/api/export/webbles', auth.dev, function (req, res) {
+    app.post('/api/export/webbles', auth.non, function (req, res) {
 
         var startPromise = (req.body.templates && req.body.webble) ? Promise.resolve(null)
             : extractEncodedParams(req);

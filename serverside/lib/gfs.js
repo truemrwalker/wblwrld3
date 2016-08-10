@@ -235,7 +235,7 @@ module.exports.GFS = function (mongoose) {
                 
                 return update({ _id: file._id }, { '$set': { "metadata.mtime": mtime || new Date() } }).then(function () {
                     return gfs.createWriteStream({ _id: file._id, mode: 'w' });
-                });                
+                });
 			}
 			else {
 
