@@ -120,7 +120,8 @@
 					<span style="font-size: 14px; font-weight: bold;">Created By:
 						<span style="font-style: italic; font-weight: normal; color: #0000ff;" ng-click="makeAutoSearch(wblMeta.webble.author)">{{wblMeta.webble.author}}</span>
 						<span>&nbsp;&nbsp;&nbsp;Publisher: </span>
-						<span ng-show="wblMeta.groups.length" style="font-style: italic; font-weight: normal; color: #0000ff;" ng-repeat="pubItem in wblMeta.groups" ng-click="makeAutoSearch(pubItem)">{{pubItem}} </span>
+						<span ng-show="wblMeta.groups.length && pubItem != 'Hidden'" style="font-style: italic; font-weight: normal; color: #0000ff;" ng-repeat="pubItem in wblMeta.groups" ng-click="makeAutoSearch(pubItem)">{{pubItem}}, </span>
+						<span ng-show="wblMeta.groups.length && pubItem == 'Hidden'" style="font-style: italic; font-weight: normal;" ng-repeat="pubItem in wblMeta.groups" >{{pubItem}} </span>
 						<span ng-hide="wblMeta.groups.length" style="font-style: italic; font-weight: normal;" translate>Not Specified</span>
 					</span>
 				</div>

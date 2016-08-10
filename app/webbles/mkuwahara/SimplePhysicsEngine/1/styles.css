@@ -7,8 +7,8 @@
 /*/ === BEGIN: Phys Engine Classes === /*/
 
 .physEngineContainer{
-    width: 250px;
-    height: 250px;
+    width: 500px;
+    height: 300px;
     background-color: #d329c6;
     border: 2px solid black;
     border-radius:2px;

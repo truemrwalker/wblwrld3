@@ -1544,7 +1544,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 
 
-    //========================================================================================
+	//========================================================================================
     // Download Webble Template Manifest File
     // This method loads all files (one by one) found in the webble templates manifest file.
     // When done it continues loading the rest of the template.
@@ -1555,24 +1555,24 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             var libItem = wblManifestLibs.shift();
             var libItemExt = libItem.substr(libItem.lastIndexOf('.')+1);
 
-            if(libItemExt == 'css'){
-                $.ajax({url: libItem,
-                    success: function(){
-                        $('<link rel="stylesheet" type="text/css" href="' + libItem + '" >').appendTo("head");
-                    },
-                    complete: function(){
-                        downloadingManifestLibs = false;
-                        downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
-                    }
-                });
-            }
-            else{
-                $.getScript( libItem )
-                    .always(function( jqxhr, settings, exception ) {
-                        downloadingManifestLibs = false;
-                        downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
-                    });
-            }
+			if(libItemExt == 'css'){
+				$.ajax({url: libItem,
+					success: function(){
+						$('<link rel="stylesheet" type="text/css" href="' + libItem + '" >').appendTo("head");
+					},
+					complete: function(){
+						downloadingManifestLibs = false;
+						downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
+					}
+				});
+			}
+			else{
+				$.getScript( libItem )
+					.always(function( jqxhr, settings, exception ) {
+						downloadingManifestLibs = false;
+						downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
+					});
+			}
         }
         else{
             downloadWblTemplatePartTwo(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
