@@ -60,7 +60,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	//
     var fsOps = require('../lib/ops/gfsing')(app, config, mongoose, gettext, auth);
 
-    function exportWebble(req, res, webbleDef, webbleTemplates, dirGetter, idGetter) {
+    function exportWebble(req, res, webbleDef, webbleTemplates, dirGetter, idGetter, verGetter) {
 
         var pack = tar.pack();
 
@@ -74,7 +74,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
             // Sequentially
             return webbleTemplates.reduce(function (soFar, w) {
-                return soFar.then(() => fsOps.exportFiles(req, w, path.join(dirGetter(w), idGetter(w)), pack));
+                return soFar.then(() => fsOps.exportFiles(req, w, path.join(dirGetter(w), idGetter(w), verGetter(w)), pack));
             }, Promise.resolve(null));
 
         }).then(function () {
@@ -99,8 +99,8 @@ module.exports = function (app, config, mongoose, gettext, auth) {
         return fsOps.importFiles(req, {}, devWebbleDir,
             function (tarDir) {
 
-                var query = is_dev ? DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.templateid': tarDir }] })
-                    : Webble.findOne({ "webble.templateid": tarDir });
+                var query = is_dev ? DevWebble.findOne({ $and: [{ _owner: req.user._id }, { 'webble.defid': tarDir }] })
+                    : Webble.findOne({ "webble.defid": tarDir });
 
                 return query.exec().then(function (w) {
 
@@ -200,7 +200,8 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
                 let dirGetter = w => util.indexOf(pubTemplates, t => t.templateId == w.webble.templateid) != -1 ? webbleDir : devWebbleDir;
                 let idGetter = w => util.indexOf(pubTemplates, t => t.templateId == w.webble.templateid) != -1 ? w.webble.templateid : w._id.toString();
-                return exportWebble(req, res, webbleDef, allTemplates, dirGetter, idGetter);
+                let verGetter = w => w.webble.templaterevision.toString();
+                return exportWebble(req, res, webbleDef, allTemplates, dirGetter, idGetter, verGetter);
             });
 
         }).catch(err => util.resSendError(res, err));
@@ -209,7 +210,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	app.get('/api/takeout/devwebbles', auth.dev, function (req, res) {
 
         return DevWebble.find({ _owner: req.user._id }).exec()
-            .then(webbles => exportWebble(req, res, null, webbles, w => devWebbleDir, w => w._id.toString()))
+            .then(webbles => exportWebble(req, res, null, webbles, w => devWebbleDir, w => w._id.toString(), w => "0"))
             .catch(err => util.resSendError(res, err));
 	});
 

@@ -205,7 +205,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
 					gfs.createWriteStream(targetPath, path.basename(header.name), null, 0).then(function (writeStream) {
 
-                        targetObj.files.push(getRelativeUrl(targetObj.webble.templateid, header.name));
+                        targetObj.files.push(getRelativeUrl(targetObj.webble.defid, header.name));
 
 						stream.pipe(writeStream);
 						
@@ -323,7 +323,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 		
 		exportFiles: function (req, query, targetPathPrefix, pack) {
 			
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+			return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (obj) {
 				
 				ensureObjectValid(req, obj, true);
 				
@@ -333,7 +333,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 		
 		importFiles: function (req, query, targetPathPrefix, objGetterAsync, objSetterAsync) {
 			
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+			return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (obj) {
 				// ensureObjectValid(req, obj);
 				
 				// Ignore everything we get from query ... we don't really use it now
@@ -347,7 +347,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 		
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 			
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+			return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (obj) {
 				ensureObjectValid(req, obj);
 				
 				var targetVer = versionUpdater(obj);
