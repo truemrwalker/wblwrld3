@@ -204,9 +204,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 if (!webble.webble.author)
                     webble.webble.author = req.user.username || req.user.name.full;
 
-                res.json(normalizeWebble(webble));
+                return webble; // We should return the object to continue publication
 
-            }).catch(err => util.resSendError(res, err, gettext("could not modify webble")));
+            }).then(webble => res.json(normalizeWebble(webble)))
+                .catch(err => util.resSendError(res, err, gettext("could not modify webble")));
 		}
     });
 

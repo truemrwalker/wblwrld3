@@ -108,66 +108,65 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
-		publish: function (req, query, createNewObjFunc, checkAndupdateObjFunc) {
+        publish: function (req, query, createNewObjFunc, checkAndupdateObjFunc) {
 
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
-				.then(function(obj) {
+            return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (obj) {
 
-					if (!obj) {
+                if (!obj) {
 
-						obj = createNewObjFunc();
+                    obj = createNewObjFunc();
 
-						if (!obj._owner)
-							obj._owner = req.user._id;
-					}
-					ensureObjectValid(req, obj);
+                    if (!obj._owner)
+                        obj._owner = req.user._id;
+                }
+                ensureObjectValid(req, obj);
 
-					// Update Object
-					//
-					obj = checkAndupdateObjFunc(obj);
+                // Update Object
+                //
+                obj = checkAndupdateObjFunc(obj);
 
-					// Publication under specific groups
-					//
-					var pub_promises = [];
+                // Publication under specific groups
+                //
+                var pub_promises = [];
 
-					if (req.body.groups && req.body.groups.length) {
+                if (req.body.groups && req.body.groups.length) {
 
-						if (!req.user._sec.groups || req.user._sec.groups.length == 0)
-							throw new util.RestError(gettext("Wrong publication group"), 403);
+                    if (!req.user._sec.groups || req.user._sec.groups.length == 0)
+                        throw new util.RestError(gettext("Wrong publication group"), 403);
 
-						req.body.groups.forEach(function(gIndex) {
+                    req.body.groups.forEach(function (gIndex) {
 
-							if (gIndex < 0 || gIndex >= req.user._sec.groups.length)
-								throw new util.RestError(gettext("Wrong publication group"), 403);
+                        if (gIndex < 0 || gIndex >= req.user._sec.groups.length)
+                            throw new util.RestError(gettext("Wrong publication group"), 403);
 
-							pub_promises.push(addObjectToGroup(obj, req.user._sec.groups[gIndex]));
-						});
-					}
-					else {
+                        pub_promises.push(addObjectToGroup(obj, req.user._sec.groups[gIndex]));
+                    });
+                }
+                else {
 
-						obj._sec.groups.forEach(function(gId) {
-							pub_promises.push(addObjectToGroup(obj, gId)); // Re-add to group to enforce pub policies
-						});
-					}
+                    obj._sec.groups.forEach(function (gId) {
+                        pub_promises.push(addObjectToGroup(obj, gId)); // Re-add to group to enforce pub policies
+                    });
+                }
 
-					obj._updated = Date.now();
+                obj._updated = Date.now();
 
-					return Promise.all(pub_promises).then(function() {
-						return obj.save();
-					});
-				});
-		},
+                return Promise.all(pub_promises).then(function () {
+                    return obj.save();
+                });
+            });
+
+        },
 
 		//**************************************************************
 
 		unpublish: function (req, query) {
 
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
-				.then(function(obj) {
-					ensureObjectValid(req, obj, 204); // 204 (No Content) per RFC2616
+            return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj, 204); // 204 (No Content) per RFC2616
 
-					return obj.remove();
-				});
+                return obj.remove();
+            });
 		}
 
 		//**************************************************************
