@@ -41,7 +41,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			throw new util.RestError(gettext("Requested object does not exist", 404));
 	}
 
-	function verifyGroupRecursively(trustVector, groupId, groupNameCache) {
+	function verifyGroupRecursively(trustVector, groupId) {
 
 		if (!groupId)
 			return Promise.resolve(false);
@@ -54,11 +54,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 if (!grp)
                     return false;
 
-                groupNameCache[grp._id.toString()] = grp.name;
-
                 // For now only single parents supported
                 //
-                return verifyGroupRecursively(trustVector, grp._sec.groups[0], groupNameCache);
+                return verifyGroupRecursively(trustVector, grp._sec.groups[0]);
 
 			}).catchReturn(false);
 		}
@@ -74,7 +72,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		//
 		verify: function(req, query) {
 
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (objs) {
+			return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (objs) {
                 ensureObjectValid(req, objs);
 
                 if (!(objs instanceof Array)) // Sometimes we want to verify just one object
@@ -82,12 +80,11 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 
                 var trustVector = req.user && req.user._sec.trusts;
                 if (!trustVector || trustVector.length == 0)
-                    return { trusts: objs.map(o => false), group_cache: {} };
+                    return objs.map(o => false);
                 else {
 
                     var cache = {}; // Store already calculated results for pruning
-                    var groupNameCache = {}; // Store group names that we've seen so far
-                    
+
                     var results = objs.map(function(obj) {
 
                         var groups = obj._sec.groups;
@@ -100,14 +97,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                             return false;
                         else {
 
-                            var promises = [];
-                            groups.forEach(function (g) {
+                            var promises = groups.map(function (g) {
 
-                                if (cache[g.toString()] === undefined) {
-
-                                    promises.push(verifyGroupRecursively(trustVector, g, groupNameCache)
-                                        .then(r => (cache[g.toString] = r)));
-                                }
+                                return (cache[g.toString()] !== undefined) ? cache[g.toString()]
+                                    : verifyGroupRecursively(trustVector, g).then(r => (cache[g.toString()] = r));
                             });
 
                             if (promises.length == 0) // This can never happen mate!
@@ -116,10 +109,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                             return Promise.all(promises).then(util.anyTrue);
                         }
                     });
-
-                    return Promise.all(results).then(function (trusts) {
-                        return { trusts: trusts, group_cache: groupNameCache };
-                    });
+                    return Promise.all(results);
                 }
             });
 		},

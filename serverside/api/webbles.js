@@ -43,9 +43,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-    function normalizeWebble(w, isVerified, isTrusted, groupNameCache, files) {
+    var groupNameCache = {};
+
+    function normalizeWebble(w, isVerified, isTrusted, files) {
 
         var result = w.getNormalizedObject(files, isVerified, isTrusted);
+
+        var groupNameCache = app.locals.groupNameCache;
 
         if (groupNameCache && w._sec.groups)
             result.groups = w._sec.groups.map(gId => groupNameCache[gId.toString()] || "Hidden");
@@ -97,14 +101,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
                     if (req.query.verify && req.query.verify === '1' && req.user) {
 
-                        return verifyOps.verify(req, results).then(function (verResult) {
+                        return verifyOps.verify(req, results).then(function (trustResults) {
 
-                            if (results.length != verResult.trusts.length)
+                            if (results.length != trustResults.length)
                                 res.json(util.transform_(results, normalizeWebble));
                             else {
 
                                 for (var i = 0; i < results.length; ++i)
-                                    results[i] = normalizeWebble(results[i], true, verResult.trusts[i], verResult.group_cache);
+                                    results[i] = normalizeWebble(results[i], true, trustResults[i]);
 
                                 res.json(results);
                             }
@@ -150,15 +154,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
                 return fsOps.associatedFiles(req, webble, path.join(webbleDir, webble.webble.defid)).then(function (files) {
 
-                    return req.query.verify ? verifyOps.verify(req, webble).then(function (result) {
-                        res.json(normalizeWebble(webble, true, result.trusts[0], result.group_cache, files));
-                    }) : res.json(normalizeWebble(webble, false, false, null, files));
+                    return req.query.verify ? verifyOps.verify(req, webble).then(function (trustResults) {
+                        res.json(normalizeWebble(webble, true, trustResults[0], files));
+                    }) : res.json(normalizeWebble(webble, false, false, files));
                 });
             }
             else if (req.query.verify) {
 
-                return verifyOps.verify(req, webble).then(function (result) {
-                    res.json(normalizeWebble(webble, true, result.trusts[0], result.group_cache));
+                return verifyOps.verify(req, webble).then(function (trustResults) {
+                    res.json(normalizeWebble(webble, true, trustResults[0]));
                 });
 			}
 			else
@@ -278,7 +282,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.get('/api/webbles/:id/verify', auth.usr, function(req, res) {
 
         return verifyOps.verify(req, Webble.findOne({ "webble.defid": req.params.id }, '-webble'))
-            .then(result => res.json(result.trusts[0]))
+            .then(trustResults => res.json(trustResults[0]))
             .catch(err => util.resSendError(res, err));
 	});
 
@@ -287,7 +291,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
   app.put('/api/verify/webbles', auth.usr, function(req, res) {
 
       return verifyOps.verify(req, Webble.find({ "webble.defid": { $in: req.body.webbles || [] } }, '-webble'))
-          .then(result => res.json(result.trusts))
+          .then(trustResults => res.json(trustResults))
           .catch(err => util.resSendError(res, err));
   });
 

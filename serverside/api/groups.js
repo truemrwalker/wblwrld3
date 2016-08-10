@@ -34,6 +34,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	var User = mongoose.model('User');
 	var Webble = mongoose.model('Webble');
 
+    ////////////////////////////////////////////////////////////////////
+    // Cache all groupNames for maximum speed
+    //
+    app.locals.groupNameCache = {};
+    Group.find({}).exec().then(groups => groups.forEach(g => app.locals.groupNameCache[g._id.toString()] = g.name));
+
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
@@ -84,11 +90,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 group.mergeWithObject(req.body.group);
                 
                 return group.save().then(function () {
+
+                    // Cache the name of the group we've just created and return it
+                    app.locals.groupNameCache[group._id.toString()] = group.name;
+
                     return group;
                 });
             });
         });
-	}
+    }
 
 	////////////////////////////////////////////////////////////////////
 	// Groups in general
@@ -109,31 +119,23 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			];
 		}
 
-		Group.find(query.conditions, '', query.options).exec().then(function (groups) {
+        Group.find(query.conditions, '', query.options).exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/mygroups', auth.usr, function (req, res) {
 
 		Group.find({$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]}).exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.post('/api/groups', auth.adm, function (req, res) { // Top-level groups must be managed by the adminzzz
 
 		createGroup(req, true).then(function (group) {
             res.json(normalizeGroup(group));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -147,9 +149,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             
             res.json(normalizeGroup(group));
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.put('/api/groups/:id', auth.usr, function (req, res) {
@@ -171,10 +171,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 res.json(normalizeGroup(group));
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/groups/:id', auth.usr, function (req, res) {
@@ -208,10 +205,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 });
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -220,20 +214,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		createGroup(req, false).then(function (group) {
             res.json(normalizeGroup(group));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/groups/:id/groups', auth.usr, function (req, res) { // Sub-groups
 
 		return Group.find({ "_sec.groups" : getId(req) }).exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -259,20 +247,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		groupingOps.getGroupMembers(req, Group.findById(getId(req)), User.find({})).then(function (results) {
             res.json(util.transform_(results, function (u) { return u.toJSON(); }));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/groups/:id/users', auth.usr, function (req, res) {
 
 		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), User.find({})).then(function () {
             res.status(200).send(gettext("User removed from group"));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -283,30 +265,21 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             Webble.findOne({ "webble.defid": req.body.webble })).then(function () {
             
             res.status(200).send(gettext("Webble added to group"));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+            }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/groups/:id/webbles', auth.usr, function (req, res) {
 
         groupingOps.getGroupMembers(req, Group.findById(getId(req)), Webble.find({})).then(function (results) {
             res.json(util.transform_(results, function (w) { return w.toJSON(); }));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/groups/:id/webbles', auth.usr, function (req, res) {
 
 		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), Webble.find({})).then(function () {
             res.status(200).send(gettext("Webble removed from group"));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -318,10 +291,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		groupingOps.modifyGroupMember(req, Group.findById(getId(req)), execAble).then(function () {
             res.status(200).send(gettext("Object added to group"));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/groups/:id/objects', auth.usr, function (req, res) {
@@ -330,10 +300,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		groupingOps.getGroupMembers(req, Group.findById(getId(req)), execAble).then(function (results) {
             res.json(util.transform_(results, function (o) { return { id: o._id, repr: o.repr() } }));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/groups/:id/objects', auth.usr, function (req, res) {
@@ -342,10 +309,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		groupingOps.clearGroupMembers(req, Group.findById(getId(req)), execAble).then(function () {
             res.status(200).send(gettext("Objects removed from group"));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 };
