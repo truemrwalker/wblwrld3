@@ -33,6 +33,41 @@ function startFsMonitor(webbleDir, mongoose) {
 	var util = require('../lib/util');	
 	var libGfs = require('../lib/gfs');
 
+    function onFileChange(localFile, stat) {
+
+        var localDir = path.relative(webbleDir, path.dirname(localFile)).split(path.sep);
+        var verIndex = util.lastIndexOf(localDir, util.isStringNumber);
+
+        if (verIndex == -1 || verIndex == 0) {
+            console.log("Error updating file:", localFile);
+            return;
+        }
+
+        var id = localDir[verIndex - 1], version = localDir[verIndex];
+        var remainingPath = localDir.slice(verIndex + 1).join(path.sep);
+
+        var filename = path.basename(localFile);
+        var remoteDir = path.join('webbles', id, version, remainingPath);
+
+        if (!stat) {
+
+            return gfs.deleteFile(remoteDir, filename)
+                .then(() => console.log("DEBUG: Deleted file:", localFile))
+                .catch(err => console.log("Error Deleting file:", err));
+        }
+        else if (!stat.isFile() || filename.toLowerCase() == 'info.json') {
+
+            console.log("DEBUG: Skipping file:", localFile);
+            return Promise.resolve();
+        }
+        else {
+
+            return gfs.upload(fs.createReadStream(localFile), remoteDir, filename)
+                .then(() => console.log("DEBUG: Updated file:", localFile, "->", path.join(remoteDir, filename)))
+                .catch(err => console.log("Error updating file:", err));
+        }
+    }
+
 	// Implementation
 	var watcher = require('chokidar').watch(webbleDir, {
 		ignored: /[\/\\]\./,
@@ -42,29 +77,9 @@ function startFsMonitor(webbleDir, mongoose) {
 	
 	var gfs = new libGfs.GFS(mongoose);
 	
-	// 'add' is handled by 'change', 'unlink' handled by maintainance scripts
-	watcher.on('change', function (localFile, stat) {
-		
-		var localDir = path.relative(webbleDir, path.dirname(localFile)).split(path.sep);
-		var verIndex = util.lastIndexOf(localDir, util.isStringNumber);
-		
-		if (verIndex == -1 || verIndex == 0) {
-			console.log("Error updating file:", localFile);
-			return;
-		}
-		
-		var id = localDir[verIndex - 1], version = localDir[verIndex];
-		var remainingPath = localDir.slice(verIndex + 1).join(path.sep);
-		
-		var filename = path.basename(localFile);
-		var remoteDir = path.join('webbles', id, version, remainingPath);
-		
-		gfs.upload(fs.createReadStream(localFile), remoteDir, filename).then(function () {
-			console.log("DEBUG: Updated file:", localFile, "->", path.join(remoteDir, filename));
-		}).catch(function (err) {
-			console.log("Error updating file:", err);
-		});
-	});
+    // 'add' is handled by 'change'
+    watcher.on('change', onFileChange);
+    watcher.on('unlink', onFileChange);
 }
 
 module.exports = function (app, config, mongoose, gettext, webServer) {

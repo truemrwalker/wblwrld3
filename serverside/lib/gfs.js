@@ -194,7 +194,7 @@ module.exports.GFS = function (mongoose) {
 
 		var self = this;
 		return self.getFile(directory, filename, ownerId).then(function(file) {
-			return self.deleteFileEntry(file);
+			return file ? self.deleteFileEntry(file) : file;
 		});
 	};
 
