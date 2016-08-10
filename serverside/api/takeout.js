@@ -81,11 +81,10 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 
             pack.finalize();
 
-            var descr = webbleDef ? webbleDef.webble.description : req.user ? req.user.name.first : "Anonymous";
-            var name = webbleDef ? webbleDef.webble.displayname : req.user ? req.user.username : "Webble Archive";
+            var name = webbleDef ? webbleDef.webble.displayname : "Webble Archive";
 
             res.writeHead(200, {
-                'Content-Description': 'Webble Archive: ' + descr,
+                'Content-Description': 'Webble Archive: ' + name,
                 'Content-Disposition': 'inline; filename="' + name + '.war"',
                 'Content-Type': 'application/octet-stream'
             });
