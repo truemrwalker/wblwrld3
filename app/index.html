@@ -1,49 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="wblwrld3App">
     <head>
-        <!--
-        ===========================================================================================
-        // Webble World
-        // [IntelligentPad system for the web]
-        // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
-        // v3.0 (2013), v3.1(2015)
-        //
-        // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
-        // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
-        // Server Side Developer: Giannis Georgalis
-        // Additional Support: Jonas Sjöbergh
-        //
-        // This file is part of Webble World (c).
-        // ******************************************************************************************
-        // Webble World is licensed under the Apache License, Version 2.0 (the "License");
-        // you may not use this file except in compliance with the License.
-        // You may obtain a copy of the License at
-        //
-        // http://www.apache.org/licenses/LICENSE-2.0
-        //
-        // Unless required by applicable law or agreed to in writing, software
-        // distributed under the License is distributed on an "AS IS" BASIS,
-        // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        // See the License for the specific language governing permissions and
-        // limitations under the License.
-        // ******************************************************************************************
-        // The use of the word "Webble" or "webble" for the loadable meme media objects are limited
-        // only to objects that actually loads in this original Webble World Platform. Modifications
-        // of the meme media object code which leads to breaking of compatibility with the original
-        // Webble World platform, may no longer be refered to as a "Webble" or "webble".
-        // ******************************************************************************************
-        //===========================================================================================
-        -->
-        <title ng-bind="pageTitle | translate"></title>
-
         <meta charset="utf-8"/>
         <meta name="application-name" content="Webble World"/>
-        <meta name="version" content="3.0"/>
+        <meta name="version" content="3.1"/>
         <meta name="description" content="Webble World, meme media object tool for building and using Webble applications"/>
         <meta name="author" content="Micke Nicander Kuwahara"/>
         <meta name="revised" content="M.N.K., March 2014"/>
         <meta name="keywords" content="Webble World, Universe, Webbles, Webbling, Meme Media, IntelligentPad, IntelligentBox, Micke Nicander Kuwahara, Yuzuru Tanaka, configure, edit, attach, detach, object"/>
-        <meta name="generator" content="WebStorm 7.02"/>
+        <meta name="generator" content="WebStorm 2016.2"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="google-site-verification" content="makSg-XnaN-RDJxY0CWDn3mp8GrCzwz3nD0frGGdRUk" />
 		<meta property="og:title" content="Webble World 3.1" />
@@ -51,6 +16,41 @@
 		<meta property="og:description" content="Create your own custom online applications and share with the world with little or no programming." />
 		<meta property="og:url" content="https://wws.meme.hokudai.ac.jp/" />
 
+		<title ng-bind="pageTitle | translate">Webble World</title>
+
+		<!--
+       ===========================================================================================
+       // Webble World
+       // [IntelligentPad system for the web]
+       // Copyright (c) 2010 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka in Meme Media R&D Group of Hokkaido University
+       // v3.0 (2013), v3.1(2015)
+       //
+       // Project Leader & Lead Meme Media Architect: Yuzuru Tanaka
+       // Webble System Lead Architect & Developer: Micke Nicander Kuwahara
+       // Server Side Developer: Giannis Georgalis
+       // Additional Support: Jonas Sjöbergh
+       //
+       // This file is part of Webble World (c).
+       // ******************************************************************************************
+       // Webble World is licensed under the Apache License, Version 2.0 (the "License");
+       // you may not use this file except in compliance with the License.
+       // You may obtain a copy of the License at
+       //
+       // http://www.apache.org/licenses/LICENSE-2.0
+       //
+       // Unless required by applicable law or agreed to in writing, software
+       // distributed under the License is distributed on an "AS IS" BASIS,
+       // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       // See the License for the specific language governing permissions and
+       // limitations under the License.
+       // ******************************************************************************************
+       // The use of the word "Webble" or "webble" for the loadable meme media objects are limited
+       // only to objects that actually loads in this original Webble World Platform. Modifications
+       // of the meme media object code which leads to breaking of compatibility with the original
+       // Webble World platform, may no longer be refered to as a "Webble" or "webble".
+       // ******************************************************************************************
+       //===========================================================================================
+       -->
 
 
         <!--===========================================================================================
@@ -256,7 +256,7 @@
                         <a ng-cloak class="dropdown-toggle menuHeaderText" data-hover="dropdown">{{item.title | translate | titleMod:item.itemName:getCurrWS()}}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li ng-repeat="sublink in item.sublinks track by $index" ng-show="sublink.visibility_enabled">
-                                <a ng-if="sublink.sublink_itemName != 'divider'" ng-cloak class="menuItemText" ng-click="executeMenuSelection(sublink.sublink_itemName, null);">{{sublink.title | translate}} {{sublink.shortcut}}<div ng-show="isContentUpdated(sublink.sublink_itemName)" style="display: inline;"><img src="images/icons/Updated.png" style="padding-left: 10px; width: 60px;"/><span style="font-size: 9px; padding-left: 15px;">{{getUpdateDate(sublink.sublink_itemName)}}</span></div></a>
+                                <a ng-if="sublink.sublink_itemName != 'divider'" ng-cloak class="menuItemText" ng-click="executeMenuSelection(sublink.sublink_itemName, null);">{{sublink.title | translate}} {{sublink.shortcut}}<div ng-show="isContentUpdated(sublink.sublink_itemName)" style="display: inline;"><img src="images/icons/Updated.png" alt="Menu Item Updated" style="padding-left: 10px; width: 60px;"/><span style="font-size: 9px; padding-left: 15px;">{{getUpdateDate(sublink.sublink_itemName)}}</span></div></a>
                                 <a ng-if="sublink.sublink_itemName == 'divider'" ng-cloak class="menuItemText">------------------------------------</a>
                             </li>
                         </ul>
@@ -286,13 +286,13 @@
 					<li>
 						<a href="" ng-click="executeMenuSelection('altf10', null);" tooltip-placement="bottom" uib-tooltip="{{langChangeTooltipTxt}}">
 							<span ng-hide="flagImageFound">{{getCurrentLanguage() | nativeName}}</span>
-							<img ng-show="flagImageFound" onError="angular.element(this).scope().imgError();" ng-src="images/icons/langFlags/{{getCurrentLanguage()}}.png" style="width: 25px; height: 25px;"/>
+							<img ng-show="flagImageFound" onError="angular.element(this).scope().imgError();" ng-src="images/icons/langFlags/{{getCurrentLanguage()}}.png" alt="Current Language: {{getCurrentLanguage() | nativeName}}" style="width: 25px; height: 25px;"/>
 						</a>
 					</li>
 					<!--Right side quick icon to go to platform settings-->
 					<li>
 						<a href="" ng-click="executeMenuSelection('platformprops', null);" tooltip-placement="left-bottom" uib-tooltip="{{menuItems[2].sublinks[10].title | translate}}">
-							<img src="images/icons/gearicon_sm.png" style="margin-left: -15px; margin-right: -13px; width: 20px; height: 20px;"/>
+							<img src="images/icons/gearicon_sm.png" alt="Platform Settings" style="margin-left: -15px; margin-right: -13px; width: 20px; height: 20px;"/>
 						</a>
 					</li>
 				</ul>
@@ -337,7 +337,7 @@
     // This is Progress bar and progress indicator that can be displayed and used when needed
     //=====================================================================================-->
     <div class="centerCenter progressIndicator" data-ng-show="progressManager.isWorking" style="z-index: 200000;">
-        <img style="width: 100px; height: 100px;" src="images/ajax-loader.gif">
+        <img style="width: 100px; height: 100px;" src="images/ajax-loader.gif" alt="System Working">
     </div>
     <div class="span4 centerCenter progressBar" data-ng-show="progressManager.isLoading">
       <uib-progress percent="progressManager.soFarLevel" class="progress-warning progress-striped active" />
