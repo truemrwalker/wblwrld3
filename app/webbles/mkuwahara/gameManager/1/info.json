@@ -1,8 +1,0 @@
-{
-    "name": "Game Manager Webble",
-    "description": "This is a webble that is suppose to help you build and make your own games, but also contain games made so that anyone can play them. It is supposed to be packed with features and tools for all game related development and game playing entertainment.",
-    "keywords": "game development play sprite 2d iso3d 3d management platform boardgame",
-    "author": "truemrwalker",
-    "image": "images/wbls/games.png",
-    "noautogen": true
-}

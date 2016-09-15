@@ -144,7 +144,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     // Changeable Slot names for the slots to be used with interaction ball: resize
     var resizeSlots_ = {width: undefined, height: undefined};
     $scope.getResizeSlots = function(){return resizeSlots_;};
-    $scope.setResizeSlots = function(widthSlotName, heightSlotName){resizeSlots_ = {width: widthSlotName, height: heightSlotName};};
+    $scope.setResizeSlots = function(widthSlotName, heightSlotName){ resizeSlots_ = {width: widthSlotName, height: heightSlotName}; };
 
 	// A Parser and Stringifiers for managing values that are functions or contain functions
 	$scope.dynJSFuncParse = function(key, value) { if(value && (typeof value === 'string') && value.indexOf("function") === 0){ return new Function('return ' + value)(); } return value; };
@@ -500,7 +500,17 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 						}
 					}
 					else{
-						tmp['value'] = theValue;
+						if(metadata.inputType == Enum.aopInputTypes.Point && theValue.x && !isNaN(theValue.x) && theValue.y && !isNaN(theValue.y) ){
+							tmp['value'] = [theValue.x, theValue.y];
+							tmp['vectorObject'] = true;
+						}
+						else if(metadata.inputType == Enum.aopInputTypes.Size && theValue.w && !isNaN(theValue.w) && theValue.h && !isNaN(theValue.h) ){
+							tmp['value'] = [theValue.w, theValue.h];
+							tmp['vectorObject'] = true;
+						}
+						else{
+							tmp['value'] = theValue;
+						}
 						if(key.search('font-family') != -1){
 							tmp['value'] = tmp['value'].toString().replace(/"/g, '').replace(/'/g, '').toLowerCase();
 						}
@@ -667,6 +677,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 										var metadata = theSlots_[slot].getMetaData();
 										if(metadata != null && (metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size)){
 											if(JSON.stringify(theSlots_[slot].getValue()) == JSON.stringify(p.value)){
+												if(p.vectorObject == true) {
+													if(metadata.inputType == Enum.aopInputTypes.Point){
+														p.value = {x: p.value[0], y: p.value[1]};
+													}
+													else{
+														p.value = {w: p.value[0], h: p.value[1]};
+													}
+												}
 												itsOk = false;
 											}
 										}

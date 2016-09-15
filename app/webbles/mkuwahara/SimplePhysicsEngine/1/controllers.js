@@ -8,7 +8,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('physEngineCtrl', function($scope, $log, Slot, Enum, dbService) {
+wblwrld3App.controller('physEngineCtrl', function($scope, $log, $timeout, Slot, Enum) {
     // $scope is needed for angularjs to work properly and should not be removed. Slot is a Webble World
     // available Service and is needed for any form of Slot manipulation inside this template and should neither be
     // removed.
@@ -84,7 +84,7 @@ wblwrld3App.controller('physEngineCtrl', function($scope, $log, Slot, Enum, dbSe
 //    );
 
 
-	var world;
+	var physEngineHolder;
 
 
 
@@ -106,6 +106,16 @@ wblwrld3App.controller('physEngineCtrl', function($scope, $log, Slot, Enum, dbSe
     // *Create Value watchers for slots and other values
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+
+		physEngineHolder = $scope.theView.parent().find("#physEngineHolder");
+		$scope.theView.parent().draggable('option', 'cancel', '#physEngineHolder');
+		physEngineHolder.bind('contextmenu',function(){ if(!$scope.altKeyIsDown){return false;} });
+
+		$scope.setChildContainer(physEngineHolder);
+
+
+
+
           //TODO: If you have images and other resources uploaded in your webble template folder, and need to access them with a relative path, just call the getTemplatePath() function as shown below
           //TODO: to get the correct location for this Webble and its resource files
           //internalFilesPath = $scope.getTemplatePath($scope.theWblMetadata['templateid'], $scope.theWblMetadata['templaterevision']);
@@ -215,74 +225,47 @@ wblwrld3App.controller('physEngineCtrl', function($scope, $log, Slot, Enum, dbSe
 		//TODO: that is a good thing when you want the listener to follow the rhythm of Angular and not react too soon.
 		//TODO: So which type to use is up to you and the purpose. Less watches are better for optimization though.
 
-		Physics(function(world){
-
-			var viewWidth = 500;
-			var viewHeight = 300;
-
-			var renderer = Physics.renderer('canvas', {
-				el: 'physEngineViewport',
-				width: viewWidth,
-				height: viewHeight,
-				meta: false, // don't display meta data
-				styles: {
-					// set colors for the circle bodies
-					'circle' : {
-						strokeStyle: '#351024',
-						lineWidth: 1,
-						fillStyle: '#d33682',
-						angleIndicator: '#351024'
-					}
-				}
-			});
-
-			// add the renderer
-			world.add( renderer );
-			// render on each step
-			world.on('step', function(){
-				world.render();
-			});
-
-			// bounds of the window
-			var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
-
-			// constrain objects to these bounds
-			world.add(Physics.behavior('edge-collision-detection', {
-				aabb: viewportBounds,
-				restitution: 0.99,
-				cof: 0.99
-			}));
-
-			// add a circle
-			world.add(
-				Physics.body('circle', {
-					x: 50, // x-coordinate
-					y: 30, // y-coordinate
-					vx: 0.2, // velocity in x-direction
-					vy: 0.01, // velocity in y-direction
-					radius: 20
-				})
-			);
-
-			// ensure objects bounce when edge collision is detected
-			world.add( Physics.behavior('body-impulse-response') );
-
-			// add some gravity
-			world.add( Physics.behavior('constant-acceleration') );
-
-			// subscribe to ticker to advance the simulation
-			Physics.util.ticker.on(function( time, dt ){
-
-				world.step( time );
-			});
-
-			// start the ticker
-			Physics.util.ticker.start();
-
-		});
-
+		$timeout(function(){ initPhysWorld(); }, 1000);
     };
     //===================================================================================
+
+
+
+	//===================================================================================
+	// Initiate Physics World
+	// Initiate the physic engine and everything it needs
+	//===================================================================================
+	var initPhysWorld = function(){
+		// module aliases
+		var Engine = Matter.Engine,
+			Render = Matter.Render,
+			World = Matter.World,
+			Bodies = Matter.Bodies;
+
+// create an engine
+		var engine = Engine.create();
+
+// create a renderer
+		var render = Render.create({
+			element: physEngineHolder[0],
+			engine: engine
+		});
+
+// create two boxes and a ground
+		var boxA = Bodies.rectangle(400, 200, 80, 80);
+		var boxB = Bodies.rectangle(450, 50, 80, 80);
+		var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+
+// add all of the bodies to the world
+		World.add(engine.world, [boxA, boxB, ground]);
+
+// run the engine
+		Engine.run(engine);
+
+// run the renderer
+		Render.run(render);
+	};
+	//===================================================================================
 
 
     //===================================================================================

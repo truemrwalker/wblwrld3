@@ -1475,7 +1475,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 								for(var i = 0; i < data["libs"].length;i++){
 									if(!isExist.valueInArray(prevLoadedManifestLibs, data["libs"][i])){
 										var urlPath = data["libs"][i];
-										if(data["libs"][i].search('http') == -1){
+										if(data["libs"][i].search('http') == -1 && data["libs"][i].search('//cdn.') == -1){
 											urlPath = corePath + "/" + data["libs"][i];
 										}
 										wblManifestLibs.push(urlPath);
@@ -2222,7 +2222,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				// Check so that child and parent are'nt already related in an unnatural way
 				for(var i = 0, d; d = $scope.getAllDescendants(child)[i]; i++){
 					if (d.scope().getInstanceId() == parent.scope().getInstanceId()){
-						$log.warn('Incest is not allowed!!');
+						$log.warn('Incest is not allowed!! You are trying to create a circular relationship where parents are grand-children to themselves.');
 						return;
 					}
 				}

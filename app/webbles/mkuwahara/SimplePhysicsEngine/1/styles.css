@@ -8,10 +8,18 @@
 
 .physEngineContainer{
     width: 500px;
-    height: 300px;
-    background-color: #d329c6;
+    height: 500px;
+    background-color: #fff458;
     border: 2px solid black;
     border-radius:2px;
+	padding: 10px;
+}
+
+.physEngineHolder{
+	width: 476px;
+	height: 476px;
+	background-color: #d2f0ff;
+	border: 2px solid black;
 }
 
 /*/ === END: Phys Engine Classes === /*/

@@ -1,0 +1,44 @@
+//====================================================================================================================
+// Directives for Phaser Game Dev for Webble World v3.0 (2013)
+// Created By: Micke Nicander Kuwahara
+//====================================================================================================================
+
+//=======================================================================================
+// RESIZING
+// This directive is specified to create event handlers for the mouse in order to let us
+// resize the width of a sibling input tag using the element with this attribute as a
+// handle.
+//=======================================================================================
+wblwrld3App.directive('gameViewportResizing', function() {
+	return {
+		restrict:'AC',
+		link: function(scope, element, attrs) {
+			var theLastPos_ = {x: 0, y: 0};
+
+			element.on('mousedown', function(event) {
+				theLastPos_ = {x: event.clientX, y: event.clientY};
+				var rememberBorderStyle = element.parent().css('border-style');
+				element.parent().css('border-style', 'dashed');
+
+				scope.getPlatformElement().mouseup(function(event){
+					scope.getPlatformElement().unbind('mousemove');
+					scope.getPlatformElement().unbind('mouseup');
+					element.parent().css('border-style', rememberBorderStyle);
+					if(!scope.$$phase){ scope.$apply(); }
+				});
+
+				scope.getPlatformElement().mousemove(function(event){
+					var target = element.parent();
+					target.css('width', parseInt(target.css('width')) + (event.clientX - theLastPos_.x));
+					target.css('height', parseInt(target.css('height')) + (event.clientY - theLastPos_.y));
+					theLastPos_ = {x: event.clientX, y: event.clientY};
+				});
+
+				event.stopPropagation();
+			});
+		}
+	};
+});
+//=======================================================================================
+
+//====================================================================================================================

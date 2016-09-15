@@ -160,6 +160,7 @@ wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enu
                                                         // {inputType: Enum.aopInputTypes.MultiCheckBox, comboBoxContent: ['OPTION 1', 'OPTION 2', ETC]}  //Slot value is an array
                                                         // {inputType: Enum.aopInputTypes.Slider, sliderMinMax: [0, 100]}
                                                         // {inputType: Enum.aopInputTypes.DatePick}  // slot value is date filtered: $filter('date')(new Date(), 'yyyy-MM-dd');
+														// More input type options is found in readme.txt under Service
                                                         // If not set the Property form will make a pretty good guess
                                                         // instead, which in most cases are more than enough.
             undefined                                   // Element Pointer (undefined if not connected with CSS and those

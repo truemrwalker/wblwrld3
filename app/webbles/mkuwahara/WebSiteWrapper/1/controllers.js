@@ -78,6 +78,7 @@ wblwrld3App.controller('WebContentWrapperCtrl', function($scope, $log, $timeout,
 			}
 		}, true);
 
+
 		$scope.$watch(function(){return $scope.gimme('wcwGrabber:height');}, function(newVal, oldVal) {
 			var h = parseInt(newVal);
 			if(!isNaN(h)){

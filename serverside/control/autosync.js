@@ -28,9 +28,9 @@ var path = require('path');
 var fs = require('fs');
 
 function startFsMonitor(webbleDir, mongoose) {
-	
-	// Local Imports	
-	var util = require('../lib/util');	
+
+	// Local Imports
+	var util = require('../lib/util');
 	var libGfs = require('../lib/gfs');
 
     function onFileChange(localFile, stat) {
@@ -51,9 +51,10 @@ function startFsMonitor(webbleDir, mongoose) {
 
         if (!stat) {
 
-            return gfs.deleteFile(remoteDir, filename)
-                .then(() => console.log("DEBUG: Deleted file:", localFile))
-                .catch(err => console.log("Error Deleting file:", err));
+            // return gfs.deleteFile(remoteDir, filename)
+            //     .then(() => console.log("DEBUG: Deleted file:", localFile))
+            //     .catch(err => console.log("Error Deleting file:", err));
+			return Promise.resolve();
         }
         else if (!stat.isFile() || filename.toLowerCase() == 'info.json') {
 
@@ -74,16 +75,16 @@ function startFsMonitor(webbleDir, mongoose) {
 		persistent: true,
 		ignoreInitial: true
 	});
-	
+
 	var gfs = new libGfs.GFS(mongoose);
-	
+
     // 'add' is handled by 'change'
     watcher.on('change', onFileChange);
     watcher.on('unlink', onFileChange);
 }
 
 module.exports = function (app, config, mongoose, gettext, webServer) {
-	
+
 	var autoSyncActive = false;
 
 	if (config.DEPLOYMENT == 'development') {

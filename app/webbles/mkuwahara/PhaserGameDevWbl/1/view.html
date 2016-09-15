@@ -1,10 +1,12 @@
 <!--====================================================================================================================
-// View for Game Manager Webble for Webble World v3.0 (2013)
+// View for Phaser Game Dev Webble for Webble World v3.0 (2013)
 // Created By: truemrwalker
 //===================================================================================================================-->
 
-<div id="gameManagerContainer" class="gameManagerContainer" ng-controller="gameManagerCtrl">
-	<div></div>
+<div id="phaserGameDevContainer" class="phaserGameDevContainer" ng-controller="phaserGameDevCtrl">
+	<div id="gameViewPortReSizer" class="gameReSizer" ng-style="{'margin-left': resizingPos.x, 'margin-top': resizingPos.y}" game-viewport-resizing></div>
+
+	<div id="phaserGameDevCanvasHolder"></div>
 </div>
 
 <!--=================================================================================================================-->
