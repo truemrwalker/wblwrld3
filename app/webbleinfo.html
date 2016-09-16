@@ -87,6 +87,18 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+		<style>
+			.infoContainer{
+				word-wrap: normal;
+			}
+
+			@media only screen and (min-width: 350px) {
+				.infoContainer {
+					word-wrap: break-word;
+				}
+			}
+		</style>
+
 	</head>
 
 	<!--===========================================================================================
@@ -126,7 +138,7 @@
 		<!--=====================================================================================
 		// This is where all Webble data will be displayed after it has been retrieved from the server
 		//====================================================================================-->
-		<div class="wblwrldform-main" style="padding-left: 40px; min-width: 600px;">
+		<div class="wblwrldform-main infoContainer" style="padding-left: 40px; padding-right: 40px;">
 			<h1 id="pageTitle">Webble World 3.1: Webble Information Page</h1>
 			<hr style="border: 1px double black; height: 2px;  margin: 0; padding: 0; width: 98%;">
 
@@ -138,7 +150,7 @@
 			<div class="keepTheDistanceBelow dividerLineAbove" style="font-size: 18px; width: 98%;">
 				<div class="row">
 					<div class="col-xs-12" style="text-align: center;">
-						<a id="wblLink" class="btn btn-primary btn-lg" href="#" role="button"></a>
+						<a id="wblLink" class="btn btn-primary btn-lg" style="white-space: normal;" href="#" role="button"></a>
 					</div>
 				</div>
 			</div>
@@ -197,7 +209,7 @@
 			<div class="keepTheDistanceBelow dividerLineAbove" style="font-size: 18px; width: 98%;">
 				<div class="row">
 					<div class="col-xs-12" style="text-align: center;">
-						<a id="wblLink2" class="btn btn-primary btn-lg" href="#" role="button"></a>
+						<a id="wblLink2" class="btn btn-primary btn-lg" style="white-space: normal;" href="#" role="button"></a>
 					</div>
 				</div>
 			</div>
