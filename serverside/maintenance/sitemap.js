@@ -42,16 +42,23 @@ module.exports = function (app, config, mongoose, gettext) {
 
     return Webble.find({}).exec().then(function (webbles) {
 
-        var stream = fs.createWriteStream(path.join(config.APP_ROOT_DIR, "sitemap.xml"));
+        return new Promise(function(resolve, reject) {
 
-        stream.write('<?xml version="1.0" encoding="UTF-8"?>');
-        stream.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+            var stream = fs.createWriteStream(path.join(config.APP_ROOT_DIR, "sitemap.xml"));
 
-        webbles.forEach(function (w) {
-            stream.write('<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=' + w.webble.defid + '</loc></url>');
-        });
+            //stream.on('end', resolve);
+            //stream.on('error', reject);
 
-        stream.write('</urlset>');
-        stream.end();
+            stream.write('<?xml version="1.0" encoding="UTF-8"?>');
+            stream.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+
+            webbles.forEach(function (w) {
+                stream.write('<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=' + w.webble.defid + '</loc></url>');
+            });
+
+            stream.write('</urlset>');
+            stream.end();
+            resolve();
+         });
     });
 };
