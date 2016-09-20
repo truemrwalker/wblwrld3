@@ -105,7 +105,7 @@ module.exports = function(app, config, mongoose, gettext) {
         if (getWebbleIdCache.hasOwnProperty(relativeDirectory))
             return getWebbleIdCache[relativeDirectory].then(function (webbleId) { return webbleId; });
 
-        var pathComponents = relativeDirectory.split(path.sep);
+        var pathComponents = relativeDirectory.split(path.sep);        
         if (pathComponents.length < 3)
             return Promise.reject(new Error("Wrong webble relative directory"));
 
@@ -268,7 +268,7 @@ module.exports = function(app, config, mongoose, gettext) {
 
                 dups[f.filename] = f;
 
-                if (f.metadata._owner)
+                if (f.metadata._owner || f.metadata.directory === 'images')
                     return backupRemoteFile(f);
 
                 return getWebbleId(f.metadata.directory).then(function (ownerId) {
