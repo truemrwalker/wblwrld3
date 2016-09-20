@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-06-22 16:22+0900\n"
+"PO-Revision-Date: 2016-09-20 16:30+0900\n"
 "Last-Translator: Micke Kuwahara <micke.kuwahara@gmail.com>\n"
 "Language-Team: \n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.9\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
@@ -94,7 +94,7 @@ msgstr ""
 
 #: app/scripts/services/services.js:1148
 msgid "About"
-msgstr "約"
+msgstr "About"
 
 #: app/scripts/services/services.js:172
 msgid "About (share, rate etc.)"
@@ -122,7 +122,7 @@ msgstr ""
 
 #: app/views/profile.html:119 app/views/profile.html:123
 msgid "Account Information"
-msgstr "口座情報"
+msgstr "アカウント情報"
 
 #: serverside/auth/providers/facebook.js:99
 msgid "Account is already connected to Facebook"
@@ -138,7 +138,7 @@ msgstr ""
 
 #: app/views/profile.html:359
 msgid "Account not connected"
-msgstr "アカウント接続されていません"
+msgstr "アカウントが接続されていません。"
 
 #: serverside/auth/auth.js:67
 msgid "Account suspended"
@@ -150,7 +150,7 @@ msgstr "アクション"
 
 #: app/views/adm.html:109
 msgid "Active Sessions"
-msgstr "アクティブセッション"
+msgstr "アクティブ・セッション"
 
 #: app/scripts/services/services.js:1133
 msgid "Active Workspace Info"
@@ -159,7 +159,7 @@ msgstr "アクティブなワークスペース情報"
 #: app/views/editors/license-key-editor.html:57
 #: app/views/modalForms/shareWSSheet.html:76
 msgid "Add"
-msgstr "加えます"
+msgstr "追加"
 
 #: app/scripts/services/services.js:168
 #: app/views/modalForms/addCustSlotSheet.html:45
@@ -168,7 +168,7 @@ msgstr "カスタムスロットを追加"
 
 #: app/views/modalForms/publishWebbleSheet.html:93
 msgid "Add Publishing Groups:"
-msgstr "公開グループを追加します。"
+msgstr "公開グループの追加"
 
 #: app/views/groups.html:206
 msgid "Add Users"
@@ -176,7 +176,7 @@ msgstr "ユーザーの追加"
 
 #: app/views/profile.html:352
 msgid "Additional Accounts"
-msgstr "追加アカウント"
+msgstr "アカウントの追加"
 
 #: app/views/groups.html:113 app/views/groups.html:115
 msgid "Address"
@@ -210,8 +210,8 @@ msgid ""
 "After the user have selected a parent by clicking on it the border of the "
 "child glows light pink while the selected parent’s border glows in deep red."
 msgstr ""
-"ユーザーがそれに子供の境界線をクリックして親を選択した後、選択した親の境界線"
-"が深い赤色に点灯している間薄いピンクに点灯します。"
+"ユーザーが親を選択したすると、選択した親の境界線が深い赤色に点灯し、この境界"
+"線が薄いピンク色に点灯します。"
 
 #: app/scripts/controllers/platform.js:827
 #: app/scripts/controllers/platform.js:832
@@ -224,15 +224,15 @@ msgstr "コンテンツの整列"
 
 #: app/scripts/services/services.js:525
 msgid "Align Items"
-msgstr "アイテムの位置を合わせます"
+msgstr "アイテムの整列"
 
 #: app/scripts/services/services.js:526
 msgid "Align Self"
-msgstr "自己の位置を合わせます"
+msgstr "自身の整列"
 
 #: app/scripts/services/services.js:771
 msgid "Alignment for the selected item inside the flexible container"
-msgstr "フレキシブルコンテナ内の選択した項目の位置合わせ"
+msgstr "フレキシブルコンテナ内の選択した項目の整列"
 
 #: app/scripts/services/services.js:769
 msgid ""
@@ -247,12 +247,12 @@ msgid ""
 "All new publications and updates (by members) under this group require the "
 "owner's approval"
 msgstr ""
-"このグループの下にあるすべての新しい出版物やアップデート（メンバー）は、所有"
-"者の承認が必要"
+"このグループの下にあるすべての新しい公開やアップデート（メンバー）は、所有者"
+"の承認が必要です"
 
 #: app/scripts/controllers/groups.js:140
 msgid "All publications and updates under this group are suspended"
-msgstr "このグループの下のすべての刊行物およびアップデートが中断されます"
+msgstr "このグループの下のすべての公開とアップデートが中断されます"
 
 #: app/views/adm.html:92
 msgid "All User Accounts"
@@ -260,7 +260,7 @@ msgstr "すべてのユーザーアカウント"
 
 #: app/scripts/controllers/templates.js:283
 msgid "All your controller are belong to us"
-msgstr "すべてのコントローラ私たちに属しています"
+msgstr "君たちのコントローラは、すべて私たちがいただいた。"
 
 #: app/scripts/controllers/templates.js:284
 msgid "All your directive are belong to us"
@@ -276,7 +276,7 @@ msgstr "すべてのサービス私たちに属しています"
 
 #: app/views/profile.html:95
 msgid "Allow"
-msgstr "許可します"
+msgstr "許可"
 
 #: serverside/lib/ops/publishing.js:92
 msgid "Allow new publication under the group:"
@@ -294,7 +294,7 @@ msgstr ""
 
 #: app/scripts/controllers/login.js:64
 msgid "Already logged in"
-msgstr "すでにログイン"
+msgstr "ログインしています"
 
 #: app/scripts/services/services.js:214
 msgid "Always Allow All"
@@ -337,7 +337,7 @@ msgstr "角度"
 #: app/scripts/controllers/chat.js:74 serverside/api/support.js:43
 #: serverside/api/support.js:50
 msgid "Anonymous Coward"
-msgstr "匿名の臆病者"
+msgstr "Anonymous Coward"
 
 #: app/scripts/controllers/platform.js:835
 msgid ""
@@ -357,7 +357,7 @@ msgstr "答え"
 
 #: app/views/modalForms/faqSheet.html:62
 msgid "Answered"
-msgstr "答え"
+msgstr "回答済"
 
 #: app/scripts/controllers/platform.js:4456
 msgid "Application Runtime"
@@ -402,7 +402,7 @@ msgstr ""
 
 #: app/views/groups.html:185
 msgid "Apply"
-msgstr "適用します"
+msgstr "適用"
 
 #: app/index.html:219
 msgid ""
@@ -416,17 +416,15 @@ msgstr ""
 msgid ""
 "Are you sure you want to permanently delete the selected template and all "
 "its files?"
-msgstr ""
-"あなたは永久に選択したテンプレートとそのすべてのファイルを削除してもよろしい"
-"ですか？"
+msgstr "選択したテンプレートとそのすべてのファイルを削除してもよいですか？"
 
 #: app/scripts/controllers/templates.js:323
 msgid "Are you sure you want to permanently delete the template file:"
-msgstr "あなたが永続的にテンプレートファイルを削除してもよろしいです："
+msgstr "テンプレートファイルを削除してもよろしいです："
 
 #: app/scripts/controllers/profile.js:247
 msgid "Are you sure you want to revoke your membership to the following group:"
-msgstr "あなたは、次のグループにあなたのメンバーシップを取り消すしますか："
+msgstr "次のグループのあなたのメンバーシップを取り消しますか："
 
 #: app/scripts/controllers/platform.js:3994
 msgid "Arrow Keys"
@@ -434,7 +432,7 @@ msgstr ""
 
 #: app/views/modalForms/faqSheet.html:91
 msgid "Ask"
-msgstr "頼みます"
+msgstr "確認する"
 
 #: app/scripts/services/services.js:201
 msgid "Ask everytime"
@@ -450,23 +448,23 @@ msgstr ""
 
 #: app/scripts/controllers/modalForms/faq.js:50
 msgid "Asked by you"
-msgstr "あなたによって尋ね"
+msgstr ""
 
 #: app/scripts/controllers/wblCore.js:1791 app/scripts/services/services.js:129
 #: app/scripts/services/services.js:159
 msgid "Assign Parent"
-msgstr "親の割り当て"
+msgstr "親の割当て"
 
 #: app/scripts/controllers/wblCore.js:1362
 #: app/scripts/controllers/wblCore.js:2469
 #: app/scripts/controllers/wblCore.js:2474
 #: app/scripts/controllers/wblCore.js:2479
 msgid "Assign Parent Failed"
-msgstr "割り当て親が失敗しました"
+msgstr "親の割当てに失敗しました。"
 
 #: app/views/groups.html:234
 msgid "Assign User To Group"
-msgstr "ユーザーをグループに割り当てます"
+msgstr "ユーザーをグループに割当てる"
 
 #: app/views/profile.html:354
 msgid ""
@@ -490,7 +488,7 @@ msgstr "自動生成"
 
 #: app/scripts/directives/directives.js:443
 msgid "Auto Slot-Conn Enabled"
-msgstr "自動スロットコネティカットは有効"
+msgstr "自動スロットコネクション有効"
 
 #: app/scripts/services/services.js:203
 msgid "Automatically keep current older"
@@ -506,7 +504,7 @@ msgstr "利用可能なワークスペース："
 
 #: app/scripts/controllers/modalForms/platformLangPick.js:47
 msgid "Avialable languages for Webble World"
-msgstr "Webble世界のための接続可言語"
+msgstr "利用可能な言語"
 
 #: app/scripts/services/services.js:536
 msgid "Backface visibility"
@@ -518,7 +516,7 @@ msgstr "背景"
 
 #: app/scripts/services/services.js:538
 msgid "Background Attachment"
-msgstr "背景アタッチメント"
+msgstr "背景のアタッチ"
 
 #: app/scripts/services/services.js:539
 msgid "Background Clip"
@@ -534,7 +532,7 @@ msgstr "背景画像"
 
 #: app/scripts/services/services.js:542
 msgid "Background Origin"
-msgstr "背景起源"
+msgstr "背景の原点"
 
 #: app/scripts/services/services.js:543
 msgid "Background Position"
@@ -553,7 +551,7 @@ msgstr "背景サイズ"
 #: app/scripts/controllers/modalForms/wblAbout.js:60
 #: app/scripts/directives/directives.js:177
 msgid "Bad"
-msgstr "悪いです"
+msgstr "悪い"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:46
 msgid "basic"
@@ -586,51 +584,51 @@ msgstr "ボーダー"
 
 #: app/scripts/services/services.js:547
 msgid "Border Bottom"
-msgstr "ボーダーボトム"
+msgstr "ボーダー（下）"
 
 #: app/scripts/services/services.js:548
 msgid "Border Bottom Color"
-msgstr "ボーダーボトムの色"
+msgstr "ボーダー（下）の色"
 
 #: app/scripts/services/services.js:549
 msgid "Border Bottom Left Radius"
-msgstr "ボーダー左下半径"
+msgstr "ボーダー（左下）半径"
 
 #: app/scripts/services/services.js:550
 msgid "Border Bottom Right Radius"
-msgstr "ボーダー右下半径"
+msgstr "ボーダー（右下）半径"
 
 #: app/scripts/services/services.js:551
 msgid "Border Bottom Style"
-msgstr "ボーダーボトムスタイル"
+msgstr "ボーダー（下）スタイル"
 
 #: app/scripts/services/services.js:552
 msgid "Border Bottom Width"
-msgstr "ボーダー裾幅"
+msgstr "ボーダー（下）の幅"
 
 #: app/scripts/services/services.js:553
 msgid "Border Collapse"
-msgstr "ボーダー崩壊"
+msgstr "ボーダー消去"
 
 #: app/scripts/services/services.js:554
 msgid "Border Color"
-msgstr "枠線の色"
+msgstr "ボーダーの色"
 
 #: app/scripts/services/services.js:555
 msgid "Border Image"
-msgstr "境界画像"
+msgstr "ボーダーの画像"
 
 #: app/scripts/services/services.js:556
 msgid "Border Image Outset"
-msgstr "境界画像の冒頭"
+msgstr "ボーダー画像の冒頭"
 
 #: app/scripts/services/services.js:557
 msgid "Border Image Repeat"
-msgstr "境界画像の繰り返し"
+msgstr "ボーダー画像の繰り返し"
 
 #: app/scripts/services/services.js:558
 msgid "Border Image Slice"
-msgstr "境界画像スライス"
+msgstr "ボーダー画像スライス"
 
 #: app/scripts/services/services.js:559
 msgid "Border Image Source"
@@ -638,43 +636,43 @@ msgstr "ボーダーイメージソース"
 
 #: app/scripts/services/services.js:560
 msgid "Border Image Width"
-msgstr "境界画像の幅"
+msgstr "ボーダー画像の幅"
 
 #: app/scripts/services/services.js:561
 msgid "Border Left"
-msgstr "ボーダー左"
+msgstr "ボーダー（左）"
 
 #: app/scripts/services/services.js:562
 msgid "Border Left Color"
-msgstr "ボーダー左の色"
+msgstr "ボーダー（左）の色"
 
 #: app/scripts/services/services.js:563
 msgid "Border Left Style"
-msgstr "ボーダー左スタイル"
+msgstr "ボーダー（左）スタイル"
 
 #: app/scripts/services/services.js:564
 msgid "Border Left Width"
-msgstr "ボーダー左幅"
+msgstr "ボーダー（左）幅"
 
 #: app/scripts/services/services.js:565
 msgid "Border Radius"
-msgstr "国境半径"
+msgstr "ボーダー半径"
 
 #: app/scripts/services/services.js:566
 msgid "Border Right"
-msgstr "ボーダー右"
+msgstr "ボーダー（右）"
 
 #: app/scripts/services/services.js:567
 msgid "Border Right Color"
-msgstr "ボーダー右の色"
+msgstr "ボーダー（右）の色"
 
 #: app/scripts/services/services.js:568
 msgid "Border Right Style"
-msgstr "国境を右スタイル"
+msgstr "ボーダー（右）スタイル"
 
 #: app/scripts/services/services.js:569
 msgid "Border Right Width"
-msgstr "ボーダー右幅"
+msgstr "ボーダー（右）幅"
 
 #: app/scripts/services/services.js:570
 msgid "Border Spacing"
@@ -682,43 +680,43 @@ msgstr "ボーダーの間隔"
 
 #: app/scripts/services/services.js:571
 msgid "Border Style"
-msgstr "境界線のスタイル"
+msgstr "ボーダーのスタイル"
 
 #: app/scripts/services/services.js:572
 msgid "Border Top"
-msgstr "ボーダートップ"
+msgstr "ボーダー（上）"
 
 #: app/scripts/services/services.js:573
 msgid "Border Top Color"
-msgstr "ボーダートップの色"
+msgstr "ボーダー（上）の色"
 
 #: app/scripts/services/services.js:574
 msgid "Border Top Left Radius"
-msgstr "ボーダートップ左半径"
+msgstr "ボーダー（上）左半径"
 
 #: app/scripts/services/services.js:575
 msgid "Border Top Right Radius"
-msgstr "ボーダー右上半径"
+msgstr "ボーダー（右上）半径"
 
 #: app/scripts/services/services.js:576
 msgid "Border Top Style"
-msgstr "国境トップスタイル"
+msgstr "ボーダー（上）スタイル"
 
 #: app/scripts/services/services.js:577
 msgid "Border Top Width"
-msgstr "国境トップ幅"
+msgstr "ボーダー（上）の幅"
 
 #: app/scripts/services/services.js:578
 msgid "Border Width"
-msgstr "境界線の幅"
+msgstr "ボーダーの幅"
 
 #: app/scripts/services/services.js:579
 msgid "Bottom Position"
-msgstr "底部位置"
+msgstr "ボトム位置"
 
 #: app/scripts/services/services.js:581
 msgid "Box Shadow"
-msgstr "ボックスシャドウ"
+msgstr "シャドウ"
 
 #: app/scripts/services/services.js:166
 msgid "Bring to Front"
@@ -743,19 +741,19 @@ msgstr "バンドルロックは許可されていません："
 
 #: app/scripts/controllers/modalForms/wblProtection.js:113
 msgid "Bundle Not Allowed:"
-msgstr "バンドル許可されていません："
+msgstr "バンドルは許可されていません："
 
 #: app/scripts/controllers/platform.js:4416
 msgid "Bundle Selection Broken"
-msgstr "バンドルの選択ブロークン"
+msgstr "バンドルの選択が壊れています"
 
 #: app/scripts/controllers/platform.js:623
 msgid "bundled a bunch of webbles"
-msgstr "webblesの束をバンドル"
+msgstr "webbleの集合をバンドル"
 
 #: app/scripts/controllers/platform.js:823
 msgid "But it is relatively easy to fix."
-msgstr "しかし、それは修正することは比較的容易です。"
+msgstr "しかし、それを修正することは比較的容易です。"
 
 #: app/scripts/directives/directives.js:444
 msgid ""
@@ -788,7 +786,7 @@ msgstr "キャンセル"
 
 #: app/scripts/controllers/platform.js:3993
 msgid "Cancel what is currently going on (e.g. Close form)."
-msgstr "現在（例えば、フォームを閉じます）で何が起こっているかキャンセル。"
+msgstr "現在の処理をキャンセル"
 
 #: serverside/api/support.js:149
 msgid "Cannot answer question"
@@ -813,7 +811,7 @@ msgstr ""
 #: app/scripts/controllers/platform.js:4342
 #: app/scripts/controllers/platform.js:4353
 msgid "Cannot do that..."
-msgstr "それを行うことができません..."
+msgstr "実行できません"
 
 #: serverside/api/workspaces.js:156
 msgid "Cannot find workspace"
@@ -866,7 +864,7 @@ msgstr "キャプションサイド"
 
 #: app/scripts/controllers/platform.js:3985
 msgid "Change Platform Language"
-msgstr "変更プラットフォーム言語"
+msgstr "プラットフォーム言語の変更"
 
 #: app/scripts/controllers/modalForms/editCustInteractObj.js:49
 #: app/scripts/controllers/modalForms/editCustMenuItems.js:47
@@ -875,7 +873,7 @@ msgstr ""
 
 #: app/scripts/controllers/draw.js:33
 msgid "Chaotic Multi-User Draw Surface"
-msgstr "カオスマルチユーザードロー表面"
+msgstr "カオスマルチユーザードローサーフェイス"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:46
 msgid "chart"
@@ -883,19 +881,19 @@ msgstr "チャート"
 
 #: app/scripts/controllers/login.js:102
 msgid "Checking Data for Signing Up..."
-msgstr "のサインアップのためのデータを確認しています..."
+msgstr "サインアップのためのデータを確認しています。"
 
 #: app/views/modalForms/about.html:51
 msgid "Chief System Developer:"
-msgstr "チーフシステム開発者："
+msgstr "システム開発責任者："
 
 #: app/views/modalForms/slotConnSheet.html:71
 msgid "Child \\ Parent"
-msgstr "子供\\親"
+msgstr "子 \\ 親"
 
 #: app/views/modalForms/slotConnSheet.html:50
 msgid "Child Slot:"
-msgstr "子供のスロット："
+msgstr "子スロット："
 
 #: app/views/modalForms/importWebbleSheet.html:53
 #: app/views/modalForms/loadWebbleSheet.html:76
@@ -908,11 +906,11 @@ msgstr "クリア"
 
 #: app/scripts/controllers/platform.js:3992
 msgid "Clear all Webble world cookies and local storage user data."
-msgstr "すべてWebble世界クッキーとローカルストレージのユーザーデータを消去。"
+msgstr "すべてクッキーとローカルストレージのユーザーデータを消去"
 
 #: app/views/modalForms/clearSomething.html:41
 msgid "Clear?"
-msgstr "クリア？"
+msgstr "クリアしますか？"
 
 #: app/scripts/services/services.js:588
 msgid "Clip"
@@ -929,7 +927,7 @@ msgstr "クローズ"
 
 #: app/scripts/controllers/groups.js:139
 msgid "Closed for publications"
-msgstr "出版物のため閉鎖"
+msgstr "公開の停止"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:46
 msgid "color"
@@ -953,19 +951,19 @@ msgstr "列のルール"
 
 #: app/scripts/services/services.js:594
 msgid "Column Rule Color"
-msgstr "列ルールのカラー"
+msgstr "列のカラールール"
 
 #: app/scripts/services/services.js:595
 msgid "Column Rule Style"
-msgstr "列ルールのスタイル"
+msgstr "列スタイルのルール"
 
 #: app/scripts/services/services.js:596
 msgid "Column Rule Width"
-msgstr "列のルール幅"
+msgstr "列幅のルール"
 
 #: app/scripts/services/services.js:597
 msgid "Column Span"
-msgstr "列スパン"
+msgstr "カラムスパン"
 
 #: app/scripts/services/services.js:598
 msgid "Column Width"
@@ -973,7 +971,7 @@ msgstr "列幅"
 
 #: app/scripts/services/services.js:599
 msgid "Columns"
-msgstr "コラム"
+msgstr "カラム"
 
 #: app/views/modalForms/rateWblSheet.html:58
 msgid "Comment:"
@@ -989,7 +987,7 @@ msgstr "新しいWebbleバンドルを設定"
 
 #: app/views/login.html:139 app/views/profile.html:337
 msgid "Confirm Password"
-msgstr "パスワードを認証します"
+msgstr "パスワードの確認"
 
 #: app/views/login.html:137 app/views/profile.html:335
 msgid "Confirm your password"
@@ -997,11 +995,11 @@ msgstr "あなたのパスワードを確認"
 
 #: app/scripts/services/services.js:161
 msgid "Connect Slots"
-msgstr "スロットを接続します"
+msgstr "スロットの接続"
 
 #: app/views/profile.html:360
 msgid "Connected"
-msgstr "接続"
+msgstr "接続中"
 
 #: app/scripts/controllers/platform.js:573
 msgid "connected child slot"
@@ -1009,11 +1007,11 @@ msgstr "接続された子スロット"
 
 #: app/views/modalForms/slotConnSheet.html:90
 msgid "Connection Directions:"
-msgstr "接続方向："
+msgstr "スロットの接続方向："
 
 #: app/scripts/controllers/modalForms/wblProtection.js:143
 msgid "Contextmenu Not Allowed:"
-msgstr "たContextMenu許可されていません："
+msgstr "コンテクストメニューは許可されていません："
 
 #: app/scripts/services/services.js:856
 msgid ""
@@ -1075,15 +1073,15 @@ msgstr ""
 
 #: app/views/templates.html:132
 msgid "Create"
-msgstr "作ります"
+msgstr "作成"
 
 #: app/views/groups.html:171
 msgid "Create as a subgroup of"
-msgstr "のサブグループとして作成します。"
+msgstr "サブグループとして作成"
 
 #: app/views/modalForms/wblAbout.html:109
 msgid "Create Sandbox Copy"
-msgstr "サンドボックスのコピーを作成します。"
+msgstr "サンドボックスのコピーを作成"
 
 #: app/index.html:218
 msgid ""
@@ -1125,11 +1123,11 @@ msgstr "現在の言語："
 
 #: app/views/modalForms/publishWebbleSheet.html:50
 msgid "Current Webble Definition ID:"
-msgstr "現在Webble定義ID："
+msgstr "WebbleのID："
 
 #: app/scripts/controllers/platform.js:4024
 msgid "Current workspace quick saved"
-msgstr "現在のワークスペースを素早く保存します"
+msgstr "ワークスペースのクイック保存"
 
 #: app/scripts/controllers/modalForms/platformLangPick.js:49
 msgid ""
@@ -1169,7 +1167,7 @@ msgstr "カスタムメニュー項目"
 
 #: app/index.html:212
 msgid "Dear Visitor,"
-msgstr "親愛なる訪問者、"
+msgstr "Dear Visitor,"
 
 #: app/scripts/controllers/groups.js:255
 msgid "Deauthorize"
@@ -1266,15 +1264,15 @@ msgstr "定義著者："
 
 #: app/views/modalForms/wblAbout.html:96
 msgid "Definition Description:"
-msgstr "定義説明："
+msgstr "定義の説明："
 
 #: app/views/modalForms/wblAbout.html:84
 msgid "Definition Id:"
-msgstr "定義ID："
+msgstr "定義のID："
 
 #: app/views/modalForms/wblAbout.html:102
 msgid "Definition Keywords:"
-msgstr "定義キーワード："
+msgstr "定義のキーワード："
 
 #: app/scripts/controllers/templates.js:324
 #: app/scripts/controllers/templates.js:411
@@ -1306,7 +1304,7 @@ msgstr ""
 
 #: app/scripts/controllers/modalForms/wblProtection.js:71
 msgid "Delete Not Allowed:"
-msgstr "削除許可されていません："
+msgstr "削除は許可されていません："
 
 #: app/scripts/controllers/templates.js:409
 msgid "Delete Template Confirmation"
@@ -1330,7 +1328,7 @@ msgstr "削除に失敗しました"
 
 #: app/views/profile.html:98
 msgid "Deny"
-msgstr "否定します"
+msgstr "不許可"
 
 #: app/scripts/services/services.js:897
 msgid ""
@@ -1385,11 +1383,11 @@ msgstr "開発者コミュニティ"
 
 #: app/views/templates.html:233
 msgid "Discard"
-msgstr "捨てます"
+msgstr "破棄"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:107
 msgid "Disconnect Children Not Allowed:"
-msgstr "外し子供たちは許可されていません："
+msgstr "小の接続解除は許可されていません："
 
 #: app/scripts/controllers/wblCore.js:395
 msgid "Display Name"
@@ -1431,7 +1429,7 @@ msgstr "再起動しないでください"
 
 #: app/scripts/controllers/profile.js:248
 msgid "Do Not Revoke Membership"
-msgstr "会員を取り消しません。"
+msgstr "メンバーシップを取り消しません。"
 
 #: app/scripts/controllers/adm.js:60
 msgid "Do not update"
@@ -1454,7 +1452,7 @@ msgstr ""
 
 #: app/scripts/services/services.js:1139
 msgid "Documentation"
-msgstr "ドキュメンテーション"
+msgstr "ドキュメント"
 
 #: app/scripts/controllers/modalForms/editCustInteractObj.js:50
 #: app/scripts/controllers/modalForms/editCustMenuItems.js:49
@@ -1472,7 +1470,7 @@ msgstr ""
 
 #: app/scripts/services/services.js:1145
 msgid "Download Developers Package"
-msgstr "開発パッケージをダウンロード"
+msgstr "開発パッケージを取得"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:155
 msgid "Drag Clone Not Allowed:"
@@ -1509,11 +1507,11 @@ msgstr "編集"
 
 #: app/views/modalForms/editCustInteractObjSheet.html:45
 msgid "Edit Custom Interaction Objects"
-msgstr "編集カスタムインタラクションオブジェクト"
+msgstr "カスタムインタラクションオブジェクトの編集"
 
 #: app/views/modalForms/editCustMenuItemsSheet.html:45
 msgid "Edit Custom Menu Items"
-msgstr "編集カスタムメニュー項目"
+msgstr "カスタムメニュー項目の編集"
 
 #: app/views/groups.html:198 app/views/groups.html:94
 msgid "Edit Group"
@@ -1521,7 +1519,7 @@ msgstr "グループの編集"
 
 #: app/views/templates.html:212
 msgid "Edit Template Files"
-msgstr "編集テンプレートファイル"
+msgstr "テンプレートファイルの編集"
 
 #: app/views/groups.html:106 app/views/login.html:123 app/views/login.html:194
 #: app/views/login.html:47 app/views/profile.html:142
@@ -1564,7 +1562,7 @@ msgstr ""
 
 #: app/views/modalForms/propertySheet.html:86
 msgid "Example Text (size 20px)"
-msgstr "例テキスト（サイズ20px）"
+msgstr "テキスト（サイズ20px）"
 
 #: app/scripts/controllers/platform.js:836
 msgid "Example:"
@@ -1601,11 +1599,11 @@ msgstr ""
 #: app/scripts/controllers/modalForms/wblAbout.js:62
 #: app/scripts/directives/directives.js:179
 msgid "Fairly Ok"
-msgstr "かなり[OK]を"
+msgstr "かなりOK"
 
 #: app/scripts/services/services.js:1141
 msgid "FAQ"
-msgstr "よくある質問"
+msgstr "よくある質問 (FAQ)"
 
 #: app/views/modalForms/about.html:55
 msgid "Feedback:"
@@ -1625,15 +1623,15 @@ msgstr "ファイル名"
 
 #: app/views/profile.html:263
 msgid "Find Group..."
-msgstr "グループを探します..."
+msgstr "グループを検索"
 
 #: app/views/groups.html:211
 msgid "Find User"
-msgstr "ユーザーを探します"
+msgstr "ユーザーを検索"
 
 #: app/views/groups.html:150
 msgid "Find User..."
-msgstr "ユーザーを探します..."
+msgstr "ユーザーを検索"
 
 #: app/scripts/services/services.js:624
 msgid "Float"
@@ -1641,7 +1639,7 @@ msgstr "フロート"
 
 #: app/scripts/controllers/login.js:137 serverside/auth/providers/local.js:262
 msgid "Follow the link to login and change your password:"
-msgstr "ログインしてパスワードを変更するためのリンクは、次のとおりです。"
+msgstr "以下のリンクからログインしてパスワードを変更してください。"
 
 #: app/scripts/controllers/workSpaces.js:66
 msgid ""
@@ -1670,7 +1668,7 @@ msgstr "フォントサイズ"
 
 #: app/scripts/services/services.js:631
 msgid "Font Size Adjust"
-msgstr "フォントサイズの調整します"
+msgstr "フォントサイズの調整"
 
 #: app/scripts/services/services.js:633
 msgid "Font Style"
@@ -1678,11 +1676,11 @@ msgstr "フォントスタイル"
 
 #: app/scripts/services/services.js:635
 msgid "Font Variant"
-msgstr "フォントのバリアント"
+msgstr "font-variant"
 
 #: app/scripts/services/services.js:642
 msgid "Font Weight"
-msgstr "フォントの重さ"
+msgstr "フォントのウェイト"
 
 #: app/index.html:226
 msgid "for more information about Webbles and Intelligent Pad, please visit"
@@ -1693,11 +1691,11 @@ msgstr "Webblesとインテリジェントパッドの詳細については、�
 #: app/scripts/controllers/platform.js:608
 #: app/scripts/controllers/platform.js:615
 msgid "for webble"
-msgstr "webble用"
+msgstr "for webble"
 
 #: app/scripts/controllers/platform.js:818
 msgid "For Webble Template Developer"
-msgstr "Webbleテンプレートの開発者のための"
+msgstr "Webbleテンプレートの開発者用"
 
 #: app/scripts/services/services.js:589
 msgid "Foreground Color"
@@ -1729,7 +1727,7 @@ msgstr "ゲーム"
 
 #: app/views/profile.html:193
 msgid "Gender"
-msgstr "ジェンダー"
+msgstr "性別"
 
 #: app/views/profile.html:60
 msgid ""
@@ -1754,14 +1752,14 @@ msgstr ""
 #: app/scripts/controllers/modalForms/wblAbout.js:63
 #: app/scripts/directives/directives.js:180
 msgid "Good"
-msgstr "グッド"
+msgstr "Good"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:81
 #: app/scripts/controllers/modalForms/viewRateCommentsWbl.js:60
 #: app/scripts/controllers/modalForms/wblAbout.js:65
 #: app/scripts/directives/directives.js:182
 msgid "Great!"
-msgstr "すばらしいです！"
+msgstr "Great!"
 
 #: serverside/lib/ops/publishing.js:83
 msgid "Group closed for maintainance"
@@ -1799,11 +1797,11 @@ msgstr ""
 
 #: app/views/modalForms/about.html:54
 msgid "Hardcore System Testing:"
-msgstr "ハードコアシステムテスト："
+msgstr "Hardcore System Testing:"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:95
 msgid "Having Children Not Allowed:"
-msgstr "許可されていません子供を持ちます："
+msgstr "子オブジェクトを持つことが許可されていません："
 
 #: app/scripts/services/services.js:644
 msgid "Height"
@@ -1811,11 +1809,11 @@ msgstr "高さ"
 
 #: app/views/modalForms/propertySheet.html:124
 msgid "Height:"
-msgstr "身長："
+msgstr "高さ："
 
 #: app/scripts/services/services.js:1137
 msgid "Help"
-msgstr "助けて"
+msgstr "ヘルプ"
 
 #: app/views/modalForms/platformLangSheet.html:58
 msgid "Help Us Translate"
@@ -1827,15 +1825,15 @@ msgid ""
 "or by file from your local computer"
 msgstr ""
 "ここでは、オンラインサーバーから、またはローカルコンピュータからファイルによ"
-"るURLでWebbleをロードするために天気を決​​めます"
+"るURLでWebbleをロードするかどうかを決定します"
 
 #: app/scripts/controllers/modalForms/publishWebble.js:77
 msgid ""
 "Here you decide weather to publish this Webble online to the public server "
 "or only locally to your computer"
 msgstr ""
-"ここでは、天気がコンピュータにローカルでのみ公開サーバーにオンラインでこの"
-"Webbleを公開したりすることを決定します"
+"ここでは、コンピュータにローカルでのみ公開サーバーにオンラインでこのWebbleを"
+"公開したりするかどうかを決定します"
 
 #: app/views/modalForms/searchWblSheet.html:83
 msgid "hide untrusted"
@@ -1851,15 +1849,15 @@ msgstr "非常にお勧め"
 
 #: app/views/modalForms/about.html:50
 msgid "Hokkaido University"
-msgstr "北大"
+msgstr "北海道大学"
 
 #: app/scripts/directives/directives.js:398
 msgid "Horizontal Position"
-msgstr "水平位"
+msgstr "水平位置"
 
 #: app/scripts/controllers/templates.js:282
 msgid "How the Webble looks"
-msgstr "どのWebbleルックス"
+msgstr "How the Webble looks"
 
 #: app/scripts/controllers/templates.js:281
 msgid "How the Webble view is structured"
@@ -1867,11 +1865,11 @@ msgstr "Webbleビューが構成されている方法"
 
 #: app/views/templates.html:169
 msgid "Hurray! You don't have any unpublished templates."
-msgstr "万歳！あなたは、任意の未発表のテンプレートを持っていません。"
+msgstr "あなたは未発表のテンプレートを持っていません。"
 
 #: app/views/templates.html:98
 msgid "Id"
-msgstr "イド"
+msgstr "ID"
 
 #: app/views/templates.html:182
 msgid "ID"
@@ -1978,7 +1976,7 @@ msgstr "画像フィルタグレースケール"
 
 #: app/scripts/services/services.js:612
 msgid "Image Filter Hue Rotate"
-msgstr "イメージフィルタ色相を回転させ"
+msgstr "イメージフィルタ色相の回転"
 
 #: app/scripts/services/services.js:613
 msgid "Image Filter Invert"
@@ -2002,7 +2000,7 @@ msgstr "画像選択："
 
 #: app/views/modalForms/publishWebbleSheet.html:99
 msgid "Image View:"
-msgstr "画像を見ます："
+msgstr "画像ビュー："
 
 #: app/scripts/services/services.js:1110
 #: app/views/modalForms/importWebbleSheet.html:43
@@ -2031,7 +2029,7 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:948
 msgid "in"
-msgstr "で"
+msgstr "in"
 
 #: app/scripts/services/services.js:880
 msgid ""
@@ -2050,9 +2048,7 @@ msgstr ""
 msgid ""
 "In order to publish a Webble, you need a proper username which you have not "
 "yet. Please visit your user-profile page and rectify that."
-msgstr ""
-"Webbleを公開するためには、あなたがまだ持っていない、適切なユーザー名が必要で"
-"す。あなたのユーザープロフィールページを訪問し、それを修正してください。"
+msgstr "Webbleを公開するためには、ユーザー登録が必要です。"
 
 #: app/views/modalForms/exportWebbleSheet.html:55
 msgid "Included Webble Templates:"
@@ -2076,11 +2072,11 @@ msgstr ""
 
 #: app/scripts/services/services.js:898
 msgid "Increases or decreases the space between characters in a text"
-msgstr "増加するか、テキスト内の文字の間にスペースを減少させます"
+msgstr "テキスト内の文字間隔の増減"
 
 #: app/scripts/services/services.js:1008
 msgid "Increases or decreases the white space between words"
-msgstr "増加または単語の間に空白を減少させます"
+msgstr "テキスト内の単語間隔の増減"
 
 #: app/views/modalForms/editCustInteractObjSheet.html:57
 msgid "Index"
@@ -2092,7 +2088,7 @@ msgstr "情報"
 
 #: app/views/modalForms/addCustSlotSheet.html:63
 msgid "Initiation Value:"
-msgstr "開始値："
+msgstr "初期値："
 
 #: app/views/modalForms/wblAbout.html:78
 msgid "Instance Id:"
@@ -2100,7 +2096,7 @@ msgstr "インスタンスID："
 
 #: app/scripts/controllers/modalForms/wblProtection.js:131
 msgid "Interaction Objects Not Visible:"
-msgstr "相互作用が表示されないオブジェクト："
+msgstr "相互作用が非表示オブジェクト："
 
 #: app/scripts/controllers/modalForms/wblProperties.js:43
 msgid "Internal"
@@ -2128,11 +2124,11 @@ msgstr "アイテムの表示名"
 
 #: app/views/modalForms/editCustMenuItemsSheet.html:60
 msgid "Item Enabled"
-msgstr "アイテムの有効"
+msgstr "アイテムの有効化"
 
 #: app/views/modalForms/editCustMenuItemsSheet.html:51
 msgid "Item Id"
-msgstr "項目ID"
+msgstr "アイテムID"
 
 #: app/views/login.html:125 app/views/login.html:196
 msgid "john@example.com"
@@ -2157,11 +2153,11 @@ msgstr "最終更新日："
 
 #: app/scripts/directives/directives.js:389
 msgid "Layer Order Index"
-msgstr "レイヤの順序インデックス"
+msgstr "レイヤの順序"
 
 #: app/scripts/services/services.js:652
 msgid "Left Position"
-msgstr "左の位置"
+msgstr "左位置"
 
 #: app/scripts/services/services.js:653
 msgid "Letter Spacing"
@@ -2262,7 +2258,7 @@ msgstr "低クリアランスユーザー"
 
 #: app/views/modalForms/publishSandboxWblsToo.html:41
 msgid "Make Template Webble Public?"
-msgstr "テンプレートWebble公開を作りますか？"
+msgstr "テンプレートWebbleを公開しますか？"
 
 #: app/views/profile.html:196
 msgid "Male"
@@ -2314,7 +2310,7 @@ msgid ""
 "mark the cells of the merged combo in the child and parent to correspond "
 "with eachother the way you want."
 msgstr ""
-"お互いにあなたが望むように対応して、子と親でマージされたコンボの細胞をマー"
+"お互いにあなたが望むように対応して、子と親でマージされたコンボのセルをマー"
 "ク。"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:83
@@ -2362,7 +2358,7 @@ msgstr "ミームメディアラボのYouTubeページ。"
 
 #: app/views/modalForms/about.html:50
 msgid "Meme Media Laboratory"
-msgstr "ミームメディアラボ"
+msgstr "知識メディアラボラトリー"
 
 #: app/views/modalForms/slotConnSheet.html:62
 msgid "Merged Combo Slot channels:"
@@ -2370,7 +2366,7 @@ msgstr "マージされたコンボスロットチャネル："
 
 #: app/views/modalForms/addCustSlotSheet.html:105
 msgid "Merged Combo Slots"
-msgstr "合併コンボスロット"
+msgstr "コンボスロットのマージ"
 
 #: app/scripts/services/services.js:673
 msgid "Min Height"
@@ -2390,7 +2386,7 @@ msgstr ""
 
 #: app/scripts/controllers/groups.js:134
 msgid "Moderate all updates"
-msgstr "適度なすべての更新"
+msgstr "すべてを更新"
 
 #: app/scripts/controllers/groups.js:129
 msgid "Moderate new publications"
@@ -2402,7 +2398,7 @@ msgstr ""
 
 #: app/views/modalForms/editCustInteractObjSheet.html:82
 msgid "Mouse Event Type"
-msgstr "マウスイベントの種類"
+msgstr "マウスイベントタイプ"
 
 #: app/scripts/controllers/modalForms/editCustInteractObj.js:48
 msgid "Mouse Move"
@@ -2414,7 +2410,7 @@ msgstr "そのdirectiontで現在選択されてWebbleを移動します。"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:47
 msgid "Move Not Allowed:"
-msgstr "許可されていません移動します。"
+msgstr "移動は許可されていません。"
 
 #: app/scripts/controllers/platform.js:539
 msgid "moved webble"
@@ -2436,11 +2432,11 @@ msgstr ""
 #: app/views/modalForms/searchWblSheet.html:74 app/views/profile.html:126
 #: app/views/templates.html:107 app/views/templates.html:183
 msgid "Name"
-msgstr "名"
+msgstr "名前"
 
 #: app/views/modalForms/editCustInteractObjSheet.html:67
 msgid "Name Id"
-msgstr "名前ID"
+msgstr "名前 ID"
 
 #: app/views/groups.html:160 app/views/groups.html:225 app/views/groups.html:61
 #: app/views/profile.html:275
@@ -2449,7 +2445,7 @@ msgstr "名前："
 
 #: app/scripts/controllers/platform.js:3515
 msgid "Need a username..."
-msgstr "ユーザ名を必要とします..."
+msgstr "ユーザ名が必要です..."
 
 #: app/scripts/services/services.js:217
 msgid "Never Allow Any"
@@ -2457,7 +2453,7 @@ msgstr ""
 
 #: app/scripts/services/services.js:1097
 msgid "New"
-msgstr "新しいです"
+msgstr "新規作成"
 
 #: app/views/modalForms/shareWSSheet.html:66
 msgid "New Collaborator:"
@@ -2469,11 +2465,11 @@ msgstr "新規ファイル"
 
 #: app/views/groups.html:197 app/views/groups.html:93
 msgid "New Group"
-msgstr "新しいグループ"
+msgstr "新規グループ"
 
 #: app/views/modalForms/addCustSlotSheet.html:111
 msgid "New Merge-Combo Slot Name:"
-msgstr "新しいマージ·コンボスロット名："
+msgstr "新規マージコンボスロット名："
 
 #: app/views/modalForms/faqSheet.html:84
 msgid "New Question"
@@ -2481,7 +2477,7 @@ msgstr "新しい質問"
 
 #: app/views/modalForms/addCustSlotSheet.html:57
 msgid "New Slot Name:"
-msgstr "新しいスロット名："
+msgstr "新規スロット名："
 
 #: app/views/modalForms/platformPropsSheet.html:106
 msgid "New Template Revision Behavior:"
@@ -2489,7 +2485,7 @@ msgstr ""
 
 #: app/views/modalForms/publishWebbleSheet.html:56
 msgid "New Webble Definition ID:"
-msgstr "新しいWebble定義ID："
+msgstr "新規定義ID："
 
 #: app/scripts/controllers/modalForms/searchWbl.js:86
 msgid "Next"
@@ -2513,19 +2509,19 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:4459
 msgid "No of different Webble Definitions used"
-msgstr "使用される異なるWebble定義なし"
+msgstr "使用される異なる定義無し"
 
 #: app/scripts/controllers/platform.js:4458
 msgid "No of different Webble Templates used"
-msgstr "使用される異なるWebbleテンプレートなし"
+msgstr "使用される異なるテンプレート無し"
 
 #: app/scripts/controllers/platform.js:4457
 msgid "No of loaded Webbles"
-msgstr "ロードされたWebblesなし"
+msgstr "ロードされたWebbles無し"
 
 #: app/scripts/controllers/platform.js:4044
 msgid "No Quick-Save Workspace in Storage"
-msgstr "ストレージではありませんクイックワークスペースの保存"
+msgstr "クイックワークスペースのストレージへの保存"
 
 #: app/scripts/controllers/platform.js:1491
 #: app/scripts/controllers/platform.js:2671
@@ -2538,19 +2534,19 @@ msgstr ""
 
 #: app/views/workSpaces.html:72
 msgid "No Webble is selected"
-msgstr "いいえWebbleが選択されていません"
+msgstr "Webbleが選択されていません"
 
 #: app/scripts/controllers/workSpaces.js:65
 msgid "No Webbles are connected with eachother or share their model"
-msgstr "いいえWebblesはお互いに接続されていないか、そのモデルを共有しています"
+msgstr "Webblesはお互いに接続されていないか、そのモデルを共有していません"
 
 #: app/scripts/controllers/platform.js:3074
 msgid "No Webbles to bundle are selected."
-msgstr "バンドルするんWebblesが選択されていません。"
+msgstr "バンドルするWebblesが選択されていません。"
 
 #: app/scripts/controllers/platform.js:4269
 msgid "No Workspace to share."
-msgstr "共有するワークスペースません。"
+msgstr "共有するワークスペースがありません。"
 
 #: app/scripts/controllers/platform.js:4192
 msgid "No Workspaces Available"
@@ -2562,7 +2558,7 @@ msgstr "非開発者モードが表示されません："
 
 #: app/scripts/controllers/platform.js:3981
 msgid "Non-Menu Shortcut Keys"
-msgstr "非メニューのショートカットキー"
+msgstr "非メニューショートカットキー"
 
 #: app/scripts/controllers/modalForms/addCustSlot.js:49
 #: app/scripts/controllers/modalForms/editCustInteractObj.js:49
@@ -2628,7 +2624,7 @@ msgstr "の"
 #: app/views/modalForms/about.html:78 app/views/modalForms/infoMsg.html:54
 #: app/views/modalForms/wblAbout.html:130
 msgid "Ok"
-msgstr "Ok"
+msgstr "OK"
 
 #: app/views/profile.html:103 serverside/api/adm/server.js:52
 #: serverside/api/info.js:62 serverside/api/users.js:102
@@ -2643,7 +2639,7 @@ msgid ""
 "from deletion and therefore this operation is canceled."
 msgstr ""
 "Webblesの1つ以上は、削除しようと削除から保護されているため、この操作がキャン"
-"セルされるに含ま。"
+"セルされる。"
 
 #: app/scripts/controllers/wblCore.js:2289
 #: app/scripts/controllers/wblCore.js:2320
@@ -2652,7 +2648,7 @@ msgid ""
 "from duplication and therefore this operation is canceled."
 msgstr ""
 "Webblesの1つ以上の複製を試みる複製から保護されているため、この操作がキャンセ"
-"ルされるに含ま。"
+"ルされる。"
 
 #: app/scripts/controllers/platform.js:3534
 msgid ""
@@ -2686,24 +2682,24 @@ msgstr "オンラインユーザー"
 #: app/scripts/directives/directives.js:416
 #: app/scripts/services/services.js:682
 msgid "Opacity"
-msgstr "不透明度"
+msgstr "透明度"
 
 #: app/scripts/services/services.js:1098
 #: app/views/modalForms/openWSSheet.html:43 app/views/templates.html:249
 msgid "Open"
-msgstr "オープン"
+msgstr "開く"
 
 #: app/scripts/services/services.js:1142
 msgid "Open Chat"
-msgstr "オープンチャット"
+msgstr "チャットを開く"
 
 #: app/scripts/controllers/groups.js:124
 msgid "Open for publications"
-msgstr "出版物のためのオープン"
+msgstr "公開物を開く"
 
 #: app/scripts/services/services.js:126
 msgid "Open Menu"
-msgstr "メニューを開きます"
+msgstr "メニューを開く"
 
 #: app/scripts/controllers/platform.js:3990
 msgid "Open System Language Select Form"
@@ -2711,7 +2707,7 @@ msgstr ""
 
 #: app/views/modalForms/openWSSheet.html:45
 msgid "Open Workspace"
-msgstr "ワークスペースを開きます"
+msgstr "ワークスペースを開く"
 
 #: app/scripts/controllers/platform.js:824
 msgid ""
@@ -2722,7 +2718,7 @@ msgstr ""
 
 #: app/scripts/controllers/login.js:128 app/scripts/controllers/profile.js:206
 msgid "Operation cancelled"
-msgstr "操作をキャンセル"
+msgstr "操作のキャンセル"
 
 #: serverside/lib/ops/fsing.js:54 serverside/lib/ops/gfsing.js:54
 msgid "Operation not applicable to this kind of object"
@@ -2730,7 +2726,7 @@ msgstr ""
 
 #: app/views/login.html:88
 msgid "Or login using one of your social accounts:"
-msgstr "またはあなたの社会的なアカウントのいずれかを使用してログイン："
+msgstr "または、ソーシャルアカウントを使用してログイン："
 
 #: app/scripts/services/services.js:685
 msgid "Outline"
@@ -2742,7 +2738,7 @@ msgstr "アウトラインの色"
 
 #: app/scripts/services/services.js:687
 msgid "Outline Offset"
-msgstr "概要オフセット"
+msgstr "アウトラインオフセット"
 
 #: app/scripts/services/services.js:688
 msgid "Outline Style"
@@ -2774,7 +2770,7 @@ msgstr ""
 
 #: app/views/groups.html:147
 msgid "Owner User"
-msgstr "所有者ユーザー"
+msgstr "所有者"
 
 #: app/scripts/services/services.js:694
 msgid "Padding"
@@ -2782,19 +2778,19 @@ msgstr "パディング"
 
 #: app/scripts/services/services.js:695
 msgid "Padding Bottom"
-msgstr "パディングボトム"
+msgstr "パディング（下）"
 
 #: app/scripts/services/services.js:696
 msgid "Padding Left"
-msgstr "左パディング"
+msgstr "パディング（左）"
 
 #: app/scripts/services/services.js:697
 msgid "Padding Right"
-msgstr "パディング右"
+msgstr "パディング（右）"
 
 #: app/scripts/services/services.js:698
 msgid "Padding Top"
-msgstr "上のパディング"
+msgstr "パディング（上）"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:89
 msgid "Parent Assignment Not Allowed:"
@@ -2806,7 +2802,7 @@ msgstr ""
 
 #: app/scripts/controllers/modalForms/wblProtection.js:101
 msgid "Parent Revoking Not Allowed:"
-msgstr "親が許可しないの取り消し："
+msgstr "親の取り消しは許可されていません："
 
 #: app/views/modalForms/slotConnSheet.html:56
 msgid "Parent Slot:"
@@ -2827,7 +2823,7 @@ msgstr ""
 
 #: app/views/login.html:172 app/views/login.html:83
 msgid "Password is required"
-msgstr "パスワードが要求されます"
+msgstr "パスワードが必要です"
 
 #: app/views/login.html:173
 msgid "Password must be at least 5 characters long"
@@ -2851,11 +2847,11 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:566
 msgid "peeled webble"
-msgstr "剥離webble"
+msgstr "webbleをはがす"
 
 #: app/views/modalForms/faqSheet.html:75
 msgid "Pending Answers you need to give"
-msgstr "あなたが与える必要がある保留中の回答"
+msgstr "保留中の回答"
 
 #: app/scripts/controllers/platform.js:2220
 msgid "Pending Questions in the FAQ"
@@ -2873,7 +2869,7 @@ msgstr "カスタムイメージを選択してください："
 
 #: app/views/modalForms/bundleSheet.html:51
 msgid "Pick which slots should be accessable in the bundle"
-msgstr "スロットがバンドルにアクセス可能であるべきである選びます"
+msgstr "バンドルでアクセス可能なスロットを選択"
 
 #: app/views/modalForms/platformPropsSheet.html:50
 msgid "Platform Execution Mode:"
@@ -2895,7 +2891,7 @@ msgstr "以下のエラーを修正してください："
 
 #: app/views/login.html:167
 msgid "Please provide a (decent) name"
-msgstr "（まともな）名前を入力してください"
+msgstr "有効な名前を入力してください"
 
 #: serverside/auth/providers/local.js:162
 msgid "Please provide a password"
@@ -2970,7 +2966,7 @@ msgstr "保護"
 
 #: app/views/groups.html:137
 msgid "Publication Policy"
-msgstr "出版方針"
+msgstr "公開ポリシー"
 
 #: app/scripts/services/services.js:1111 app/scripts/services/services.js:156
 msgid "Publish"
@@ -2978,20 +2974,20 @@ msgstr "パブリッシュ"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:77
 msgid "Publish Not Allowed:"
-msgstr "公開許可されていません："
+msgstr "公開は許可されていません："
 
 #: app/scripts/controllers/platform.js:3519
 msgid "Publish Not Available"
-msgstr "ご利用いただけません公開"
+msgstr "公開はご利用いただけません"
 
 #: app/views/modalForms/publishWebbleSheet.html:45
 msgid "Publish Webble"
-msgstr "Webbleを公開"
+msgstr "Webbleの公開"
 
 #: app/scripts/controllers/platform.js:3505
 #: app/scripts/controllers/wblCore.js:1429
 msgid "Publish Webble Attempt Failed"
-msgstr "失敗したWebble試みを公開"
+msgstr "Webbleの公開に失敗しました"
 
 #: app/views/groups.html:260
 msgid "Published Objects"
@@ -3008,15 +3004,15 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:3988
 msgid "Quick Load A Fundamental Webble."
-msgstr "クイックロード基本Webble。"
+msgstr "基本Webbleのクイックロード"
 
 #: app/scripts/controllers/platform.js:3987
 msgid "Quick Load Previusly Quick-Saved Desktop."
-msgstr "クイックロードPreviuslyクイック保存デスクトップ。"
+msgstr "前回のデスクトップのクイックロード"
 
 #: app/scripts/controllers/platform.js:3986
 msgid "Quick Save Current Desktop."
-msgstr "クイックセーブ現在のデスクトップ。"
+msgstr "現在のデスクトップをクイックセーブ"
 
 #: app/scripts/controllers/platform.js:3989
 msgid "Quick Toggles between System Language and English."
@@ -3024,15 +3020,15 @@ msgstr "システム言語と英語の間の迅速な切り替えます。"
 
 #: app/views/modalForms/wblAbout.html:67
 msgid "Rate"
-msgstr "レート"
+msgstr "評価"
 
 #: app/views/modalForms/rateWblSheet.html:41
 msgid "Rate This Webble"
-msgstr "レートこのWebble"
+msgstr "Webbleの評価"
 
 #: app/views/modalForms/wblAbout.html:62
 msgid "Rated"
-msgstr "定格の"
+msgstr "評価"
 
 #: app/views/modalForms/searchWblSheet.html:75
 msgid "Rating"
@@ -3049,7 +3045,7 @@ msgstr ""
 
 #: app/views/modalForms/slotConnSheet.html:95
 msgid "Receive"
-msgstr "受け取ります"
+msgstr "受信"
 
 #: app/scripts/services/services.js:1108
 msgid "Recent"
@@ -3061,16 +3057,16 @@ msgstr "最近のクイック保存ワークスペースが復元されました
 
 #: app/scripts/services/services.js:1119
 msgid "Redo"
-msgstr "やり直します"
+msgstr "やり直し"
 
 #: app/views/login.html:63
 msgid "Remember me"
-msgstr "私を覚えてますか"
+msgstr "記憶する"
 
 #: app/scripts/directives/editors/license-key-editor.js:64
 #: app/views/modalForms/shareWSSheet.html:61 app/views/templates.html:79
 msgid "Remove"
-msgstr "削除します"
+msgstr "削除"
 
 #: app/scripts/services/services.js:902
 msgid ""
@@ -3097,7 +3093,7 @@ msgstr ""
 
 #: app/scripts/services/services.js:130
 msgid "Rescale"
-msgstr "再スケール"
+msgstr "リスケール"
 
 #: app/views/login.html:203 app/views/profile.html:343
 msgid "Reset"
@@ -3105,7 +3101,7 @@ msgstr "リセット"
 
 #: app/scripts/controllers/login.js:136 serverside/auth/providers/local.js:261
 msgid "Reset Account Password Request"
-msgstr "アカウントのパスワードのリセット要求"
+msgstr "アカウントパスワードのリセット要求"
 
 #: app/views/login.html:187 app/views/login.html:189
 msgid "Reset Password"
@@ -3117,7 +3113,7 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:3991
 msgid "Reset Webble World Intro to first time visitor mode."
-msgstr "初めての訪問者モードにWebble世界イントロをリセットします。"
+msgstr "初めての訪問者モードにイントロをリセットします。"
 
 #: app/scripts/services/services.js:128 app/scripts/services/services.js:707
 msgid "Resize"
@@ -3125,7 +3121,7 @@ msgstr "リサイズ"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:53
 msgid "Resize Not Allowed:"
-msgstr "サイズ変更は許可されていません："
+msgstr "リサイズは許可されていません："
 
 #: app/views/editors/license-key-editor.html:40
 #: app/views/editors/license-key-editor.html:70
@@ -3154,7 +3150,7 @@ msgstr "逆"
 
 #: app/views/profile.html:242
 msgid "Revoke Group Membership"
-msgstr "グループメンバーシップを取り消します"
+msgstr "グループメンバーシップの取り消し"
 
 #: app/scripts/controllers/profile.js:246
 #: app/scripts/controllers/profile.js:248
@@ -3169,19 +3165,19 @@ msgstr "親を取り消し"
 #: app/scripts/controllers/wblCore.js:2554
 #: app/scripts/controllers/wblCore.js:2558
 msgid "Revoke Parent Failed"
-msgstr "取り消し親は失敗しました"
+msgstr "親の取り消しに失敗しました"
 
 #: app/views/profile.html:303
 msgid "Revoke Trust"
-msgstr "信頼を取り消します"
+msgstr "Trustの取り消し"
 
 #: app/scripts/services/services.js:711
 msgid "Right Position"
-msgstr "右の位置"
+msgstr "右位置"
 
 #: app/scripts/services/services.js:127
 msgid "Rotate"
-msgstr "ローテート"
+msgstr "回転"
 
 #: app/scripts/services/services.js:860
 msgid ""
@@ -3209,7 +3205,7 @@ msgstr "ワークスペースの名前を付けて保存..."
 #: app/scripts/controllers/platform.js:4238
 #: app/scripts/controllers/platform.js:4254
 msgid "Save Workspace Not Available"
-msgstr "ワークスペースの保存利用いただけません"
+msgstr "ワークスペースの保存を利用できません"
 
 #: app/scripts/directives/directives.js:425
 msgid "Scale"
@@ -3222,7 +3218,7 @@ msgstr "検索"
 
 #: app/views/modalForms/searchWblSheet.html:63
 msgid "search webbles"
-msgstr "検索webbles"
+msgstr "Webbleの検索"
 
 #: app/views/groups.html:69
 msgid "Select a group to get more information"
@@ -3234,7 +3230,7 @@ msgstr "全て選択"
 
 #: app/scripts/controllers/modalForms/addCustSlot.js:76
 msgid "Select the slots you also want combined into a combo slot."
-msgstr "あなたはまた、コンボスロットに合わせたいスロットを選択します。"
+msgstr "あなたはまた、コンボスロットに追加したいスロットを選択します。"
 
 #: app/scripts/controllers/modalForms/importWebble.js:51
 msgid ""
@@ -3278,17 +3274,17 @@ msgstr "パスワードの設定"
 
 #: app/scripts/controllers/wblCore.js:1406
 msgid "Set Property Failed"
-msgstr "設定されたプロパティは、失敗しました"
+msgstr "プロパティの設定に失敗しました"
 
 #: app/scripts/services/services.js:167
 msgid "Set Protection"
-msgstr "設定されている保護"
+msgstr "保護の設定"
 
 #: app/scripts/controllers/wblCore.js:1276
 #: app/scripts/controllers/wblCore.js:1327
 #: app/scripts/controllers/wblCore.js:2627
 msgid "Set Size Slot Failed"
-msgstr "セットサイズスロットに失敗しました"
+msgstr "サイズスロットの設定に失敗しました"
 
 #: app/scripts/controllers/platform.js:542
 msgid "set slot"
@@ -3340,7 +3336,7 @@ msgstr "テキストの太いまたは細い文字を表示するかを設定"
 
 #: app/scripts/services/services.js:789
 msgid "Sets if/how a background image will be repeated"
-msgstr "セット背景画像が繰り返される方法/場合"
+msgstr "背景画像の繰り返し設定"
 
 #: app/scripts/services/services.js:786
 msgid ""
@@ -3528,7 +3524,7 @@ msgstr "要素の上ボーダーの幅を設定します"
 
 #: app/scripts/services/services.js:1101
 msgid "Share"
-msgstr "シェア"
+msgstr "共有"
 
 #: app/views/modalForms/shareWSSheet.html:41
 msgid "Share Workspace"
@@ -3536,15 +3532,15 @@ msgstr "共有ワークスペース"
 
 #: app/scripts/services/services.js:1123
 msgid "Shared Duplicate"
-msgstr "共有重複"
+msgstr "共有複製"
 
 #: app/scripts/services/services.js:163
 msgid "Shared Model Duplicate"
-msgstr "共有モデルの重複"
+msgstr "共有モデルの複製"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:65
 msgid "Shared Model Duplicate Not Allowed:"
-msgstr "共有モデルの重複は許可されていません："
+msgstr "共有モデルの複製は許可されていません："
 
 #: app/scripts/controllers/wblCore.js:2314
 msgid "Shared Model Duplication Failed"
@@ -3593,11 +3589,11 @@ msgstr "簡略記述特性は、一つの宣言内のすべてのフォントプ
 #: app/scripts/controllers/platform.js:145 app/views/login.html:101
 #: app/views/login.html:103
 msgid "Sign Up"
-msgstr "サインアップ"
+msgstr "登録"
 
 #: app/scripts/controllers/login.js:108
 msgid "Signed up and logged in successfully"
-msgstr "サインアップし正常にログイン"
+msgstr "サインアップとログインに成功しました"
 
 #: app/views/templates.html:68
 msgid "Size"
@@ -3605,7 +3601,7 @@ msgstr "サイズ"
 
 #: app/views/mediaplayer.html:39
 msgid "Skip Intro"
-msgstr "スキップイントロ"
+msgstr "イントロのスキップ"
 
 #: app/views/modalForms/platformPropsSheet.html:97
 msgid "Slim Clutter-free Webble Browser Enabled:"
@@ -3621,11 +3617,11 @@ msgstr "スロット接続"
 
 #: app/views/modalForms/addCustSlotSheet.html:96
 msgid "Slot Full Name:"
-msgstr "スロット氏名："
+msgstr "スロットのフルネーム："
 
 #: app/views/modalForms/addCustSlotSheet.html:117
 msgid "Slots to pick:"
-msgstr "選択するスロット："
+msgstr "スロットの選択："
 
 #: app/views/modalForms/propertySheet.html:52
 msgid "Slots:"
@@ -3871,7 +3867,7 @@ msgstr ""
 
 #: app/views/modalForms/addCustSlotSheet.html:51
 msgid "Stand-alone Slots"
-msgstr "スタンドアロンスロット"
+msgstr "スタンドアローンスロット"
 
 #: app/scripts/controllers/modalForms/shareWS.js:52 app/views/groups.html:297
 msgid "Start typing a username"
@@ -3889,7 +3885,7 @@ msgstr "ユーザー名の入力を開始"
 #: app/views/modalForms/slotConnSheet.html:43
 #: app/views/modalForms/wblProtectionSheet.html:43
 msgid "Submit"
-msgstr "提出します"
+msgstr "送信"
 
 #: serverside/api/webbles.js:310
 msgid "Successfully cleared"
@@ -3924,7 +3920,7 @@ msgstr "あなたのテンプレートエディタにコピーしたテンプレ
 
 #: app/views/templates.html:115
 msgid "Template Description"
-msgstr "テンプレート説明"
+msgstr "テンプレートの説明"
 
 #: serverside/api/dev/templates.js:97
 msgid "Template does not exist"
@@ -3955,7 +3951,7 @@ msgstr "テンプレートリビジョン："
 #: app/scripts/controllers/modalForms/wblAbout.js:58
 #: app/scripts/directives/directives.js:175
 msgid "Terrible"
-msgstr "ひどいです"
+msgstr "酷い"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:46
 msgid "text"
@@ -3963,7 +3959,7 @@ msgstr "テキスト"
 
 #: app/scripts/services/services.js:714
 msgid "Text Alignment"
-msgstr "テキストアラインメント"
+msgstr "テキストの整列"
 
 #: app/scripts/services/services.js:717
 msgid "Text Decoration"
@@ -3971,7 +3967,7 @@ msgstr "テキストの装飾"
 
 #: app/scripts/services/services.js:721
 msgid "Text Indent"
-msgstr "テキストインデント"
+msgstr "テキストのインデント"
 
 #: app/scripts/services/services.js:725
 msgid "Text Shadow"
@@ -4068,8 +4064,8 @@ msgid ""
 "The file selected is not an image file and will therefore not be used as "
 "such. Auto generated image will be used instead."
 msgstr ""
-"選択したファイルは、画像ファイルではありませんので、そのようなものとして使用"
-"されることはありません。自動生成された画像が代わりに使用されます。"
+"選択したファイルは、画像ファイルではありません。自動生成された画像が代わりに"
+"使用されます。"
 
 #: app/scripts/controllers/modalForms/wblProperties.js:230
 msgid "The file selected is not an image file."
@@ -4079,17 +4075,15 @@ msgstr "選択したファイルは、画像ファイルではありません。
 msgid ""
 "The file selected is too large. Max size allowed is 300kb. Please resize "
 "image or choose a smaller one."
-msgstr ""
-"選択したファイルが大きすぎます。許可された最大サイズは300KBです。画像のサイズ"
-"を変更するか、小さい方を選択してください。"
+msgstr "選択したファイルが大きすぎます。許可された最大サイズは300KBです。"
 
 #: app/views/groups.html:273
 msgid "The following objects are members of the group"
-msgstr "次のオブジェクトは、グループのメンバーであります"
+msgstr "次のオブジェクトは、グループのメンバーです。"
 
 #: app/scripts/services/services.js:834
 msgid "The foreground color of this element."
-msgstr "この要素の前景色。"
+msgstr "要素の前景色"
 
 #: app/scripts/directives/directives.js:399
 msgid ""
@@ -4142,7 +4136,7 @@ msgstr "名前Webbleはフレンドリーとして示したユーザです。"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:68
 msgid "The Number of Available Webbles Right Now:"
-msgstr "利用可能Webbles今すぐ右の数："
+msgstr "利用可能なWebble数："
 
 #: serverside/lib/ops/publishing.js:48
 msgid "The object is published under groups you are not member of"
@@ -4215,9 +4209,7 @@ msgstr ""
 msgid ""
 "The user-name or e-mail for a Webble user you want to share this Workspace "
 "with"
-msgstr ""
-"あなたがこのワークスペースを共有したいWebbleユーザーのユーザー名または電子"
-"メール"
+msgstr "共有するWebbleユーザーのユーザー名または電子メール"
 
 #: serverside/auth/providers/local.js:104
 msgid "The username you provided is invalid"
@@ -4239,11 +4231,11 @@ msgstr ""
 
 #: app/scripts/services/services.js:823
 msgid "The width in pixels of the border (0 = no border)"
-msgstr "境界線の幅（ピクセル単位）（0 =境界線なし）"
+msgstr "境界線の幅（ピクセル）（0 =境界線無し）"
 
 #: app/scripts/controllers/modalForms/saveWSAs.js:48
 msgid "The Workspace name cannot be blank"
-msgstr "ワークスペース名は空白にすることはできません"
+msgstr "ワークスペース名は空白にできません"
 
 #: app/views/groups.html:269
 msgid "There are no objects published under the group"
@@ -4288,9 +4280,7 @@ msgstr "これらは、利用可能なCSSが選択されたビジュアル要素
 msgid ""
 "These are the descriptive keywords this Webble will be more easly searched "
 "and found by"
-msgstr ""
-"これらは、このWebbleがよりイースリーにより検索し、発見される説明的なキーワー"
-"ドであります"
+msgstr "このWebbleを検索するためのキーワードです"
 
 #: app/scripts/controllers/modalForms/exportWebble.js:56
 msgid ""
@@ -4717,7 +4707,7 @@ msgstr "回"
 
 #: app/scripts/controllers/platform.js:542
 msgid "to"
-msgstr "へ"
+msgstr "to"
 
 #: app/views/profile.html:234
 msgid ""
@@ -4750,35 +4740,35 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:826
 msgid "to..."
-msgstr "へ..."
+msgstr "to..."
 
 #: app/scripts/services/services.js:1132
 msgid "Toggle Connection View"
-msgstr "接続の表示の切り替え"
+msgstr "接続の表示を切替え"
 
 #: app/scripts/controllers/platform.js:3984
 msgid "Toggle Console Debug Logging."
-msgstr "コンソールデバッグログを切り替えます。"
+msgstr "コンソールデバッグログの切替え"
 
 #: app/scripts/services/services.js:1135
 msgid "Toggle Fullscreen"
-msgstr "トグルフルスクリーン"
+msgstr "フルスクリーン切替え"
 
 #: app/scripts/controllers/platform.js:3983
 msgid "Toggle Main menu visibility."
-msgstr "メインメニューの表示を切り替えます。"
+msgstr "メインメニューの表示を切替え"
 
 #: app/views/modalForms/editCustInteractObjSheet.html:72
 msgid "Tooltip Text"
-msgstr "ツールヒントのテキスト"
+msgstr "ツールチップテキスト"
 
 #: app/scripts/services/services.js:728
 msgid "Top Position"
-msgstr "首位"
+msgstr "位置（上）"
 
 #: app/scripts/services/services.js:742
 msgid "Transform Origin"
-msgstr "原点を変換します"
+msgstr "原点を変換"
 
 #: app/scripts/services/services.js:729
 msgid "Transform Rotate"
@@ -4830,7 +4820,7 @@ msgstr "Z翻訳変換"
 
 #: app/scripts/services/services.js:744
 msgid "Transition"
-msgstr "トランジション"
+msgstr "遷移"
 
 #: app/scripts/services/services.js:745
 msgid "Transition Delay"
@@ -4842,11 +4832,11 @@ msgstr "遷移時間"
 
 #: app/scripts/services/services.js:747
 msgid "Transition Property"
-msgstr "トランジションプロパティ"
+msgstr "遷移プロパティ"
 
 #: app/scripts/services/services.js:748
 msgid "Transition Timing Function"
-msgstr "遷移タイミング機能"
+msgstr "遷移タイミングファンクション"
 
 #: app/views/modalForms/about.html:56
 msgid "Translations:"
@@ -4855,11 +4845,11 @@ msgstr ""
 #: app/views/profile.html:225 app/views/profile.html:287
 #: app/views/profile.html:293
 msgid "Trust"
-msgstr "信頼"
+msgstr "Trust"
 
 #: app/views/profile.html:229
 msgid "Trust and Group Memberships"
-msgstr "信頼とグループメンバーシップ"
+msgstr "Trustとグループメンバーシップ"
 
 #: serverside/lib/ops/trusting.js:74
 msgid "Trust relationship already exists"
@@ -4867,7 +4857,7 @@ msgstr ""
 
 #: app/views/data.html:52
 msgid "Trusted:"
-msgstr "信頼されました："
+msgstr "Trustされました："
 
 #: serverside/auth/providers/local.js:246
 msgid "Try again later"
@@ -4875,7 +4865,7 @@ msgstr ""
 
 #: app/scripts/controllers/login.js:143
 msgid "Trying to recover password and send email..."
-msgstr "パスワードを回復し、電子メールを送信しようとしてい..."
+msgstr "パスワードを回復し、電子メールを送信.."
 
 #: app/scripts/services/services.js:1140
 msgid "Tutorial Vids"
@@ -4911,15 +4901,15 @@ msgstr "バンドル解除に失敗しました"
 
 #: app/scripts/controllers/modalForms/wblProtection.js:119
 msgid "Unbundle Not Allowed:"
-msgstr "アンバンドル許可されていません："
+msgstr "バンドル解除が許可されていません："
 
 #: app/scripts/controllers/platform.js:642
 msgid "unbundled the bundle with id"
-msgstr "idのアンバンドルのバンドル"
+msgstr "IDでバンドル解除"
 
 #: app/scripts/services/services.js:1118
 msgid "Undo"
-msgstr "取り消します"
+msgstr "取り消し（Undo）"
 
 #: app/views/profile.html:74
 msgid "Unhandled Notifications"
@@ -4935,7 +4925,7 @@ msgstr "未転記"
 
 #: app/views/templates.html:166
 msgid "Unpublished Templates"
-msgstr "未発表のテンプレート"
+msgstr "未公開のテンプレート"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:684
 #: app/scripts/controllers/modalForms/viewRateCommentsWbl.js:103
@@ -4949,15 +4939,15 @@ msgstr ""
 
 #: app/scripts/controllers/adm.js:60 app/views/templates.html:133
 msgid "Update"
-msgstr "アップデート"
+msgstr "更新"
 
 #: app/views/adm.html:75
 msgid "Update Application"
-msgstr "アプリケーション更新"
+msgstr "アプリケーションの更新"
 
 #: app/scripts/controllers/adm.js:58
 msgid "Update Application Warning"
-msgstr "アプリケーション更新の警告"
+msgstr "アプリケーションの更新の警告"
 
 #: app/views/workSpaces.html:62
 msgid "Update from Work surface"
@@ -4989,7 +4979,7 @@ msgstr ""
 
 #: app/scripts/controllers/profile.js:166
 msgid "User logged out"
-msgstr "ユーザーがログアウト"
+msgstr "ユーザーがログアウトしました"
 
 #: app/scripts/controllers/profile.js:162
 msgid "User not logged in"
@@ -5039,7 +5029,7 @@ msgstr ""
 
 #: app/views/data.html:51
 msgid "Verified:"
-msgstr "検証："
+msgstr "検証済："
 
 #: app/scripts/services/services.js:750
 msgid "Vertical Align"
@@ -5054,18 +5044,18 @@ msgstr "垂直位置"
 #: app/scripts/controllers/modalForms/wblAbout.js:59
 #: app/scripts/directives/directives.js:176
 msgid "Very Bad"
-msgstr "非常に悪いです"
+msgstr "非常に悪い"
 
 #: app/scripts/controllers/modalForms/searchWbl.js:80
 #: app/scripts/controllers/modalForms/viewRateCommentsWbl.js:59
 #: app/scripts/controllers/modalForms/wblAbout.js:64
 #: app/scripts/directives/directives.js:181
 msgid "Very Good"
-msgstr "とても良いです"
+msgstr "とても良い"
 
 #: app/scripts/services/services.js:1130
 msgid "View"
-msgstr "見ます"
+msgstr "表示（View）"
 
 #: app/views/modalForms/wblAbout.html:66
 msgid "View Comments"
@@ -5095,7 +5085,7 @@ msgstr "投票"
 
 #: app/views/adm.html:50
 msgid "Waiting for the server to respond..."
-msgstr "サーバが応答するのを待っています..."
+msgstr "サーバの応答を待っています..."
 
 #: app/scripts/controllers/login.js:78
 msgid "Waiting User to Authenticate..."
@@ -5168,7 +5158,7 @@ msgstr ""
 
 #: app/scripts/controllers/platform.js:2019
 msgid "Webble Successfully Published"
-msgstr "正常に発行Webble"
+msgstr "Webbleが正常に発行されました"
 
 #: app/views/modalForms/loadWebbleSheet.html:65
 msgid "Webble URL:"
@@ -5176,15 +5166,15 @@ msgstr "Webble URL："
 
 #: app/index.html:233
 msgid "Webble World - development team"
-msgstr "Webble世界 - 開発チーム"
+msgstr "Webble World - 開発チーム"
 
 #: app/scripts/controllers/platform.js:841
 msgid "Webble World Development Team, Hokkaido University"
-msgstr "Webble世界開発チーム、北海道大学"
+msgstr "Webble World 開発チーム、北海道大学"
 
 #: app/scripts/controllers/platform.js:4455
 msgid "Webble World Platform Information"
-msgstr "Webble世界プラットフォーム情報"
+msgstr "Webble World プラットフォーム情報"
 
 #: app/scripts/controllers/platform.js:142
 msgid ""
@@ -5361,7 +5351,7 @@ msgstr ""
 
 #: app/scripts/app.js:312 app/scripts/controllers/platform.js:951
 msgid "Where memes comes alive"
-msgstr "どこミームは生きています"
+msgstr "Where memes comes alive"
 
 #: app/scripts/services/services.js:783
 msgid ""
@@ -5410,7 +5400,7 @@ msgstr "値を持ちます"
 
 #: app/scripts/services/services.js:762
 msgid "Word Break"
-msgstr "単語の切れ目"
+msgstr "Word Break"
 
 #: app/scripts/services/services.js:763
 msgid "Word Spacing"
@@ -5443,7 +5433,7 @@ msgstr "ワークスペースの保存"
 
 #: app/scripts/controllers/platform.js:4288
 msgid "Workspace successfully deleted from server"
-msgstr "ワークスペースが正常にサーバーから削除します"
+msgstr "ワークスペースが正常にサーバーから削除されました"
 
 #: app/scripts/controllers/templates.js:288
 msgid "Write something that nobody will read, MD-style!"
@@ -5488,7 +5478,7 @@ msgstr "あなたは次のグループのメンバーであります"
 
 #: app/views/profile.html:254
 msgid "You are not member of any group :-("
-msgstr "あなたは、任意のグループのメンバーではありません:-("
+msgstr "あなたは、どのグループのメンバーでもありません:-("
 
 #: serverside/lib/ops/fsing.js:51 serverside/lib/ops/gfsing.js:51
 #: serverside/lib/ops/licensing.js:44 serverside/lib/ops/sharing.js:43
@@ -5662,7 +5652,7 @@ msgstr ""
 
 #: app/views/modalForms/faqSheet.html:98
 msgid "Your Questions Pending Answers"
-msgstr "あなたの質問の回答を保留"
+msgstr "質問の回答を保留"
 
 #: app/views/modalForms/rateWblSheet.html:53
 msgid "Your Rating:"
