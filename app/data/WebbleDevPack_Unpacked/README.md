@@ -11,7 +11,7 @@ Also, be aware of the order the webble files load in case you have some crucial 
 Below is also a large list of available Webble Core and Platform access methods for all sort of needs. Also listed are
 existing services, directives and filters that your Webble might want to use to make magic happen.
 
------------------------------------------------------------------------------------------------------------------
+<!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
 
 The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. within the Webble-template
