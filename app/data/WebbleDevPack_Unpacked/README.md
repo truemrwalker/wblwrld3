@@ -1,28 +1,25 @@
+#Basic Webble Template API
+
 **Dear Webble Developer**,
-
-Welcome to current version of Webble World 3. We invite you to start developing your own Webble Templates and upload them to the Online
-Webble repository for the world to share.
-
-In the files provided you will find the necessary information (as comments and TODO's) that you need to build your
-Webble template. You can also download and read the Webble World Manual found online.
-
-Also, be aware of the order the webble files load in case you have some crucial dependencies. First is the manifest files 
-and the library files included in it, next the styles.css is loaded followed by the services, filters, directives and 
-finally the controller. The last file of all to be loaded is the view.html. Because of this one should not run any code
-inside the controller (or the other js files) that is dependent on the DOM before it actually exist. Such code should be 
-called from or inside the $scope.coreCall_Init function which is automatically called by the Webble as soon as all files 
-are loaded.
-
-Below is also a large list of available Webble Core and Platform access methods for all sort of needs. Also listed are
+>Welcome to current version of Webble World 3. We invite you to start developing your own Webble Templates and upload them to the Online Webble repository for the world to share.
+>
+>In the files provided you will find the necessary information (as comments and TODO's) that you need to build your Webble template.   You can also download and read the Webble World Manual found online.
+>
+>Also, be aware of the order the webble files load in case you have some crucial dependencies. First is the manifest files and the library files included in it, next the styles.css is loaded followed by the services, filters, directives and finally the controller. The last file of all to be loaded is the view.html. Because of this one should not run any code inside the controller (or the other js files) that is dependent on the DOM before it actually exist. Such code should be called from or inside the **_$scope.coreCall_Init_** function which is automatically called by the Webble as soon as all files are loaded.
+>
+>Below is also a large list of available Webble Core and Platform access methods for all sort of needs. Also listed are
 existing services, directives and filters that your Webble might want to use to make magic happen.
 
 -----------------------------------------------------------------------------------------------------------------
+##Webble Core
 
-The WEBBLE CORE is exactly what it sounds like. The heart of a Webble and what makes it such. within the Webble-template
-$scope, the core can be reached to get following methods and data:
+The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. within the Webble-template
+**_$scope_**, the core can be reached to get following methods and data:
 
-    // Returns the unique identifier for this particular Webble instance
-    $scope.getInstanceId();
+####Returns the unique identifier for this particular Webble instance
+```JavaScript
+$scope.getInstanceId();
+```	
 
     // The unique template element for a webble, in order to get access to the inner scope of other Webbles
     $scope.theView;
