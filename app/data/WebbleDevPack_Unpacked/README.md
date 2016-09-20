@@ -1,7 +1,4 @@
-Like ReadMe.txt but a little bit better
-=======================================
-
-Dear Webble Developer,
+**Dear Webble Developer**,
 
 Welcome to current version of Webble World 3. We invite you to start developing your own Webble Templates and upload them to the Online
 Webble repository for the world to share.
