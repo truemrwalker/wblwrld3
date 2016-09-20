@@ -40,21 +40,26 @@ module.exports = function(app, config, mongoose, gettext) {
     
     ////////////////////////////////////////////////////////////////////
 
-    return Webble.find({ 'webble.image' : /^data:image\/png;base64,/ }).exec().then(function (webbles) {
+    const imageDataUrlRegex = /^data:image\/(\w+);base64,/;
+
+    return Webble.find({ 'webble.image' : imageDataUrlRegex }).exec().then(function (webbles) {
 
         return Promise.all(webbles.map(function (w) {
 
-            return gfs.createWriteStream('images', w.webble.defid + '.png', null, null).then(function(stream) {
+            var imageType = w.webble.image.match(imageDataUrlRegex)[1];
+
+            return gfs.createWriteStream('images', w.webble.defid + '.' + imageType, null, null).then(function(stream) {
 
                 return new Promise(function(resolve, reject) {
 
                     stream.on('finish', resolve);
                     stream.on('error', reject);
 
-                    var buffer = new Buffer(w.webble.image.substring(22), 'base64');
+                    var buffer = new Buffer(w.webble.image.substring(19 + imageType.length), 'base64');
                     stream.end(buffer);
 
-                    var imageFile = 'files/images/' + w.webble.defid + '.png';
+                    var imageFile = 'files/images/' + w.webble.defid + '.' + imageType;
+
                     console.log("Writing webble image to file:", imageFile, "...");
 
                     w.webble.image = imageFile;
