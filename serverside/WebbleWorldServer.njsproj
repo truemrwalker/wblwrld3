@@ -24,6 +24,7 @@
     <Compile Include="config.js" />
     <Compile Include="control\_machine.js" />
     <Compile Include="control\autosync.js" />
+    <Compile Include="maintenance\sitemap.js" />
     <Compile Include="models\machine.js" />
     <Compile Include="models\message.js" />
     <Compile Include="realtime\pubsub.js" />
@@ -101,12 +102,8 @@
     <Folder Include="control\" />
     <Folder Include="scripts\" />
     <Folder Include="realtime" />
-    <Folder Include="typings\" />
-    <Folder Include="typings\globals\" />
-    <Folder Include="typings\globals\node\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\index.d.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
