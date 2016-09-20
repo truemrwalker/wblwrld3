@@ -61,7 +61,7 @@ var gettext = function(str) { return str; };
 var mongoose = require('mongoose');
 var app = express();
 
-Promise.join([
+Promise.join(
 
 	dbutil.connect(mongoose, config.MONGODB_URL),
 
@@ -100,10 +100,9 @@ Promise.join([
 		var auth = require('./auth/auth')(app, config, mongoose, gettext);
 			
 		// Load all modules that define the web server's routes
-        return Promise.all([
+        return Promise.join(
             loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth),
-            loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth),
-        ]).then(function () {
+            loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth), function () {
             
             // 3. Second part of middleware initialization (after having had set up routes)
             //			
@@ -114,28 +113,27 @@ Promise.join([
                 app.use(serveStatic(config.APP_ROOT_DIR));
             }
         });
-	}),
 
-]).then(function () {
+	}), function () {
 
-	switch (config.DEPLOYMENT) {
+        switch (config.DEPLOYMENT) {
 
-		case 'bootstrap':
-			return loader.executeAllScripts('bootstrap', app, config, mongoose, gettext,
-				[]).then(process.exit);
+	        case 'bootstrap':
+		        return loader.executeAllScripts('bootstrap', app, config, mongoose, gettext,
+			        []).then(process.exit);
 
-		case 'maintenance':
-			return loader.executeAllScripts('maintenance', app, config, mongoose, gettext,
-				['templates.js', 'files.js']).then(process.exit);
+	        case 'maintenance':
+		        return loader.executeAllScripts('maintenance', app, config, mongoose, gettext,
+			        ['templates.js', 'files.js']).then(process.exit);
 
-		case 'development':
-		case 'testing':
-			return loader.executeAllScripts('maintenance', app, config, mongoose, gettext,
-				['templates.js', 'files.js']).then(startAllServers);
+	        case 'development':
+	        case 'testing':
+		        return loader.executeAllScripts('maintenance', app, config, mongoose, gettext,
+			        ['templates.js', 'files.js']).then(startAllServers);
 
-		default:
-			return Promise.try(startAllServers);
-	}
+	        default:
+		        return Promise.try(startAllServers);
+        }
 
 }).then(reportStartupSuccess, reportStartupError);
 

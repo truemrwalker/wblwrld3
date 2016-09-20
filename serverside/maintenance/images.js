@@ -1,4 +1,4 @@
-//
+﻿//
 // Webble World 3.0 (IntelligentPad system for the web)
 //
 // Copyright (c) 2010-2015 Micke Nicander Kuwahara, Giannis Georgalis, Yuzuru Tanaka
@@ -20,20 +20,47 @@
 //
 
 //
-// users.js
+// images.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
 var Promise = require("bluebird");
 
 var util = require('../lib/util');
+var libGfs = require('../lib/gfs');
 
 module.exports = function(app, config, mongoose, gettext) {
 
-	var User = mongoose.model('User');
+	var Webble = mongoose.model('Webble');
+
+   	var gfs = new libGfs.GFS(mongoose);
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-	////////////////////////////////////////////////////////////////////
+    
+    ////////////////////////////////////////////////////////////////////
 
+    return Webble.find({ 'webble.image' : /^data:image\/png;base64,/ }).exec().then(function (webbles) {
+
+        return Promise.all(webbles.map(function (w) {
+
+            return gfs.createWriteStream('images', w.webble.defid + '.png', null, null).then(function(stream) {
+
+                return new Promise(function(resolve, reject) {
+
+                    stream.on('finish', resolve);
+                    stream.on('error', reject);
+
+                    var buffer = new Buffer(w.webble.image.substring(22), 'base64');
+                    stream.end(buffer);
+
+                    var imageFile = 'files/images/' + w.webble.defid + '.png';
+                    console.log("Writing webble image to file:", imageFile, "...");
+
+                    w.webble.image = imageFile;
+                    return w.save();
+                });
+            });
+        }));
+    });
 };
