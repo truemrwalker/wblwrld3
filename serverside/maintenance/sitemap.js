@@ -46,19 +46,17 @@ module.exports = function (app, config, mongoose, gettext) {
 
             var stream = fs.createWriteStream(path.join(config.APP_ROOT_DIR, "sitemap.xml"));
 
-            //stream.on('end', resolve);
-            //stream.on('error', reject);
+            stream.on('finish', resolve);
+            stream.on('error', reject);
 
-            stream.write('<?xml version="1.0" encoding="UTF-8"?>');
-            stream.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+            stream.write('<?xml version="1.0" encoding="UTF-8"?>\n');
+            stream.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n');
 
             webbles.forEach(function (w) {
-                stream.write('<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=' + w.webble.defid + '</loc></url>');
+                stream.write('<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=' + w.webble.defid + '</loc></url>\n');
             });
 
-            stream.write('</urlset>');
-            stream.end();
-            resolve();
+            stream.end('</urlset>\n');
          });
     });
 };
