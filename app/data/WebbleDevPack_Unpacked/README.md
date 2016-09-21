@@ -47,16 +47,17 @@ Those available from core are:
 **_image_**: a data block and/or url to an image selected by _author_ to represent the Webble visually before being loaded  
 **_instanceid_**: NOT the current instance id as mentioned above, but the old instance id this Webble had the last time it got published. This value is kept in order to restore connections of all sorts and identify current Webble instances from knowledge of previous instances.
 ```JavaScript
-// Get a Webble's description text
+// Get a Webble description text
 var descriptionTxt = $scope.theWblMetadata['description'];
-// Get a Webble's old instance Id
+// Get a Webble old instance Id
 var oldInstanceId = $scope.theWblMetadata['instancedeid'];
 ```
-
-
 ####_getInstanceName()_ ![Method][meth]
-    // Get Current Instance display Name
-    $scope.getInstanceName();
+Get Current Instance display Name (Same name which is found at the top of the Webbles Properties/slots form)
+```JavaScript
+// Get Webble current set display name for the specific instance 
+var currentDisplayName = $scope.getInstanceName();
+```
 
     // Get Webble Full Name returns this webbles user defined display name together with its
     // instance id and its template id.
