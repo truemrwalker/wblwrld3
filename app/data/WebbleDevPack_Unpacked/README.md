@@ -17,7 +17,7 @@ existing services, directives and filters that your Webble might want to use to 
 The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. Within the Webble-template
 **_$scope_**, the core can be reached to get following methods and data:
 
-####_getInstanceId()_
+####_getInstanceId()_  ![Method][meth]
 (_Method_)  
 Returns the unique identifier for a particular Webble instance. No Set method exists, since this value is controlled by the system and never change during the instance lifetime of a Webble.
 ```JavaScript
@@ -26,14 +26,16 @@ var ownInstanceId = $scope.getInstanceId();
 // Example of Getting first Webble childs Instance Id
 var childInstanceId = $scope.getChildren()[0].scope().getInstanceId();
 ```	
-####_theView_
+<hr style="border: dotted 1px;" />
+####_theView_  ![Property][prop]
 (_Property_)  
 The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations.
 ```JavaScript
 // Get accesss to a inner JQuery element of the Webble using theView
 var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ```
-####theWblMetadata
+<hr style="border: dotted 1px;" />
+####theWblMetadata  ![Property][prop]
 (_Property_)  	
 JSON object that holds all metadata that this webble need to keep about itself.  
 Those available from core are 
@@ -50,7 +52,8 @@ Those available from core are
 // Get a Webbles description text
 var descriptionTxt = $scope.theWblMetadata['description'];
 ```
-    
+<hr style="border: dotted 1px;" />
+####_getInstanceName()_ ![Method][meth]
     // Get Current Instance display Name
     $scope.getInstanceName();
 
@@ -757,3 +760,6 @@ Extra functions that is within the system and can be used by any Webble develope
     if(thisMachine.version == "12.5"){ /* Do Something */ }
     if(thisMachine.OS == "Windows"){ /* Do Something */ }
     if(thisMachine.device == "iPad"){ /* Do Something */ }
+
+[prop]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-P-icon.png
+[meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
