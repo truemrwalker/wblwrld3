@@ -121,11 +121,24 @@ The method then returns a bit flag value to tell how the set process succeeded
 // Set the slot "MySlot" to the string value of "Hello World"
 $scope.set("MySlot", "Hello World");
 ```
+###_addSlot(whatSlot)_ ![Method][meth]
+Adds a slot (an instance of the slot 'class') to the list of slots.
+A new instance of the Slot class is created by calling  
+`new Slot(slotName, slotValue, slotDisplayName, slotDisplayDescription, slotCategory, slotMetaData, slotElementPointer)`  
+Details about the [Slot](#slot) class can be found below under [Services](#services)
+```JavaScript
+// Creates and adds a new slot "msg"
+var newSlot = new Slot('msg',
+	"Hello Webble",
+	'Message',
+	'Text displayed on the Webble',
+	$scope.theWblMetadata['templateid'],
+	undefined,
+	undefined
+));
+$scope.addSlot(newSlot);
+```
     
-
-###_()_ ![Method][meth]
-    // Add Slot, adds a slot (an instance of the slot 'class') to the list of slots.
-    $scope.addSlot(whatSlot);
 
 ###_()_ ![Method][meth]
     // Get Slot, returns a slot (complete 'class' instance) specified by its id name.
@@ -608,7 +621,7 @@ the directive name as instructed either as a tag attribute or class name.
     fullspread
 
 <!------------------------------------------------------------------------------------------------------------------->
-##Services
+##Services<a name="services"></a>
 In the **Services** can be found multiple help functions and support methods along with various providers av data of all
 sorts. If one want to use a service in a Webble the name of the service must be included at the top of the controller 
 function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, except the ones he/she would create themselves inside the template are the following.
@@ -770,6 +783,7 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     // Good to know is that only the unique name, the value, the slot category and the metadata are saved in the JSON 
     // configuration file. Other values must be recreated at slot creation (usually during Webble initiation) and are 
     // not stored.
+    <a name="slot"></a>
     new Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr);
         [slotInstance].getName();
         [slotInstance].setName(newSlotName);
