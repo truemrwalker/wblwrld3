@@ -139,29 +139,38 @@ var newSlot = new Slot('msg',
 ));
 $scope.addSlot(newSlot);
 ```
-    
-
-###_()_ ![Method][meth]
-    // Get Slot, returns a slot (complete 'class' instance) specified by its id name.
-    $scope.getSlot(whatSlotName);
-
-###_()_ ![Method][meth]
-    // Get Slots, returns the complete list of slots.
-    $scope.getSlots();
-
-###_()_ ![Method][meth]
-    // Remove Slot, removes a slot found by name from the list of slots.
-    $scope.removeSlot(whatSlotName);
-
-###_()_ ![Method][meth]
-    // The default slot to auto connect. When this is set any parent child connection automatically also get a slot
-    // connection using this value as to which slot to connect, provided both parent and child have this value set and
-    // no previous connection has been done already.
-    $scope.getDefaultSlot();
-    
-###_()_ ![Method][meth]
-    $scope.setDefaultSlot(newDefaultSlot);
-
+###_getSlot(whatSlotName)_ ![Method][meth]
+Returns a slot (complete 'class' instance) specified by its id name.
+```JavaScript
+// Gets a specific Slot "MySlot" and displays its description in the console
+$log.log( $scope.getSlot("MySlot").getDisplayDescription() );
+```
+###_getSlots()_ ![Method][meth]
+Returns the complete object-list of slots.
+```JavaScript
+// Iterates the complete slot list and prints the slot key (slot name) in the console description in the console
+for(var slot in $scope.getSlots()){
+	$log.log( slot );
+}
+```
+###_removeSlot(whatSlotName)_ ![Method][meth]
+Removes a slot found by name from the object-list of slots.
+```JavaScript
+// Removes (Deletes) the slot "MySlot" from the Webble slot list
+$scope.removeSlot("MySlot");
+```
+###_getDefaultSlot()_ ![Method][meth]
+Returns the default slot used for auto connection if that is enabled. When this is set any parent child connection automatically also get a slot connection using this value as to which slot to connect, provided both parent and child have this value set and no previous connection has been done already. A Webble can only have one default slot. 
+```JavaScript
+// Displays in the console the current default slot for this Webble
+$log.log( $scope.getDefaultSlot() );
+```
+###_setDefaultSlot(newDefaultSlot)_ ![Method][meth]
+Sets the current default slot for the Webble. If set to `undefined` no default slot connection is attempted.
+```JavaScript
+// Sets the slot "msg" to be the default slot
+$scope.setDefaultSlot("msg");
+```
 ###_()_ ![Method][meth]
     // The currently selected slot in this webble to be used in slot communication
     $scope.getSelectedSlot();
