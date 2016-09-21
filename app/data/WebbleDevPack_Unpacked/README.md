@@ -28,14 +28,12 @@ var ownInstanceId = $scope.getInstanceId();
 // Example of Getting first Webble childs Instance Id
 var childInstanceId = $scope.getChildren()[0].scope().getInstanceId();
 ```	
-<hr style="border: dotted 1px;" />
 ####_theView_  ![Property][prop]
 The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations.
 ```JavaScript
 // Get accesss to a inner JQuery element of the Webble using theView
 var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ```
-<hr style="border: dotted 1px;" />
 ####theWblMetadata  ![Property][prop]
 JSON object that holds all metadata that this webble need to keep about itself.  
 Those available from core are 
@@ -51,8 +49,9 @@ Those available from core are
 ```JavaScript
 // Get a Webble's description text
 var descriptionTxt = $scope.theWblMetadata['description'];
+// Get a Webble's old instance Id
+var oldInstanceId = $scope.theWblMetadata['instancedeid'];
 ```
-<hr style="border: dotted 1px;" />
 ####_getInstanceName()_ ![Method][meth]
     // Get Current Instance display Name
     $scope.getInstanceName();
