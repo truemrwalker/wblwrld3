@@ -63,6 +63,7 @@ var currentDisplayName = $scope.getInstanceName();
 ###_getWebbleFullName()_ ![Method][meth]
 Get Webble Full Name, returns this webbles user defined display name together with its instance id and its template id. Mainly used for display purposes.
 ```JavaScript
+// Display the full name of the Webble in the console
 var wblFullName = $scope.getWebbleFullName();
 $log.log(wblFullName);
 ```
