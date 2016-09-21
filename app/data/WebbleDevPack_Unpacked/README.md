@@ -37,9 +37,6 @@ var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ###theWblMetadata  ![Property][prop]
 JSON object that holds all metadata that this webble need to keep about itself.  
 Those available from core are:
-* hej
-* din
-* gris
 
 * **_defid_**: definition id when last published  
 * **_templateid_**: id of the template used  
