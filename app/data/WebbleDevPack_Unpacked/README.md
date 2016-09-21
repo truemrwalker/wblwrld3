@@ -17,33 +17,40 @@ existing services, directives and filters that your Webble might want to use to 
 The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. Within the Webble-template
 **_$scope_**, the core can be reached to get following methods and data:
 
-#####_getInstanceId()_
-Returns the unique identifier for this particular Webble instance.
+####_getInstanceId()_
+(_Method_)  
+Returns the unique identifier for a particular Webble instance. No Set method exists, since this value is controlled by the system and never change during the instance lifetime of a Webble.
 ```JavaScript
 // Example of Getting own Instance Id
 var ownInstanceId = $scope.getInstanceId();
 // Example of Getting first Webble childs Instance Id
 var childInstanceId = $scope.getChildren()[0].scope().getInstanceId();
 ```	
-#####_theView_
+####_theView_
+(_Property_)  
 The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations.
 ```JavaScript
 // Get accesss to a inner JQuery element of the Webble using theView
 var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ```
-	
-    // All metadata that this webble need to hold about itself
-    $scope.theWblMetadata;
-    Those available from core are 'defid' (definition id when last published), 'templateid' (id of the template used),
-    'templaterevision' (the current revision of the that template being used), 'author' (the user name who published
-    this Webble), 'displayname' (the user friendly name of this Webble instance as of the time of publishing (inherited
-    by default from its definition) and not perhaps the current one, 'description' (an 'author' written text to describe
-    the Webble (may be in any language)), 'keywords' (an 'author' written list of descriptive words to categorize the
-    Webble (may be in any language)), 'image' (a data block and/or url to an image selected by 'author' to represent
-    the Webble visually before being loaded) and finally 'instanceid' (which is not the current instance id as mentioned
-    above but the old instance id this Webble had the last time it got published. This value is kept in order to restore
-    connections of all sorts and identify current Webble instances from knowledge of previous instances).
-
+####theWblMetadata
+(_Property_)  	
+JSON object that holds all metadata that this webble need to keep about itself.  
+Those available from core are 
+* _defid_ (definition id when last published)
+* _templateid_ (id of the template used)
+* _templaterevision_ (the current revision of the template being used)
+* _author_ (the user name who published this Webble)
+* _displayname_ (the user friendly name of this Webble instance as of the time of publishing (inherited by default from its definition) and perhaps not the current one
+* _description_ (an _author_-written text to describe the Webble (may be in any language))
+* _keywords_ (an _author_-written list of descriptive words to categorize the Webble (may be in any language))
+* _image_ (a data block and/or url to an image selected by _author_ to represent the Webble visually before being loaded)
+* _instanceid_ (NOT the current instance id as mentioned above, but the old instance id this Webble had the last time it got published. This value is kept in order to restore connections of all sorts and identify current Webble instances from knowledge of previous instances).
+```JavaScript
+// Get a Webbles description text
+var descriptionTxt = $scope.theWblMetadata['description'];
+```
+    
     // Get Current Instance display Name
     $scope.getInstanceName();
 
