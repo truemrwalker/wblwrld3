@@ -118,6 +118,7 @@ The method then returns a bit flag value to tell how the set process succeeded
 * 0: `NonExisting` (The slot did not exist)
 * 1: `Exists` (The slot exists but no value was changed)
 * 2: `ValueChanged` (The slot value was changed)
+
 ```JavaScript
 // Set the slot "MySlot" to the string value of "Hello World"
 $scope.set("MySlot", "Hello World");
