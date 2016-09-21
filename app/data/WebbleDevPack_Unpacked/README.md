@@ -14,10 +14,11 @@ existing services, directives and filters that your Webble might want to use to 
 <!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
 
-The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. within the Webble-template
+The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. Within the Webble-template
 **_$scope_**, the core can be reached to get following methods and data:
 
-####Returns the unique identifier for this particular Webble instance
+###getInstanceId()
+Returns the unique identifier for this particular Webble instance
 ```JavaScript
 $scope.getInstanceId();
 ```	
@@ -236,10 +237,10 @@ $scope.getInstanceId();
     $scope.sendOnlineData(whatRoom, whatData);
     
 
------------------------------------------------------------------------------------------------------------------
-
-The PLATFORM is the actual Webble World environment and it includes many helpful methods to access sections of the
-system and specific Webbles:
+<!------------------------------------------------------------------------------------------------------------------->
+##Platform
+The **Platform** is the actual Webble World environment and it includes many helpful methods to access sections of the
+system and specific Webbles. Also in this case it is reached from within the `$scope` of the Webble-template.
 
     // Gets and Sets current active execution mode level (developer, admin, etc)
     $scope.getCurrentExecutionMode();
@@ -427,10 +428,10 @@ system and specific Webbles:
     $scope.getPlatformBkgColor();
     $scope.setPlatformBkgColor(newPlatformBkgColor);
 
------------------------------------------------------------------------------------------------------------------
-
-The WORKSPACE is the area where the Webbles resides and are modified and/or used. It contains mainly internal methods,
-but a few useful help functions exists.
+<!------------------------------------------------------------------------------------------------------------------->
+##Workspace
+The **Workspace** is the area where the Webbles resides and are modified and/or used. It contains mainly internal methods,
+but a few useful help functions exists. Even here those are accessed via the Webble-template's `$scope`.
 
     // The Bubble Text object can be used to display short info at specific locations, mainly Webbles. The following 
     // methods are available to manipulate that.
@@ -443,13 +444,13 @@ but a few useful help functions exists.
     // Fast access to get the current height of the work surface area as a css value with 'px' at the end
      $scope.getSurfaceHeight();
 
------------------------------------------------------------------------------------------------------------------
-
-The INTERACTION OBJECT is those small balls that each Webble has on the border when "Main" selected. There are 12
+<!------------------------------------------------------------------------------------------------------------------->
+##Interaction Object
+The **Interaction Object** is those small balls that each Webble has on the border when "_Main_" selected. There are 12
 avialable around the border, but by default only 3-4 are activated. The Webble-template developer may configure and
 activate (or deactivate) freely any of those for its own need. In the Webble-template the developer most easy just
 define a Interaction object array object and all is set up automatically, but if the need for fine grain power exist,
-then this is what is available:
+then that is also available.
 
     // The Color of the Interaction Object
     $scope.color = '';
@@ -481,11 +482,11 @@ then this is what is available:
     // Set Is Enabled, sets the enabling state (true or false) for this object. (false = not visible)
     $scope.setIsEnabled(enableState);
 
------------------------------------------------------------------------------------------------------------------
-
-AngularJS DIRECTIVES can be very powerful and we recommend the Webble-template developers to create their own for their
+<!------------------------------------------------------------------------------------------------------------------->
+##Directives
+AngularJS **Directives** can be very powerful and we recommend the Webble-template developers to create their own for their
 Webbles, but there are a few simple ones already available in the platform core that can be easily used too. Just apply
-the directive name as instructed either as a tag attribute or class name:
+the directive name as instructed either as a tag attribute or class name.
 
     // Makes an element draggable (JQuery style) (Attribute or Class)
     draggable [optional: draggable="{options}" ]
@@ -502,12 +503,11 @@ the directive name as instructed either as a tag attribute or class name:
     // Resize the element's width to the same size as the current window size
     fullspread
 
------------------------------------------------------------------------------------------------------------------
-
-In the SERVICES can be found multiple help functions and support methods along with various providers av data of all
+<!------------------------------------------------------------------------------------------------------------------->
+##Services
+In the **Services** can be found multiple help functions and support methods along with various providers av data of all
 sorts. If one want to use a service in a Webble the name of the service must be included at the top of the controller 
-function declaration (e.g. Enum or wwConst etc.). The ones that could be of interest for a Webble-template developer, except the ones he/she would create
-themselves inside the template are the following:
+function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, except the ones he/she would create themselves inside the template are the following.
 
     //Available Platform states
     Enum.availablePlatformPotentials
@@ -714,13 +714,11 @@ themselves inside the template are the following:
     mathy.countDecimals(theValue);				//Returns the number of decimals in a float number
     mathy.getRotationDegrees(jquery-element);  	//Get rotation in degrees of a specified jquery element
     mathy.monthDiff(date 1, date 2)				//returns the number of months between two dates
-});
-//=================================================================================
 
------------------------------------------------------------------------------------------------------------------
-
-With AngularJS FILTERS one can alter and modify any value in many powerful ways with ease and speed and is recommended to
-be created and used within the Webble-template itself, but the platform has a few available too, that might be useful:
+<!------------------------------------------------------------------------------------------------------------------->
+##Filters
+With AngularJS **Filters** one can alter and modify any value in many powerful ways with ease and speed and is recommended to
+be created and used within the Webble-template itself, but the platform has a few available too, that might be useful.
 
     // takes a language code and turn it into the readable native name of that language
     IN JS: nativeName(input);     IN HTML: {{ input | nativeName }}
@@ -735,8 +733,8 @@ be created and used within the Webble-template itself, but the platform has a fe
     // A bitwise test filter that return true or false if bit is set or not
     IN JS:bitwiseAnd(firstNumber, secondNumber);     IN HTML: {{ firstNumber | bitwiseAnd : secondNumber }}
 
------------------------------------------------------------------------------------------------------------------
-
+<!------------------------------------------------------------------------------------------------------------------->
+##Extra Additional
 Extra functions that is within the system and can be used by any Webble developer
 
 	// Detecting the current browser, version and OS
