@@ -29,7 +29,7 @@ var ownInstanceId = $scope.getInstanceId();
 var childInstanceId = $scope.getChildren()[0].scope().getInstanceId();
 ```	
 ###_theView_  ![Property][prop]
-The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations.
+The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations. 
 ```JavaScript
 // Get accesss to a inner JQuery element of the Webble using theView
 var innerElement = $scope.theView.parent().find("#MyInnerElement");
@@ -66,7 +66,7 @@ var wblFullName = $scope.getWebbleFullName();
 $log.log(wblFullName);
 ```
 ###_getChildren()_ ![Method][meth]
-Returns an array of The children for the specific webble
+Returns an array of The children Webbles for the specific webble. To access a method inside a Webble retrieved from e.g. `getChild()` one uses the AngularJS `scope()` method for the specified Webble pointer as seen in the code example below.
 ```JavaScript
 // Log the full name of each child in the console
 for(var i = 0, c; c = $scope.getChildren()[i]; i++){
