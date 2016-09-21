@@ -11,6 +11,9 @@ Also, be aware of the order the webble files load in case you have some crucial 
 Below is also a large list of available Webble Core and Platform access methods for all sort of needs. Also listed are
 existing services, directives and filters that your Webble might want to use to make magic happen.
 
+* ![Method][meth] = Method
+* ![Property][prop] = Property
+
 <!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
 
@@ -18,7 +21,6 @@ The **Webble Core** is exactly what it sounds like. The heart of a Webble and wh
 **_$scope_**, the core can be reached to get following methods and data:
 
 ####_getInstanceId()_  ![Method][meth]
-(_Method_)  
 Returns the unique identifier for a particular Webble instance. No Set method exists, since this value is controlled by the system and never change during the instance lifetime of a Webble.
 ```JavaScript
 // Example of Getting own Instance Id
@@ -28,7 +30,6 @@ var childInstanceId = $scope.getChildren()[0].scope().getInstanceId();
 ```	
 <hr style="border: dotted 1px;" />
 ####_theView_  ![Property][prop]
-(_Property_)  
 The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations.
 ```JavaScript
 // Get accesss to a inner JQuery element of the Webble using theView
@@ -36,7 +37,6 @@ var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ```
 <hr style="border: dotted 1px;" />
 ####theWblMetadata  ![Property][prop]
-(_Property_)  	
 JSON object that holds all metadata that this webble need to keep about itself.  
 Those available from core are 
 * _defid_ (definition id when last published)
@@ -49,7 +49,7 @@ Those available from core are
 * _image_ (a data block and/or url to an image selected by _author_ to represent the Webble visually before being loaded)
 * _instanceid_ (NOT the current instance id as mentioned above, but the old instance id this Webble had the last time it got published. This value is kept in order to restore connections of all sorts and identify current Webble instances from knowledge of previous instances).
 ```JavaScript
-// Get a Webbles description text
+// Get a Webble's description text
 var descriptionTxt = $scope.theWblMetadata['description'];
 ```
 <hr style="border: dotted 1px;" />
