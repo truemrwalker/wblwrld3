@@ -37,15 +37,15 @@ var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ####theWblMetadata  ![Property][prop]
 JSON object that holds all metadata that this webble need to keep about itself.  
 Those available from core are: 
-* **_defid_** (definition id when last published)
-* **_templateid_** (id of the template used)
-* **_templaterevision_** (the current revision of the template being used)
-* **_author_** (the user name who published this Webble)
-* **_displayname_** (the user friendly name of this Webble instance as of the time of publishing (inherited by default from its definition) and perhaps not the current one
-* **_description_** (an _author_-written text to describe the Webble (may be in any language))
-* **_keywords_** (an _author_-written list of descriptive words to categorize the Webble (may be in any language))
-* **_image_** (a data block and/or url to an image selected by _author_ to represent the Webble visually before being loaded)
-* **_instanceid_** (NOT the current instance id as mentioned above, but the old instance id this Webble had the last time it got published. This value is kept in order to restore connections of all sorts and identify current Webble instances from knowledge of previous instances).
+**_defid_** (definition id when last published)  
+**_templateid_** (id of the template used)  
+**_templaterevision_** (the current revision of the template being used)  
+**_author_** (the user name who published this Webble)  
+**_displayname_** (the user friendly name of this Webble instance as of the time of publishing (inherited by default from its definition) and perhaps not the current one  
+**_description_** (an _author_-written text to describe the Webble (may be in any language))  
+**_keywords_** (an _author_-written list of descriptive words to categorize the Webble (may be in any language))  
+**_image_** (a data block and/or url to an image selected by _author_ to represent the Webble visually before being loaded)  
+**_instanceid_** (NOT the current instance id as mentioned above, but the old instance id this Webble had the last time it got published. This value is kept in order to restore connections of all sorts and identify current Webble instances from knowledge of previous instances).
 ```JavaScript
 // Get a Webble's description text
 var descriptionTxt = $scope.theWblMetadata['description'];
