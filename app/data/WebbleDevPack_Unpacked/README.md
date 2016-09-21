@@ -17,15 +17,19 @@ existing services, directives and filters that your Webble might want to use to 
 The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. Within the Webble-template
 **_$scope_**, the core can be reached to get following methods and data:
 
-**_getInstanceId()_**  
-Returns the unique identifier for this particular Webble instance
+#####_getInstanceId()_
+Returns the unique identifier for this particular Webble instance.
 ```JavaScript
-$scope.getInstanceId();
+// Example of Getting own Instance Id
+var ownInstanceId = $scope.getInstanceId();
+// Example of Getting first Webble childs Instance Id
+var childInstanceId = $scope.getChildren()[0].scope().getInstanceId();
 ```	
-**_theView_**  
-The unique template element for a webble, in order to get access to the inner scope of other Webbles
+#####_theView_
+The unique template element (JQuery) for a webble, in order to get access to the inner scope of self or another Webble mainly for performing Jquery operations.
 ```JavaScript
-$scope.theView;
+// Get accesss to a inner JQuery element of the Webble using theView
+var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ```
 	
     // All metadata that this webble need to hold about itself
