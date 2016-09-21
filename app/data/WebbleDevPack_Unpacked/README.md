@@ -621,7 +621,8 @@ the directive name as instructed either as a tag attribute or class name.
     fullspread
 
 <!------------------------------------------------------------------------------------------------------------------->
-##Services<a name="services"></a>
+<a name="services"></a>
+##Services
 In the **Services** can be found multiple help functions and support methods along with various providers av data of all
 sorts. If one want to use a service in a Webble the name of the service must be included at the top of the controller 
 function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, except the ones he/she would create themselves inside the template are the following.
@@ -777,13 +778,15 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     // Get Timestamp, creates a unix like time stamp value.
     getTimestamp();
 
+<a name="slot"></a>
+
     // Slot (class service), is an object instance provider for the class concept of 'Slot'. If you want a special
     // behavior, like for example a custom gimme, then you override the getValue method for the specified slot instance
     // in your Webble init function at slot creation time.
     // Good to know is that only the unique name, the value, the slot category and the metadata are saved in the JSON 
     // configuration file. Other values must be recreated at slot creation (usually during Webble initiation) and are 
     // not stored.
-    <a name="slot"></a>
+    
     new Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr);
         [slotInstance].getName();
         [slotInstance].setName(newSlotName);
