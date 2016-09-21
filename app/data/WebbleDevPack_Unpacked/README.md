@@ -34,7 +34,7 @@ The unique template element (JQuery) for a webble, in order to get access to the
 // Get accesss to a inner JQuery element of the Webble using theView
 var innerElement = $scope.theView.parent().find("#MyInnerElement");
 ```
-###theWblMetadata  ![Property][prop]
+###_theWblMetadata_  ![Property][prop]
 JSON object that holds all metadata that this webble need to keep about itself.  
 Those available from core are:
 
