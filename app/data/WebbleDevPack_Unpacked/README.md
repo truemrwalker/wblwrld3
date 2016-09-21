@@ -76,33 +76,52 @@ for(var i = 0, c; c = $scope.getChildren()[i]; i++){
 ###_getParent()_ ![Method][meth]
 Returns the parent webble, if any, otherwise NULL.
 ```JavaScript
-var myParentsDisplayName = $scope.getParent().scope().getWebbleFullName();
+// get the webbles parents full display name
+var myParentsFullDisplayName = $scope.getParent().scope().getWebbleFullName();
 ```
-###_()_ ![Method][meth]
-    // Paste connects the webble to a parent webble provided as a parameter
-    $scope.paste(parent);
+###_paste(parent)_ ![Method][meth]
+Paste connects the webble to a parent-webble provided as a parameter
+```JavaScript
+// Paste a webble to another Webble and create a parent child relationship
+$scope.paste(otherWbl);
+```
+###_peel()_ ![Method][meth]
+Peel removes the parent for the Webble and make it an orphan again
+```JavaScript
+// disconnect from current parent webble
+$scope.peel();
+```
+###_getChildContainer()_ ![Method][meth]
+The childcontainer is a jquery element object pointing at the place in the webble where children should be DOM pasted. Default value usually works fine, but for Webbles using clipping this might be useful to change.
+```JavaScript
+// Get the JQuery elelment in the Webble that holds the children webbles views
+$scope.getChildContainer();
+```
+###_setChildContainer(newContainer)_ ![Method][meth]
+Default value for child container usually works fine, but for Webbles using clipping a need to place the children elsewhere in the internal Webble DOM might be useful. If one wishes to set it back to the default value one need to save away that before making any changes. If Set to `undefined` no child can be pasted.
+```JavaScript
+// Set the JQuery elelment in the Webble that will hold the children webbles
+$scope.setChildContainer(newContainer);
+```
+###_gimme(slotName)_ ![Method][meth]
+Returns the value of a slot found by slot name provided as parameter. if no slot by the specified name is found undefined is returned.
+The Value can be of any type, including string, number, array, object etc.
+```JavaScript
+// Displays the slot value for "MySlot" in the console window
+$log.log( $scope.gimme("MySlot") );
+```
+###_set(slotName, slotValue)_ ![Method][meth]
+Sets a new value to the slot with the name and value sent as a parameters. If a value is of completely wrong type or nonsensical the set will be ignored and the old value will remain.
+The method then returns a bit flag value to tell how the set process succeeded
 
-###_()_ ![Method][meth]
-    // Peel removes the parent for the Webble and make it an orphan again
-    $scope.peel();
-
-###_()_ ![Method][meth]
-    // The childcontainer is a jquery element object pointing at the place in the webble where children should be DOM
-    // pasted. Default value usually works fine, but for Webbles using clipping this might be useful.
-    $scope.getChildContainer();
+* 0: `NonExisting` (The slot did not exist)
+* 1: `Exists` (The slot exists but no value was changed)
+* 2: `ValueChanged` (The slot value was changed)
+```JavaScript
+// Set the slot "MySlot" to the string value of "Hello World"
+$scope.set("MySlot", "Hello World");
+```
     
-###_()_ ![Method][meth]
-    $scope.setChildContainer(newContainer);
-
-###_()_ ![Method][meth]
-    // Gimme returns the value of a slot found by name parameter. if no slot by specified name is found undefined is
-    // returned.
-    $scope.gimme(slotName);
-
-###_()_ ![Method][meth]
-    // Set, sets a new value to the slot with the name sent as a parameter. The method then returns a bit flag value to
-    // tell how the set process succeeded (NonExisting[0], Exists[1], ValueChanged[2]).
-    $scope.set(slotName, slotValue);
 
 ###_()_ ![Method][meth]
     // Add Slot, adds a slot (an instance of the slot 'class') to the list of slots.
