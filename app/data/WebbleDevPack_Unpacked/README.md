@@ -218,7 +218,7 @@ This method sets a new value to the slot with the name and value sent as a param
     * slotName (String)
     * slotValue (Any)
 * **Returns:**
-    * Bit Flag (Integer)
+    * (Integer) Enum Value
         * 0: `NonExisting` (The slot did not exist)
         * 1: `Exists` (The slot exists but no value was changed)
         * 2: `ValueChanged` (The slot value was changed)
@@ -390,99 +390,118 @@ Creates a slot communication channel and connects a parent slot with this Webble
 // Create a dual direction slot connection fro this Webble to its parent
 $scope.connectSlots("theParentSlot", "MySlot", {send: true, receive: true});
 ```
-###_()_ ![Method][meth]
-This property keeps track of any protection setting this webble is currently using. See bitFlags_WebbleProtection in Services for more info of available options.
+###_getProtection_ ![Method][meth]
+Returns a bit flag value property which keeps track of any protection setting this webble is currently using. See [bitFlags_WebbleProtection](#bitFlags_WebbleProtection) in [Services](#services) for more info of available protection options.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.getProtection();
-
-###_()_ ![Method][meth]
-
-####
+####getProtection()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * Bit Flag (Integer (Binary)) Containing a Bit flag value that indicates weather a protection is enabled or not (1 or 0)
 
 ```JavaScript
-//
-
+// Gets current Webble protection settings and checks if it is protected against Moving, if so print to the console
+if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.MOVE, 10)) !== 0){
+	$log.log("This Webble is not allowed to move");
+}
 ```
-    $scope.setProtection(protectionCode);
-    
-###_()_ ![Method][meth]
-Disable or enable (previously disabled) Webble's popup menu items identified by ItemId (string) which for default menu items are the following: 'Publish', 'Duplicate', 'Delete', 'AssignParent', 'RevokeParent', 'ConnectSlots', 'Props', 'SharedDuplicate', 'Bundle', 'Unbundle', 'BringFwd', 'Protect', 'AddCustomSlots' and 'About'. One can also check weather an item is disabled or not.
+###_setProtection_ ![Method][meth]
+Sets the Bit Flag value which holds information of which Protections are enabled or not.
 
-####
+####setProtection(protectionCode)
 
 * **Parameters:**
-    * ()
+    * protectionCode (Integer (Binary)) Bit flag value that indicates all protection states as enabled or not (1 or 0)
 * **Returns:**
-    * ()
+    * None
 
 ```JavaScript
-//
-
+// Turns on protection against Move and Duplicate in the current Protection Flag.
+var thisWblProt = $scope.getProtection();
+thisWblProt = bitflags.on(thisWblProt, Enum.bitFlags_WebbleProtection.MOVE);
+thisWblProt = bitflags.on(thisWblProt, Enum.bitFlags_WebbleProtection.DUPLICATE);
+$scope.setProtection(thisWblProt);
 ```
-    $scope.addPopupMenuItemDisabled(whatItem)
-    
-###_()_ ![Method][meth]
+###_addPopupMenuItemDisabled_ ![Method][meth]
+Disables Webble's popup menu items identified by ItemId (string) which for default menu items are the following:
 
-####
+<a name="defMenuItems"></a>
+* Publish
+* Duplicate
+* Delete
+* AssignParent
+* RevokeParent
+* ConnectSlots
+* Props
+* SharedDuplicate
+* Bundle
+* Unbundle
+* BringFwd
+* Protect
+* AddCustomSlots
+* About
+ 
+Custom Menu Items can also be disabled the same way using their ItemId string.
+
+####addPopupMenuItemDisabled(whatItem)
 
 * **Parameters:**
-    * ()
+    * whatItem (String) The name id of the menu item wished to be disabled
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Disables (Makes invisible) the previously created custom menu item "MyCustMenuItem" so it cannot be interacted with.
+$scope.addPopupMenuItemDisabled("MyCustMenuItem");
 ```
-    $scope.removePopupMenuItemDisabled(whatItem)
+###_removePopupMenuItemDisabled_ ![Method][meth]
+Enables (previously disabled) Webble's popup menu items identified by ItemId (string) and make it visible in the Webble context menu again. Available default menu items can be viewed [here](#defMenuItems):
 
-###_()_ ![Method][meth]
-
-####
+####removePopupMenuItemDisabled(whatItem)
 
 * **Parameters:**
-    * ()
+    * whatItem (String) The name id of the menu item wished to be enabled
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Enables (Makes visible) previously disabled default menu item "BringFwd" so it can be interacted with again.
+$scope.removePopupMenuItemDisabled("BringFwd");
 ```
-    $scope.isPopupMenuItemDisabled(whatItem)    
+###_isPopupMenuItemDisabled_ ![Method][meth]
+Returns true if the Webble's popup menu item identified by ItemId (string) is disabled, otherwise false. Available default menu items can be viewed [here](#defMenuItems):
 
-###_()_ ![Method][meth]
-Selection State informs if this webble is selected and how and for what
-
-####
+####isPopupMenuItemDisabled(whatItem)
 
 * **Parameters:**
-    * ()
+    * whatItem (String) The name id of the menu item wished to be informed about
 * **Returns:**
-    * ()
+    * (Boolean) True of False depending on if it is disabled or not
 
 ```JavaScript
-//
-
+// check if "BringFwd" menu item is disabled and if it is enable it
+if( $scope.isPopupMenuItemDisabled("BringFwd") ){
+	$scope.removePopupMenuItemDisabled("BringFwd");
+}
 ```
-    $scope.getSelectionState();
-    
+###_getSelectionState_ ![Method][meth]
+Returns the webbles selection State, which informs if this webble is selected or not and if so, how and for what purpose.
+The available different states can be viewed [here](#availableOnePicks_SelectTypes)
+
+####getSelectionState()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Enum Value (Integer) Represents which type of selection the Webble is currently under
+
+```JavaScript
+// Checks if the Webble is fully main selected, and if so displays info about it in the console
+if ( $scope.getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked ){
+	$log.log("This Webble is Fully Selected with green border and interaction balls");
+}
+```
 ###_()_ ![Method][meth]
 
 ####
@@ -1236,6 +1255,8 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
       HighClearanceUser: gettext("High Clearance User"), MediumClearanceUser:  gettext("Medium Clearance User"),
       LowClearanceUser:  gettext("Low Clearance User") }
 
+<a name="availableOnePicks_SelectTypes"></a>
+
     // The different types of visual selected states available
     Enum.availableOnePicks_SelectTypes
     { AsNotSelected: 0, AsMainClicked: 1, AsChild: 2, AsHighlighted: 3, AsImportant: 4, AsToBeRemembered: 5, AsParent: 6,
@@ -1264,6 +1285,9 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     { None: 0, IsMoving: 2, NoBubble: 4 }
 
     // The different protections that can be set on a webble [Bitwise Flags] (See Webble Protection in a live Webble for further details)
+    
+<a name="bitFlags_WebbleProtection"></a>    
+    
     Enum.bitFlags_WebbleProtection
     { NO, MOVE, RESIZE, DUPLICATE, SHAREDMODELDUPLICATE, DELETE, PUBLISH, PROPERTY, PARENT_CONNECT, CHILD_CONNECT, 
       PARENT_DISCONNECT, CHILD_DISCONNECT, BUNDLE, UNBUNDLE, DEFAULT_MENU, INTERACTION_OBJECTS, SELECTED, POPUP_MENU,
