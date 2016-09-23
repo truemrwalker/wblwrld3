@@ -173,154 +173,266 @@ Sets the current default slot for the Webble. If set to `undefined` no default s
 // Sets the slot "msg" to be the default slot
 $scope.setDefaultSlot("msg");
 ```
-###_()_ ![Method][meth]
-    // The currently selected slot in this webble to be used in slot communication
+###_getSelectedSlot()_ ![Method][meth]
+Returns the currently selected slot in this webble to be used in slot communication. No Set method exists since that is all managed internally when creating a slot communication.
+```JavaScript
+//
+
+```
     $scope.getSelectedSlot();
 
 ###_()_ ![Method][meth]
-    // The currently connected slot in the parent webble to be used in slot communication
+The currently connected slot in the parent webble to be used in slot communication
+```JavaScript
+//
+
+```
     $scope.getConnectedSlot();
+    
 
 ###_()_ ![Method][meth]
-    // Slot connection direction SEND and RECEIVE enabled flag
+Slot connection direction SEND and RECEIVE enabled flag
+```JavaScript
+//
+
+```
     $scope.getSlotConnDir();
 
 ###_()_ ![Method][meth]
-    // Connects a parent conn slot found by name with this Webbles selected slot found by name
-    // with a direction object with this format {send: false, receive: false}.
+Connects a parent conn slot found by name with this Webbles selected slot found by name with a direction object with this format {send: false, receive: false}.
+```JavaScript
+//
+
+```
     $scope.connectSlots(parentSlot, childSlot, directions);
 
 ###_()_ ![Method][meth]
-    // This property keeps track of any protection setting this webble is currently using.
-    // See bitFlags_WebbleProtection in Services for more info of available options.
+This property keeps track of any protection setting this webble is currently using. See bitFlags_WebbleProtection in Services for more info of available options.
+```JavaScript
+//
+
+```
     $scope.getProtection();
 
 ###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.setProtection(protectionCode);
     
-###_()_ ![Method][meth]    
-    // Disable or enable (previously disabled) Webble's popup menu items identified by ItemId (string) which for
-    // default menu items are the following: 'Publish', 'Duplicate', 'Delete', 'AssignParent', 'RevokeParent',
-    // 'ConnectSlots', 'Props', 'SharedDuplicate', 'Bundle', 'Unbundle', 'BringFwd', 'Protect', 'AddCustomSlots' and
-    // 'About'. One can also check weather an item is disabled or not.
+###_()_ ![Method][meth]
+Disable or enable (previously disabled) Webble's popup menu items identified by ItemId (string) which for default menu items are the following: 'Publish', 'Duplicate', 'Delete', 'AssignParent', 'RevokeParent', 'ConnectSlots', 'Props', 'SharedDuplicate', 'Bundle', 'Unbundle', 'BringFwd', 'Protect', 'AddCustomSlots' and 'About'. One can also check weather an item is disabled or not.
+```JavaScript
+//
+
+```
     $scope.addPopupMenuItemDisabled(whatItem)
     
-###_()_ ![Method][meth]    
+###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.removePopupMenuItemDisabled(whatItem)
 
-###_()_ ![Method][meth]    
+###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.isPopupMenuItemDisabled(whatItem)    
 
 ###_()_ ![Method][meth]
-    // Selection State informs if this webble is selected and how and for what
+Selection State informs if this webble is selected and how and for what
+```JavaScript
+//
+
+```
     $scope.getSelectionState();
     
 ###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.setSelectionState(newSelectionState)
 
 ###_()_ ![Method][meth]
-    // Activate Border shows or hides the webble border. But also allow to change border style, width and color. This
-    is automatically set when selection state is altered, but for more fine grian controll this may be used.
+Activate Border shows or hides the webble border. But also allow to change border style, width and color. This is automatically set when selection state is altered, but for more fine grian controll this may be used.
+```JavaScript
+//
+
+```
     $scope.activateBorder(isEnabled, whatColor, whatWidth, whatStyle, glowEnabled);
 
 ###_()_ ![Method][meth]
-    //A list of Interaction objects that will give the user the power to interact with the webble more easy
+A list of Interaction objects that will give the user the power to interact with the webble more easy
+```JavaScript
+//
+
+```
     $scope.theInteractionObjects;
 
 ###_()_ ![Method][meth]
-    // Get Interaction Object By Name iterates all the Interaction objects and return the one that match the name sent
-    // as a parameter, if not found undefined is returned.
+Get Interaction Object By Name iterates all the Interaction objects and return the one that match the name sent as a parameter, if not found undefined is returned.
+```JavaScript
+//
+
+```
     $scope.getInteractionObjectByName(whatName);
 
 ###_()_ ![Method][meth]
-    // Tells us if the interaction objects are visible or not
+Tells us if the interaction objects are visible or not
+```JavaScript
+//
+
+```
     $scope.getInteractionObjContainerVisibilty();
 
 ###_()_ ![Method][meth]
-    // ActivateMenuItem reacts on context menu item click or can be used to manually activate a Webble menu option.
+ActivateMenuItem reacts on context menu item click or can be used to manually activate a Webble menu option.
+```JavaScript
+//
+
+```
     $scope.activateMenuItem(itemName);
 
 ###_()_ ![Method][meth]
-    // Create Webble Definition, creates a webble definition object containing an exact description of the webble.
-    // Provide bool true if the Webble def should be used outside the Webble in question and positions should be
-    // absolute for each containing Webble instead of relative to its parents.
+Create Webble Definition, creates a webble definition object containing an exact description of the webble. Provide bool true if the Webble def should be used outside the Webble in question and positions should be absolute for each containing Webble instead of relative to its parents.
+```JavaScript
+//
+
+```
     $scope.createWblDef(withAbsPosAndExternalUse);
 
 ###_()_ ![Method][meth]
-    // Duplicate, duplicates itself at a specified offset position from the original and when done call the provided
-    // callback function with the new copy provided as a parameter.
+Duplicate, duplicates itself at a specified offset position from the original and when done call the provided callback function with the new copy provided as a parameter.
+```JavaScript
+//
+
+```
     $scope.duplicate(whatOffset, whatCallbackMethod);
 
 ###_()_ ![Method][meth]
-    // Shared Model Duplicate, duplicates itself at a specified offset position from the original and let the copy share
-    // the same model (all slots) and when done call the provided callback function with the new copy provided as a
-    // parameter.
+Shared Model Duplicate, duplicates itself at a specified offset position from the original and let the copy share the same model (all slots) and when done call the provided callback function with the new copy provided as a parameter.
+```JavaScript
+//
+
+```
     $scope.sharedModelDuplicate(whatOffset, whatCallbackMethod);
 
 ###_()_ ![Method][meth]
-    // If there are any slots that controls Webble size they can be found or set here
+If there are any slots that controls Webble size they can be found or set here
+```JavaScript
+//
+
+```
     $scope.getResizeSlots();
     $scope.setResizeSlots(widthSlotName, heightSlotName);
 
 ###_()_ ![Method][meth]
-    // Changeable Slot name for the slot to be used with interaction ball: Rotate
+Changeable Slot name for the slot to be used with interaction ball: Rotate
+```JavaScript
+//
+
+```
     $scope.getRotateSlot();
     
 ###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.setRotateSlot(rotateSlotName);
 
 ###_()_ ![Method][meth]
-    // Tells us if the Webble are visible or not (true or false) and a set for changing that.
+Tells us if the Webble are visible or not (true or false) and a set for changing that.
+```JavaScript
+//
+
+```
     $scope.getWblVisibilty();
 
-###_()_ ![Method][meth]    
+###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.setWblVisibilty(newVal);
 
 ###_()_ ![Method][meth]
-    // A set of bit flags that control some of the Webble settings available (None[0], IsMoving[2], NoBubble[4])
+A set of bit flags that control some of the Webble settings available (None[0], IsMoving[2], NoBubble[4])
+```JavaScript
+//
+
+```
     $scope.getWebbleConfig() = function(){return theWebbleSettingFlags_;};
     
-###_()_ ![Method][meth]    
+###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.setWebbleConfig(whatNewConfigState);
 
 ###_()_ ![Method][meth]
-    // Flag to indicate if this Webble is bundled or not. (The SET methods is mainly to be used internally by the core
-    // but it is possible to access it via the scope if needed)
+Flag to indicate if this Webble is bundled or not. (The SET methods is mainly to be used internally by the core but it is possible to access it via the scope if needed)
+```JavaScript
+//
+
+```
     $scope.getIsBundled();
     
-###_()_ ![Method][meth]    
+###_()_ ![Method][meth]
+```JavaScript
+//
+
+```
     $scope.setIsBundled(newBundleState);
 
 ###_()_ ![Method][meth]
-    // List of Webbles whom which this one, share model (slots) with
+List of Webbles whom which this one, share model (slots) with
+```JavaScript
+//
+
+```
     $scope.getModelSharees();
 
 ###_()_ ![Method][meth]
-    // Flag for this webble to know when its currently creating a modelSharee.
+Flag for this webble to know when its currently creating a modelSharee.
+```JavaScript
+//
+
+```
     $scope.getIsCreatingModelSharee();
 
 ###_()_ ![Method][meth]
-    // A set of flags for rescuing weird touch event behavior
+A set of flags for rescuing weird touch event behavior
+```JavaScript
+//
+
+```
     $scope.touchRescueFlags = {
         doubleTapTemporarelyDisabled: false,
         interactionObjectActivated: false
     };
     	
-###_()_ ![Method][meth]    	
-	// Register Webble World Event Listener
-	// Register an event listener for a specific event for a specific target (self, other or
-	// all) (targetData can be set for slotChange as a slotName to narrow down event further)
-	// and the callback function the webble wish to be called if the event fire.
-	// The callback function will then be handed a datapack object containing needed
-	// information to react to the event accordingly. (see wwEventListeners_)
-	// if targetId is undefined the webble will be listening to itself and if the targetId is
-	// set to null it will listen to all webbles.	
+###_()_ ![Method][meth]
+Register Webble World Event Listener
+Register an event listener for a specific event for a specific target (self, other or all) (targetData can be set for slotChange as a slotName to narrow down event further) and the callback function the webble wish to be called if the event fire. The callback function will then be handed a datapack object containing needed information to react to the event accordingly. (see wwEventListeners_) if targetId is undefined the webble will be listening to itself and if the targetId is set to null it will listen to all webbles.
+```JavaScript
+//
+
+```
 	$scope.registerWWEventListener(eventType, callbackFunc, targetId, targetData);
 	
-###_()_ ![Method][meth]	
-	// All callback functions are sent a datapack object as a parameter when they fire which includes different things
-	// depending on the event. The targetId post in these datapacks are only useful when the webble are listening to
-	// multiple webbles with the same callback.
+###_()_ ![Method][meth]
+All callback functions are sent a datapack object as a parameter when they fire which includes different things depending on the event. The targetId post in these datapacks are only useful when the webble are listening to multiple webbles with the same callback.
+```JavaScript
+//
+
+```
 	wwEventListeners_ = {
 		slotChanged:		 		Returning Data: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
 		deleted: 	                Returning Data: {targetId: [Instance Id for webble being deleted], timestamp: [a chronical timestamp value]}
@@ -337,33 +449,41 @@ $scope.setDefaultSlot("msg");
 	};
 	
 ###_()_ ![Method][meth]
-	// Register Online Data Listener
-    // Lets the webble join a uniquely identified online data broadcasting virtual room for sending and receiving 
-    // messages via the server online to other users. One must provide a unique id for the message area, an event 
-    // handler method that receives all incoming messages for that room and optional if one wish to exclude the current 
-    // user in the message dispatching.
+Register Online Data Listener Lets the webble join a uniquely identified online data broadcasting virtual room for sending and receiving messages via the server online to other users. One must provide a unique id for the message area, an event handler method that receives all incoming messages for that room and optional if one wish to exclude the current user in the message dispatching.
+```JavaScript
+//
+
+```
     $scope.registerOnlineDataListener(msgRoomId, eventHandler, excludeSelf);
 
 ###_()_ ![Method][meth]
-    // The callback eventHandler for incoming messages provided when registering (above) will be sent the incoming data
-    // as the first parameter and the sending user as the second
-    // USAGE EXAMPLE
+The callback eventHandler for incoming messages provided when registering (above) will be sent the incoming data as the first parameter and the sending user as the second
+USAGE EXAMPLE
+```JavaScript
+//
+
+```
     var onOnlineDataArrive = function(data, username) {
         $log.log(data);
         $log.log("data sent by " + username);
     };
     
-###_()_ ![Method][meth]    
-    // Unregister Online Data Listener
-    // Lets the webble leave a uniquely identified online data broadcasting virtual room used for sending and receiving 
-    // messages at their own will. This is an optional method. The system will clean up by itself if the Webbles disappears.
+###_()_ ![Method][meth]
+Unregister Online Data Listener
+Lets the webble leave a uniquely identified online data broadcasting virtual room used for sending and receiving messages at their own will. This is an optional method. The system will clean up by itself if the Webbles disappears.
+```JavaScript
+//
+
+```
     $scope.unregisterOnlineDataListener(whatRoom);
     
-###_()_ ![Method][meth]    
-    // Send Online Data
-    // Lets the webble sends data over the internet via the Webble server to any other webble and user online that is 
-    // currently listening. It only works if the user has previously registered an online room. the webble must provide 
-    // the room id to which the data is being sent and the of course the data which can be anything json approved.
+###_()_ ![Method][meth]
+Send Online Data
+Lets the webble sends data over the internet via the Webble server to any other webble and user online that is currently listening. It only works if the user has previously registered an online room. the webble must provide the room id to which the data is being sent and the of course the data which can be anything json approved.
+```JavaScript
+//
+
+```
     $scope.sendOnlineData(whatRoom, whatData);
     
 <!------------------------------------------------------------------------------------------------------------------->
