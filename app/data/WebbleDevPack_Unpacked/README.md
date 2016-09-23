@@ -20,8 +20,11 @@ existing services, directives and filters that your Webble might want to use to 
 The **Webble Core** is exactly what it sounds like. The heart of a Webble and what makes it such. Within the Webble-template
 **_$scope_**, the core can be reached to get following methods and data:
 
-###_getInstanceId()_  ![Method][meth]
+###_getInstanceId_  ![Method][meth]
 Returns the unique identifier for a particular Webble instance. No Set method exists, since this value is controlled by the system and never change during the instance lifetime of a Webble.
+`getInstanceId()`
+Properties: None
+Returns: Webble Instance Id (Integer) (Unique)
 ```JavaScript
 // Example of Getting own Instance Id
 var ownInstanceId = $scope.getInstanceId();
@@ -174,32 +177,28 @@ Sets the current default slot for the Webble. If set to `undefined` no default s
 $scope.setDefaultSlot("msg");
 ```
 ###_getSelectedSlot()_ ![Method][meth]
-Returns the currently selected slot in this webble to be used in slot communication. No Set method exists since that is all managed internally when creating a slot communication.
+Returns the name of the currently selected slot in this webble which is used in slot communication with its parent. No Set method exists since that is all managed internally when creating a slot communication.
 ```JavaScript
-//
-
+// Gets the name of the slot that is currently selected slot for slot communication
+var selSlot = $scope.getSelectedSlot();
 ```
-    $scope.getSelectedSlot();
-
-###_()_ ![Method][meth]
-The currently connected slot in the parent webble to be used in slot communication
+###_getConnectedSlot()_ ![Method][meth]
+Returns the name of the  currently connected slot in the parent webble to be used in slot communication. No Set method exists since that is all managed internally when creating a slot communication. Slot communications are always stored and managed by the child Webble.
 ```JavaScript
-//
-
+// Gets the name of the connected slot in the parent webble
+var parentsConnSlot = $scope.getConnectedSlot();
 ```
-    $scope.getConnectedSlot();
-    
-
-###_()_ ![Method][meth]
-Slot connection direction SEND and RECEIVE enabled flag
+###_getSlotConnDir()_ ![Method][meth]
+Returns the slot connection direction object which informs if SEND and RECEIVE are enabled or not.
+The object returned looks like follow with a boolean value set to each key: `{send: false, receive: false}`
 ```JavaScript
-//
-
+// Checks if this Webble is sending slot values and print to the console if it is.
+if( $scope.getSlotConnDir().send ){
+	$log.log("This Webble is sending slot data")
+};
 ```
-    $scope.getSlotConnDir();
-
-###_()_ ![Method][meth]
-Connects a parent conn slot found by name with this Webbles selected slot found by name with a direction object with this format {send: false, receive: false}.
+###_connectSlots(parentSlot, childSlot, directions)_ ![Method][meth]
+Creates a slot communication channelConnects a parent conn slot found by name with this Webbles selected slot found by name with a direction object with this format {send: false, receive: false}.
 ```JavaScript
 //
 
