@@ -425,7 +425,6 @@ $scope.setProtection(thisWblProt);
 ```
 ###_addPopupMenuItemDisabled_ ![Method][meth]
 Disables Webble's popup menu items identified by ItemId (string) which for default menu items are the following:
-
 <a name="defMenuItems"></a>
 
 * Publish
@@ -503,132 +502,139 @@ if ( $scope.getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClic
 	$log.log("This Webble is Fully Selected with green border and interaction balls");
 }
 ```
-###_()_ ![Method][meth]
+###_setSelectionState_ ![Method][meth]
+Sets the webbles selection State to a specific selection type and makes the Webble display it accordingly (turning on or off different colored borders etc.).
+The available different states can be viewed [here](#availableOnePicks_SelectTypes)
 
-####
+####setSelectionState(newSelectionState)
 
 * **Parameters:**
-    * ()
+    * newSelectionState (Enum Value)
 * **Returns:**
-    * ()
+    * Nothing
+
+```JavaScript
+// Turns off any current selection state for the Webble
+$scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
+```
+###_activateBorder_ ![Method][meth]
+Activate Border shows or hides the webble border. But also allow to change border style, width and color. This is automatically set when selection state is altered, but for more fine grain controll this may be used. All parameters have a default value and are therefore optional.
+
+####activateBorder(isEnabled, whatColor, whatWidth, whatStyle, glowEnabled)
+
+* **Parameters:**
+    * isEnabled (Boolean) If the border should be visible or not
+    * whatColor (Color String) Hexadecimal color value "#000000", color name "black", rgb or rgba value (rgb(0, 0, 0)) are allowed
+    	* OPTIONAL
+        * default: "#46f03e"
+    * whatWidth (Integer) the width of the border
+    	* OPTIONAL
+        * default: 3
+    * whatStyle (String) any available css border style value
+    	* OPTIONAL
+        * default: "solid"
+    * glowEnabled (Boolean) If true creates a glow effect around the border
+    	* OPTIONAL
+        * default: false
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Sets the Webbles border to be yellow, thick, dottet with glow
+$scope.activateBorder(true, "yellow", 6, "dotted", true);
+```
+###_theInteractionObjects_ ![Property][prop]
+Contains a list of [Interaction object](#io) pointers (colored balls around the Webble border which gives the user the power to interact with the webble more easy)
+
+####theInteractionObjects
+
+* **Returns:**
+    * (Array) interaction object instance pointers for accessing their internals
+
+```JavaScript
+// Disables the Interaction Object with index value 6
+$scope.theInteractionObjects[6].scope().setIsEnabled(false);
+```
+###_getInteractionObjectByName_ ![Method][meth]
+Returns the Interaction object that match the name sent as a parameter, if not found `undefined` is returned.
+
+####getInteractionObjectByName(whatName)
+
+* **Parameters:**
+    * whatName (String) 
+* **Returns:**
+    * (Object Pointer) an Interaction Object and all its internals
+        * `undefined` if not found
+
+```JavaScript
+// Disables the Interaction Object with name "MyOwnIO" (Fails if does not exist)
+$scope.getInteractionObjectByName("MyOwnIO").setIsEnabled(false);
+```
+###_getInteractionObjContainerVisibilty_ ![Method][meth]
+Tells us if any or none of the interaction objects are visible or not. Method mainly used internally.
+
+####getInteractionObjContainerVisibilty()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or false if the interaction objects are currently visible or not (Webble selected and border turned on)
 
 ```JavaScript
 //
-
+if ( $scope.getInteractionObjContainerVisibilty() ){
+	$log.log("They are visible")
+}
 ```
-    $scope.setSelectionState(newSelectionState)
+###_activateMenuItem_ ![Method][meth]
+Activates (fires) any of the available context menu items for the Webble and executes the code related to the menu item found by the id provided as parameter. Existing default menu items can be viewed [here](#availableOnePicks_DefaultWebbleMenuTargets)
 
-###_()_ ![Method][meth]
-Activate Border shows or hides the webble border. But also allow to change border style, width and color. This is automatically set when selection state is altered, but for more fine grian controll this may be used.
-
-####
+####activateMenuItem(itemName)
 
 * **Parameters:**
-    * ()
+    * itemName (String) Menu item id name
+        * For default items the Enum name is used as string, and NOT the Enum Integer
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Force the About info form for this Webble to be opened
+$scope.activateMenuItem("About");
 ```
-    $scope.activateBorder(isEnabled, whatColor, whatWidth, whatStyle, glowEnabled);
+###_createWblDef_ ![Method][meth]
+Creates a webble definition JSON object containing an exact description of the webble, with its slots, position, relationships metadata etc.  This is the object that describes each Webble at its current state and which is stored in the server database when published.
+Provide true if the Webble def should be used outside the Webble in question and positions should be absolute for each containing Webble instead of relative to its parents. 
 
-###_()_ ![Method][meth]
-A list of Interaction objects that will give the user the power to interact with the webble more easy
-
-####
+####createWblDef(withAbsPosAndExternalUse)
 
 * **Parameters:**
-    * ()
+    * withAbsPosAndExternalUse (Boolean) When true the Webble definition will contain the absolute position instead of relative.
+        * OPTIONAL
 * **Returns:**
-    * ()
+    * (JSON) the webble definition JSON object just created
 
 ```JavaScript
-//
-
+// Displays the Webbles configuration data in the console
+$log.log( $scope.createWblDef() );
 ```
-    $scope.theInteractionObjects;
+###_duplicate_ ![Method][meth]
+Duplicate the Webble itself and creates a copy at a specified offset position from the original self and when done call the provided callback function (if provided) with the new copy as a parameter.
 
-###_()_ ![Method][meth]
-Get Interaction Object By Name iterates all the Interaction objects and return the one that match the name sent as a parameter, if not found undefined is returned.
-
-####
+####duplicate(whatOffset, whatCallbackMethod)
 
 * **Parameters:**
-    * ()
+    * whatOffset (Object) x and y position from the position of self where the copy should appear
+        *  e.g. {x: 15, y: 15}
+    * whatCallbackMethod (Function) To be called when the duplication is finished. Will be called with Duplicate Webble pointer as parameter.
+        * OPTIONAL
 * **Returns:**
-    * ()
+    * (Boolean) True or False wheather the duplication succeeded or not
 
 ```JavaScript
-//
-
+// Creates a duplicate of self 100 pixels to the right (does not call any callback function)
+$scope.duplicate({x: 100, y: 0});
 ```
-    $scope.getInteractionObjectByName(whatName);
-
-###_()_ ![Method][meth]
-Tells us if the interaction objects are visible or not
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.getInteractionObjContainerVisibilty();
-
-###_()_ ![Method][meth]
-ActivateMenuItem reacts on context menu item click or can be used to manually activate a Webble menu option.
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.activateMenuItem(itemName);
-
-###_()_ ![Method][meth]
-Create Webble Definition, creates a webble definition object containing an exact description of the webble. Provide bool true if the Webble def should be used outside the Webble in question and positions should be absolute for each containing Webble instead of relative to its parents.
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.createWblDef(withAbsPosAndExternalUse);
-
-###_()_ ![Method][meth]
-Duplicate, duplicates itself at a specified offset position from the original and when done call the provided callback function with the new copy provided as a parameter.
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.duplicate(whatOffset, whatCallbackMethod);
+    
 
 ###_()_ ![Method][meth]
 Shared Model Duplicate, duplicates itself at a specified offset position from the original and let the copy share the same model (all slots) and when done call the provided callback function with the new copy provided as a parameter.
@@ -1146,6 +1152,7 @@ but a few useful help functions exists. Even here those are accessed via the Web
      $scope.getSurfaceHeight();
 
 <!------------------------------------------------------------------------------------------------------------------->
+<a name="io"></a>
 ##Interaction Object
 The **Interaction Object** is those small balls that each Webble has on the border when "_Main_" selected. There are 12
 avialable around the border, but by default only 3-4 are activated. The Webble-template developer may configure and
@@ -1229,6 +1236,8 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     // Tooltip Text for default Interaction objects that all webbles share
     Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt
     { Menu: gettext("Open Menu"), Rotate: gettext("Rotate"), Resize: gettext("Resize"), AssignParent: gettext("Assign Parent") }
+
+<a name="availableOnePicks_DefaultWebbleMenuTargets"></a>
 
     // Default context menu choices that all webbles share
     Enum.availableOnePicks_DefaultWebbleMenuTargets
