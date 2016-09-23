@@ -29,7 +29,8 @@ Returns the unique identifier for a particular Webble instance. No Set method ex
     * None
 * **Returns:**
     * (Integer) Webble Instance Id
-        * _Unique Value_ 
+        * _Unique Value_
+
 ```JavaScript
 // Example of Getting own Instance Id
 var ownInstanceId = $scope.getInstanceId();
