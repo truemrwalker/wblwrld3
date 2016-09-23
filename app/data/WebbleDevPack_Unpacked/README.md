@@ -43,7 +43,8 @@ The unique template element (JQuery) for a webble, in order to get access to the
 ####theView
 
 * **Returns:**
-    * (JQuery Element) Pointer to the Webble View Element in the DOM
+    * (JQuery Element) Pointer to the Webble Element
+        * to access the View in the DOM and the Webble scope
 
 ```JavaScript
 // Get accesss to a inner JQuery element of the Webble using theView
@@ -62,6 +63,11 @@ Those available from core are:
 * **_keywords_**: an _author_-written list of descriptive words to categorize the Webble (may be in any language)  
 * **_image_**: a data block and/or url to an image selected by _author_ to represent the Webble visually before being loaded  
 * **_instanceid_**: NOT the current instance id as mentioned above, but the old instance id this Webble had the last time it got published. This value is kept in order to restore connections of all sorts and identify current Webble instances from knowledge of previous instances.
+
+####theWblMetadata["KEY"]
+
+* **Returns:**
+    * (Various) Value of the selected key
 
 ```JavaScript
 // Get a Webble description text
