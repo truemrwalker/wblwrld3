@@ -23,8 +23,10 @@ The **Webble Core** is exactly what it sounds like. The heart of a Webble and wh
 ###_getInstanceId_  ![Method][meth]
 Returns the unique identifier for a particular Webble instance. No Set method exists, since this value is controlled by the system and never change during the instance lifetime of a Webble.  
 `getInstanceId()`  
-Properties: None  
-Returns: Webble Instance Id (Integer) (Unique)
+**Properties:**  
+> None  
+**Returns:**  
+> Webble Instance Id (Integer) (Unique)
 ```JavaScript
 // Example of Getting own Instance Id
 var ownInstanceId = $scope.getInstanceId();
