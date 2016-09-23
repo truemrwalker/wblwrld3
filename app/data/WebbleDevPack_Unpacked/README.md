@@ -142,6 +142,7 @@ Paste connects the webble to a parent-webble provided as a parameter. If proviod
 
 * **Parameters:**
     * parent (Webble Pointer)
+        * candidate for being a parent to the Webble
 * **Returns:**
     * (Boolean) True of False depending on success of creating relationship
 
@@ -166,78 +167,78 @@ $scope.peel();
 ###_getChildContainer_ ![Method][meth]
 The childcontainer is a jquery element object pointing at the place in the webble where children should be DOM pasted. Default value usually works fine, but for Webbles using clipping this might be useful to change.
 
-####
+####getChildContainer()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (JQuery Element) The DOM element where children are pasted within the DOM tree for the Webble
 
 ```JavaScript
 // Get the JQuery elelment in the Webble that holds the children webbles views
 $scope.getChildContainer();
 ```
-###_setChildContainer(newContainer)_ ![Method][meth]
+###_setChildContainer_ ![Method][meth]
 Default value for child container usually works fine, but for Webbles using clipping a need to place the children elsewhere in the internal Webble DOM might be useful. If one wishes to set it back to the default value one need to save away that before making any changes. If Set to `undefined` no child can be pasted.
 
-####
+####setChildContainer(newContainer)
 
 * **Parameters:**
-    * ()
+    * newContainer (JQuery Element)
+        * DOM tree element within the Webble where children Webbles should be pasted
+        * `undefined` blocks pasting 
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
 // Set the JQuery elelment in the Webble that will hold the children webbles
 $scope.setChildContainer(newContainer);
 ```
-###_gimme(slotName)_ ![Method][meth]
-Returns the value of a slot found by slot name provided as parameter. if no slot by the specified name is found undefined is returned.
-The Value can be of any type, including string, number, array, object etc.
+###_gimme_ ![Method][meth]
+Returns the value of a slot found by slot name provided as parameter. if no slot by the specified name is found undefined is returned. The Value can be of any type, including string, number, array, object or even NULL etc.
 
-####
+####gimme(slotName)
 
 * **Parameters:**
-    * ()
+    * slotName (String)
 * **Returns:**
-    * ()
+    * (Various) The Value of the slot instance
+        * `undefined` if no slot of provided name exists
 
 ```JavaScript
 // Displays the slot value for "MySlot" in the console window
 $log.log( $scope.gimme("MySlot") );
 ```
-###_set(slotName, slotValue)_ ![Method][meth]
-Sets a new value to the slot with the name and value sent as a parameters. If a value is of completely wrong type or nonsensical the set will be ignored and the old value will remain.
-The method then returns a bit flag value to tell how the set process succeeded
+###_set_ ![Method][meth]
+This method sets a new value to the slot with the name and value sent as a parameters. If a value is of completely wrong type or nonsensical the set will be ignored and the old value will remain. The method also returns a bit Enum flag value to tell how the set process succeeded (`Enum.bitFlags_SlotManipulations`)
 
-* 0: `NonExisting` (The slot did not exist)
-* 1: `Exists` (The slot exists but no value was changed)
-* 2: `ValueChanged` (The slot value was changed)
-
-####
+####set(slotName, slotValue)
 
 * **Parameters:**
-    * ()
+    * slotName (String)
+    * slotValue (Any)
 * **Returns:**
-    * ()
-
+    * Bit Flag (Integer)
+        * 0: `NonExisting` (The slot did not exist)
+        * 1: `Exists` (The slot exists but no value was changed)
+        * 2: `ValueChanged` (The slot value was changed)
 
 ```JavaScript
 // Set the slot "MySlot" to the string value of "Hello World"
 $scope.set("MySlot", "Hello World");
 ```
-###_addSlot(whatSlot)_ ![Method][meth]
+###_addSlot_ ![Method][meth]
 Adds a slot (an instance of the slot 'class') to the list of slots.
 A new instance of the Slot class is created by calling  
 `new Slot(slotName, slotValue, slotDisplayName, slotDisplayDescription, slotCategory, slotMetaData, slotElementPointer)`  
 Details about the [Slot](#slot) class can be found below under [Services](#services)
 
-####
+####addSlot(whatSlot)
 
 * **Parameters:**
-    * ()
+    * whatSlot (Slot Object)
 * **Returns:**
-    * ()
+    * (Boolean) True of False depending on success
 
 ```JavaScript
 // Creates and adds a new slot "msg"
@@ -251,29 +252,29 @@ var newSlot = new Slot('msg',
 ));
 $scope.addSlot(newSlot);
 ```
-###_getSlot(whatSlotName)_ ![Method][meth]
+###_getSlot_ ![Method][meth]
 Returns a slot (complete 'class' instance) specified by its id name.
 
-####
+####getSlot(whatSlotName)
 
 * **Parameters:**
-    * ()
+    * whatSlotName (String)
 * **Returns:**
-    * ()
+    * (Slot Object) to access all different layers of the Slots metadata etc.
 
 ```JavaScript
 // Gets a specific Slot "MySlot" and displays its description in the console
 $log.log( $scope.getSlot("MySlot").getDisplayDescription() );
 ```
-###_getSlots()_ ![Method][meth]
+###_getSlots_ ![Method][meth]
 Returns the complete object-list of slots.
 
-####
+####getSlots()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (JSON) For iterating over all slots to access all keys (slot id) 
 
 ```JavaScript
 // Iterates the complete slot list and prints the slot key (slot name) in the console description in the console
@@ -281,86 +282,89 @@ for(var slot in $scope.getSlots()){
 	$log.log( slot );
 }
 ```
-###_removeSlot(whatSlotName)_ ![Method][meth]
+###_removeSlot_ ![Method][meth]
 Removes a slot found by name from the object-list of slots.
 
-####
+####removeSlot(whatSlotName)
 
 * **Parameters:**
-    * ()
+    * whatSlotName (String)
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
 // Removes (Deletes) the slot "MySlot" from the Webble slot list
 $scope.removeSlot("MySlot");
 ```
-###_getDefaultSlot()_ ![Method][meth]
+###_getDefaultSlot_ ![Method][meth]
 Returns the default slot used for auto connection if that is enabled. When this is set any parent child connection automatically also get a slot connection using this value as to which slot to connect, provided both parent and child have this value set and no previous connection has been done already. A Webble can only have one default slot.
 
-####
+####getDefaultSlot()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) Id name of the slot in question
+        * `undefined` if no default slot exists
  
 ```JavaScript
 // Displays in the console the current default slot for this Webble
 $log.log( $scope.getDefaultSlot() );
 ```
-###_setDefaultSlot(newDefaultSlot)_ ![Method][meth]
+###_setDefaultSlot_ ![Method][meth]
 Sets the current default slot for the Webble. If set to `undefined` no default slot connection is attempted.
 
-####
+####setDefaultSlot(newDefaultSlot)
 
 * **Parameters:**
-    * ()
+    * newDefaultSlot (String) Slot Id Name
+        * Set to `undefined` for no default connection
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
 // Sets the slot "msg" to be the default slot
 $scope.setDefaultSlot("msg");
 ```
-###_getSelectedSlot()_ ![Method][meth]
-Returns the name of the currently selected slot in this webble which is used in slot communication with its parent. No Set method exists since that is all managed internally when creating a slot communication.
+###_getSelectedSlot_ ![Method][meth]
+Returns the name of the currently selected slot in this webble which is used in slot communication with its parent. No Set method exists since that is all managed internally when creating a slot communication ([`connectSlots`](#connectSlots)).
 
-####
+####getSelectedSlot()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) Name id of the slot in this Webble used for slot communication
 
 ```JavaScript
 // Gets the name of the slot that is currently selected slot for slot communication
 var selSlot = $scope.getSelectedSlot();
 ```
-###_getConnectedSlot()_ ![Method][meth]
+###_getConnectedSlot_ ![Method][meth]
 Returns the name of the  currently connected slot in the parent webble to be used in slot communication. No Set method exists since that is all managed internally when creating a slot communication. Slot communications are always stored and managed by the child Webble.
 
-####
+####getConnectedSlot()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) Name id of the slot in parent Webble used for slot communication
 
 ```JavaScript
 // Gets the name of the connected slot in the parent webble
 var parentsConnSlot = $scope.getConnectedSlot();
 ```
-###_getSlotConnDir()_ ![Method][meth]
+###_getSlotConnDir_ ![Method][meth]
 Returns the slot connection direction object which informs if SEND and RECEIVE are enabled or not.
-The object returned looks like follow with a boolean value set to each key: `{send: false, receive: false}`
+The object returned informs of what communication directions are currently enabled.
 
-####
+####getSlotConnDir()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Object) Boolean value for each object key representing enabled or not
+        * `{send: false, receive: false}`
 
 ```JavaScript
 // Checks if this Webble is sending slot values and print to the console if it is.
@@ -368,22 +372,24 @@ if( $scope.getSlotConnDir().send ){
 	$log.log("This Webble is sending slot data")
 };
 ```
-###_connectSlots(parentSlot, childSlot, directions)_ ![Method][meth]
-Creates a slot communication channelConnects a parent conn slot found by name with this Webbles selected slot found by name with a direction object with this format {send: false, receive: false}.
+<a name="connectSlots"></a>
+###_connectSlots_ ![Method][meth]
+Creates a slot communication channel and connects a parent slot with this Webbles selected slot with a direction enabled object. When connection is created a slot value exchange is immediately done for each direction enabled. If both is enabled SEND is executed first from the child to the parent. (meaning that RECEIVE will contain the same value the child already sent)
 
-####
+####connectSlots(parentSlot, childSlot, directions)
 
 * **Parameters:**
-    * ()
+    * parentSlot (String) Name id of the slot in parent Webble used for slot communication
+    * childSlot (String) Name id of the slot in self Webble used for slot communication
+    * directions (Object) Boolean value for each object key representing enabled or not
+        * `{send: false, receive: false}`
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Create a dual direction slot connection fro this Webble to its parent
+$scope.connectSlots("theParentSlot", "MySlot", {send: true, receive: true});
 ```
-    $scope.connectSlots(parentSlot, childSlot, directions);
-
 ###_()_ ![Method][meth]
 This property keeps track of any protection setting this webble is currently using. See bitFlags_WebbleProtection in Services for more info of available options.
 
