@@ -427,6 +427,7 @@ $scope.setProtection(thisWblProt);
 Disables Webble's popup menu items identified by ItemId (string) which for default menu items are the following:
 
 <a name="defMenuItems"></a>
+
 * Publish
 * Duplicate
 * Delete
