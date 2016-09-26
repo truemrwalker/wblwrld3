@@ -909,6 +909,15 @@ $scope.registerOnlineDataListener("MyRoom", function(data, username) {
 ```    
 ###_sendOnlineData_ ![Method][meth]
 Lets the webble send data over the internet via the Webble server to any other webble and user online that is currently listening. It only works if the user has previously registered an online room as mentioned above. the webble must provide the room id to which the data is being sent and the the data, which can be basically anything, must still be json approved.
+
+####sendOnlineData(whatRoom, whatData)
+
+* **Parameters:**
+    * whatRoom (String) The unique name id of the room to send the data to
+	* whatData (String) Sent as a string but can be any stringified data, like an array or json object, that can be parsed back at arrival for better managing
+* **Returns:**
+    * Nothing
+	
 ```JavaScript
 // Sending an online message to "MyRoom" which will be broadcasted to all current user sessions that listens world wide
 $scope.sendOnlineData("My Room", "How about a game of chess, professor Falken?");
