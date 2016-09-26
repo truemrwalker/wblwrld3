@@ -740,225 +740,193 @@ $log.log( $scope.getWblVisibilty() );
 $scope.setWblVisibilty(false);
 ```
 ###_getWebbleConfig_ ![Method][meth]
-A set of bit flags that control some of the Webble settings available (None[0], IsMoving[2], NoBubble[4])
+Returns a bitflag that holds some of the few Webble states available. Which states can be seen [here](#bitFlags_WebbleConfigs).
 
 ####getWebbleConfig()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Integer (Binary)) A bit flag value that contains some states a Webble can be in (Mainly _Moving_)
 
 ```JavaScript
-//
+// checks if the Webble is not moving, and if so, informs about it in the console
+if((parseInt($scope.getWebbleConfig(), 10) & parseInt(Enum.bitFlags_WebbleConfigs.IsMoving, 10)) == 0){
+	$log.log( "The Webble is not Moving" );
+}
+```    
+###_setWebbleConfig_ ![Method][meth]
+Sets a bitflag that holds some of the few external Webble states available. Which states that are included can be seen [here](#bitFlags_WebbleConfigs)
 
-```
-    $scope.getWebbleConfig() = function(){return theWebbleSettingFlags_;};
-    
-###_()_ ![Method][meth]
-
-####
+####setWebbleConfig(whatNewConfigState)
 
 * **Parameters:**
-    * ()
+    * whatNewConfigState (Integer (Binary)) the new config bit flag value for the Webble
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Sets the Webble to never display any Info bubble text when e.g. being selected
+$scope.setWebbleConfig(bitflags.on($scope.getWebbleConfig(), Enum.bitFlags_WebbleConfigs.NoBubble));
 ```
-    $scope.setWebbleConfig(whatNewConfigState);
+###_getIsBundled_ ![Method][meth]
+Returns an integer flag that indicates if this Webble is bundled or not. 0 means not bundled, any value above 0 means how many nested bundles the Webble is within.
 
-###_()_ ![Method][meth]
-Flag to indicate if this Webble is bundled or not. (The SET methods is mainly to be used internally by the core but it is possible to access it via the scope if needed)
-
-####
+####getIsBundled()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Integer) 0 or Above. where 0 means not bundled and values above means amount of nested bundles.
 
 ```JavaScript
-//
-
+// Prints in the console the amount of bundles the Webble is within
+$log.log( $scope.getIsBundled() );
 ```
-    $scope.getIsBundled();
-    
-###_()_ ![Method][meth]
+###_getModelSharees_ ![Method][meth]
+Returns a list of Webbles whom which this one, share model (slots) with.
 
-####
+####getModelSharees()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Array) List of Webble pointers (which the Webble share slots with)
 
 ```JavaScript
-//
-
+// Prints in the console the Instance Id for every Webble this one shares model (slots) with
+for(var i = 0, ms; ms = $scope.getModelSharees()[i]; i++){
+	$log.log( ms.scope().getInstanceId() );
+}
 ```
-    $scope.setIsBundled(newBundleState);
+###_getIsCreatingModelSharee_ ![Method][meth]
+Returns boolean Flag for this webble to know whether it is currently in the process of creating a model-Sharee. Rarely used, but might be useful is some specific and time critical situations.
 
-###_()_ ![Method][meth]
-List of Webbles whom which this one, share model (slots) with
-
-####
+####getIsCreatingModelSharee()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Boolean) True or False depending if the Webble is busy creating model-sharee or not.
 
 ```JavaScript
-//
-
+// Checks if the Webble is busy creating a model-sharee, and if so informs about it in the console
+if( $scope.getIsCreatingModelSharee() ){
+	$log.log( "I am Busy!"):
+}
 ```
-    $scope.getModelSharees();
+###_touchRescueFlags_ ![Property][prop]
+A set of boolean flags for helping the devloper rescuing some (weird) touch event behaviors. Mainly used for reading.
 
-###_()_ ![Method][meth]
-Flag for this webble to know when its currently creating a modelSharee.
+####touchRescueFlags
 
-####
-
-* **Parameters:**
-    * ()
 * **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.getIsCreatingModelSharee();
-
-###_()_ ![Method][meth]
-A set of flags for rescuing weird touch event behavior
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.touchRescueFlags = {
-        doubleTapTemporarelyDisabled: false,
-        interactionObjectActivated: false
+    * (Object) A set of dedicated object keys containing boolean values that control some environment behavior.
+	    * doubleTapTemporarelyDisabled: (Boolean) tells whether double tap behavior is blocked or not
+		* interactionObjectActivated: (Boolean) tells whether Interaction Objects are active or disabled.
     };
-    	
-###_()_ ![Method][meth]
-Register Webble World Event Listener
-Register an event listener for a specific event for a specific target (self, other or all) (targetData can be set for slotChange as a slotName to narrow down event further) and the callback function the webble wish to be called if the event fire. The callback function will then be handed a datapack object containing needed information to react to the event accordingly. (see wwEventListeners_) if targetId is undefined the webble will be listening to itself and if the targetId is set to null it will listen to all webbles.
 
-####
+```JavaScript
+// Turns off double tap functionality and then turns it on again after one second
+$scope.touchRescueFlags.doubleTapTemporarelyDisabled = true;
+$timeout(function(){$scope.touchRescueFlags.doubleTapTemporarelyDisabled = false;}, 1000);
+```
+###_registerWWEventListener_ ![Method][meth]
+Registers an event listener for a specific event (see [availableWWEvents](#availableWWEvents)) for a specific target (self, other or all) (targetData can be set for slotChange as a slotName to narrow down event further but not used for other events) and the callback function the webble wish to be called if the event fires. The callback function will then be handed a datapack object containing needed information to react to the event accordingly. All callback functions are sent a datapack object as a parameter when they fire which includes different things depending on the event. The targetId post in these datapacks are only useful when the webble are listening to multiple webbles with the same callback. If targetId is undefined the webble will be listening to itself, or if the targetId match an existing Webble then that will be listened to, and if the targetId is set to NULL it will listen to all webbles.
+
+**Returning Data for each event type**
+
+* slotChanged: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
+* **deleted:** {targetId: [Instance Id for webble being deleted], timestamp: [a chronical timestamp value]}
+* **duplicated:** {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
+* **sharedModelDuplicated:** {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
+* **pasted:** {targetId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [a chronological timestamp value]}
+* **gotChild:** {targetId: [Instance Id for webble getting child], childId: [Instance Id for Webble that was pasted], timestamp: [a chronological timestamp value]}
+* **peeled:** {targetId: [Instance Id for Webble leaving parent], parentId: [Instance Id for Webble that lost its child], timestamp: [when it happened as ms integer]}
+* **lostChild:** {targetId: [Instance Id for Webble losing child], childId: [Instance Id for Webble that was peeled away], timestamp: [when it happened as ms integer]}
+* **keyDown:** {targetId: null[=UNSPECIFIED], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [a chronological timestamp value]}
+* **loadingWbl:** {targetId: [Instance Id for webble that got loaded], timestamp: [a chronological timestamp value]}
+* **mainMenuExecuted:** {targetId: null[=UNSPECIFIED], menuId: [menu sublink id], timestamp: [a chronological timestamp value]}
+* **wblMenuExecuted:** {targetId: [Instance Id for the Webble executing menu], menuId: [menu item name], timestamp: [a chronological timestamp value]}
+
+####registerWWEventListener(eventType, callbackFunc, targetId, targetData)
 
 * **Parameters:**
-    * ()
+    * eventType (Integer (Enum)) Which event that is of interest, selected by using the availableWWEvents Enum Service
+	    * e.g. Enum.availableWWEvents.slotChanged
+	* callbackFunc (Function) The function that will be called when the event fires and which will retrieve the event data.
+	* targetId (Integer) Instance Id of the Webble whose event are being listened to.
+	    * `undefined` is self
+		* `null` is all
+	* targetData (String) Only used with slotChanged event and then is the name of the slot being listened to (if only one is enough)
 * **Returns:**
-    * ()
+    * (Function) A function that can be called (without any parameters) to stop and kill the event listener.
 
 ```JavaScript
-//
-
+// One simple example of adding a webble world event listener, in this case for slot-change, and in the callback function manage possible event-fire situations.
+var slotChangeListener = $scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+	if(eventData.slotName == "msg"){
+		if(eventData.slotValue == "go big"){
+			$scope.set("square:width", 300);
+			$scope.set("square:height", 300);
+		}
+		else if(eventData.slotValue == "go small"){
+			$scope.set("square:width", 30);
+			$scope.set("square:height", 30);
+		}
+		else if(eventData.slotValue == "stop"){
+			// Kill event listener
+			slotChangeListener()
+		}
+	}	
+	else if(eventData.slotName == "squareTxt:font-size"){
+		if(parseInt(eventData.slotValue) > 40){
+			$log.log("Don't Scream!")
+		}
+	}
+});
 ```
-	$scope.registerWWEventListener(eventType, callbackFunc, targetId, targetData);
-	
-###_()_ ![Method][meth]
-All callback functions are sent a datapack object as a parameter when they fire which includes different things depending on the event. The targetId post in these datapacks are only useful when the webble are listening to multiple webbles with the same callback.
+###_registerOnlineDataListener_ ![Method][meth]
+Registers Online Data Listene and lets the webble join a uniquely identified online data broadcasting virtual room for sending and receiving messages via the server online to other users. One must provide a unique id for the message area, an event handler method that receives all incoming messages for that room and optional if one wish to exclude sending messages to oneself (current user) in the message dispatching.
+The callback eventHandler for incoming messages provided when registering (above) will be sent the incoming data as the first parameter and the sending user as the second (Se code example below). 
 
-####
+####registerOnlineDataListener(msgRoomId, eventHandler, excludeSelf)
 
 * **Parameters:**
-    * ()
+    * msgRoomId (String) A unique name of the virtual online communication room
+	* eventHandler (Function) Event listener that will recieve all incoming messages
+	* excludeSelf (Boolean) True or False if messages sent by self (current user (not Webble)) should also be recieved or ignored
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Register a online message room by the id "MyRoom" and a event listener function that will take care of any incoming message
+$scope.registerOnlineDataListener("MyRoom", function(data, username) {
+	$log.log("data sent by: " + username);
+	$log.log("data collected by webble: " + $scope.getInstanceId());
+	$log.log("data text: " + data);
+}, false);
+```    
+###_sendOnlineData_ ![Method][meth]
+Lets the webble send data over the internet via the Webble server to any other webble and user online that is currently listening. It only works if the user has previously registered an online room as mentioned above. the webble must provide the room id to which the data is being sent and the the data, which can be basically anything, must still be json approved.
+```JavaScript
+// Sending an online message to "MyRoom" which will be broadcasted to all current user sessions that listens world wide
+$scope.sendOnlineData("My Room", "How about a game of chess, professor Falken?");
 ```
-	wwEventListeners_ = {
-		slotChanged:		 		Returning Data: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
-		deleted: 	                Returning Data: {targetId: [Instance Id for webble being deleted], timestamp: [a chronical timestamp value]}
-		duplicated: 	            Returning Data: {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
-		sharedModelDuplicated: 		Returning Data: {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
-		pasted: 	                Returning Data: {targetId: [Instance Id for webble being pasted], parentId: [Instance Id for Webble that is pasted upon], timestamp: [a chronological timestamp value]}
-		gotChild: 					Returning Data: {targetId: [Instance Id for webble getting child], childId: [Instance Id for Webble that was pasted], timestamp: [a chronological timestamp value]}
-		peeled: 	                Returning Data: {targetId: [Instance Id for Webble leaving parent], parentId: [Instance Id for Webble that lost its child], timestamp: [when it happened as ms integer]}
-		lostChild: 		            Returning Data: {targetId: [Instance Id for Webble losing child], childId: [Instance Id for Webble that was peeled away], timestamp: [when it happened as ms integer]}
-		keyDown: 					Returning Data: {targetId: null[=UNSPECIFIED], key: {code: [key code], name: [key name], released: [True When Key Released], timestamp: [a chronological timestamp value]}
-		loadingWbl: 				Returning Data: {targetId: [Instance Id for webble that got loaded], timestamp: [a chronological timestamp value]}
-		mainMenuExecuted: 		    Returning Data: {targetId: null[=UNSPECIFIED], menuId: [menu sublink id], timestamp: [a chronological timestamp value]}
-		wblMenuExecuted: 	        Returning Data: {targetId: [Instance Id for the Webble executing menu], menuId: [menu item name], timestamp: [a chronological timestamp value]}
-	};
-	
-###_()_ ![Method][meth]
-Register Online Data Listener Lets the webble join a uniquely identified online data broadcasting virtual room for sending and receiving messages via the server online to other users. One must provide a unique id for the message area, an event handler method that receives all incoming messages for that room and optional if one wish to exclude the current user in the message dispatching.
+###_unregisterOnlineDataListener_ ![Method][meth]
+Lets the webble leave a uniquely identified online data broadcasting virtual room used for sending and receiving messages at their own will. This is an optional method since the system will clean up by itself if the Webbles just dissapear without unregistering.
 
-####
+####unregisterOnlineDataListener(whatRoom)
 
 * **Parameters:**
-    * ()
+    * whatRoom (String) The unique name of the virtual online communication room
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Unregister listening to the broadcasting of online messages from the virtual room called "MyRoom"
+$scope.unregisterOnlineDataListener("MyRoom");
 ```
-    $scope.registerOnlineDataListener(msgRoomId, eventHandler, excludeSelf);
-
-###_()_ ![Method][meth]
-The callback eventHandler for incoming messages provided when registering (above) will be sent the incoming data as the first parameter and the sending user as the second
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-USAGE EXAMPLE
-```JavaScript
-//
-
-```
-    var onOnlineDataArrive = function(data, username) {
-        $log.log(data);
-        $log.log("data sent by " + username);
-    };
-    
-###_()_ ![Method][meth]
-Unregister Online Data Listener
-Lets the webble leave a uniquely identified online data broadcasting virtual room used for sending and receiving messages at their own will. This is an optional method. The system will clean up by itself if the Webbles disappears.
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-//
-
-```
-    $scope.unregisterOnlineDataListener(whatRoom);
-    
-###_()_ ![Method][meth]
-Send Online Data
-Lets the webble sends data over the internet via the Webble server to any other webble and user online that is currently listening. It only works if the user has previously registered an online room. the webble must provide the room id to which the data is being sent and the of course the data which can be anything json approved.
-```JavaScript
-//
-
-```
-    $scope.sendOnlineData(whatRoom, whatData);
     
 <!------------------------------------------------------------------------------------------------------------------->
 ##Platform
@@ -1306,6 +1274,8 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     Enum.SlotDisablingState
     { None: 0, PropertyEditing: 1, PropertyVisibility: 2, ConnectionVisibility: 4, AllVisibility: 8 }
 
+<a name="bitFlags_WebbleConfigs"></a>
+
     // The different types of available webble metadata [Bitwise Flags]
     Enum.bitFlags_WebbleConfigs
     { None: 0, IsMoving: 2, NoBubble: 4 }
@@ -1318,7 +1288,9 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     { NO, MOVE, RESIZE, DUPLICATE, SHAREDMODELDUPLICATE, DELETE, PUBLISH, PROPERTY, PARENT_CONNECT, CHILD_CONNECT, 
       PARENT_DISCONNECT, CHILD_DISCONNECT, BUNDLE, UNBUNDLE, DEFAULT_MENU, INTERACTION_OBJECTS, SELECTED, POPUP_MENU,
       NON_DEV_HIDDEN, DRAG_CLONE, BUNDLE_LOCKED, EXPORT }
-                                                              
+                                            
+<a name="availableWWEvents"></a>    											
+											
     // The different Webble World Events that a Webble can listen to  
     Enum.availableWWEvents
     { slotChanged: 0, deleted: 1, duplicated: 2, sharedModelDuplicated: 3, pasted: 4, gotChild: 5, peeled: 6, 
