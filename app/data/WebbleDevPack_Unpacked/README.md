@@ -628,105 +628,121 @@ Duplicate the Webble itself and creates a copy at a specified offset position fr
     * whatCallbackMethod (Function) To be called when the duplication is finished. Will be called with Duplicate Webble pointer as parameter.
         * OPTIONAL
 * **Returns:**
-    * (Boolean) True or False wheather the duplication succeeded or not
+    * (Boolean) True or False wheather the attempt to duplicate succeeds or not
 
 ```JavaScript
 // Creates a duplicate of self 100 pixels to the right (does not call any callback function)
 $scope.duplicate({x: 100, y: 0});
 ```
-    
+###_sharedModelDuplicate_ ![Method][meth]
+Shared Model Duplicate, duplicates itself at a specified offset position from the original and let the copy share the same model (all slots) and when done call the optional provided callback function with the new copy provided as a parameter.
 
-###_()_ ![Method][meth]
-Shared Model Duplicate, duplicates itself at a specified offset position from the original and let the copy share the same model (all slots) and when done call the provided callback function with the new copy provided as a parameter.
-
-####
+####sharedModelDuplicate(whatOffset, whatCallbackMethod)
 
 * **Parameters:**
-    * ()
+	* whatOffset (Object) x and y position from the position of self where the copy should appear
+        *  e.g. {x: 15, y: 15}
+    * whatCallbackMethod (Function) To be called when the duplication is finished. Will be called with Duplicate Webble pointer as parameter.
+        * OPTIONAL
 * **Returns:**
-    * ()
+    * (Boolean) True or False wheather the attempt to model duplicate succeeds or not
 
 ```JavaScript
-//
+// Creates a model duplicate of self 20 pixels to the right and 20 below with a provide callback function
+$scope.sharedModelDuplicate({x: 20, y: 20}, function(newWbl){ $log.log( newWbl.scope().getInstanceId(); ) });
+```   
+###_getResizeSlots_ ![Method][meth]
+If there are any slots that controls the Webble size, either css generated or developer assigned, they can be found here.
 
-```
-    $scope.sharedModelDuplicate(whatOffset, whatCallbackMethod);
-
-###_()_ ![Method][meth]
-If there are any slots that controls Webble size they can be found or set here
-
-####
+####getResizeSlots()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Object) Size object with width and height keys
+	    * e.g. {width: 100, height: 50}
+		* unassigned Size Slots returns {width: undefined, height: undefined}
 
 ```JavaScript
-//
-
+// Prints the Webble width and height to the console
+var wblSize = $scope.getResizeSlots();
+$log.log( "width: " + wblSize.width + ", Height: " + wblSize.height );
 ```
-    $scope.getResizeSlots();
-    $scope.setResizeSlots(widthSlotName, heightSlotName);
+###_setResizeSlots_ ![Method][meth]
+Sets (assigns) which slots that represents the width and height of the webble. If CSS slots for width and height are created the Webble will call this itself using the slots it found as an educated guess to be used, but the developer can at any time reassign with this method.
 
-###_()_ ![Method][meth]
-Changeable Slot name for the slot to be used with interaction ball: Rotate
-
-####
+####setResizeSlots(widthSlotName, heightSlotName)
 
 * **Parameters:**
-    * ()
+    * widthSlotName (String) the name of the slot which holds the value of the webbles outer width
+	* heightSlotName (String) the name of the slot which holds the value of the webbles outer height
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Assigns Size slots for the Webble by pointing at two existing slots to represent the main size.
+$scope.setResizeSlots("wblMainWidth", "wblMainHeight");
 ```
-    $scope.getRotateSlot();
-    
-###_()_ ![Method][meth]
-```JavaScript
-//
+###_getRotateSlot_ ![Method][meth]
+Returns the name of the slot that holds the Webbles rotation value. Mainly used by interaction ball: Rotate
 
-```
-    $scope.setRotateSlot(rotateSlotName);
-
-###_()_ ![Method][meth]
-Tells us if the Webble are visible or not (true or false) and a set for changing that.
-
-####
+####getRotateSlot()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) Name of the slot that keeps the rotation value of the Webble
+	    * Default: 'root:transform-rotate'
 
 ```JavaScript
-//
-
+// Prints the name of the rotate Webble slot in the console
+$log.log( $scope.getRotateSlot() );
 ```
-    $scope.getWblVisibilty();
+###_setRotateSlot_ ![Method][meth]
+Sets the name of the slot that holds the Webbles rotation value. Mainly used by interaction ball: Rotate
 
-###_()_ ![Method][meth]
-
-####
+####setRotateSlot(rotateSlotName)
 
 * **Parameters:**
-    * ()
+    * rotateSlotName (String)
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-//
-
+// Assigns the name of the rotate Webble slot in the console
+$scope.setRotateSlot("myOwnRotateSlot");
 ```
-    $scope.setWblVisibilty(newVal);
+###_getWblVisibilty_ ![Method][meth]
+Tells us if the Webble are visible or not (true or false).
 
-###_()_ ![Method][meth]
+####getWblVisibilty()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False if the Webble is visible or not
+
+```JavaScript
+// Prints to the concole the webbles visibility state
+$log.log( $scope.getWblVisibilty() );
+```
+###_setWblVisibilty_ ![Method][meth]
+
+####setWblVisibilty(newVal)
+
+* **Parameters:**
+    * newVal (Boolean) True or False if one wants the Webble to be visible or not 
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Makes the Webble invisible
+$scope.setWblVisibilty(false);
+```
+###_getWebbleConfig_ ![Method][meth]
 A set of bit flags that control some of the Webble settings available (None[0], IsMoving[2], NoBubble[4])
 
-####
+####getWebbleConfig()
 
 * **Parameters:**
     * ()
