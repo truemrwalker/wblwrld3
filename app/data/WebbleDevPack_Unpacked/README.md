@@ -942,116 +942,618 @@ $scope.unregisterOnlineDataListener("MyRoom");
 The **Platform** is the actual Webble World environment and it includes many helpful methods to access sections of the
 system and specific Webbles. Also in this case it is reached from within the `$scope` of the Webble-template.
 
-    // Gets and Sets current active execution mode level (developer, admin, etc)
-    $scope.getCurrentExecutionMode();
-    $scope.setExecutionMode(whatExecutionModeIndex);
+###_getCurrentExecutionMode_ ![Method][meth]
+Gets the current active execution mode level (developer, admin, etc which can be studied in detail [here](#availableOnePicks_ExecutionModes)). Execution mode is a way to control behavior and flow in a Webble depending on user type.
+
+####getCurrentExecutionMode()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer (Enum)) the current execution mode value as found [here](#availableOnePicks_ExecutionModes)
+
+```JavaScript
+// Checks if the execution mode is Admin, and if so prints to the console
+if( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Admin){
+	$log.log("You are in Admin Mode");
+}
+```
+###_setExecutionMode_ ![Method][meth]
+
+####setExecutionMode(whatExecutionModeIndex)
+
+* **Parameters:**
+    * whatExecutionModeIndex (Integer (Enum)) the index number for the execution mode wished to be assigned
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Setting (force) the Webble World Execution Mode to be in Admin mode
+$scope.setExecutionMode(Enum.availableOnePicks_ExecutionModes.Admin);
+```
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Returns a bit flag container that keeps track of various settings which configures the platform environment
     // See SERVICES bitFlags_PlatformConfigs for more details.
     $scope.getPlatformSettingsFlags();
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Gets or Sets a bit flag container that keeps track of various states this platform has to deal with
     // See SERVICES bitFlags_PlatformStates for more details.
     $scope.getPlatformCurrentStates();
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+	
     $scope.setPlatformCurrentStates(newPCS);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // This is the jquery element of this platform
     $scope.getPlatformElement();
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // This is the DOM element (not the jquery element) of the current selected work surface.
     // (This is where top parent webbles are glued onto in the DOM)
     $scope.getWSE();
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // future child waiting to be assigned a parent. Usually only needed by the core, but it is there if ever needed.
     $scope.getPendingChild();
-    $scope.setPendingChild(newPC);
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
+
+	$scope.setPendingChild(newPC);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // If one have a slot or Webble operation one does not want to be a part of the undo stack then set this to true
     // just before calling the slot set or operation call. (set it back to false is not needed since the system reset
     // that on its own)
     $scope.BlockNextAddUndo();
     
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+	
     // If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true
     // just before calling starting the process and call the unblock method to return to normal mode again
     $scope.BlockAddUndo();
     $scope.UnblockAddUndo();
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // A set of flags for rescuing weird touch event behavior
     $scope.touchRescuePlatformFlags = {
         noParentSelectPossibleYet: false
     };
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Reset Selections, resets the work surface by removing all selections and half finished connections.
     $scope.resetSelections();
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Clean Active Workspace, cleans out everything from the current selected workspace and resets the webbles therein.
     $scope.cleanActiveWS()
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Load Webble from URL, tries to load a Webble JSON file from a URI provided as a parameter. The callbackmethod if
     // provided will be called when the new Webble is loaded including a ref point to the new Webble.
     $scope.loadWblFromURL(whatUrl, whatCallbackMethod);
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Download Webble Defintion File, loads a webble identified by a unique name, either from server of from memory.
     // The callbackmethod if provided will be called when the new Webble is loaded including a ref point to the new
     // Webble.
     $scope.downloadWebbleDef(whatWblDefId, whatCallbackMethod);
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Load From Definition File, loads a webble from a JSON definition provided as a parameter. The callbackmethod if
     // provided will be called when the new Webble is loaded including a ref point to the new Webble.
     $scope.loadWebbleFromDef(whatWblDef, whatCallbackMethod);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Waiting, turns on or off the appearance indicators ('is loading' gif image) in waiting mode. returns current waiting state if parameter is undefined.
     $scope.waiting(isWaitingEnabled);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Get Bundle Master, returns the bundle master of the specified Webble if it has one otherwise undefined.
     $scope.getBundleMaster(whatWebble);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get Current Active Workspace, returns the current active workspace.
     $scope.getCurrWS();
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Get Number of All Webbles in All Workspaces, returns the amount of Webbles currently in the platform
     // (all workspaces included).
     $scope.getNoOfAllWebblesInAllWS();
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get Current Active Webbles, returns a list of the current active webbles (in the active Workspace).
     $scope.getActiveWebbles();
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Get Selected Webbles, returns a list of all webbles "Main" selected (in the active Workspace).
     $scope.getSelectedWebbles();
 
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get Webble Absolute Position In Pixels, calculates the specified webbles absolute position within the work surface.
     $scope.getWblAbsPosInPixels(whatWebble);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get Webble Center Position, calculates the specified webbles absolute center position within the work surface.
     $scope.getWebbleCenterPos(whatWebble);
-    
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get the top parent for a specific Webble and returns it. If no top parent exist the webble itself is returned 
     // (since it is obviously the top)
     $scope.getTopParent(whatWebble);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get All Ancestors, finds all ancestors (parents and parents parents etc) of the defined webble and returns the list.
     $scope.getAllAncestors(whatWebble);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Get All Descendants, returns all webbles of those that are children or grandchildren etc of the webble specified
     // in the parameter, which is also included in the top of the list.
     $scope.getAllDescendants(whatWebble);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Looks for either the highest or the lowest value from all existing Webbles of a specified slot and return that value.
     $scope.getWinningSlotValueAmongAllWebbles(whatSlot, lowestWins){
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Request Webble Selection, deals with the interaction process of making webbles MAIN selected properly
     $scope.requestWebbleSelection(target);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Publish Webble, saves and publish Webble definition to a specified place somewhere (server or local). Includes
     // form input requiremnets from user.
     $scope.requestPublishWebble(whatWbl);
-    
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Exports a Webble and all its needed templates (incl code files) to a webble code package file which can be 
     // imported to any other Webble World platform.
     $scope.requestExportWebble(whatWbl);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Request Delete Webble, deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when job is done)
     $scope.requestDeleteWebble(target, callbackFunc);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Request Assign Parent, deals with the interaction process of assigning child parent relationship due to user
     // interaction. The target is the child if no child is pending, and it is the parent if there is a pending child.
@@ -1059,12 +1561,42 @@ system and specific Webbles. Also in this case it is reached from within the `$s
     // usually calls the Webble Core's paste() method instead.
     $scope.requestAssignParent(target);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Shows the Quick Info Message box with the specified text for either 2.5 seconds or the specified time of either
     // default size or the specified size at either the center of the screen or the specified position using either 
     // default color or the specified color (which can be an array of colors for gradient effect). 
     // If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed.
     // If one call the function with empty text and time set to 0, the current QIM message (if any) will immediately close down.
     $scope.showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Open Form, Creates and opens a modal form window for a specific use that can be used to edit or consume any data.
     // For more details of available forms see SERVICES aopForms.
@@ -1077,23 +1609,128 @@ system and specific Webbles. Also in this case it is reached from within the `$s
     // Callback function is used for catching form response data (not available in infoMsg)
     $scope.openForm(whatForm, content, callbackFunc);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Default Service Error can be used as a generic fail message for promises that cannot be kept.
     $scope.serviceError(errorMsg);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Get Webbles By Template Id, returna a list of Webbles with a specific template id. (found in active Workspace)
     $scope.getWebblesByTemplateId(whatTemplateid);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Get Webble By Instance Id, return the unique Webble with a specific instance id. (found in active Workspace)
     $scope.getWebbleByInstanceId(whatInstanceId);
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Get Webbles By Display Name, returns a list of Webbles with a certain display name. (found in active Workspace)
     $scope.getWebblesByDisplayName(whatWebbleDisplayName);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Select All Webbles, make all webbles "Main" selected.
     $scope.selectAllWebbles();
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Unselect All Webbles, makes all webbles unselected
     $scope.unselectAllWebbles();
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Execute Menu Selection, executes the correct action, based on menu or shortcut selection.
     // For more details of avialable selections please see SERVICES menuItemsFactoryService, where the itemnames are
@@ -1101,31 +1738,191 @@ system and specific Webbles. Also in this case it is reached from within the `$s
     // Webble World 3 Platform by pressing Alt+F1.
     $scope.executeMenuSelection(sublink, whatKeys);
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Fast access to filter that lets you write dynamic string outputs in an efficient way.
     $scope.strFormatFltr("string with parameters, like {0} and {1} inside it", [parameter0, parameter1]);
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
 
     // Returns the default language (code) of the browser
     $scope.getSysLanguage();
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Returns the current language (code) being used by the Webble World Platform
     $scope.getCurrentLanguage();
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
 	// Informs if there is a Webble World form currently open or not
 	$scope.getIsFormOpen();
-		
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Flags for some specific keyboard keys, weather they are currently pressed or not
     $scope.altKeyIsDown = false;
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+	
     $scope.shiftKeyIsDown = false;
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+	
     $scope.ctrlKeyIsDown = false;
-    
+
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
     $scope.setWaitingServiceDeactivationState(newState);
-        
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // If debugging and one want to display a text in the menu section where debug enabled is displayed, one can use this variable
     $scope.debugValue.txt
-    
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
     // Quick way to retrieve or set the current background color of the platform. 
     $scope.getPlatformBkgColor();
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+	
     $scope.setPlatformBkgColor(newPlatformBkgColor);
 
 <!------------------------------------------------------------------------------------------------------------------->
@@ -1247,6 +2044,8 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
 	  BringFwd: gettext("Bring to Front"), Protect: gettext("Set Protection"), 
 	  AddCustomSlots: gettext("Add Custom Slots"), EditCustomMenuItems: gettext("Custom Menu Items"), 
 	  EditCustomInteractionObjects: gettext("Custom Interaction Objects"), About: gettext("About")}
+
+<a name="availableOnePicks_ExecutionModes"></a>
 
     // The different execution modes the webble world can be set to
     Enum.availableOnePicks_ExecutionModes
