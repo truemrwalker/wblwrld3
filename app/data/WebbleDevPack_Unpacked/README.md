@@ -959,6 +959,7 @@ if( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Ad
 }
 ```
 ###_setExecutionMode_ ![Method][meth]
+Sets the current active execution mode level (developer, admin, etc which can be studied in detail [here](#availableOnePicks_ExecutionModes)). Execution mode is a way to control behavior and flow in a Webble depending on user type.
 
 ####setExecutionMode(whatExecutionModeIndex)
 
@@ -971,226 +972,219 @@ if( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Ad
 // Setting (force) the Webble World Execution Mode to be in Admin mode
 $scope.setExecutionMode(Enum.availableOnePicks_ExecutionModes.Admin);
 ```
-###_()_ ![Method][meth]
+###_getPlatformSettingsFlags_ ![Method][meth]
+Returns a bit flag value that holds various settings which controls user enabled platform environment values. See [Services](#services) and [bitFlags_PlatformConfigs](#bitFlags_PlatformConfigs) for more details.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Returns a bit flag container that keeps track of various settings which configures the platform environment
-    // See SERVICES bitFlags_PlatformConfigs for more details.
-    $scope.getPlatformSettingsFlags();
-
-
-###_()_ ![Method][meth]
-
-####
+####getPlatformSettingsFlags()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Integer(Binary)) Platform configuration settings value (often user related)
 
 ```JavaScript
-// 
-
+// Checks if the main menu is visible, and if not tells about it via the console
+if((parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) != 0){
+	$log.log("The main menu is hidden");
+}
 ```
+###_getPlatformCurrentStates_ ![Method][meth]
+Gets a bit flag holder that contains various states this platform has to pay attention too. Very unlikely needed by a Webble developer, but it is still there if that would be the case. See [Services](#services) and [bitFlags_PlatformStates](#bitFlags_PlatformStates) for more details.
 
-    // Gets or Sets a bit flag container that keeps track of various states this platform has to deal with
-    // See SERVICES bitFlags_PlatformStates for more details.
-    $scope.getPlatformCurrentStates();
+####getPlatformCurrentStates()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer(Binary)) Platform state value (often related to various _busy_ states)
+
+```JavaScript
+// Checks if platform is currently waiting for parent selection, and if so tella bout it in the console
+if((parseInt(scope.getPlatformCurrentStates(), 10) & parseInt(Enum.bitFlags_PlatformStates.WaitingForParent, 10)) !== 0){
+	$log.log("You are supposed to pick a parent webble now.")
+}
+```	
+###_setPlatformCurrentStates_ ![Method][meth]
+Sets a bit flag holder that contains various states this platform has to pay attention too. Very unlikely needed by a Webble developer, but it is still there if so. See [Services](#services) and [bitFlags_PlatformStates](#bitFlags_PlatformStates) for more details.
+
+####setPlatformCurrentStates(newPCS)
+
+* **Parameters:**
+    * newPCS (Integer(Binary)) a bit flag integer for platform busy state
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Stop any possible current parent selection process and resets the Webble selection
+$scope.setPendingChild(undefined);
+$scope.setPlatformCurrentStates(bitflags.off($scope.getPlatformCurrentStates(), Enum.bitFlags_PlatformStates.WaitingForParent));
+$scope.unselectAllWebbles();
+```
+###_getPlatformElement_ ![Method][meth]
+Returns the jquery element of this platform. (Most often used for mouse event handling outside of the scope of the Webble)
+####getPlatformElement()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Jquery Element Pointer) The Platform (work surface) of Webble World as a Jquery Element
+
+```JavaScript
+// Turns off the default mouse event for a part of the Webble and create a custom mouse down event for the Webble that in turn will create a mouse up and mouse move event for the whole platform in order to not loose scope outside the webbles element boundaries
+$scope.theView.parent().draggable('option', 'cancel', '#myWblElement');
+$scope.theView.parent().find("#myWblElement").bind('vmousedown', mouseDownEventHandler);
+var mouseDownEventHandler = function (e) {
+	$log.log("Mouse is Down");
+
+	$scope.getPlatformElement().bind('mouseup', function(e){
+		$scope.getPlatformElement().unbind('mousemove');
+		$scope.getPlatformElement().unbind('mouseup');
+		$log.log("Mouse is Up");
+	});
 	
-###_()_ ![Method][meth]
+	$scope.getPlatformElement().bind('mousemove', function(e){
+		$log.log("Mouse is Moving");
+	});
+};
+```
+###_getWSE_ ![Method][meth]
+Returns the DOM element (not the jquery element) of the current selected work surface. (This is where top parent webbles are glued onto in the DOM). Most likely never needed by the Webble developer.
 
-####
+####getWSE()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (DOM Element Pointer) Work Space Element in the DOM tree where all Webbles resides
 
 ```JavaScript
-// 
-
+//  Adds a image of a cute kitten on the work space surface (Which most likely annoy the hell out of most Webble World users and make them avoid your Webbles again :-) )
+var cuteKittenImgUrl = "https://lh3.ggpht.com/4kCi1_H566RFQrBcNYk5hKyA0TzlaxANZww2Kgf7Wp0dXmXyEQNw1ETG96OgG72oag=h900";
+var cuteKittenImg = $('<img id="cuteKitten">');
+cuteKittenImg.attr('src', cuteKittenImgUrl);
+$scope.getWSE().append(cuteKittenImg);
 ```
-	
-    $scope.setPlatformCurrentStates(newPCS);
+###_getPendingChild_ ![Method][meth]
+Returns the future child waiting to be assigned a parent. Usually only used by the core, but it is there if ever needed.
 
-
-###_()_ ![Method][meth]
-
-####
+####getPendingChild()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Webble Pointer) the Webble which is pending as a child waiting for a being assigned a parent.
+	    * `undefined` when no Webble is pending
 
 ```JavaScript
-// 
-
+// If there is a pending child then print its instance id in the console
+if( $scope.getPendingChild() ){
+	$log.log( $scope.getPendingChild().scope().getInstanceId );
+}
 ```
 
-    // This is the jquery element of this platform
-    $scope.getPlatformElement();
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // This is the DOM element (not the jquery element) of the current selected work surface.
-    // (This is where top parent webbles are glued onto in the DOM)
-    $scope.getWSE();
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // future child waiting to be assigned a parent. Usually only needed by the core, but it is there if ever needed.
+    
     $scope.getPendingChild();
 
-###_()_ ![Method][meth]
+###_setPendingChild_ ![Method][meth]
+Sets the future child waiting to be assigned a parent. Usually only used by the core, but it is there if ever needed.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-
-	$scope.setPendingChild(newPC);
-
-
-###_()_ ![Method][meth]
-
-####
+####setPendingChild(newPC)
 
 * **Parameters:**
-    * ()
+    * newPC (Webble Pointer) the webble which will be assigned to wait for a parent selection (by user mouse click)
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Iterate through all active Webbles and assign the first valid one as parent to this Webble
+for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+	if (aw.scope() && aw.scope().getInstanceId() != $scope.getInstanceId()){
+		$scope.setPendingChild($scope.theView);
+		$scope.requestAssignParent(aw);
+		break;
+	}
+}
 ```
-
-    // If one have a slot or Webble operation one does not want to be a part of the undo stack then set this to true
-    // just before calling the slot set or operation call. (set it back to false is not needed since the system reset
-    // that on its own)
-    $scope.BlockNextAddUndo();
-    
+###_BlockNextAddUndo_ ![Method][meth]
+If a Webble wishes to perform a Webble operation or slot-set one does not want to be a part of the undo stack, then call this method (without any parameters) just after calling the slot set or operation call, and the wish will be granted. (also works the other way around if one wishes to make the platform forget about the previous operation before the new one, but then the method is called before any Webble operation).
 	
-###_()_ ![Method][meth]
-
-####
+####BlockNextAddUndo()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Will make the platform forget about the most recent latest slot change or webble operation and make it undoable.
+$scope.BlockNextAddUndo();
 ```
+###_BlockAddUndo_ ![Method][meth]
+If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true just before starting the process and then later call the unblock method to return to normal mode again. Basically not used outside the core but available if ever reasons arise.
 	
-    // If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true
-    // just before calling starting the process and call the unblock method to return to normal mode again
-    $scope.BlockAddUndo();
-    $scope.UnblockAddUndo();
-
-
-###_()_ ![Method][meth]
-
-####
+####BlockAddUndo()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// These slot changes can never be undone or redone individually only as a complete package due to the BlockAddUndo
+$scope.BlockAddUndo();
+$scope.set("msg", "You Love Me!");
+$scope.set("root:left", 700);
+$scope.set("root:top", 500);
+$scope.set("root:transform-rotate", 45);
+$scope.UnblockAddUndo();
 ```
-
-    // A set of flags for rescuing weird touch event behavior
-    $scope.touchRescuePlatformFlags = {
-        noParentSelectPossibleYet: false
-    };
-
-
-###_()_ ![Method][meth]
-
-####
+###_UnblockAddUndo_ ![Method][meth]
+If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true just before starting the process and then later call the unblock method to return to normal mode again. Basically not used outside the core but available if ever reasons arise.
+	
+####UnblockAddUndo()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// These slot changes can never be undone or redone individually only as a complete package due to the BlockAddUndo
+$scope.BlockAddUndo();
+$scope.set("msg", "You Love Me!");
+$scope.set("root:left", 700);
+$scope.set("root:top", 500);
+$scope.set("root:transform-rotate", 45);
+$scope.UnblockAddUndo();
 ```
+###_resetSelections_ ![Method][meth]
+Reset Selections, resets the work surface by removing all Webble selections and undo any half finished connections.
 
-    // Reset Selections, resets the work surface by removing all selections and half finished connections.
-    $scope.resetSelections();
-
-###_()_ ![Method][meth]
-
-####
+####resetSelections()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Resets all selections and remove any pending parent child relationship creation.
+$scope.resetSelections();
 ```
+###_cleanActiveWS_ ![Method][meth]
+Clean Active Workspace, cleans out everything (every Webble) from the current selected workspace and resets the workspace.
 
-    // Clean Active Workspace, cleans out everything from the current selected workspace and resets the webbles therein.
-    $scope.cleanActiveWS()
+####cleanActiveWS()
 
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Clean out all webbles and reset the workspace
+$scope.cleanActiveWS();
+```
 ###_()_ ![Method][meth]
 
 ####
@@ -2074,6 +2068,20 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     Enum.bitFlags_InitStates
     { None: 0, InitBegun: 1, InitFinished: 2, ActiveReady: 4, AllDone: 8 }
     
+<a name="bitFlags_PlatformConfigs"></a>	
+	
+	//Used for settings and configuraions of the platform environment
+        // [Bitwise Flags]
+        bitFlags_PlatformConfigs: {
+            None: 0,
+            PlatformInteractionBlockEnabled: 1,
+            MainMenuVisibilityEnabled: 2,
+            PopupInfoEnabled: 4,
+            autoBehaviorEnabled: 8
+        },
+	
+<a name="bitFlags_PlatformStates"></a>		
+	
     //Used for keeping track what the platform is doing [Bitwise Flags]
     Enum.bitFlags_PlatformStates
     { None: 0, WaitingForParent: 1, WaitingForAllSelect: 2 }
