@@ -11,6 +11,8 @@ Also, be aware of the order the webble files load in case you have some crucial 
 Below is also a large list of available Webble Core and Platform access methods for all sort of needs. Also listed are
 existing services, directives and filters that your Webble might want to use to make magic happen.
 
+(Note. Remember to turn on Debug Logging in Webble World when coding so that you can use $log.log() and the console the best way)
+
 * ![Method][meth] = Method
 * ![Property][prop] = Property
 
@@ -1252,7 +1254,7 @@ Turns on or off the appearance indicator ('is loading' gif image) in waiting mod
 // Turns on the waiting visualizer to inform the user that work is being done. (Don't forget to turn it off later though)
 $scope.waiting(true);
 ```
-##_getBundleMaster_ ![Method][meth]
+###_getBundleMaster_ ![Method][meth]
 Returns the bundle master of the specified Webble if it has one, otherwise undefined. Bundle master is the outermost bundle webble, counted from a specific Webble.
 
 ####getBundleMaster(whatWebble)
@@ -1363,135 +1365,117 @@ Returns the top parent for a specific Webble. If no top parent exist the webble 
 topParent = $scope.getTopParent($scope.theView);
 topParent.scope().activateBorder(true, "purple", 4, "double", true);
 ```
-###_()_ ![Method][meth]
+###_getAllAncestors_ ![Method][meth]
+Returns a list (array) of all ancestors (parents and parents parents etc) of the defined webble. The list is ordered from the closest to the furthest away.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Get All Ancestors, finds all ancestors (parents and parents parents etc) of the defined webble and returns the list.
-    $scope.getAllAncestors(whatWebble);
-
-
-###_()_ ![Method][meth]
-
-####
+####getAllAncestors(whatWebble)
 
 * **Parameters:**
-    * ()
+    * whatWebble (Webble Pointer) The Webble whose information we are after
 * **Returns:**
-    * ()
+    * (Array) All Webbles (Webble Pointer) that is an ancestor of the parameter Webble
 
 ```JavaScript
-// 
-
+// Iterate through all ancestor Webbles and make them tell the console their instance Id
+for(var i = 0, anc; anc = $scope.getAllAncestors($scope.theView)[i]; i++){
+	$log.log(i + ": " + anc.scope().getInstanceId());
+}
 ```
-
-    // Get All Descendants, returns all webbles of those that are children or grandchildren etc of the webble specified
-    // in the parameter, which is also included in the top of the list.
-    $scope.getAllDescendants(whatWebble);
-
-
-###_()_ ![Method][meth]
-
-####
+###_getAllDescendants_ ![Method][meth]
+Returns all webbles of those that are children or grandchildren etc of the webble specified in the parameter, which is also included at the top of the list.
+	
+####getAllDescendants(whatWebble)
 
 * **Parameters:**
-    * ()
+    * whatWebble (Webble Pointer) The Webble whose information we are after
 * **Returns:**
-    * ()
+    * (Array) All Webbles (Webble Pointer) that is a descendant of the parameter Webble (including self)
 
 ```JavaScript
-// 
-
+// Iterate through all descendants (and self) and give each its own colored border (as long as the palette is big enough)
+for(var n = 0, d; d = $scope.getAllDescendants($scope.theView)[n]; n++){
+	d.scope().activateBorder(true, wwConsts.palette[n].name, 4, "dashed", true);
+}
 ```
+###_getWinningSlotValueAmongAllWebbles_ ![Method][meth]
+Looks for either the highest or the lowest value from all existing Webbles of a specified slot and return that value and the Webble who had it. Any slot value type can be compared, but numbers are probably the only thing that works well. (Slots with numbers and text like "25px" works fine too since they get parsed). If numbers are equal, the first value found will be winning.
 
-    // Looks for either the highest or the lowest value from all existing Webbles of a specified slot and return that value.
-    $scope.getWinningSlotValueAmongAllWebbles(whatSlot, lowestWins){
-
-
-###_()_ ![Method][meth]
-
-####
+####getWinningSlotValueAmongAllWebbles()
 
 * **Parameters:**
-    * ()
+    * whatSlot (String) the name of the slot which will be compared
+	* lowestWins (Boolean) if true, the lowest value will be searched for (instead of the highest)
 * **Returns:**
-    * ()
+    * (Object) an object with two keys for value (Float) and value owner's Instance Id (Integer)
+	    * eg. `{value: 0, owner: undefined}` before comparison starts 
 
 ```JavaScript
-// 
-
+// Find the Webble that has the highest z-index value and display it in the console
+var mostHighZ = $scope.getWinningSlotValueAmongAllWebbles('root:z-index', false);
+$log.log( "Webble " + mostHighZ.owner + " has the highest Z-index value of " + mostHighZ.value );
 ```
+###_requestWebbleSelection_ ![Method][meth]
+Method that selects (activate border and Interaction Balls) the Webble provided as parameter as Main-selected and all its children as and Child-selected.
 
-    // Request Webble Selection, deals with the interaction process of making webbles MAIN selected properly
-    $scope.requestWebbleSelection(target);
-
-
-###_()_ ![Method][meth]
-
-####
+####requestWebbleSelection(target)
 
 * **Parameters:**
-    * ()
+    * target (Webble Pointer) the Webble that is targeted for the operation
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Select this Webble and its children
+$scope.requestWebbleSelection($scope.theView);
 ```
-
-    // Publish Webble, saves and publish Webble definition to a specified place somewhere (server or local). Includes
-    // form input requiremnets from user.
-    $scope.requestPublishWebble(whatWbl);
-
-
-###_()_ ![Method][meth]
-
-####
+###_requestPublishWebble_ ![Method][meth]
+Prepare for Webble publishing and opens up a user input form where the user needs to fill in required data before the Webble can be published to a specified place somewhere (server or local).
+	
+####requestPublishWebble(whatWbl)
 
 * **Parameters:**
-    * ()
+    * whatWbl (Webble Pointer) the Webble that is targeted for the operation
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Opens up the publish form for this Webble
+$scope.requestPublishWebble($scope.theView);
 ```
+###_requestExportWebble_ ![Method][meth]
+Opens the Export Webble input form for the user to exports a specified Webble and all its needed templates (incl code files) to a webble code package file which can be imported to any other Webble World platform.
 
-    // Exports a Webble and all its needed templates (incl code files) to a webble code package file which can be 
-    // imported to any other Webble World platform.
-    $scope.requestExportWebble(whatWbl);
-
-
-###_()_ ![Method][meth]
-
-####
+####requestExportWebble(whatWbl)
 
 * **Parameters:**
-    * ()
+    * whatWbl (Webble Pointer) the Webble that is targeted for the operation
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Opens up the export form for this Webble
+$scope.requestExportWebble($scope.theView);
 ```
+###_requestDeleteWebble_ ![Method][meth]
+Deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when the job is done)
 
-    // Request Delete Webble, deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when job is done)
-    $scope.requestDeleteWebble(target, callbackFunc);
+####requestDeleteWebble(target, callbackFunc)
 
+* **Parameters:**
+    * target (Webble Pointer) the Webble that is targeted for the operation
+	* callbackFunc (Function) Callback function that will be called when the Webble has been deleted
+	    * OPTIONAL
+* **Returns:**
+    * (Boolean) True or False whether the attempt to delete was successful or not
 
+```JavaScript
+// Murder the Webbles first-born child if there are any children
+if($scope.getChildren().length > 0){
+	$scope.requestDeleteWebble($scope.getChildren()[0], function(){
+		$log.log("Ah! Finally you are dead you parasite!");
+	});
+}
+```
 ###_()_ ![Method][meth]
 
 ####
