@@ -603,12 +603,12 @@ $scope.activateMenuItem("About");
 ```
 ###_createWblDef_ ![Method][meth]
 Creates a webble definition JSON object containing an exact description of the webble, with its slots, position, relationships metadata etc.  This is the object that describes each Webble at its current state and which is stored in the server database when published.
-Provide true if the Webble def should be used outside the Webble in question and positions should be absolute for each containing Webble instead of relative to its parents. 
+Provide true if the Webble def should be used outside the Webble in question and positions should be absolute for each containing Webble instead of relative to its parents (Most common and useful is true). (A Webble def created, using false cannot be used when loading new Webbles).
 
 ####createWblDef(withAbsPosAndExternalUse)
 
 * **Parameters:**
-    * withAbsPosAndExternalUse (Boolean) When true the Webble definition will contain the absolute position instead of relative.
+    * withAbsPosAndExternalUse (Boolean) When true the Webble definition will contain the absolute position instead of relative and can be used when loading new webbles ([loadWebbleFromDef](#loadWebbleFromDef)).
         * OPTIONAL
 * **Returns:**
     * (JSON) the webble definition JSON object just created
@@ -1185,227 +1185,184 @@ Clean Active Workspace, cleans out everything (every Webble) from the current se
 // Clean out all webbles and reset the workspace
 $scope.cleanActiveWS();
 ```
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Load Webble from URL, tries to load a Webble JSON file from a URI provided as a parameter. The callbackmethod if
-    // provided will be called when the new Webble is loaded including a ref point to the new Webble.
-    $scope.loadWblFromURL(whatUrl, whatCallbackMethod);
-
-###_()_ ![Method][meth]
-
-####
+###_loadWblFromURL_ ![Method][meth]
+Tries to load a Webble JSON file from a URL provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
+	
+####loadWblFromURL(whatUrl, whatCallbackMethod)
 
 * **Parameters:**
-    * ()
+    * whatUrl (String) a URL string to where a Webble JSON config file is located
+	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
+	    * OPTIONAL
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Loads a Webble from an external server and when it arrives make it (or at least its latest template) say its name in the console
+$scope.loadWblFromURL("https://www.myServer.com/myWebbles/bestWblEver.json", function(newWbl){
+	$log.log( newWbl.scope().getWebbleFullName() + " has arrived!" );
+});
 ```
-
-    // Download Webble Defintion File, loads a webble identified by a unique name, either from server of from memory.
-    // The callbackmethod if provided will be called when the new Webble is loaded including a ref point to the new
-    // Webble.
-    $scope.downloadWebbleDef(whatWblDefId, whatCallbackMethod);
-
-###_()_ ![Method][meth]
-
-####
+###_downloadWebbleDef_ ![Method][meth]
+Downloads a webble identified by its unique name, either from server of from memory. The callbackmethod, if provided, will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
+	
+####downloadWebbleDef(whatWblDefId, whatCallbackMethod)
 
 * **Parameters:**
-    * ()
+    * whatWblDefId (String) A Unique Webble id that will identify which Webble is requested
+	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
+	    * OPTIONAL
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Loads a Webble from the internal Webble Server and when it arrives make it (or at least its latest template) say its name in the console
+$scope.downloadWebbleDef("genericCharts", function(newWbl){
+	$log.log( newWbl.scope().getWebbleFullName() + " has arrived!" );
+});
 ```
-
-    // Load From Definition File, loads a webble from a JSON definition provided as a parameter. The callbackmethod if
-    // provided will be called when the new Webble is loaded including a ref point to the new Webble.
-    $scope.loadWebbleFromDef(whatWblDef, whatCallbackMethod);
-
-
-###_()_ ![Method][meth]
-
-####
+<a name="_loadWebbleFromDef_"></a>
+###_loadWebbleFromDef_ ![Method][meth]
+Loads a webble from a JSON definition provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
+	
+####loadWebbleFromDef(whatWblDef, whatCallbackMethod)
 
 * **Parameters:**
-    * ()
+    * whatWblDef (JSON Object) The Webble definition config object
+	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
+	    * OPTIONAL
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Odd way of loading an exact copy of oneself
+$scope.loadWebbleFromDef($scope.createWblDef(true));
 ```
+###_waiting_ ![Method][meth]
+Turns on or off the appearance indicator ('is loading' gif image) in waiting mode. returns current waiting state if parameter is undefined.
 
-    // Waiting, turns on or off the appearance indicators ('is loading' gif image) in waiting mode. returns current waiting state if parameter is undefined.
-    $scope.waiting(isWaitingEnabled);
-
-
-###_()_ ![Method][meth]
-
-####
+####waiting(isWaitingEnabled)
 
 * **Parameters:**
-    * ()
+    * isWaitingEnabled (Boolean)
 * **Returns:**
-    * ()
+    * (Boolean) if parameter is `undefined` returns the curent status of is waiting mode ('is loading' gif image visibility)
 
 ```JavaScript
-// 
-
+// Turns on the waiting visualizer to inform the user that work is being done. (Don't forget to turn it off later though)
+$scope.waiting(true);
 ```
+##_getBundleMaster_ ![Method][meth]
+Returns the bundle master of the specified Webble if it has one, otherwise undefined. Bundle master is the outermost bundle webble, counted from a specific Webble.
 
-    // Get Bundle Master, returns the bundle master of the specified Webble if it has one otherwise undefined.
-    $scope.getBundleMaster(whatWebble);
-
-
-###_()_ ![Method][meth]
-
-####
+####getBundleMaster(whatWebble)
 
 * **Parameters:**
-    * ()
+    * whatWebble (Webble Pointer) The Webble whose possible Bundle master we are after
 * **Returns:**
-    * ()
+    * (Webble Pointer) The Bundle Master for the specified Webble if found, otherwise `undefined`
+	    * May be self
 
 ```JavaScript
-// 
-
+// Check if one is bundled and if so, tell it to the console
+if( $scope.getBundleMaster($scope.theView) ){
+	$log.log("I am bundled!");
+}
 ```
+###_getCurrWS_ ![Method][meth]
+Returns the current active workspace object. Rarely, close too never, used outside the Webble core, but if ever needed, here it is.
+Contains id, name, webbles, if its shared and more.
 
-    // Get Current Active Workspace, returns the current active workspace.
-    $scope.getCurrWS();
-
-
-###_()_ ![Method][meth]
-
-####
+####getCurrWS()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Object) Json object that holds all available data about the workspace, including all attached Webbles and any current metadata
 
 ```JavaScript
-// 
-
+// Prints the name of the current workspace to the console
+$log.log( $scope.getCurrWS().name );
 ```
+###_getActiveWebbles_ ![Method][meth]
+Returns a list (array) of all the current active webbles (in the active Workspace).
 
-    // Get Number of All Webbles in All Workspaces, returns the amount of Webbles currently in the platform
-    // (all workspaces included).
-    $scope.getNoOfAllWebblesInAllWS();
-
-
-###_()_ ![Method][meth]
-
-####
+####getActiveWebbles()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Array) All Webbles (Webble Pointer) that is currently active (exists) in the current workspace
 
 ```JavaScript
-// 
-
+// Iterate through all active Webbles and make them tell the console their full name
+for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+	$log.log( aw.scope().getWebbleFullName() );
+}
 ```
+###_getSelectedWebbles_ ![Method][meth]
+Returns a list (array) of all webbles which are "Main" selected.
 
-    // Get Current Active Webbles, returns a list of the current active webbles (in the active Workspace).
-    $scope.getActiveWebbles();
-
-
-###_()_ ![Method][meth]
-
-####
+####getSelectedWebbles()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (Array) All Webbles (Webble Pointer) that is currently "Main"-selected
 
 ```JavaScript
-// 
-
+// Iterate through all "Main"-selected Webbles and make them turn 45 degrees
+for(var i = 0, aw; aw = $scope.getSelectedWebbles()[i]; i++){
+	aw.scope().set("root:transform-rotate", 45);
+}
 ```
+###_getWblAbsPosInPixels_ ![Method][meth]
+Returns the calculated absolute position in pixels for the specified webbles within the work surface.
 
-    // Get Selected Webbles, returns a list of all webbles "Main" selected (in the active Workspace).
-    $scope.getSelectedWebbles();
-
-
-
-###_()_ ![Method][meth]
-
-####
+####getWblAbsPosInPixels(whatWebble)
 
 * **Parameters:**
-    * ()
+    * whatWebble (Webble Pointer) The Webble whose absolute position we are after
 * **Returns:**
-    * ()
+    * (Object) Position object with an x and y key (Webbles top left)
+	    * e.g. {x: 0, y: 0}
 
 ```JavaScript
-// 
-
+// Make the Webble tell the console its absolute position on the workspace (and not its relative position to its parent)
+var absPos = $scope.getWblAbsPosInPixels($scope.theView);
+$log.log("I am located at left: " + absPos.x + " and top: " + absPos.y);
 ```
+###_getWebbleCenterPos_ ![Method][meth]
+Returns the calculated absolute center position for the specified webble within the work surface.
 
-    // Get Webble Absolute Position In Pixels, calculates the specified webbles absolute position within the work surface.
-    $scope.getWblAbsPosInPixels(whatWebble);
-
-
-###_()_ ![Method][meth]
-
-####
+####getWebbleCenterPos(whatWebble)
 
 * **Parameters:**
-    * ()
+    * whatWebble (Webble Pointer) The Webble whose center we are after
 * **Returns:**
-    * ()
+    * (Object) Center Position object with an x and y key
+	    * e.g. {x: 0, y: 0}
 
 ```JavaScript
-// 
-
+// Make the Webble tell the console its absolute center position on the workspace
+var absCenterPos = $scope.getWebbleCenterPos($scope.theView);
+$log.log("My Center is located at left: " + absCenterPos.x + " and top: " + absCenterPos.y);
 ```
-
-    // Get Webble Center Position, calculates the specified webbles absolute center position within the work surface.
-    $scope.getWebbleCenterPos(whatWebble);
-
-
-###_()_ ![Method][meth]
-
-####
+###_getTopParent_ ![Method][meth]
+Returns the top parent for a specific Webble. If no top parent exist the webble itself is returned (since it is obviously the top). (Top Parent is the parent in a chain of related Webbles that has no parent of its own)
+	
+####getTopParent(whatWebble)
 
 * **Parameters:**
-    * ()
+    * whatWebble (Webble Pointer) The Webble who we are after
 * **Returns:**
-    * ()
+    * (Webble Pointer) the Webble that is top parent
 
 ```JavaScript
-// 
-
+// activate a purple double glowing border for the top parent webble, which ever it is.
+topParent = $scope.getTopParent($scope.theView);
+topParent.scope().activateBorder(true, "purple", 4, "double", true);
 ```
-
-    // Get the top parent for a specific Webble and returns it. If no top parent exist the webble itself is returned 
-    // (since it is obviously the top)
-    $scope.getTopParent(whatWebble);
-
-
 ###_()_ ![Method][meth]
 
 ####
