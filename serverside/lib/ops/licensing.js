@@ -101,62 +101,59 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		modifyKey: function (req, query) {
 
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
-				.then(function(obj) {
-					ensureObjectValid(req, obj);
+            return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj);
 
-					if (!req.body.realm || !req.body.resource)
-						throw new util.RestError(gettext("Incorrect licensing key identifiers"));
+                if (!req.body.realm || !req.body.resource)
+                    throw new util.RestError(gettext("Incorrect licensing key identifiers"));
 
-					var index = util.indexOf(obj._auth.keys, function(k) {
-						return k.realm == req.body.realm && k.resource == req.body.resource;
-					});
+                var index = util.indexOf(obj._auth.keys, function (k) {
+                    return k.realm == req.body.realm && k.resource == req.body.resource;
+                });
 
-					if (!req.body.remove && !req.body.access_key)
-						throw new util.RestError(gettext("Missing access key"));
+                if (!req.body.remove && !req.body.access_key)
+                    throw new util.RestError(gettext("Missing access key"));
 
-					if (index !== -1) { // Delete or Modify
+                if (index !== -1) { // Delete or Modify
 
-						if (req.body.remove)
-							obj._auth.keys.splice(index, 1);
-						else
-							obj._auth.keys[index].access_key = req.body.access_key;
-					}
-					else
-						obj._auth.keys.push(req.body); // Add new
+                    if (req.body.remove)
+                        obj._auth.keys.splice(index, 1);
+                    else
+                        obj._auth.keys[index].access_key = req.body.access_key;
+                }
+                else
+                    obj._auth.keys.push(req.body); // Add new
 
-					return obj.save();
-				});
+                return obj.save();
+            });
 		},
 
 		//**************************************************************
 
 		getKey: function (req, query) {
 
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
-				.then(function(obj) {
-					ensureObjectValid(req, obj);
+            return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj);
 
-					if (!req.query.realm || !req.query.resource)
-						throw new util.RestError(gettext("Incorrect licensing key request"));
+                if (!req.query.realm || !req.query.resource)
+                    throw new util.RestError(gettext("Incorrect licensing key request"));
 
-					return findKeyRecursively(obj, req.query.realm, req.query.resource);
-				});
+                return findKeyRecursively(obj, req.query.realm, req.query.resource);
+            });
 		},
 
 		//**************************************************************
 
 		listKeys: function (req, query) {
 
-			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
-				.then(function(obj) {
-					ensureObjectValid(req, obj);
+            return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
+                ensureObjectValid(req, obj);
 
-					var results = [];
-					return listKeysRecursively(obj, req.user, results).then(function () {
-						return results;
-					});
-				});
+                var results = [];
+                return listKeysRecursively(obj, req.user, results).then(function () {
+                    return results;
+                });
+            });
 		}
 	};
 };

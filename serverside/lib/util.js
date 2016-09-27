@@ -216,6 +216,28 @@ module.exports.isStringNumber = function (str) {
 ////////////////////////////////////////////////////////////////////////
 // Rest-specific utility functions
 //
+module.exports.stripObject = function (obj) {
+
+    if ('toJSON' in obj) {
+
+        var result = obj.toJSON();
+        Object.getOwnPropertyNames(result).forEach(function (propname) {
+            if (propname[0] === '_')
+                delete result[propname];
+        });
+        return result;
+    }
+    else {
+
+        var result = {};
+        Object.getOwnPropertyNames(obj).forEach(function (propname) {
+            if (propname[0] !== '_')
+                result[propname] = obj[propname];
+        });
+        return result;
+    }
+};
+
 module.exports.buildQuery = function (query, ignoreList, namespace, aliasesObj) {
 
 	var start = (query.start && 1 * query.start) || 0;

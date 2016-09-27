@@ -79,27 +79,21 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	    Webble.find(query.conditions,
 		    '_created _updated webble.templateid webble.templaterevision webble.displayname webble.description webble.keywords webble.author',
-		    query.options).exec().then(function (results) {
+            query.options).lean().exec().then(function (results) {
 
-			    res.json(util.transform_(results, normalizeTemplate));
-		    },
-			function (err) {
-				util.resSendError(res, err, gettext("Cannot retrieve templates"));
-			}
-	    ).done();
+                res.json(util.transform_(results, normalizeTemplate));
+            }).catch(err => util.resSendError(res, err));
     });
 
     app.get('/api/dev/templates/:id', auth.dev, function(req, res) {
 
-	    Webble.findOne({ "webble.defid": req.params.id }).exec().then(function (w) {
-            
+        Webble.findOne({ "webble.defid": req.params.id }).exec().then(function (w) {
+
             if (!w)
                 throw new util.RestError(gettext("Template does not exist"), 404);
-            
+
             res.json(normalizeTemplate(w));
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
+        }).catch(err => util.resSendError(res, err));
     });
 };

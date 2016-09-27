@@ -71,12 +71,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		}
 		query.conditions["_type"] = 'qa';
 
-		Post.find(query.conditions, '', query.options).exec().then(function (posts) {
+        Post.find(query.conditions, '', query.options).lean().exec().then(function (posts) {
             res.json(util.transform_(posts, normalizePost));
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot retrieve questions"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot retrieve questions")));
 	});
 
 	app.post('/api/support/qa', auth.usr, function (req, res) {
@@ -112,17 +109,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/support/qa/:id', auth.usr, function (req, res) {
 
-		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
+        Post.findById(mongoose.Types.ObjectId(req.params.id)).lean().exec().then(function (post) {
             
             if (!post || post._type !== 'qa')
                 throw new util.RestError(gettext("Question no longer exists"), 404);
             
             res.json(normalizePost(post));
 
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot get question"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot get question")));
 	});
 
 	app.put('/api/support/qa/:id', auth.usr, function (req, res) {
@@ -145,10 +139,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 res.json(normalizePost(post));
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot answer question"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot answer question")));
 	});
 
 	app.delete('/api/support/qa/:id', auth.usr, function (req, res) {
@@ -162,10 +153,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 res.status(200).send(gettext("Successfully deleted")); // Everything OK
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot delete question"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot delete question")));
 	});
 
 	//******************************************************************

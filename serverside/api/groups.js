@@ -44,17 +44,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	// Utility functions
 	//
 	function getId(req) {
-		var id;
-		try {
-			id = mongoose.Types.ObjectId(req.params.id);
+
+        try {
+			return mongoose.Types.ObjectId(req.params.id);
 		} catch (err) {
-			id = null; // Query with null
+			return null; // Query with null
 		}
-		return id;
 	}
 
-	function normalizeGroup(g) {
-		return g.toJSON();
+    function normalizeGroup(g) {
+        var obj = util.stripObject(g);
+        obj.id = g._id;
+        return obj;
 	}
 
 	function createGroup(req, isTopLevel) {
@@ -119,21 +120,21 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			];
 		}
 
-        Group.find(query.conditions, '', query.options).exec().then(function (groups) {
+        Group.find(query.conditions, '', query.options).lean().exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
         }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/mygroups', auth.usr, function (req, res) {
 
-		Group.find({$or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }]}).exec().then(function (groups) {
+        Group.find({ $or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }] }).lean().exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
         }).catch(err => util.resSendError(res, err));
 	});
 
 	app.post('/api/groups', auth.adm, function (req, res) { // Top-level groups must be managed by the adminzzz
 
-		createGroup(req, true).then(function (group) {
+        createGroup(req, true).then(function (group) {
             res.json(normalizeGroup(group));
         }).catch(err => util.resSendError(res, err));
 	});
@@ -142,7 +143,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/groups/:id', auth.usr, function (req, res) {
 
-		Group.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (group) {
+        Group.findById(mongoose.Types.ObjectId(req.params.id)).lean().exec().then(function (group) {
             
             if (!group)
                 throw new util.RestError(gettext("Group no longer exists"), 404);
@@ -219,7 +220,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/groups/:id/groups', auth.usr, function (req, res) { // Sub-groups
 
-		return Group.find({ "_sec.groups" : getId(req) }).exec().then(function (groups) {
+        return Group.find({ "_sec.groups": getId(req) }).lean().exec().then(function (groups) {
             res.json(util.transform_(groups, normalizeGroup));
         }).catch(err => util.resSendError(res, err));
 	});
@@ -234,13 +235,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.put('/api/groups/:id/users', auth.usr, function (req, res) {
 
         groupingOps.modifyGroupMember(req, Group.findById(getId(req)), 
-            User.findOne({ $or : [{ email: req.body.user }, { username: req.body.user }] })).then(function () {
+            User.findOne({ $or: [{ email: req.body.user }, { username: req.body.user }] })).then(function () {
 
-            res.status(200).send(gettext("User added to group"));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+                res.status(200).send(gettext("User added to group"));
+            }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/groups/:id/users', auth.usr, function (req, res) {
@@ -263,8 +261,8 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
         groupingOps.modifyGroupMember(req, Group.findById(getId(req)), 
             Webble.findOne({ "webble.defid": req.body.webble })).then(function () {
-            
-            res.status(200).send(gettext("Webble added to group"));
+
+                res.status(200).send(gettext("Webble added to group"));
             }).catch(err => util.resSendError(res, err));
 	});
 

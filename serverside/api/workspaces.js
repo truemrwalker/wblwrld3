@@ -45,10 +45,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	}
 	function normalizeFullWS(ws) {
 
-		var obj = ws.toJSON();
-		obj.workspace.id = ws.id;
-		obj.workspace.is_shared = ws._contributors.length != 0;
-		return obj.workspace;
+        ws.workspace.id = ws._id;
+        ws.workspace.is_shared = ws._contributors.length != 0;
+        return util.stripObject(ws.workspace);
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -76,12 +75,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		else
 			query.conditions["$or"] = ownerDisjunctions;
 
-		Workspace.find(query.conditions, '_contributors workspace.name workspace.creator', query.options).exec().then(function (workspaces) {
+        Workspace.find(query.conditions, '_contributors workspace.name workspace.creator', query.options).lean().exec().then(function (workspaces) {
             res.json(util.transform_(workspaces, normalizeWS));
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot retrieve workspaces"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot retrieve workspaces")));
 	});
 
 	app.post('/api/workspaces', auth.usr, function(req, res) {
@@ -93,27 +89,21 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		ws.save().then(function () {
             res.json(normalizeWS(ws)); // Everything OK
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
 
 	app.get('/api/workspaces/:id', auth.usr, function (req, res) {
 
-		Workspace.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (ws) {
+        Workspace.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (ws) {
             
             if (!ws || !ws.isUserAuthorized(req.user))
                 throw new util.RestError(gettext("Workspace no longer exists"), 404);
             
             res.json(normalizeFullWS(ws));
 
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot retrieve workspace"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot retrieve workspace")));
 	});
 
 	app.put('/api/workspaces/:id', auth.usr, function (req, res) {
@@ -142,10 +132,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
         }).spread(function (ws) {
             res.json(normalizeWS(ws)); // Everything OK
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot change workspace"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot change workspace")));
 	});
 
 	app.delete('/api/workspaces/:id', auth.usr, function (req, res) {
@@ -162,10 +149,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 res.status(200).send(gettext("Successfully deleted")); // Everything OK
             });
 
-        }).catch(function (err) {
-            util.resSendError(res, err, gettext("Cannot delete workspace"));
-        }).done();
-
+        }).catch(err => util.resSendError(res, err, gettext("Cannot delete workspace")));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -175,40 +159,25 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/workspaces/:id/share', auth.usr, function(req, res) {
 
-		sharingOps.updateContributors(req, Workspace.findById(mongoose.Types.ObjectId(req.params.id)))
-			.then(function(users) {
-				res.json(users);
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        sharingOps.updateContributors(req, Workspace.findById(mongoose.Types.ObjectId(req.params.id))).then(function (users) {
+            res.json(users);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.get('/api/workspaces/:id/share', auth.usr, function(req, res) {
 
-		sharingOps.getContributors(req, Workspace.findById(mongoose.Types.ObjectId(req.params.id)))
-			.then(function(users) {
-				res.json(users);
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        sharingOps.getContributors(req, Workspace.findById(mongoose.Types.ObjectId(req.params.id))).then(function (users) {
+            res.json(users);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/workspaces/:id/share', auth.usr, function(req, res) {
 
 		var del = (req.query.me) ? sharingOps.removeCurrentUser : sharingOps.clearContributors;
 
-		del(req, Workspace.findById(mongoose.Types.ObjectId(req.params.id)))
-			.then(function() {
-				res.status(200).send(gettext("Successfully deleted")); // Everything OK
-			})
-			.catch(function (err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        del(req, Workspace.findById(mongoose.Types.ObjectId(req.params.id))).then(function () {
+            res.status(200).send(gettext("Successfully deleted")); // Everything OK
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************

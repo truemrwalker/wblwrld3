@@ -45,10 +45,19 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	function normalizeWebble(w, files) {
 
-        var obj = w.getNormalizedObject(files);
+        var obj = { webble: w.webble };
+
+        obj.created = w._created || w._id.getTimestamp() || Date.now();
+        obj.updated = w._updated || new Date();
+        obj.rating = w._rating.average;
+        obj.rating_count = w._rating.count;
+        obj.is_shared = w._contributors.length != 0;
+
+        obj.files = files;
 
         obj.id = w._id;
         obj.is_dev = true;
+
         return obj;
 	}
 
@@ -77,7 +86,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/dev/webbles/:id', auth.non, function(req, res) {
 
-		return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function(webble) {
+        return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function(webble) {
 
 			if (!webble)
                 throw new util.RestError(gettext("Webble does not exist"));

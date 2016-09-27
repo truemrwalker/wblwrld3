@@ -35,17 +35,16 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	// Utility functions
 	//
 	function normalizeUser(u) {
-
-		return u.toJSON();
+        return util.stripObject(u);
 	}
 
 	function toIndex(indexString) {
 
-		var index = -1;
 		try {
-			index = parseInt(indexString, 10);
-		} catch (err) {}
-		return index;
+			return parseInt(indexString, 10);
+        } catch (err) {
+            return -1;
+        }
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -59,12 +58,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-		User.find(query.conditions, 'name username languages', query.options).exec().then(function (users) {
+        User.find(query.conditions, 'name username languages', query.options).lean().exec().then(function (users) {
             res.json(util.transform_(users, normalizeUser));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -73,38 +69,23 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/users/trusts', auth.usr, function(req, res) {
 
-		trustingOps.getTrusts(req, req.user)
-			.then(function(groups) {
-				res.json(groups);
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        trustingOps.getTrusts(req, req.user).then(function (groups) {
+            res.json(groups);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.put('/api/users/trusts', auth.usr, function(req, res) {
 
-		trustingOps.modifyTrusts(req, req.user)
-			.then(function() {
-				res.status(200).send(gettext("OK"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        trustingOps.modifyTrusts(req, req.user).then(function () {
+            res.status(200).send(gettext("OK"));
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.delete('/api/users/trusts', auth.usr, function(req, res) {
 
-		trustingOps.clearTrusts(req, req.user)
-			.then(function() {
-				res.status(200).send(gettext("OK"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        trustingOps.clearTrusts(req, req.user).then(function () {
+            res.status(200).send(gettext("OK"));
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
@@ -136,7 +117,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 			req.user.save().then(function() {
 				res.status(200).send(gettext("OK"));
-			}).done();
+            }).catch(err => util.resSendError(res, err));
 		}
 	});
 
@@ -150,15 +131,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 return g.toJSON();
             }));
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-
-        }).done();
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.put('/api/users/groups', auth.usr, function(req, res) {
 
-		Promise.try(function() { return mongoose.Types.ObjectId(req.body.group); }).then(function (gId) {
+		Promise.try(() => mongoose.Types.ObjectId(req.body.group)).then(function (gId) {
             
             var index = req.user._sec.groups.indexOf(gId);
             
@@ -173,10 +151,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 });
             }
 
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 };

@@ -47,14 +47,26 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     function normalizeWebble(w, isVerified, isTrusted, files) {
 
-        var result = w.getNormalizedObject(files, isVerified, isTrusted);
+        var obj = { webble: w.webble };
+
+        obj.created = w._created || w._id.getTimestamp() || Date.now();
+        obj.updated = w._updated || new Date();
+        obj.rating = w._rating.average;
+        obj.rating_count = w._rating.count;
+        obj.is_shared = w._contributors.length != 0;
+
+        obj.is_verified = !!isVerified;
+        obj.is_trusted = !!isTrusted;
+
+        obj.files = files;
 
         var groupNameCache = app.locals.groupNameCache;
 
         if (groupNameCache && w._sec.groups)
-            result.groups = w._sec.groups.map(gId => groupNameCache[gId.toString()] || "Hidden");
+            obj.groups = w._sec.groups.map(gId => groupNameCache[gId.toString()] || "Hidden");
 
-        return result;
+        console.log("***| RETURNING WEBBLE: ", w.webble.defid, "|***");
+        return obj;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -94,30 +106,30 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		    //console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-            return Webble.find(query.conditions, excludeWebbleFields, query.options).exec().then(function (results) {
+            return Webble.find(query.conditions, excludeWebbleFields, query.options).lean().exec().then(function (results) {
 
-                    if (!results)
-                        throw new util.RestError(gettext("There are not any webbles"));
+                if (!results)
+                    throw new util.RestError(gettext("There are not any webbles"));
 
-                    if (req.query.verify && req.query.verify === '1' && req.user) {
+                if (req.query.verify && req.query.verify === '1' && req.user) {
 
-                        return verifyOps.verify(req, results).then(function (trustResults) {
+                    return verifyOps.verify(req, results).then(function (trustResults) {
 
-                            if (results.length != trustResults.length)
-                                res.json(util.transform_(results, normalizeWebble));
-                            else {
+                        if (results.length != trustResults.length)
+                            res.json(util.transform_(results, normalizeWebble));
+                        else {
 
-                                for (var i = 0; i < results.length; ++i)
-                                    results[i] = normalizeWebble(results[i], true, trustResults[i]);
+                            for (var i = 0; i < results.length; ++i)
+                                results[i] = normalizeWebble(results[i], true, trustResults[i]);
 
-                                res.json(results);
-                            }
-                        });
-                    }
-                    else
-                        res.json(util.transform_(results, normalizeWebble));
+                            res.json(results);
+                        }
+                    });
+                }
+                else
+                    res.json(util.transform_(results, normalizeWebble));
 
-                }).catch(err => util.resSendError(res, err, gettext("Could not retrieve webbles")));
+            }).catch(err => util.resSendError(res, err, gettext("Could not retrieve webbles")));
 	    }
     });
 
@@ -125,7 +137,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
         const ownerCond = { $or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }] };
 
-        return Webble.find(ownerCond, excludeWebbleFields).exec().then(function (webbles) {
+        return Webble.find(ownerCond, excludeWebbleFields).lean().exec().then(function (webbles) {
 
             if (!webbles)
                 throw new util.RestError(gettext("Cannot retrieve webbles"));
@@ -141,7 +153,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     app.get('/api/webbles/:id', auth.non, function(req, res) {
 
-	    return Webble.findOne({ "webble.defid": req.params.id }).exec().then(function(webble) {
+        return Webble.findOne({ "webble.defid": req.params.id }).exec().then(function(webble) {
 
             if (!webble)
                 throw new util.RestError(gettext("Webble does not exist"));
@@ -175,7 +187,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/webbles/:id/image', auth.non, function(req, res) {
 
-		return Webble.findOne({ "webble.defid": req.params.id }).exec().then(function(webble) {
+        return Webble.findOne({ "webble.defid": req.params.id }).lean().exec().then(function(webble) {
 
             if (!webble)
                 throw new util.RestError(gettext("Webble does not exist"));

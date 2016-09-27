@@ -36,10 +36,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	function normalizeUser(u) {
 
-		var user = u.toJSON();
-		delete user.auth_keys;
-    delete user.notif;
-		return user;
+        var u = util.stripObject(u);
+		delete u.auth_keys;
+        delete u.notif;
+        return u;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -74,12 +74,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 		console.log("Query with conditions:", query.conditions, "...and options:", query.options);
 
-		User.find(query.conditions, '-_sec', query.options).exec().then(function (users) {
+        User.find(query.conditions, '-_sec', query.options).lean().exec().then(function (users) {
             res.json(util.transform_(users, normalizeUser));
-        }).catch(function (err) {
-            util.resSendError(res, err);
-        }).done();
-
+        }).catch(err => util.resSendError(res, err));
 	});
 
 };

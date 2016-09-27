@@ -36,14 +36,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-	function getId(req) {
-		var id;
+    function getId(req) {
+
 		try {
-			id = mongoose.Types.ObjectId(req.params.id);
+			return mongoose.Types.ObjectId(req.params.id);
 		} catch (err) {
-			id = null; // Query with null
+			return null; // Query with null
 		}
-		return id;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -53,52 +52,32 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.get('/api/licenses/user', auth.usr, function (req, res) {
 
-		licensingOps.listKeys(req, req.user)
-			.then(function(results) {
-				res.json(results);
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        licensingOps.listKeys(req, req.user).then(function (results) {
+            res.json(results);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.put('/api/licenses/user', auth.usr, function (req, res) {
 
-		licensingOps.modifyKey(req, req.user)
-			.then(function() {
-				res.status(200).send(gettext("License Key Modified"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        licensingOps.modifyKey(req, req.user).then(function () {
+            res.status(200).send(gettext("License Key Modified"));
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************
 
 	app.get('/api/licenses/group/:id', auth.usr, function (req, res) {
 
-		licensingOps.listKeys(req, Group.findById(getId(req)))
-			.then(function(results) {
-				res.json(results);
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        licensingOps.listKeys(req, Group.findById(getId(req))).then(function (results) {
+            res.json(results);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	app.put('/api/licenses/group/:id', auth.usr, function (req, res) {
 
-		licensingOps.modifyKey(req, Group.findById(getId(req)))
-			.then(function() {
-				res.status(200).send(gettext("License Key Modified"));
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        licensingOps.modifyKey(req, Group.findById(getId(req))).then(function () {
+            res.status(200).send(gettext("License Key Modified"));
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	////////////////////////////////////////////////////////////////////
@@ -106,14 +85,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	app.get('/api/licenses/key', auth.usr, function (req, res) {
 
-		licensingOps.getKey(req, req.user)
-			.then(function(value) {
-				res.json(value && value.access_key);
-			})
-			.catch(function(err) {
-				util.resSendError(res, err);
-			})
-			.done();
+        licensingOps.getKey(req, req.user).then(function (value) {
+            res.json(value && value.access_key);
+        }).catch(err => util.resSendError(res, err));
 	});
 
 	//******************************************************************

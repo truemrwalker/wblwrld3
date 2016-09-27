@@ -174,22 +174,6 @@ module.exports = function(app, config, mongoose, gettext) {
 		};
 	};
     
-    WebbleSchema.methods.getNormalizedObject = function (files, isVerified, isTrusted) {
-        
-        var obj = this.toJSON();
-        obj.created = this._created || this._id.getTimestamp() || Date.now();
-        obj.updated = this._updated || new Date();
-        obj.rating = this._rating.average;
-        obj.rating_count = this._rating.count;
-        obj.is_shared = this._contributors.length != 0;
-        
-        obj.is_verified = !!isVerified;
-        obj.is_trusted = !!isTrusted;
-
-        obj.files = files;
-        return obj;
-    };
-
 	//******************************************************************
 
 	WebbleSchema.methods.isUserOwner = function (user) {

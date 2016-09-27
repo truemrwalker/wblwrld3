@@ -48,10 +48,17 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	//
     function normalizeDevWebble(w) {
 
-        var obj = w.getNormalizedObject(w.files);
+        var obj = { webble: w.webble };
+
+        obj.created = w._created || w._id.getTimestamp() || Date.now();
+        obj.updated = w._updated || new Date();
+        obj.rating = w._rating.average;
+        obj.rating_count = w._rating.count;
+        obj.is_shared = w._contributors.length != 0;
 
         obj.id = w._id;
         obj.is_dev = true;
+
         return obj;
     }
 
