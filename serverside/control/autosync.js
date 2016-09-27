@@ -51,10 +51,9 @@ function startFsMonitor(webbleDir, mongoose) {
 
         if (!stat) {
 
-            // return gfs.deleteFile(remoteDir, filename)
-            //     .then(() => console.log("DEBUG: Deleted file:", localFile))
-            //     .catch(err => console.log("Error Deleting file:", err));
-			return Promise.resolve();
+            return gfs.deleteFile(remoteDir, filename)
+                .then(() => console.log("DEBUG: Deleted file:", localFile))
+                .catch(err => console.log("Error Deleting file:", err));
         }
         else if (!stat.isFile() || filename.toLowerCase() == 'info.json') {
 
@@ -78,20 +77,17 @@ function startFsMonitor(webbleDir, mongoose) {
 
 	var gfs = new libGfs.GFS(mongoose);
 
-    // 'add' is handled by 'change'
+    watcher.on('add', onFileChange);
     watcher.on('change', onFileChange);
     watcher.on('unlink', onFileChange);
 }
 
 module.exports = function (app, config, mongoose, gettext, webServer) {
 
-	var autoSyncActive = false;
-
 	if (config.DEPLOYMENT == 'development') {
 
 		try {
 			startFsMonitor(path.join(config.APP_ROOT_DIR, 'webbles'), mongoose);
-			autoSyncActive = true;
 		}
 		catch (err) {
 			console.log("Error enabling file autosync", err);
