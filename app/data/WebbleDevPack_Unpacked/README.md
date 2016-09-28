@@ -1476,389 +1476,393 @@ if($scope.getChildren().length > 0){
 	});
 }
 ```
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Request Assign Parent, deals with the interaction process of assigning child parent relationship due to user
-    // interaction. The target is the child if no child is pending, and it is the parent if there is a pending child.
-    // This method is usually never called from outside the platform, instead for forcing parent-child relationship one
-    // usually calls the Webble Core's paste() method instead.
-    $scope.requestAssignParent(target);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Shows the Quick Info Message box with the specified text for either 2.5 seconds or the specified time of either
-    // default size or the specified size at either the center of the screen or the specified position using either 
-    // default color or the specified color (which can be an array of colors for gradient effect). 
-    // If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed.
-    // If one call the function with empty text and time set to 0, the current QIM message (if any) will immediately close down.
-    $scope.showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Open Form, Creates and opens a modal form window for a specific use that can be used to edit or consume any data.
-    // For more details of available forms see SERVICES aopForms.
-    // For Custom simple message popups please use Enum.aopForms.infoMsg form with a content parameter config as such:
-    // {title: 'title text', content: 'body text'}. (Content can also contain html and css)
-    // The Webble-template builder can provide his own form html, controller and style class and call this method with
-    // an empty name and include whats needed in the content parameter configured as such:
-    // Array [{templateUrl: "absolute or relative path to form html file", controller: "Name of the controller method",
-    //        size: "'lg' for large, 'sm' for small or blank '' for normal"}, "Form Content in any form and type (string, array, object etc)"].
-    // Callback function is used for catching form response data (not available in infoMsg)
-    $scope.openForm(whatForm, content, callbackFunc);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Default Service Error can be used as a generic fail message for promises that cannot be kept.
-    $scope.serviceError(errorMsg);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Get Webbles By Template Id, returna a list of Webbles with a specific template id. (found in active Workspace)
-    $scope.getWebblesByTemplateId(whatTemplateid);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Get Webble By Instance Id, return the unique Webble with a specific instance id. (found in active Workspace)
-    $scope.getWebbleByInstanceId(whatInstanceId);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Get Webbles By Display Name, returns a list of Webbles with a certain display name. (found in active Workspace)
-    $scope.getWebblesByDisplayName(whatWebbleDisplayName);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Select All Webbles, make all webbles "Main" selected.
-    $scope.selectAllWebbles();
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Unselect All Webbles, makes all webbles unselected
-    $scope.unselectAllWebbles();
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Execute Menu Selection, executes the correct action, based on menu or shortcut selection.
-    // For more details of avialable selections please see SERVICES menuItemsFactoryService, where the itemnames are
-    // used as a sublink call. Additionally exists short cut keys outside the menu, which can be examined in the
-    // Webble World 3 Platform by pressing Alt+F1.
-    $scope.executeMenuSelection(sublink, whatKeys);
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Fast access to filter that lets you write dynamic string outputs in an efficient way.
-    $scope.strFormatFltr("string with parameters, like {0} and {1} inside it", [parameter0, parameter1]);
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Returns the default language (code) of the browser
-    $scope.getSysLanguage();
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Returns the current language (code) being used by the Webble World Platform
-    $scope.getCurrentLanguage();
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-	// Informs if there is a Webble World form currently open or not
-	$scope.getIsFormOpen();
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-
-    // Flags for some specific keyboard keys, weather they are currently pressed or not
-    $scope.altKeyIsDown = false;
+###_requestAssignParent_ ![Method][meth]
+Request Assign Parent, deals with the interaction process of creating a child-parent relationship due to user interaction. The target parameter is the child if no child is pending, and it is the parent if there is a pending child. This method is usually NEVER called from outside the platform, instead. for forcing parent-child relationship, one usually calls the Webble Core's `paste()` method instead.
 	
-###_()_ ![Method][meth]
-
-####
+####requestAssignParent(target)
 
 * **Parameters:**
-    * ()
+    * target (Webble Pointer) the Webble that is being assigned child or parent status
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
-
+// Initiate a parent-child relationship creation where the user is supposed to click on possible parent for the Webble already assigned as child
+$scope.requestAssignParent($scope.theView);
 ```
+###_showQIM_ ![Method][meth]
+Shows the Quick Info Message box with the specified text for either 2.5 seconds or the specified time of either default size or the specified size at either the center of the screen or the specified position using either default color or the specified color (which can be an array of colors for gradient effect). If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed. If one call the function with empty text and time set to 0, the current QIM message (if any) will immediately close down.
 	
-    $scope.shiftKeyIsDown = false;
+####showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance)
+
+* **Parameters:**
+    * qimText (String) The text being displaid
+	    * If Empty (and qimTime = 0) will close the Quick Info Message Box
+	* qimTime (Integer) the number of milliseconds the Quick Info Message Box will be displayed
+	    * OPTIONAL
+		* Default: 2500 ms
+	* qimSize (Object(Vector)) an object with _w_ and _h_ as keys (value in pixels)
+	    * e.g. {w: 100, h: 100}
+		* OPTIONAL
+		* Default: {w: 250, h: 100} 
+	* qimPos (Object(Vector)) an object with _x_ and _y_ as keys (value in pixels)
+	    * e.g. {x: 100, y: 100}
+		* OPTIONAL
+		* Default: Centered in browser window
+	* qimColor (Color String OR Array(of Color Strings)) Hexadecimal color value "#000000", color name "black", rgb or rgba value (rgb(0, 0, 0)) are allowed. If an array is used then a color gradience will be created.
+    	* OPTIONAL
+        * default: Gradient light yellow / Khaki
+	* qimDominance (Boolean) By default any current Quick Info Message Box is replaced if a new one is called, but if this parameter is set to true, then any further calls of this method will be ignored (not qued)
+	    * OPTIONAL
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Displays a Quick Info Message Box with custom settings
+$scope.showQIM("You are Awsome!", 3000, {w: 400, h: 200}, undefined, ["red", "orange", "yellow"]);
+```
+###_openForm_ ![Method][meth]
+Open Form creates and opens a modal form window for a specific use that can be used to edit or consume any data. For more details of available forms see Services [aopForms](#aopForms). Most predefined forms requires very specific configured content to siplay properly and is not really meant to be used from within Webble code, but if ever needed the possibility exists.
+For Custom simple message popups please use `Enum.aopForms.infoMsg` form with a content parameter config as such:  
+`{title: 'title text', content: 'body text'}`. (Content can also contain html and css).  
+The Webble-template builder can provide his own form html, controller and style class and call this method with an empty name and include whats needed in the content parameter configured as such:  
+Array [{templateUrl: "absolute or relative path to form html file", controller: "Name of the controller method", size: "'lg' for large, 'sm' for small or blank '' for normal"}, "Form Content in any form and type (string, array, object etc)"].  
+Callback function is used for catching form response data (not available in infoMsg)
 	
-###_()_ ![Method][meth]
-
-####
+####openForm(whatForm, content, callbackFunc)
 
 * **Parameters:**
-    * ()
+    * whatForm (Integer(Enum)) see [aopForms](#aopForms) in servcies for available forms
+	    * Value not recognized by aopForms will assumme a custom form request
+	* content (Object) an object with different keys or value depending on which form is called for 
+	* callbackFunc (Function) after the form is closed this function will be called, and depending on which form that was used the provided data object will contain different keys and values
+	    * OPTIONAL
 * **Returns:**
-    * ()
+    * Nothing
 
 ```JavaScript
-// 
+// Opens a pre configured aopForm for Webble browser and Webble search
+$scope.openForm(Enum.aopForms.wblSearch, $scope, null);
 
+// Opens simple info message form
+$scope.openForm(Enum.aopForms.infoMsg, {title: 'Welcome to My Webble', content:
+	"<p>This Webble is the best and greatest Webble ever made " +
+	"since dawn of time and it will make America great again.</p>"}
+);
+
+// Opens a custom form using custom html and javascript, found in the Webble template (see source code cooments for detailed usage)
+$scope.openForm('MyCustomForm', [{templateUrl: 'my-custom-form.html', controller: 'MyCustomForm_Ctrl', size: 'lg', backdrop: 'static'}, {formInputData1: $scope.gimme("mySlot"), formInputData2: $scope.gimme("myOtherSlot")}], function(returnContent){
+	$log.log(returnContent);
+});
 ```
+###_getWebblesByTemplateId_ ![Method][meth]
+Returns a list of Webbles (of all active Webbles) with a specific template id.
+
+####getWebblesByTemplateId(whatTemplateid)
+
+* **Parameters:**
+    * whatTemplateid (String) the template id used to search for active Webbles
+* **Returns:**
+    * (Array) a list of all Webbles that have the specified template id
+
+```JavaScript
+// Get all Webbles that is of template identified as "fundamental" and write their instance id to the console
+for(var i = 0, aw; aw = $scope.getWebblesByTemplateId("fundamental")[i]; i++){
+	$log.log(aw.scope().getInstanceId());
+}
+```
+###_getWebbleByInstanceId_ ![Method][meth]
+Return the unique Webble (of all active Webbles) with a specific instance id.
+
+####getWebbleByInstanceId(whatInstanceId)
+
+* **Parameters:**
+    * whatInstanceId (Integer) the instance id of the active Webble being searched for
+* **Returns:**
+    * (Webble Pointer) the Webble that have the spcified instance id
+
+```JavaScript
+// Get the Webble that has instance id 2, and if it exists write its template id to the console
+var theWbl = $scope.getWebbleByInstanceId(2);
+if(theWbl){
+	$log.log(theWbl.scope().theWblMetadata['templateid']);
+}
+```
+###_getWebblesByDisplayName_ ![Method][meth]
+Returns a list of Webbles (of all active Webbles) with a certain display name.
+
+####getWebblesByDisplayName(whatWebbleDisplayName)
+
+* **Parameters:**
+    * whatWebbleDisplayName (String) the display name used to search for active Webbles
+* **Returns:**
+    * (Array) a list of all Webbles that have the spcified display name
+
+```JavaScript
+// Get all Webbles that has the display name "Fundamental Webble" and write their instance id to the console
+for(var i = 0, aw; aw = $scope.getWebblesByDisplayName("Fundamental Webble")[i]; i++){
+	$log.log(aw.scope().getInstanceId());
+}
+```
+###_selectAllWebbles_ ![Method][meth]
+Makes all Webbles "Main" selected (With green solid border and visible Interaction objects).
+
+####selectAllWebbles()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Selects alla Webbles
+$scope.selectAllWebbles();
+```
+###_unselectAllWebbles_ ![Method][meth]
+Makes all Webbles unselected (Without any border).
+
+####unselectAllWebbles()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Unselects alla Webbles
+$scope.unselectAllWebbles();
+```
+###_executeMenuSelection_ ![Method][meth]
+Executes the correct action, based on menu (or corresponding shortcut selection which can be examined in the Webble World 3 Platform). When calling this method it will have the same effect as if the user have clicked on the specified menu option in the top main menu.
+
+#####Available menu sublink names
+
+* **shortcutinfo:** Displays a form with some shortcut keys information
+* **altf2:** Toggles Main menu visibility
+* **altf3:** Toggles Debug logging
+* **altf5:** Quick saves workspace
+* **altf6:** Quick loads previously quick saved workspace
+* **altf8:** Loads a Fundamental Webble
+* **altf9:** Change current Platform language to English
+* **altf10:** Opens up the platform language change form
+* **altshiftpagedown:** Reset Webble World Intro to first time visitor mode
+* **altshiftend:** Clear all Webble world cookies and local storage user data.
+* **esc:** Cancel what is currently going on (e.g. Close form)
+* **leftarrow:** Move current selected Webble to the left
+* **rightarrow:** Move current selected Webble to the right
+* **uparrow:** Move current selected Webble upwards
+* **downarrow:** Move current selected Webble downwards
+* **gestSwipeDown:** Shows top main menu (only on tablets)
+* **gestSwipeUp:** Hides top main menu (only on tablets)
+* **newws:** New Workspace (Clear away current)
+* **openws:** Open Workspace (opens workspace selection form)
+* **savews:** Saves current workspace (with current name if exists otherwise dipslays form for giving name)
+* **savewsas:** Dipslays form for giving save name to workspace
+* **sharews:** Share workspace opens form for selecting users to share with 
+* **deletews:** Delete Current open Workspace (opens confirmation box)
+* **browse:** Opens Webble browser
+* **loadwbl:** Load Webble opens form for loading webble online or local
+* **impwbl:** Import Webble opens form for selecting import file
+* **pub:** Publish Webble opens the form for doing just that
+* **expwbl:** Export Webble opens form for doing that
+* **upload:**: Switch to the Webble Template Editor
+* **undo:**: Undo the last Webble operation
+* **redo:** Redo the last undone Webble operation
+* **selectall:** Select all selects all Webbles in the workspace
+* **deselectall:** Deselect all deselects all Webbles in the workspace
+* **duplicate:** Duplicate creates a duplicate of all selected Webbles
+* **sharedduplicate:** Shared Duplicate creates a shared duplicate of all selected Webbles
+* **bundle:** Bundle creates a bundle of all selected Webbles
+* **delete:** Delete, deletes all selected Webbles
+* **wblprops:** Webble Props open the multi Webble slot change form
+* **platformprops:** Opens the platform settings form
+* **toggleconn:** Toggle Connection View toggles the connection view visualization
+* **wsinfo:** Workspace information displays a form with active Webbles information
+* **fullscrn:** Fullscreen toggles fullscreen mode
+* **docs:** Opens up the Webble manual in a new browser tab
+* **tutorials:** Opens a new browser tab for Webble YouTube tutorials
+* **faq:** FAQ opens up the FAQ form
+* **openchat:** Open Chat opens the chat form
+* **support:** Support opens the user defined mail program for writing mail to Webble World Support team
+* **community:** Opens a new browser tab for StackOverflow developers community page
+* **devpack:** Developers Package download a zipfile with Webble template development files
+* **git:**Opens a new browser tab for Webbel World GitHub page
+* **bugreport:** Bug report opens the user defined mail program for writing mail to Webble World debug team
+* **about:** About opens up the Webble world About information form
+* **profile:** Switch to the user profile page
+* **notif:** Switch to the user notification settings tab in the profile page
+* **groups:** Switch to the user groups settings tab in the profile page
+* **logout:** Logs out the current logged in user
 	
-    $scope.ctrlKeyIsDown = false;
-
-
-###_()_ ![Method][meth]
-
-####
+####executeMenuSelection(sublink, whatKeys)
 
 * **Parameters:**
-    * ()
+    * sublink (String) the name of the submenu item wished to be executed
+	* whatKeys (Object) object with object-keys that describe which keys have been pressed. 
+	    * OPTIONAL
+	    * default: {theAltKey: false, theShiftKey: false, theCtrlKey: false, theKey: ''}
+		* `theKey` uses a readable key name value (not key code). Such name can be retrieved by [this](#fromKeyCode) service
 * **Returns:**
-    * ()
+    * (Boolean) True or false whether any action was executed or not
 
 ```JavaScript
-// 
-
+// Select all Webbles and then duplicate them and finish by deselect them ($timeout is used to make sure one process finish before the next one starts (not always needed, but sometimes, for time critical operations))
+$timeout(function(){
+	$scope.executeMenuSelection("selectall");
+	$timeout(function(){
+		$scope.executeMenuSelection("duplicate");
+		$timeout(function(){
+			$scope.executeMenuSelection("deselectall");
+		});
+	});
+});
 ```
+###_strFormatFltr_ ![Method][meth]
+Fast access to filter that lets you write dynamic string outputs in an efficient way.
 
-    // Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
-    $scope.setWaitingServiceDeactivationState(newState);
-
-###_()_ ![Method][meth]
-
-####
+####strFormatFltr(stringFormat)
 
 * **Parameters:**
-    * ()
+    * stringFormat (String) String with parameters inside it
+	    * e.g. "This is {0} stringformat string that I made {1}.", ["my", "myself"] (the values in the array can be variables)
 * **Returns:**
-    * ()
+    * (String) the correct formatted string
 
 ```JavaScript
-// 
-
+// Report error to the console about non existing webble tempalte of a certain revision
+$log.error($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist.', [whatTemplateId, whatTemplateRevision]));
 ```
+###_getSysLanguage_ ![Method][meth]
+Returns the default language (language code) of the browser.
 
-    // If debugging and one want to display a text in the menu section where debug enabled is displayed, one can use this variable
-    $scope.debugValue.txt
-
-###_()_ ![Method][meth]
-
-####
+####getSysLanguage()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) the language code for the browser
+	    * e.g. "en-us"
 
 ```JavaScript
-// 
-
+// Writes the system language code to the console
+$log.log($scope.getSysLanguage());
 ```
+###_getCurrentLanguage_ ![Method][meth]
+Returns the current language (language code) being used by the Webble World Platform.
 
-    // Quick way to retrieve or set the current background color of the platform. 
-    $scope.getPlatformBkgColor();
-	
-###_()_ ![Method][meth]
-
-####
+####getCurrentLanguage()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) the language code for the Webble World platform
+	    * e.g. "en-us"
 
 ```JavaScript
-// 
-
+// Writes the platform language code to the console
+$log.log($scope.getCurrentLanguage());
 ```
-	
-    $scope.setPlatformBkgColor(newPlatformBkgColor);
+###_getIsFormOpen_ ![Method][meth]
+Informs if there is a Webble World form currently open or not
+
+####getIsFormOpen()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether a webble world form is open or not
+
+```JavaScript
+// Tells the console if there is any form open or not
+$log.log("A form is currently open: " + $scope.getIsFormOpen());
+```
+###_altKeyIsDown_ ![Property][prop]
+Boolean Flag for the ALT key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
+
+####altKeyIsDown
+
+* **Returns:**
+    * (Boolean) True or False whether the key is down or not
+
+```JavaScript
+// Tells the console if the ALT key is pressed or not
+$log.log("The ALT key is down: " + $scope.altKeyIsDown);
+```
+###_shiftKeyIsDown_ ![Property][prop]
+Boolean Flag for the SHIFT key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
+
+####shiftKeyIsDown
+
+* **Returns:**
+    * (Boolean) True or False whether the key is down or not
+
+```JavaScript
+// Tells the console if the SHIFT key is pressed or not
+$log.log("The SHIFT key is down: " + $scope.shiftKeyIsDown);
+```
+###_ctrlKeyIsDown_ ![Property][prop]
+Boolean Flag for the CTRL key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
+
+####ctrlKeyIsDown
+
+* **Returns:**
+    * (Boolean) True or False whether the key is down or not
+
+```JavaScript
+// Tells the console if the CTRL key is pressed or not
+$log.log("The CTRL key is down: " + $scope.ctrlKeyIsDown);
+```
+###_setWaitingServiceDeactivationState_ ![Method][meth]
+Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
+
+####setWaitingServiceDeactivationState(newState)
+
+* **Parameters:**
+    * newState (Boolean) True or False for OFF or ON of showing waiting graphics
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Makes sure no "work in progress" graphics are displayed from here on now
+$scope.setWaitingServiceDeactivationState(true);
+```
+###_debugValue.txt_ ![Property][prop]
+If one is debugging, and one wants to display a text in the menu section where "debug Logging On" is displayed, one can use this variable.
+
+####debugValue.txt
+
+```JavaScript
+// Sets the debugValue.txt to the Webbles "MySlot" slot value
+$scope.debugValue.txt = $scope.gimme("MySlot");
+```
+###_getPlatformBkgColor_ ![Method][meth]
+Quick way to retrieve the current background color of the platform. 
+
+####getPlatformBkgColor()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the current background color of the platform workspace
+
+```JavaScript
+// Tells the console which color the platform currently use
+$log.log($scope.getPlatformBkgColor());
+```
+###_setPlatformBkgColor_ ![Method][meth]
+Quick way to set the current background color of the platform. This setting only lasts before next change or end of the user session. It will not affect the users default background color in future sessions.
+
+####setPlatformBkgColor(newPlatformBkgColor)
+
+* **Parameters:**
+    * newPlatformBkgColor (Color String) Hexadecimal value "#000000", color name "black", rgb or rgba value (rgb(0, 0, 0)) are allowed
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Sets the workspace platform background to purple
+$scope.setPlatformBkgColor("purple");
+``` 
 
 <!------------------------------------------------------------------------------------------------------------------->
 ##Workspace
@@ -1946,6 +1950,8 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     //Available Platform states
     Enum.availablePlatformPotentials
     { None: 0, Slim: 1, Limited: 2, Full: 3, Custom: 4, Undefined: 5 }
+
+<a name="aopForms"></a>
 
     //Available forms and modal windows
     Enum.aopForms
@@ -2086,6 +2092,8 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
 
     // Get Uri Variables, returns a JavaScript Object containing the URL parameters from the current URL
     getUrlVars();
+
+<a name="fromKeyCode"></a>    
 
     // Keyboard key name from key code, returns the name of a key on the keyboard based on the key code value.
     fromKeyCode(keycode);
