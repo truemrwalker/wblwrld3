@@ -1863,23 +1863,128 @@ Quick way to set the current background color of the platform. This setting only
 // Sets the workspace platform background to purple
 $scope.setPlatformBkgColor("purple");
 ``` 
-
 <!------------------------------------------------------------------------------------------------------------------->
 ##Workspace
 The **Workspace** is the area where the Webbles resides and are modified and/or used. It contains mainly internal methods,
 but a few useful help functions exists. Even here those are accessed via the Webble-template's `$scope`.
 
-    // The Bubble Text object can be used to display short info at specific locations, mainly Webbles. The following 
-    // methods are available to manipulate that.
-    $scope.getBubbleTxt();
-    $scope.setBubbleTxt(newTxt);
-    $scope.getBubbleTxtVisibility();
-    $scope.setBubbleTxtPos(newPos);
-    $scope.setBubbleTxtVisibility(newVisibilityState, howLong); //state is true or false and how long is time in milliseconds
-    
-    // Fast access to get the current height of the work surface area as a css value with 'px' at the end
-     $scope.getSurfaceHeight();
+###_getBubbleTxt_ ![Method][meth]
+The Bubble Text object can be used to display short info at specific locations, mostly Webbles. This method returns the current bubble text.
+	
+####getBubbleTxt()
 
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) The text currently assigned to the bubble text object
+
+```JavaScript
+// Use an AngularJS value watch to catch when the bubble text change and if it does, print it to the console
+$scope.$watch(function(){ return $scope.getBubbleTxt(); }, function(newVal, oldVal) {
+	if(newVal != ""){
+		$log.log(newVal);	
+	}
+}, true);
+```
+###_setBubbleTxt_ ![Method][meth]
+Sets the bubble text to a speciefied text.
+
+####setBubbleTxt(newTxt)
+
+* **Parameters:**
+    * newTxt (String) the new text which the bibble text object will hold
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Set the bubble text to a new string
+$scope.setBubbleTxt("This is awsome!");
+```
+###_getBubbleTxtVisibility_ ![Method][meth]
+Returns the bubble text current visibility status.
+
+####getBubbleTxtVisibility()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether the bubble text object is visible or not
+
+```JavaScript
+// Use an AngularJS value watch to catch when the bubble becomes visible and if it does, print the current bubble text to the console
+$scope.$watch(function(){ return $scope.getBubbleTxtVisibility(); }, function(newVal, oldVal) {
+	if(newVal == true){
+		$log.log($scope.getBubbleTxt());
+	}
+}, true);
+```	
+###_getBubbleTxtPos_ ![Method][meth]
+Returns the current (absolute) position on the workspace for the bubble text object, but adjusted for avoiding display outside the window frame and in relation to the possible Webble being targeted.
+
+####getBubbleTxtPos()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Object(vector)) an object with _x_ and _y_ keys for the bubble text position
+	    * e.g. {x: 100, y: 100}
+
+```JavaScript
+// Prints to the console the adjusted bubble text object position
+$log.log( $scope.getBubbleTxtPos() );
+```
+
+###_setBubbleTxtPos_ ![Method][meth]
+Sets the new (absolute) position on the workspace for the bubble text object (and optionally includes the Webble being targeted).
+
+####setBubbleTxtPos(newPos, caller)
+
+* **Parameters:**
+    * newPos (Object(vector)) an object with _x_ and _y_ keys for the bubble text position
+	    * e.g. {x: 100, y: 100}
+		* When disabled positioned offside at {x: -1000, y: -1000}
+	* caller (Webble Pointer) Informs the bubble text which Webble is being targeted for text display
+	    * OPTIONAL
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Place the bubble text object at a new non-webble-related position
+$scope.setBubbleTxtPos({x: 150, y: 150});
+```
+###_setBubbleTxtVisibility_ ![Method][meth]
+When calling this with true and a time, the bubble text object will appear at its assigned (and adjusted) position, showing its assigned text for the amount of milliseconds defined. When that time has passed the bubble text object will hide and resets itself, both its text and position.
+
+####setBubbleTxtVisibility(newVisibilityState, howLong)
+
+* **Parameters:**
+    * newVisibilityState (Boolean) True or false whether the bubble text object should be visible or not
+	* howLong (Integer) Time in milliseconds for how long the bubble text object should be visible before it goes invisible again
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Assigns a bubble text object to the webble and display its text for 3.5 seconds
+$scope.setBubbleTxt("Booo!");
+var absPos = $scope.getWblAbsPosInPixels($scope.theView);
+$scope.setBubbleTxtPos(absPos, $scope.theView);
+$scope.setBubbleTxtVisibility(true, 3500);
+```
+###_getSurfaceHeight_ ![Method][meth]
+Fast access to get the current height of the work surface area as a css value with 'px' at the end.
+
+####getSurfaceHeight()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the height of the workspace surface as a css value with pixels.
+	    * e.g. "900px"
+
+```JavaScript
+// Print to the console the current height of the workspace area
+$log.log( $scope.getSurfaceHeight() );
+```   
 <!------------------------------------------------------------------------------------------------------------------->
 <a name="io"></a>
 ##Interaction Object
