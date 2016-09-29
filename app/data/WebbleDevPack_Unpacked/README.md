@@ -44,7 +44,7 @@ The unique template element (JQuery) for a webble, in order to get access to the
 
 ####theView
 
-* **Returns:**
+* **Get & Set:**
     * (Webble Pointer) Pointer to the Webble Element
         * to access the View in the DOM and the Webble scope
 
@@ -68,7 +68,7 @@ Those available from core are:
 
 ####theWblMetadata["KEY"]
 
-* **Returns:**
+* **Get & Set:**
     * (Various) Value of the selected key
 
 ```JavaScript
@@ -550,7 +550,7 @@ Contains a list of [Interaction object](#io) pointers (colored balls around the 
 
 ####theInteractionObjects
 
-* **Returns:**
+* **Get & Set:**
     * (Array) interaction object instance pointers for accessing their internals
 
 ```JavaScript
@@ -822,7 +822,7 @@ A set of boolean flags for helping the devloper rescuing some (weird) touch even
 
 ####touchRescueFlags
 
-* **Returns:**
+* **Get & Set:**
     * (Object) A set of dedicated object keys containing boolean values that control some environment behavior.
 	    * doubleTapTemporarelyDisabled: (Boolean) tells whether double tap behavior is blocked or not
 		* interactionObjectActivated: (Boolean) tells whether Interaction Objects are active or disabled.
@@ -1781,7 +1781,7 @@ Boolean Flag for the ALT key on the Keyboard, weather it is currently pressed or
 
 ####altKeyIsDown
 
-* **Returns:**
+* **Get & Set:**
     * (Boolean) True or False whether the key is down or not
 
 ```JavaScript
@@ -1793,7 +1793,7 @@ Boolean Flag for the SHIFT key on the Keyboard, weather it is currently pressed 
 
 ####shiftKeyIsDown
 
-* **Returns:**
+* **Get & Set:**
     * (Boolean) True or False whether the key is down or not
 
 ```JavaScript
@@ -1805,7 +1805,7 @@ Boolean Flag for the CTRL key on the Keyboard, weather it is currently pressed o
 
 ####ctrlKeyIsDown
 
-* **Returns:**
+* **Get & Set:**
     * (Boolean) True or False whether the key is down or not
 
 ```JavaScript
@@ -1831,6 +1831,9 @@ If one is debugging, and one wants to display a text in the menu section where "
 
 ####debugValue.txt
 
+* **Get & Set:**
+    * (String) any optional text
+	
 ```JavaScript
 // Sets the debugValue.txt to the Webbles "MySlot" slot value
 $scope.debugValue.txt = $scope.gimme("MySlot");
@@ -1988,60 +1991,225 @@ $log.log( $scope.getSurfaceHeight() );
 <!------------------------------------------------------------------------------------------------------------------->
 <a name="io"></a>
 ##Interaction Object
-The **Interaction Object** is those small balls that each Webble has on the border when "_Main_" selected. There are 12
-avialable around the border, but by default only 3-4 are activated. The Webble-template developer may configure and
-activate (or deactivate) freely any of those for its own need. In the Webble-template the developer most easy just
-define a Interaction object array object and all is set up automatically, but if the need for fine grain power exist,
-then that is also available.
+The **Interaction Objects** are those small balls that each Webble has on the border when "_Main_" selected. There are 12
+of them avialable around the border, but by default only 3-4 are activated. The Webble-template developer may configure and
+activate (or deactivate) freely any of those for its own need. In the Webble-template the developer just define an Interaction object array object and all is set up automatically, but if the need for fine grain power exist, then that is also available. To access the Interaction object array one use `$scope.theInteractionObjects` and to access a specific interaction object method one use `$scope.theInteractionObjects[i].scope().ioMethod();`.  
+As a Webble template developer one can manipulate the default interaction objects to the fullest, but one should probably avoid it if possible because it will confuse Webble users who are used to certain behaviors.
 
-    // The Color of the Interaction Object
-    $scope.color = '';
+###_color_ ![Property][prop]
+a property that contains the color of the Interaction Object
 
-    // The position of the Interaction Object. (In 99.99% of the cases this is completelly auto adjusted by the Webble,
-    // but it is available to enforce if needed)
-    $scope.pos = {left: 0, top: 0};
+####color
 
-    // The Text displayed when hoovering the Interaction Object, which usually describes what it does
-    $scope.tooltip = 'undefined';
+* **Get & Set:**
+    * (Color String) the color of the interaction object
 
-    // Index of the Interaction object available 0-11 in order to grab the one interaction object one really wants.
-    // The index positions are as follows
-    //     0,4,8-----1
-    //     |         5
-    //     |         9
-    //     11        |
-    //     7         |
-    //     3----2,6,10
-    $scope.getIndex();
+```JavaScript
+// Iterates all a Webbles interaction objects and prints their colors to the console
+for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
+	$log.log( $scope.theInteractionObjects[i].scope().color );
+}
+```
+###_pos_ ![Property][prop]
+A property that contains the position of the Interaction Object relative to its Webble (in pixels). (In 99.99% of the cases this is completelly auto adjusted by the Webble, but it is available to enforce if needed)
+	
+####pos
 
-    // The name that the interaction object is identified by and is used to trigger custom behavior
-    $scope.getName();
-    $scope.setName(whatName);
+* **Get & Set:**
+    * (Object(vector)) a position object with _left_ and _top_ keys telling the position of the interaction ball
+	    * e.g. {left: 0, top: 0}
 
-    // Get Is Enabled, gets if this object is enabled or not. (false = not visible)
-    $scope.getIsEnabled();
+```JavaScript
+// Iterates all a Webbles interaction objects and prints their position in pixels (reltive to its Webble) to the console
+for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
+	$log.log( $scope.theInteractionObjects[i].scope().pos );
+}
+```
+###_tooltip_ ![Property][prop]
+A property that contains the Text which is displayed when hoovering the Interaction Object with the mouse. The text usually describes what the interaction object does.
 
-    // Set Is Enabled, sets the enabling state (true or false) for this object. (false = not visible)
-    $scope.setIsEnabled(enableState);
+####tooltip
 
+* **Get & Set:**
+    * (String) text that will be displayed as a tooltip when the mouse hoovers above the Interaction ball
+	    * "undefined" for disabled interaction objects
+
+```JavaScript
+// Iterates all a Webbles interaction objects and prints their tooltip text to the console
+for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
+	$log.log( $scope.theInteractionObjects[i].scope().tooltip );
+}
+```
+###_getIndex_ ![Method][meth]
+Returns the index of the Interaction object, from 0 to 11, in order to grab the one interaction object one really wants. the index value and IO array value are most likely the same, but this method can be used to identify an Interaction object outside its array.  
+The index positions are as follows (note the circular assignment of index value):  
+0,4,8-----1  
+|         5  
+|         9  
+11        |  
+7         |  
+3----2,6,10
+	
+####getIndex()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer) The index value of the interaction object which tells where along the Webble border the IO is stationed and found
+
+```JavaScript
+// Iterates all a Webbles interaction objects to find the specific one with color pink and print its index value to the console
+for(var i = 0; i < $scope.theInteractionObjects.length; i++){
+	if($scope.theInteractionObjects[i].scope().color == "pink"){
+		$log.log( $scope.theInteractionObjects[i].scope().getIndex() );
+	}
+}
+```
+###_getName_ ![Method][meth]
+Returns the name that the interaction object is identified by and which is used to trigger custom behavior.
+
+####getName()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the unique id name this interaction object go by
+	    * Empty string for disabled interaction objects
+
+```JavaScript
+// Iterates all a Webbles interaction objects and prints their unique id name to the console
+for(var i = 0; i < $scope.theInteractionObjects.length; i++){	
+	$log.log( $scope.theInteractionObjects[i].scope().getName() );
+}
+```
+###_setName_ ![Method][meth]
+Sets the name that the interaction object is identified by and which is used to trigger custom behavior.
+
+####setName(whatName)
+
+* **Parameters:**
+    * whatName (String) the unique id name this interaction object should go by
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Assign a new name to the interaction object with index 6
+$scope.theInteractionObjects[6].scope().setName("selfDestruct");
+```
+###_getIsEnabled_ ![Method][meth]
+Returns if this object is enabled or not. (false = invisible)
+
+####getIsEnabled()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether teh interaction object is enabled or not
+
+```JavaScript
+// Iterates all a Webbles interaction objects and prints if they are enabled or not
+for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
+	$log.log("IO with index " + i + " is enabled: " + $scope.theInteractionObjects[i].scope().getIsEnabled());
+}
+```
+###_setIsEnabled_ ![Method][meth]
+Sets the enabling state (true or false) for this object (true = visible). The effect of a interaction object being triggered by a user must be handled in the `coreCall_Event_InteractionObjectActivityReaction` method inside the Webble template controller (See source code and comments for details).
+
+####setIsEnabled(enableState)
+
+* **Parameters:**
+    * enableState (Boolean) True or False whether the interaction object should be enabled or not
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// configures, initiate and enables a new interaction object for the Webble
+$scope.theInteractionObjects[6].scope().setName("selfDestruct");
+$scope.theInteractionObjects[6].scope().tooltip = "Self Destruct";
+$scope.theInteractionObjects[6].scope().setIsEnabled(true);
+```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Directives
 AngularJS **Directives** can be very powerful and we recommend the Webble-template developers to create their own for their
-Webbles, but there are a few simple ones already available in the platform core that can be easily used too. Just apply
-the directive name as instructed either as a tag attribute or class name.
+Webbles (though not any requirment). But there are also a few simple ones already available in the platform core too, that can be easily applied. Just apply the directive name as instructed below either as a tag attribute or class name.
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Makes an element draggable (JQuery style) (Attribute or Class)
     draggable [optional: draggable="{options}" ]
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Makes an element resizable (JQuery style) (Attribute or Class)
     resizable [ optional: 'resizable="{options}" ]
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Makes an element sortable (JQuery style) (Attribute or Class)
     sortable [ optional: 'sortable="{options}" ]
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // make sure the select tags 'size' value can be set dynamically.
     ng-size"{{value}}"
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Resize the element's width to the same size as the current window size
     fullspread
 
