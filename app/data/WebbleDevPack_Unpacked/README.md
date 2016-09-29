@@ -2044,10 +2044,10 @@ for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
 Returns the index of the Interaction object, from 0 to 11, in order to grab the one interaction object one really wants. the index value and IO array value are most likely the same, but this method can be used to identify an Interaction object outside its array.  
 The index positions are as follows (note the circular assignment of index value):  
 0,4,8-----1  
-|         5  
-|         9  
-11        |  
-7         |  
+|.........5  
+|.........9  
+11........|  
+7.........|  
 3----2,6,10
 	
 ####getIndex()
