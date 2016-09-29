@@ -15,6 +15,7 @@ existing services, directives and filters that your Webble might want to use to 
 
 * ![Method][meth] = Method
 * ![Property][prop] = Property
+* ![Directive][dir] = Directive
 
 <!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
@@ -2043,8 +2044,7 @@ for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
 ###_getIndex_ ![Method][meth]
 Returns the index of the Interaction object, from 0 to 11, in order to grab the one interaction object one really wants. the index value and IO array value are most likely the same, but this method can be used to identify an Interaction object outside its array.  
 The index positions are as follows (note the circular assignment of index value):  
-![IO Pos Info][ioposinfo]
-	
+![IO Pos Info][ioposinfo]	
 ####getIndex()
 
 * **Parameters:**
@@ -2128,7 +2128,7 @@ $scope.theInteractionObjects[6].scope().setIsEnabled(true);
 AngularJS **Directives** can be very powerful and we recommend the Webble-template developers to create their own for their
 Webbles (though not any requirment). But there are also a few simple ones already available in the platform core too, that can be easily applied. Just apply the directive name as instructed below either as a tag attribute or class name.
 
-###_()_ ![Method][meth]
+###_()_ ![Directive][dir]
 
 ####
 
@@ -2144,7 +2144,7 @@ Webbles (though not any requirment). But there are also a few simple ones alread
     // Makes an element draggable (JQuery style) (Attribute or Class)
     draggable [optional: draggable="{options}" ]
 
-###_()_ ![Method][meth]
+###_()_ ![Directive][dir]
 
 ####
 
@@ -2160,7 +2160,7 @@ Webbles (though not any requirment). But there are also a few simple ones alread
     // Makes an element resizable (JQuery style) (Attribute or Class)
     resizable [ optional: 'resizable="{options}" ]
 
-###_()_ ![Method][meth]
+###_()_ ![Directive][dir]
 
 ####
 
@@ -2176,7 +2176,7 @@ Webbles (though not any requirment). But there are also a few simple ones alread
     // Makes an element sortable (JQuery style) (Attribute or Class)
     sortable [ optional: 'sortable="{options}" ]
 
-###_()_ ![Method][meth]
+###_()_ ![Directive][dir]
 
 ####
 
@@ -2192,7 +2192,7 @@ Webbles (though not any requirment). But there are also a few simple ones alread
     // make sure the select tags 'size' value can be set dynamically.
     ng-size"{{value}}"
 
-###_()_ ![Method][meth]
+###_()_ ![Directive][dir]
 
 ####
 
@@ -2487,5 +2487,5 @@ Extra functions that is within the system and can be used by any Webble develope
 
 [prop]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-P-icon.png
 [meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
-[dir]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
+[dir]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-D-icon.png
 [ioposinfo]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/ioPosInfo.png
