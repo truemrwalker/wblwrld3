@@ -2043,12 +2043,7 @@ for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
 ###_getIndex_ ![Method][meth]
 Returns the index of the Interaction object, from 0 to 11, in order to grab the one interaction object one really wants. the index value and IO array value are most likely the same, but this method can be used to identify an Interaction object outside its array.  
 The index positions are as follows (note the circular assignment of index value):  
-0,4,8-----1  
-|.........5  
-|.........9  
-11........|  
-7.........|  
-3----2,6,10
+![IO Pos Info][ioposinfo]
 	
 ####getIndex()
 
@@ -2492,3 +2487,5 @@ Extra functions that is within the system and can be used by any Webble develope
 
 [prop]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-P-icon.png
 [meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
+[dir]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
+[ioposinfo]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/ioPosInfo.png
