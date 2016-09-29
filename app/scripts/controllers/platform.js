@@ -152,6 +152,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		adminsDen: gettext("Admin's Den"),
 		logout: gettext("Logout")
 	};
+	$scope.currentWblWrldVersion = wwDef.WWVERSION;
     //-------------------------------
 
 
@@ -351,6 +352,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// Flags and short memory trackers that keeps track of platform states
 	var waitingForNumberKey_ = 0;
 	var frozenRecentWblList_ = [];
+	var platformResize_JSTimeout;
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -440,6 +442,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
     //=== EVENT HANDLERS =====================================================================
+
+
+	//========================================================================================
+	// Catch and react on browser window resize events
+	//========================================================================================
+	$( window ).resize(function(){
+		clearTimeout(platformResize_JSTimeout);
+		platformResize_JSTimeout = setTimeout(function(){
+			if(!$scope.$$phase){ $scope.$apply(); }
+		}, 350);
+	});
+	//========================================================================================
 
 
     //========================================================================================
@@ -2874,7 +2888,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 	//========================================================================================
 	// Send Online Message
-	// This method make a socker emit call on behalf of a custom webble to the server and
+	// This method make a socket emit call on behalf of a custom webble to the server and
 	// anyone online listening.
 	//========================================================================================
 	$scope.sendOnlineMsg = function(whatRoom, whatMsg){
@@ -4018,7 +4032,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var winner = {value: 0, owner: undefined};
 
         for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-            var thisWblValue = aw.scope().gimme(whatSlot);
+            var thisWblValue = parseFloat(aw.scope().gimme(whatSlot));
             if(lowestWins){
                 if(thisWblValue < winner.value){
                     winner.value = thisWblValue;

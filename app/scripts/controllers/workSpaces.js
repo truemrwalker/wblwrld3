@@ -48,6 +48,7 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $uibModal, $t
     // SET is more complex and found further below
 
     var bubbleTxtPos_ = {x: -1000, y: -1000};
+	var bblAdjPos = {x: -2000, y: -2000};
     $scope.putBelow = '';
     var bblTxtCaller_ = undefined;
     var displayTimer_;
@@ -228,15 +229,25 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $uibModal, $t
     // Returns the adjusted position of the bubble Text element
     //========================================================================================
     $scope.getBubbleTxtPos = function(){
-        var adjBblTxtPos = {x: bubbleTxtPos_.x, y: bubbleTxtPos_.y - 30};
-        if(adjBblTxtPos.y < 0 && adjBblTxtPos.y > -1000){
-            $scope.putBelow = 'top';
-            adjBblTxtPos.y = bubbleTxtPos_.y + parseInt(bblTxtCaller_.parent().css('height')) + 25;
-        }
-        else{
-            $scope.putBelow = '';
-        }
-        return adjBblTxtPos;
+    	if(bblAdjPos.x == -2000){
+			var adjBblTxtPos = {x: bubbleTxtPos_.x, y: bubbleTxtPos_.y - 30};
+
+			if(adjBblTxtPos.y < 0 && adjBblTxtPos.y > -1030){
+				$scope.putBelow = 'top';
+				if(bblTxtCaller_){
+					adjBblTxtPos.y = bubbleTxtPos_.y + parseInt(bblTxtCaller_.parent().css('height')) + 25;
+				}
+			}
+			else{
+				$scope.putBelow = '';
+			}
+
+			bblAdjPos = adjBblTxtPos;
+			return adjBblTxtPos;
+		}
+		else{
+			return bblAdjPos;
+		}
     };
     //========================================================================================
 
@@ -246,8 +257,9 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $uibModal, $t
     //========================================================================================
     $scope.setBubbleTxtPos = function(newPos, caller){
         bblTxtCaller_ = caller;
-        if(newPos.x && newPos.y){
+        if(newPos.x != undefined && newPos.y != undefined){
             bubbleTxtPos_ = newPos;
+			bblAdjPos = {x: -2000, y: -2000};
         }
     };
     //========================================================================================

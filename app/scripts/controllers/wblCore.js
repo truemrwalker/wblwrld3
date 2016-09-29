@@ -74,7 +74,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     // jquery element object pointing at the place in this webble where children should be DOM pasted
     var childContainer_ = undefined;
     $scope.getChildContainer = function(){return childContainer_;};
-    // SET a bit more complex and found further below
+	$scope.setChildContainer = function(newContainer){ childContainer_ = newContainer; };
 
     // The default slot to auto connect
     var theDefaultSlot_ = '';
@@ -1332,7 +1332,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     //= ---------				    -----------
     //= interactionObjectNameId     the id string name of the interaction object to manipulate
     //= eventType                   the type of the event that caused this call (click or move etc)
-    //= e                           mouse event arguments
+    //= e                           mouse event arguments      ]
     //=
     //= Returns: nothing
     //=
@@ -1990,23 +1990,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     };
     //========================================================================================
 
-	                /**/
+
     //========================================================================================
     // Get Instance Name
     // This method gets this webbles display name.
     //========================================================================================
     $scope.getInstanceName = function(){
         return $scope.theWblMetadata['displayname'];
-    };
-    //========================================================================================
-
-
-    //========================================================================================
-    // Set Child Container
-    // This method sets this webbles child container.
-    //========================================================================================
-    $scope.setChildContainer = function(newContainer){
-        childContainer_ = newContainer;
     };
     //========================================================================================
 
@@ -2481,7 +2471,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
         modifiedWblDef = getModifiedWblDefPosOffset(modifiedWblDef, whatOffset);
         modifiedWblDef = getModifiedWblZIndex(modifiedWblDef);
         $scope.loadWebbleFromDef(modifiedWblDef, whatCallbackMethod);
-        return true;
+
+		return true;
     };
     //========================================================================================
 
