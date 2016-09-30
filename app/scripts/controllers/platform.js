@@ -189,6 +189,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     // Flag that tells us weather the platform is running at its full potential or only with limited powers
     var currentPlatformPotential_ = Enum.availablePlatformPotentials.Undefined;
+	$scope.getCurrentPlatformPotential = function(){ return currentPlatformPotential_; };
 
     // Webble Instance Id counter, that assign session unique id's for the Webbles created.
     var wblInstanceIdCounter_ = 0;
