@@ -16,7 +16,7 @@ existing services, directives and filters that your Webble might want to use to 
 * ![Method][meth] = Method
 * ![Property][prop] = Property
 * ![Directive][dir] = Directive
-* ![Enum][enum] = Enumirations
+* ![Enum][enum] = Enumerations
 
 <!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
