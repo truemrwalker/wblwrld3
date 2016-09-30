@@ -2205,12 +2205,15 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
 <a name="enum"></a>
 ###_Enum_ ![Property][prop]
 The `Enum` service contains numerous enumaration lists for quicker and more structured and readable coding. To access any of the specific Enum obejcts just call Enum (remember to also add it to the top of the controller) envoking the enum object one is after and then the enum item available in that enum list.
-e.g. `if ( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.HighClearanceUser ) { alert("Good for you!"); }`
+e.g.  
+`if ( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.HighClearanceUser ) { `  
+`	alert("Good for you!");`  
+`}`
 
-####Enum.ENUM_OBJECT_NAME.ENUM_OBJECT_ITEM_NAME
+####**Enum.OBJECT_NAME.ITEM_NAME**
 
 <a name="availablePlatformPotentials"></a>
-#####Enum.availablePlatformPotentials
+####Enum.availablePlatformPotentials
 Available Platform states has mainly to do with access to the Webble World Service and Database, and is therefore hardly never needed for a Webble developer to be concerned about, but it does exist. It can be set only from the server and internally by server admins.
 
 * None: 0
@@ -2228,7 +2231,7 @@ if ( $scope.getCurrentPlatformPotential() != Enum.availablePlatformPotentials.Fu
 }
 ```
 <a name="aopForms"></a>
-#####Enum.aopForms
+####Enum.aopForms
 Available forms and modal windows that can be opened and displayed inside Webble World.
 
 * userReg: 0 _(User Registration)_
