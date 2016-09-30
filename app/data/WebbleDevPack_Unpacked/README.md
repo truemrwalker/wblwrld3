@@ -16,6 +16,7 @@ existing services, directives and filters that your Webble might want to use to 
 * ![Method][meth] = Method
 * ![Property][prop] = Property
 * ![Directive][dir] = Directive
+* ![Enum][enum] = Enumirations
 
 <!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
@@ -2205,16 +2206,19 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
 <a name="enum"></a>
 ###_Enum_ ![Property][prop]
 The `Enum` service contains numerous enumaration lists for quicker and more structured and readable coding. To access any of the specific Enum obejcts just call Enum (remember to also add it to the top of the controller) envoking the enum object one is after and then the enum item available in that enum list.
-e.g.  
-`if ( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.HighClearanceUser ) { `  
-`	alert("Good for you!");`  
-`}`
 
 ####**Enum.OBJECT_NAME.ITEM_NAME**
 
+```JavaScript
+if ( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.HighClearanceUser ) {
+	alert("Good for you!");
+}
+```
 <a name="availablePlatformPotentials"></a>
-####Enum.availablePlatformPotentials
+###_availablePlatformPotentials_ ![Enum][enum]
 Available Platform states has mainly to do with access to the Webble World Service and Database, and is therefore hardly never needed for a Webble developer to be concerned about, but it does exist. It can be set only from the server and internally by server admins.
+
+####Enum.availablePlatformPotentials
 
 * None: 0
 * Slim: 1
@@ -2231,8 +2235,10 @@ if ( $scope.getCurrentPlatformPotential() != Enum.availablePlatformPotentials.Fu
 }
 ```
 <a name="aopForms"></a>
-####Enum.aopForms
+###_aopForms_ ![Enum][enum]
 Available forms and modal windows that can be opened and displayed inside Webble World.
+
+####Enum.aopForms
 
 * userReg: 0 _(User Registration)_
 * wblProps: 1 _(Weble Properties/Slots)_
@@ -2539,4 +2545,5 @@ Extra functions that is within the system and can be used by any Webble develope
 [prop]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-P-icon.png
 [meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
 [dir]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-D-icon.png
+[enum]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-E-icon.png
 [ioposinfo]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/ioPosInfo.png
