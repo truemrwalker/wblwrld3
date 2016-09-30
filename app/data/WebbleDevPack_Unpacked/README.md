@@ -1255,6 +1255,22 @@ Turns on or off the appearance indicator ('is loading' gif image) in waiting mod
 // Turns on the waiting visualizer to inform the user that work is being done. (Don't forget to turn it off later though)
 $scope.waiting(true);
 ```
+###_getCurrentPlatformPotential_ ![Method][meth]
+Returns the current Platform potential state, which tells us if the system is running at full sped or not, or being blocked and protected agains full use in some way. (See [Enum](#enum) and [availablePlatformPotentials](#availablePlatformPotentials) for more details about various potential states).
+
+####getCurrentPlatformPotential()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer(Enum)) The numerical representative for the current state of the platform potential mode
+
+```JavaScript
+// Warn the user running Webble world in any limited mode that this Webble does not accept that
+if ( $scope.getCurrentPlatformPotential() != Enum.availablePlatformPotentials.Full ) { 
+	showQIM("This Webble only work properly in Full platform state."); 
+}
+```
 ###_getBundleMaster_ ![Method][meth]
 Returns the bundle master of the specified Webble if it has one, otherwise undefined. Bundle master is the outermost bundle webble, counted from a specific Webble.
 
@@ -2128,106 +2144,126 @@ $scope.theInteractionObjects[6].scope().setIsEnabled(true);
 AngularJS **Directives** can be very powerful and we recommend the Webble-template developers to create their own for their
 Webbles (though not any requirment). But there are also a few simple ones already available in the platform core too, that can be easily applied. Just apply the directive name as instructed below either as a tag attribute or class name.
 
-###_()_ ![Directive][dir]
+###_draggable_ ![Directive][dir]
+Makes an element draggable (JQuery style) (initiated either as an Attribute or Class). For more information about the draggable options see JQuerys [draggable](http://api.jqueryui.com/draggable/) page online.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-    // Makes an element draggable (JQuery style) (Attribute or Class)
-    draggable [optional: draggable="{options}" ]
-
-###_()_ ![Directive][dir]
-
-####
+####draggable [optional: draggable="{options}" ]
 
 * **Parameters:**
-    * ()
-* **Returns:**
-    * ()
+    * (Object) a jquery draggable options object (See [draggable](http://api.jqueryui.com/draggable/)).
+	   * OPTIONAL
 
-```JavaScript
-// 
-
+```HTML
+<!-- Make the span element draggable inside the div by adding the attribute "draggable" -->
+<div id="myWebbleView" ng-controller="myWebbleCtrl">
+    <span id="myWblTxt" draggable>{{gimme('myTxtSlot')}}</span>
+</div>
 ```
-    // Makes an element resizable (JQuery style) (Attribute or Class)
-    resizable [ optional: 'resizable="{options}" ]
+###_sortable_ ![Directive][dir]
+Makes a list element sortable (JQuery style) (initiated either as an Attribute or Class). For more information about the sortable options see JQuerys [sortable](http://api.jqueryui.com/sortable/) page online.
 
-###_()_ ![Directive][dir]
-
-####
+####sortable [ optional: 'sortable="{options}" ]
 
 * **Parameters:**
-    * ()
-* **Returns:**
-    * ()
+    * (Object) a jquery sortable options object (See [draggable](http://api.jqueryui.com/sortable/)).
+	   * OPTIONAL
 
-```JavaScript
-// 
-
+```HTML
+<!-- Make the ui list element sortable inside the div by adding the attribute "sortable" -->
+<div id="myWebbleView" ng-controller="myWebbleCtrl">
+    <ul id="myList" sortable>
+		<li>Item 1</li>
+		<li>Item 2</li>
+		<li>Item 3</li>
+		<li>Item 4</li>
+		<li>Item 5</li>
+	</ul>
+</div>
 ```
-    // Makes an element sortable (JQuery style) (Attribute or Class)
-    sortable [ optional: 'sortable="{options}" ]
+###_ng-size_ ![Directive][dir]
+Make sure that the `<select>` tags 'size' value can be set dynamically (e.g. from a slot)
 
-###_()_ ![Directive][dir]
-
-####
+####ng-size"{{value}}"
 
 * **Parameters:**
-    * ()
-* **Returns:**
-    * ()
+    * value (Float) the height value wished to oppose on the `<select>` element
 
-```JavaScript
-// 
-
+```HTML
+<!-- Make the size of the select list dynamicly controlled by a slot -->
+<div class="myClass">
+	<select id="mySelect" ng-size="{{gimme('mySelectListSizeSlot')}}" ng-options="li for li in myList.items" style="width: auto;">
+	</select>
+</div>
 ```
-    // make sure the select tags 'size' value can be set dynamically.
-    ng-size"{{value}}"
-
-###_()_ ![Directive][dir]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-    // Resize the element's width to the same size as the current window size
-    fullspread
-
 <!------------------------------------------------------------------------------------------------------------------->
 <a name="services"></a>
 ##Services
-In the **Services** can be found multiple help functions and support methods along with various providers av data of all
+In the **Services** can be found multiple help functions and support methods along with various providers of data of all
 sorts. If one want to use a service in a Webble the name of the service must be included at the top of the controller 
-function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, except the ones he/she would create themselves inside the template are the following.
+function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, besides the ones he/she would create themselves inside the template, are the following.
 
-    //Available Platform states
-    Enum.availablePlatformPotentials
-    { None: 0, Slim: 1, Limited: 2, Full: 3, Custom: 4, Undefined: 5 }
+<a name="enum"></a>
+###_Enum_ ![Property][prop]
+The `Enum` service contains numerous enumaration lists for quicker and more structured and readable coding. To access any of the specific Enum obejcts just call Enum (remember to also add it to the top of the controller) envoking the enum object one is after and then the enum item available in that enum list.
+e.g. `if ( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.HighClearanceUser ) { alert("Good for you!"); }`
 
+####Enum.ENUM_OBJECT_NAME.ENUM_OBJECT_ITEM_NAME
+
+<a name="availablePlatformPotentials"></a>
+#####Enum.availablePlatformPotentials
+Available Platform states has mainly to do with access to the Webble World Service and Database, and is therefore hardly never needed for a Webble developer to be concerned about, but it does exist. It can be set only from the server and internally by server admins.
+
+* None: 0
+* Slim: 1
+* Limited: 2
+* Full: 3
+    * Default (99.999% of the time)
+* Custom: 4
+* Undefined: 5
+
+```JavaScript
+// Warn the user running Webble world in any limited mode that this Webble does not accept that
+if ( $scope.getCurrentPlatformPotential() != Enum.availablePlatformPotentials.Full ) { 
+	showQIM("This Webble only works properly in Full platform state."); 
+}
+```
 <a name="aopForms"></a>
+#####Enum.aopForms
+Available forms and modal windows that can be opened and displayed inside Webble World.
 
-    //Available forms and modal windows
-    Enum.aopForms
-    { userReg: 0, wblProps: 1, slotConn: 2, protect: 3, addCustSlot: 4, infoMsg: 5, langChange: 6, publishWebble: 7,
-      loadWebble: 8, saveWorkspace: 9, platformProps: 10, about: 12, wblAbout: 13, wblSearch: 14, faq: 15, bundle: 16,
-      deleteWorkspace: 17, rateWbl: 18, saveWorkspaceAs: 19, shareWorkspaces: 20, editCustMenuItems: 21, editCustInteractObj: 22,
-	  viewWblRatingAndComments: 23, exportWebble: 24, importWebble: 25 }
+* userReg: 0 _(User Registration)_
+* wblProps: 1 _(Weble Properties/Slots)_
+* slotConn: 2 _(Slot Connection)_
+* protect: 3 _(Protection)_
+* addCustSlot: 4 _(Add Custom Slots)_
+* infoMsg: 5 _(Custom Information Message)_
+* langChange: 6 _(Language Change)_
+* publishWebble: 7 _(Publish Webble)_
+* loadWebble: 8 _(Load Webble)_
+* saveWorkspace: 9 _(Save Workspace)_
+* platformProps: 10 _(Platform Properties)_
+* about: 12 _(About Weble World Platform)_
+* wblAbout: 13 _(About Specific Webble)_
+* wblSearch: 14 _(Webble Browser and Search)_
+* faq: 15 _(Frequently Asked Questions)_
+* bundle: 16 _(Bundle Webbles)_
+* deleteWorkspace: 17 _(Delete Workspace)_
+* rateWbl: 18 _(Rate Webble)_
+* saveWorkspaceAs: 19 _(Save Workspace As...)_
+* shareWorkspaces: 20 _(Share Workspace)_
+* editCustMenuItems: 21 _(Edit Custom Menu Items)_
+* editCustInteractObj: 22 _(Edit Custom Interaction Objects)_
+* viewWblRatingAndComments: 23 _(View a Specific Webbles Rating and User Comments)_
+* exportWebble: 24 _(Export Webble)_
+* importWebble: 25 _(Import Webble)_
 
+```JavaScript
+// Opens the Webble World platform About Window
+$scope.openForm(Enum.aopForms.about, null, null);
+```
+
+
+    
     // Default Interaction objects that all webbles share
     Enum.availableOnePicks_DefaultInteractionObjects
     { Menu: 0, Rotate: 1, Resize: 2, AssignParent: 3 }
@@ -2326,6 +2362,18 @@ function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of 
     Enum.availableWWEvents
     { slotChanged: 0, deleted: 1, duplicated: 2, sharedModelDuplicated: 3, pasted: 4, gotChild: 5, peeled: 6, 
       lostChild: 7, keyDown: 8, loadingWbl: 9, mainMenuExecuted: 10, wblMenuExecuted: 11 }
+
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
+
       
     // A service that returns useful constant values
     wwConsts.palette
