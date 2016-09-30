@@ -2270,66 +2270,200 @@ Available forms and modal windows that can be opened and displayed inside Webble
 // Opens the Webble World platform About Window
 $scope.openForm(Enum.aopForms.about, null, null);
 ```
+###_availableOnePicks_DefaultInteractionObjects_ ![Enum][enum]
+All default Interaction objects that all webbles share.
 
+####Enum.availableOnePicks_DefaultInteractionObjects
 
-    
-    // Default Interaction objects that all webbles share
-    Enum.availableOnePicks_DefaultInteractionObjects
-    { Menu: 0, Rotate: 1, Resize: 2, AssignParent: 3 }
+* Menu: 0 _(Open Webble Context Menu)_
+* Rotate: 1 _(Rotate Webble)_
+* Resize: 2 _(Resize Webble)_
+* AssignParent _(Assign Parent)_
 
-    // Tooltip Text for default Interaction objects that all webbles share
-    Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt
-    { Menu: gettext("Open Menu"), Rotate: gettext("Rotate"), Resize: gettext("Resize"), AssignParent: gettext("Assign Parent") }
+```JavaScript
+// Check if the target name variable is set to assign parent, and if so call that method
+if (targetName == getKeyByValue(Enum.availableOnePicks_DefaultInteractionObjects, Enum.availableOnePicks_DefaultInteractionObjects.AssignParent)){
+	$scope.assignParent();
+}
+```
+###_availableOnePicks_DefaultInteractionObjectsTooltipTxt_ ![Enum][enum]
+Tooltip Text for default Interaction objects that all webbles share for fast access and corresponding to `availableOnePicks_DefaultInteractionObjects`.
 
+####Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt
+
+* Menu: "Open Menu"
+* Rotate: "Rotate"
+* Resize: "Resize"
+* AssignParent: "Assign Parent"
+
+```JavaScript
+// Print to the console, the default Interaction Tooltip text in the current platform language for rotate IO
+var rotateIO = Enum.availableOnePicks_DefaultInteractionObjects.Rotate;
+$log.log( gettextCatalog.getString(Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt[rotateIO]) );
+```    
 <a name="availableOnePicks_DefaultWebbleMenuTargets"></a>
+###_availableOnePicks_DefaultWebbleMenuTargets_ ![Enum][enum]
+The default context menu choices that all webbles share.
 
-    // Default context menu choices that all webbles share
-    Enum.availableOnePicks_DefaultWebbleMenuTargets
-    { Publish: 1, Duplicate: 2, Delete: 3, AssignParent: 4, RevokeParent: 5, ConnectSlots: 6, Props: 7,
-      SharedDuplicate: 8, Bundle: 9, Unbundle: 10, BringFwd: 11, Protect: 12, AddCustomSlots: 13, 
-      EditCustomMenuItems: 14, EditCustomInteractionObjects: 15, About: 16}
-      
-    // Default menu choices Name Texts
-	Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt
-	{ Publish: gettext("Publish"), Duplicate: gettext("Duplicate"), Delete: gettext("Delete"), 
-	  AssignParent: gettext("Assign Parent"), RevokeParent: gettext("Revoke Parent"), 
-	  ConnectSlots: gettext("Connect Slots"), Props: gettext("Properties"), 
-	  SharedDuplicate: gettext("Shared Model Duplicate"), Bundle: gettext("Bundle"), Unbundle: gettext("Unbundle"),
-	  BringFwd: gettext("Bring to Front"), Protect: gettext("Set Protection"), 
-	  AddCustomSlots: gettext("Add Custom Slots"), EditCustomMenuItems: gettext("Custom Menu Items"), 
-	  EditCustomInteractionObjects: gettext("Custom Interaction Objects"), About: gettext("About")}
+####Enum.availableOnePicks_DefaultWebbleMenuTargets
 
+* Publish: 1 _(Publish Webble)_
+* Duplicate: 2 _(Duplicate Webble)_
+* Delete: 3 _()Delete Webble_
+* AssignParent: 4 _(Assign Parent to Webble)_
+* RevokeParent: 5 _(Revoke Parent from Webble)_
+* ConnectSlots: 6 _(Connect Slots to and from Webble)_
+* Props: 7 _(Properies and Slots)_
+* SharedDuplicate: 8 _(Share Model Duplicate Webble)_
+* Bundle: 9 _(Bundle Webble)_
+* Unbundle: 10 _(Undbundle Webble)_
+* BringFwd: 11 _(Bring Forward Webble (z-index))_
+* Protect: 12 _(Set Protection Flags for Webble)_
+* AddCustomSlots: 13 _(Add Custom Slots to Webble)_
+* EditCustomMenuItems: 14 _(Edit Custom Menu Items for Webble)_
+* EditCustomInteractionObjects: 15 _(Edit Custom Interaction Objects for Webble)_
+* About: 16 _(Display Information of Webble)_
+
+```JavaScript
+// Check if the enumNumId variable is set to BringFwd, and if so tell the console about it
+if (enumNumId == Enum.availableOnePicks_DefaultWebbleMenuTargets.BringFwd) {
+	$log.log("Bring Forward was picked");
+}
+```
+###_availableOnePicks_DefaultWebbleMenuTargetsNameTxt_ ![Enum][enum]
+Webble Menu Text for default context menu items that all webbles share for fast access and corresponding to `availableOnePicks_DefaultWebbleMenuTargets`.
+
+####Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt
+
+* Publish: "Publish"
+* Duplicate: "Duplicate"
+* Delete: "Delete"
+* AssignParent: "Assign Parent"
+* RevokeParent: "Revoke Parent"
+* ConnectSlots: "Connect Slots"
+* Props: "Properties"
+* SharedDuplicate: "Shared Model Duplicate"
+* Bundle: "Bundle"
+* Unbundle: "Unbundle"
+* BringFwd: "Bring to Front"
+* Protect: "Set Protection"
+* AddCustomSlots: "Add Custom Slots"
+* EditCustomMenuItems: "Custom Menu Items"
+* EditCustomInteractionObjects: "Custom Interaction Objects"
+* About: "About"
+
+```JavaScript
+// Print to the console, the default Webble menu text in the current platform language for Props
+var props = Enum.availableOnePicks_DefaultWebbleMenuTargets.Props;
+$log.log( gettextCatalog.getString(Enum.availableOnePicks_DefaultWebbleMenuTargetsNameTxt[props]) );
+```   
 <a name="availableOnePicks_ExecutionModes"></a>
+###_availableOnePicks_ExecutionModes_ ![Enum][enum]
+The different execution modes the webble world can be set to.
 
-    // The different execution modes the webble world can be set to
-    Enum.availableOnePicks_ExecutionModes
-    { Developer: 0, Admin: 1, SuperHighClearanceUser: 2, HighClearanceUser: 3, MediumClearanceUser: 4, LowClearanceUser: 5 },
+####Enum.availableOnePicks_ExecutionModes
 
-    // Text for the different execution modes the webble world can be set to
-    Enum.availableOnePicks_ExecutionModesDisplayText
-    { Developer: gettext("Developer"), Admin: gettext("Admin"), SuperHighClearanceUser: gettext("Super High Clearance User"),
-      HighClearanceUser: gettext("High Clearance User"), MediumClearanceUser:  gettext("Medium Clearance User"),
-      LowClearanceUser:  gettext("Low Clearance User") }
+* Developer: 0
+* Admin: 1
+* SuperHighClearanceUser: 2
+* HighClearanceUser: 3
+* MediumClearanceUser: 4
+* LowClearanceUser: 5
 
+```JavaScript
+// Check if current execution mode is the highest "Developer", and if so tell the console about it
+if ($scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Developer){
+	$log.log("Currently running in the highest Execution Mode");
+}
+```
+###_availableOnePicks_ExecutionModesDisplayText_ ![Enum][enum]
+Execution Mode Name Text for available various execution modes corresponding to `availableOnePicks_ExecutionModes`.
+
+####Enum.availableOnePicks_ExecutionModesDisplayText
+
+* Developer: "Developer"
+* Admin: "Admin"
+* SuperHighClearanceUser: "Super High Clearance User"
+* HighClearanceUser: "High Clearance User"
+* MediumClearanceUser: "Medium Clearance User"
+* LowClearanceUser: "Low Clearance User"
+
+```JavaScript
+// Print to the console, the execution mode text in the current platform language for Developer
+var dev = Enum.availableOnePicks_ExecutionModes.Developer;
+$log.log( gettextCatalog.getString(Enum.availableOnePicks_ExecutionModesDisplayText[dev]) );
+```
 <a name="availableOnePicks_SelectTypes"></a>
+###_availableOnePicks_SelectTypes_ ![Enum][enum]
+The different types of selected states available which a Webble can be in (both highly visual and semi-visual states). This is what controlls the default behavior of the Webble border (color and looks)
 
-    // The different types of visual selected states available
-    Enum.availableOnePicks_SelectTypes
-    { AsNotSelected: 0, AsMainClicked: 1, AsChild: 2, AsHighlighted: 3, AsImportant: 4, AsToBeRemembered: 5, AsParent: 6,
-      AsWaitingForParent: 7, AsWaitingForChild: 8, AsNewParent: 9, AsNewChild: 10 }
+####Enum.availableOnePicks_SelectTypes
 
+* AsNotSelected: 0 _(Not Selected)_
+* AsMainClicked: 1 _(Main Selected)_
+* AsChild: 2 _(Child)_
+* AsHighlighted: 3 _(Only Highlighted)_
+* AsImportant: 4 _(Important)_
+* AsToBeRemembered: 5 _(Keep in mind)_
+* AsParent: 6 _(Parent)_
+* AsWaitingForParent: 7 _(Waiting for Parent)_
+* AsWaitingForChild: 8 _(Waiting for Child)_
+* AsNewParent: 9 _(New Parent)_
+* AsNewChild: 10 _(New Child)_
+
+```JavaScript
+// Remove all selection for the Webble
+$scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
+```
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```
     // The different available form input types used to interact with webble properties and similar
     Enum.aopInputTypes
     { Undefined: 0, CheckBox: 1, ColorPick: 2, ComboBoxUseIndex: 3, ComboBoxUseValue: 4, FontFamily: 5, RadioButton: 6,
       Slider: 7, Point: 8, Numeral: 9, PasswordBox: 10, Size: 11, TextBox: 12, MultiListBox: 13, MultiCheckBox: 14,
       RichText: 15, DatePick: 16, ImagePick: 17, AudioPick: 18, VideoPick: 19, WebPick: 20, TextArea: 21 }
 
+
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```
     //Used for webble initation states [Bitwise Flags]
     Enum.bitFlags_InitStates
     { None: 0, InitBegun: 1, InitFinished: 2, ActiveReady: 4, AllDone: 8 }
-    
+   
+   
 <a name="bitFlags_PlatformConfigs"></a>	
-	
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```	
 	//Used for settings and configuraions of the platform environment
         // [Bitwise Flags]
         bitFlags_PlatformConfigs: {
@@ -2340,8 +2474,20 @@ $scope.openForm(Enum.aopForms.about, null, null);
             autoBehaviorEnabled: 8
         },
 	
-<a name="bitFlags_PlatformStates"></a>		
 	
+<a name="bitFlags_PlatformStates"></a>		
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```	
     //Used for keeping track what the platform is doing [Bitwise Flags]
     Enum.bitFlags_PlatformStates
     { None: 0, WaitingForParent: 1, WaitingForAllSelect: 2 }
@@ -2350,38 +2496,72 @@ $scope.openForm(Enum.aopForms.about, null, null);
     Enum.SlotDisablingState
     { None: 0, PropertyEditing: 1, PropertyVisibility: 2, ConnectionVisibility: 4, AllVisibility: 8 }
 
-<a name="bitFlags_WebbleConfigs"></a>
 
+
+<a name="bitFlags_WebbleConfigs"></a>
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```
     // The different types of available webble metadata [Bitwise Flags]
     Enum.bitFlags_WebbleConfigs
     { None: 0, IsMoving: 2, NoBubble: 4 }
 
+
+
+
+
+
     // The different protections that can be set on a webble [Bitwise Flags] (See Webble Protection in a live Webble for further details)
     
 <a name="bitFlags_WebbleProtection"></a>    
-    
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```    
     Enum.bitFlags_WebbleProtection
     { NO, MOVE, RESIZE, DUPLICATE, SHAREDMODELDUPLICATE, DELETE, PUBLISH, PROPERTY, PARENT_CONNECT, CHILD_CONNECT, 
       PARENT_DISCONNECT, CHILD_DISCONNECT, BUNDLE, UNBUNDLE, DEFAULT_MENU, INTERACTION_OBJECTS, SELECTED, POPUP_MENU,
       NON_DEV_HIDDEN, DRAG_CLONE, BUNDLE_LOCKED, EXPORT }
                                             
 <a name="availableWWEvents"></a>    											
-											
+###_x_ ![Enum][enum]
+
+
+####Enum.
+
+* x: 0 _()_
+* 
+
+```JavaScript
+// 
+
+```											
     // The different Webble World Events that a Webble can listen to  
     Enum.availableWWEvents
     { slotChanged: 0, deleted: 1, duplicated: 2, sharedModelDuplicated: 3, pasted: 4, gotChild: 5, peeled: 6, 
       lostChild: 7, keyDown: 8, loadingWbl: 9, mainMenuExecuted: 10, wblMenuExecuted: 11 }
 
 
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
 
-```JavaScript
-// 
 
-```
+
 
       
     // A service that returns useful constant values
