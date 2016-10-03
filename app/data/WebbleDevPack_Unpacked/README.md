@@ -2205,7 +2205,7 @@ sorts. If one want to use a service in a Webble the name of the service must be 
 function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, besides the ones he/she would create themselves inside the template, are the following.
 
 <a name="enum"></a>
-###_**Enum**_ ![Property][prop]
+<span style="color: purple;">###_**Enum**_</span> ![Property][prop]
 The `Enum` service contains numerous enumaration lists for quicker and more structured and readable coding. To access any of the specific Enum obejcts just call Enum (remember to also add it to the top of the controller) envoking the enum object one is after and then the enum item available in that enum list.
 
 ####**Enum.OBJECT_NAME.ITEM_NAME**
