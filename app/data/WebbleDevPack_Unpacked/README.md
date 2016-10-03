@@ -835,6 +835,7 @@ A set of boolean flags for helping the devloper rescuing some (weird) touch even
 $scope.touchRescueFlags.doubleTapTemporarelyDisabled = true;
 $timeout(function(){$scope.touchRescueFlags.doubleTapTemporarelyDisabled = false;}, 1000);
 ```
+<a name="registerWWEventListener"></a>    											
 ###_registerWWEventListener_ ![Method][meth]
 Registers an event listener for a specific event (see [availableWWEvents](#availableWWEvents)) for a specific target (self, other or all) (targetData can be set for slotChange as a slotName to narrow down event further but not used for other events) and the callback function the webble wish to be called if the event fires. The callback function will then be handed a datapack object containing needed information to react to the event accordingly. All callback functions are sent a datapack object as a parameter when they fire which includes different things depending on the event. The targetId post in these datapacks are only useful when the webble are listening to multiple webbles with the same callback. If targetId is undefined the webble will be listening to itself, or if the targetId match an existing Webble then that will be listened to, and if the targetId is set to NULL it will listen to all webbles.
 
@@ -2415,161 +2416,297 @@ The different types of selected states available which a Webble can be in (both 
 // Remove all selection for the Webble
 $scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
 ```
-###_x_ ![Enum][enum]
+###_aopInputTypes_ ![Enum][enum]
+The different available form input types used to interact with webble properties and similar. Mainly used by Webble developer when creating slots, as a metadata instruction, when the auto generated display type is not enough. The look and feel of each input type depends on the browser.
 
+####Enum.aopInputTypes
 
-####Enum.
-
-* x: 0 _()_
-* 
+* Undefined: 0 _(The initial default value, later adjusted either by the system or the user, no need to ever set manually)_
+* CheckBox: 1 _(A classic check box (Boolean), Usually auto detected)_
+* ColorPick: 2 _(Color Picker, Manual assignment required)_
+* ComboBoxUseIndex: 3 _(Drop down box, slot store integer index value, Manual assignment required (incl. list))_
+* ComboBoxUseValue: 4 _(Drop down box, slot store string list option value, Manual assignment required (incl. list))_
+* FontFamily: 5 _(Drop down box, slot store string font value, auto detected from CSS otherwise manual assignment required (incl. list). Additional font options from online needs to be added manually)_
+* RadioButton: 6 _(Clasic radio button, slot store string option value, Manual assignment required (incl. list))_
+* Slider: 7 _(Slider (Numerical), Manual assignment required (incl. Min/Max))_
+* Point: 8 _(Two Numerical input boxes, for x and y, Manual assignment required and values need to be either Object {x: 0, y: 0} or Array [0, 0])_
+* Numeral: 9 _(Classic text input box (small width) (Numerical (Integer & Float)), Usually auto detected)_
+* PasswordBox: 10 _(Classic password input box (medium width), with hidden input value, Manual assignment required)_
+* Size: 11 _(Two Numerical input boxes, for width and height, Manual assignment required and values need to be either Object {w: 0, h: 0} or Array [0, 0])_
+* TextBox: 12 _(A classic text input box (String), Usually auto detected (also common fallback when auto detection fails))_
+* MultiListBox: 13 _(Multi select list box, slot store array of index values, manual assignment required (incl. list))_
+* MultiCheckBox: 14 _(A set of classic Check boxes, slot store array of index values, manual assignment required (incl. list))_
+* RichText: 15 _(Simple Text editor, with basic formatting (HTML enhanced String), manual assignment required)_
+* DatePick: 16 _(Date Picker, JavaScript Date() value object or String, manual assignment required)_
+* ImagePick: 17 _(File Select & Text Input (with image view), Slot store as string, manual assignment required)_
+* AudioPick: 18 _(File Select & Text Input (with audio player), Slot store as string, manual assignment required)_
+* VideoPick: 19 _(File Select & Text Input (with video player), Slot store as string, manual assignment required)_
+* WebPick: 20 _(Text Input (with iframe web viewer), Slot store as string, manual assignment required)_
+* TextArea: 21 _(Classic text area input, Slot store as string, auto detected if slot initial value is very long string, otherwise manual assignment required)_
 
 ```JavaScript
-// 
-
+// Create a new slot of drop down box type tracking index value
+$scope.addSlot(new Slot('myFavoriteFruit',
+	0,
+	'My Favorite Fruit',
+	'This is my currently favorite fruit',
+	$scope.theWblMetadata['templateid'],
+	{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Apple", "Pear", "Orange", "Kiwi", "Banana"]},
+	undefined
+));
 ```
-    // The different available form input types used to interact with webble properties and similar
-    Enum.aopInputTypes
-    { Undefined: 0, CheckBox: 1, ColorPick: 2, ComboBoxUseIndex: 3, ComboBoxUseValue: 4, FontFamily: 5, RadioButton: 6,
-      Slider: 7, Point: 8, Numeral: 9, PasswordBox: 10, Size: 11, TextBox: 12, MultiListBox: 13, MultiCheckBox: 14,
-      RichText: 15, DatePick: 16, ImagePick: 17, AudioPick: 18, VideoPick: 19, WebPick: 20, TextArea: 21 }
+###_bitFlags_InitStates_ ![Enum][enum]
+Used for webble initation states (Bitwise Flags). This is in all known cases completely irrelevant for a Webble developer and can be ignored, but if ever a reason to track these states occure, then these are the different states available.
 
+####Enum.bitFlags_InitStates
 
-###_x_ ![Enum][enum]
-
-
-####Enum.
-
-* x: 0 _()_
-* 
+* None: 0 _()_
+* InitBegun: 1 _(The Webble Core Init Method have just begun its work)_
+* InitFinished: 2 _(The Webble Core Init Method have just finished its work)_
+* ActiveReady: 4 _(Not used)_
+* AllDone: 8 _(Not used)_
 
 ```JavaScript
-// 
-
+// Check if the Webble is in the middle of initiation and if so tell the console about it
+var isInitStart = ((parseInt($scope.getInitiationState(), 10) & parseInt(Enum.bitFlags_InitStates.InitBegun, 10)) !== 0);
+var isInitNotDone = ((parseInt($scope.getInitiationState(), 10) & parseInt(Enum.bitFlags_InitStates.InitFinished, 10)) === 0);
+if(isInitStart && isInitNotDone){
+	$log.log("I am in the middle of something!");
+}
 ```
-    //Used for webble initation states [Bitwise Flags]
-    Enum.bitFlags_InitStates
-    { None: 0, InitBegun: 1, InitFinished: 2, ActiveReady: 4, AllDone: 8 }
-   
-   
 <a name="bitFlags_PlatformConfigs"></a>	
-###_x_ ![Enum][enum]
+###_bitFlags_PlatformConfigs_ ![Enum][enum]
+Used for settings and configuraions of the platform environment.
 
+####Enum.bitFlags_PlatformConfigs
 
-####Enum.
-
-* x: 0 _()_
-* 
+* None: 0
+* PlatformInteractionBlockEnabled: 1 _(Is User interaction blocked (currently not in use))_
+* MainMenuVisibilityEnabled: 2 _(Is main menu visible or not)_
+* PopupInfoEnabled: 4 _(Are Popup info messages enabled or not (setting currently disregarded))_
+* autoBehaviorEnabled: 8 _(Is auto behavior (slot default connection etc.) enabled or not)_
 
 ```JavaScript
-// 
-
+// Tell the console if the menu is open or not
+var ps = $scope.getPlatformSettingsFlags();
+var menuIsOpen = ((parseInt(ps, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) != 0)
+$log.log( "Menu Open: " + menuIsOpen );
 ```	
-	//Used for settings and configuraions of the platform environment
-        // [Bitwise Flags]
-        bitFlags_PlatformConfigs: {
-            None: 0,
-            PlatformInteractionBlockEnabled: 1,
-            MainMenuVisibilityEnabled: 2,
-            PopupInfoEnabled: 4,
-            autoBehaviorEnabled: 8
-        },
-	
-	
 <a name="bitFlags_PlatformStates"></a>		
-###_x_ ![Enum][enum]
+###_bitFlags_PlatformStates_ ![Enum][enum]
+Used for keeping track of some things the platform is doing (Bitwise Flags). This is in all known cases completely irrelevant for a Webble developer and can be ignored, but if ever a reason to track these states occure, then these are the different states available.
 
+####Enum.bitFlags_PlatformStates
 
-####Enum.
-
-* x: 0 _()_
-* 
+* None: 0
+* WaitingForParent: 1 _(Is Waiting for the user to click a Webble, which will then be assigned as parent)_
+* WaitingForAllSelect: 2 _(Is in the progress of selecting all Webbles and turn on their highlight borders)_
 
 ```JavaScript
-// 
+// Check if the platform is waiting for a parent selection, and if so tell it to the console
+if((parseInt($scope.getPlatformCurrentStates(), 10) & parseInt(Enum.bitFlags_PlatformStates.WaitingForParent, 10)) !== 0){
+	$log.log("We are waiting!!")
+}
+```
+###_SlotDisablingState_ ![Enum][enum]
+Used for keeping track if a slot is disabled in some way or another. Each higher value include all lower ones.
 
-```	
-    //Used for keeping track what the platform is doing [Bitwise Flags]
-    Enum.bitFlags_PlatformStates
-    { None: 0, WaitingForParent: 1, WaitingForAllSelect: 2 }
+####Enum.SlotDisablingState
 
-    //Used for keeping track if a slot is disabled in some way or another (higher values include all lower ones)
-    Enum.SlotDisablingState
-    { None: 0, PropertyEditing: 1, PropertyVisibility: 2, ConnectionVisibility: 4, AllVisibility: 8 }
+* None: 0 _(Fully Enabled Slot)_
+* PropertyEditing: 1 _(Slot cannot be edited in the slot/property form (but viewed))_
+* PropertyVisibility: 2 _(Slot cannot be seen in the slot/property form (but seen and used in the slot connection form))_
+* ConnectionVisibility: 4 _(Slot cannot be used to create connections and does not show up in the slot connection form)_
+* AllVisibility: 8 _(Can only be used internally by the Webble Developer and is never visible for external use in any way)_
 
-
-
+```JavaScript
+// Make the slot "MySlot" invisible in the property form
+$scope.getSlot('MySlot').setDisabledSetting(Enum.SlotDisablingState.PropertyVisibility);
+```
 <a name="bitFlags_WebbleConfigs"></a>
-###_x_ ![Enum][enum]
-
+###_bitFlags_WebbleConfigs_ ![Enum][enum]
+The different types of some available core internal webble metadata (Bitwise Flags).
 
 ####Enum.
 
+* None: 0
+* IsMoving: 2 _(The Webble is currently being moved (dragged) (or not))_
+* NoBubble: 4 _(The Webble will not display a information bubble text box (or will))_
+
+```JavaScript
+// Check if the Webble allows Bubble info text or not, and if not, write to the console
+if ((parseInt($scope.getWebbleConfig(), 10) & parseInt(Enum.bitFlags_WebbleConfigs.NoBubble, 10)) != 0){
+	$log.log("What do you have against bubbles?")
+}
+```
+<a name="bitFlags_WebbleProtection"></a>    
+###_bitFlags_WebbleProtection_ ![Enum][enum]
+The different protections that can be set on a webble (Bitwise Flags).
+
+####Enum.bitFlags_WebbleProtection
+
 * x: 0 _()_
-* 
+* NO: 0 _(No Operation Protection)_
+* MOVE: 1 _(Moving is not allowed)_
+* RESIZE: 2 _(Resizing is not allowed)_
+* DUPLICATE: 4 _(Duplication is not allowed)_
+* SHAREDMODELDUPLICATE: 8 _(Shared Model Duplication is not allowed)_
+* DELETE: 16 _(Deleting is not allowed)_
+* PUBLISH: 32 _(Publishing is not allowed)_
+* PROPERTY: 64 _(Changing slots are not allowed)_
+* PARENT_CONNECT: 128 _(Assigning a parent is not allowed)_
+* CHILD_CONNECT: 256 _(Have children is not allowed)_
+* PARENT_DISCONNECT: 512 _(Peel from parent is not allowed)_
+* CHILD_DISCONNECT: 1024 _(Remove children is not allowed)_
+* BUNDLE: 2048 _(Bundling is not allowed)_
+* UNBUNDLE: 4096 _(Un-bundling is not allowed)_
+* DEFAULT_MENU: 8192 _(Default menu is not allowed (but custom menu item is)_
+* INTERACTION_OBJECTS: 16384 _(Interaction Balls not allowed)_
+* SELECTED: 32768 _(selection is not allowed)_
+* POPUP_MENU: 65536 _(Popup Menu is not allowed)_
+* NON_DEV_HIDDEN: 131072 _(Is not Visible unless in developer mode)_
+* DRAG_CLONE: 262144 _(Dragged Clone is not allowed (slot pos immediately updated))_
+* BUNDLE_LOCKED: 524288 _(Locking and trapping a Webble from being dragged inside a bundle is not allowed)_
+* EXPORT: 1048576 _(Export is not allowed)_
+
+```JavaScript
+// Check if the Webble is allowed to get published, and if not write to the console
+if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PUBLISH, 10)) !== 0){
+	$log.log("You are not allowed to be shared to the world, you poor, poor thing.");
+}
+```                                         
+<a name="availableWWEvents"></a>    											
+###_availableWWEvents_ ![Enum][enum]
+The different Webble World Events that a Webble can listen to. (See [registerWWEventListener](#registerWWEventListener)) for details on how to create and manage a Webble Event Listener).
+
+####Enum.availableWWEvents
+
+* slotChanged: 0
+* deleted: 1
+* duplicated: 2
+* sharedModelDuplicated: 3
+* pasted: 4
+* gotChild: 5
+* peeled: 6
+* lostChild: 7
+* keyDown: 8
+* loadingWbl: 9
+* mainMenuExecuted: 10
+* wblMenuExecuted: 11
+
+```JavaScript
+// One simple example of adding a webble world event listener, in this case for slot-change, and in the callback function manage possible event-fire situations.
+var slotChangeListener = $scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+	if(eventData.slotName == "msg"){
+		if(eventData.slotValue == "go big"){
+			$scope.set("square:width", 300);
+			$scope.set("square:height", 300);
+		}
+		else if(eventData.slotValue == "go small"){
+			$scope.set("square:width", 30);
+			$scope.set("square:height", 30);
+		}
+		else if(eventData.slotValue == "stop"){
+			// Kill event listener
+			slotChangeListener()
+		}
+	}	
+	else if(eventData.slotName == "squareTxt:font-size"){
+		if(parseInt(eventData.slotValue) > 40){
+			$log.log("Don't Scream!")
+		}
+	}
+});
+```
+###_wwConsts_ ![Property][prop]
+The `wwConsts` service contains a range of useful constants for quicker and more structured and readable coding. To access any of the specific wwConsts obejcts just call wwConsts (remember to also add it to the top of the controller) envoking the wwConsts object one is after and then the wwConsts item available in that enum list.
+
+####**wwConsts.CONSTANT_NAME**
+
+```JavaScript
+// Iterates over the default font family list and print each name to the console
+for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
+	$log.log(wwConsts.defaultFontFamilies[i]);
+}
+```
+
+
+###_()_ ![Property][prop]
+
+####
+
+* **Returns:**
+    * ()
 
 ```JavaScript
 // 
 
 ```
-    // The different types of available webble metadata [Bitwise Flags]
-    Enum.bitFlags_WebbleConfigs
-    { None: 0, IsMoving: 2, NoBubble: 4 }
-
-
-
-
-
-
-    // The different protections that can be set on a webble [Bitwise Flags] (See Webble Protection in a live Webble for further details)
-    
-<a name="bitFlags_WebbleProtection"></a>    
-###_x_ ![Enum][enum]
-
-
-####Enum.
-
-* x: 0 _()_
-* 
-
-```JavaScript
-// 
-
-```    
-    Enum.bitFlags_WebbleProtection
-    { NO, MOVE, RESIZE, DUPLICATE, SHAREDMODELDUPLICATE, DELETE, PUBLISH, PROPERTY, PARENT_CONNECT, CHILD_CONNECT, 
-      PARENT_DISCONNECT, CHILD_DISCONNECT, BUNDLE, UNBUNDLE, DEFAULT_MENU, INTERACTION_OBJECTS, SELECTED, POPUP_MENU,
-      NON_DEV_HIDDEN, DRAG_CLONE, BUNDLE_LOCKED, EXPORT }
-                                            
-<a name="availableWWEvents"></a>    											
-###_x_ ![Enum][enum]
-
-
-####Enum.
-
-* x: 0 _()_
-* 
-
-```JavaScript
-// 
-
-```											
-    // The different Webble World Events that a Webble can listen to  
-    Enum.availableWWEvents
-    { slotChanged: 0, deleted: 1, duplicated: 2, sharedModelDuplicated: 3, pasted: 4, gotChild: 5, peeled: 6, 
-      lostChild: 7, keyDown: 8, loadingWbl: 9, mainMenuExecuted: 10, wblMenuExecuted: 11 }
-
-
-
-
-
-
       
-    // A service that returns useful constant values
+    
     wwConsts.palette
+	
+###_()_ ![Property][prop]
+
+####
+
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     wwConsts.lightPalette
+	
+###_()_ ![Property][prop]
+
+####
+
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     wwConsts.elementTransformations
+	
+###_()_ ![Property][prop]
+
+####
+
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     wwConsts.languages
+	
+###_()_ ![Property][prop]
+
+####
+
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     wwConsts.defaultFontFamilies
+
+
+
+
+
+
+
+
+
+
 
     // Color hex and RGB value converter service.
     colorService.rgbToHex(R,G,B);
