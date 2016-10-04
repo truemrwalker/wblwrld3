@@ -2705,99 +2705,176 @@ The `colorService` service contains a range of useful methods for color related 
 // Get the RGBA value as a string from the hex value for opaque "red"
 $log.log( colorService.hexToRGBAStr("#ffff0000") );
 ```
+###_rgbToHex_ ![Method][meth]
+Returns a hexadecimal color value converted from three rgb values.
 
-###_()_ ![Method][meth]
-
-####colorService.
+####colorService.rgbToHex(R,G,B)
 
 * **Parameters:**
-    * ()
+    * R (Integer) the "Red" value for a RGB color, ranging from 0-255
+	* G (Integer) the "Green" value for a RGB color, ranging from 0-255
+	* B (Integer) the "Blue" value for a RGB color, ranging from 0-255
 * **Returns:**
-    * ()
+    * (String) the hexadecimal value corresponding to the RGB values provided as parameters
+	    * e.g. "#22FA86" (from R=34, G=250, B=134)
 
 ```JavaScript
-// 
+// Print the hex value from three separate R, G and B values to the console
+$log.log( colorService.rgbToHex(34,250,134) );
+```
+###_rgbStrToHex_ ![Method][meth]
+Returns a rgb value as a string converted from a hexadecimal color value.
 
+####colorService.rgbStrToHex(rgbStr)
+
+* **Parameters:**
+    * rgbStr (String) a rgb value as a string
+	    * e.g. "rgb(0,0,0)"
+* **Returns:**
+    * (String) the hexadecimal value corresponding to the RGB string value provided as parameter
+	    * e.g. "#1BD659" (from "rgb(27,214,89)")
+
+```JavaScript
+// Print the hex value from a rgb value provided as a string "rgb(0,0,0)"
+$log.log( colorService.rgbStrToHex("rgb(27,214,89)") );
+```	
+###_hexToRGB_ ![Method][meth]
+Returns a set of three rgb values in an object converted from a hexadecimal color value.
+
+####colorService.hexToRGB(hex)
+
+* **Parameters:**
+    * hex (String) a classic hexadecimal color string
+	    * e.g. "#FF00FF"
+* **Returns:**
+    * (Object) contains three keys for r, g and b
+	    * e.g. {r: 255, g: 0, b: 255}
+
+```JavaScript
+// Print the separate R, G and B value from a hexadecimal color string "#AA6607"
+var rgb = colorService.hexToRGB("#AA6607");
+$log.log( "R: " + rgb.r + ", G: " + rgb.g + ", B: " + rgb.b );
+```
+###_hexToRGBAStr_ ![Method][meth]
+Returns a RGBA (including opacity) value as a string converted from a hexadecimal color value with opacity. (Observe the switched order of the opacity value)
+
+####colorService.hexToRGBAStr(hex)
+
+* **Parameters:**
+    * hex (String) a classic hexadecimal color string with opacity
+	    * e.g. "#FFFF00FF" 
+* **Returns:**
+    * (String) a rgba value as a string
+		* e.g. "rgba(255,0,25,1)"
+		
+```JavaScript
+// Print the RGBA value as a string from a hexadecimal color string "#FFAA6607" to the console
+$log.log( colorService.hexToRGBAStr("#FFAA6607") );
+```
+###_**=== strCatcher ===**_ ![Property][prop]
+The `strCatcher` service contains a range of english string collections for all CSS related attributes. To access any of the specific strCatcher properties just call strCatcher (remember to also add it to the top of the controller) envoking the strCatcher method one is after (optional including the css definition). Each CSS attribute key is in upper case and without hyphens.
+
+####**strCatcher.PROPERTY_NAME().CSS-DEFINITION**
+
+```JavaScript
+// Print the description of the CSS attribute for background-color to the console
+$log.log( strCatcher.cssAttrDescs().BACKGROUNDCOLOR );
+```
+###_cssAttrNames_ ![Method][meth]
+Returns a list of all english readable labels for all existing CSS attributes.
+
+####colorService.cssAttrNames()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Array (of Strings)) List of english readable names for all CSS attributes
+
+```JavaScript
+// Print the label of the CSS attribute for background-color to the console
+$log.log( strCatcher.cssAttrNames().BACKGROUNDCOLOR );
+```
+###_cssAttrDescs_ ![Method][meth]
+Returns a list of all english readable descriptions for all existing CSS attributes.
+
+####colorService.cssAttrDescs()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Array (of Strings)) List of english readable descriptions for all CSS attributes
+
+```JavaScript
+// Print the description of the CSS attribute for background-color to the console
+$log.log( strCatcher.cssAttrDescs().BACKGROUNDCOLOR );
+```
+###_isSafeFontFamily_ ![Method][meth]
+Simple service that tests if the provided font name is a safe and a known one (part of the default) and returns the result. (remember to also add it to the top of the controller).
+
+####isSafeFontFamily(fontFamilyNameToTest)
+
+* **Parameters:**
+    * fontFamilyNameToTest (String) the name of the font family
+* **Returns:**
+    * (Boolean) True or False whether the font is safe or not
+
+```JavaScript
+// Tells the console whether the fon "Georgia" is a safe font to use in the browser
+var fontFamily = "Georgia";
+$log.log( fontFamily + " is a safe font to use: " + isSafeFontFamily(fontFamily) );
+```
+###_**=== dbService ===**_ ![Property][prop]
+The `dbService` service contains predefined database queries for accessing Webbles and webble meta data. Only one is currently offered properly for external use by Webble Developers (see below), but there are plenty more available. (remember to also add it to the top of the controller)
+
+####**dbService.QUERYMETHOD(PARAMETERS)**
+
+```JavaScript
+// Ask the Webble World Server and its database to returned the stored Webble definition JSON object for a specified Webble Template
+dbService.getWebbleDef("fundamental").then(function(data) {
+	// Print the retrieved JSON object to the console
+	$log.log( data );
+},function(eMsg){
+	// If error, print the retrieved error message to the console
+	$log.log( eMsg );
+});
+```
+###_getMyAccessKey_ ![Method][meth]
+Service that fetches an access key object that is associated either with the user's account or with the groups, including the parent groups, to which the user belongs.	     
+
+####dbService.getMyAccessKey(realm, resource)
+
+* **Parameters:**
+    * realm (String) Any string uniquely identifying the issuer of the access key
+	     * usually the domain name of the target service e.g., google.com, amazon.co.uk, microsoft.co.br, etc.
+	* resource (String) Any string uniquely identifying the resource(s) to which this key provides access to
+	     * usually an identifier refering to the target services e.g., maps, all, office2014_xp_pro, etc.
+* **Returns:**
+    * (Promise) a promise that is fulfilled on success with the access key object and rejected on failure with a user friendly string message that describes the error
+
+```JavaScript
+// Ask the server for this current Webble Worlds users API keys for a specific realm and resource
+dbService.getMyAccessKey(realm, resource).then( function(returningKey) {
+	// DO WHAT YOU ARE SUPPOSED TO DO TO ACCESS THE API WITH THE KEYS YOU RETRIEVED.
+},function(err) {
+	$log.log(err);
+});
+```
+###_getUrlVars_ ![Method][meth]
+Simple service that returns an object containing the URL parameters from the current URL. (remember to also add it to the top of the controller).
+
+####getUrlVars()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Object) object containing the URL parameters as keys with their values as value, from the current URL
+	    * e.g. {webble: "genericCharts", workspace: "57ea3170cd612d24248ca7a4"}
+
+```JavaScript
+// Print to the console all current URL parameters and their values
+$log.log( getUrlVars() );
 ```
 
-
-
-    // Color hex and RGB value converter service.
-    colorService.rgbToHex(R,G,B);
-	
-	
-###_()_ ![Method][meth]
-
-####colorService.
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    colorService.rgbStrToHex(rgbStr);
-	
-###_()_ ![Method][meth]
-
-####colorService.
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    colorService.hexToRGB(hex);
-	
-###_()_ ![Method][meth]
-
-####colorService.
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    colorService.hexToRGBAStr(hex)
-
-
-
-
-
-
-
-
-    // String Catcher returns a proper string for name and description of CSS attributes
-    strCatcher.cssAttrNames
-    strCatcher.cssAttrDescs
-
-    // Is Safe Font Family, tests if the provided font name is a safe and known one.
-    isSafeFontFamily(fontFamilyNameToTest);
-
-    // Service that calls for personal API access keys for a specific realm and resource previously stored in current user's user profile.
-    dbService.getMyAccessKey(realm, resource).then(
-        function(returningKey) {
-            // DO WHAT YOU ARE SUPPOSED TO DO TO ACCESS THE API WITH THE KEYS YOU RETRIEVED.
-        },
-        function(err){$log.log(err);}
-    );
-
-    // Get CSS Class property value, returns the class value for a specific property found within loaded style sheets.
-    getCSSClassPropValue(style, selector, sheet);
-
-    // Get Uri Variables, returns a JavaScript Object containing the URL parameters from the current URL
-    getUrlVars();
 
 <a name="fromKeyCode"></a>    
 
