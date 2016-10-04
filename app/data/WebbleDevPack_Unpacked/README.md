@@ -2205,7 +2205,7 @@ sorts. If one want to use a service in a Webble the name of the service must be 
 function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, besides the ones he/she would create themselves inside the template, are the following.
 
 <a name="enum"></a>
-###_**Enum**_ ![Property][prop]
+###_**=== Enum ===**_ ![Property][prop]
 The `Enum` service contains numerous enumaration lists for quicker and more structured and readable coding. To access any of the specific Enum obejcts just call Enum (remember to also add it to the top of the controller) envoking the enum object one is after and then the enum item available in that enum list.
 
 ####**Enum.OBJECT_NAME.ITEM_NAME**
@@ -2618,8 +2618,8 @@ var slotChangeListener = $scope.registerWWEventListener(Enum.availableWWEvents.s
 	}
 });
 ```
-###_**wwConsts**_ ![Property][prop]
-The `wwConsts` service contains a range of useful constants for quicker and more structured and readable coding. To access any of the specific wwConsts obejcts just call wwConsts (remember to also add it to the top of the controller) envoking the wwConsts object one is after and then the wwConsts item available in that enum list.
+###_**=== wwConsts ===**_ ![Property][prop]
+The `wwConsts` service contains a range of useful constants for quicker and more structured and readable coding. To access any of the specific wwConsts objects just call wwConsts (remember to also add it to the top of the controller) envoking the wwConsts object one is after and then the wwConsts item available in that enum list.
 
 ####**wwConsts.CONSTANT_NAME**
 
@@ -2629,12 +2629,89 @@ for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
 	$log.log(wwConsts.defaultFontFamilies[i]);
 }
 ```
+###_palette_ ![Property][prop]
+Returns an array of carefully selected mix of colors to be used in various settings and situations. The palette contains 16 colors in the following order: red, blue, purple, magenta, darkgreen, orange, black, lightgreen, cyan, brown, grey, pink, yellowgreen, yellow, lightpink and olive. The color names are CSS3 compatible.
 
+####wwConsts.palette
 
-###_()_ ![Property][prop]
+* **Returns:**
+    * (Array(of Objects)) Each object contains a color-name and a color-value (as a hexadecimal (#ffffff))
+	    * e.g. {name: "red", value: "#ff0000"}
 
-####
+```JavaScript
+// Change the color-slot every 3 seconds using the palette constant
+var colorIndex = 0;
+var changeColor = function(){
+	if(colorIndex > 15){ colorIndex = 0; }
+	$scope.set("MyColorSlot", wwConsts.palette[colorIndex++].value);
+	$timeout(changeColor, 300);
+};
+```
+###_lightPalette_ ![Property][prop]
+Returns an array of carefully selected mix of lighter colors to be used in various settings and situations. The light palette contains 16 light colors in the following order: webble world yellow (wblWrldYellow), pink, LightSalmon, Coral, BurlyWood, Chocolate, LightSkyBlue, Aquamarine, PaleGreen, Plum, MistyRose, LightCyan, Silver, PeachPuff, LightSteelBlue and Tomato. Except for the first color (Webble World Yellow) the other color names are CSS3 compatible.
 
+####wwConsts.lightPalette
+
+* **Returns:**
+    * (Array(of Objects)) Each object contains a color-name and a color-value (as a hexadecimal (#ffffff))
+	    * e.g. {name: "wblWrldYellow", value: "#FFF68F"}
+
+```JavaScript
+// Change the color-slot every 3 seconds using the light palette constant
+var colorIndex = 0;
+var changeColor = function(){
+	if(colorIndex > 15){ colorIndex = 0; }
+	$scope.set("MyColorSlot", wwConsts.lightPalette[colorIndex++].value);
+	$timeout(changeColor, 300);
+};
+```
+###_languages_ ![Property][prop]
+A small subset of avilable languages, where some are present inside Webble World, which contains language code, language name in english and in the language itself and the phrase "Change Language" in each language. This is mainly used internally, but it is there to use also for Webble developers if ever needed. The language codes are the international recognized codes. Following languages are included: English, Swedish, Japanese, German, Finnish, French, Russian, Hebrew, Greek and Spanish.
+
+####wwConsts.languages
+
+* **Returns:**
+    * (Array (of Objects)) each object have a set of language describing keys
+	    * e.g. {code: "sv", NativeName: "Svenska", EnglishName: "Swedish", ChangeStr: "Ändra Språk"},
+
+```JavaScript
+// Tell the console how to say "Change Language" in Swedish
+for(var i = 0; i < wwConsts.languages.length; i++){
+	if(wwConsts.languages[i].code == "sv"){
+		$log.log("In Swedish the phrase 'Change language' looks like this: '" + wwConsts.languages[i].ChangeStr + "'.");
+	}
+}
+```
+###_defaultFontFamilies_ ![Property][prop]
+Returns a list of the names for the default font families supported by most browsers and which Webble World also fully support withou any additional downloads. The names are CSS3 compatible.
+
+####wwConsts.defaultFontFamilies
+
+* **Returns:**
+    * (Array(of Strings)) each item is just a string name of the font family
+
+```JavaScript
+// Iterates over the default font family list and print each name to the console
+for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
+	$log.log(wwConsts.defaultFontFamilies[i]);
+}
+```
+###_**=== colorService ===**_ ![Property][prop]
+The `colorService` service contains a range of useful methods for color related rgb and hec color conversions etc. To access any of the specific colorService methods just call colorService (remember to also add it to the top of the controller) envoking the colorService method one is after (including any possible parameters).
+
+####**colorService.METHOD_NAME(PARAMETERS)**
+
+```JavaScript
+// Get the RGBA value as a string from the hex value for opaque "red"
+$log.log( colorService.hexToRGBAStr("#ffff0000") );
+```
+
+###_()_ ![Method][meth]
+
+####colorService.
+
+* **Parameters:**
+    * ()
 * **Returns:**
     * ()
 
@@ -2642,77 +2719,64 @@ for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
 // 
 
 ```
-      
-    
-    wwConsts.palette
-	
-###_()_ ![Property][prop]
-
-####
-
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    wwConsts.lightPalette
-	
-###_()_ ![Property][prop]
-
-####
-
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    wwConsts.elementTransformations
-	
-###_()_ ![Property][prop]
-
-####
-
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    wwConsts.languages
-	
-###_()_ ![Property][prop]
-
-####
-
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    wwConsts.defaultFontFamilies
-
-
-
-
-
-
-
-
 
 
 
     // Color hex and RGB value converter service.
     colorService.rgbToHex(R,G,B);
+	
+	
+###_()_ ![Method][meth]
+
+####colorService.
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     colorService.rgbStrToHex(rgbStr);
+	
+###_()_ ![Method][meth]
+
+####colorService.
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     colorService.hexToRGB(hex);
+	
+###_()_ ![Method][meth]
+
+####colorService.
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     colorService.hexToRGBAStr(hex)
+
+
+
+
+
+
+
 
     // String Catcher returns a proper string for name and description of CSS attributes
     strCatcher.cssAttrNames
