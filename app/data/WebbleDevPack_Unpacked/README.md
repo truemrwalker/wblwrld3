@@ -3155,39 +3155,63 @@ $log.log( "My Time Stamp: " + myTimeStamp );
 ```
 <a name="slot"></a>
 ###_**=== Slot ===**_ ![Class][class]
-The `Slot` class service... To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+The `Slot` class service is an object instance provider for the class concept of 'Slot'.  
+The Slot class service contains a vast range of methods and properties which describes the slot instance in various useful ways.  
+One create a new Slot instance with the use of the `new` command. One Creator is provided with seven parameters that will fully initiate the Webble. Some values may be undefined if not used, and some values will be auto generated if needed.
+Good to know is that only the unique name, the value, the slot category and the metadata are saved in the JSON configuration file. Other values must be recreated at slot creation (usually during Webble initiation) and are not stored, or manually stored by the Webble developer using `coreCall_CreateCustomWblDef` in the Webble controller.  
+If you want a special behavior, like for example a custom gimme, then you override the getValue method for the specified slot instance in your Webble init function at slot creation time. (remember to also add it to the top of the controller). To access any of the specific Slot methods just call them via the Slot instance (created with `new`) and then envoke the method one is after.
 
-####**.METHOD()**
+####**new Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr)**
+
+* **Creator Parameters:**
+    * sName (String) the name of the slot
+	    * Unique name (within the Webble instance)
+	* sValue (Any) the value of the slot
+	    * The initiating value type, will set the Slot on the path, trying its best to keep it to that type
+		* `undefined` and `null` are also allowed (though rarely used or needed)
+	* sDispName (String) a readable descriptive name of the slot for external display
+	    * If not assigned, the Slot will use its sName also as sDispName
+	* sDispDesc (String) a deeper description of the slot and its purpose
+	    * May be left out, but strongly discouraged, since this is the only way for a user to understand the slot
+	* sCat (String) the category definition name of the slot
+	    * Custom grouping name in order to sort slots nicely in the property form
+	    * Usually set to the Webble template id `$scope.theWblMetadata['templateid']`
+		* Can be empty string
+	* sMetaData (Object) the metadata of the slot with various custom and slot value type specific content 
+	    * e.g. `{inputType: Enum.aopInputTypes.[INPUT TYPE]}` (See Enum Service for details for options)
+		* Study the Webble template controller template for further details of available metadata content
+		* metadata may, and is often, undefined, since the Slot usually can guess pretty well on its own what to do
+		* a Webble template developer can add custom slot metadata for all internal use (which is also stored)
+	* sElementPntr (Element Pointer) the element pointer to the element where a CSS-related slot connects its value
+		* Usually never set to anything except `undefined`, since this is only needed by CSS slots and they are usually auto generated. (see the Webble template controller template for further details on how to auto create CSS related slots)
 
 ```JavaScript
-// 
-$log.log(  );
+// Create a new slot instance and add it to the webbles slot list
+$scope.addSlot(new Slot('msg',
+	"Hello Webble",
+	"Message",
+	"Text displayed on the Webble",
+	$scope.theWblMetadata['templateid'],
+	undefined,
+	undefined
+));
 ```
+###_getName_ ![Method][meth]
+Returns the unique name of the slot instance.
 
-    // Slot (class service), is an object instance provider for the class concept of 'Slot'. If you want a special
-    // behavior, like for example a custom gimme, then you override the getValue method for the specified slot instance
-    // in your Webble init function at slot creation time.
-    // Good to know is that only the unique name, the value, the slot category and the metadata are saved in the JSON 
-    // configuration file. Other values must be recreated at slot creation (usually during Webble initiation) and are 
-    // not stored.
-    
-    new Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr);
-	
-###_()_ ![Method][meth]
-
-####
+####[slotInstance].getName()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) the unique name of the slot
 
 ```JavaScript
-// 
-
-```	
-        [slotInstance].getName();
-		
+// Iterate over all slots and print their name to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getName() );
+}
+```		
 ###_()_ ![Method][meth]
 
 ####
