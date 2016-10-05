@@ -17,6 +17,7 @@ existing services, directives and filters that your Webble might want to use to 
 * ![Property][prop] = Property
 * ![Directive][dir] = Directive
 * ![Enum][enum] = Enumerations
+* ![Class][class] = Class
 
 <!------------------------------------------------------------------------------------------------------------------->
 ##Webble Core
@@ -2903,246 +2904,258 @@ var protectKey = Enum.bitFlags_WebbleProtection.DELETE;
 newProtection = bitflags.toggle(newProtection, protectKey);
 $scope.setProtection(newProtection);
 ```
+###_off_ ![Method][meth]
+Bit-Flag Operation which turns a binary flag off from a provided set of bitflags and returns the altered set of bitflags.
 
-###_()_ ![Method][meth]
-
-####
+####bitflags.off(whatFlagSelection, whatBitFlag)
 
 * **Parameters:**
-    * ()
+    * whatFlagSelection (Integer) a set of bitflags
+	    * e.g. 0110 = 5 or 100101 = 37
+	* whatBitFlag (Integer) the bit flag we are after
+	    * e.g. 3rd = 4 or 6th = 32
 * **Returns:**
-    * ()
+    * (Integer) the new and altered bitflag set
 
 ```JavaScript
-// 
-
+// Turns OFF the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.PUBLISH;
+newProtection = bitflags.off(newProtection, protectKey);
+$scope.setProtection(newProtection);
 ```
-    // Bit Flag Operations, turns binary flags on and off.
-    bitflags.off(whatFlagSelection, whatBitFlag);
-	
-###_()_ ![Method][meth]
+###_on_ ![Method][meth]
+Bit-Flag Operation which turns a binary flag on from a provided set of bitflags and returns the altered set of bitflags.
 
-####
+####bitflags.on(whatFlagSelection, whatBitFlag)
 
 * **Parameters:**
-    * ()
+    * whatFlagSelection (Integer) a set of bitflags
+	    * e.g. 0110 = 5 or 100101 = 37
+	* whatBitFlag (Integer) the bit flag we are after
+	    * e.g. 3rd = 4 or 6th = 32
 * **Returns:**
-    * ()
+    * (Integer) the new and altered bitflag set
 
 ```JavaScript
-// 
-
-```	
-    bitflags.on(whatFlagSelection, whatBitFlag);
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    bitflags.toggle(whatFlagSelection, whatBitFlag);
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
+// Turns ON the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.BUNDLE;
+newProtection = bitflags.on(newProtection, protectKey);
+$scope.setProtection(newProtection);
 ```
-    // Get Key By Value, gets a associative array and a value and returns the name of the key containing that value or,
-    // if not found, returns null.
-    getKeyByValue(object, value);
+###_toggle_ ![Method][meth]
+Bit-Flag Operation which toggles a binary flags from on to off or vice versa from a provided set of bitflags and returns the altered set of bitflags.
 
-###_()_ ![Method][meth]
-
-####
+####bitflags.toggle(whatFlagSelection, whatBitFlag)
 
 * **Parameters:**
-    * ()
+    * whatFlagSelection (Integer) a set of bitflags
+	    * e.g. 0110 = 5 or 100101 = 37
+	* whatBitFlag (Integer) the bit flag we are after
+	    * e.g. 3rd = 4 or 6th = 32
 * **Returns:**
-    * ()
+    * (Integer) the new and altered bitflag set
 
 ```JavaScript
-// 
+// Toggles the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.MOVE;
+newProtection = bitflags.toggle(newProtection, protectKey);
+$scope.setProtection(newProtection);
+```	
+###_getKeyByValue_ ![Method][meth]
+A service which takes an associative array and a value and returns the name of the key containing that value, or if not found, returns null. (remember to also add it to the top of the controller)
+	
+####getKeyByValue(object, value)
 
+* **Parameters:**
+    * object (Object) any object with a set of keys and values
+	* value (Any) any value that might be found in the object parameter
+* **Returns:**
+    * (String) the name of the key which contained the value provided as a parameter
+
+```JavaScript
+// write to the console the key name for the current selection state of the Webble
+$log.log( getKeyByValue(Enum.availableOnePicks_SelectTypes, $scope.getSelectionState())  );
 ```
-    // Is Valid Enum Value, tests that a specified value is contained within the range of values inside a specific Enum
-    // value collection. Values is validated both by key name and/or by key value.
-    isValidEnumValue(enumToTest, valueToTest);
-   
-   
-###_**===  ===**_ ![Property][prop]
-The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
-
-####**.METHOD()**
-
-```JavaScript
-// 
-$log.log(  );
-```   
-    // isExist, A service that checks if something exist somewhere. For example if a specific value exists in a 
-    // specific array. valueInArrayOfObj can take an array of keys for nested objects. Both service methods can return 
-    // the index of the find instead of just true or false if retAsIndex is set to true
+###_isValidEnumValue_ ![Method][meth]
+A service which tests that a specified value is contained within the range of values inside a specific Enum (or other object) value collection. Values are validated both by key name and/or by key value. (remember to also add it to the top of the controller)
 	
-###_()_ ![Method][meth]
-
-####
+####isValidEnumValue(enumToTest, valueToTest)
 
 * **Parameters:**
-    * ()
+    * enumToTest (Object) the set of key-values that is being tested 
+	* valueToTest (Any) a value to test against
 * **Returns:**
-    * ()
+    * (Boolean) True or False whether the value was present or not
 
 ```JavaScript
-// 
-
-```	
-    isExist.valueInArray(theArray, theValue, retAsIndex);
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    isExist.valueInArrayOfObj(theArray, theValue, theObjKey, retAsIndex);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
+// Tell the console if a specifc value is valid for exec mode settings
+var whatValue = 7
+$log.log( whatValue + " is a valid exec mode value: " + isValidEnumValue(Enum.availableOnePicks_ExecutionModes, whatValue) );
 ```
-    // Is Valid Style Value, tests that a specified style value within a specified style setting is a valid option.
-    isValidStyleValue(styleToTest, possibleStyleValue);
+###_**=== isExist ===**_ ![Property][prop]
+The `isExist` service checks if something exist somewhere, for example if a specific value exists in a specific array. To access any of the specific isExist methods just call isExist (remember to also add it to the top of the controller) envoking the method one is after. Both service methods can return the index of the find instead of just true or false
 
-
-
-###_**===  ===**_ ![Property][prop]
-The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
-
-####**.METHOD()**
+####**isExist.METHOD(PARAMETERS)**
 
 ```JavaScript
-// 
-$log.log(  );
+// tell the console if a specific value existst in a specified array
+var myArray = [17, 21, 39, 198, 12], myValue = 39;
+$log.log( myValue + " exists in myArray: " + isExist.valueInArray(myArray, myValue) );
 ```
-    // JSON Query, a collection of functions to query a json object.
-	
-###_()_ ![Method][meth]
+###_valueInArray_ ![Method][meth]
+Checks whether a specified value exists in a provided array and if so returns the result either as a Boolean or as the index value of the find.
 
-####
+####isExist.valueInArray(theArray, theValue, retAsIndex)
 
 * **Parameters:**
-    * ()
+    * theArray (Array) the array to search inside
+	* theValue (Any) the value to look for in the array
+	* retAsIndex (Boolean) whether the return value should be the index of the find or just a Boolean
+	    * OPTIONAL
 * **Returns:**
-    * ()
+    * (Boolean / Integer) Either True or False for locating the value or the index of the value if requested
 
 ```JavaScript
-// 
-
+// tell the console at what index a specific value existst in a specified array
+var myArray = [17, 21, 39, 198, 12], myValue = 39;
+$log.log( myValue + " exists in myArray at index: " + isExist.valueInArray(myArray, myValue, true) );
 ```	
-    jsonQuery.allValByKey(obj, key);
-	
-###_()_ ![Method][meth]
+###_valueInArrayOfObj_ ![Method][meth]
+Checks whether a specified object key value exists in a provided array of objects and if so returns the result either as a Boolean or as the index value of the find. Can take an array of keys for nested objects.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    jsonQuery.allObjWithKey(obj, key);
-	
-###_()_ ![Method][meth]
-
-####
+####isExist.valueInArrayOfObj(theArray, theValue, theObjKey, retAsIndex)
 
 * **Parameters:**
-    * ()
+    * theArray (Array) the array to search inside
+	* theValue (Any) the value to look for in the array
+	* theObjKey (String) the key name of the object being examined
+	* retAsIndex (Boolean) whether the return value should be the index of the find or just a Boolean
+	    * OPTIONAL
 * **Returns:**
-    * ()
+    * (Boolean / Integer) Either True or False for locating the value or the index of the value if requested
 
 ```JavaScript
-// 
-
-```	
-    jsonQuery.allObjValuesAsArray(obj);
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    jsonQuery.getArrayIndexByObjValue(obj, val);
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
+// tell the console at what index a specific value existst in a specified array of objects under a specific object key
+var myArray = [{name: "Bob", city: "London", age: 45}, {name: "Janet", city: "New York", age: 39}, {name: "Ryu", city: "Tokyo", age: 17}], myValue = 39, myKey = "age";
+$log.log( myValue + " exists in myArray under object key '" + myKey + "' at index: " + isExist.valueInArrayOfObj(myArray, myValue, myKey, true) );
 ```
-    // Get Timestamp, creates a unix like time stamp value.
-    getTimestamp();
+###_isValidStyleValue_ ![Method][meth]
+A service that tests if a specified style value within a specified style setting is a valid option. (remember to also add it to the top of the controller).
 
+####isValidStyleValue(styleToTest, possibleStyleValue);
 
+* **Parameters:**
+    * styleToTest (String) the name if the style being tested
+	    * e.g. "margin-left"
+	* possibleStyleValue (Any) the value which will attempted to apply on the provided css style
+* **Returns:**
+    * (Boolean) True or False whether the value is valid or not
 
+```JavaScript
+// tells the console whether a specific value is valid for a specific css style
+var theStyle = "background-color", theValue = "#ff00ff";
+$log.log( theValue + " is a valid value for the css style of " + theStyle + ": " + isValidStyleValue(theStyle, theValue) );
+```
+###_**=== jsonQuery ===**_ ![Property][prop]
+The `jsonQuery` service contains a collection of methods to query a json object (incl. nested objects) for different things. To access any of the specific  jsonQuery methods just call jsonQuery (remember to also add it to the top of the controller) envoking the method one is after.
 
+####**jsonQuery.METHOD(PARAMETERS)**
 
+```JavaScript
+// tell the console at which index a specific value would be stored if the object where it is found would be an array
+var myObj = {name: "Bob", city: "London", age: 35, weight: 87.5, work: "CG Artist"};
+var myValue = "87.5";
+var theIndex = jsonQuery.getArrayIndexByObjValue(myObj, myValue);
+$log.log( "If myObj was converted to an array, the value " + myValue + " would be stored at index: " + theIndex );
+```
+###_allValByKey_ ![Method][meth]
+Search through an object and returns all values (stored in an array) which was found under the provided key.
 
+####jsonQuery.allValByKey(obj, key)
+
+* **Parameters:**
+    * obj (Object) an ordinary key-value object
+	* key (String) the key which will be looked for in the provided object
+* **Returns:**
+    * (Array) all the values found under the specified key
+
+```JavaScript
+// Lists all values for a specified key in a specified object and print it to the console.
+var myObj = {dad: {name: "Bob", city: "London", age: 35}, mom: {name: "Lisa", city: "London", age: 41}};
+var myKey = "age";
+$log.log( "These are the values for the key '" + myKey + "' in myObj: " + jsonQuery.allValByKey(myObj, myKey) );
+```
+###_allObjWithKey_ ![Method][meth]
+Search through an object and returns an array of generated objects which contains the provided key and its value.
+
+####jsonQuery.allObjWithKey(obj, key)
+
+* **Parameters:**
+    * obj (Object) an ordinary key-value object (nested is allowed)
+	* key (String) the key which will be looked for in the provided object
+* **Returns:**
+    * (Array) a set of generated objects with the specified key and value
+
+```JavaScript
+// Write to the console the generated array of objects created when looking for a certain key in a certain object
+var myObj = {dad: {name: "Bob", city: "London", age: 35}, mom: {name: "Lisa", city: "Cambridge", age: 41}};
+var myKey = "city";
+$log.log( jsonQuery.allObjWithKey(myObj, myKey) );
+```
+###_allObjValuesAsArray_ ![Method][meth]
+Returns an array of all values found in an object (object values are returned as objects and are not cut up any further). Kind of works like an object to array converter.
+
+####jsonQuery.allObjValuesAsArray(obj)
+
+* **Parameters:**
+    * obj (Object) an ordinary key-value object (nested is allowed)
+* **Returns:**
+    * (Array) a set of all values found in an object, now stored in an array
+
+```JavaScript
+// Write to the console all values found in the outer object
+var myObj = {dad: {name: "Bob", city: "London", age: 35}, mom: {name: "Lisa", city: "Cambridge", age: 41}};		
+$log.log( jsonQuery.allObjValuesAsArray(myObj) );
+```
+###_getArrayIndexByObjValue_ ![Method][meth]
+Returns the index of an array where a value was found in an object after it has been converted to an array.
+
+####jsonQuery.getArrayIndexByObjValue(obj, val);
+
+* **Parameters:**
+    * obj (Object) an ordinary key-value object (nested is allowed)
+	* val (Any) the value we are looking for
+* **Returns:**
+    * (Integer) the index of the value after the object was converted to an array
+
+```JavaScript
+// tell the console at which index a specific value would be stored if the object where it is found would be an array
+var myObj = {name: "Bob", city: "London", age: 35, weight: 87.5, work: "CG Artist"};
+var myValue = "87.5";
+var theIndex = jsonQuery.getArrayIndexByObjValue(myObj, myValue);
+$log.log( "If myObj was converted to an array, the value " + myValue + " would be stored at index: " + theIndex );
+```
+###_getTimestamp_ ![Method][meth]
+Returns a unix like time stamp value. (useful for e.g. unique identifiers). (remember to also add it to the top of the controller).
+
+####getTimestamp()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Float) a large numerical value based on the current exact time (in ms) (therefore unique)
+
+```JavaScript
+// tell the timestamp value to the console 
+var myTimeStamp = getTimestamp();
+$log.log( "My Time Stamp: " + myTimeStamp );
+```
 <a name="slot"></a>
-###_**===  ===**_ ![Property][prop]
-The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+###_**=== Slot ===**_ ![Class][class]
+The `Slot` class service... To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
 
 ####**.METHOD()**
 
@@ -3839,4 +3852,5 @@ Extra functions that is within the system and can be used by any Webble develope
 [meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
 [dir]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-D-icon.png
 [enum]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-E-icon.png
+[class]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-C-icon.png
 [ioposinfo]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/ioPosInfo.png
