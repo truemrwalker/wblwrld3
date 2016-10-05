@@ -128,11 +128,11 @@ ww3Services.factory('Enum', function (gettext) {
 
         // Default Interaction objects' Tooltip text
         availableOnePicks_DefaultInteractionObjectsTooltipTxt: {
-            Menu: gettext("Open Menu"),
-            Rotate: gettext("Rotate"),
-            Resize: gettext("Resize"),
-            AssignParent: gettext("Assign Parent"),
-            Rescale: gettext("Rescale")
+            Menu: "Open Menu",
+            Rotate: "Rotate",
+            Resize: "Resize",
+            AssignParent: "Assign Parent",
+            Rescale: "Rescale"
         },
 
         // Default menu choices that all webbles share
@@ -158,23 +158,23 @@ ww3Services.factory('Enum', function (gettext) {
 
 		// Default menu choices Name Texts
 		availableOnePicks_DefaultWebbleMenuTargetsNameTxt: {
-			Publish: gettext("Publish"),
-			Duplicate: gettext("Duplicate"),
-			Delete: gettext("Delete"),
-			AssignParent: gettext("Assign Parent"),
-			RevokeParent: gettext("Revoke Parent"),
-			ConnectSlots: gettext("Connect Slots"),
-			Props: gettext("Properties"),
-			SharedDuplicate: gettext("Shared Model Duplicate"),
-			Bundle: gettext("Bundle"),
-			Unbundle: gettext("Unbundle"),
-			BringFwd: gettext("Bring to Front"),
-			Protect: gettext("Set Protection"),
-			AddCustomSlots: gettext("Add Custom Slots"),
-			EditCustomMenuItems: gettext("Custom Menu Items"),
-			EditCustomInteractionObjects: gettext("Custom Interaction Objects"),
-			Export: gettext("Export"),
-			About: gettext("About (share, rate etc.)")
+			Publish: "Publish",
+			Duplicate: "Duplicate",
+			Delete: "Delete",
+			AssignParent: "Assign Parent",
+			RevokeParent: "Revoke Parent",
+			ConnectSlots: "Connect Slots",
+			Props: "Properties",
+			SharedDuplicate: "Shared Model Duplicate",
+			Bundle: "Bundle",
+			Unbundle: "Unbundle",
+			BringFwd: "Bring to Front",
+			Protect: "Set Protection",
+			AddCustomSlots: "Add Custom Slots",
+			EditCustomMenuItems: "Custom Menu Items",
+			EditCustomInteractionObjects: "Custom Interaction Objects",
+			Export: "Export",
+			About: "About (share, rate etc.)"
 		},
 
         // The different execution modes the webble world can be set to
@@ -188,12 +188,12 @@ ww3Services.factory('Enum', function (gettext) {
         },
 
         availableOnePicks_ExecutionModesDisplayText: {
-            Developer: gettext("Developer"),
-            Admin: gettext("Admin"),
-            SuperHighClearanceUser: gettext("Super High Clearance User"),
-            HighClearanceUser: gettext("High Clearance User"),
-            MediumClearanceUser:  gettext("Medium Clearance User"),
-            LowClearanceUser:  gettext("Low Clearance User")
+            Developer: "Developer",
+            Admin: "Admin",
+            SuperHighClearanceUser: "Super High Clearance User",
+            HighClearanceUser: "High Clearance User",
+            MediumClearanceUser: "Medium Clearance User",
+            LowClearanceUser: "Low Clearance User"
         },
 
 		availableOnePicks_templateRevisionBehaviors: {
@@ -1720,7 +1720,7 @@ ww3Services.factory('getCSSClassPropValue', [function() {
 //=================================================================================
 ww3Services.factory('getUrlVars', [function() {
     return function(){
-        var vars = [], hash;
+        var vars = {}, hash;
         var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 
         for(var i = 0; i < hashes.length; i++)
@@ -2142,6 +2142,9 @@ ww3Services.factory('Slot', function(Enum, getTimestamp, isValidEnumValue) {
 		originalType_ = typeof value_;
 		if(metaData_ != null && (metaData_.inputType == Enum.aopInputTypes.Point || metaData_.inputType == Enum.aopInputTypes.Size)){
 			originalType_ = 'vector';
+		}
+		if(metaData_ != null && metaData_.inputType == Enum.aopInputTypes.DatePick){
+			originalType_ = 'date';
 		}
 		else if(Object.prototype.toString.call( value_ ) === '[object Array]') {
 			originalType_ = 'array';

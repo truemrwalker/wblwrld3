@@ -475,7 +475,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
                     tmp['value'] = theValue;
                 }
                 else if(metadata.inputType == Enum.aopInputTypes.DatePick){
-                    tmp['value'] = dateFilter(new Date(theValue), 'yyyy-MM-dd');
+                    tmp['value'] = new Date(theValue);
                 }
 				else if(value.getOriginalType() == 'object' || value.getOriginalType() == 'array'){
 					tmp['isArrObj'] = true;
@@ -698,7 +698,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 									}
 
                                     if(itsOk){
-										if(p.originalValType == 'object' || p.originalValType == 'array') {
+                                    	var isMultiListType = (metadata != null && (metadata.inputType == Enum.aopInputTypes.MultiListBox || metadata.inputType == Enum.aopInputTypes.MultiCheckBox));
+										var isDateType = (metadata != null && metadata.inputType == Enum.aopInputTypes.DatePick);
+										if((p.originalValType == 'object' && !isDateType) || (p.originalValType == 'array' && !isMultiListType)) {
 											if(JSON.stringify(theSlots_[slot].getValue(), $scope.dynJSFuncStringify, 1) != p.value){
 												var jsonParsedVal;
 												try{
@@ -811,7 +813,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     var initInteractionObjects = function(){
         for(var dio in Enum.availableOnePicks_DefaultInteractionObjects){
             var index = Enum.availableOnePicks_DefaultInteractionObjects[dio];
-            var text = Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt[dio];
+            var text = gettextCatalog.getString(Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt[dio]);
 
             for(var i = 0; i < $scope.theInteractionObjects.length; i++){
                 if($scope.theInteractionObjects[i].scope().getIndex() == index){
@@ -2837,7 +2839,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
 			//if the value in is json or array and the slot being set is of string type... make sure a conversion is made to keep the integrity of the data
 			if(typeof slotValue === 'object' && theSlot.getOriginalType() === 'string'){
-				if(Object.prototype.toString.call( slotValue ) === '[object Array]') {
+				if(typeof slotValue.getMonth === 'function'){
+					slotValue = slotValue.toString();
+				}
+				else if(Object.prototype.toString.call( slotValue ) === '[object Array]') {
 					slotValue = {"slotValue": slotValue};
 					slotValue = JSON.stringify(slotValue, $scope.dynJSFuncStringify);
 					slotValue = slotValue.substr(slotValue.indexOf(':') + 1, slotValue.length - slotValue.indexOf(':') - 2);
@@ -2859,6 +2864,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 				}
 				else if(theSlot.getOriginalType() === 'array'){
 					slotValue = valMod.fixBrokenArrStrToProperArray(slotValue);
+				}
+				else if(theSlot.getOriginalType() === 'date'){
+					try{
+						slotValue = new Date(slotValue);
+					}
+					catch(e){
+						slotValue = new Date();
+					}
 				}
 			}
 
