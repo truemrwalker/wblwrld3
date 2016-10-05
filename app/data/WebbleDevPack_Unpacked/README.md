@@ -2874,45 +2874,282 @@ Simple service that returns an object containing the URL parameters from the cur
 // Print to the console all current URL parameters and their values
 $log.log( getUrlVars() );
 ```
-
-
 <a name="fromKeyCode"></a>    
+###_fromKeyCode_ ![Method][meth]
+Simple service that returns the name of a key on the keyboard based on the key code value. (remember to also add it to the top of the controller).
 
-    // Keyboard key name from key code, returns the name of a key on the keyboard based on the key code value.
-    fromKeyCode(keycode);
+####fromKeyCode(keycode)
 
+* **Parameters:**
+    * keycode (Integer) The key code for a specific key, usually provided from a key down event
+* **Returns:**
+    * (String) a name of a key board key
+	    * e.g. 'Down Arrow' (from key code: 40)
+
+```JavaScript
+// Tells the console which key has a certain key code
+var keyCode = 27;
+$log.log( "The key with key-code " + keyCode + " is the " + fromKeyCode(27) + " key." );
+```
+###_**=== bitflags ===**_ ![Property][prop]
+The `bitflags` service contains a few easy to access methods for bitwise operations. (remember to also add it to the top of the controller)
+
+####**bitflags.METHOD(PARAMETERS)**
+
+```JavaScript
+// Toggles the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.DELETE;
+newProtection = bitflags.toggle(newProtection, protectKey);
+$scope.setProtection(newProtection);
+```
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Bit Flag Operations, turns binary flags on and off.
     bitflags.off(whatFlagSelection, whatBitFlag);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     bitflags.on(whatFlagSelection, whatBitFlag);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     bitflags.toggle(whatFlagSelection, whatBitFlag);
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Get Key By Value, gets a associative array and a value and returns the name of the key containing that value or,
     // if not found, returns null.
     getKeyByValue(object, value);
 
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Is Valid Enum Value, tests that a specified value is contained within the range of values inside a specific Enum
     // value collection. Values is validated both by key name and/or by key value.
     isValidEnumValue(enumToTest, valueToTest);
-    
+   
+   
+###_**===  ===**_ ![Property][prop]
+The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+
+####**.METHOD()**
+
+```JavaScript
+// 
+$log.log(  );
+```   
     // isExist, A service that checks if something exist somewhere. For example if a specific value exists in a 
     // specific array. valueInArrayOfObj can take an array of keys for nested objects. Both service methods can return 
     // the index of the find instead of just true or false if retAsIndex is set to true
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     isExist.valueInArray(theArray, theValue, retAsIndex);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     isExist.valueInArrayOfObj(theArray, theValue, theObjKey, retAsIndex);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Is Valid Style Value, tests that a specified style value within a specified style setting is a valid option.
     isValidStyleValue(styleToTest, possibleStyleValue);
 
+
+
+###_**===  ===**_ ![Property][prop]
+The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+
+####**.METHOD()**
+
+```JavaScript
+// 
+$log.log(  );
+```
     // JSON Query, a collection of functions to query a json object.
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     jsonQuery.allValByKey(obj, key);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     jsonQuery.allObjWithKey(obj, key);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     jsonQuery.allObjValuesAsArray(obj);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     jsonQuery.getArrayIndexByObjValue(obj, val);
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Get Timestamp, creates a unix like time stamp value.
     getTimestamp();
 
+
+
+
+
+
 <a name="slot"></a>
+###_**===  ===**_ ![Property][prop]
+The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+
+####**.METHOD()**
+
+```JavaScript
+// 
+$log.log(  );
+```
 
     // Slot (class service), is an object instance provider for the class concept of 'Slot'. If you want a special
     // behavior, like for example a custom gimme, then you override the getValue method for the specified slot instance
@@ -2922,52 +3159,650 @@ $log.log( getUrlVars() );
     // not stored.
     
     new Slot(sName, sValue, sDispName, sDispDesc, sCat, sMetaData, sElementPntr);
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
         [slotInstance].getName();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setName(newSlotName);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getValue();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setValue(newValue);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getCategory();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setCategory(newCat);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getTimestamp();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].resetTimestamp();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setTimestamp();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setCustomTimestamp(newTimestampValue);
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
         [slotInstance].getTimestampMemory();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setTimestampMemory();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getElementPntr();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setElementPntr(newElementPntr);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getDisplayName();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getExtDisplayName();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setDisplayName(newDisplayName);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getDisplayDescription();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setDisplayDescription(newDisplayDescription);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getMetaData();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setMetaData(newMetaData);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getDisabledSetting();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setDisabledSetting(newDisabledSetting);        
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getDoNotIncludeInUndo();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setDoNotIncludeInUndo(newDoNotIncludeInUndo);        
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getIsCustomMade();
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].setIsCustomMade(customMadeState);
+		
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```		
         [slotInstance].getOriginalType();
 
+
+
+
+###_**===  ===**_ ![Property][prop]
+The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+
+####**.METHOD()**
+
+```JavaScript
+// 
+$log.log(  );
+```
     // Value Modifier and Separator, a collection of functions that modify or separate values or fix values that was not in correct format
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.getValUnitSeparated(theValue);       //for css values with units
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.addPxMaybe(theName, theVal);         //for css values who requires a unit    
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.getFormatedDate(inDate);				//Formats and return a javascript date to the iso format yyyy-mm-dd.
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.fixBrokenObjStrToProperObject(strToFix);   	//Gets a string which failed being parsed as a json object, tries to fix and mend it and create a proper object from it, or if not returns an empty object.
+	
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.fixBrokenArrStrToProperArray(strToFix);		//Gets a string which failed being parsed as an array, tries to fix and mend it and create a proper array from it, or if not returns an empty array.
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.urlify(text);                  		//Adds html link tag around html addresses found inside provided text and returns the new and improved version
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.urlifyWithImages(text);              //Adds html link tag around html addresses found inside provided text and create img tags for links that are images and returns the new and improved version
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.SlimTextFromLinksAndHtml(text);      //Remove all links and replace them with ifdo about their existance and also removes all html tags in the text and returns the new and improved version
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     valMod.findAndRemoveValueInArray(theArray, theValue); 	//Iterates through an array and if the specified value is found it is removed and the array is returned
 
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     // Is Empty, checks weather an object is empty (in every way that may be).
     isEmpty(obj);
 
+
+
+###_**===  ===**_ ![Property][prop]
+The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
+
+####**.METHOD()**
+
+```JavaScript
+// 
+$log.log(  );
+```
     // A collection of math support functions
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     mathy.countDecimals(theValue);				//Returns the number of decimals in a float number
+
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```
     mathy.getRotationDegrees(jquery-element);  	//Get rotation in degrees of a specified jquery element
+	
+###_()_ ![Method][meth]
+
+####
+
+* **Parameters:**
+    * ()
+* **Returns:**
+    * ()
+
+```JavaScript
+// 
+
+```	
     mathy.monthDiff(date 1, date 2)				//returns the number of months between two dates
 
 <!------------------------------------------------------------------------------------------------------------------->
