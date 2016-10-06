@@ -3212,9 +3212,162 @@ for(slot in $scope.getSlots()){
 	$log.log( $scope.getSlot(slot).getName() );
 }
 ```		
-###_()_ ![Method][meth]
+###_setName_ ![Method][meth]
+Let you assign a new name to the slot, if ever requested, though probably not.
 
-####
+####[slotInstance].setName(newSlotName)
+
+* **Parameters:**
+    * newSlotName (String) the name of the slot
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the name of a slot
+$scope.getSlot("mySlot").setName("yourSlot");
+```	
+###_getValue_ ![Method][meth]
+Returns the value of the slot instance. (Rarely used outside the inner core, instead one should use `$scope.gimme("SLOT-NAME")` for retrieving slot values, but if, for some reason, one need to access the slot value on this fundamental level, this is the method to use)
+
+####[slotInstance].getValue()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Any) the value of the slot, whatever it might be
+
+```JavaScript
+// Iterate over all slots and print their value to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getValue() );
+}
+```	
+###_setValue_ ![Method][meth]
+Let you assign a new value to the slot. (Should be used with enormous care, since it is kind of bypassing the Webble core system, where one would use the `$scope.set("SLOT-NAME", NEW VALUE)` for setting new slot values, while when assigning a slot directly with `setValue` non of the Webbles other systems trigger, like slot connections or slot change events (as designed). Having said that, there sometimes are reasons where one would want exactly that to happen, change a slot value secretely kind of, and if so, then this is the method to use)
+
+####[slotInstance].setValue(newValue)
+
+* **Parameters:**
+    * newValue (Any) whatever the new value should be
+	    * The initial value set at slot creation, will always dictate the value type, and therefore affect any new values being assigned, converting it to the original type. 
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the value of a slot
+$scope.getSlot("mySlot").setValue(42);
+```	
+###_getCategory_ ![Method][meth]
+Returns the category of the slot instance.
+
+####[slotInstance].getCategory()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the category group name id for the slot
+
+```JavaScript
+// Iterate over all slots and print their category to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getCategory() );
+}
+```	
+###_setCategory_ ![Method][meth]
+Let you assign a new category to the slot.
+
+####[slotInstance].setCategory(newCat)
+
+* **Parameters:**
+    * newCat (String) the new catgory name
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the category of a slot
+$scope.getSlot("mySlot").setCategory("My Best Category");
+```	
+###_getElementPntr_ ![Method][meth]
+Returns the JQuery element pointer of the slot instance, which contains a css style value that is connected with the slot value. (Rarely, if ever, used externally)
+
+####[slotInstance].getElementPntr()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Element Pointer (JQuery)) the element which contains the CSS style value the slot affects
+
+```JavaScript
+// Iterate over all slots and print their element pointer to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getElementPntr() );
+}
+```	
+###_setElementPntr_ ![Method][meth]
+Let you assign a new JQuery element pointer to the slot. This is never done externally, but all managed internally in the Webble core when auto generating CSS related slots, but if a crazy need ever occurs to assign this manually this is the method to do it with.
+
+####[slotInstance].setElementPntr(newElementPntr)
+
+* **Parameters:**
+    * newElementPntr (Element Pointer (JQuery)) the element whose CSS style value should be affected by the slot value
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the element Pointer of a slot
+$scope.getSlot("mySlot").setElementPntr($scope.theView.parent().find("#SomeOtherWebbleElement"));
+```	
+###_getDisplayName_ ![Method][meth]
+Returns the display name of the slot instance.
+
+####[slotInstance].getDisplayName()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the readable nice display name for the slot
+
+```JavaScript
+// Iterate over all slots and print their display name to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getDisplayName() );
+}
+```	
+###_getExtDisplayName_ ![Method][meth]
+Returns the extended display name of the slot instance. The extended name is the display name followed by the slots unique name within hard brackes like this "Display Name [slotname]".
+
+####[slotInstance].getExtDisplayName()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) display name and slot name in combination
+	    * e.g. "The Best Slot Ever [myBestSlot]"
+
+```JavaScript
+// Iterate over all slots and print their extended display name to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getExtDisplayName() );
+}
+```	
+###_setDisplayName_ ![Method][meth]
+Let you assign the display name of the slot.
+
+####[slotInstance].setDisplayName(newDisplayName)
+
+* **Parameters:**
+    * newDisplayName (String) a new display name
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the display name of a slot
+$scope.getSlot("mySlot").setDisplayName("A Better Name");
+```	
+###_()_ ![Method][meth]
+Returns the X of the slot instance.
+
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3222,254 +3375,17 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
-```		
-        [slotInstance].setName(newSlotName);
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].getValue();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setValue(newValue);
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].getCategory();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setCategory(newCat);
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].getTimestamp();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].resetTimestamp();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setTimestamp();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setCustomTimestamp(newTimestampValue);
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```
-        [slotInstance].getTimestampMemory();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setTimestampMemory();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].getElementPntr();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setElementPntr(newElementPntr);
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].getDisplayName();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].getExtDisplayName();
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```		
-        [slotInstance].setDisplayName(newDisplayName);
-		
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
+// Iterate over all slots and print their X to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).X() );
+}
 ```		
         [slotInstance].getDisplayDescription();
 		
 ###_()_ ![Method][meth]
+Let you assign X to the slot.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3477,14 +3393,15 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Reassign the X of a slot
+$scope.getSlot("mySlot").X(Y);
 ```		
         [slotInstance].setDisplayDescription(newDisplayDescription);
 		
 ###_()_ ![Method][meth]
+Returns the X of the slot instance.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3492,14 +3409,17 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Iterate over all slots and print their X to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).X() );
+}
 ```		
         [slotInstance].getMetaData();
 		
 ###_()_ ![Method][meth]
+Let you assign X to the slot.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3507,14 +3427,15 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Reassign the X of a slot
+$scope.getSlot("mySlot").X(Y);
 ```		
         [slotInstance].setMetaData(newMetaData);
 		
 ###_()_ ![Method][meth]
+Returns the X of the slot instance.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3522,14 +3443,17 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Iterate over all slots and print their X to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).X() );
+}
 ```		
         [slotInstance].getDisabledSetting();
 		
 ###_()_ ![Method][meth]
+Let you assign X to the slot.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3537,14 +3461,15 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Reassign the X of a slot
+$scope.getSlot("mySlot").X(Y);
 ```		
         [slotInstance].setDisabledSetting(newDisabledSetting);        
 		
 ###_()_ ![Method][meth]
+Returns the X of the slot instance.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3552,14 +3477,17 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Iterate over all slots and print their X to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).X() );
+}
 ```		
         [slotInstance].getDoNotIncludeInUndo();
 		
 ###_()_ ![Method][meth]
+Let you assign X to the slot.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3567,14 +3495,15 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Reassign the X of a slot
+$scope.getSlot("mySlot").X(Y);
 ```		
         [slotInstance].setDoNotIncludeInUndo(newDoNotIncludeInUndo);        
 		
 ###_()_ ![Method][meth]
+Returns the X of the slot instance.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3582,14 +3511,17 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Iterate over all slots and print their X to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).X() );
+}
 ```		
         [slotInstance].getIsCustomMade();
 		
 ###_()_ ![Method][meth]
+Let you assign X to the slot.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3597,14 +3529,15 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Reassign the X of a slot
+$scope.getSlot("mySlot").X(Y);
 ```		
         [slotInstance].setIsCustomMade(customMadeState);
 		
 ###_()_ ![Method][meth]
+Returns the X of the slot instance.
 
-####
+####[slotInstance].
 
 * **Parameters:**
     * ()
@@ -3612,8 +3545,10 @@ for(slot in $scope.getSlots()){
     * ()
 
 ```JavaScript
-// 
-
+// Iterate over all slots and print their X to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).X() );
+}
 ```		
         [slotInstance].getOriginalType();
 
