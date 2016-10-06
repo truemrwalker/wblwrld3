@@ -2493,7 +2493,7 @@ var ps = $scope.getPlatformSettingsFlags();
 var menuIsOpen = ((parseInt(ps, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) != 0)
 $log.log( "Menu Open: " + menuIsOpen );
 ```	
-<a name="bitFlags_PlatformStates"></a>		
+<a name="bitFlags_PlatformStates"></a>
 ###_bitFlags_PlatformStates_ ![Enum][enum]
 Used for keeping track of some things the platform is doing (Bitwise Flags). This is in all known cases completely irrelevant for a Webble developer and can be ignored, but if ever a reason to track these states occure, then these are the different states available.
 
@@ -2509,6 +2509,7 @@ if((parseInt($scope.getPlatformCurrentStates(), 10) & parseInt(Enum.bitFlags_Pla
 	$log.log("We are waiting!!")
 }
 ```
+<a name="SlotDisablingState"></a>		
 ###_SlotDisablingState_ ![Enum][enum]
 Used for keeping track if a slot is disabled in some way or another. Each higher value include all lower ones.
 
@@ -3364,419 +3365,418 @@ Let you assign the display name of the slot.
 // Reassign the display name of a slot
 $scope.getSlot("mySlot").setDisplayName("A Better Name");
 ```	
-###_()_ ![Method][meth]
-Returns the X of the slot instance.
+###_getDisplayDescription_ ![Method][meth]
+Returns the display description text of the slot instance.
 
-####[slotInstance].
+####[slotInstance].getDisplayDescription()
 
 * **Parameters:**
-    * ()
+    * None
 * **Returns:**
-    * ()
+    * (String) the description text of the slot
+
+```JavaScript
+// Iterate over all slots and print their description text to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getDisplayDescription() );
+}
+```	
+###_setDisplayDescription_ ![Method][meth]
+Let you assign the display description text to the slot.
+
+####[slotInstance].setDisplayDescription(newDisplayDescription)
+
+* **Parameters:**
+    * newDisplayDescription (String) the new display description text
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the display description text of a slot
+$scope.getSlot("mySlot").setDisplayDescription("This slot contains its value in gold");
+```	
+###_getMetaData_ ![Method][meth]
+Returns the metadata of the slot instance.
+
+####[slotInstance].getMetaData()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Object) the meta data object the slot contains
+	    * `null` by default (also after being assigned `undefined`)
+
+```JavaScript
+// Iterate over all slots and print their metadata object to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getMetaData() );
+}
+```	
+###_setMetaData_ ![Method][meth]
+Let you assign metadata to the slot. (Remember to get the current metadata before adding new, in order to avoid loosing any essential metadata the slot already carry). This is usually never called after the slot is created, but the possibility exists. 
+
+####[slotInstance].setMetaData(newMetaData)
+
+* **Parameters:**
+    * newMetaData (Object) a new or updated metadata object (with predefined and/or custom keys)
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign and update the metadata of a slot
+var mySlotMetaData = $scope.getSlot("mySlot").getMetaData();
+mySlotMetaData["myCustomKey"] = 42;
+$scope.getSlot("mySlot").setMetaData(mySlotMetaData);
+```	
+###_getDisabledSetting_ ![Method][meth]
+Returns the current disabled setting of the slot instance. Existing disabled states can be found in the service Enum library for [SlotDisablingState](#SlotDisablingState).
+
+####[slotInstance].getDisabledSetting()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer (Enum)) the current disabled state for the slot
+	    * default state is 0 (None)
+
+```JavaScript
+// Iterate over all slots and print their disabled state to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getDisabledSetting() );
+}
+```	
+###_setDisabledSetting_ ![Method][meth]
+Let you assign a new disabled setting to the slot.
+
+####[slotInstance].setDisabledSetting(newDisabledSetting)
+
+* **Parameters:**
+    * newDisabledSetting (Integer (Enum)) the new disabled setting
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the disabled setting of the slot to not allowed for property form editing
+$scope.getSlot("mySlot").setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+```	
+###_getDoNotIncludeInUndo_ ![Method][meth]
+Returns the flag of the slot instance which tells whether it should be registered by undo/redo.
+
+####[slotInstance].getDoNotIncludeInUndo()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether slot changes should be registered by the undo/redo system or not
+
+```JavaScript
+// Iterate over all slots and print their "Do not include in Redo"-flag to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getDoNotIncludeInUndo() );
+}
+```	
+###_setDoNotIncludeInUndo_ ![Method][meth]
+Let you assign the flag of the slot instance which tells whether it should be registered by undo/redo. If set to true the system will not register its activities for undo purposes. (can still be undone but only to the value before the flag was set to false, which might only be its intiation value).
+
+####[slotInstance].setDoNotIncludeInUndo(newDoNotIncludeInUndo)
+
+* **Parameters:**
+    * newDoNotIncludeInUndo (Boolean) True or False whether slot changes should be registered by the undo/redo system or not
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the "Do not include in Redo"-flag of a slot
+$scope.getSlot("mySlot").setDoNotIncludeInUndo(true);
+```	
+###_getIsCustomMade_ ![Method][meth]
+Returns the "Is Custom Made"-flag of the slot instance. Being custom made means basically that the slot was custom created by a user in realtime and was not included in the Webbble templates initial slots. It may also mean that it was a slot being auto generated by the Webble, but at some time after Webble initiation. Custom slots are also stored ans saved in the Webble Definition JSON file. The main difference between custom made and template-made slots are thet the custom made can be deleted by any user via the Webble World interface.
+
+####[slotInstance].getIsCustomMade()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether the slot is custom made or not
+
+```JavaScript
+// Iterate over all slots and print their custom-made state to the console
+for(slot in $scope.getSlots()){
+	$log.log( $scope.getSlot(slot).getIsCustomMade() );
+}
+```	
+###_setIsCustomMade_ ![Method][meth]
+Let you assign "Is Custom Made"-flag to the slot. This flag is usually set automatically by the core system and should maybe not be set by the Webble template developer, but if one wish to tamper with this anyway, this is the method to use. (Remember that custom-made slots can be deleted by the Webble user inside the slot property form (but only for the active instance, duplicates will reinvent the slot at initiation)).
+
+####[slotInstance].setIsCustomMade(customMadeState)
+
+* **Parameters:**
+    * customMadeState (Boolean) True or False whether the slot is custom made or not
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the "custom-made"-state of a slot
+$scope.getSlot("mySlot").setIsCustomMade(true);
+```	
+###_getOriginalType_ ![Method][meth]
+Returns the original value-type that the slot was asigned at creation partly based on the type of the value assigned but also based on metadata information. Besides traditional types like `string` and `number`, slots may also be `array`, `date` and `vector` (array with only two values). The main purpose of this attribute is to manage slot changes when a newly assigned slot value is of a different or  ambiguous type which needs to be tweaked or converted to better fit the original idea of the slot. If one expect a slot to contain an array, it would be rather annoying if it suddenly contained something completely different for example. There is not external set method for this attribute, since it is completely handled internally at Slot creation.
+
+####[slotInstance].getOriginalType()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the type of a slot value (with some slot enahanced differences from traditional JavaScript)
 
 ```JavaScript
 // Iterate over all slots and print their X to the console
 for(slot in $scope.getSlots()){
-	$log.log( $scope.getSlot(slot).X() );
+	$log.log( $scope.getSlot(slot).getOriginalType() );
 }
-```		
-        [slotInstance].getDisplayDescription();
-		
-###_()_ ![Method][meth]
-Let you assign X to the slot.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Reassign the X of a slot
-$scope.getSlot("mySlot").X(Y);
-```		
-        [slotInstance].setDisplayDescription(newDisplayDescription);
-		
-###_()_ ![Method][meth]
-Returns the X of the slot instance.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Iterate over all slots and print their X to the console
-for(slot in $scope.getSlots()){
-	$log.log( $scope.getSlot(slot).X() );
-}
-```		
-        [slotInstance].getMetaData();
-		
-###_()_ ![Method][meth]
-Let you assign X to the slot.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Reassign the X of a slot
-$scope.getSlot("mySlot").X(Y);
-```		
-        [slotInstance].setMetaData(newMetaData);
-		
-###_()_ ![Method][meth]
-Returns the X of the slot instance.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Iterate over all slots and print their X to the console
-for(slot in $scope.getSlots()){
-	$log.log( $scope.getSlot(slot).X() );
-}
-```		
-        [slotInstance].getDisabledSetting();
-		
-###_()_ ![Method][meth]
-Let you assign X to the slot.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Reassign the X of a slot
-$scope.getSlot("mySlot").X(Y);
-```		
-        [slotInstance].setDisabledSetting(newDisabledSetting);        
-		
-###_()_ ![Method][meth]
-Returns the X of the slot instance.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Iterate over all slots and print their X to the console
-for(slot in $scope.getSlots()){
-	$log.log( $scope.getSlot(slot).X() );
-}
-```		
-        [slotInstance].getDoNotIncludeInUndo();
-		
-###_()_ ![Method][meth]
-Let you assign X to the slot.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Reassign the X of a slot
-$scope.getSlot("mySlot").X(Y);
-```		
-        [slotInstance].setDoNotIncludeInUndo(newDoNotIncludeInUndo);        
-		
-###_()_ ![Method][meth]
-Returns the X of the slot instance.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Iterate over all slots and print their X to the console
-for(slot in $scope.getSlots()){
-	$log.log( $scope.getSlot(slot).X() );
-}
-```		
-        [slotInstance].getIsCustomMade();
-		
-###_()_ ![Method][meth]
-Let you assign X to the slot.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Reassign the X of a slot
-$scope.getSlot("mySlot").X(Y);
-```		
-        [slotInstance].setIsCustomMade(customMadeState);
-		
-###_()_ ![Method][meth]
-Returns the X of the slot instance.
-
-####[slotInstance].
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// Iterate over all slots and print their X to the console
-for(slot in $scope.getSlots()){
-	$log.log( $scope.getSlot(slot).X() );
-}
-```		
-        [slotInstance].getOriginalType();
-
-
-
-
-###_**===  ===**_ ![Property][prop]
-The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
-
-####**.METHOD()**
-
-```JavaScript
-// 
-$log.log(  );
 ```
-    // Value Modifier and Separator, a collection of functions that modify or separate values or fix values that was not in correct format
-	
-###_()_ ![Method][meth]
+###_**=== valMod ===**_ ![Property][prop]
+The `valMod` service contains a collection of methods that modify or separate values or fix values that was not in correct format. To access any of the specific valMod methods just call valMod (remember to also add it to the top of the controller) envoking the method one is after.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
+####**valMod.METHOD(PARAMETERS)**
 
 ```JavaScript
-// 
-
-```	
-    valMod.getValUnitSeparated(theValue);       //for css values with units
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.addPxMaybe(theName, theVal);         //for css values who requires a unit    
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.getFormatedDate(inDate);				//Formats and return a javascript date to the iso format yyyy-mm-dd.
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.fixBrokenObjStrToProperObject(strToFix);   	//Gets a string which failed being parsed as a json object, tries to fix and mend it and create a proper object from it, or if not returns an empty object.
-	
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.fixBrokenArrStrToProperArray(strToFix);		//Gets a string which failed being parsed as an array, tries to fix and mend it and create a proper array from it, or if not returns an empty array.
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.urlify(text);                  		//Adds html link tag around html addresses found inside provided text and returns the new and improved version
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.urlifyWithImages(text);              //Adds html link tag around html addresses found inside provided text and create img tags for links that are images and returns the new and improved version
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.SlimTextFromLinksAndHtml(text);      //Remove all links and replace them with ifdo about their existance and also removes all html tags in the text and returns the new and improved version
-	
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    valMod.findAndRemoveValueInArray(theArray, theValue); 	//Iterates through an array and if the specified value is found it is removed and the array is returned
-
-
-###_()_ ![Method][meth]
-
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
+// Adds `px` behind a numerical value if it needs it before assigning it to the slot (done internally so completely unnecessary operation)
+$scope.set("mySlot", valMod.addPxMaybe("mySlot", 42));
 ```
-    // Is Empty, checks weather an object is empty (in every way that may be).
-    isEmpty(obj);
+###_getValUnitSeparated_ ![Method][meth]
+When applied to a value (mainly slot values with CSS connection) it will attempt to separate the value from any possible present unit string and return an array with the value and the unit string separated, like for example "23px" --> [23, "px"]. Values that does not confrom to this format just returns rubbish that can be ignored. This method mainly applies to CSS values with units like "px", "em", "%" etc. This method is mainly used internally by the Webble World core, but it is also available for possible external use.
 
+####valMod.getValUnitSeparated(theValue)
 
-
-###_**===  ===**_ ![Property][prop]
-The `` service contains . To access any of the specific  methods just call  (remember to also add it to the top of the controller) envoking the method one is after.
-
-####**.METHOD()**
+* **Parameters:**
+    * theValue (Any) the value which is being targeted
+* **Returns:**
+    * (Array (Vector)) if succeded an array with the value at index 0 and the unit string at index 1
+	    * failing separations returns arrays filled with useles trash e.g. `[NaN, "rgb(51, 51, 51)"]` which are supposed to be ignored
 
 ```JavaScript
-// 
-$log.log(  );
+// Iterate over all slots and print their Value-Unit separated version the slot value to the console (no matter of how successful that separation was)
+for(slot in $scope.getSlots()){
+	$log.log( valMod.getValUnitSeparated($scope.getSlot(slot).getValue()) );
+}
 ```
-    // A collection of math support functions
-	
-###_()_ ![Method][meth]
+###_addPxMaybe_ ![Method][meth]
+Returns a modified slot value (provided as a parameter together with the slots name (which for success is mainly autogenerated CSS related slot names)). The modification will be the original numerical value with the `px` unit applied to it and returned as a string. This method is mainly used internally by the Webble World core, but it is also available for possible external use. The reason for this service method is to avoid problems with CSS values that must have a unit of some kind e.g. `left`, `top`, `width` etc.
 
-####
-
-* **Parameters:**
-    * ()
-* **Returns:**
-    * ()
-
-```JavaScript
-// 
-
-```	
-    mathy.countDecimals(theValue);				//Returns the number of decimals in a float number
-
-###_()_ ![Method][meth]
-
-####
+####valMod.addPxMaybe(theName, theVal)
 
 * **Parameters:**
-    * ()
+    * theName (String) the name of the slot which holds the value
+	* theVal (Float (Any)) The value (which should be numerical for successful modifiation but could be any) where modifcation is being applied upon if needed
 * **Returns:**
-    * ()
+    * (String) the modified value
 
 ```JavaScript
-// 
-
+// Adds `px` behind a numerical value if it needs it before assigning it to the slot (bypassing the normal core system).
+$scope.getSlot(myNicestWebbleElement:left).setValue(valMod.addPxMaybe("myNicestWebbleElement:left", 42));
 ```
-    mathy.getRotationDegrees(jquery-element);  	//Get rotation in degrees of a specified jquery element
-	
-###_()_ ![Method][meth]
+###_getFormatedDate_ ![Method][meth]
+Takes a JavaScript date and returns it as a string formatted to the iso format yyyy-mm-dd.
 
-####
+####valMod.getFormatedDate(inDate)
 
 * **Parameters:**
-    * ()
+    * inDate (Object (Date)) any JavaScript date
 * **Returns:**
-    * ()
+    * (String) date in iso format yyyy-mm-dd
 
 ```JavaScript
-// 
+// Print the current date in iso-format yyyy-mm-dd to the console 
+$log.log(valMod.getFormatedDate(Date.now()));
+```
+###_fixBrokenObjStrToProperObject_ ![Method][meth]
+Takes a string which failed being parsed into a json object, tries to fix and mend it and create a proper object and then return it. If the method fails the attempt it will return an empty object `{}`. Mainly used internally to fix crazy custom managed slot values, but is also available externally.
 
-```	
-    mathy.monthDiff(date 1, date 2)				//returns the number of months between two dates
+####valMod.fixBrokenObjStrToProperObject(strToFix)
 
+* **Parameters:**
+    * strToFix (String) a string that might be possible to convert into a JSON object
+* **Returns:**
+    * (Object) a JSON object with all keys and values in its proper place
+	    * If the method fails an empty object `{}` is returned
+
+```JavaScript
+// print to the console a proper converted Object fixed from an object-like string
+var objStr = "{steve:42,john:78,anna:27}";
+try{
+	$log.log(JSON.parse(objStr));
+	$log.log("JSON Parsed!");
+}
+catch(e){
+	$log.log("JSON Failed...");
+	var fixedVal = valMod.fixBrokenObjStrToProperObject(objStr);
+	if(!isEmpty(fixedVal)){
+		$log.log("...But Webble World Parsing succeded!");
+		$log.log( fixedVal );
+	}
+	else{
+		$log.log("All parsing attempts failed!");
+	}
+}
+```
+###_fixBrokenArrStrToProperArray_ ![Method][meth]
+Takes a string which failed being parsed into an array, tries to fix and mend it and create a proper array and then return it. If the method fails the attempt it will return an empty array `[]`. Mainly used internally to fix crazy custom managed slot values, but is also available externally.
+
+####valMod.fixBrokenArrStrToProperArray(strToFix)
+
+* **Parameters:**
+    * strToFix (String) a string that might be possible to convert into an array
+* **Returns:**
+    * (Array) an array with all values and indexes in its proper place
+	    * If the method fails an empty array `[]` is returned
+
+```JavaScript
+var arrStr = "chocolate,vanilla,strawberry";
+try{
+	$log.log(JSON.parse(arrStr));
+	$log.log("JSON Parsed!");
+}
+catch(e){
+	$log.log("JSON Failed...");
+	var fixedVal = valMod.fixBrokenArrStrToProperArray(arrStr);
+	if(!isEmpty(fixedVal)){
+		$log.log("...But Webble World Parsing succeded!");
+		$log.log( fixedVal );
+	}
+	else{
+		$log.log("All parsing attempts failed!");
+	}
+}
+```
+###_urlify_ ![Method][meth]
+Takes a text string and and adds html link-tags `<a></a>` around any url-addresses found inside the provided text and returns the new and improved version for web display with clickable links.
+
+####valMod.urlify(text)
+
+* **Parameters:**
+    * text (String) a text string with possible url links in it
+* **Returns:**
+    * (String) a text where all urls are fixed for html display with surrounding `<a>` tags
+
+```JavaScript
+// takes a text with containing urls and make it ready for html display with clickable links (and print the result to the console)
+var theTxt = "If you want to study something on your own, then https://www.khanacademy.org/ is a good place to go."
+$log.log( valMod.urlify(theTxt) );
+```
+###_urlifyWithImages_ ![Method][meth]
+Takes a text string and and adds html link-tags `<a></a>` around any url-addresses found inside the provided text and create img tags for links that are images `<img />`, and returns the new and improved version for web display with clickable links and visible images.
+
+####valMod.urlifyWithImages(text)
+
+* **Parameters:**
+    * text (String) a text string with possible url links in it (including image urls)
+* **Returns:**
+    * (String) a text where all urls are fixed for html display with surrounding `<a>` tags and images with `<img>` tags
+
+```JavaScript
+// takes a text with containing urls & image links and make it ready for html display with clickable links and visible images (and print the result to the console)
+var theTxt = "If you http://www.clipartkid.com/images/531/pix-for-pointing-at-you-clipart-hk5GgR-clipart.png want to study something on your own, then https://www.khanacademy.org/ is a good place to go."
+$log.log( valMod.urlifyWithImages(theTxt) );
+```
+###_SlimTextFromLinksAndHtml_ ![Method][meth]
+Takes a text string and and removes any url links and images and replace them with short info about their existance and returns the new and improved and slimmer version.
+
+####valMod.SlimTextFromLinksAndHtml(text)
+
+* **Parameters:**
+    * text (String) a text string with possible url links an image urls in it
+* **Returns:**
+    * (String) a slimmer version than the provided text that has stripped away any links and images
+	    * removed links are replaced with "[LINK]" and removed images are replaced with "[IMAGE]"
+
+```JavaScript
+// print to the console a slimmed down text without any possible urls and image links.
+var theTxt = "If you http://www.clipartkid.com/images/531/pix-for-pointing-at-you-clipart-hk5GgR-clipart.png want to study something on your own, then https://www.khanacademy.org/ is a good place to go."
+$log.log( valMod.SlimTextFromLinksAndHtml(theTxt) );
+```
+###_findAndRemoveValueInArray_ ![Method][meth]
+Iterates through a provided array and if the specified value is found, it is removed and the adjusted array is then returned.
+
+####valMod.findAndRemoveValueInArray(theArray, theValue)
+
+* **Parameters:**
+    * theArray (Array) the array that is being investigated
+	* theValue (Any) the value which is being removed, if found
+* **Returns:**
+    * (Array) the new and changed array where the provided value has been removed, if it was found
+
+```JavaScript
+// take an array and remove one value if it exists and then print the resulting array to the console
+var myArr = ["chocolate", "vanilla", "strawberry", "mango", "banana"];
+$log.log( valMod.findAndRemoveValueInArray(myArr, "mango") );
+```
+###_isEmpty_ ![Method][meth]
+A service that checks weather an object, string or array is empty or not. (remember to also add it to the top of the controller).
+
+####isEmpty(obj)
+
+* **Parameters:**
+    * obj (Any) a string, object or array that is being tested for being empty
+* **Returns:**
+    * (Boolean) True or False whether the provided parameter was empty or not
+
+```JavaScript
+var myArr = ["chocolate", "vanilla", "strawberry", "mango", "banana"], myObj = {}, myStr = "";
+$log.log( " myArr is empty: " + isEmpty(myArr) + "\n myObj is empty: " + isEmpty(myObj) + "\n myStr is empty: " + isEmpty(myStr) );
+```
+###_**=== mathy ===**_ ![Property][prop]
+The `mathy` service contains a collection of math support functions. To access any of the specific collection of math support functions methods just call collection of math support functions (remember to also add it to the top of the controller) envoking the method one is after.
+
+####**mathy.METHOD(PARAMETER)**
+
+```JavaScript
+// write the number of decimals to the console
+$log.log( mathy.countDecimals(7.456) );
+```
+###_countDecimals_ ![Method][meth]
+Returns the number of decimals in a float number.
+
+####mathy.countDecimals(theValue)
+
+* **Parameters:**
+    * theValue (Float) the decimal number being investigated
+* **Returns:**
+    * (Integer) the number of decimals the provided value containes
+
+```JavaScript
+// write the number of decimals in this value of pi to the console
+$log.log( mathy.countDecimals(3.141592653589793) );
+```
+###_getRotationDegrees_ ![Method][meth]
+Returns the rotation in degrees of a specified jquery element.
+
+####mathy.getRotationDegrees(jquery-element)
+
+* **Parameters:**
+    * jquery-element (Element Pointer (JQuery)) the element which current rotation is sought after
+* **Returns:**
+    * (Float) the roatation (in degrees) that the provided JQuery elememnt has
+
+```JavaScript
+// print to the console the rotation in degrees which the specified JQuery elelemnt inside the Webble currently has
+$log.log( mathy.getRotationDegrees($scope.theView.parent().find("#myInnerElement")) );
+```
+###_monthDiff_ ![Method][meth]
+Returns the number of months between two dates.
+
+####mathy.monthDiff(d1, d2)
+
+* **Parameters:**
+    * d1 (Object (Date)) the first start date
+	* d2 (Object (Date)) the second end date
+* **Returns:**
+    * (Integer) the number of months between the two provided dates
+
+```JavaScript
+// print to the console the number of months bewteen the specified dates
+$log.log( mathy.monthDiff(new Date(1989,11,9), new Date(2001,9,11)) );
+```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Filters
 With AngularJS **Filters** one can alter and modify any value in many powerful ways with ease and speed and is recommended to
