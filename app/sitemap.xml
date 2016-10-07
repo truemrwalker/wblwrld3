@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-	<url>
-		<loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=fundamental</loc>
-	</url>
-
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicTxtArea</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=SODAOpenDataAccess</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=logicGate</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicLabel</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicImage</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=RandomNumberGenerator</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=three3D</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=freeHandDrawing</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=colorPicker</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=LearningCube</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=RSSFeed</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicDatePicker</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=stringMaster</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=SoapAndRestCall</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicTabsNPages</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicMediaPlayer</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=blankSheet</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=gameOfLifeWbl</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicList</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=WizardsGameWebble</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=SimplePhysicsEngine</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=fundamental</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=changesCollector</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicButton</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicArgumentManager</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicSlider</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=simpleBasePad</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicCharts</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=PhaserGameDevWbl</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=postitnote</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=calculator</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=webble_paint</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=clock</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicTxtInput</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=WebSiteWrapper</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicRotatingNeedle</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicTime</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicWindow</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=genericCharts</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=GoogleMap</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicTwitter</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=basicTable</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=EventActionManager</loc></url>
+<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=triplets</loc></url>
 </urlset>

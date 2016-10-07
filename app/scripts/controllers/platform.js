@@ -5088,11 +5088,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         //==== HELP ============================
-        else if(sublink == 'docs' || (whatKeys.theAltKey && whatKeys.theKey == 'M')){
+        else if(sublink == 'docs' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'M')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
-                $window.open(appPaths.webbleDocRelPath);
+                $window.open(appPaths.webbleDocRelPath, '_blank');
             }
         }
+		else if(sublink == 'apidoc' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'M')){
+			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
+				$window.open(appPaths.currentAppUriCoreNoQuery + "apihelp.html", '_blank');
+			}
+		}
 		else if(sublink == 'tutorials' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'U')){
 			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
 				$window.open('https://www.youtube.com/playlist?list=PL1sLx5eXq85NvFtnzhpOm4lNJFsDE6DlZ', '_blank');

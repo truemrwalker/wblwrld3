@@ -1161,6 +1161,7 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
         {"itemName": "help", "title": gettext("Help"), "description": "", "visibility_enabled": true,
             "sublinks": [
                 {"sublink_itemName": "docs", "title": gettext("Documentation"), "shortcut": "(Alt+M)", "visibility_enabled": true},
+				{"sublink_itemName": "apidoc", "title": gettext("API Documentation"), "shortcut": "(Alt+Shift+M)", "visibility_enabled": true},
 				{"sublink_itemName": "tutorials", "title": gettext("Tutorial Vids"), "shortcut": "(Alt+Shift+U)", "visibility_enabled": true},
                 {"sublink_itemName": "faq", "title": gettext("FAQ"), "shortcut": "(Alt+Shift+F)", "visibility_enabled": true},
                 {"sublink_itemName": "openchat", "title": gettext("Open Chat"), "shortcut": "(Alt+C)", "visibility_enabled": true},
