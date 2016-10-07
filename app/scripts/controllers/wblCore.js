@@ -616,6 +616,12 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     //=========================================================================================
     var PropFormValsReturned = function(formProps){
         if(formProps != null){
+			for(var i = 0, p; p = formProps[i]; i++){
+				if(p['deleteRequest']){
+					$scope.removeSlot(p.key);
+				}
+			}
+
             if(!formProps.deleteOnly){
                 var theSlotsToSet = {};
 
@@ -762,12 +768,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
                 for(var sts in theSlotsToSet){
                     $scope.set(sts, theSlotsToSet[sts]);
-                }
-            }
-
-            for(var i = 0, p; p = formProps[i]; i++){
-                if(p['deleteRequest']){
-                    $scope.removeSlot(p.key);
                 }
             }
         }

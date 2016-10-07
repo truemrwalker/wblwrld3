@@ -2143,7 +2143,7 @@ ww3Services.factory('Slot', function(Enum, getTimestamp, isValidEnumValue) {
 		if(metaData_ != null && (metaData_.inputType == Enum.aopInputTypes.Point || metaData_.inputType == Enum.aopInputTypes.Size)){
 			originalType_ = 'vector';
 		}
-		if(metaData_ != null && metaData_.inputType == Enum.aopInputTypes.DatePick){
+		else if(metaData_ != null && metaData_.inputType == Enum.aopInputTypes.DatePick){
 			originalType_ = 'date';
 		}
 		else if(Object.prototype.toString.call( value_ ) === '[object Array]') {

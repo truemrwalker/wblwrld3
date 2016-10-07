@@ -86,6 +86,9 @@ wblwrld3App.controller('blankSheetCtrl', function($scope, $log, Slot, Enum) {
 
 				bsContainer.empty();
 				if(newVal != ""){
+					if(newVal[0] != "<" || newVal[newVal.length - 1] != ">"){
+						newVal = "<p>" + newVal + "</p>"
+					}
 					$(newVal).appendTo(bsContainer);
 					setCustomCC($scope.gimme('customChildContainerElementName'));
 				}
