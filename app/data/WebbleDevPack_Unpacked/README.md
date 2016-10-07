@@ -2577,7 +2577,7 @@ if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProte
 	$log.log("You are not allowed to be shared to the world, you poor, poor thing.");
 }
 ```                                         
-<a name="availableWWEvents"></a>    											
+<a name="availableWWEvents"></a>
 ###_availableWWEvents_ ![Enum][enum]
 The different Webble World Events that a Webble can listen to. (See [registerWWEventListener](#registerWWEventListener)) for details on how to create and manage a Webble Event Listener).
 
@@ -2667,6 +2667,7 @@ var changeColor = function(){
 	$timeout(changeColor, 300);
 };
 ```
+<a name="languages"></a>
 ###_languages_ ![Property][prop]
 A small subset of avilable languages, where some are present inside Webble World, which contains language code, language name in english and in the language itself and the phrase "Change Language" in each language. This is mainly used internally, but it is there to use also for Webble developers if ever needed. The language codes are the international recognized codes. Following languages are included: English, Swedish, Japanese, German, Finnish, French, Russian, Hebrew, Greek and Spanish.
 
@@ -3779,37 +3780,112 @@ $log.log( mathy.monthDiff(new Date(1989,11,9), new Date(2001,9,11)) );
 ```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Filters
-With AngularJS **Filters** one can alter and modify any value in many powerful ways with ease and speed and is recommended to
-be created and used within the Webble-template itself, but the platform has a few available too, that might be useful.
+With AngularJS **Filters** one can alter and modify any value in many powerful ways with ease and speed, and it is recommended to
+that webble template developers create filters of their own to empower their Webbles. But the platform has a few ones available too, that might be useful. Filters can eather be accessed as traditional AngularJS filters in HTML `{{ INPUT | FILTER }}` or via JavaScript as a method using the `$filter` keyword `$filter('FILTER-NAME')(PARAMETERS)`.
 
-    // takes a language code and turn it into the readable native name of that language
-    IN JS: nativeName(input);     IN HTML: {{ input | nativeName }}
+###_nativeName_ ![Method][meth]
+Takes an international language code and returns the readable _native_ name of that language. Not all languages are available, only those represented in the [languages](#languages) method of the `wwConst` service .
 
-    // takes a language code and turn it into a readable sentence for the line 'Change To LANG' in the native text of
-    // that language
-    IN JS: nativeString(input);     IN HTML: {{ input | nativeString }}
+####IN JS: $filter("nativeName")(langCode) ... IN HTML: {{ "langCode" | nativeName }}
 
-    // Simple string formatting filter.
-    IN JS: stringFormat(template, values);     IN HTML: {{ template | stringFormat : [variable1, variable2, etc] }}
+* **Parameters:**
+    * langCode (String) international language code
+	    * en = english, sv = swedish, fi = finnish etc.
+* **Returns:**
+    * (String) the native name of the language provided as parameter
 
-    // A bitwise test filter that return true or false if bit is set or not
-    IN JS:bitwiseAnd(firstNumber, secondNumber);     IN HTML: {{ firstNumber | bitwiseAnd : secondNumber }}
+```JavaScript
+// Print to the console the native name of the specified language provided as language code
+var langCode = "sv";
+$log.log( $filter('nativeName')(langCode) );
+```
+###_nativeString_ ![Method][meth]
+Takes an international language code and returns the readable sentence for the phrase "Change To LANG" in the native text of that language where LANG is the native name of the specified language. Not all languages are available, only those represented in the [languages](#languages) method of the `wwConst` service .
+	
+####IN JS: $filter("nativeString")(langCode) ... IN HTML: {{ "langCode" | nativeString }}
 
+* **Parameters:**
+    * langCode (String) international language code
+	    * en = english, sv = swedish, fi = finnish etc.
+* **Returns:**
+    * (String) the native phrase for "Change to LANG" where LANG is the native name of the language provided as parameter
+
+```JavaScript
+// Print to the console the native phrase "Change to LANG" of the specified language provided as language code
+var langCode = "sv";
+$log.log( $filter('nativeString')(langCode) );
+```
+###_stringFormat_ ![Method][meth]
+Takes a text and a set of dynamic values and returns the formatted string where the dynamic values have been properly merged within the text. 
+
+####IN JS: $filter("stringFormat")(template, values);     IN HTML: {{ template | stringFormat : [value1, value2, etc] }}
+
+* **Parameters:**
+    * template (String) String with parameter placeholders inside it
+	    * e.g. "This is {0} stringformat string that I made {1}.", ["my", "myself"] (the values in the array can be dynamic variables)
+	* values (Array) the values that will be replacing the placeholders in the text
+* **Returns:**
+    * (String) the correct formatted string
+
+```JavaScript
+// print to the console a text with dynamic place holders
+var theTxt = "This is {0} stringformat-string that {1} made {2}.";
+var theReplacementVals1 = ["my", "I", "myself"];
+var theReplacementVals2 = ["Zlatan's", "he", "himself"];
+$log.log($filter("stringFormat")(theTxt, theReplacementVals1));
+$log.log($filter("stringFormat")(theTxt, theReplacementVals2));
+```
+###_bitwiseAnd_ ![Method][meth]
+A bitwise test filter that returns true or false if a bit-flag is set or not
+
+####IN JS:$filter("bitwiseAnd")(firstNumber, secondNumber);     IN HTML: {{ firstNumber | bitwiseAnd : secondNumber }}
+
+* **Parameters:**
+    * firstNumber (Integer (bitwise)) the set of bit-flags where one flag will be tested for being on or off
+	* secondNumber (Integer (bitwise)) the exact bit-flag which the first set of flags will be compared with.
+* **Returns:**
+    * (Boolean) True or False whether the targeted bit-flag is On or Off.
+
+```JavaScript
+// test if the webble is protected against a specific protection type
+var wblProtections = $scope.getProtection();
+var testFlag = Enum.bitFlags_WebbleProtection.DELETE;
+var theFlagTest = $filter("bitwiseAnd")(wblProtections, testFlag);
+$log.log("This Webble is protected from 'Deletion': " + theFlagTest);
+```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Extra Additional
-Extra functions that is within the system and can be used by any Webble developer
+Additional methods/Properties/Dynamic Objects that are not located anywhere above, but is still within the system and can be used by any Webble developer if needed. Currently only one such support function exists.
 
-	// Detecting the current browser, version and OS
-    // USAGE EXAMPLE
-    var thisMachine = BrowserDetect;
-    if(thisMachine.browser == "Chrome"){ /* Do Something */ }
-    if(thisMachine.version == "12.5"){ /* Do Something */ }
-    if(thisMachine.OS == "Windows"){ /* Do Something */ }
-    if(thisMachine.device == "iPad"){ /* Do Something */ }
+###_BrowserDetect_ ![Property][prop]
+A dynamicly generated system property that contains information about the current browser, device version and Operating System for the current Webble user.
 
+Available Information Keys are:
+
+* browser
+* version
+* OS
+* device
+
+####BrowserDetect
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Object) a set of keys which informs about the users browser, device and OS
+
+```JavaScript
+// Tell the console what the current computer device is, in more details. 
+var sys = BrowserDetect;
+$log.log("This is a " + sys.device + ", running on " + sys.OS + " using browser " + sys.browser + " of version " + sys.version + ".");
+``` 
+
+<!------------------------------------------------------------------------------------------------------------------->
+<!-- Image Links for this document -->
 [prop]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-P-icon.png
 [meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
 [dir]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-D-icon.png
 [enum]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-E-icon.png
 [class]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-C-icon.png
 [ioposinfo]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/ioPosInfo.png
+<!------------------------------------------------------------------------------------------------------------------->
