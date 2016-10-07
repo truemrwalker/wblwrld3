@@ -947,182 +947,17 @@ $scope.unregisterOnlineDataListener("MyRoom");
 The **Platform** is the actual Webble World environment and it includes many helpful methods to access sections of the
 system and specific Webbles. Also in this case it is reached from within the `$scope` of the Webble-template.
 
-###_getCurrentExecutionMode_ ![Method][meth]
-Gets the current active execution mode level (developer, admin, etc which can be studied in detail [here](#availableOnePicks_ExecutionModes)). Execution mode is a way to control behavior and flow in a Webble depending on user type.
+###_altKeyIsDown_ ![Property][prop]
+Boolean Flag for the ALT key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
 
-####getCurrentExecutionMode()
+####altKeyIsDown
 
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Integer (Enum)) the current execution mode value as found [here](#availableOnePicks_ExecutionModes)
+* **Get & Set:**
+    * (Boolean) True or False whether the key is down or not
 
 ```JavaScript
-// Checks if the execution mode is Admin, and if so prints to the console
-if( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Admin){
-	$log.log("You are in Admin Mode");
-}
-```
-###_setExecutionMode_ ![Method][meth]
-Sets the current active execution mode level (developer, admin, etc which can be studied in detail [here](#availableOnePicks_ExecutionModes)). Execution mode is a way to control behavior and flow in a Webble depending on user type.
-
-####setExecutionMode(whatExecutionModeIndex)
-
-* **Parameters:**
-    * whatExecutionModeIndex (Integer (Enum)) the index number for the execution mode wished to be assigned
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Setting (force) the Webble World Execution Mode to be in Admin mode
-$scope.setExecutionMode(Enum.availableOnePicks_ExecutionModes.Admin);
-```
-###_getPlatformSettingsFlags_ ![Method][meth]
-Returns a bit flag value that holds various settings which controls user enabled platform environment values. See [Services](#services) and [bitFlags_PlatformConfigs](#bitFlags_PlatformConfigs) for more details.
-
-####getPlatformSettingsFlags()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Integer(Binary)) Platform configuration settings value (often user related)
-
-```JavaScript
-// Checks if the main menu is visible, and if not tells about it via the console
-if((parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) != 0){
-	$log.log("The main menu is hidden");
-}
-```
-###_getPlatformCurrentStates_ ![Method][meth]
-Gets a bit flag holder that contains various states this platform has to pay attention too. Very unlikely needed by a Webble developer, but it is still there if that would be the case. See [Services](#services) and [bitFlags_PlatformStates](#bitFlags_PlatformStates) for more details.
-
-####getPlatformCurrentStates()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Integer(Binary)) Platform state value (often related to various _busy_ states)
-
-```JavaScript
-// Checks if platform is currently waiting for parent selection, and if so tella bout it in the console
-if((parseInt(scope.getPlatformCurrentStates(), 10) & parseInt(Enum.bitFlags_PlatformStates.WaitingForParent, 10)) !== 0){
-	$log.log("You are supposed to pick a parent webble now.")
-}
-```	
-###_setPlatformCurrentStates_ ![Method][meth]
-Sets a bit flag holder that contains various states this platform has to pay attention too. Very unlikely needed by a Webble developer, but it is still there if so. See [Services](#services) and [bitFlags_PlatformStates](#bitFlags_PlatformStates) for more details.
-
-####setPlatformCurrentStates(newPCS)
-
-* **Parameters:**
-    * newPCS (Integer(Binary)) a bit flag integer for platform busy state
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Stop any possible current parent selection process and resets the Webble selection
-$scope.setPendingChild(undefined);
-$scope.setPlatformCurrentStates(bitflags.off($scope.getPlatformCurrentStates(), Enum.bitFlags_PlatformStates.WaitingForParent));
-$scope.unselectAllWebbles();
-```
-###_getPlatformElement_ ![Method][meth]
-Returns the jquery element of this platform. (Most often used for mouse event handling outside of the scope of the Webble)
-####getPlatformElement()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Jquery Element Pointer) The Platform (work surface) of Webble World as a Jquery Element
-
-```JavaScript
-// Turns off the default mouse event for a part of the Webble and create a custom mouse down event for the Webble that in turn will create a mouse up and mouse move event for the whole platform in order to not loose scope outside the webbles element boundaries
-$scope.theView.parent().draggable('option', 'cancel', '#myWblElement');
-$scope.theView.parent().find("#myWblElement").bind('vmousedown', mouseDownEventHandler);
-var mouseDownEventHandler = function (e) {
-	$log.log("Mouse is Down");
-
-	$scope.getPlatformElement().bind('mouseup', function(e){
-		$scope.getPlatformElement().unbind('mousemove');
-		$scope.getPlatformElement().unbind('mouseup');
-		$log.log("Mouse is Up");
-	});
-	
-	$scope.getPlatformElement().bind('mousemove', function(e){
-		$log.log("Mouse is Moving");
-	});
-};
-```
-###_getWSE_ ![Method][meth]
-Returns the DOM element (not the jquery element) of the current selected work surface. (This is where top parent webbles are glued onto in the DOM). Most likely never needed by the Webble developer.
-
-####getWSE()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (DOM Element Pointer) Work Space Element in the DOM tree where all Webbles resides
-
-```JavaScript
-//  Adds a image of a cute kitten on the work space surface (Which most likely annoy the hell out of most Webble World users and make them avoid your Webbles again :-) )
-var cuteKittenImgUrl = "https://lh3.ggpht.com/4kCi1_H566RFQrBcNYk5hKyA0TzlaxANZww2Kgf7Wp0dXmXyEQNw1ETG96OgG72oag=h900";
-var cuteKittenImg = $('<img id="cuteKitten">');
-cuteKittenImg.attr('src', cuteKittenImgUrl);
-$scope.getWSE().append(cuteKittenImg);
-```
-###_getPendingChild_ ![Method][meth]
-Returns the future child waiting to be assigned a parent. Usually only used by the core, but it is there if ever needed.
-
-####getPendingChild()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Webble Pointer) the Webble which is pending as a child waiting for a being assigned a parent.
-	    * `undefined` when no Webble is pending
-
-```JavaScript
-// If there is a pending child then print its instance id in the console
-if( $scope.getPendingChild() ){
-	$log.log( $scope.getPendingChild().scope().getInstanceId );
-}
-```
-
-    
-    $scope.getPendingChild();
-
-###_setPendingChild_ ![Method][meth]
-Sets the future child waiting to be assigned a parent. Usually only used by the core, but it is there if ever needed.
-
-####setPendingChild(newPC)
-
-* **Parameters:**
-    * newPC (Webble Pointer) the webble which will be assigned to wait for a parent selection (by user mouse click)
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Iterate through all active Webbles and assign the first valid one as parent to this Webble
-for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-	if (aw.scope() && aw.scope().getInstanceId() != $scope.getInstanceId()){
-		$scope.setPendingChild($scope.theView);
-		$scope.requestAssignParent(aw);
-		break;
-	}
-}
-```
-###_BlockNextAddUndo_ ![Method][meth]
-If a Webble wishes to perform a Webble operation or slot-set one does not want to be a part of the undo stack, then call this method (without any parameters) just after calling the slot set or operation call, and the wish will be granted. (also works the other way around if one wishes to make the platform forget about the previous operation before the new one, but then the method is called before any Webble operation).
-	
-####BlockNextAddUndo()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Will make the platform forget about the most recent latest slot change or webble operation and make it undoable.
-$scope.BlockNextAddUndo();
+// Tells the console if the ALT key is pressed or not
+$log.log("The ALT key is down: " + $scope.altKeyIsDown);
 ```
 ###_BlockAddUndo_ ![Method][meth]
 If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true just before starting the process and then later call the unblock method to return to normal mode again. Basically not used outside the core but available if ever reasons arise.
@@ -1143,10 +978,10 @@ $scope.set("root:top", 500);
 $scope.set("root:transform-rotate", 45);
 $scope.UnblockAddUndo();
 ```
-###_UnblockAddUndo_ ![Method][meth]
-If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true just before starting the process and then later call the unblock method to return to normal mode again. Basically not used outside the core but available if ever reasons arise.
+###_BlockNextAddUndo_ ![Method][meth]
+If a Webble wishes to perform a Webble operation or slot-set one does not want to be a part of the undo stack, then call this method (without any parameters) just after calling the slot set or operation call, and the wish will be granted. (also works the other way around if one wishes to make the platform forget about the previous operation before the new one, but then the method is called before any Webble operation).
 	
-####UnblockAddUndo()
+####BlockNextAddUndo()
 
 * **Parameters:**
     * None
@@ -1154,27 +989,8 @@ If one have a long range of slot or Webble operation one does not want to be a p
     * Nothing
 
 ```JavaScript
-// These slot changes can never be undone or redone individually only as a complete package due to the BlockAddUndo
-$scope.BlockAddUndo();
-$scope.set("msg", "You Love Me!");
-$scope.set("root:left", 700);
-$scope.set("root:top", 500);
-$scope.set("root:transform-rotate", 45);
-$scope.UnblockAddUndo();
-```
-###_resetSelections_ ![Method][meth]
-Reset Selections, resets the work surface by removing all Webble selections and undo any half finished connections.
-
-####resetSelections()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Resets all selections and remove any pending parent child relationship creation.
-$scope.resetSelections();
+// Will make the platform forget about the most recent latest slot change or webble operation and make it undoable.
+$scope.BlockNextAddUndo();
 ```
 ###_cleanActiveWS_ ![Method][meth]
 Clean Active Workspace, cleans out everything (every Webble) from the current selected workspace and resets the workspace.
@@ -1190,23 +1006,29 @@ Clean Active Workspace, cleans out everything (every Webble) from the current se
 // Clean out all webbles and reset the workspace
 $scope.cleanActiveWS();
 ```
-###_loadWblFromURL_ ![Method][meth]
-Tries to load a Webble JSON file from a URL provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
-	
-####loadWblFromURL(whatUrl, whatCallbackMethod)
+###_ctrlKeyIsDown_ ![Property][prop]
+Boolean Flag for the CTRL key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
 
-* **Parameters:**
-    * whatUrl (String) a URL string to where a Webble JSON config file is located
-	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
-	    * OPTIONAL
-* **Returns:**
-    * Nothing
+####ctrlKeyIsDown
+
+* **Get & Set:**
+    * (Boolean) True or False whether the key is down or not
 
 ```JavaScript
-// Loads a Webble from an external server and when it arrives make it (or at least its latest template) say its name in the console
-$scope.loadWblFromURL("https://www.myServer.com/myWebbles/bestWblEver.json", function(newWbl){
-	$log.log( newWbl.scope().getWebbleFullName() + " has arrived!" );
-});
+// Tells the console if the CTRL key is pressed or not
+$log.log("The CTRL key is down: " + $scope.ctrlKeyIsDown);
+```
+###_debugValue.txt_ ![Property][prop]
+If one is debugging, and one wants to display a text in the menu section where "debug Logging On" is displayed, one can use this variable.
+
+####debugValue.txt
+
+* **Get & Set:**
+    * (String) any optional text
+	
+```JavaScript
+// Sets the debugValue.txt to the Webbles "MySlot" slot value
+$scope.debugValue.txt = $scope.gimme("MySlot");
 ```
 ###_downloadWebbleDef_ ![Method][meth]
 Downloads a webble identified by its unique name, either from server of from memory. The callbackmethod, if provided, will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
@@ -1225,431 +1047,6 @@ Downloads a webble identified by its unique name, either from server of from mem
 $scope.downloadWebbleDef("genericCharts", function(newWbl){
 	$log.log( newWbl.scope().getWebbleFullName() + " has arrived!" );
 });
-```
-<a name="_loadWebbleFromDef_"></a>
-###_loadWebbleFromDef_ ![Method][meth]
-Loads a webble from a JSON definition provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
-	
-####loadWebbleFromDef(whatWblDef, whatCallbackMethod)
-
-* **Parameters:**
-    * whatWblDef (JSON Object) The Webble definition config object
-	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
-	    * OPTIONAL
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Odd way of loading an exact copy of oneself
-$scope.loadWebbleFromDef($scope.createWblDef(true));
-```
-###_waiting_ ![Method][meth]
-Turns on or off the appearance indicator ('is loading' gif image) in waiting mode. returns current waiting state if parameter is undefined.
-
-####waiting(isWaitingEnabled)
-
-* **Parameters:**
-    * isWaitingEnabled (Boolean)
-* **Returns:**
-    * (Boolean) if parameter is `undefined` returns the curent status of is waiting mode ('is loading' gif image visibility)
-
-```JavaScript
-// Turns on the waiting visualizer to inform the user that work is being done. (Don't forget to turn it off later though)
-$scope.waiting(true);
-```
-###_getCurrentPlatformPotential_ ![Method][meth]
-Returns the current Platform potential state, which tells us if the system is running at full sped or not, or being blocked and protected agains full use in some way. (See [Enum](#enum) and [availablePlatformPotentials](#availablePlatformPotentials) for more details about various potential states).
-
-####getCurrentPlatformPotential()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Integer(Enum)) The numerical representative for the current state of the platform potential mode
-
-```JavaScript
-// Warn the user running Webble world in any limited mode that this Webble does not accept that
-if ( $scope.getCurrentPlatformPotential() != Enum.availablePlatformPotentials.Full ) { 
-	showQIM("This Webble only work properly in Full platform state."); 
-}
-```
-###_getBundleMaster_ ![Method][meth]
-Returns the bundle master of the specified Webble if it has one, otherwise undefined. Bundle master is the outermost bundle webble, counted from a specific Webble.
-
-####getBundleMaster(whatWebble)
-
-* **Parameters:**
-    * whatWebble (Webble Pointer) The Webble whose possible Bundle master we are after
-* **Returns:**
-    * (Webble Pointer) The Bundle Master for the specified Webble if found, otherwise `undefined`
-	    * May be self
-
-```JavaScript
-// Check if one is bundled and if so, tell it to the console
-if( $scope.getBundleMaster($scope.theView) ){
-	$log.log("I am bundled!");
-}
-```
-###_getCurrWS_ ![Method][meth]
-Returns the current active workspace object. Rarely, close too never, used outside the Webble core, but if ever needed, here it is.
-Contains id, name, webbles, if its shared and more.
-
-####getCurrWS()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Object) Json object that holds all available data about the workspace, including all attached Webbles and any current metadata
-
-```JavaScript
-// Prints the name of the current workspace to the console
-$log.log( $scope.getCurrWS().name );
-```
-###_getActiveWebbles_ ![Method][meth]
-Returns a list (array) of all the current active webbles (in the active Workspace).
-
-####getActiveWebbles()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Array) All Webbles (Webble Pointer) that is currently active (exists) in the current workspace
-
-```JavaScript
-// Iterate through all active Webbles and make them tell the console their full name
-for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
-	$log.log( aw.scope().getWebbleFullName() );
-}
-```
-###_getSelectedWebbles_ ![Method][meth]
-Returns a list (array) of all webbles which are "Main" selected.
-
-####getSelectedWebbles()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Array) All Webbles (Webble Pointer) that is currently "Main"-selected
-
-```JavaScript
-// Iterate through all "Main"-selected Webbles and make them turn 45 degrees
-for(var i = 0, aw; aw = $scope.getSelectedWebbles()[i]; i++){
-	aw.scope().set("root:transform-rotate", 45);
-}
-```
-###_getWblAbsPosInPixels_ ![Method][meth]
-Returns the calculated absolute position in pixels for the specified webbles within the work surface.
-
-####getWblAbsPosInPixels(whatWebble)
-
-* **Parameters:**
-    * whatWebble (Webble Pointer) The Webble whose absolute position we are after
-* **Returns:**
-    * (Object) Position object with an x and y key (Webbles top left)
-	    * e.g. {x: 0, y: 0}
-
-```JavaScript
-// Make the Webble tell the console its absolute position on the workspace (and not its relative position to its parent)
-var absPos = $scope.getWblAbsPosInPixels($scope.theView);
-$log.log("I am located at left: " + absPos.x + " and top: " + absPos.y);
-```
-###_getWebbleCenterPos_ ![Method][meth]
-Returns the calculated absolute center position for the specified webble within the work surface.
-
-####getWebbleCenterPos(whatWebble)
-
-* **Parameters:**
-    * whatWebble (Webble Pointer) The Webble whose center we are after
-* **Returns:**
-    * (Object) Center Position object with an x and y key
-	    * e.g. {x: 0, y: 0}
-
-```JavaScript
-// Make the Webble tell the console its absolute center position on the workspace
-var absCenterPos = $scope.getWebbleCenterPos($scope.theView);
-$log.log("My Center is located at left: " + absCenterPos.x + " and top: " + absCenterPos.y);
-```
-###_getTopParent_ ![Method][meth]
-Returns the top parent for a specific Webble. If no top parent exist the webble itself is returned (since it is obviously the top). (Top Parent is the parent in a chain of related Webbles that has no parent of its own)
-	
-####getTopParent(whatWebble)
-
-* **Parameters:**
-    * whatWebble (Webble Pointer) The Webble who we are after
-* **Returns:**
-    * (Webble Pointer) the Webble that is top parent
-
-```JavaScript
-// activate a purple double glowing border for the top parent webble, which ever it is.
-topParent = $scope.getTopParent($scope.theView);
-topParent.scope().activateBorder(true, "purple", 4, "double", true);
-```
-###_getAllAncestors_ ![Method][meth]
-Returns a list (array) of all ancestors (parents and parents parents etc) of the defined webble. The list is ordered from the closest to the furthest away.
-
-####getAllAncestors(whatWebble)
-
-* **Parameters:**
-    * whatWebble (Webble Pointer) The Webble whose information we are after
-* **Returns:**
-    * (Array) All Webbles (Webble Pointer) that is an ancestor of the parameter Webble
-
-```JavaScript
-// Iterate through all ancestor Webbles and make them tell the console their instance Id
-for(var i = 0, anc; anc = $scope.getAllAncestors($scope.theView)[i]; i++){
-	$log.log(i + ": " + anc.scope().getInstanceId());
-}
-```
-###_getAllDescendants_ ![Method][meth]
-Returns all webbles of those that are children or grandchildren etc of the webble specified in the parameter, which is also included at the top of the list.
-	
-####getAllDescendants(whatWebble)
-
-* **Parameters:**
-    * whatWebble (Webble Pointer) The Webble whose information we are after
-* **Returns:**
-    * (Array) All Webbles (Webble Pointer) that is a descendant of the parameter Webble (including self)
-
-```JavaScript
-// Iterate through all descendants (and self) and give each its own colored border (as long as the palette is big enough)
-for(var n = 0, d; d = $scope.getAllDescendants($scope.theView)[n]; n++){
-	d.scope().activateBorder(true, wwConsts.palette[n].name, 4, "dashed", true);
-}
-```
-###_getWinningSlotValueAmongAllWebbles_ ![Method][meth]
-Looks for either the highest or the lowest value from all existing Webbles of a specified slot and return that value and the Webble who had it. Any slot value type can be compared, but numbers are probably the only thing that works well. (Slots with numbers and text like "25px" works fine too since they get parsed). If numbers are equal, the first value found will be winning.
-
-####getWinningSlotValueAmongAllWebbles()
-
-* **Parameters:**
-    * whatSlot (String) the name of the slot which will be compared
-	* lowestWins (Boolean) if true, the lowest value will be searched for (instead of the highest)
-* **Returns:**
-    * (Object) an object with two keys for value (Float) and value owner's Instance Id (Integer)
-	    * eg. `{value: 0, owner: undefined}` before comparison starts 
-
-```JavaScript
-// Find the Webble that has the highest z-index value and display it in the console
-var mostHighZ = $scope.getWinningSlotValueAmongAllWebbles('root:z-index', false);
-$log.log( "Webble " + mostHighZ.owner + " has the highest Z-index value of " + mostHighZ.value );
-```
-###_requestWebbleSelection_ ![Method][meth]
-Method that selects (activate border and Interaction Balls) the Webble provided as parameter as Main-selected and all its children as and Child-selected.
-
-####requestWebbleSelection(target)
-
-* **Parameters:**
-    * target (Webble Pointer) the Webble that is targeted for the operation
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Select this Webble and its children
-$scope.requestWebbleSelection($scope.theView);
-```
-###_requestPublishWebble_ ![Method][meth]
-Prepare for Webble publishing and opens up a user input form where the user needs to fill in required data before the Webble can be published to a specified place somewhere (server or local).
-	
-####requestPublishWebble(whatWbl)
-
-* **Parameters:**
-    * whatWbl (Webble Pointer) the Webble that is targeted for the operation
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Opens up the publish form for this Webble
-$scope.requestPublishWebble($scope.theView);
-```
-###_requestExportWebble_ ![Method][meth]
-Opens the Export Webble input form for the user to exports a specified Webble and all its needed templates (incl code files) to a webble code package file which can be imported to any other Webble World platform.
-
-####requestExportWebble(whatWbl)
-
-* **Parameters:**
-    * whatWbl (Webble Pointer) the Webble that is targeted for the operation
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Opens up the export form for this Webble
-$scope.requestExportWebble($scope.theView);
-```
-###_requestDeleteWebble_ ![Method][meth]
-Deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when the job is done)
-
-####requestDeleteWebble(target, callbackFunc)
-
-* **Parameters:**
-    * target (Webble Pointer) the Webble that is targeted for the operation
-	* callbackFunc (Function) Callback function that will be called when the Webble has been deleted
-	    * OPTIONAL
-* **Returns:**
-    * (Boolean) True or False whether the attempt to delete was successful or not
-
-```JavaScript
-// Murder the Webbles first-born child if there are any children
-if($scope.getChildren().length > 0){
-	$scope.requestDeleteWebble($scope.getChildren()[0], function(){
-		$log.log("Ah! Finally you are dead you parasite!");
-	});
-}
-```
-###_requestAssignParent_ ![Method][meth]
-Request Assign Parent, deals with the interaction process of creating a child-parent relationship due to user interaction. The target parameter is the child if no child is pending, and it is the parent if there is a pending child. This method is usually NEVER called from outside the platform, instead. for forcing parent-child relationship, one usually calls the Webble Core's `paste()` method instead.
-	
-####requestAssignParent(target)
-
-* **Parameters:**
-    * target (Webble Pointer) the Webble that is being assigned child or parent status
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Initiate a parent-child relationship creation where the user is supposed to click on possible parent for the Webble already assigned as child
-$scope.requestAssignParent($scope.theView);
-```
-###_showQIM_ ![Method][meth]
-Shows the Quick Info Message box with the specified text for either 2.5 seconds or the specified time of either default size or the specified size at either the center of the screen or the specified position using either default color or the specified color (which can be an array of colors for gradient effect). If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed. If one call the function with empty text and time set to 0, the current QIM message (if any) will immediately close down.
-	
-####showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance)
-
-* **Parameters:**
-    * qimText (String) The text being displaid
-	    * If Empty (and qimTime = 0) will close the Quick Info Message Box
-	* qimTime (Integer) the number of milliseconds the Quick Info Message Box will be displayed
-	    * OPTIONAL
-		* Default: 2500 ms
-	* qimSize (Object(Vector)) an object with _w_ and _h_ as keys (value in pixels)
-	    * e.g. {w: 100, h: 100}
-		* OPTIONAL
-		* Default: {w: 250, h: 100} 
-	* qimPos (Object(Vector)) an object with _x_ and _y_ as keys (value in pixels)
-	    * e.g. {x: 100, y: 100}
-		* OPTIONAL
-		* Default: Centered in browser window
-	* qimColor (Color String OR Array(of Color Strings)) Hexadecimal color value "#000000", color name "black", rgb or rgba value (rgb(0, 0, 0)) are allowed. If an array is used then a color gradience will be created.
-    	* OPTIONAL
-        * default: Gradient light yellow / Khaki
-	* qimDominance (Boolean) By default any current Quick Info Message Box is replaced if a new one is called, but if this parameter is set to true, then any further calls of this method will be ignored (not qued)
-	    * OPTIONAL
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Displays a Quick Info Message Box with custom settings
-$scope.showQIM("You are Awsome!", 3000, {w: 400, h: 200}, undefined, ["red", "orange", "yellow"]);
-```
-###_openForm_ ![Method][meth]
-Open Form creates and opens a modal form window for a specific use that can be used to edit or consume any data. For more details of available forms see Services [aopForms](#aopForms). Most predefined forms requires very specific configured content to siplay properly and is not really meant to be used from within Webble code, but if ever needed the possibility exists.
-For Custom simple message popups please use `Enum.aopForms.infoMsg` form with a content parameter config as such:  
-`{title: 'title text', content: 'body text'}`. (Content can also contain html and css).  
-The Webble-template builder can provide his own form html, controller and style class and call this method with an empty name and include whats needed in the content parameter configured as such:  
-Array [{templateUrl: "absolute or relative path to form html file", controller: "Name of the controller method", size: "'lg' for large, 'sm' for small or blank '' for normal"}, "Form Content in any form and type (string, array, object etc)"].  
-Callback function is used for catching form response data (not available in infoMsg)
-	
-####openForm(whatForm, content, callbackFunc)
-
-* **Parameters:**
-    * whatForm (Integer(Enum)) see [aopForms](#aopForms) in servcies for available forms
-	    * Value not recognized by aopForms will assumme a custom form request
-	* content (Object) an object with different keys or value depending on which form is called for 
-	* callbackFunc (Function) after the form is closed this function will be called, and depending on which form that was used the provided data object will contain different keys and values
-	    * OPTIONAL
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Opens a pre configured aopForm for Webble browser and Webble search
-$scope.openForm(Enum.aopForms.wblSearch, $scope, null);
-
-// Opens simple info message form
-$scope.openForm(Enum.aopForms.infoMsg, {title: 'Welcome to My Webble', content:
-	"<p>This Webble is the best and greatest Webble ever made " +
-	"since dawn of time and it will make America great again.</p>"}
-);
-
-// Opens a custom form using custom html and javascript, found in the Webble template (see source code cooments for detailed usage)
-$scope.openForm('MyCustomForm', [{templateUrl: 'my-custom-form.html', controller: 'MyCustomForm_Ctrl', size: 'lg', backdrop: 'static'}, {formInputData1: $scope.gimme("mySlot"), formInputData2: $scope.gimme("myOtherSlot")}], function(returnContent){
-	$log.log(returnContent);
-});
-```
-###_getWebblesByTemplateId_ ![Method][meth]
-Returns a list of Webbles (of all active Webbles) with a specific template id.
-
-####getWebblesByTemplateId(whatTemplateid)
-
-* **Parameters:**
-    * whatTemplateid (String) the template id used to search for active Webbles
-* **Returns:**
-    * (Array) a list of all Webbles that have the specified template id
-
-```JavaScript
-// Get all Webbles that is of template identified as "fundamental" and write their instance id to the console
-for(var i = 0, aw; aw = $scope.getWebblesByTemplateId("fundamental")[i]; i++){
-	$log.log(aw.scope().getInstanceId());
-}
-```
-###_getWebbleByInstanceId_ ![Method][meth]
-Return the unique Webble (of all active Webbles) with a specific instance id.
-
-####getWebbleByInstanceId(whatInstanceId)
-
-* **Parameters:**
-    * whatInstanceId (Integer) the instance id of the active Webble being searched for
-* **Returns:**
-    * (Webble Pointer) the Webble that have the spcified instance id
-
-```JavaScript
-// Get the Webble that has instance id 2, and if it exists write its template id to the console
-var theWbl = $scope.getWebbleByInstanceId(2);
-if(theWbl){
-	$log.log(theWbl.scope().theWblMetadata['templateid']);
-}
-```
-###_getWebblesByDisplayName_ ![Method][meth]
-Returns a list of Webbles (of all active Webbles) with a certain display name.
-
-####getWebblesByDisplayName(whatWebbleDisplayName)
-
-* **Parameters:**
-    * whatWebbleDisplayName (String) the display name used to search for active Webbles
-* **Returns:**
-    * (Array) a list of all Webbles that have the spcified display name
-
-```JavaScript
-// Get all Webbles that has the display name "Fundamental Webble" and write their instance id to the console
-for(var i = 0, aw; aw = $scope.getWebblesByDisplayName("Fundamental Webble")[i]; i++){
-	$log.log(aw.scope().getInstanceId());
-}
-```
-###_selectAllWebbles_ ![Method][meth]
-Makes all Webbles "Main" selected (With green solid border and visible Interaction objects).
-
-####selectAllWebbles()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Selects alla Webbles
-$scope.selectAllWebbles();
-```
-###_unselectAllWebbles_ ![Method][meth]
-Makes all Webbles unselected (Without any border).
-
-####unselectAllWebbles()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Unselects alla Webbles
-$scope.unselectAllWebbles();
 ```
 ###_executeMenuSelection_ ![Method][meth]
 Executes the correct action, based on menu (or corresponding shortcut selection which can be examined in the Webble World 3 Platform). When calling this method it will have the same effect as if the user have clicked on the specified menu option in the top main menu.
@@ -1736,35 +1133,86 @@ $timeout(function(){
 	});
 });
 ```
-###_strFormatFltr_ ![Method][meth]
-Fast access to filter that lets you write dynamic string outputs in an efficient way.
+###_getActiveWebbles_ ![Method][meth]
+Returns a list (array) of all the current active webbles (in the active Workspace).
 
-####strFormatFltr(stringFormat)
-
-* **Parameters:**
-    * stringFormat (String) String with parameters inside it
-	    * e.g. "This is {0} stringformat string that I made {1}.", ["my", "myself"] (the values in the array can be variables)
-* **Returns:**
-    * (String) the correct formatted string
-
-```JavaScript
-// Report error to the console about non existing webble tempalte of a certain revision
-$log.error($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist.', [whatTemplateId, whatTemplateRevision]));
-```
-###_getSysLanguage_ ![Method][meth]
-Returns the default language (language code) of the browser.
-
-####getSysLanguage()
+####getActiveWebbles()
 
 * **Parameters:**
     * None
 * **Returns:**
-    * (String) the language code for the browser
-	    * e.g. "en-us"
+    * (Array) All Webbles (Webble Pointer) that is currently active (exists) in the current workspace
 
 ```JavaScript
-// Writes the system language code to the console
-$log.log($scope.getSysLanguage());
+// Iterate through all active Webbles and make them tell the console their full name
+for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+	$log.log( aw.scope().getWebbleFullName() );
+}
+```
+###_getAllAncestors_ ![Method][meth]
+Returns a list (array) of all ancestors (parents and parents parents etc) of the defined webble. The list is ordered from the closest to the furthest away.
+
+####getAllAncestors(whatWebble)
+
+* **Parameters:**
+    * whatWebble (Webble Pointer) The Webble whose information we are after
+* **Returns:**
+    * (Array) All Webbles (Webble Pointer) that is an ancestor of the parameter Webble
+
+```JavaScript
+// Iterate through all ancestor Webbles and make them tell the console their instance Id
+for(var i = 0, anc; anc = $scope.getAllAncestors($scope.theView)[i]; i++){
+	$log.log(i + ": " + anc.scope().getInstanceId());
+}
+```
+###_getAllDescendants_ ![Method][meth]
+Returns all webbles of those that are children or grandchildren etc of the webble specified in the parameter, which is also included at the top of the list.
+	
+####getAllDescendants(whatWebble)
+
+* **Parameters:**
+    * whatWebble (Webble Pointer) The Webble whose information we are after
+* **Returns:**
+    * (Array) All Webbles (Webble Pointer) that is a descendant of the parameter Webble (including self)
+
+```JavaScript
+// Iterate through all descendants (and self) and give each its own colored border (as long as the palette is big enough)
+for(var n = 0, d; d = $scope.getAllDescendants($scope.theView)[n]; n++){
+	d.scope().activateBorder(true, wwConsts.palette[n].name, 4, "dashed", true);
+}
+```
+###_getBundleMaster_ ![Method][meth]
+Returns the bundle master of the specified Webble if it has one, otherwise undefined. Bundle master is the outermost bundle webble, counted from a specific Webble.
+
+####getBundleMaster(whatWebble)
+
+* **Parameters:**
+    * whatWebble (Webble Pointer) The Webble whose possible Bundle master we are after
+* **Returns:**
+    * (Webble Pointer) The Bundle Master for the specified Webble if found, otherwise `undefined`
+	    * May be self
+
+```JavaScript
+// Check if one is bundled and if so, tell it to the console
+if( $scope.getBundleMaster($scope.theView) ){
+	$log.log("I am bundled!");
+}
+```
+###_getCurrentExecutionMode_ ![Method][meth]
+Gets the current active execution mode level (developer, admin, etc which can be studied in detail [here](#availableOnePicks_ExecutionModes)). Execution mode is a way to control behavior and flow in a Webble depending on user type.
+
+####getCurrentExecutionMode()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer (Enum)) the current execution mode value as found [here](#availableOnePicks_ExecutionModes)
+
+```JavaScript
+// Checks if the execution mode is Admin, and if so prints to the console
+if( $scope.getCurrentExecutionMode() == Enum.availableOnePicks_ExecutionModes.Admin){
+	$log.log("You are in Admin Mode");
+}
 ```
 ###_getCurrentLanguage_ ![Method][meth]
 Returns the current language (language code) being used by the Webble World Platform.
@@ -1781,6 +1229,37 @@ Returns the current language (language code) being used by the Webble World Plat
 // Writes the platform language code to the console
 $log.log($scope.getCurrentLanguage());
 ```
+###_getCurrentPlatformPotential_ ![Method][meth]
+Returns the current Platform potential state, which tells us if the system is running at full sped or not, or being blocked and protected agains full use in some way. (See [Enum](#enum) and [availablePlatformPotentials](#availablePlatformPotentials) for more details about various potential states).
+
+####getCurrentPlatformPotential()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer(Enum)) The numerical representative for the current state of the platform potential mode
+
+```JavaScript
+// Warn the user running Webble world in any limited mode that this Webble does not accept that
+if ( $scope.getCurrentPlatformPotential() != Enum.availablePlatformPotentials.Full ) { 
+	showQIM("This Webble only work properly in Full platform state."); 
+}
+```
+###_getCurrWS_ ![Method][meth]
+Returns the current active workspace object. Rarely, close too never, used outside the Webble core, but if ever needed, here it is.
+Contains id, name, webbles, if its shared and more.
+
+####getCurrWS()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Object) Json object that holds all available data about the workspace, including all attached Webbles and any current metadata
+
+```JavaScript
+// Prints the name of the current workspace to the console
+$log.log( $scope.getCurrWS().name );
+```
 ###_getIsFormOpen_ ![Method][meth]
 Informs if there is a Webble World form currently open or not
 
@@ -1795,67 +1274,22 @@ Informs if there is a Webble World form currently open or not
 // Tells the console if there is any form open or not
 $log.log("A form is currently open: " + $scope.getIsFormOpen());
 ```
-###_altKeyIsDown_ ![Property][prop]
-Boolean Flag for the ALT key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
+###_getPendingChild_ ![Method][meth]
+Returns the future child waiting to be assigned a parent. Usually only used by the core, but it is there if ever needed.
 
-####altKeyIsDown
-
-* **Get & Set:**
-    * (Boolean) True or False whether the key is down or not
-
-```JavaScript
-// Tells the console if the ALT key is pressed or not
-$log.log("The ALT key is down: " + $scope.altKeyIsDown);
-```
-###_shiftKeyIsDown_ ![Property][prop]
-Boolean Flag for the SHIFT key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
-
-####shiftKeyIsDown
-
-* **Get & Set:**
-    * (Boolean) True or False whether the key is down or not
-
-```JavaScript
-// Tells the console if the SHIFT key is pressed or not
-$log.log("The SHIFT key is down: " + $scope.shiftKeyIsDown);
-```
-###_ctrlKeyIsDown_ ![Property][prop]
-Boolean Flag for the CTRL key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
-
-####ctrlKeyIsDown
-
-* **Get & Set:**
-    * (Boolean) True or False whether the key is down or not
-
-```JavaScript
-// Tells the console if the CTRL key is pressed or not
-$log.log("The CTRL key is down: " + $scope.ctrlKeyIsDown);
-```
-###_setWaitingServiceDeactivationState_ ![Method][meth]
-Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
-
-####setWaitingServiceDeactivationState(newState)
+####getPendingChild()
 
 * **Parameters:**
-    * newState (Boolean) True or False for OFF or ON of showing waiting graphics
+    * None
 * **Returns:**
-    * Nothing
+    * (Webble Pointer) the Webble which is pending as a child waiting for a being assigned a parent.
+	    * `undefined` when no Webble is pending
 
 ```JavaScript
-// Makes sure no "work in progress" graphics are displayed from here on now
-$scope.setWaitingServiceDeactivationState(true);
-```
-###_debugValue.txt_ ![Property][prop]
-If one is debugging, and one wants to display a text in the menu section where "debug Logging On" is displayed, one can use this variable.
-
-####debugValue.txt
-
-* **Get & Set:**
-    * (String) any optional text
-	
-```JavaScript
-// Sets the debugValue.txt to the Webbles "MySlot" slot value
-$scope.debugValue.txt = $scope.gimme("MySlot");
+// If there is a pending child then print its instance id in the console
+if( $scope.getPendingChild() ){
+	$log.log( $scope.getPendingChild().scope().getInstanceId );
+}
 ```
 ###_getPlatformBkgColor_ ![Method][meth]
 Quick way to retrieve the current background color of the platform. 
@@ -1871,6 +1305,433 @@ Quick way to retrieve the current background color of the platform.
 // Tells the console which color the platform currently use
 $log.log($scope.getPlatformBkgColor());
 ```
+###_getPlatformCurrentStates_ ![Method][meth]
+Gets a bit flag holder that contains various states this platform has to pay attention too. Very unlikely needed by a Webble developer, but it is still there if that would be the case. See [Services](#services) and [bitFlags_PlatformStates](#bitFlags_PlatformStates) for more details.
+
+####getPlatformCurrentStates()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer(Binary)) Platform state value (often related to various _busy_ states)
+
+```JavaScript
+// Checks if platform is currently waiting for parent selection, and if so tella bout it in the console
+if((parseInt(scope.getPlatformCurrentStates(), 10) & parseInt(Enum.bitFlags_PlatformStates.WaitingForParent, 10)) !== 0){
+	$log.log("You are supposed to pick a parent webble now.")
+}
+```
+###_getPlatformElement_ ![Method][meth]
+Returns the jquery element of this platform. (Most often used for mouse event handling outside of the scope of the Webble)
+####getPlatformElement()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Jquery Element Pointer) The Platform (work surface) of Webble World as a Jquery Element
+
+```JavaScript
+// Turns off the default mouse event for a part of the Webble and create a custom mouse down event for the Webble that in turn will create a mouse up and mouse move event for the whole platform in order to not loose scope outside the webbles element boundaries
+$scope.theView.parent().draggable('option', 'cancel', '#myWblElement');
+$scope.theView.parent().find("#myWblElement").bind('vmousedown', mouseDownEventHandler);
+var mouseDownEventHandler = function (e) {
+	$log.log("Mouse is Down");
+
+	$scope.getPlatformElement().bind('mouseup', function(e){
+		$scope.getPlatformElement().unbind('mousemove');
+		$scope.getPlatformElement().unbind('mouseup');
+		$log.log("Mouse is Up");
+	});
+	
+	$scope.getPlatformElement().bind('mousemove', function(e){
+		$log.log("Mouse is Moving");
+	});
+};
+```
+###_getPlatformSettingsFlags_ ![Method][meth]
+Returns a bit flag value that holds various settings which controls user enabled platform environment values. See [Services](#services) and [bitFlags_PlatformConfigs](#bitFlags_PlatformConfigs) for more details.
+
+####getPlatformSettingsFlags()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Integer(Binary)) Platform configuration settings value (often user related)
+
+```JavaScript
+// Checks if the main menu is visible, and if not tells about it via the console
+if((parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) != 0){
+	$log.log("The main menu is hidden");
+}
+```
+###_getSelectedWebbles_ ![Method][meth]
+Returns a list (array) of all webbles which are "Main" selected.
+
+####getSelectedWebbles()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Array) All Webbles (Webble Pointer) that is currently "Main"-selected
+
+```JavaScript
+// Iterate through all "Main"-selected Webbles and make them turn 45 degrees
+for(var i = 0, aw; aw = $scope.getSelectedWebbles()[i]; i++){
+	aw.scope().set("root:transform-rotate", 45);
+}
+```
+###_getSysLanguage_ ![Method][meth]
+Returns the default language (language code) of the browser.
+
+####getSysLanguage()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (String) the language code for the browser
+	    * e.g. "en-us"
+
+```JavaScript
+// Writes the system language code to the console
+$log.log($scope.getSysLanguage());
+```
+###_getTopParent_ ![Method][meth]
+Returns the top parent for a specific Webble. If no top parent exist the webble itself is returned (since it is obviously the top). (Top Parent is the parent in a chain of related Webbles that has no parent of its own)
+	
+####getTopParent(whatWebble)
+
+* **Parameters:**
+    * whatWebble (Webble Pointer) The Webble who we are after
+* **Returns:**
+    * (Webble Pointer) the Webble that is top parent
+
+```JavaScript
+// activate a purple double glowing border for the top parent webble, which ever it is.
+topParent = $scope.getTopParent($scope.theView);
+topParent.scope().activateBorder(true, "purple", 4, "double", true);
+```
+###_getWblAbsPosInPixels_ ![Method][meth]
+Returns the calculated absolute position in pixels for the specified webbles within the work surface.
+
+####getWblAbsPosInPixels(whatWebble)
+
+* **Parameters:**
+    * whatWebble (Webble Pointer) The Webble whose absolute position we are after
+* **Returns:**
+    * (Object) Position object with an x and y key (Webbles top left)
+	    * e.g. {x: 0, y: 0}
+
+```JavaScript
+// Make the Webble tell the console its absolute position on the workspace (and not its relative position to its parent)
+var absPos = $scope.getWblAbsPosInPixels($scope.theView);
+$log.log("I am located at left: " + absPos.x + " and top: " + absPos.y);
+```
+###_getWebbleCenterPos_ ![Method][meth]
+Returns the calculated absolute center position for the specified webble within the work surface.
+
+####getWebbleCenterPos(whatWebble)
+
+* **Parameters:**
+    * whatWebble (Webble Pointer) The Webble whose center we are after
+* **Returns:**
+    * (Object) Center Position object with an x and y key
+	    * e.g. {x: 0, y: 0}
+
+```JavaScript
+// Make the Webble tell the console its absolute center position on the workspace
+var absCenterPos = $scope.getWebbleCenterPos($scope.theView);
+$log.log("My Center is located at left: " + absCenterPos.x + " and top: " + absCenterPos.y);
+```
+###_getWebblesByDisplayName_ ![Method][meth]
+Returns a list of Webbles (of all active Webbles) with a certain display name.
+
+####getWebblesByDisplayName(whatWebbleDisplayName)
+
+* **Parameters:**
+    * whatWebbleDisplayName (String) the display name used to search for active Webbles
+* **Returns:**
+    * (Array) a list of all Webbles that have the spcified display name
+
+```JavaScript
+// Get all Webbles that has the display name "Fundamental Webble" and write their instance id to the console
+for(var i = 0, aw; aw = $scope.getWebblesByDisplayName("Fundamental Webble")[i]; i++){
+	$log.log(aw.scope().getInstanceId());
+}
+```
+###_getWebbleByInstanceId_ ![Method][meth]
+Return the unique Webble (of all active Webbles) with a specific instance id.
+
+####getWebbleByInstanceId(whatInstanceId)
+
+* **Parameters:**
+    * whatInstanceId (Integer) the instance id of the active Webble being searched for
+* **Returns:**
+    * (Webble Pointer) the Webble that have the spcified instance id
+
+```JavaScript
+// Get the Webble that has instance id 2, and if it exists write its template id to the console
+var theWbl = $scope.getWebbleByInstanceId(2);
+if(theWbl){
+	$log.log(theWbl.scope().theWblMetadata['templateid']);
+}
+```
+###_getWebblesByTemplateId_ ![Method][meth]
+Returns a list of Webbles (of all active Webbles) with a specific template id.
+
+####getWebblesByTemplateId(whatTemplateid)
+
+* **Parameters:**
+    * whatTemplateid (String) the template id used to search for active Webbles
+* **Returns:**
+    * (Array) a list of all Webbles that have the specified template id
+
+```JavaScript
+// Get all Webbles that is of template identified as "fundamental" and write their instance id to the console
+for(var i = 0, aw; aw = $scope.getWebblesByTemplateId("fundamental")[i]; i++){
+	$log.log(aw.scope().getInstanceId());
+}
+```
+###_getWinningSlotValueAmongAllWebbles_ ![Method][meth]
+Looks for either the highest or the lowest value from all existing Webbles of a specified slot and return that value and the Webble who had it. Any slot value type can be compared, but numbers are probably the only thing that works well. (Slots with numbers and text like "25px" works fine too since they get parsed). If numbers are equal, the first value found will be winning.
+
+####getWinningSlotValueAmongAllWebbles()
+
+* **Parameters:**
+    * whatSlot (String) the name of the slot which will be compared
+	* lowestWins (Boolean) if true, the lowest value will be searched for (instead of the highest)
+* **Returns:**
+    * (Object) an object with two keys for value (Float) and value owner's Instance Id (Integer)
+	    * eg. `{value: 0, owner: undefined}` before comparison starts 
+
+```JavaScript
+// Find the Webble that has the highest z-index value and display it in the console
+var mostHighZ = $scope.getWinningSlotValueAmongAllWebbles('root:z-index', false);
+$log.log( "Webble " + mostHighZ.owner + " has the highest Z-index value of " + mostHighZ.value );
+```
+###_getWSE_ ![Method][meth]
+Returns the DOM element (not the jquery element) of the current selected work surface. (This is where top parent webbles are glued onto in the DOM). Most likely never needed by the Webble developer.
+
+####getWSE()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (DOM Element Pointer) Work Space Element in the DOM tree where all Webbles resides
+
+```JavaScript
+//  Adds a image of a cute kitten on the work space surface (Which most likely annoy the hell out of most Webble World users and make them avoid your Webbles again :-) )
+var cuteKittenImgUrl = "https://lh3.ggpht.com/4kCi1_H566RFQrBcNYk5hKyA0TzlaxANZww2Kgf7Wp0dXmXyEQNw1ETG96OgG72oag=h900";
+var cuteKittenImg = $('<img id="cuteKitten">');
+cuteKittenImg.attr('src', cuteKittenImgUrl);
+$scope.getWSE().append(cuteKittenImg);
+```
+###_loadWblFromURL_ ![Method][meth]
+Tries to load a Webble JSON file from a URL provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
+	
+####loadWblFromURL(whatUrl, whatCallbackMethod)
+
+* **Parameters:**
+    * whatUrl (String) a URL string to where a Webble JSON config file is located
+	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
+	    * OPTIONAL
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Loads a Webble from an external server and when it arrives make it (or at least its latest template) say its name in the console
+$scope.loadWblFromURL("https://www.myServer.com/myWebbles/bestWblEver.json", function(newWbl){
+	$log.log( newWbl.scope().getWebbleFullName() + " has arrived!" );
+});
+```
+<a name="_loadWebbleFromDef_"></a>
+###_loadWebbleFromDef_ ![Method][meth]
+Loads a webble from a JSON definition provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
+	
+####loadWebbleFromDef(whatWblDef, whatCallbackMethod)
+
+* **Parameters:**
+    * whatWblDef (JSON Object) The Webble definition config object
+	* whatCallbackMethod (Function) Callback function that will be called when the new Webble is finished loading, providing a webble metadata package as a parameter which contains a Webble Pointer to the morst recent Webble loaded (if a compound set was loaded), old instance id and the webble definition json.
+	    * OPTIONAL
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Odd way of loading an exact copy of oneself
+$scope.loadWebbleFromDef($scope.createWblDef(true));
+```
+###_openForm_ ![Method][meth]
+Open Form creates and opens a modal form window for a specific use that can be used to edit or consume any data. For more details of available forms see Services [aopForms](#aopForms). Most predefined forms requires very specific configured content to siplay properly and is not really meant to be used from within Webble code, but if ever needed the possibility exists.
+For Custom simple message popups please use `Enum.aopForms.infoMsg` form with a content parameter config as such:  
+`{title: 'title text', content: 'body text'}`. (Content can also contain html and css).  
+The Webble-template builder can provide his own form html, controller and style class and call this method with an empty name and include whats needed in the content parameter configured as such:  
+Array [{templateUrl: "absolute or relative path to form html file", controller: "Name of the controller method", size: "'lg' for large, 'sm' for small or blank '' for normal"}, "Form Content in any form and type (string, array, object etc)"].  
+Callback function is used for catching form response data (not available in infoMsg)
+	
+####openForm(whatForm, content, callbackFunc)
+
+* **Parameters:**
+    * whatForm (Integer(Enum)) see [aopForms](#aopForms) in servcies for available forms
+	    * Value not recognized by aopForms will assumme a custom form request
+	* content (Object) an object with different keys or value depending on which form is called for 
+	* callbackFunc (Function) after the form is closed this function will be called, and depending on which form that was used the provided data object will contain different keys and values
+	    * OPTIONAL
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Opens a pre configured aopForm for Webble browser and Webble search
+$scope.openForm(Enum.aopForms.wblSearch, $scope, null);
+
+// Opens simple info message form
+$scope.openForm(Enum.aopForms.infoMsg, {title: 'Welcome to My Webble', content:
+	"<p>This Webble is the best and greatest Webble ever made " +
+	"since dawn of time and it will make America great again.</p>"}
+);
+
+// Opens a custom form using custom html and javascript, found in the Webble template (see source code cooments for detailed usage)
+$scope.openForm('MyCustomForm', [{templateUrl: 'my-custom-form.html', controller: 'MyCustomForm_Ctrl', size: 'lg', backdrop: 'static'}, {formInputData1: $scope.gimme("mySlot"), formInputData2: $scope.gimme("myOtherSlot")}], function(returnContent){
+	$log.log(returnContent);
+});
+```
+###_requestAssignParent_ ![Method][meth]
+Request Assign Parent, deals with the interaction process of creating a child-parent relationship due to user interaction. The target parameter is the child if no child is pending, and it is the parent if there is a pending child. This method is usually NEVER called from outside the platform, instead. for forcing parent-child relationship, one usually calls the Webble Core's `paste()` method instead.
+	
+####requestAssignParent(target)
+
+* **Parameters:**
+    * target (Webble Pointer) the Webble that is being assigned child or parent status
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Initiate a parent-child relationship creation where the user is supposed to click on possible parent for the Webble already assigned as child
+$scope.requestAssignParent($scope.theView);
+```
+###_requestDeleteWebble_ ![Method][meth]
+Deletes a specified webble from the system. (the last (optional) parameter is a function that will be called when the job is done)
+
+####requestDeleteWebble(target, callbackFunc)
+
+* **Parameters:**
+    * target (Webble Pointer) the Webble that is targeted for the operation
+	* callbackFunc (Function) Callback function that will be called when the Webble has been deleted
+	    * OPTIONAL
+* **Returns:**
+    * (Boolean) True or False whether the attempt to delete was successful or not
+
+```JavaScript
+// Murder the Webbles first-born child if there are any children
+if($scope.getChildren().length > 0){
+	$scope.requestDeleteWebble($scope.getChildren()[0], function(){
+		$log.log("Ah! Finally you are dead you parasite!");
+	});
+}
+```
+###_requestExportWebble_ ![Method][meth]
+Opens the Export Webble input form for the user to exports a specified Webble and all its needed templates (incl code files) to a webble code package file which can be imported to any other Webble World platform.
+
+####requestExportWebble(whatWbl)
+
+* **Parameters:**
+    * whatWbl (Webble Pointer) the Webble that is targeted for the operation
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Opens up the export form for this Webble
+$scope.requestExportWebble($scope.theView);
+```
+###_requestPublishWebble_ ![Method][meth]
+Prepare for Webble publishing and opens up a user input form where the user needs to fill in required data before the Webble can be published to a specified place somewhere (server or local).
+	
+####requestPublishWebble(whatWbl)
+
+* **Parameters:**
+    * whatWbl (Webble Pointer) the Webble that is targeted for the operation
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Opens up the publish form for this Webble
+$scope.requestPublishWebble($scope.theView);
+```
+###_requestWebbleSelection_ ![Method][meth]
+Method that selects (activate border and Interaction Balls) the Webble provided as parameter as Main-selected and all its children as and Child-selected.
+
+####requestWebbleSelection(target)
+
+* **Parameters:**
+    * target (Webble Pointer) the Webble that is targeted for the operation
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Select this Webble and its children
+$scope.requestWebbleSelection($scope.theView);
+```
+###_resetSelections_ ![Method][meth]
+Reset Selections, resets the work surface by removing all Webble selections and undo any half finished connections.
+
+####resetSelections()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Resets all selections and remove any pending parent child relationship creation.
+$scope.resetSelections();
+```
+###_selectAllWebbles_ ![Method][meth]
+Makes all Webbles "Main" selected (With green solid border and visible Interaction objects).
+
+####selectAllWebbles()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Selects alla Webbles
+$scope.selectAllWebbles();
+```
+###_setExecutionMode_ ![Method][meth]
+Sets the current active execution mode level (developer, admin, etc which can be studied in detail [here](#availableOnePicks_ExecutionModes)). Execution mode is a way to control behavior and flow in a Webble depending on user type.
+
+####setExecutionMode(whatExecutionModeIndex)
+
+* **Parameters:**
+    * whatExecutionModeIndex (Integer (Enum)) the index number for the execution mode wished to be assigned
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Setting (force) the Webble World Execution Mode to be in Admin mode
+$scope.setExecutionMode(Enum.availableOnePicks_ExecutionModes.Admin);
+```
+###_setPendingChild_ ![Method][meth]
+Sets the future child waiting to be assigned a parent. Usually only used by the core, but it is there if ever needed.
+
+####setPendingChild(newPC)
+
+* **Parameters:**
+    * newPC (Webble Pointer) the webble which will be assigned to wait for a parent selection (by user mouse click)
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Iterate through all active Webbles and assign the first valid one as parent to this Webble
+for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+	if (aw.scope() && aw.scope().getInstanceId() != $scope.getInstanceId()){
+		$scope.setPendingChild($scope.theView);
+		$scope.requestAssignParent(aw);
+		break;
+	}
+}
+```
 ###_setPlatformBkgColor_ ![Method][meth]
 Quick way to set the current background color of the platform. This setting only lasts before next change or end of the user session. It will not affect the users default background color in future sessions.
 
@@ -1884,7 +1745,142 @@ Quick way to set the current background color of the platform. This setting only
 ```JavaScript
 // Sets the workspace platform background to purple
 $scope.setPlatformBkgColor("purple");
-``` 
+```
+###_setPlatformCurrentStates_ ![Method][meth]
+Sets a bit flag holder that contains various states this platform has to pay attention too. Very unlikely needed by a Webble developer, but it is still there if so. See [Services](#services) and [bitFlags_PlatformStates](#bitFlags_PlatformStates) for more details.
+
+####setPlatformCurrentStates(newPCS)
+
+* **Parameters:**
+    * newPCS (Integer(Binary)) a bit flag integer for platform busy state
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Stop any possible current parent selection process and resets the Webble selection
+$scope.setPendingChild(undefined);
+$scope.setPlatformCurrentStates(bitflags.off($scope.getPlatformCurrentStates(), Enum.bitFlags_PlatformStates.WaitingForParent));
+$scope.unselectAllWebbles();
+```
+###_setWaitingServiceDeactivationState_ ![Method][meth]
+Allows you to turn off (or on) the displaying of all and every waiting graphics for Webble World
+
+####setWaitingServiceDeactivationState(newState)
+
+* **Parameters:**
+    * newState (Boolean) True or False for OFF or ON of showing waiting graphics
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Makes sure no "work in progress" graphics are displayed from here on now
+$scope.setWaitingServiceDeactivationState(true);
+```
+###_shiftKeyIsDown_ ![Property][prop]
+Boolean Flag for the SHIFT key on the Keyboard, weather it is currently pressed or not. Can also be set for simulating key press within the platform.
+
+####shiftKeyIsDown
+
+* **Get & Set:**
+    * (Boolean) True or False whether the key is down or not
+
+```JavaScript
+// Tells the console if the SHIFT key is pressed or not
+$log.log("The SHIFT key is down: " + $scope.shiftKeyIsDown);
+```
+###_showQIM_ ![Method][meth]
+Shows the Quick Info Message box with the specified text for either 2.5 seconds or the specified time of either default size or the specified size at either the center of the screen or the specified position using either default color or the specified color (which can be an array of colors for gradient effect). If qimDominance is set to true, any other QIM messages will be discarded while the dominant one is still displayed. If one call the function with empty text and time set to 0, the current QIM message (if any) will immediately close down.
+	
+####showQIM(qimText, qimTime, qimSize, qimPos, qimColor, qimDominance)
+
+* **Parameters:**
+    * qimText (String) The text being displaid
+	    * If Empty (and qimTime = 0) will close the Quick Info Message Box
+	* qimTime (Integer) the number of milliseconds the Quick Info Message Box will be displayed
+	    * OPTIONAL
+		* Default: 2500 ms
+	* qimSize (Object(Vector)) an object with _w_ and _h_ as keys (value in pixels)
+	    * e.g. {w: 100, h: 100}
+		* OPTIONAL
+		* Default: {w: 250, h: 100} 
+	* qimPos (Object(Vector)) an object with _x_ and _y_ as keys (value in pixels)
+	    * e.g. {x: 100, y: 100}
+		* OPTIONAL
+		* Default: Centered in browser window
+	* qimColor (Color String OR Array(of Color Strings)) Hexadecimal color value "#000000", color name "black", rgb or rgba value (rgb(0, 0, 0)) are allowed. If an array is used then a color gradience will be created.
+    	* OPTIONAL
+        * default: Gradient light yellow / Khaki
+	* qimDominance (Boolean) By default any current Quick Info Message Box is replaced if a new one is called, but if this parameter is set to true, then any further calls of this method will be ignored (not qued)
+	    * OPTIONAL
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Displays a Quick Info Message Box with custom settings
+$scope.showQIM("You are Awsome!", 3000, {w: 400, h: 200}, undefined, ["red", "orange", "yellow"]);
+```
+###_strFormatFltr_ ![Method][meth]
+Fast access to filter that lets you write dynamic string outputs in an efficient way.
+
+####strFormatFltr(stringFormat)
+
+* **Parameters:**
+    * stringFormat (String) String with parameters inside it
+	    * e.g. "This is {0} stringformat string that I made {1}.", ["my", "myself"] (the values in the array can be variables)
+* **Returns:**
+    * (String) the correct formatted string
+
+```JavaScript
+// Report error to the console about non existing webble tempalte of a certain revision
+$log.error($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist.', [whatTemplateId, whatTemplateRevision]));
+```
+###_UnblockAddUndo_ ![Method][meth]
+If one have a long range of slot or Webble operation one does not want to be a part of the undo stack then set this to true just before starting the process and then later call the unblock method to return to normal mode again. Basically not used outside the core but available if ever reasons arise.
+	
+####UnblockAddUndo()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// These slot changes can never be undone or redone individually only as a complete package due to the BlockAddUndo
+$scope.BlockAddUndo();
+$scope.set("msg", "You Love Me!");
+$scope.set("root:left", 700);
+$scope.set("root:top", 500);
+$scope.set("root:transform-rotate", 45);
+$scope.UnblockAddUndo();
+```
+###_unselectAllWebbles_ ![Method][meth]
+Makes all Webbles unselected (Without any border).
+
+####unselectAllWebbles()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Unselects alla Webbles
+$scope.unselectAllWebbles();
+```
+###_waiting_ ![Method][meth]
+Turns on or off the appearance indicator ('is loading' gif image) in waiting mode. returns current waiting state if parameter is undefined.
+
+####waiting(isWaitingEnabled)
+
+* **Parameters:**
+    * isWaitingEnabled (Boolean)
+* **Returns:**
+    * (Boolean) if parameter is `undefined` returns the curent status of is waiting mode ('is loading' gif image visibility)
+
+```JavaScript
+// Turns on the waiting visualizer to inform the user that work is being done. (Don't forget to turn it off later though)
+$scope.waiting(true);
+```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Workspace
 The **Workspace** is the area where the Webbles resides and are modified and/or used. It contains mainly internal methods,
@@ -1908,19 +1904,20 @@ $scope.$watch(function(){ return $scope.getBubbleTxt(); }, function(newVal, oldV
 	}
 }, true);
 ```
-###_setBubbleTxt_ ![Method][meth]
-Sets the bubble text to a speciefied text.
+###_getBubbleTxtPos_ ![Method][meth]
+Returns the current (absolute) position on the workspace for the bubble text object, but adjusted for avoiding display outside the window frame and in relation to the possible Webble being targeted.
 
-####setBubbleTxt(newTxt)
+####getBubbleTxtPos()
 
 * **Parameters:**
-    * newTxt (String) the new text which the bibble text object will hold
+    * None
 * **Returns:**
-    * Nothing
+    * (Object(vector)) an object with _x_ and _y_ keys for the bubble text position
+	    * e.g. {x: 100, y: 100}
 
 ```JavaScript
-// Set the bubble text to a new string
-$scope.setBubbleTxt("This is awsome!");
+// Prints to the console the adjusted bubble text object position
+$log.log( $scope.getBubbleTxtPos() );
 ```
 ###_getBubbleTxtVisibility_ ![Method][meth]
 Returns the bubble text current visibility status.
@@ -1939,23 +1936,36 @@ $scope.$watch(function(){ return $scope.getBubbleTxtVisibility(); }, function(ne
 		$log.log($scope.getBubbleTxt());
 	}
 }, true);
-```	
-###_getBubbleTxtPos_ ![Method][meth]
-Returns the current (absolute) position on the workspace for the bubble text object, but adjusted for avoiding display outside the window frame and in relation to the possible Webble being targeted.
+```
+###_getSurfaceHeight_ ![Method][meth]
+Fast access to get the current height of the work surface area as a css value with 'px' at the end.
 
-####getBubbleTxtPos()
+####getSurfaceHeight()
 
 * **Parameters:**
     * None
 * **Returns:**
-    * (Object(vector)) an object with _x_ and _y_ keys for the bubble text position
-	    * e.g. {x: 100, y: 100}
+    * (String) the height of the workspace surface as a css value with pixels.
+	    * e.g. "900px"
 
 ```JavaScript
-// Prints to the console the adjusted bubble text object position
-$log.log( $scope.getBubbleTxtPos() );
+// Print to the console the current height of the workspace area
+$log.log( $scope.getSurfaceHeight() );
 ```
+###_setBubbleTxt_ ![Method][meth]
+Sets the bubble text to a speciefied text.
 
+####setBubbleTxt(newTxt)
+
+* **Parameters:**
+    * newTxt (String) the new text which the bibble text object will hold
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Set the bubble text to a new string
+$scope.setBubbleTxt("This is awsome!");
+```
 ###_setBubbleTxtPos_ ![Method][meth]
 Sets the new (absolute) position on the workspace for the bubble text object (and optionally includes the Webble being targeted).
 
@@ -1992,21 +2002,6 @@ var absPos = $scope.getWblAbsPosInPixels($scope.theView);
 $scope.setBubbleTxtPos(absPos, $scope.theView);
 $scope.setBubbleTxtVisibility(true, 3500);
 ```
-###_getSurfaceHeight_ ![Method][meth]
-Fast access to get the current height of the work surface area as a css value with 'px' at the end.
-
-####getSurfaceHeight()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (String) the height of the workspace surface as a css value with pixels.
-	    * e.g. "900px"
-
-```JavaScript
-// Print to the console the current height of the workspace area
-$log.log( $scope.getSurfaceHeight() );
-```   
 <!------------------------------------------------------------------------------------------------------------------->
 <a name="io"></a>
 ##Interaction Object
@@ -2029,36 +2024,6 @@ for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
 	$log.log( $scope.theInteractionObjects[i].scope().color );
 }
 ```
-###_pos_ ![Property][prop]
-A property that contains the position of the Interaction Object relative to its Webble (in pixels). (In 99.99% of the cases this is completelly auto adjusted by the Webble, but it is available to enforce if needed)
-	
-####pos
-
-* **Get & Set:**
-    * (Object(vector)) a position object with _left_ and _top_ keys telling the position of the interaction ball
-	    * e.g. {left: 0, top: 0}
-
-```JavaScript
-// Iterates all a Webbles interaction objects and prints their position in pixels (reltive to its Webble) to the console
-for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
-	$log.log( $scope.theInteractionObjects[i].scope().pos );
-}
-```
-###_tooltip_ ![Property][prop]
-A property that contains the Text which is displayed when hoovering the Interaction Object with the mouse. The text usually describes what the interaction object does.
-
-####tooltip
-
-* **Get & Set:**
-    * (String) text that will be displayed as a tooltip when the mouse hoovers above the Interaction ball
-	    * "undefined" for disabled interaction objects
-
-```JavaScript
-// Iterates all a Webbles interaction objects and prints their tooltip text to the console
-for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
-	$log.log( $scope.theInteractionObjects[i].scope().tooltip );
-}
-```
 ###_getIndex_ ![Method][meth]
 Returns the index of the Interaction object, from 0 to 11, in order to grab the one interaction object one really wants. the index value and IO array value are most likely the same, but this method can be used to identify an Interaction object outside its array.  
 The index positions are as follows (note the circular assignment of index value):  
@@ -2078,6 +2043,22 @@ for(var i = 0; i < $scope.theInteractionObjects.length; i++){
 	}
 }
 ```
+###_getIsEnabled_ ![Method][meth]
+Returns if this object is enabled or not. (false = invisible)
+
+####getIsEnabled()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether teh interaction object is enabled or not
+
+```JavaScript
+// Iterates all a Webbles interaction objects and prints if they are enabled or not
+for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
+	$log.log("IO with index " + i + " is enabled: " + $scope.theInteractionObjects[i].scope().getIsEnabled());
+}
+```
 ###_getName_ ![Method][meth]
 Returns the name that the interaction object is identified by and which is used to trigger custom behavior.
 
@@ -2095,34 +2076,19 @@ for(var i = 0; i < $scope.theInteractionObjects.length; i++){
 	$log.log( $scope.theInteractionObjects[i].scope().getName() );
 }
 ```
-###_setName_ ![Method][meth]
-Sets the name that the interaction object is identified by and which is used to trigger custom behavior.
+###_pos_ ![Property][prop]
+A property that contains the position of the Interaction Object relative to its Webble (in pixels). (In 99.99% of the cases this is completelly auto adjusted by the Webble, but it is available to enforce if needed)
+	
+####pos
 
-####setName(whatName)
-
-* **Parameters:**
-    * whatName (String) the unique id name this interaction object should go by
-* **Returns:**
-    * Nothing
-
-```JavaScript
-// Assign a new name to the interaction object with index 6
-$scope.theInteractionObjects[6].scope().setName("selfDestruct");
-```
-###_getIsEnabled_ ![Method][meth]
-Returns if this object is enabled or not. (false = invisible)
-
-####getIsEnabled()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Boolean) True or False whether teh interaction object is enabled or not
+* **Get & Set:**
+    * (Object(vector)) a position object with _left_ and _top_ keys telling the position of the interaction ball
+	    * e.g. {left: 0, top: 0}
 
 ```JavaScript
-// Iterates all a Webbles interaction objects and prints if they are enabled or not
+// Iterates all a Webbles interaction objects and prints their position in pixels (reltive to its Webble) to the console
 for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
-	$log.log("IO with index " + i + " is enabled: " + $scope.theInteractionObjects[i].scope().getIsEnabled());
+	$log.log( $scope.theInteractionObjects[i].scope().pos );
 }
 ```
 ###_setIsEnabled_ ![Method][meth]
@@ -2140,6 +2106,35 @@ Sets the enabling state (true or false) for this object (true = visible). The ef
 $scope.theInteractionObjects[6].scope().setName("selfDestruct");
 $scope.theInteractionObjects[6].scope().tooltip = "Self Destruct";
 $scope.theInteractionObjects[6].scope().setIsEnabled(true);
+```
+###_setName_ ![Method][meth]
+Sets the name that the interaction object is identified by and which is used to trigger custom behavior.
+
+####setName(whatName)
+
+* **Parameters:**
+    * whatName (String) the unique id name this interaction object should go by
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Assign a new name to the interaction object with index 6
+$scope.theInteractionObjects[6].scope().setName("selfDestruct");
+```
+###_tooltip_ ![Property][prop]
+A property that contains the Text which is displayed when hoovering the Interaction Object with the mouse. The text usually describes what the interaction object does.
+
+####tooltip
+
+* **Get & Set:**
+    * (String) text that will be displayed as a tooltip when the mouse hoovers above the Interaction ball
+	    * "undefined" for disabled interaction objects
+
+```JavaScript
+// Iterates all a Webbles interaction objects and prints their tooltip text to the console
+for (var i = 0; i < $scope.theInteractionObjects.length; i++ ){
+	$log.log( $scope.theInteractionObjects[i].scope().tooltip );
+}
 ```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Directives
@@ -2159,6 +2154,21 @@ Makes an element draggable (JQuery style) (initiated either as an Attribute or C
 <!-- Make the span element draggable inside the div by adding the attribute "draggable" -->
 <div id="myWebbleView" ng-controller="myWebbleCtrl">
     <span id="myWblTxt" draggable>{{gimme('myTxtSlot')}}</span>
+</div>
+```
+###_ng-size_ ![Directive][dir]
+Make sure that the `<select>` tags 'size' value can be set dynamically (e.g. from a slot)
+
+####ng-size"{{value}}"
+
+* **Parameters:**
+    * value (Float) the height value wished to oppose on the `<select>` element
+
+```HTML
+<!-- Make the size of the select list dynamicly controlled by a slot -->
+<div class="myClass">
+	<select id="mySelect" ng-size="{{gimme('mySelectListSizeSlot')}}" ng-options="li for li in myList.items" style="width: auto;">
+	</select>
 </div>
 ```
 ###_sortable_ ![Directive][dir]
@@ -2182,21 +2192,6 @@ Makes a list element sortable (JQuery style) (initiated either as an Attribute o
 	</ul>
 </div>
 ```
-###_ng-size_ ![Directive][dir]
-Make sure that the `<select>` tags 'size' value can be set dynamically (e.g. from a slot)
-
-####ng-size"{{value}}"
-
-* **Parameters:**
-    * value (Float) the height value wished to oppose on the `<select>` element
-
-```HTML
-<!-- Make the size of the select list dynamicly controlled by a slot -->
-<div class="myClass">
-	<select id="mySelect" ng-size="{{gimme('mySelectListSizeSlot')}}" ng-options="li for li in myList.items" style="width: auto;">
-	</select>
-</div>
-```
 <!------------------------------------------------------------------------------------------------------------------->
 <a name="services"></a>
 ##Services
@@ -2204,6 +2199,189 @@ In the **Services** can be found multiple help functions and support methods alo
 sorts. If one want to use a service in a Webble the name of the service must be included at the top of the controller 
 function declaration (e.g. `Enum` or `wwConst` etc.). The ones that could be of interest for a Webble-template developer, besides the ones he/she would create themselves inside the template, are the following.
 
+###_**=== bitflags ===**_ ![Property][prop]
+The `bitflags` service contains a few easy to access methods for bitwise operations. (remember to also add it to the top of the controller)
+
+####**bitflags.METHOD(PARAMETERS)**
+
+```JavaScript
+// Toggles the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.DELETE;
+newProtection = bitflags.toggle(newProtection, protectKey);
+$scope.setProtection(newProtection);
+```
+###_off_ ![Method][meth]
+Bit-Flag Operation which turns a binary flag off from a provided set of bitflags and returns the altered set of bitflags.
+
+####bitflags.off(whatFlagSelection, whatBitFlag)
+
+* **Parameters:**
+    * whatFlagSelection (Integer) a set of bitflags
+	    * e.g. 0110 = 5 or 100101 = 37
+	* whatBitFlag (Integer) the bit flag we are after
+	    * e.g. 3rd = 4 or 6th = 32
+* **Returns:**
+    * (Integer) the new and altered bitflag set
+
+```JavaScript
+// Turns OFF the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.PUBLISH;
+newProtection = bitflags.off(newProtection, protectKey);
+$scope.setProtection(newProtection);
+```
+###_on_ ![Method][meth]
+Bit-Flag Operation which turns a binary flag on from a provided set of bitflags and returns the altered set of bitflags.
+
+####bitflags.on(whatFlagSelection, whatBitFlag)
+
+* **Parameters:**
+    * whatFlagSelection (Integer) a set of bitflags
+	    * e.g. 0110 = 5 or 100101 = 37
+	* whatBitFlag (Integer) the bit flag we are after
+	    * e.g. 3rd = 4 or 6th = 32
+* **Returns:**
+    * (Integer) the new and altered bitflag set
+
+```JavaScript
+// Turns ON the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.BUNDLE;
+newProtection = bitflags.on(newProtection, protectKey);
+$scope.setProtection(newProtection);
+```
+###_toggle_ ![Method][meth]
+Bit-Flag Operation which toggles a binary flags from on to off or vice versa from a provided set of bitflags and returns the altered set of bitflags.
+
+####bitflags.toggle(whatFlagSelection, whatBitFlag)
+
+* **Parameters:**
+    * whatFlagSelection (Integer) a set of bitflags
+	    * e.g. 0110 = 5 or 100101 = 37
+	* whatBitFlag (Integer) the bit flag we are after
+	    * e.g. 3rd = 4 or 6th = 32
+* **Returns:**
+    * (Integer) the new and altered bitflag set
+
+```JavaScript
+// Toggles the Protection flag for a specific protection item and set it to the Webble
+var newProtection = $scope.getProtection();
+var protectKey = Enum.bitFlags_WebbleProtection.MOVE;
+newProtection = bitflags.toggle(newProtection, protectKey);
+$scope.setProtection(newProtection);
+```
+###_**=== colorService ===**_ ![Property][prop]
+The `colorService` service contains a range of useful methods for color related rgb and hec color conversions etc. To access any of the specific colorService methods just call colorService (remember to also add it to the top of the controller) envoking the colorService method one is after (including any possible parameters).
+
+####**colorService.METHOD_NAME(PARAMETERS)**
+
+```JavaScript
+// Get the RGBA value as a string from the hex value for opaque "red"
+$log.log( colorService.hexToRGBAStr("#ffff0000") );
+```
+###_rgbToHex_ ![Method][meth]
+Returns a hexadecimal color value converted from three rgb values.
+
+####colorService.rgbToHex(R,G,B)
+
+* **Parameters:**
+    * R (Integer) the "Red" value for a RGB color, ranging from 0-255
+	* G (Integer) the "Green" value for a RGB color, ranging from 0-255
+	* B (Integer) the "Blue" value for a RGB color, ranging from 0-255
+* **Returns:**
+    * (String) the hexadecimal value corresponding to the RGB values provided as parameters
+	    * e.g. "#22FA86" (from R=34, G=250, B=134)
+
+```JavaScript
+// Print the hex value from three separate R, G and B values to the console
+$log.log( colorService.rgbToHex(34,250,134) );
+```
+###_rgbStrToHex_ ![Method][meth]
+Returns a rgb value as a string converted from a hexadecimal color value.
+
+####colorService.rgbStrToHex(rgbStr)
+
+* **Parameters:**
+    * rgbStr (String) a rgb value as a string
+	    * e.g. "rgb(0,0,0)"
+* **Returns:**
+    * (String) the hexadecimal value corresponding to the RGB string value provided as parameter
+	    * e.g. "#1BD659" (from "rgb(27,214,89)")
+
+```JavaScript
+// Print the hex value from a rgb value provided as a string "rgb(0,0,0)"
+$log.log( colorService.rgbStrToHex("rgb(27,214,89)") );
+```	
+###_hexToRGB_ ![Method][meth]
+Returns a set of three rgb values in an object converted from a hexadecimal color value.
+
+####colorService.hexToRGB(hex)
+
+* **Parameters:**
+    * hex (String) a classic hexadecimal color string
+	    * e.g. "#FF00FF"
+* **Returns:**
+    * (Object) contains three keys for r, g and b
+	    * e.g. {r: 255, g: 0, b: 255}
+
+```JavaScript
+// Print the separate R, G and B value from a hexadecimal color string "#AA6607"
+var rgb = colorService.hexToRGB("#AA6607");
+$log.log( "R: " + rgb.r + ", G: " + rgb.g + ", B: " + rgb.b );
+```
+###_hexToRGBAStr_ ![Method][meth]
+Returns a RGBA (including opacity) value as a string converted from a hexadecimal color value with opacity. (Observe the switched order of the opacity value)
+
+####colorService.hexToRGBAStr(hex)
+
+* **Parameters:**
+    * hex (String) a classic hexadecimal color string with opacity
+	    * e.g. "#FFFF00FF" 
+* **Returns:**
+    * (String) a rgba value as a string
+		* e.g. "rgba(255,0,25,1)"
+		
+```JavaScript
+// Print the RGBA value as a string from a hexadecimal color string "#FFAA6607" to the console
+$log.log( colorService.hexToRGBAStr("#FFAA6607") );
+```
+###_**=== dbService ===**_ ![Property][prop]
+The `dbService` service contains predefined database queries for accessing Webbles and webble meta data. Only one is currently offered properly for external use by Webble Developers (see below), but there are plenty more available. (remember to also add it to the top of the controller)
+
+####**dbService.QUERYMETHOD(PARAMETERS)**
+
+```JavaScript
+// Ask the Webble World Server and its database to returned the stored Webble definition JSON object for a specified Webble Template
+dbService.getWebbleDef("fundamental").then(function(data) {
+	// Print the retrieved JSON object to the console
+	$log.log( data );
+},function(eMsg){
+	// If error, print the retrieved error message to the console
+	$log.log( eMsg );
+});
+```
+###_getMyAccessKey_ ![Method][meth]
+Service that fetches an access key object that is associated either with the user's account or with the groups, including the parent groups, to which the user belongs.	     
+
+####dbService.getMyAccessKey(realm, resource)
+
+* **Parameters:**
+    * realm (String) Any string uniquely identifying the issuer of the access key
+	     * usually the domain name of the target service e.g., google.com, amazon.co.uk, microsoft.co.br, etc.
+	* resource (String) Any string uniquely identifying the resource(s) to which this key provides access to
+	     * usually an identifier refering to the target services e.g., maps, all, office2014_xp_pro, etc.
+* **Returns:**
+    * (Promise) a promise that is fulfilled on success with the access key object and rejected on failure with a user friendly string message that describes the error
+
+```JavaScript
+// Ask the server for this current Webble Worlds users API keys for a specific realm and resource
+dbService.getMyAccessKey(realm, resource).then( function(returningKey) {
+	// DO WHAT YOU ARE SUPPOSED TO DO TO ACCESS THE API WITH THE KEYS YOU RETRIEVED.
+},function(err) {
+	$log.log(err);
+});
+```
 <a name="enum"></a>
 ###_**=== Enum ===**_ ![Property][prop]
 The `Enum` service contains numerous enumaration lists for quicker and more structured and readable coding. To access any of the specific Enum obejcts just call Enum (remember to also add it to the top of the controller) envoking the enum object one is after and then the enum item available in that enum list.
@@ -2528,7 +2706,7 @@ $scope.getSlot('MySlot').setDisabledSetting(Enum.SlotDisablingState.PropertyVisi
 ###_bitFlags_WebbleConfigs_ ![Enum][enum]
 The different types of some available core internal webble metadata (Bitwise Flags).
 
-####Enum.
+####Enum.bitFlags_WebbleConfigs
 
 * None: 0
 * IsMoving: 2 _(The Webble is currently being moved (dragged) (or not))_
@@ -2619,383 +2797,6 @@ var slotChangeListener = $scope.registerWWEventListener(Enum.availableWWEvents.s
 	}
 });
 ```
-###_**=== wwConsts ===**_ ![Property][prop]
-The `wwConsts` service contains a range of useful constants for quicker and more structured and readable coding. To access any of the specific wwConsts objects just call wwConsts (remember to also add it to the top of the controller) envoking the wwConsts object one is after and then the wwConsts item available in that enum list.
-
-####**wwConsts.CONSTANT_NAME**
-
-```JavaScript
-// Iterates over the default font family list and print each name to the console
-for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
-	$log.log(wwConsts.defaultFontFamilies[i]);
-}
-```
-###_palette_ ![Property][prop]
-Returns an array of carefully selected mix of colors to be used in various settings and situations. The palette contains 16 colors in the following order: red, blue, purple, magenta, darkgreen, orange, black, lightgreen, cyan, brown, grey, pink, yellowgreen, yellow, lightpink and olive. The color names are CSS3 compatible.
-
-####wwConsts.palette
-
-* **Returns:**
-    * (Array(of Objects)) Each object contains a color-name and a color-value (as a hexadecimal (#ffffff))
-	    * e.g. {name: "red", value: "#ff0000"}
-
-```JavaScript
-// Change the color-slot every 3 seconds using the palette constant
-var colorIndex = 0;
-var changeColor = function(){
-	if(colorIndex > 15){ colorIndex = 0; }
-	$scope.set("MyColorSlot", wwConsts.palette[colorIndex++].value);
-	$timeout(changeColor, 300);
-};
-```
-###_lightPalette_ ![Property][prop]
-Returns an array of carefully selected mix of lighter colors to be used in various settings and situations. The light palette contains 16 light colors in the following order: webble world yellow (wblWrldYellow), pink, LightSalmon, Coral, BurlyWood, Chocolate, LightSkyBlue, Aquamarine, PaleGreen, Plum, MistyRose, LightCyan, Silver, PeachPuff, LightSteelBlue and Tomato. Except for the first color (Webble World Yellow) the other color names are CSS3 compatible.
-
-####wwConsts.lightPalette
-
-* **Returns:**
-    * (Array(of Objects)) Each object contains a color-name and a color-value (as a hexadecimal (#ffffff))
-	    * e.g. {name: "wblWrldYellow", value: "#FFF68F"}
-
-```JavaScript
-// Change the color-slot every 3 seconds using the light palette constant
-var colorIndex = 0;
-var changeColor = function(){
-	if(colorIndex > 15){ colorIndex = 0; }
-	$scope.set("MyColorSlot", wwConsts.lightPalette[colorIndex++].value);
-	$timeout(changeColor, 300);
-};
-```
-<a name="languages"></a>
-###_languages_ ![Property][prop]
-A small subset of avilable languages, where some are present inside Webble World, which contains language code, language name in english and in the language itself and the phrase "Change Language" in each language. This is mainly used internally, but it is there to use also for Webble developers if ever needed. The language codes are the international recognized codes. Following languages are included: English, Swedish, Japanese, German, Finnish, French, Russian, Hebrew, Greek and Spanish.
-
-####wwConsts.languages
-
-* **Returns:**
-    * (Array (of Objects)) each object have a set of language describing keys
-	    * e.g. {code: "sv", NativeName: "Svenska", EnglishName: "Swedish", ChangeStr: "Ändra Språk"},
-
-```JavaScript
-// Tell the console how to say "Change Language" in Swedish
-for(var i = 0; i < wwConsts.languages.length; i++){
-	if(wwConsts.languages[i].code == "sv"){
-		$log.log("In Swedish the phrase 'Change language' looks like this: '" + wwConsts.languages[i].ChangeStr + "'.");
-	}
-}
-```
-###_defaultFontFamilies_ ![Property][prop]
-Returns a list of the names for the default font families supported by most browsers and which Webble World also fully support withou any additional downloads. The names are CSS3 compatible.
-
-####wwConsts.defaultFontFamilies
-
-* **Returns:**
-    * (Array(of Strings)) each item is just a string name of the font family
-
-```JavaScript
-// Iterates over the default font family list and print each name to the console
-for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
-	$log.log(wwConsts.defaultFontFamilies[i]);
-}
-```
-###_**=== colorService ===**_ ![Property][prop]
-The `colorService` service contains a range of useful methods for color related rgb and hec color conversions etc. To access any of the specific colorService methods just call colorService (remember to also add it to the top of the controller) envoking the colorService method one is after (including any possible parameters).
-
-####**colorService.METHOD_NAME(PARAMETERS)**
-
-```JavaScript
-// Get the RGBA value as a string from the hex value for opaque "red"
-$log.log( colorService.hexToRGBAStr("#ffff0000") );
-```
-###_rgbToHex_ ![Method][meth]
-Returns a hexadecimal color value converted from three rgb values.
-
-####colorService.rgbToHex(R,G,B)
-
-* **Parameters:**
-    * R (Integer) the "Red" value for a RGB color, ranging from 0-255
-	* G (Integer) the "Green" value for a RGB color, ranging from 0-255
-	* B (Integer) the "Blue" value for a RGB color, ranging from 0-255
-* **Returns:**
-    * (String) the hexadecimal value corresponding to the RGB values provided as parameters
-	    * e.g. "#22FA86" (from R=34, G=250, B=134)
-
-```JavaScript
-// Print the hex value from three separate R, G and B values to the console
-$log.log( colorService.rgbToHex(34,250,134) );
-```
-###_rgbStrToHex_ ![Method][meth]
-Returns a rgb value as a string converted from a hexadecimal color value.
-
-####colorService.rgbStrToHex(rgbStr)
-
-* **Parameters:**
-    * rgbStr (String) a rgb value as a string
-	    * e.g. "rgb(0,0,0)"
-* **Returns:**
-    * (String) the hexadecimal value corresponding to the RGB string value provided as parameter
-	    * e.g. "#1BD659" (from "rgb(27,214,89)")
-
-```JavaScript
-// Print the hex value from a rgb value provided as a string "rgb(0,0,0)"
-$log.log( colorService.rgbStrToHex("rgb(27,214,89)") );
-```	
-###_hexToRGB_ ![Method][meth]
-Returns a set of three rgb values in an object converted from a hexadecimal color value.
-
-####colorService.hexToRGB(hex)
-
-* **Parameters:**
-    * hex (String) a classic hexadecimal color string
-	    * e.g. "#FF00FF"
-* **Returns:**
-    * (Object) contains three keys for r, g and b
-	    * e.g. {r: 255, g: 0, b: 255}
-
-```JavaScript
-// Print the separate R, G and B value from a hexadecimal color string "#AA6607"
-var rgb = colorService.hexToRGB("#AA6607");
-$log.log( "R: " + rgb.r + ", G: " + rgb.g + ", B: " + rgb.b );
-```
-###_hexToRGBAStr_ ![Method][meth]
-Returns a RGBA (including opacity) value as a string converted from a hexadecimal color value with opacity. (Observe the switched order of the opacity value)
-
-####colorService.hexToRGBAStr(hex)
-
-* **Parameters:**
-    * hex (String) a classic hexadecimal color string with opacity
-	    * e.g. "#FFFF00FF" 
-* **Returns:**
-    * (String) a rgba value as a string
-		* e.g. "rgba(255,0,25,1)"
-		
-```JavaScript
-// Print the RGBA value as a string from a hexadecimal color string "#FFAA6607" to the console
-$log.log( colorService.hexToRGBAStr("#FFAA6607") );
-```
-###_**=== strCatcher ===**_ ![Property][prop]
-The `strCatcher` service contains a range of english string collections for all CSS related attributes. To access any of the specific strCatcher properties just call strCatcher (remember to also add it to the top of the controller) envoking the strCatcher method one is after (optional including the css definition). Each CSS attribute key is in upper case and without hyphens.
-
-####**strCatcher.PROPERTY_NAME().CSS-DEFINITION**
-
-```JavaScript
-// Print the description of the CSS attribute for background-color to the console
-$log.log( strCatcher.cssAttrDescs().BACKGROUNDCOLOR );
-```
-###_cssAttrNames_ ![Method][meth]
-Returns a list of all english readable labels for all existing CSS attributes.
-
-####colorService.cssAttrNames()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Array (of Strings)) List of english readable names for all CSS attributes
-
-```JavaScript
-// Print the label of the CSS attribute for background-color to the console
-$log.log( strCatcher.cssAttrNames().BACKGROUNDCOLOR );
-```
-###_cssAttrDescs_ ![Method][meth]
-Returns a list of all english readable descriptions for all existing CSS attributes.
-
-####colorService.cssAttrDescs()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Array (of Strings)) List of english readable descriptions for all CSS attributes
-
-```JavaScript
-// Print the description of the CSS attribute for background-color to the console
-$log.log( strCatcher.cssAttrDescs().BACKGROUNDCOLOR );
-```
-###_isSafeFontFamily_ ![Method][meth]
-Simple service that tests if the provided font name is a safe and a known one (part of the default) and returns the result. (remember to also add it to the top of the controller).
-
-####isSafeFontFamily(fontFamilyNameToTest)
-
-* **Parameters:**
-    * fontFamilyNameToTest (String) the name of the font family
-* **Returns:**
-    * (Boolean) True or False whether the font is safe or not
-
-```JavaScript
-// Tells the console whether the fon "Georgia" is a safe font to use in the browser
-var fontFamily = "Georgia";
-$log.log( fontFamily + " is a safe font to use: " + isSafeFontFamily(fontFamily) );
-```
-###_**=== dbService ===**_ ![Property][prop]
-The `dbService` service contains predefined database queries for accessing Webbles and webble meta data. Only one is currently offered properly for external use by Webble Developers (see below), but there are plenty more available. (remember to also add it to the top of the controller)
-
-####**dbService.QUERYMETHOD(PARAMETERS)**
-
-```JavaScript
-// Ask the Webble World Server and its database to returned the stored Webble definition JSON object for a specified Webble Template
-dbService.getWebbleDef("fundamental").then(function(data) {
-	// Print the retrieved JSON object to the console
-	$log.log( data );
-},function(eMsg){
-	// If error, print the retrieved error message to the console
-	$log.log( eMsg );
-});
-```
-###_getMyAccessKey_ ![Method][meth]
-Service that fetches an access key object that is associated either with the user's account or with the groups, including the parent groups, to which the user belongs.	     
-
-####dbService.getMyAccessKey(realm, resource)
-
-* **Parameters:**
-    * realm (String) Any string uniquely identifying the issuer of the access key
-	     * usually the domain name of the target service e.g., google.com, amazon.co.uk, microsoft.co.br, etc.
-	* resource (String) Any string uniquely identifying the resource(s) to which this key provides access to
-	     * usually an identifier refering to the target services e.g., maps, all, office2014_xp_pro, etc.
-* **Returns:**
-    * (Promise) a promise that is fulfilled on success with the access key object and rejected on failure with a user friendly string message that describes the error
-
-```JavaScript
-// Ask the server for this current Webble Worlds users API keys for a specific realm and resource
-dbService.getMyAccessKey(realm, resource).then( function(returningKey) {
-	// DO WHAT YOU ARE SUPPOSED TO DO TO ACCESS THE API WITH THE KEYS YOU RETRIEVED.
-},function(err) {
-	$log.log(err);
-});
-```
-###_getUrlVars_ ![Method][meth]
-Simple service that returns an object containing the URL parameters from the current URL. (remember to also add it to the top of the controller).
-
-####getUrlVars()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Object) object containing the URL parameters as keys with their values as value, from the current URL
-	    * e.g. {webble: "genericCharts", workspace: "57ea3170cd612d24248ca7a4"}
-
-```JavaScript
-// Print to the console all current URL parameters and their values
-$log.log( getUrlVars() );
-```
-<a name="fromKeyCode"></a>    
-###_fromKeyCode_ ![Method][meth]
-Simple service that returns the name of a key on the keyboard based on the key code value. (remember to also add it to the top of the controller).
-
-####fromKeyCode(keycode)
-
-* **Parameters:**
-    * keycode (Integer) The key code for a specific key, usually provided from a key down event
-* **Returns:**
-    * (String) a name of a key board key
-	    * e.g. 'Down Arrow' (from key code: 40)
-
-```JavaScript
-// Tells the console which key has a certain key code
-var keyCode = 27;
-$log.log( "The key with key-code " + keyCode + " is the " + fromKeyCode(27) + " key." );
-```
-###_**=== bitflags ===**_ ![Property][prop]
-The `bitflags` service contains a few easy to access methods for bitwise operations. (remember to also add it to the top of the controller)
-
-####**bitflags.METHOD(PARAMETERS)**
-
-```JavaScript
-// Toggles the Protection flag for a specific protection item and set it to the Webble
-var newProtection = $scope.getProtection();
-var protectKey = Enum.bitFlags_WebbleProtection.DELETE;
-newProtection = bitflags.toggle(newProtection, protectKey);
-$scope.setProtection(newProtection);
-```
-###_off_ ![Method][meth]
-Bit-Flag Operation which turns a binary flag off from a provided set of bitflags and returns the altered set of bitflags.
-
-####bitflags.off(whatFlagSelection, whatBitFlag)
-
-* **Parameters:**
-    * whatFlagSelection (Integer) a set of bitflags
-	    * e.g. 0110 = 5 or 100101 = 37
-	* whatBitFlag (Integer) the bit flag we are after
-	    * e.g. 3rd = 4 or 6th = 32
-* **Returns:**
-    * (Integer) the new and altered bitflag set
-
-```JavaScript
-// Turns OFF the Protection flag for a specific protection item and set it to the Webble
-var newProtection = $scope.getProtection();
-var protectKey = Enum.bitFlags_WebbleProtection.PUBLISH;
-newProtection = bitflags.off(newProtection, protectKey);
-$scope.setProtection(newProtection);
-```
-###_on_ ![Method][meth]
-Bit-Flag Operation which turns a binary flag on from a provided set of bitflags and returns the altered set of bitflags.
-
-####bitflags.on(whatFlagSelection, whatBitFlag)
-
-* **Parameters:**
-    * whatFlagSelection (Integer) a set of bitflags
-	    * e.g. 0110 = 5 or 100101 = 37
-	* whatBitFlag (Integer) the bit flag we are after
-	    * e.g. 3rd = 4 or 6th = 32
-* **Returns:**
-    * (Integer) the new and altered bitflag set
-
-```JavaScript
-// Turns ON the Protection flag for a specific protection item and set it to the Webble
-var newProtection = $scope.getProtection();
-var protectKey = Enum.bitFlags_WebbleProtection.BUNDLE;
-newProtection = bitflags.on(newProtection, protectKey);
-$scope.setProtection(newProtection);
-```
-###_toggle_ ![Method][meth]
-Bit-Flag Operation which toggles a binary flags from on to off or vice versa from a provided set of bitflags and returns the altered set of bitflags.
-
-####bitflags.toggle(whatFlagSelection, whatBitFlag)
-
-* **Parameters:**
-    * whatFlagSelection (Integer) a set of bitflags
-	    * e.g. 0110 = 5 or 100101 = 37
-	* whatBitFlag (Integer) the bit flag we are after
-	    * e.g. 3rd = 4 or 6th = 32
-* **Returns:**
-    * (Integer) the new and altered bitflag set
-
-```JavaScript
-// Toggles the Protection flag for a specific protection item and set it to the Webble
-var newProtection = $scope.getProtection();
-var protectKey = Enum.bitFlags_WebbleProtection.MOVE;
-newProtection = bitflags.toggle(newProtection, protectKey);
-$scope.setProtection(newProtection);
-```	
-###_getKeyByValue_ ![Method][meth]
-A service which takes an associative array and a value and returns the name of the key containing that value, or if not found, returns null. (remember to also add it to the top of the controller)
-	
-####getKeyByValue(object, value)
-
-* **Parameters:**
-    * object (Object) any object with a set of keys and values
-	* value (Any) any value that might be found in the object parameter
-* **Returns:**
-    * (String) the name of the key which contained the value provided as a parameter
-
-```JavaScript
-// write to the console the key name for the current selection state of the Webble
-$log.log( getKeyByValue(Enum.availableOnePicks_SelectTypes, $scope.getSelectionState())  );
-```
-###_isValidEnumValue_ ![Method][meth]
-A service which tests that a specified value is contained within the range of values inside a specific Enum (or other object) value collection. Values are validated both by key name and/or by key value. (remember to also add it to the top of the controller)
-	
-####isValidEnumValue(enumToTest, valueToTest)
-
-* **Parameters:**
-    * enumToTest (Object) the set of key-values that is being tested 
-	* valueToTest (Any) a value to test against
-* **Returns:**
-    * (Boolean) True or False whether the value was present or not
-
-```JavaScript
-// Tell the console if a specifc value is valid for exec mode settings
-var whatValue = 7
-$log.log( whatValue + " is a valid exec mode value: " + isValidEnumValue(Enum.availableOnePicks_ExecutionModes, whatValue) );
-```
 ###_**=== isExist ===**_ ![Property][prop]
 The `isExist` service checks if something exist somewhere, for example if a specific value exists in a specific array. To access any of the specific isExist methods just call isExist (remember to also add it to the top of the controller) envoking the method one is after. Both service methods can return the index of the find instead of just true or false
 
@@ -3042,23 +2843,6 @@ Checks whether a specified object key value exists in a provided array of object
 // tell the console at what index a specific value existst in a specified array of objects under a specific object key
 var myArray = [{name: "Bob", city: "London", age: 45}, {name: "Janet", city: "New York", age: 39}, {name: "Ryu", city: "Tokyo", age: 17}], myValue = 39, myKey = "age";
 $log.log( myValue + " exists in myArray under object key '" + myKey + "' at index: " + isExist.valueInArrayOfObj(myArray, myValue, myKey, true) );
-```
-###_isValidStyleValue_ ![Method][meth]
-A service that tests if a specified style value within a specified style setting is a valid option. (remember to also add it to the top of the controller).
-
-####isValidStyleValue(styleToTest, possibleStyleValue);
-
-* **Parameters:**
-    * styleToTest (String) the name if the style being tested
-	    * e.g. "margin-left"
-	* possibleStyleValue (Any) the value which will attempted to apply on the provided css style
-* **Returns:**
-    * (Boolean) True or False whether the value is valid or not
-
-```JavaScript
-// tells the console whether a specific value is valid for a specific css style
-var theStyle = "background-color", theValue = "#ff00ff";
-$log.log( theValue + " is a valid value for the css style of " + theStyle + ": " + isValidStyleValue(theStyle, theValue) );
 ```
 ###_**=== jsonQuery ===**_ ![Property][prop]
 The `jsonQuery` service contains a collection of methods to query a json object (incl. nested objects) for different things. To access any of the specific  jsonQuery methods just call jsonQuery (remember to also add it to the top of the controller) envoking the method one is after.
@@ -3139,20 +2923,57 @@ var myValue = "87.5";
 var theIndex = jsonQuery.getArrayIndexByObjValue(myObj, myValue);
 $log.log( "If myObj was converted to an array, the value " + myValue + " would be stored at index: " + theIndex );
 ```
-###_getTimestamp_ ![Method][meth]
-Returns a unix like time stamp value. (useful for e.g. unique identifiers). (remember to also add it to the top of the controller).
+###_**=== mathy ===**_ ![Property][prop]
+The `mathy` service contains a collection of math support functions. To access any of the specific collection of math support functions methods just call collection of math support functions (remember to also add it to the top of the controller) envoking the method one is after.
 
-####getTimestamp()
-
-* **Parameters:**
-    * None
-* **Returns:**
-    * (Float) a large numerical value based on the current exact time (in ms) (therefore unique)
+####**mathy.METHOD(PARAMETER)**
 
 ```JavaScript
-// tell the timestamp value to the console 
-var myTimeStamp = getTimestamp();
-$log.log( "My Time Stamp: " + myTimeStamp );
+// write the number of decimals to the console
+$log.log( mathy.countDecimals(7.456) );
+```
+###_countDecimals_ ![Method][meth]
+Returns the number of decimals in a float number.
+
+####mathy.countDecimals(theValue)
+
+* **Parameters:**
+    * theValue (Float) the decimal number being investigated
+* **Returns:**
+    * (Integer) the number of decimals the provided value containes
+
+```JavaScript
+// write the number of decimals in this value of pi to the console
+$log.log( mathy.countDecimals(3.141592653589793) );
+```
+###_getRotationDegrees_ ![Method][meth]
+Returns the rotation in degrees of a specified jquery element.
+
+####mathy.getRotationDegrees(jquery-element)
+
+* **Parameters:**
+    * jquery-element (Element Pointer (JQuery)) the element which current rotation is sought after
+* **Returns:**
+    * (Float) the roatation (in degrees) that the provided JQuery elememnt has
+
+```JavaScript
+// print to the console the rotation in degrees which the specified JQuery elelemnt inside the Webble currently has
+$log.log( mathy.getRotationDegrees($scope.theView.parent().find("#myInnerElement")) );
+```
+###_monthDiff_ ![Method][meth]
+Returns the number of months between two dates.
+
+####mathy.monthDiff(d1, d2)
+
+* **Parameters:**
+    * d1 (Object (Date)) the first start date
+	* d2 (Object (Date)) the second end date
+* **Returns:**
+    * (Integer) the number of months between the two provided dates
+
+```JavaScript
+// print to the console the number of months bewteen the specified dates
+$log.log( mathy.monthDiff(new Date(1989,11,9), new Date(2001,9,11)) );
 ```
 <a name="slot"></a>
 ###_**=== Slot ===**_ ![Class][class]
@@ -3535,6 +3356,43 @@ for(slot in $scope.getSlots()){
 	$log.log( $scope.getSlot(slot).getOriginalType() );
 }
 ```
+###_**=== strCatcher ===**_ ![Property][prop]
+The `strCatcher` service contains a range of english string collections for all CSS related attributes. To access any of the specific strCatcher properties just call strCatcher (remember to also add it to the top of the controller) envoking the strCatcher method one is after (optional including the css definition). Each CSS attribute key is in upper case and without hyphens.
+
+####**strCatcher.PROPERTY_NAME().CSS-DEFINITION**
+
+```JavaScript
+// Print the description of the CSS attribute for background-color to the console
+$log.log( strCatcher.cssAttrDescs().BACKGROUNDCOLOR );
+```
+###_cssAttrNames_ ![Method][meth]
+Returns a list of all english readable labels for all existing CSS attributes.
+
+####strCatcher.cssAttrNames()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Array (of Strings)) List of english readable names for all CSS attributes
+
+```JavaScript
+// Print the label of the CSS attribute for background-color to the console
+$log.log( strCatcher.cssAttrNames().BACKGROUNDCOLOR );
+```
+###_cssAttrDescs_ ![Method][meth]
+Returns a list of all english readable descriptions for all existing CSS attributes.
+
+####strCatcher.cssAttrDescs()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Array (of Strings)) List of english readable descriptions for all CSS attributes
+
+```JavaScript
+// Print the description of the CSS attribute for background-color to the console
+$log.log( strCatcher.cssAttrDescs().BACKGROUNDCOLOR );
+```
 ###_**=== valMod ===**_ ![Property][prop]
 The `valMod` service contains a collection of methods that modify or separate values or fix values that was not in correct format. To access any of the specific valMod methods just call valMod (remember to also add it to the top of the controller) envoking the method one is after.
 
@@ -3711,6 +3569,150 @@ Iterates through a provided array and if the specified value is found, it is rem
 var myArr = ["chocolate", "vanilla", "strawberry", "mango", "banana"];
 $log.log( valMod.findAndRemoveValueInArray(myArr, "mango") );
 ```
+###_**=== wwConsts ===**_ ![Property][prop]
+The `wwConsts` service contains a range of useful constants for quicker and more structured and readable coding. To access any of the specific wwConsts objects just call wwConsts (remember to also add it to the top of the controller) envoking the wwConsts object one is after and then the wwConsts item available in that enum list.
+
+####**wwConsts.CONSTANT_NAME**
+
+```JavaScript
+// Iterates over the default font family list and print each name to the console
+for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
+	$log.log(wwConsts.defaultFontFamilies[i]);
+}
+```
+###_palette_ ![Property][prop]
+Returns an array of carefully selected mix of colors to be used in various settings and situations. The palette contains 16 colors in the following order: red, blue, purple, magenta, darkgreen, orange, black, lightgreen, cyan, brown, grey, pink, yellowgreen, yellow, lightpink and olive. The color names are CSS3 compatible.
+
+####wwConsts.palette
+
+* **Returns:**
+    * (Array(of Objects)) Each object contains a color-name and a color-value (as a hexadecimal (#ffffff))
+	    * e.g. {name: "red", value: "#ff0000"}
+
+```JavaScript
+// Change the color-slot every 3 seconds using the palette constant
+var colorIndex = 0;
+var changeColor = function(){
+	if(colorIndex > 15){ colorIndex = 0; }
+	$scope.set("MyColorSlot", wwConsts.palette[colorIndex++].value);
+	$timeout(changeColor, 300);
+};
+```
+###_lightPalette_ ![Property][prop]
+Returns an array of carefully selected mix of lighter colors to be used in various settings and situations. The light palette contains 16 light colors in the following order: webble world yellow (wblWrldYellow), pink, LightSalmon, Coral, BurlyWood, Chocolate, LightSkyBlue, Aquamarine, PaleGreen, Plum, MistyRose, LightCyan, Silver, PeachPuff, LightSteelBlue and Tomato. Except for the first color (Webble World Yellow) the other color names are CSS3 compatible.
+
+####wwConsts.lightPalette
+
+* **Returns:**
+    * (Array(of Objects)) Each object contains a color-name and a color-value (as a hexadecimal (#ffffff))
+	    * e.g. {name: "wblWrldYellow", value: "#FFF68F"}
+
+```JavaScript
+// Change the color-slot every 3 seconds using the light palette constant
+var colorIndex = 0;
+var changeColor = function(){
+	if(colorIndex > 15){ colorIndex = 0; }
+	$scope.set("MyColorSlot", wwConsts.lightPalette[colorIndex++].value);
+	$timeout(changeColor, 300);
+};
+```
+<a name="languages"></a>
+###_languages_ ![Property][prop]
+A small subset of avilable languages, where some are present inside Webble World, which contains language code, language name in english and in the language itself and the phrase "Change Language" in each language. This is mainly used internally, but it is there to use also for Webble developers if ever needed. The language codes are the international recognized codes. Following languages are included: English, Swedish, Japanese, German, Finnish, French, Russian, Hebrew, Greek and Spanish.
+
+####wwConsts.languages
+
+* **Returns:**
+    * (Array (of Objects)) each object have a set of language describing keys
+	    * e.g. {code: "sv", NativeName: "Svenska", EnglishName: "Swedish", ChangeStr: "Ändra Språk"},
+
+```JavaScript
+// Tell the console how to say "Change Language" in Swedish
+for(var i = 0; i < wwConsts.languages.length; i++){
+	if(wwConsts.languages[i].code == "sv"){
+		$log.log("In Swedish the phrase 'Change language' looks like this: '" + wwConsts.languages[i].ChangeStr + "'.");
+	}
+}
+```
+###_defaultFontFamilies_ ![Property][prop]
+Returns a list of the names for the default font families supported by most browsers and which Webble World also fully support withou any additional downloads. The names are CSS3 compatible.
+
+####wwConsts.defaultFontFamilies
+
+* **Returns:**
+    * (Array(of Strings)) each item is just a string name of the font family
+
+```JavaScript
+// Iterates over the default font family list and print each name to the console
+for(var i = 0; i < wwConsts.defaultFontFamilies.length; i++){
+	$log.log(wwConsts.defaultFontFamilies[i]);
+}
+```
+###_**=== Solo Service Collection ===**_ ![Property][prop]
+Here follow a set of single services with only one method and task where each one has to be added separately to the top of the controller if being used.
+
+<a name="fromKeyCode"></a>    
+###_fromKeyCode_ ![Method][meth]
+Simple service that returns the name of a key on the keyboard based on the key code value. (remember to also add it to the top of the controller).
+
+####fromKeyCode(keycode)
+
+* **Parameters:**
+    * keycode (Integer) The key code for a specific key, usually provided from a key down event
+* **Returns:**
+    * (String) a name of a key board key
+	    * e.g. 'Down Arrow' (from key code: 40)
+
+```JavaScript
+// Tells the console which key has a certain key code
+var keyCode = 27;
+$log.log( "The key with key-code " + keyCode + " is the " + fromKeyCode(27) + " key." );
+```
+###_getKeyByValue_ ![Method][meth]
+A service which takes an associative array and a value and returns the name of the key containing that value, or if not found, returns null. (remember to also add it to the top of the controller)
+	
+####getKeyByValue(object, value)
+
+* **Parameters:**
+    * object (Object) any object with a set of keys and values
+	* value (Any) any value that might be found in the object parameter
+* **Returns:**
+    * (String) the name of the key which contained the value provided as a parameter
+
+```JavaScript
+// write to the console the key name for the current selection state of the Webble
+$log.log( getKeyByValue(Enum.availableOnePicks_SelectTypes, $scope.getSelectionState())  );
+```
+###_getTimestamp_ ![Method][meth]
+Returns a unix like time stamp value. (useful for e.g. unique identifiers). (remember to also add it to the top of the controller).
+
+####getTimestamp()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Float) a large numerical value based on the current exact time (in ms) (therefore unique)
+
+```JavaScript
+// tell the timestamp value to the console 
+var myTimeStamp = getTimestamp();
+$log.log( "My Time Stamp: " + myTimeStamp );
+```
+###_getUrlVars_ ![Method][meth]
+Simple service that returns an object containing the URL parameters from the current URL. (remember to also add it to the top of the controller).
+
+####getUrlVars()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Object) object containing the URL parameters as keys with their values as value, from the current URL
+	    * e.g. {webble: "genericCharts", workspace: "57ea3170cd612d24248ca7a4"}
+
+```JavaScript
+// Print to the console all current URL parameters and their values
+$log.log( getUrlVars() );
+```
 ###_isEmpty_ ![Method][meth]
 A service that checks weather an object, string or array is empty or not. (remember to also add it to the top of the controller).
 
@@ -3725,63 +3727,77 @@ A service that checks weather an object, string or array is empty or not. (remem
 var myArr = ["chocolate", "vanilla", "strawberry", "mango", "banana"], myObj = {}, myStr = "";
 $log.log( " myArr is empty: " + isEmpty(myArr) + "\n myObj is empty: " + isEmpty(myObj) + "\n myStr is empty: " + isEmpty(myStr) );
 ```
-###_**=== mathy ===**_ ![Property][prop]
-The `mathy` service contains a collection of math support functions. To access any of the specific collection of math support functions methods just call collection of math support functions (remember to also add it to the top of the controller) envoking the method one is after.
+###_isSafeFontFamily_ ![Method][meth]
+Simple service that tests if the provided font name is a safe and a known one (part of the default) and returns the result. (remember to also add it to the top of the controller).
 
-####**mathy.METHOD(PARAMETER)**
-
-```JavaScript
-// write the number of decimals to the console
-$log.log( mathy.countDecimals(7.456) );
-```
-###_countDecimals_ ![Method][meth]
-Returns the number of decimals in a float number.
-
-####mathy.countDecimals(theValue)
+####isSafeFontFamily(fontFamilyNameToTest)
 
 * **Parameters:**
-    * theValue (Float) the decimal number being investigated
+    * fontFamilyNameToTest (String) the name of the font family
 * **Returns:**
-    * (Integer) the number of decimals the provided value containes
+    * (Boolean) True or False whether the font is safe or not
 
 ```JavaScript
-// write the number of decimals in this value of pi to the console
-$log.log( mathy.countDecimals(3.141592653589793) );
+// Tells the console whether the fon "Georgia" is a safe font to use in the browser
+var fontFamily = "Georgia";
+$log.log( fontFamily + " is a safe font to use: " + isSafeFontFamily(fontFamily) );
 ```
-###_getRotationDegrees_ ![Method][meth]
-Returns the rotation in degrees of a specified jquery element.
-
-####mathy.getRotationDegrees(jquery-element)
+###_isValidEnumValue_ ![Method][meth]
+A service which tests that a specified value is contained within the range of values inside a specific Enum (or other object) value collection. Values are validated both by key name and/or by key value. (remember to also add it to the top of the controller)
+	
+####isValidEnumValue(enumToTest, valueToTest)
 
 * **Parameters:**
-    * jquery-element (Element Pointer (JQuery)) the element which current rotation is sought after
+    * enumToTest (Object) the set of key-values that is being tested 
+	* valueToTest (Any) a value to test against
 * **Returns:**
-    * (Float) the roatation (in degrees) that the provided JQuery elememnt has
+    * (Boolean) True or False whether the value was present or not
 
 ```JavaScript
-// print to the console the rotation in degrees which the specified JQuery elelemnt inside the Webble currently has
-$log.log( mathy.getRotationDegrees($scope.theView.parent().find("#myInnerElement")) );
+// Tell the console if a specifc value is valid for exec mode settings
+var whatValue = 7
+$log.log( whatValue + " is a valid exec mode value: " + isValidEnumValue(Enum.availableOnePicks_ExecutionModes, whatValue) );
 ```
-###_monthDiff_ ![Method][meth]
-Returns the number of months between two dates.
+###_isValidStyleValue_ ![Method][meth]
+A service that tests if a specified style value within a specified style setting is a valid option. (remember to also add it to the top of the controller).
 
-####mathy.monthDiff(d1, d2)
+####isValidStyleValue(styleToTest, possibleStyleValue);
 
 * **Parameters:**
-    * d1 (Object (Date)) the first start date
-	* d2 (Object (Date)) the second end date
+    * styleToTest (String) the name if the style being tested
+	    * e.g. "margin-left"
+	* possibleStyleValue (Any) the value which will attempted to apply on the provided css style
 * **Returns:**
-    * (Integer) the number of months between the two provided dates
+    * (Boolean) True or False whether the value is valid or not
 
 ```JavaScript
-// print to the console the number of months bewteen the specified dates
-$log.log( mathy.monthDiff(new Date(1989,11,9), new Date(2001,9,11)) );
+// tells the console whether a specific value is valid for a specific css style
+var theStyle = "background-color", theValue = "#ff00ff";
+$log.log( theValue + " is a valid value for the css style of " + theStyle + ": " + isValidStyleValue(theStyle, theValue) );
 ```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Filters
 With AngularJS **Filters** one can alter and modify any value in many powerful ways with ease and speed, and it is recommended to
 that webble template developers create filters of their own to empower their Webbles. But the platform has a few ones available too, that might be useful. Filters can eather be accessed as traditional AngularJS filters in HTML `{{ INPUT | FILTER }}` or via JavaScript as a method using the `$filter` keyword `$filter('FILTER-NAME')(PARAMETERS)`.
 
+###_bitwiseAnd_ ![Method][meth]
+A bitwise test filter that returns true or false if a bit-flag is set or not
+
+####IN JS:$filter("bitwiseAnd")(firstNumber, secondNumber);     IN HTML: {{ firstNumber | bitwiseAnd : secondNumber }}
+
+* **Parameters:**
+    * firstNumber (Integer (bitwise)) the set of bit-flags where one flag will be tested for being on or off
+	* secondNumber (Integer (bitwise)) the exact bit-flag which the first set of flags will be compared with.
+* **Returns:**
+    * (Boolean) True or False whether the targeted bit-flag is On or Off.
+
+```JavaScript
+// test if the webble is protected against a specific protection type
+var wblProtections = $scope.getProtection();
+var testFlag = Enum.bitFlags_WebbleProtection.DELETE;
+var theFlagTest = $filter("bitwiseAnd")(wblProtections, testFlag);
+$log.log("This Webble is protected from 'Deletion': " + theFlagTest);
+```
 ###_nativeName_ ![Method][meth]
 Takes an international language code and returns the readable _native_ name of that language. Not all languages are available, only those represented in the [languages](#languages) method of the `wwConst` service .
 
@@ -3833,24 +3849,6 @@ var theReplacementVals1 = ["my", "I", "myself"];
 var theReplacementVals2 = ["Zlatan's", "he", "himself"];
 $log.log($filter("stringFormat")(theTxt, theReplacementVals1));
 $log.log($filter("stringFormat")(theTxt, theReplacementVals2));
-```
-###_bitwiseAnd_ ![Method][meth]
-A bitwise test filter that returns true or false if a bit-flag is set or not
-
-####IN JS:$filter("bitwiseAnd")(firstNumber, secondNumber);     IN HTML: {{ firstNumber | bitwiseAnd : secondNumber }}
-
-* **Parameters:**
-    * firstNumber (Integer (bitwise)) the set of bit-flags where one flag will be tested for being on or off
-	* secondNumber (Integer (bitwise)) the exact bit-flag which the first set of flags will be compared with.
-* **Returns:**
-    * (Boolean) True or False whether the targeted bit-flag is On or Off.
-
-```JavaScript
-// test if the webble is protected against a specific protection type
-var wblProtections = $scope.getProtection();
-var testFlag = Enum.bitFlags_WebbleProtection.DELETE;
-var theFlagTest = $filter("bitwiseAnd")(wblProtections, testFlag);
-$log.log("This Webble is protected from 'Deletion': " + theFlagTest);
 ```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Extra Additional
