@@ -941,8 +941,7 @@ Lets the webble leave a uniquely identified online data broadcasting virtual roo
 ```JavaScript
 // Unregister listening to the broadcasting of online messages from the virtual room called "MyRoom"
 $scope.unregisterOnlineDataListener("MyRoom");
-```
-    
+```    
 <!------------------------------------------------------------------------------------------------------------------->
 ##Platform
 The **Platform** is the actual Webble World environment and it includes many helpful methods to access sections of the
