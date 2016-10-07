@@ -3877,11 +3877,7 @@ Available Information Keys are:
 // Tell the console what the current computer device is, in more details. 
 var sys = BrowserDetect;
 $log.log("This is a " + sys.device + ", running on " + sys.OS + " using browser " + sys.browser + " of version " + sys.version + ".");
-``` 
-
-
-<!------------------------------------------------------------------------------------------------------------------->
-<!-- Image Links for this document -->
+```
 
 [prop]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-P-icon.png
 [meth]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-M-icon.png
@@ -3889,5 +3885,3 @@ $log.log("This is a " + sys.device + ", running on " + sys.OS + " using browser 
 [enum]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-E-icon.png
 [class]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/Letter-C-icon.png
 [ioposinfo]: https://raw.githubusercontent.com/truemrwalker/wblwrld3/master/app/images/icons/ioPosInfo.png
-
-<!------------------------------------------------------------------------------------------------------------------->
