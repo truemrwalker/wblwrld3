@@ -20,6 +20,7 @@
 		"cookie": "latest",
 		"cookie-parser": "latest",
 		"serve-static": "latest",
+		"request": "latest",
 
 		"bluebird": "latest",
 		"socket.io": "latest",

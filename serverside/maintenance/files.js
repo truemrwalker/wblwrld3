@@ -278,7 +278,7 @@ module.exports = function(app, config, mongoose, gettext) {
                         console.log("Chowned file:", f.filename);
                         return gfs.chownFileEntry(f, ownerId);
                     }
-                    console.log("Orphan file:", f.filename);
+                    //console.log("Orphan file:", f.filename);
 
                 }).then(function () {
                     return backupRemoteFile(f);

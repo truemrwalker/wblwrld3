@@ -102,7 +102,10 @@ module.exports = (function() {
 		//     MONGODB_URL, SERVER_URL, SERVER_URL_PUBLIC
 
 		// DEPLOYMENT can be 'development', 'production', 'testing', 'maintenance', 'bootstrap'
-		DEPLOYMENT: 'development'
+        DEPLOYMENT: 'development',
+
+        // Default sync options
+        SYNC_ONLINE_WEBBLES: false
 	};
 
 	////////////////////////////////////////////////////////////////////
@@ -130,14 +133,16 @@ module.exports = (function() {
 	});
 
 	Object.keys(config).forEach(function (key) { // Give priority to arguments
-			
-		var optionKey = "--" + key.toLowerCase().replace('_', '-');
-			
+
+		var optionKey = "--" + key.toLowerCase().replace(/_/g, '-');
+
 		var argIndex = process.argv.indexOf(optionKey);
 		if (argIndex != -1 && argIndex + 1 < process.argv.length) {
-				
+
 			var value = process.argv[argIndex + 1];
-			config[key] = value[0] != '-' ? value : '';
+            config[key] = value[0] != '-' ? value : '';
+
+            //console.log("Command-line option processed in config:", key, "->", config[key]);
 		}
 	});
 

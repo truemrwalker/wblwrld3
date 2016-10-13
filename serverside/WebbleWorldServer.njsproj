@@ -26,6 +26,7 @@
     <Compile Include="control\autosync.js" />
     <Compile Include="maintenance\images.js" />
     <Compile Include="maintenance\sitemap.js" />
+    <Compile Include="maintenance\online-webbles.js" />
     <Compile Include="models\machine.js" />
     <Compile Include="models\message.js" />
     <Compile Include="realtime\pubsub.js" />

@@ -270,7 +270,24 @@ module.exports.GFS = function (mongoose) {
 
 	// Upload
 	//
-	this.upload = function(readStream, directory, filename, ownerId, mtime) {
+    this.uploadLazy = function (readStreamFunc, directory, filename, ownerId, mtime) {
+
+        var self = this;
+        return self.createWriteStream(directory, filename, ownerId, mtime).then(function (writeStream) {
+
+            return new Promise(function (resolve, reject) {
+
+                var readStream = readStreamFunc();
+                readStream.pipe(writeStream);
+                readStream.once('error', reject);
+
+                writeStream.once('error', reject);
+                writeStream.once('close', resolve);
+            });
+        });
+    };
+
+    this.upload = function (readStream, directory, filename, ownerId, mtime) {
 
 		var self = this;
 		return self.createWriteStream(directory, filename, ownerId, mtime).then(function(writeStream) {
