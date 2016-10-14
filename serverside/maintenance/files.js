@@ -183,6 +183,11 @@ module.exports = function(app, config, mongoose, gettext) {
                 promises.push(gfs.deleteFileEntry(remoteFile));
             });
             return Promise.all(promises);
+
+        }, function (err) { // When getWebbleId is rejected
+
+            console.log("Corrupt/unexpected files found under remote directory:", remoteDir);
+            //return Promise.all(remoteFiles.map(f => gfs.deleteFileEntry(f)));
         });
 	}
 
@@ -279,6 +284,11 @@ module.exports = function(app, config, mongoose, gettext) {
                         return gfs.chownFileEntry(f, ownerId);
                     }
                     //console.log("Orphan file:", f.filename);
+
+                }, function (err) { // When getWebbleId is rejected
+
+                    console.log("WARNING: Unexpected file:", f.filename, "(Deleting)");
+                    return gfs.deleteFileEntry(f);
 
                 }).then(function () {
                     return backupRemoteFile(f);
