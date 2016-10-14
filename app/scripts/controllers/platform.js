@@ -5095,7 +5095,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 		else if(sublink == 'apidoc' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'M')){
 			if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
-				$window.open(appPaths.currentAppUriCoreNoQuery + "apihelp.html", '_blank');
+                $window.open(appPaths.currentAppUriCoreNoQuery + "webbleapidoc.html", '_blank');
 			}
 		}
 		else if(sublink == 'tutorials' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'U')){
