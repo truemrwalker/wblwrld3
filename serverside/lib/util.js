@@ -194,6 +194,9 @@ module.exports.isEmailValid = function (email) {
 
 module.exports.isUsernameValid = function (username) {
 
+    if (username === 'j') // Special case only for Jonas :)
+        return true;
+
 	var regExp = /^[a-z0-9_-]{3,16}$/;
 	return regExp.test(username);
 };

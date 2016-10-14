@@ -41,9 +41,6 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 	function createUserIdHash(user) {
 		return crypt.createHash(user._auth.local.hash.substring(5, 15) + user.email);
 	}
-	function createUserSearchObj(username) {
-		return {$or: [{ email: username }, { username: username }]};
-	}
 
 	////////////////////////////////////////////////////////////////////
 	// Configure passport's behavior
@@ -53,7 +50,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		passwordField: 'password'
 	}, function (username, password, done) {
 		
-		User.findOne(createUserSearchObj(username)).exec().then(function (user) {
+        User.findOne({ $or: [{ email: username }, { username: username }] }).exec().then(function (user) {
 			
 			if (!user)
 				done(null, null, { message: gettext("Incorrect username") });
@@ -101,7 +98,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 				throw new util.RestError(gettext("The email you provided is invalid"));
 
 			if (req.body.username && !util.isUsernameValid(req.body.username))
-				throw new util.RestError(gettext("The username you provided is invalid"));
+                throw new util.RestError(gettext("This username is already taken"));
 
 			if (req.body.password && req.body.password !== req.body.confirmPassword)
 				throw new util.RestError(gettext("Passwords don't match"));
