@@ -21,6 +21,7 @@
 		"cookie-parser": "latest",
 		"serve-static": "latest",
 		"request": "latest",
+		"archiver": "latest",
 
 		"bluebird": "latest",
 		"socket.io": "latest",

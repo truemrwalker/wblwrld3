@@ -24,6 +24,7 @@
     <Compile Include="config.js" />
     <Compile Include="control\_machine.js" />
     <Compile Include="control\autosync.js" />
+    <Compile Include="api\files\zip.js" />
     <Compile Include="maintenance\images.js" />
     <Compile Include="maintenance\sitemap.js" />
     <Compile Include="maintenance\online-webbles.js" />
@@ -50,7 +51,7 @@
     <Compile Include="bootstrap\posts.js" />
     <Compile Include="bootstrap\webbles.js" />
     <Compile Include="bootstrap\workspaces.js" />
-    <Compile Include="files\webbles.js" />
+    <Compile Include="api\files\webbles.js" />
     <Compile Include="lib\crypt.js" />
     <Compile Include="lib\dbutil.js" />
     <Compile Include="lib\gfs.js" />
@@ -94,7 +95,7 @@
     <Folder Include="auth" />
     <Folder Include="auth\providers" />
     <Folder Include="bootstrap" />
-    <Folder Include="files" />
+    <Folder Include="api\files\" />
     <Folder Include="keys" />
     <Folder Include="lib" />
     <Folder Include="lib\ops" />

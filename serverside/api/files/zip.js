@@ -20,53 +20,52 @@
 //
 
 //
-// files.js
+// zip.js
 // Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
 //
 var Promise = require("bluebird");
 
-var libGfs = require('../lib/gfs');
 var path = require('path');
+var fs = require('fs');
+var archiver = require('archiver');
+
+Promise.promisifyAll(fs);
 
 module.exports = function(app, config, mongoose, gettext, auth) {
 
-	var gfs = new libGfs.GFS(mongoose);
-
-	// Just in case we are running on localhost on windows
-	//
-	var getFileWithPath = gfs.getFileWithPath;
-
-	if (path.sep != '/') {
-
-		getFileWithPath = function (fullPath) {
-			return gfs.getFileWithPath(fullPath.replace(/\//g, path.sep));
-		};
-	}
-
 	// Test with:
-	// https://localhost:7443/files/webbles/LearningCube/1/images/grasslight-big.jpg
+	// https://localhost:7443/api/files/zip/data/WebbleDevPack_Unpacked.zip
 	//
-	app.get('/files/*', function (req, res) {
+	app.get('/api/files/zip/*', function (req, res) {
 
-		var fullPath = req.params[0];
-		//var directory = path.dirname(fullPath);
-		//var filename = path.basename(fullPath);
+        var fullPath = req.params[0];
 
-        return getFileWithPath(fullPath).then(function (fileEntry) {
+		var baseDir = path.dirname(fullPath);
+		var baseName = path.basename(fullPath, '.zip');
 
-            if (!fileEntry)
+        if (!baseDir || !baseName || baseDir.length == 0 || baseName.length == 0)
+            return res.status(404).end();
+
+        var directoryToZip = path.join(config.APP_ROOT_DIR, baseDir, baseName);
+
+        return fs.statAsync(directoryToZip).then(function (stat) {
+
+            if (!stat || !stat.isDirectory())
                 res.status(404).end();
             else {
 
-                res.set('Content-Type', fileEntry.contentType);
-                res.set('Content-Length', fileEntry.length);
-                res.set('Cache-Control', "max-age=3600");
+                var archive = archiver('zip');
 
-                return gfs.downloadFromFileEntry(res, fileEntry);
+                res.attachment(baseName + '.zip');
+                archive.pipe(res);
+
+                archive.directory(directoryToZip, baseName);
+                archive.finalize();
             }
+
         }).catch(function (err) {
 
-            console.log(err);
+            //console.log(err);
             res.status(404).end();
         });
     });

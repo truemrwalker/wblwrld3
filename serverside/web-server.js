@@ -100,9 +100,7 @@ Promise.join(
 		var auth = require('./auth/auth')(app, config, mongoose, gettext);
 			
 		// Load all modules that define the web server's routes
-        return Promise.join(
-            loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth),
-            loader.executeAllScripts('files', app, config, mongoose, gettext, [], auth), function () {
+        return loader.executeAllScripts('api', app, config, mongoose, gettext, [], auth).then(function () {
             
             // 3. Second part of middleware initialization (after having had set up routes)
             //			
