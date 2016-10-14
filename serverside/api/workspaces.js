@@ -113,7 +113,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             if (!ws)
                 throw new util.RestError(gettext("Workspace no longer exists"), 404);
             
-            if (!ws.isUserAuthorized(req.user))
+            if (!ws.isUserAuthorized(req.user, true))
                 throw new util.RestError(gettext("Not authorized to change workspace"), 403);
             
             // Just in case

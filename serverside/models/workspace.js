@@ -36,7 +36,8 @@ module.exports = function(app, config, mongoose, gettext) {
 	    workspace: {
 
 		    name: String,
-		    creator: String,
+            creator: String,
+            share_readonly: Boolean,
 		    webbles: [WebbleSchema]
 	    },
 
@@ -88,10 +89,13 @@ module.exports = function(app, config, mongoose, gettext) {
 		return !this._owner || this._owner.equals(user._id);
 	};
 
-	WorkspaceSchema.methods.isUserAuthorized = function (user) {
+	WorkspaceSchema.methods.isUserAuthorized = function (user, isWrite) {
 
 		if (!this._owner || this._owner.equals(user._id) || user._sec.role === 'adm')
 			return true;
+
+        if (isWrite && this.workspace.share_readonly)
+            return false;
 
 		for (var i = 0; i < this._contributors.length; ++i) {
 			if (this._contributors[i].equals(user._id))
