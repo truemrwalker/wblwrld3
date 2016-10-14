@@ -5125,7 +5125,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
         else if(sublink == 'devpack' || (whatKeys.theAltKey && whatKeys.theKey == 'G')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
-                $window.open('data/WebbleDevPack.zip');
+                $window.open('api/files/zip/data/WebbleDevPack.zip');
             }
         }
 		else if(sublink == 'git' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'G')){

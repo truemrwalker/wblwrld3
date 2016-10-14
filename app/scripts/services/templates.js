@@ -111,7 +111,7 @@ ww3Services.factory('templateService', ['$q', '$upload', '$http', function($q, $
 		//**************************************************************
 
 		getBoilerplate: function(file) {
-			return $http.get('/data/WebbleDevPack_Unpacked/' + file);
+			return $http.get('/data/WebbleDevPack/' + file);
 		},
 
 		//**************************************************************

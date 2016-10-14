@@ -34,7 +34,7 @@ Promise.promisifyAll(fs);
 module.exports = function(app, config, mongoose, gettext, auth) {
 
 	// Test with:
-	// https://localhost:7443/api/files/zip/data/WebbleDevPack_Unpacked.zip
+	// https://localhost:7443/api/files/zip/data/WebbleDevPack.zip
 	//
 	app.get('/api/files/zip/*', function (req, res) {
 
