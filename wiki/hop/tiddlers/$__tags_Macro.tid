@@ -1,0 +1,17 @@
+created: 20160729095058305
+modified: 20160729095532453
+tags: $:/tags/Macro
+title: $:/tags/Macro
+type: text/vnd.tiddlywiki
+
+\define webble(id: "fundamental" width: 1700, height:1000)
+<html>
+<iframe allowfullscreen="allowfullscreen" width="$width$" height="$height$" src="https://wws.meme.hokudai.ac.jp/#/app?webble=$id$"></iframe>
+</html>
+\end
+
+\define vlsvl(width: 1000, height:800)
+<html>
+<iframe allowfullscreen="allowfullscreen" width="$width$" height="$height$" src="https://dev.meme.hokudai.ac.jp"></iframe>
+</html>
+\end

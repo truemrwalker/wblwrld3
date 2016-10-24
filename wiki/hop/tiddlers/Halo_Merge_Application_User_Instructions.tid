@@ -1,0 +1,127 @@
+created: 20161019032601434
+modified: 20161019073014139
+tags: [[Halo Merge Application]]
+title: Halo Merge Application User Instructions
+type: text/vnd.tiddlywiki
+
+This application visualizes data from particle simulations. The data used shows halos moving in space and merging with other halos.
+
+[img[images/HaloMergeAppDescription.jpg]]
+
+!! Data
+
+[img[images/HaloMergeData3.jpg]]
+
+You can load data by dragging data files and dropping them on the "Drop Data File Here" area of the application, or by clicking "Choose Files" and browsing to the file. You can download sample data files from the "Malo Merge data sets" part of this Web page, or you can use your own files. Any file that has either TAB separated, comma separated, or space separated rows with data should work.
+
+[img[images/HaloMergeData1.jpg]]
+
+[img[images/HaloMergeData2.jpg]]
+
+!! Selecting Data
+
+[img[images/HaloMergeSelect1.jpg]]
+
+[img[images/HaloMergeSelect2.jpg]]
+
+[img[images/HaloMergeSelect3.jpg]]
+
+You can select subsets of data by clicking and dragging on the visualizations. If you hold down the Ctrl key while clicking and dragging, you can select multiple data sets. Different sets will be shown in different colors, and unselected data will be shown in grey.
+
+There is a "Select All" button to select all data on all components, located on the Master Controller component in the top left corner.
+
+!! Zooming and Panning
+
+[img[images/HaloMergeZoomAndPan.jpg]]
+
+You can zoom the plots. Pressing the + key will zoom in and pressing the - key will zoom out, when you have the mouse cursor over the component you want to zoom. When you have zoomed in, you can use the arrow keys to pan up, down, left, and right.
+
+!! Reordering Parallel Coordinates
+
+[img[images/HaloMergeMoveCoordinates.jpg]]
+
+You can move the parallel coordinates to reorder them, by clicking on the header text of the coordinate and dragging it to a new position.
+
+!! Parallel Coordinate Properties
+
+[img[images/HaloMergeParallelCoordProperties1.jpg]]
+
+[img[images/HaloMergeParallelCoordProperties2.jpg]]
+
+[img[images/HaloMergeParallelCoordProperties3.jpg]]
+
+ You can access the properties menu of the parallel coordinates component by right-clicking on the component and selecting "Properties". The most interesting properties to change are:
+
+* "Line Transparency", when there are very many lines, making the lines more transparent can make the visualization easier to understand.
+* "Quick Render Threshold", this indicates the number of data items for switching to the faster (but uglier) rendering method. This should be set fairly low (say 500) or the graphical rendering will be very slow on big data sets.
+* "Use logarithmic scales", this property is used to specify that some parallel coordinates should show the data on a logarithmic scale (linear scale is the default). A number of "true" and "false" corresponding to the number of parallel coordinates currently on screen are listed. Anything indicated as "false" will have a linear scale and anything indicated with "true" will have logarithmic scales. The order of the "true" and "false" list is the same as the current order of the coordinates on screen.
+* "Width" and "Height" are used to make the component bigger or smaller on the screen.
+
+!! Digital Dashboard (Master Controller) Properties
+
+[img[images/HaloMergeDashboardProperties1.jpg]]
+
+[img[images/HaloMergeDashboardProperties2.jpg]]
+
+The master controller also has properties, also accessed by right-clicking on the component and selecting "Properties". The most interesting property to change is:
+
+* "Colors", this property specifies what colors to use. It contains the background colors, the colors of the selection rectangles, the colors of the different subsets of data selected etc.
+
+!! Halo Plot Properties
+
+[img[images/HaloMergeHaloProperties1.jpg]]
+
+[img[images/HaloMergeHaloProperties2.jpg]]
+
+[img[images/HaloMergeHaloProperties3.jpg]]
+
+ You can of course also access the properties menu of the halo plot components by right-clicking on each component and selecting "Properties". The most interesting properties to change are:
+
+* "MinDotSize" and "MaxDotSize" are used to specify how large the halos should be in the plot.
+* "Log Scale for Dots", if set to true this makes the size of the halos depend on the logarithm of the size variable instead of the raw size variable.
+* "Transparency", if there is a lot of data plotted on top of each other, lowering the transparency may make the visualization easier to understand. Setting the transparency to 1 will make the graphical rendering quite a lot faster than other values, though.
+* "Quick Render Threshold", this indicates the number of data items for switching to the faster (but uglier) rendering method. This should be set fairly low (say 500) or the graphical rendering will be very slow on big data sets.
+* "Width" and "Height" are used to make the component bigger or smalle on the screen.
+* "StoryGraph Mode", this option is used to change how the visualization is drawn. It is explained in more detailed below.
+
+!! What Data to Visualize Where
+
+[img[images/HaloMergeDashboardDataconnections1.jpg]]
+
+[img[images/HaloMergeDashboardDataconnections2.jpg]]
+
+By right-clicking on the Master Controller component, you can specify what data should be visualized by which component. Selecting "Data -> Visualizations" ("Visualizations -> Data" gives a similar menu) opens up a menu listing data sets and visualization components (in this example there is only one data source, though).
+
+[img[images/HaloMergeDashboardDataconnections3.jpg]]
+
+Clicking on the name of one visualization component brings up the data this component expects to receive to be able to visualize something. Drop-down boxes can be used to select what data to assign to for example the x-axis, or what data contains the time stamp information etc.
+
+[img[images/HaloMergeDashboardDataconnections4.jpg]]
+
+[img[images/HaloMergeDashboardDataconnections2.jpg]]
+
+We can change the x-axis and y-axis to show "time" and "mass" instead of the X and Y positions in space. After selecting the data to visualize, click the "Apply" button at the top. This returns us to the previous menu, where we click the "Close" button at the top.
+
+[img[images/HaloMergeDashboardDataconnections5.jpg]]
+
+The visualization is now very different.
+
+!! Story Graphs
+
+[img[images/HaloMergeHaloStoryGraph1.jpg]]
+
+[img[images/HaloMergeHaloStoryGraph2.jpg]]
+
+StoryGraphs are a visualization technique originally used to show geographic data over time. It fold three dimension: longitude, latitude, and time, into a 2D plot. The x-axis is time. The left hand side y-axis shows the longitude and the right side y-axis shows the latitude. A point in space becomes a line from left to right, from the longitude of the point to the latitude of the point. A point in time and space is plotted on the line of the point, at the position on the line corresponding to the time (as indicated by the x-axis).
+
+To plot using the StoryGraph visualization technique, open the properties window and check the "StoryGraph mode" checkbox.
+
+!! Ancestors and Descendants
+
+[img[images/HaloMergeHaloAncestors1.jpg]]
+
+[img[images/HaloMergeHaloAncestors2.jpg]]
+
+[img[images/HaloMergeHaloAncestors3.jpg]]
+
+By holding down the SHIFT key and clicking on a halo, the direct descendants and direct ancestors of this halo will be shown in different colors.

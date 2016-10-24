@@ -1,0 +1,13 @@
+created: 20160729083111805
+modified: 20160729083229116
+tags: [[Deep Learning Hands-On Application]]
+title: Deep Learning Application User Instructions
+type: text/vnd.tiddlywiki
+
+! Deep Learning hands-on application
+
+This application shows neural networks and which pathways in the network respond to which inputs. Nodes and edges with a low response are shown in colors close to black. Negative responses and positive responses are shown in different colors, and brighter colors mean a stronger response than dull colors (close to black). 
+
+If you have your own data and/or your own neural network to use in the portal application, you can drag-and-drop data files onto the "Drop Data File Here" areas of the two data input components and drag-and-drop files describing network layouts on the "Drop Data File Here" part of the network visualization component. You can also click the "Choose Files" buttons in the application and select the files this way. 
+
+You can click on different ligands and proteins in the list of intputs to see how the network reacts to different inputs. 

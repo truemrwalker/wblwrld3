@@ -26,8 +26,8 @@
  *
  * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
  */
-ww3Controllers.controller('LoginCtrl', [ '$scope', 'gettext', 'gettextCatalog', 'authOfferToRegisterByDefault', 'authService',
-function ($scope, gettext, gettextCatalog, authOfferToRegisterByDefault, authService) {
+ww3Controllers.controller('LoginCtrl', [ '$scope', '$window', '$location', 'gettext', 'gettextCatalog', 'authOfferToRegisterByDefault', 'authService',
+function ($scope, $window, $location, gettext, gettextCatalog, authOfferToRegisterByDefault, authService) {
 
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
@@ -80,8 +80,15 @@ function ($scope, gettext, gettextCatalog, authOfferToRegisterByDefault, authSer
         authService.login(provider, $scope.loginData).then(
             function(response) {
 
-                clearForms();
-                $scope.$close(gettext("Logged in successfully"));
+                if ($location.search().ref) { // redirect to referrer
+
+                    $window.location.href = $location.search().ref;
+                }
+                else {
+
+                    clearForms();
+                    $scope.$close(gettext("Logged in successfully"));
+                }
             },
             function error(response) {
 

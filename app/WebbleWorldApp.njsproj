@@ -50,14 +50,12 @@
     <Folder Include="styles\imported\jqueryui\" />
     <Folder Include="styles\imported\jqueryui\1.10.0\" />
     <Folder Include="styles\imported\jqueryui\1.10.0\images\" />
-    <Folder Include="typings\" />
-    <Folder Include="typings\globals\" />
-    <Folder Include="typings\globals\node\" />
     <Folder Include="views\" />
     <Folder Include="views\editors\" />
     <Folder Include="views\modalForms\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="404.html" />
     <Content Include="502.html" />
     <Content Include="index.html" />
     <Content Include="scripts\libs\jquery-contextmenu\images\cut.png" />
@@ -116,6 +114,8 @@
     <Content Include="views\profile.html" />
     <Content Include="views\templates.html" />
     <Content Include="views\workSpaces.html" />
+    <Content Include="webbleapidoc.html" />
+    <Content Include="webbleinfo.html" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\app.js" />
@@ -187,7 +187,6 @@
     <Content Include="scripts\translations.js" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\index.d.ts" />
   </ItemGroup>
   <ItemGroup>

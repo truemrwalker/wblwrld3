@@ -1,0 +1,18 @@
+created: 20160729083235213
+modified: 20160729083306636
+tags: [[Deep Learning Hands-On Application]]
+title: Deep Learning data files
+type: text/vnd.tiddlywiki
+
+
+Deep Learning data files
+
+If you do not have your own data or own neural network, the application starts with a randomly generated network and some different input vectors to choose from. There are some other demo files available that you can use and can be useful to see what file format the application expects if you want to use your own data.
+
+* DemoNN.1.txt, a randomly generated network with 12 input nodes, 2 output nodes and three layers of 300 nodes.
+* DemoNN.2.txt, another randomly generated network with 12 input nodes, 2 output nodes and three layers of 300 nodes.
+* DeepLearningInput.1.txt, a small example file that works with the two networks above.
+* DemoNN.3.txt, another randomly generated network with 2874 input nodes, 2 output nodes and three layers of 300 nodes.
+* DeepLearningInput.2.gist.txt, two example vectors from the Profeat system, in the GIST format. Can be used with the DemoNN.3 above.
+* DeepLearningInput.3.csv.txt, two example vectors from the Profeat system, in CSV format. Can be used with the DemoNN.3 above.
+

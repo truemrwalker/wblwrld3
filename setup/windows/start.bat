@@ -8,6 +8,7 @@ for /r "C:\Program Files\MongoDB" %%a in (*) do if /i "%%~nxa"=="mongod.exe" set
 START /b cmd /c "%MONGOD%" --dbpath=.mongodbdatabase
 
 ECHO Wating for mongodb to start...
-timeout /t 5 /nobreak
+
+ping -n 6 -w 1000 127.0.0.1
 
 node serverside\web-server.js

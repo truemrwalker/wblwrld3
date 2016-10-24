@@ -1,0 +1,9 @@
+created: 20161019073528065
+modified: 20161019073717212
+tags: [[Yoshida Group]]
+title: Supernova Identification
+type: text/vnd.tiddlywiki
+
+! Background Information
+
+Stars are spread in the night sky and appear to shine in exactly the same way every single night, apart from, perhaps, some slight, consistent changes in appearance due to earth's seasons. Despite this consistent appearance, however, at many areas of the night sky, you can find celestials bodies that indeed change by substantially increasing their brightness for a period of one minute to one hour or even one day. Many of these changes are the result of supernova explosions, resulting from the death of the star as it is consumed by a black hole. Other factors that contribute to the change of brightness are due to yet unknown celestial phenomena. In this context, our research team has been able to find a large number of distant supernova from data collected from the Subaru telescope in Japan. To achieve this, we have developed an image analysis application that combines Machine Learning (ML) and statistical models that operate on the vast quantities of the collected data. Therefore, in this portal we have developed an application that showcases the process and challenges of detecting supernova from images obtained by the data collected from the Subaru telescope's observation of galaxies. 

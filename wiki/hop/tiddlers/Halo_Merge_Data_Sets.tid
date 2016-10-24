@@ -1,0 +1,15 @@
+created: 20160729084241134
+modified: 20161019073451409
+tags: [[Halo Merge Application]]
+title: Halo Merge Data Sets
+type: text/vnd.tiddlywiki
+
+! Halo Merge data files
+
+If you have your own data files, you can use your own data. We also have some sample data files for you to try.
+
+
+* [lnk[images/HaloDataSupersmallSample.txt]], a very small sample file with only 63 lines of data.
+* [lnk[images/HaloDataSmallSample.txt]], a small sample file with about 8,000 lines of data (700kb).
+* [lnk[images/HaloDataSample.txt]], a very small sample file with only 40,000 lines of data (3.5mb). This amount of data will currently make the application a bit slow, and use a lot of memory.
+

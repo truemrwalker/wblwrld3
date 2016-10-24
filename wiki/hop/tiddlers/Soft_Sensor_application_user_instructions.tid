@@ -1,0 +1,17 @@
+created: 20160729081733771
+modified: 20160729081837431
+tags: [[Soft Sensor hands-on application]]
+title: Soft Sensor application user instructions
+type: text/vnd.tiddlywiki
+
+If you do not have your own data to use in the portal application, you can download a demo data set here: SoftSensorData30.csv (1.5 megabytes). Once you have downloaded this file, you can drag-and-drop it onto the "Drop Data File Here" area in the application, or you can click the "Choose Files" button in the application and select the file. 
+
+You can click on the green circles in the plant diagram. This turns the sensors at the locations of the circles off (or turns them back on again).
+
+Select subsets by clicking and dragging in the visualizations
+
+You can click and drag in the plots to select subsets of data. If you hold down control, different selected subsets will get different colors. 
+
+ You can zoom in and out in the plots using the plus and minus keys. When zoomed you can pan the view using the arrow keys.
+
+When using the keyboard, you may have to click on either the system menu or on the white background of the application to tell the browser to give focus to the hands-on portal application before the browser will send the keyboard inputs to the application. If you click outside the application, you may have to do this again to get the keyboard inputs to go to the application. 

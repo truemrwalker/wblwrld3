@@ -1,0 +1,7 @@
+created: 20160729085117600
+modified: 20160729095810183
+tags: [[Deep Learning Hands-On Application]] Demo
+title: Try the Deep Learning Application
+type: text/vnd.tiddlywiki
+
+<<webble HandsOnPortalNeuralNetworkApp 1700 1000>>

@@ -45,7 +45,8 @@
 		"nodemailer": "latest",
 		"nodemailer-mailgun-transport" : "latest",
 
-		"mkdirp": "latest"
+		"mkdirp": "latest",
+		"tiddlywiki" : "latest"
 	},
 
 	"devDependencies": {

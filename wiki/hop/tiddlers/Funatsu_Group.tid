@@ -1,0 +1,18 @@
+created: 20160729080627971
+modified: 20160729083956239
+tags: TableOfContents Group
+title: Funatsu Group
+type: text/vnd.tiddlywiki
+
+! Development of a knowledge-generating platform driven by big data in drug discovery through production processes
+
+This is the Hands-on Portal for the Japan Science and Technology Agency (JST) CREST funding program for "Advanced Application Technologies to Boost Big Data Utilization for Multiple-Field Scientific Discovery and Social Problem Solving". This page is about the "Development of a knowledge-generating platform driven by big data in drug discovery through production processes" project funded in this funding program.
+Hands-on Applications
+
+!! These are the hands-on applications currently available based on this project:
+
+* Soft sensor application. This application shows a chemical plant with various sensors. One sensor location only gives data readings every 30 seconds but it would be useful to have an idea about what is going on more often. A "soft sensor" is added to predict what the data at this sensor location would be at times when there is no data from the sensor. This is done by modeling the system and predicting the data in this sensor location based on the data from other sensors in the plant.
+* Deep learning application. In this application you can visualize the response from a "deep learning" neural network. The network has been trained to determine if a ligand (chemical compound) and a receptor (protein) will bind or not. Instead of doing many experiments in the chemistry lab, you can check with the neural network which ligands bind with which receptors.
+* 3D visualization of chemical compounds
+* Chemical compound and reaction search
+* Exploration of the Virtually Generated Compound Library

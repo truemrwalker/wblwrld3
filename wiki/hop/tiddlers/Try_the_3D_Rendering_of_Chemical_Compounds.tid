@@ -1,0 +1,9 @@
+created: 20160729085801815
+modified: 20160729085843588
+tags: [[Chemical Compound 3D Rendering]]
+title: Try the 3D Rendering of Chemical Compounds
+type: text/vnd.tiddlywiki
+
+<html>
+<iframe allowfullscreen="allowfullscreen" width="1100" height="1000" src="https://www.tstcl.jp/jsmol/search.php"></iframe>
+</html>

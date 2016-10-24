@@ -1,0 +1,14 @@
+caption: Contents
+created: 20160728090529894
+creator: giannis
+modified: 20160728091340153
+modifier: giannis
+tags: $:/tags/SideBar
+title: TableOfContents
+type: text/vnd.tiddlywiki
+
+<div class="tc-table-of-contents">
+
+<<toc-selective-expandable 'TableOfContents'>>
+
+</div>
