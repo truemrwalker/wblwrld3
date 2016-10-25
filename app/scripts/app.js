@@ -288,11 +288,16 @@ wblwrld3App.config(['$routeProvider', function ($routeProvider) {
 		    controller: 'DataCtrl',
 		    reloadOnSearch: false
 	    })
-      .when('/adm', {
-        templateUrl: 'views/adm.html',
-        controller: 'AdmCtrl',
-        reloadOnSearch: false
-      })
+        .when('/adm', {
+            templateUrl: 'views/adm.html',
+            controller: 'AdmCtrl',
+            reloadOnSearch: false
+        })
+        .when('/wiki', {
+            templateUrl: 'views/wiki.html',
+            controller: 'WikiCtrl',
+            reloadOnSearch: false
+        })
         .otherwise({redirectTo: '/'});
 
 }]);

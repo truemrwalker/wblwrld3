@@ -112,6 +112,7 @@
     <Content Include="views\modalForms\wblAbout.html" />
     <Content Include="views\modalForms\wblProtectionSheet.html" />
     <Content Include="views\profile.html" />
+    <Content Include="views\wiki.html" />
     <Content Include="views\templates.html" />
     <Content Include="views\workSpaces.html" />
     <Content Include="webbleapidoc.html" />
@@ -197,6 +198,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\controllers\modalForms\viewRateCommentsWbl.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\controllers\wiki.js" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

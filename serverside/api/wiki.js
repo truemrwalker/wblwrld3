@@ -26,11 +26,14 @@
 var Promise = require("bluebird");
 
 var path = require("path");
+var util = require('../lib/util');
 
 ////////////////////////////////////////////////////////////////////////
 // Meta info stuff
 //
 module.exports = function(app, config, mongoose, gettext, auth) {
+
+    var Wiki = mongoose.model('Wiki');
 
     const options = {
         rootTiddler: "$:/core/save/all",
@@ -81,7 +84,85 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     }
 
    	////////////////////////////////////////////////////////////////////
-    // Routes: for these paths to work there has to be a tiddler called:
+    // Wiki (as a first-class value) manipulation routes
+    //
+    app.get('/api/wiki', auth.usr, function (req, res) {
+
+        res.json([
+            {
+                id: "hop",
+                name: "HOP HOP HOP",
+                description: "this is a nice description",
+                public_url: "/wiki/hop"
+            },
+            {
+                id: "hop1",
+                name: "HOP HOP HOP",
+                description: "this is a nice description",
+                public_url: "/wiki/hop"
+            },
+            {
+                id: "hop2",
+                name: "HOP HOP HOP",
+                description: "this is a nice description",
+                public_url: "/wiki/hop"
+            },
+            {
+                id: "hop3",
+                name: "HOP HOP HOP",
+                description: "this is a nice description",
+                public_url: "/wiki/hop"
+            },
+            {
+                id: "hop4",
+                name: "HOP HOP HOP",
+                description: "this is a nice description",
+                public_url: "/wiki/hop"
+            },
+            {
+                id: "hop5",
+                name: "HOP HOP HOP",
+                description: "this is a nice description",
+                public_url: "/wiki/hop"
+            }
+        ]);
+    });
+
+    app.post('/api/wiki', auth.usr, function (req, res) {
+
+    });
+
+    app.delete('/api/wiki/:wiki', auth.usr, function (req, res) {
+
+    });
+
+    //******************************************************************
+
+    var sharingOps = require('../lib/ops/sharing')(app, config, mongoose, gettext, auth);
+
+    app.put('/api/wiki/:id/share', auth.usr, function (req, res) {
+
+        return sharingOps.updateContributors(req, Wiki.findOne({ id: req.params.id }))
+            .then(users => res.json(users))
+            .catch(err => util.resSendError(res, err));
+    });
+
+    app.get('/api/wiki/:id/share', auth.usr, function (req, res) {
+
+        return sharingOps.getContributors(req, Wiki.findOne({ id: req.params.id }))
+            .then(users => res.json(users))
+            .catch(err => util.resSendError(res, err));
+    });
+
+    app.delete('/api/wiki/:id/share', auth.usr, function (req, res) {
+
+        return sharingOps.clearContributors(req, Wiki.findOne({ id: req.params.id }))
+            .then(() => res.status(200).send(gettext("Successfully deleted")))
+            .catch(err => util.resSendError(res, err));
+    });
+
+   	////////////////////////////////////////////////////////////////////
+    // TW-specific routes. For these to work there has to be a tiddler called:
     //      $:/config/tiddlyweb/host
     // That contains the following:
     //      $protocol$//$host$/api/wiki/hop/
