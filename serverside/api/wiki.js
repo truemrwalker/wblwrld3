@@ -32,23 +32,6 @@ var path = require("path");
 //
 module.exports = function(app, config, mongoose, gettext, auth) {
 
-    var $tw = require("tiddlywiki/boot/boot.js").TiddlyWiki();
-
-    $tw.boot.argv = [path.join(config.PROJECT_ROOT_DIR, "wiki", "hop")];
-    $tw.boot.boot();
-
-    if (!$tw.boot.wikiTiddlersPath) {
-        $tw.utils.warning("Warning: Wiki folder '" + $tw.boot.wikiPath + "' does not exist or is missing a tiddlywiki.info file");
-    }
-
-    if (!$tw.wiki.getTiddler("$:/plugins/tiddlywiki/tiddlyweb") || !$tw.wiki.getTiddler("$:/plugins/tiddlywiki/filesystem")) {
-        $tw.utils.warning("Warning: Plugins required for client-server operation (\"tiddlywiki/filesystem\" and \"tiddlywiki/tiddlyweb\") are missing from tiddlywiki.info file");
-    }
-
-    // Local variables/options
-    //
-    const wiki = $tw.wiki;
-
     const options = {
         rootTiddler: "$:/core/save/all",
         renderType: "text/plain",
@@ -57,22 +40,68 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     const knownTiddlerFields = ["bag", "created", "creator", "modified", "modifier", "permissions", "recipe", "revision", "tags", "text", "title", "type", "uri"];
 
-    //******************************************************************
-    // For these paths to work there has to be a tiddler called:
+    const openWikis = {};
+    let wikiBootstrapper = null;
+
+  	////////////////////////////////////////////////////////////////////
+	// Utility functions
+	//
+    function openWiki(name) {
+
+        if (!wikiBootstrapper)
+            wikiBootstrapper = require("tiddlywiki/boot/boot.js");
+
+        let tw = wikiBootstrapper.TiddlyWiki();
+
+        tw.boot.argv = [path.join(config.PROJECT_ROOT_DIR, "wiki", name)];
+        tw.boot.boot();
+
+        if (!tw.boot.wikiTiddlersPath) {
+            tw.utils.warning("Warning: Wiki folder '" + tw.boot.wikiPath + "' does not exist or is missing a tiddlywiki.info file");
+        }
+
+        if (!tw.wiki.getTiddler("$:/plugins/tiddlywiki/tiddlyweb") || !tw.wiki.getTiddler("$:/plugins/tiddlywiki/filesystem")) {
+            tw.utils.warning("Warning: Plugins required for client-server operation (\"tiddlywiki/filesystem\" and \"tiddlywiki/tiddlyweb\") are missing from tiddlywiki.info file");
+        }
+
+        return openWikis[name] = tw;
+    }
+
+    function closeWiki(name) {
+
+        delete openWikis[name];
+    }
+
+    function getWiki(name) {
+
+        if (openWikis.hasOwnProperty(name))
+            return openWikis[name];
+        else
+            return openWiki(name);
+    }
+
+   	////////////////////////////////////////////////////////////////////
+    // Routes: for these paths to work there has to be a tiddler called:
     //      $:/config/tiddlyweb/host
     // That contains the following:
-    //      $protocol$//$host$/api/wiki/
+    //      $protocol$//$host$/api/wiki/hop/
     //
     // See also:
     //      wblwrld3/wiki/hop/tiddlers/$__config_tiddlyweb_host.tid
     //
-    app.get('/api/wiki', function (req, res) {
+    app.get('/api/wiki/:wiki', function (req, res) {
 
-        if (!req.user) {
+        if (!req.isAuthenticated()) {
 
-            res.redirect("/#/login?ref=/api/wiki");
+            if (!req.query.embed)
+                res.redirect("/#/login?ref=/api/wiki/" + req.params.wiki);
+            else
+                res.status(401).end(); // res.status(403).end(); // Forbidden
         }
         else {
+
+            let tw = getWiki(req.params.wiki);
+            let wiki = tw.wiki;
 
             res.writeHead(200, { "Content-Type": options.serveType });
             var text = wiki.renderTiddler(options.renderType, options.rootTiddler);
@@ -80,29 +109,39 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         }
     });
 
-    app.get('/api/wiki/status', auth.usr, function (req, res) {
+    app.get('/api/wiki/:wiki/status', auth.usr, function (req, res) {
+
+        let tw = getWiki(req.params.wiki);
+        let wiki = tw.wiki;
 
         res.json({
 
             username: req.user && (req.user.username || req.user.name.full || req.user.email) || 'Anonymous',
             space: { recipe: "default" },
-            tiddlywiki_version: $tw.version
+            tiddlywiki_version: tw.version
         });
     });
 
-    app.get('/api/wiki/favicon.ico', function (req, res) {
+    app.get('/api/wiki/:wiki/favicon.ico', function (req, res) {
+
+        let tw = getWiki(req.params.wiki);
+        let wiki = tw.wiki;
+
         res.writeHead(200, { "Content-Type": "image/x-icon" });
         var buffer = wiki.getTiddlerText("$:/favicon.ico", "");
         res.end(buffer, "base64");
     });
 
-    app.get('/api/wiki/recipes/default/tiddlers.json', auth.usr, function (req, res) {
+    app.get('/api/wiki/:wiki/recipes/default/tiddlers.json', auth.usr, function (req, res) {
+
+        let tw = getWiki(req.params.wiki);
+        let wiki = tw.wiki;
 
         var tiddlers = [];
         wiki.forEachTiddler({ sortField: "title" }, function (title, tiddler) {
 
             var tiddlerFields = {};
-            $tw.utils.each(tiddler.fields, function (field, name) {
+            tw.utils.each(tiddler.fields, function (field, name) {
                 if (name !== "text") {
                     tiddlerFields[name] = tiddler.getFieldString(name);
                 }
@@ -115,14 +154,17 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         res.json(tiddlers);
     });
 
-    app.get('/api/wiki/recipes/default/tiddlers/:tiddler', auth.usr, function (req, res) {
+    app.get('/api/wiki/:wiki/recipes/default/tiddlers/:tiddler', auth.usr, function (req, res) {
 
-        var tiddler = state.wiki.getTiddler(req.params.tiddler);
-        var tiddlerFields = {};
+        let tw = getWiki(req.params.wiki);
+        let wiki = tw.wiki;
+
+        let tiddler = state.wiki.getTiddler(req.params.tiddler);
+        let tiddlerFields = {};
 
         if (tiddler) {
 
-            $tw.utils.each(tiddler.fields, function (field, name) {
+            tw.utils.each(tiddler.fields, function (field, name) {
 
                 var value = tiddler.getFieldString(name);
                 if (knownTiddlerFields.indexOf(name) !== -1) {
@@ -143,15 +185,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     //******************************************************************
 
-    app.put('/api/wiki/recipes/default/tiddlers/:tiddler', auth.usr, function (req, res) {
+    app.put('/api/wiki/:wiki/recipes/default/tiddlers/:tiddler', auth.usr, function (req, res) {
 
-        var title = req.params.tiddler;
-        var fields = req.body;
+        let tw = getWiki(req.params.wiki);
+        let wiki = tw.wiki;
+
+        let title = req.params.tiddler;
+        let fields = req.body;
 
         // Pull up any subfields in the `fields` object
         if (fields.fields) {
 
-            $tw.utils.each(fields.fields, function (field, name) {
+            tw.utils.each(fields.fields, function (field, name) {
                 fields[name] = field;
             });
             delete fields.fields;
@@ -160,7 +205,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         // Remove any revision field
         delete fields.revision;
 
-        wiki.addTiddler(new $tw.Tiddler(wiki.getCreationFields(), fields, { title: title }, wiki.getModificationFields()));
+        wiki.addTiddler(new tw.Tiddler(wiki.getCreationFields(), fields, { title: title }, wiki.getModificationFields()));
         var changeCount = wiki.getChangeCount(title).toString();
 
         res.writeHead(204, "OK", {
@@ -170,23 +215,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         res.end();
     });
 
-    app.delete('/api/wiki/bags/default/tiddlers/:tiddler', auth.usr, function (req, res) {
+    app.delete('/api/wiki/:wiki/bags/default/tiddlers/:tiddler', auth.usr, function (req, res) {
 
-        var title = req.params.tiddler;
+        let tw = getWiki(req.params.wiki);
+        let wiki = tw.wiki;
+
+        let title = req.params.tiddler;
 
         wiki.deleteTiddler(title);
 
-        res.writeHead(204, "OK", { "Content-Type": "text/plain" });
-        res.end();
+        res.status(204).send(gettext("OK"));
+
+        //res.writeHead(204, "OK", { "Content-Type": "text/plain" });
+        //res.end();
     });
-
- //   app.put('/api/wiki', auth.usr, function (req, res) {
-
- //   });
-
-	//app.post('/api/wiki/foo', function (req, res) {
-
-	//	console.log("--> START COMMITTED:\n", req.body, "\nEND COMMITTED <--");
-	//	res.status(200).send(gettext("OK"));
-	//});
 };

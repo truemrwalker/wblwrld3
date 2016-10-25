@@ -3,4 +3,4 @@ modified: 20160729082528371
 title: $:/config/tiddlyweb/host
 type: text/vnd.tiddlywiki
 
-$protocol$//$host$/api/wiki/
+$protocol$//$host$/api/wiki/hop/
