@@ -83,49 +83,24 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             return openWiki(name);
     }
 
+    function normalizeWiki(wiki) {
+        return util.stripObject(wiki);
+    }
+
    	////////////////////////////////////////////////////////////////////
     // Wiki (as a first-class value) manipulation routes
     //
     app.get('/api/wiki', auth.usr, function (req, res) {
 
-        res.json([
-            {
-                id: "hop",
-                name: "HOP HOP HOP",
-                description: "this is a nice description",
-                public_url: "/wiki/hop"
-            },
-            {
-                id: "hop1",
-                name: "HOP HOP HOP",
-                description: "this is a nice description",
-                public_url: "/wiki/hop"
-            },
-            {
-                id: "hop2",
-                name: "HOP HOP HOP",
-                description: "this is a nice description",
-                public_url: "/wiki/hop"
-            },
-            {
-                id: "hop3",
-                name: "HOP HOP HOP",
-                description: "this is a nice description",
-                public_url: "/wiki/hop"
-            },
-            {
-                id: "hop4",
-                name: "HOP HOP HOP",
-                description: "this is a nice description",
-                public_url: "/wiki/hop"
-            },
-            {
-                id: "hop5",
-                name: "HOP HOP HOP",
-                description: "this is a nice description",
-                public_url: "/wiki/hop"
-            }
-        ]);
+        const ownerCond = { $or: [{ _owner: req.user._id }, { _owner: null }, { _contributors: req.user._id }] };
+
+        return Wiki.find(ownerCond).lean().exec().then(function (wikis) {
+
+            if (!wikis)
+                throw new util.RestError(gettext("Cannot retrieve wikis"));
+            res.json(util.transform_(wikis, normalizeWiki));
+
+        }).catch(err => util.resSendError(res, err));
     });
 
     app.post('/api/wiki', auth.usr, function (req, res) {

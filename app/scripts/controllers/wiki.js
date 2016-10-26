@@ -70,69 +70,6 @@ function ($scope, $timeout, $http, gettext, confirm) {
 		$scope.formDeleteWiki();
 	};
 
-    //******************************************************************
-
-    $scope.selectedContributor = {};
-    $scope.contributors = [];
-    $scope.currConIndex = -1;
-
-    $scope.getUsers = function (q) {
-
-        return $http.get('/api/users?limit=20&q=' + encodeURIComponent(q)).then(function (resp) {
-            return resp.data;
-        });
-    };
-
-    $scope.setContributors = function (wiki) {
-
-        $scope.selectedContributor = {};
-        $scope.contributors = [];
-        $scope.currConIndex = -1;
-
-        if (wiki.id) {
-
-            $http.get(scope.prefix + '/' + wiki.id + '/share').then(function (resp) {
-                $scope.contributors = resp.data;
-            });
-        }
-    };
-
-    $scope.selectContributor = function (con, index) {
-
-        if (scope.currConIndex == index)
-            scope.currConIndex = -1;
-        else
-            scope.currConIndex = index;
-    };
-
-    $scope.deleteContributor = function (con, index) {
-
-        confirm.show(gettext("Remove Contributor:") + " " + con.username,
-            gettext("If you confirm the user will not be able to edit the object anymore."),
-            gettext("Remove"), gettext("Do Not Remove")).then(function () {
-
-                $http.delete(scope.prefix + '/' + holder.id + '/share').then(function (resp) {
-                    scope.contributors.splice(index, 1);
-                });
-            });
-    };
-
-    $scope.addContributor = function (data) {
-
-        for (var i = 0; i < scope.contributors.length; ++i) {
-
-            if (scope.contributors[i].username == data.username) {
-
-                scope.selectContributor(scope.contributors[i], i);
-                return;
-            }
-        }
-
-        $http.put(scope.prefix + '/' + holder.id + '/share', data).then(function () {
-            scope.contributors.push(angular.copy(data));
-        });
-    };
-
 	////////////////////////////////////////////////////////////////////
 	// Functionality for the form buttons
 	//

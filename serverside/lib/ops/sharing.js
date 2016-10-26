@@ -60,7 +60,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             if (!req.body.users || req.body.users.length == 0)
                 throw new util.RestError(gettext("No users were provided"));
             
-            return User.find({ $or: [{ email: { $in: req.body.users } } , { username: { $in: req.body.users } }] },
+            return User.find({ $or: [{ email: { $in: req.body.users } }, { username: { $in: req.body.users } }] },
 					'name email username').exec().then(function (users) {
                 
                 if (!users || users.length == 0)
@@ -108,7 +108,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			return query.populate('_contributors', 'name email username').exec().then(function (obj) {
                 ensureObjectValid(req, obj);
                 
-                return util.transform(obj._contributors, function (u) { return u.username || u.email; }); // Everything OK
+                return obj._contributors; //util.transform(obj._contributors, function (u) { return u.username || u.email; }); // Everything OK
             });
 		},
 

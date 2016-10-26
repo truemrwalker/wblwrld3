@@ -57,6 +57,18 @@ module.exports = function(app, config, mongoose, gettext) {
 		return this._owner.equals(user._id);
 	};
 
+    WikiSchema.methods.isUserContributor = function (user) {
+
+        if (this._owner && this._owner.equals(user._id))
+            return true;
+
+        for (var i = 0; i < this._contributors.length; ++i) {
+            if (this._contributors[i].equals(user._id))
+                return true;
+        }
+        return false;
+    };
+
     WikiSchema.methods.isUserAuthorized = function (user) {
 
 		if (!this._owner || this._owner.equals(user._id) || user._sec.role === 'adm')

@@ -79,6 +79,7 @@
     <Content Include="views\chat.html" />
     <Content Include="views\data.html" />
     <Content Include="views\draw.html" />
+    <Content Include="views\editors\share-object-editor.html" />
     <Content Include="views\editors\license-key-editor.html" />
     <Content Include="views\groups.html" />
     <Content Include="views\login.html" />
@@ -201,6 +202,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\controllers\wiki.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\directives\editors\share-object-editor.js" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

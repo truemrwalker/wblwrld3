@@ -35,7 +35,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	// Utility functions
 	//
 	function normalizeUser(u) {
-        return util.stripObject(u);
+        var result = util.stripObject(u);
+        result.name.full = u.name.first + ' ' + u.name.last;
+        return result;
 	}
 
 	function toIndex(indexString) {
