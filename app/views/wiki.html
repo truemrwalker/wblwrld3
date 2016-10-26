@@ -65,7 +65,8 @@
                             <td>
                                 <div ng-if="w.id===currWikiId" stop-event="click" class="btn-group btn-group-xs btn-group-horizontal">
                                     <a class="btn btn-default" ng-click="openWiki(w)"><span translate>Open</span> <span class="fa fa-book"></span></a>
-                                    <a class="btn btn-danger" ng-click="deleteWiki(w)"><span translate>Delete</span> <span class="fa fa-trash-o"></span></a>
+                                    <!--<a class="btn btn-danger" ng-click="deleteWiki(w)"><span translate>Delete</span> <span class="fa fa-trash-o"></span></a>-->
+                                    <a class="btn btn-info" target="_blank" ng-href="/api/wiki/{{w.id}}/link"><span translate>Publish</span> <span class="fa fa-share"></span></a>
                                 </div>
                             </td>
 

@@ -46,6 +46,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     const openWikis = {};
     let wikiBootstrapper = null;
 
+    const createIndexHtmlArgs = ["--rendertiddler", "$:/plugins/tiddlywiki/tiddlyweb/save/offline", "index.html", "text/plain"];
+    const saveImagesArgs = [];
+
   	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
@@ -109,6 +112,32 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     app.delete('/api/wiki/:wiki', auth.usr, function (req, res) {
 
+    });
+
+    app.get('/api/wiki/:wiki/link', function (req, res) {
+
+        var name = req.params.wiki;
+
+        if (openWikis.hasOwnProperty(name) && req.isAuthenticated()) {
+
+            var tw = openWikis[name];
+
+            var commander = new tw.Commander(
+                createIndexHtmlArgs,
+                function (err) {
+
+                    if (err)
+                        tw.utils.error("Error: " + err);
+                },
+                tw.wiki,
+                { output: process.stdout, error: process.stderr }
+            );
+            commander.outputPath = path.join(config.APP_ROOT_DIR, "wiki", name);
+            commander.execute();
+
+            closeWiki(name);
+        }
+        res.redirect("/wiki/" + name);
     });
 
     //******************************************************************

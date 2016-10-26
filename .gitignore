@@ -14,3 +14,4 @@ obj
 *.sdf
 typings/
 sitemap.xml
+/app/wiki/
