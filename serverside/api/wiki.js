@@ -78,6 +78,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     function closeWiki(name) {
 
+        openWikis[name] = null;
         delete openWikis[name];
     }
 
@@ -115,6 +116,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     app.delete('/api/wiki/:wiki', auth.usr, function (req, res) {
 
+        var name = req.params.wiki;
+        closeWiki(name);
+
+        res.status(200).send(gettext("OK"));
     });
 
     app.get('/api/wiki/:wiki/link', function (req, res) {

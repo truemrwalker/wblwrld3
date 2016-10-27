@@ -51,7 +51,7 @@
                             <th translate>Name</th>
                             <th translate>Description</th>
 
-                            <th width="130px"></th> <!-- Actions -->
+                            <th></th> <!-- Actions -->
                         </tr>
                     </thead>
 
@@ -64,7 +64,8 @@
 
                             <td>
                                 <div ng-if="w.id===currWikiId" stop-event="click" class="btn-group btn-group-xs btn-group-horizontal">
-                                    <a class="btn btn-default" ng-click="openWiki(w)"><span translate>Open</span> <span class="fa fa-book"></span></a>
+                                    <a class="btn btn-default" ng-disabled="currWikiEmbedUrl" ng-click="openWiki(w)"><span translate>Open</span> <span class="fa fa-book"></span></a>
+                                    <a class="btn btn-default" ng-disabled="!currWikiEmbedUrl" ng-click="closeWiki(w)"><span translate>Close</span></a>
                                     <!--<a class="btn btn-danger" ng-click="deleteWiki(w)"><span translate>Delete</span> <span class="fa fa-trash-o"></span></a>-->
                                     <a class="btn btn-info" target="_blank" ng-href="/api/wiki/{{w.id}}/link"><span translate>Publish</span> <span class="fa fa-share"></span></a>
                                 </div>
@@ -86,6 +87,6 @@
     <!-- Load and render the selected wiki inside an iframe -->
     <!----------------------------------------------------------------->
 
-    <iframe ng-src="{{currWikiEmbedUrl}}" style="width:100%; height:85%; position:absolute;">Hop, hop, hop</iframe>
+    <iframe ng-if="currWikiEmbedUrl" ng-src="{{currWikiEmbedUrl}}" style="width:100%; height:85%; position:absolute;">Hop, hop, hop</iframe>
 
 </div>

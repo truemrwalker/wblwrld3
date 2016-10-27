@@ -50,6 +50,13 @@ function ($scope, $timeout, $http, gettext, confirm) {
         $scope.currWikiEmbedUrl = "/api/wiki/" + encodeURIComponent(w.id) + "?embed=1";
     };
 
+    $scope.closeWiki = function (w) {
+
+        $http.delete("/api/wiki/" + encodeURIComponent(w.id)).then(function () {
+            delete $scope.currWikiEmbedUrl;
+        });
+    };
+
 	$scope.selectWiki = function(w) {
 
 		if (!w || ($scope.currTemplateId && $scope.currTemplateId === w.id)) {
