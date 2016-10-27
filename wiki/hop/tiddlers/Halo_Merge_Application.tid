@@ -1,12 +1,14 @@
 created: 20160729084053262
-modified: 20161019072002864
+creator: j
+modified: 20161027034521588
+modifier: j
 tags: [[Yoshida Group]] Application
 title: Halo Merge Application
 type: text/vnd.tiddlywiki
 
 ! Halo background information
 
-[img[images/HaloMergeMassParticles.jpg]]
+[img[HaloMergeMassParticles.jpg]]
 
 There is a vast number of galaxies in the universe. Those galaxies vary in color, shape (spiral or elliptical) and mass size. Essentially, a single galaxy comprises of a large population of individual stars and there are galaxies with over 100 million stars. All of these galaxies were born at the beginning of the universe and continue to evolve until today. Stars pulled together by their own gravitational forces, are clustered in specific spots in the universe to form galaxies. In our research we are aiming to reproduce the evolution of the material and the distribution of the universe via simulations running on supercomputers. In this context, we try to identify galaxies via recognizing their halos in our simulation results. In cosmology, the condensed material that surrounds a population of large stars is called a halo. Specifically, in our computer simulation, the distribution of the material of the universe has been modeled as a distribution of mass particles (called bebbly) (Fig. 1). When this particular material is condesed into a specific area, it forms a halo. Furthermore, this whole process of forming halos essentially affects and controls the birth and nature of a galaxy. Therefore, here, in this portal we provide applications and tools to analyze and visualize the spatial distribution of halos and their evolution over time. 
 

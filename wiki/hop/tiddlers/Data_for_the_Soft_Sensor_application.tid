@@ -1,13 +1,15 @@
 created: 20160729081941115
-modified: 20160729082008270
+creator: j
+modified: 20161027045321721
+modifier: j
 tags: [[Soft Sensor hands-on application]]
 title: Data for the Soft Sensor application
 type: text/vnd.tiddlywiki
 
 You can download several different data files to use with the Soft Sensor application. Each file is about 1.5 megabytes. They all contain sensor readings from the same sensors, but the data for the location of the soft sensor comes at different intervals. The other sensors sample data every second. The sensor to model with a soft sensor samples data less often.
 
-    SoftSensorData30.csv, data from the sensor to model with a soft sensor is sampled every 30 seconds.
-    SoftSensorData60.csv, data from the sensor to model with a soft sensor is sampled every 60 seconds.
-    SoftSensorData90.csv, data from the sensor to model with a soft sensor is sampled every 90 seconds.
-    SoftSensorData120.csv, data from the sensor to model with a soft sensor is sampled every 120 seconds.
-    SoftSensorData240.csv, data from the sensor to model with a soft sensor is sampled every 240 seconds.
+* <<download "SoftSensorData30.csv.zip">>, data from the sensor to model with a soft sensor is sampled every 30 seconds.
+ * <<download "SoftSensorData60.csv.zip">>, data from the sensor to model with a soft sensor is sampled every 60 seconds.
+* <<download "SoftSensorData90.csv.zip">>, data from the sensor to model with a soft sensor is sampled every 90 seconds.
+* <<download SoftSensorData120.csv.zip>>, data from the sensor to model with a soft sensor is sampled every 120 seconds.
+* [[SoftSensorData240.csv.zip]], data from the sensor to model with a soft sensor is sampled every 240 seconds.

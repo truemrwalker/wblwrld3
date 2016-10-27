@@ -46,8 +46,11 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     const openWikis = {};
     let wikiBootstrapper = null;
 
-    const createIndexHtmlArgs = ["--rendertiddler", "$:/plugins/tiddlywiki/tiddlyweb/save/offline", "index.html", "text/plain"];
-    const saveImagesArgs = [];
+    const createIndexHtmlArgs = [
+        "--savetiddlers", "[is[image]]", "images", "--setfield", "[is[image]]", "_canonical_uri", "$:/core/templates/canonical-uri-external-image", "text/plain",
+        "--setfield", "[is[image]]", "text", "", "text/plain",
+        "--rendertiddler", "$:/plugins/tiddlywiki/tiddlyweb/save/offline", "index.html", "text/plain"
+    ];
 
   	////////////////////////////////////////////////////////////////////
 	// Utility functions
@@ -124,11 +127,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
             var commander = new tw.Commander(
                 createIndexHtmlArgs,
-                function (err) {
-
-                    if (err)
-                        tw.utils.error("Error: " + err);
-                },
+                (err) => { if (err) tw.utils.error("Error: " + err) },
                 tw.wiki,
                 { output: process.stdout, error: process.stderr }
             );

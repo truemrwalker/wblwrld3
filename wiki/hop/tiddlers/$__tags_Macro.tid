@@ -15,3 +15,15 @@ type: text/vnd.tiddlywiki
 <iframe allowfullscreen="allowfullscreen" width="$width$" height="$height$" src="https://dev.meme.hokudai.ac.jp"></iframe>
 </html>
 \end
+
+\define download-inner(title)
+<a href=<<makedatauri """$(text)$""" """$(type)$""">> download="download">Download "$title$"</a>
+\end
+
+\define download(title)
+<$set name="type" value={{$title$!!type}}>
+<$set name="text" value={{$title$!!text}}>
+<<download-inner "$title$">>
+</$set>
+</$set>
+\end

@@ -1,30 +1,32 @@
 created: 20161019032601434
-modified: 20161019073014139
+creator: j
+modified: 20161027035736878
+modifier: j
 tags: [[Halo Merge Application]]
 title: Halo Merge Application User Instructions
 type: text/vnd.tiddlywiki
 
 This application visualizes data from particle simulations. The data used shows halos moving in space and merging with other halos.
 
-[img[images/HaloMergeAppDescription.jpg]]
+[img[HaloMergeAppDescription.jpg]]
 
 !! Data
 
-[img[images/HaloMergeData3.jpg]]
+[img[HaloMergeData3.jpg]]
 
 You can load data by dragging data files and dropping them on the "Drop Data File Here" area of the application, or by clicking "Choose Files" and browsing to the file. You can download sample data files from the "Malo Merge data sets" part of this Web page, or you can use your own files. Any file that has either TAB separated, comma separated, or space separated rows with data should work.
 
-[img[images/HaloMergeData1.jpg]]
+[img[HaloMergeData1.jpg]]
 
-[img[images/HaloMergeData2.jpg]]
+[img[HaloMergeData2.jpg]]
 
 !! Selecting Data
 
-[img[images/HaloMergeSelect1.jpg]]
+[img[HaloMergeSelect1.jpg]]
 
-[img[images/HaloMergeSelect2.jpg]]
+[img[HaloMergeSelect2.jpg]]
 
-[img[images/HaloMergeSelect3.jpg]]
+[img[HaloMergeSelect3.jpg]]
 
 You can select subsets of data by clicking and dragging on the visualizations. If you hold down the Ctrl key while clicking and dragging, you can select multiple data sets. Different sets will be shown in different colors, and unselected data will be shown in grey.
 
@@ -32,23 +34,23 @@ There is a "Select All" button to select all data on all components, located on 
 
 !! Zooming and Panning
 
-[img[images/HaloMergeZoomAndPan.jpg]]
+[img[HaloMergeZoomAndPan.jpg]]
 
 You can zoom the plots. Pressing the + key will zoom in and pressing the - key will zoom out, when you have the mouse cursor over the component you want to zoom. When you have zoomed in, you can use the arrow keys to pan up, down, left, and right.
 
 !! Reordering Parallel Coordinates
 
-[img[images/HaloMergeMoveCoordinates.jpg]]
+[img[HaloMergeMoveCoordinates.jpg]]
 
 You can move the parallel coordinates to reorder them, by clicking on the header text of the coordinate and dragging it to a new position.
 
 !! Parallel Coordinate Properties
 
-[img[images/HaloMergeParallelCoordProperties1.jpg]]
+[img[HaloMergeParallelCoordProperties1.jpg]]
 
-[img[images/HaloMergeParallelCoordProperties2.jpg]]
+[img[HaloMergeParallelCoordProperties2.jpg]]
 
-[img[images/HaloMergeParallelCoordProperties3.jpg]]
+[img[HaloMergeParallelCoordProperties3.jpg]]
 
  You can access the properties menu of the parallel coordinates component by right-clicking on the component and selecting "Properties". The most interesting properties to change are:
 
@@ -59,9 +61,9 @@ You can move the parallel coordinates to reorder them, by clicking on the header
 
 !! Digital Dashboard (Master Controller) Properties
 
-[img[images/HaloMergeDashboardProperties1.jpg]]
+[img[HaloMergeDashboardProperties1.jpg]]
 
-[img[images/HaloMergeDashboardProperties2.jpg]]
+[img[HaloMergeDashboardProperties2.jpg]]
 
 The master controller also has properties, also accessed by right-clicking on the component and selecting "Properties". The most interesting property to change is:
 
@@ -69,11 +71,11 @@ The master controller also has properties, also accessed by right-clicking on th
 
 !! Halo Plot Properties
 
-[img[images/HaloMergeHaloProperties1.jpg]]
+[img[HaloMergeHaloProperties1.jpg]]
 
-[img[images/HaloMergeHaloProperties2.jpg]]
+[img[HaloMergeHaloProperties2.jpg]]
 
-[img[images/HaloMergeHaloProperties3.jpg]]
+[img[HaloMergeHaloProperties3.jpg]]
 
  You can of course also access the properties menu of the halo plot components by right-clicking on each component and selecting "Properties". The most interesting properties to change are:
 
@@ -86,31 +88,31 @@ The master controller also has properties, also accessed by right-clicking on th
 
 !! What Data to Visualize Where
 
-[img[images/HaloMergeDashboardDataconnections1.jpg]]
+[img[HaloMergeDashboardDataconnections1.jpg]]
 
-[img[images/HaloMergeDashboardDataconnections2.jpg]]
+[img[HaloMergeDashboardDataconnections2.jpg]]
 
 By right-clicking on the Master Controller component, you can specify what data should be visualized by which component. Selecting "Data -> Visualizations" ("Visualizations -> Data" gives a similar menu) opens up a menu listing data sets and visualization components (in this example there is only one data source, though).
 
-[img[images/HaloMergeDashboardDataconnections3.jpg]]
+[img[HaloMergeDashboardDataconnections3.jpg]]
 
 Clicking on the name of one visualization component brings up the data this component expects to receive to be able to visualize something. Drop-down boxes can be used to select what data to assign to for example the x-axis, or what data contains the time stamp information etc.
 
-[img[images/HaloMergeDashboardDataconnections4.jpg]]
+[img[HaloMergeDashboardDataconnections4.jpg]]
 
-[img[images/HaloMergeDashboardDataconnections2.jpg]]
+[img[HaloMergeDashboardDataconnections2.jpg]]
 
 We can change the x-axis and y-axis to show "time" and "mass" instead of the X and Y positions in space. After selecting the data to visualize, click the "Apply" button at the top. This returns us to the previous menu, where we click the "Close" button at the top.
 
-[img[images/HaloMergeDashboardDataconnections5.jpg]]
+[img[HaloMergeDashboardDataconnections5.jpg]]
 
 The visualization is now very different.
 
 !! Story Graphs
 
-[img[images/HaloMergeHaloStoryGraph1.jpg]]
+[img[HaloMergeHaloStoryGraph1.jpg]]
 
-[img[images/HaloMergeHaloStoryGraph2.jpg]]
+[img[HaloMergeHaloStoryGraph2.jpg]]
 
 StoryGraphs are a visualization technique originally used to show geographic data over time. It fold three dimension: longitude, latitude, and time, into a 2D plot. The x-axis is time. The left hand side y-axis shows the longitude and the right side y-axis shows the latitude. A point in space becomes a line from left to right, from the longitude of the point to the latitude of the point. A point in time and space is plotted on the line of the point, at the position on the line corresponding to the time (as indicated by the x-axis).
 
@@ -118,10 +120,10 @@ To plot using the StoryGraph visualization technique, open the properties window
 
 !! Ancestors and Descendants
 
-[img[images/HaloMergeHaloAncestors1.jpg]]
+[img[HaloMergeHaloAncestors1.jpg]]
 
-[img[images/HaloMergeHaloAncestors2.jpg]]
+[img[HaloMergeHaloAncestors2.jpg]]
 
-[img[images/HaloMergeHaloAncestors3.jpg]]
+[img[HaloMergeHaloAncestors3.jpg]]
 
 By holding down the SHIFT key and clicking on a halo, the direct descendants and direct ancestors of this halo will be shown in different colors.
