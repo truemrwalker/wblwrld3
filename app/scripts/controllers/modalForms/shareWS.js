@@ -179,7 +179,7 @@ ww3Controllers.controller('shareWSSheetCtrl', function ($scope, $uibModalInstanc
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
     dbService.getWSCollaborators($scope.formItems.theWS.id).then(function(users){
-        $scope.formItems.wsCollaborators = users.map(function (u) { return u.username || u.email; });
+        $scope.formItems.wsCollaborators = users.map(function (u) { return u.username || u.email || u; });
     },function(eMsg){
         $scope.msgTexts.errorMsg = eMsg;
     });
