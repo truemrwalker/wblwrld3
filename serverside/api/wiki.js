@@ -47,8 +47,8 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     let wikiBootstrapper = null;
 
     const createIndexHtmlArgs = [
-        "--savetiddlers", "[is[image]]", "images", "--setfield", "[is[image]]", "_canonical_uri", "$:/core/templates/canonical-uri-external-image", "text/plain",
-        "--setfield", "[is[image]]", "text", "", "text/plain",
+        //"--savetiddlers", "[is[image]]", "images", "--setfield", "[is[image]]", "_canonical_uri", "$:/core/templates/canonical-uri-external-image", "text/plain",
+        //"--setfield", "[is[image]]", "text", "", "text/plain",
         "--rendertiddler", "$:/plugins/tiddlywiki/tiddlyweb/save/offline", "index.html", "text/plain"
     ];
 
@@ -248,7 +248,8 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         let tw = getWiki(req.params.wiki);
         let wiki = tw.wiki;
 
-        let tiddler = state.wiki.getTiddler(req.params.tiddler);
+        let title = req.params.tiddler;
+        let tiddler = wiki.getTiddler(title);
         let tiddlerFields = {};
 
         if (tiddler) {
