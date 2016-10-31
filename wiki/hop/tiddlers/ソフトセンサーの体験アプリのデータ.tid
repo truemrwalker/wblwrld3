@@ -1,0 +1,15 @@
+created: 20160729082020635
+creator: j
+modified: 20161027040014388
+modifier: j
+tags: [[Soft Sensor hands-on application]]
+title: ソフトセンサーの体験アプリのデータ
+type: text/vnd.tiddlywiki
+
+ソフトセンサーのアプリに使えるデータがダウンロードできます。
+
+* <<download SoftSensorData30.csv>>、データのサンプルが30秒に1回。
+* <<download SoftSensorData60.csv>>、データのサンプルが60秒に1回。
+* <<download SoftSensorData90.csv>>、データのサンプルが90秒に1回。
+* <<download SoftSensorData120.csv>>、データのサンプルが120秒に1回。
+* <<download SoftSensorData240.csv>>、データのサンプルが240秒に1回。

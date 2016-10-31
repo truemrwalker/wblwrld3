@@ -5,7 +5,8 @@
 	"plugins": [
 		"tiddlywiki/tiddlyweb",
 		"tiddlywiki/filesystem",
-		"tiddlywiki/highlight"
+		"tiddlywiki/highlight",
+		"webbleworld"
 	],
 	"themes": [
 		"tiddlywiki/vanilla",

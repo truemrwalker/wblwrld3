@@ -26,7 +26,7 @@
 var Promise = require("bluebird");
 
 module.exports = function(app, config, mongoose, gettext) {
-    
+
     var WikiSchema = new mongoose.Schema({
 
         id: { type: String, required: true, index: { unique: true } },
@@ -46,7 +46,7 @@ module.exports = function(app, config, mongoose, gettext) {
 
 		delete ret._id;
 		delete ret.__v;
-        
+
         delete ret._owner;
         delete ret._contributors;
 	};
@@ -54,7 +54,7 @@ module.exports = function(app, config, mongoose, gettext) {
 	// Methods
 	//
     WikiSchema.methods.isUserOwner = function (user) {
-		return this._owner.equals(user._id);
+		return !this._owner || this._owner.equals(user._id);
 	};
 
     WikiSchema.methods.isUserContributor = function (user) {

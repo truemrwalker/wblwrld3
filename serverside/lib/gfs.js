@@ -116,11 +116,11 @@ module.exports.GFS = function (mongoose) {
         //      http://mongodb.github.io/node-mongodb-native/2.0/api/Cursor.html
         // Then, cursor.toArray() returns a promise
         //
-		return gfs.files.find(options).toArray();
+		return Promise.resolve(gfs.files.find(options).toArray());
 	};
 
 	this.getFiles = function(directory, ownerId) {
-		return gfs.files.find(genQuery(directory, null, ownerId)).toArray(); // ditto
+		return Promise.resolve(gfs.files.find(genQuery(directory, null, ownerId)).toArray()); // ditto
 	};
 
 	// Move files
