@@ -12,11 +12,9 @@
 
 		"mime": "latest",
 		"express": "latest",
-		"response-time": "latest",
 		"express-session": "latest",
 		"body-parser": "latest",
 		"busboy": "latest",
-		"method-override": "latest",
 		"cookie": "latest",
 		"cookie-parser": "latest",
 		"serve-static": "latest",
@@ -27,7 +25,6 @@
 		"socket.io": "latest",
 
 		"mongoose": "latest",
-		"mongoose-user": "latest",
 		"gridfs-stream": "latest",
 		"connect-mongo": "latest",
 		"tar-stream": "latest",
@@ -35,12 +32,9 @@
 
 		"passport": "latest",
 		"passport-local": "latest",
-		"passport-oauth1": "latest",
 		"passport-twitter": "latest",
-		"passport-google": "latest",
 		"passport-google-oauth": "latest",
 		"passport-facebook": "latest",
-		"passport-github": "latest",
 
 		"nodemailer": "latest",
 		"nodemailer-mailgun-transport" : "latest",
@@ -54,17 +48,7 @@
 		"chokidar" : "latest",
 
 		"grunt": "latest",
-		"grunt-angular-gettext" : "latest",
-
-		"load-grunt-tasks": "latest",
-		"time-grunt": "latest",
-
-		"grunt-usemin": "latest",
-		"grunt-svgmin": "latest",
-		"grunt-rev": "latest",
-		"grunt-open": "latest",
-		"grunt-concurrent": "latest",
-		"grunt-google-cdn": "latest"
+		"grunt-angular-gettext" : "latest"
 	},
 
 	"scripts": {
