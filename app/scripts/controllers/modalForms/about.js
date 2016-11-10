@@ -35,11 +35,15 @@
 // ABOUT WEBBLE WORLD FORM CONTROLLER
 // This controls the Platforms About form
 //====================================================================================================================
-ww3Controllers.controller('AboutSheetCtrl', function ($scope, $uibModalInstance) {
+ww3Controllers.controller('AboutSheetCtrl', function ($scope, $uibModalInstance, gettext) {
 
     //=== PROPERTIES ================================================================
     $scope.version = wwDef.WWVERSION;
 
+	$scope.socialMedia = {
+		Url: "https://wws.meme.hokudai.ac.jp/",
+		Text: gettext("Webble World, meme media object tool for building and using Webble applications")
+	};
 
 
     //=== EVENT HANDLERS =====================================================================

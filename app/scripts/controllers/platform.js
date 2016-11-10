@@ -140,17 +140,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 		return false;
 	};
-	$scope.socialMedia = {
-		Url: "https://wws.meme.hokudai.ac.jp/",
-		Text: gettext("Webble World, meme media object tool for building and using Webble applications")
-	};
 	$scope.userMenuTxts = {
 		signUp: gettext("Sign Up"),
 		login: gettext("Login"),
 		profileSettings: gettext("Profile Settings"),
 		groups: gettext("Groups"),
 		adminsDen: gettext("Admin's Den"),
-		logout: gettext("Logout")
+		logout: gettext("Logout"),
+		share: gettext("Share with Social Media")
 	};
 	$scope.currentWblWrldVersion = wwDef.WWVERSION;
     //-------------------------------
@@ -907,6 +904,20 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         // make sure we have a platform menu even when deep linking to an area that does not really care for one, but need it
         if($location.path() != '' && $location.path().search('mediaplayer') == -1){
             $scope.setMenuModeEnabled(true);
+
+			if($location.path() != "/app"){
+				$timeout(function(){
+					$scope.getMenuItem('workspace').visibility_enabled = false;
+
+					$scope.getMenuItem('edit').visibility_enabled = false;
+
+					$scope.getMenuItem('toggleconn').visibility_enabled = false;
+					$scope.getMenuItem('wsinfo').visibility_enabled = false;
+
+					$scope.getMenuItem('webbles').visibility_enabled = false;
+					appViewOpen = false;
+				});
+			}
         }
 
         // Fire up and enable all $watch(es)
@@ -1402,52 +1413,31 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 			}
 			if(isInSandbox == null){
-				dbService.getWebbleDef(whatTemplateId).then(function(data) {
-					var wblTemplateFileList = sortFileListInOrderOfLoading(data.files);
-					var topAvailableTemplateVersion = data.webble.templaterevision;
-					if(topAvailableTemplateVersion > whatTemplateRevision){
-						if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime && !dontAskJustDoIt){
-							if (confirm($scope.strFormatFltr('There is a more recent version [{2}] of the Webble template "{0}" available than the version [{1}] that was requested. Do you want to use the newer version instead (OK) or stick with the requested older version (Cancel). (Be aware that a newer template version may not be fully compatible with your other Webbles)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
-								downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef, wblTemplateFileList);
-							} else {
-								downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
+				if(whatTemplateId == whatWblDef.webble.defid && whatTemplateRevision == whatWblDef.webble.templaterevision){
+					templateRevisionDetermination(whatTemplateId, whatTemplateRevision, whatWblDef, whatWblDef);
+				}
+				else{
+					dbService.getWebbleDef(whatTemplateId).then(function(data) {
+						templateRevisionDetermination(whatTemplateId, whatTemplateRevision, whatWblDef, data);
+					},function(eMsg){
+						isInSandbox = null;
+						for(var i = 0; i < availableSandboxWebbles_.length; i++){
+							if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
+								isInSandbox = availableSandboxWebbles_[i];
+								break;
 							}
 						}
-						else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate || dontAskJustDoIt){
-							downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef, wblTemplateFileList);
+
+						if(isInSandbox != null){
+							downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
 						}
 						else{
-							downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
-						}
-					}
-					else if(topAvailableTemplateVersion < whatTemplateRevision){
-						if (confirm($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist, but there is a template with the same name of lower revision "{2}" available. Do you want to use that one instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
-							downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef, wblTemplateFileList);
-						} else {
 							forceResetDownloadFlagsAndMemories();
+							$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
+							alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
 						}
-					}
-					else{
-						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
-					}
-				},function(eMsg){
-					isInSandbox = null;
-					for(var i = 0; i < availableSandboxWebbles_.length; i++){
-						if(whatTemplateId == availableSandboxWebbles_[i].webble.templateid){
-							isInSandbox = availableSandboxWebbles_[i];
-							break;
-						}
-					}
-
-					if(isInSandbox != null){
-						downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
-					}
-					else{
-						forceResetDownloadFlagsAndMemories();
-						$log.error($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
-						alert($scope.strFormatFltr('The server does not contain any Webble template with the id "{0}" (of any revision) and can therefore not be loaded. Mission Aborted', [whatTemplateId]));
-					}
-				});
+					});
+				}
 			}
 			else{
 				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
@@ -1455,6 +1445,43 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 		else{
 			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(["controllers.js", "styles.css", "view.html"]));
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Template Revision Determination
+	// This method manages which template version to download and when that has been figured
+	// out do the actual call for the template in question.
+	//========================================================================================
+	var templateRevisionDetermination = function(whatTemplateId, whatTemplateRevision, whatWblDef, data){
+		var wblTemplateFileList = sortFileListInOrderOfLoading(data.files);
+		var topAvailableTemplateVersion = data.webble.templaterevision;
+		if(topAvailableTemplateVersion > whatTemplateRevision){
+			if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime && !dontAskJustDoIt){
+				if (confirm($scope.strFormatFltr('There is a more recent version [{2}] of the Webble template "{0}" available than the version [{1}] that was requested. Do you want to use the newer version instead (OK) or stick with the requested older version (Cancel). (Be aware that a newer template version may not be fully compatible with your other Webbles)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
+					downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef, wblTemplateFileList);
+				} else {
+					downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
+				}
+			}
+			else if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.autoUpdate || dontAskJustDoIt){
+				downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef, wblTemplateFileList);
+			}
+			else{
+				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
+			}
+		}
+		else if(topAvailableTemplateVersion < whatTemplateRevision){
+			if (confirm($scope.strFormatFltr('The Webble template "{0}" of revision [{1}] did not exist, but there is a template with the same name of lower revision "{2}" available. Do you want to use that one instead (OK) or abandon the loading (Cancel)', [whatTemplateId, whatTemplateRevision, topAvailableTemplateVersion])) == true) {
+				downloadWblTemplate(whatTemplateId, topAvailableTemplateVersion, whatWblDef, wblTemplateFileList);
+			} else {
+				forceResetDownloadFlagsAndMemories();
+			}
+		}
+		else{
+			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, wblTemplateFileList);
 		}
 	};
 	//========================================================================================
