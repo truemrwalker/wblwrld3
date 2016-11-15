@@ -1,9 +1,9 @@
 ﻿# Running
 
-The Webble World Server is implemented as a node.js application. The server's entry point is 
+The Webble World Server is implemented as a node.js application. The server's entry point is
 ```web-server.js``` and, thus, can be invoked as: ```node web-server.js```.
 
-Note that the server can be invoked from any working directory, e.g., 
+Note that the server can be invoked from any working directory, e.g.,
 ```node serverside/web-server.js```.
 
 When the server starts it prints its main endpoint via which the Webble World application
@@ -32,7 +32,7 @@ The Webble World Server is a typical node.js application. Its core dependencies 
 REST endpoints that are used by the Webble World application.
 
 * [git](https://git-scm.com/) for managing the source code of Webble World but also to
-enable the use of the ```npm``` tool (usually, bundled with node.js) that is, in turn, 
+enable the use of the ```npm``` tool (usually, bundled with node.js) that is, in turn,
 used for the management of the Webble World server's software libraries.
 
 * [mongoDB](https://www.mongodb.com/) as Webble World server's database for persisting
@@ -46,7 +46,7 @@ of websockets-based communication.
 
 To run Webble World server the aforementioned dependencies have to be installed in the
 target system. The subdirectory ```setup``` (```../setup```) contains helpful scripts
-and information for installing the server on Microsoft Windows and Ubuntu-based 
+and information for installing the server on Microsoft Windows and Ubuntu-based
 GNU/Linux systems.
 
 In general, the installation process consists of the following steps:
@@ -71,7 +71,7 @@ git clone https://github.com/truemrwalker/wblwrld3.git
 
 ### Installation of the dependent servers/tools
 
-This depends on the target platform. Each tool's website contains packages and/or 
+This depends on the target platform. Each tool's website contains packages and/or
 information for installing the tool on many different platforms and operating systems.
 
 More information can be found on each tool's website:
@@ -95,23 +95,23 @@ Usually, the ```npm``` command is bundled together with [node.js](https://nodejs
 If that's not the case for the default distribution of a specific platform, then
 the ```npm``` command should be installed separately.
 
-### Creation of the database and its principal user 
+### Creation of the database and its principal user
 
-Webble World server saves all its objects, user-generated objects and user-generated files 
-in a [mongoDB](https://www.mongodb.com/) database called by default ```wblwrld3``` which 
-has as a principal user a user named ```webbler```. All these default names be changed 
-by specifying different configuration values (see section [```config.js```]).
+Webble World server saves all its objects, user-generated objects and user-generated files
+in a [mongoDB](https://www.mongodb.com/) database called by default ```wblwrld3``` which
+has as a principal user a user named ```webbler```. All these default names be changed
+by specifying different configuration values (see section [config.js]).
 
-The default password for the ```webbler``` user can be seen (and changed)  in the 
-file ```secretsdb.json```. See also sections [```config.js```] and [```secrets.js```]
+The default password for the ```webbler``` user can be seen (and changed)  in the
+file ```secretsdb.json```. See also sections [config.js] and [secrets.js]
 for more information.
 
-The creation of the ```wblwrld3``` database and its ```webbler``` user can be automated 
-by running the command ```mongo scripts/mongoshell.js```, where ```mongo``` is an 
-interactive mongoDB client distributed together with the  mongoDB database and the script 
-```scripts/mongoshell.js``` includes the required commands needed for the creation 
+The creation of the ```wblwrld3``` database and its ```webbler``` user can be automated
+by running the command ```mongo scripts/mongoshell.js```, where ```mongo``` is an
+interactive mongoDB client distributed together with the  mongoDB database and the script
+```scripts/mongoshell.js``` includes the required commands needed for the creation
 of the database and its principal user. Before the invocation of the ```mongo``` command,
-the mongoDB server has to already be running on the appropriate host and port.
+the mongoDB server has to be running already on the appropriate host and port.
 
 The ```scripts/mongoshell.js``` script contains default values for the name of the database,
 its principal user and the principal user's password. If those values are changed in
@@ -123,20 +123,39 @@ generate a new ```scripts/mongoshell.js``` file with the most up-to-date values:
 ### Initialization of the database with preexisting objects and values
 
 After the creation of Webble World server's database (```wblwrld3``` by default), the
-command ```node serverside/web-server.js --deployment bootstrap``` initializes the 
-database and populates it with a set of predefined objects that are either part 
+command ```node serverside/web-server.js --deployment maintenace``` initializes the
+database and populates it with a set of predefined objects that are either part
 of the server's functionality or were developed by the core team of the Webble World platform.
 
 ## Updates and maintenance
 
+To get the latest updates from Webble World server's repository, the command
+```git pull``` has to be invoked inside the directory of the local, cloned repository.
+Note that this command will update both the Webble World server and the SPA Webble World client.
+
+Subsequently, to update the server's objects in the database, the following command has to
+be invoked in the project's root directory:
+
 ```node serverside/web-server.js --deployment maintenance```
 
+The above command, apart from updating the database with respect to the newly fetched
+file modifications, it also performs some maintenace operations. Section [maintenance], contains
+more details.
 
-```git pull```
+Most user-generated objects and files stored in the database are related to Webble World
+platform's main components, called *webbles*. Additionally, the reference, main deployment of
+Webble World platform is accessible at the following URL:
 
 https://wws.meme.hokudai.ac.jp
 
+Since the reference deployment of Webble World is supposed to contain the definitive collection
+of *webbles*, there is a maintenance configuration option (off by default) to synchronize the
+central database with the local one:
+
 ```node serverside/web-server.js --deployment maintenance --sync-online-webbles 1```
+
+After the successful invocation of the above command, all published components (webbles) on the
+https://wws.meme.hokudai.ac.jp server are also made available to the local server instance.
 
 # General Organization
 
@@ -154,7 +173,7 @@ subdirectories that contain the top-level modules that implement the functionali
 
 A detailed explanation for each of them follows.
 
-### ```web-server.js``` 
+### ```web-server.js```
 
 This is the server's entrypoint and the only thing it does is initialize and start the server
 depending on the:
@@ -193,10 +212,10 @@ The ```secretsdb.ejson``` file is created from the ```secretsdb.json``` file - t
 in the same directory as the first - by running the script ```scripts/secretsdbgen.js```. Note that
 the script should be run under node.js - i.e., ```node scripts/secretsdbgen.js```
 
-If the file ```secretsdb.ejson``` is not found, then any available secrets are read from 
+If the file ```secretsdb.ejson``` is not found, then any available secrets are read from
 the file ```secretsdb.json```, which is located in the ```serverside``` directory.
 
-Secrets can also be overriden by (a) ```config.js```, (b) environment variables, or even 
+Secrets can also be overriden by (a) ```config.js```, (b) environment variables, or even
 (c) command-line arguments. See next section.
 
 ### ```config.js```
@@ -210,7 +229,7 @@ not via the secrets module directly.
 
 ```config``` options can be overriden by either environment variables or command-line arguments
 that are defined when the server entrypoint is invoked - e.g.:
- 
+
 ```node serverside/web-server.js --deployment maintenance --sync-online-webbles 1```
 
 Command-line arguments can override environment variables and preset ```config.js``` values and
@@ -347,7 +366,7 @@ server on a new system and are never loaded or executed if they are not explicit
 
 ## Dependencies
 
-Webble World Server's dependencies are manged via npm and are declared in ```package.json``` which is 
+Webble World Server's dependencies are manged via npm and are declared in ```package.json``` which is
 located at the project's root (i.e., ```../package.json``` - relative to the server's directory).
 
 A list of the dependencies and the way they are used follows:
