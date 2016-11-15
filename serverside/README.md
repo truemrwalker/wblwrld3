@@ -218,31 +218,132 @@ environment variables can only override the preset ```config.js``` values.
 
 ### ```api```
 
+This sub-directory contains all the REST endpoints that essentially comprise the Webble World server's
+API. Different resources are grouped into distinct files. These REST endpoints are invoked from the
+Angular services that are located into the ```/app/scripts/services``` sub-directory, which is part
+of Webble World SPA client.
+
+Files that begin with an underscore (```_```), e.g., ```_server.js```, are not loaded in the Webble
+World server and thus all the routes (REST endpoints) they define are not available.
+
 #### ```api/adm```
+
+This sub-directory contains all the REST endpoints that are exported/are accessible only to users that
+have the role ```adm``` - i.e., they are *administrators* of the Webble World platform.
 
 #### ```api/dev```
 
+This sub-directory contains all the REST endpoints that are exported/are accessible only to users that
+have the role ```dev``` - i.e., they are *developers* of the Webble World platform. Developers are those
+users that are able to create components (webbles) by writing Javascript code.
+
+This role differs from the ```usr``` role where normal users are allowed to create new components
+(webbles) only by combining existing ones.
+
+Since the Webble World platform is still experimental and under heavy development, by default new user 
+accounts are given the role ```dev```.
+
 #### ```api/files```
+
+This sub-directory contains all the REST endpoints that concern the creation and update of files. Those
+files are either user-generated files associated with user-generated components (webbles) or files related
+to automatically generated Software Development Kit (SDK) bundles and documentation.
+
+Note that user-generated files associated with webbles are saved and kept in the database for two reasons:
+
+1. To allow the Webble World server to be replicated easily, without requiring the additional setup of
+distributed filesystems and/or the introduction of additional file synchronization mechanisms.
+
+2. To enable the easy *dockerization* of the Webble World server, since the latter only needs a read-only
+filesystem to fully deliver its functionality.
 
 ### ```auth```
 
+This sub-directory contains all the REST endpoints (routes) and application code for authenticating
+and managing user accounts. 
+
+The file ```auth-socket.js``` contains code for authenticating websocket connections to determine 
+whether a specific websocket connection is made by a authenticated user or not. The reason for this
+is that some websocket-based interactions are only permitted for logged-in (authenticated) users 
+while others are permitted for all users. See [realtime] for more information.
+
 #### ```auth/providers```
+
+This sub-directory contains all the necessary code and REST endpoints in order to be able to authenticate
+users using either third-party authentication providers (e.g., Google or Twitter) or local password-based
+user accounts (```local.js```).
 
 ### ```models```
 
+This sub-directory contains all [mongoose](http://mongoosejs.com/) objects that model the documents stored
+in the underlying [mongoDB](https://www.mongodb.com/) database.
+
 ### ```bootstrap``` and ```maintenance```
+
+These two sub-directories contain a set of self-contained, autonomous scripts that are used for performing
+boostrap and maintenance operations that in turn influence the operation of the Webble World server and
+the set of the user-generated objects and files that are stored in the database.
+
+In this sense, if the property ```config.DEPLOYMENT``` or the environment variable ```DEPLOYMENT``` 
+holds the value ```bootstrap``, or if the argument ```--deployment bootstrap``` is specified in the 
+command-line when ```web-server.js``` is invoked, then the Webble World server runs all the scripts 
+inside the ```bootstrap``` sub-directory and then exits.
+
+On the other hand, if the property ```config.DEPLOYMENT``` or the environment variable ```DEPLOYMENT``` 
+holds the value ```maintenance``, or if the argument ```--deployment maintenance``` is specified in the 
+command-line when ```web-server.js``` is invoked, then the Webble World server runs all the scripts 
+inside the ```maintenance``` sub-directory and then exits.
+
+Finally, if the specified value is ```development``` (instead of ```bootstrap``` or ```maintenance```),
+which is also the default value, then the Webble World server runs all the scripts  inside the 
+```maintenance``` sub-directory and then starts normally, accepting requests over its default endpoints.
+
+In all other cases, the scripts under those directories are ignored. Scripts are also ignored if they
+start with an underscore (```_```), e.g., ```_workspaces.js```.
 
 ### ```control```
 
+This sub-directory contains code that controls peripheral aspects of the functionality, configuration
+and state of the Webble World server and has nothing to do with its actual "business logic" or the
+operation of its exported endpoints.
+
+As before, scripts starting with an underscore (```_```), e.g., ```_machine.js``` are ignored.
+
+Therefore, currently, the only active script (```autosync.js```) runs when the Webble World server is invoked
+in a ```development``` deployment setting and the only thing it does is monitoring the modification of those 
+files (on the local filesystem) that are associated with Webble World components (webbles) and synchronizes those
+modifications with the corresponding database entities in real-time.
+
 ### ```realtime```
+
+This sub-directory contains the components that implement Webble World server's real-time functions. These realtime
+functions are implemented via websockets that can be either in authenticated or unauthenticated state.
 
 ### ```keys```
 
+This sub-directory contains the public and private keys needed for the initialization and operation of Webble World
+server's ```https``` endpoint. Of course, the keys inside that directory are self-signed, have expired and are meant
+only for testing and development purposes. 
+
+The reference deployment of Webble World, running under https://wws.meme.hokudai.ac.jp uses a different, valid and 
+widely trusted certificate.
+
 ### ```lib```
+
+This sub-directory contains reusable components and functions with minimum dependencies that are reused throughout
+Webble World's server codebase.
 
 #### ```lib/ops```
 
+This particular sub-directory contains reusable components that model *behaviors* or *operations* (hence ```ops```)
+that Webble World server's first class objects exhibit. Therefore, the components defined in this sub-directory
+are only used inside REST endpoint functions as a response to client-requested operations (e.g., publishing a webble).
+
 ### ```scripts```
+
+This sub-directory contains some peripheral, independent and self-contained scripts/meta-scripts that create or modify
+the Webble World server's source and configuration files. As such they are mostly used for bootstrapping Webble World
+server on a new system and are never loaded or executed if they are not explicitly invoked by the user.
 
 ## Dependencies
 
