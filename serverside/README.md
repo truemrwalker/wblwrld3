@@ -259,7 +259,7 @@ users that are able to create components (webbles) by writing Javascript code.
 This role differs from the ```usr``` role where normal users are allowed to create new components
 (webbles) only by combining existing ones.
 
-Since the Webble World platform is still experimental and under heavy development, by default new user 
+Since the Webble World platform is still experimental and under heavy development, by default new user
 accounts are given the role ```dev```.
 
 #### ```api/files```
@@ -279,11 +279,11 @@ filesystem to fully deliver its functionality.
 ### ```auth```
 
 This sub-directory contains all the REST endpoints (routes) and application code for authenticating
-and managing user accounts. 
+and managing user accounts.
 
-The file ```auth-socket.js``` contains code for authenticating websocket connections to determine 
+The file ```auth-socket.js``` contains code for authenticating websocket connections to determine
 whether a specific websocket connection is made by a authenticated user or not. The reason for this
-is that some websocket-based interactions are only permitted for logged-in (authenticated) users 
+is that some websocket-based interactions are only permitted for logged-in (authenticated) users
 while others are permitted for all users. See [realtime] for more information.
 
 #### ```auth/providers```
@@ -303,18 +303,18 @@ These two sub-directories contain a set of self-contained, autonomous scripts th
 boostrap and maintenance operations that in turn influence the operation of the Webble World server and
 the set of the user-generated objects and files that are stored in the database.
 
-In this sense, if the property ```config.DEPLOYMENT``` or the environment variable ```DEPLOYMENT``` 
-holds the value ```bootstrap``, or if the argument ```--deployment bootstrap``` is specified in the 
-command-line when ```web-server.js``` is invoked, then the Webble World server runs all the scripts 
+In this sense, if the property ```config.DEPLOYMENT``` or the environment variable ```DEPLOYMENT```
+holds the value ```bootstrap``, or if the argument ```--deployment bootstrap``` is specified in the
+command-line when ```web-server.js``` is invoked, then the Webble World server runs all the scripts
 inside the ```bootstrap``` sub-directory and then exits.
 
-On the other hand, if the property ```config.DEPLOYMENT``` or the environment variable ```DEPLOYMENT``` 
-holds the value ```maintenance``, or if the argument ```--deployment maintenance``` is specified in the 
-command-line when ```web-server.js``` is invoked, then the Webble World server runs all the scripts 
+On the other hand, if the property ```config.DEPLOYMENT``` or the environment variable ```DEPLOYMENT```
+holds the value ```maintenance``, or if the argument ```--deployment maintenance``` is specified in the
+command-line when ```web-server.js``` is invoked, then the Webble World server runs all the scripts
 inside the ```maintenance``` sub-directory and then exits.
 
 Finally, if the specified value is ```development``` (instead of ```bootstrap``` or ```maintenance```),
-which is also the default value, then the Webble World server runs all the scripts  inside the 
+which is also the default value, then the Webble World server runs all the scripts  inside the
 ```maintenance``` sub-directory and then starts normally, accepting requests over its default endpoints.
 
 In all other cases, the scripts under those directories are ignored. Scripts are also ignored if they
@@ -329,7 +329,7 @@ operation of its exported endpoints.
 As before, scripts starting with an underscore (```_```), e.g., ```_machine.js``` are ignored.
 
 Therefore, currently, the only active script (```autosync.js```) runs when the Webble World server is invoked
-in a ```development``` deployment setting and the only thing it does is monitoring the modification of those 
+in a ```development``` deployment setting and the only thing it does is monitoring the modification of those
 files (on the local filesystem) that are associated with Webble World components (webbles) and synchronizes those
 modifications with the corresponding database entities in real-time.
 
@@ -342,9 +342,9 @@ functions are implemented via websockets that can be either in authenticated or 
 
 This sub-directory contains the public and private keys needed for the initialization and operation of Webble World
 server's ```https``` endpoint. Of course, the keys inside that directory are self-signed, have expired and are meant
-only for testing and development purposes. 
+only for testing and development purposes.
 
-The reference deployment of Webble World, running under https://wws.meme.hokudai.ac.jp uses a different, valid and 
+The reference deployment of Webble World, running under https://wws.meme.hokudai.ac.jp uses a different, valid and
 widely trusted certificate.
 
 ### ```lib```
@@ -412,7 +412,7 @@ Used for parsing cookies that are necessary for maintaining persistent sessions.
 
 #### ```cookie-parser```
 
-A lower level component than the ```cookie``` mentioned above, which actually uses it to
+A lower-level component than the ```cookie``` mentioned above, which actually uses the former to
 perform cookie parsing. It is explicitly declared as a dependency, however, since we need it
 to perform websockets-based authentication in the ```auth/auth-socket.js``` file.
 
@@ -420,21 +420,59 @@ to perform websockets-based authentication in the ```auth/auth-socket.js``` file
 
 #### ```serve-static```
 
+Webble World server can either be exposed directly on a specific endpoint or, alternatively, it
+can be deployed behind a reverse proxy that will forward all REST invocations to the Webble World
+server instance.
+
+When the Webble World server is fully responsible for serving both the REST Application Programming
+Interface (API) and the Webble World SPA client's files and assets, the ```serve-static``` library
+(express *middleware*) is used to serve the latter.
+
+On the other hand, when the configuration parameter ```config.SERVER_BEHIND_REVERSE_PROXY``` is
+*true*, then Webble World server assumes that a reverse proxy (e.g., [nginx](https://www.nginx.com/))
+is used in front of its (potentially multiple) deployed instances. In that case, the server is **not**
+responsible for serving the Webble World SPA client's files and assets, and, thus, the
+```serve-static``` library is not used.
+
 * See also: https://github.com/expressjs/serve-static
 
 #### ```request```
+
+This library is used specifically for performing REST requests to the definitive deployment of
+the Webble World server (under the https://wws.meme.hokudai.ac.jp endpoint) in order to obtain
+and synchronize the user-generated objects and files that represent the platforms components
+(webbles). It is, thus, utilized only when the following command is invoked:
+
+```node serverside/web-server.js --deployment maintenance --sync-online-webbles 1```
+
+Specifically, these requests are implemented by the ```maintenace/online-webbles.js``` file.
 
 * See also: https://github.com/request/request
 
 #### ```archiver```
 
+This library is used for creating a zip archive of any sub-directory under the ```/app```
+directory. The Webble World server exposes this functionality under a route defined in the
+file ```api/files/zip.js```. That REST endpoint is subsequently used by the Webble World
+SPA client to enable the downloading of the ```/app/data/WebbleDevPack``` directory,
+which contains some source and documentation files related to the development of Webble
+World components (called webbles).
+
 * See also: https://www.npmjs.com/package/archiver
 
 #### ```bluebird```
 
+This library is used throughout the Webble World server implementation as the primary
+Javascript promise library for obtaining and managing the results of all asynchronous
+operations.
+
 * See also: http://bluebirdjs.com/docs/getting-started.html
 
 #### ```socket.io```
+
+This library is used for establishing websocket connections between the Webble World SPA
+client and the Webble World server in order to implement the platforms real-time functions.
+See also [realtime] section.
 
 * See also: http://socket.io/docs/
 
@@ -443,21 +481,44 @@ to perform websockets-based authentication in the ```auth/auth-socket.js``` file
 
 #### ```mongoose```
 
+This library is used for higher-level, streamlined and more type-safe access to the objects
+stored in the [mongoDB](https://www.mongodb.com/) database.
+
 * See also: http://mongoosejs.com/
 
 #### ```gridfs-stream```
+
+This library is used for creating, modifying and accessing the user-generated files stored in
+the [mongoDB](https://www.mongodb.com/) database.
 
 * See also: https://github.com/aheckmann/gridfs-stream
 
 #### ```connect-mongo```
 
+This library offers an [express](http://expressjs.com/) *middleware* for storing session
+information into the [mongoDB](https://www.mongodb.com/) database.
+
 * See also: https://github.com/jdesboeufs/connect-mongo
 
 #### ```tar-stream```
 
+This library is used for creating archives of one or more Webble World components (webbles)
+when those need to be exported. These archives can be subsequently imported into other
+deployments of the Webble World server. This functionality is exposed as a REST endpoint
+and implemented in the file ```api/takeout.js```.
+
 * See also: https://github.com/mafintosh/tar-stream
 
 #### ```redis```
+
+[Redis](http://redis.io/) is used for broadcasting websocket messages to all the instances of
+the Webble World server. This is essential for avoiding the partition of the websocket
+message-space.
+
+If the Webble World server fails to connect to the configured [redis](http://redis.io/) instance,
+the websocket messages sent to a specific Webble World server instance are only delivered to the
+websockets managed by that same instance. Other instances running under the same endpoint will
+never get those messages.
 
 * See also: https://github.com/NodeRedis/node_redis
 
@@ -466,29 +527,52 @@ to perform websockets-based authentication in the ```auth/auth-socket.js``` file
 
 #### ```passport```
 
+This library is used for authenticating users to the Webble World server. The use of passport and
+its sub-libraries is therefore restricted to scripts under the ```auth``` sub-directory.
+
 * See also: http://passportjs.org/
 
 #### ```passport-local```
+
+This passport sub-library is used for authenticating users against local, password based accounts.
 
 * See also: https://github.com/jaredhanson/passport-local
 
 #### ```passport-twitter```
 
+This passport sub-library is used for authenticating users against their Twitter account.
+
 * See also: https://github.com/jaredhanson/passport-twitter
 
 #### ```passport-google-oauth```
+
+This passport sub-library is used for authenticating users against their Google account.
 
 * See also: https://github.com/jaredhanson/passport-google-oauth
 
 #### ```passport-facebook```
 
+This passport sub-library is used for authenticating users against their Facebook account.
+
 * See also: https://github.com/jaredhanson/passport-facebook
 
 #### ```nodemailer```
 
+This library is used for sending emails to users. Currently, mails are sent to users only
+when they want to reset their password. In that case an email with a reset link is sent
+via ```nodemailer``` to their email address.
+
+Following that link users are able to set a new password to their account.
+
 * See also: https://github.com/nodemailer/nodemailer
 
 #### ```nodemailer-mailgun-transport```
+
+This nodemailer sub-library (nodemailer backend) is used to send email messages via the
+[mailgun](http://www.mailgun.com/) email delivery service.
+
+As mentioned before, currently, emails are sent to users only when they want to reset their
+password.
 
 * See also: https://github.com/orliesaurus/nodemailer-mailgun-transport
 
@@ -496,6 +580,9 @@ to perform websockets-based authentication in the ```auth/auth-socket.js``` file
 ### Specialized
 
 #### ```mkdirp```
+
+This library is used to create directory hierarchies in the filesystem. This mostly used by
+maintenance scripts, which are located under the ```maintenace``` sub-directory.
 
 * See also: https://github.com/substack/node-mkdirp
 
