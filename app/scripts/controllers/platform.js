@@ -1496,6 +1496,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         var corePath = $scope.getTemplatePath(whatTemplateId, whatTemplateRevision);
 
 		if(corePath.search(appPaths.webbleSandboxCore) != -1){
+			whatTemplateRevision = 0;
 			var loadedBefore = false;
 			for(var j = 0; j < listOfLoadedSandboxWebbles_.length; j++){
 				if(listOfLoadedSandboxWebbles_[j] == whatTemplateId){
@@ -3191,8 +3192,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     //========================================================================================
     // Download Webble
-    // This method calls the server to load a webble. If the webble has been loaded previously
-    // it is stored in memory and the system will call it from there instead of the server.
+    // This method calls the server to load a webble.
     //========================================================================================
     $scope.downloadWebbleDef = function(whatWblDefId, whatCallbackMethod) {
         if (whatWblDefId != ""){

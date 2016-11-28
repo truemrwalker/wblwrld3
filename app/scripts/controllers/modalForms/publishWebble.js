@@ -324,8 +324,5 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $uibModalI
         $scope.errorMsg = eMsg;
     });
 
-
-
-
 });
 //======================================================================================================================
