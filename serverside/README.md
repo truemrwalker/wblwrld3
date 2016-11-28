@@ -119,7 +119,7 @@ its principal user and the principal user's password. If those values are change
 the Webble World server's configuration, then the following command can be used to
 generate a new ```scripts/mongoshell.js``` file with the most up-to-date values:
 
-```node scripts/mongoshellgen.js```
+```cd scripts``` and then: ```node mongoshellgen.js```
 
 ### 5. Initialization of the database with preexisting objects and values
 
@@ -156,7 +156,8 @@ Subsequently, the file ```secretsdb.json```, located in this sub-directory has t
 to the newly created ```wblwrld3``` sub-directory and edited to contain the correct API keys and secrets.
 
 Finally, the ```secretsdb.ejson``` file can be created from the ```secretsdb.json``` file by
-running the ```scripts/secretsdbgen.js``` script (```node scripts/secretsdbgen.js```).
+running the ```scripts/secretsdbgen.js``` script from inside the ```scripts``` sub-directory -
+i.e., ```cd scripts``` and then ```node secretsdbgen.js```.
 
 The following two sub-sections describe how to obtain and setup the required API keys in order to
 utilize the aforementioned third-party services in the Webble World platform.
@@ -318,7 +319,8 @@ Only the first valid directory is considered for resolving the full path of the 
 
 The ```secretsdb.ejson``` file is created from the ```secretsdb.json``` file - that should be located
 in the same directory as the first - by running the script ```scripts/secretsdbgen.js```. Note that
-the script should be run under node.js - i.e., ```node scripts/secretsdbgen.js```
+the script should be run under node.js inside the ```scripts``` sub-directory - i.e., ```cd scripts```
+and then: ```node secretsdbgen.js```.
 
 If the file ```secretsdb.ejson``` is not found, then any available secrets are read from
 the file ```secretsdb.json```, which is located in the ```serverside``` directory.
@@ -471,6 +473,9 @@ are only used inside REST endpoint functions as a response to client-requested o
 This sub-directory contains some peripheral, independent and self-contained scripts/meta-scripts that create or modify
 the Webble World server's source and configuration files. As such they are mostly used for bootstrapping Webble World
 server on a new system and are never loaded or executed if they are not explicitly invoked by the user.
+
+Note that the scripts in this directory should be run from inside the ```scripts``` sub-directory. For example:
+```cd scripts``` and then: ```node secretsdbgen.js```.
 
 ## Dependencies
 
