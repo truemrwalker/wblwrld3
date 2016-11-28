@@ -54,9 +54,9 @@ In general, the installation process consists of the following steps:
 1. Cloning the Webble World Github repository
 2. Installation of the dependent servers/tools
 3. Installation of the dependent software libraries
-4. Creation of the database and its principal user
-5. Initialization of the database with preexisting objects and values
-6. Setup the third-party service API keys (optional)
+4. Setup the third-party service API keys (optional)
+5. Creation of the database and its principal user
+6. Initialization of the database with preexisting objects and values
 
 ### 1. Cloning the Webble World Github repository
 
@@ -96,39 +96,7 @@ Usually, the ```npm``` command is bundled together with [node.js](https://nodejs
 If that's not the case for the default distribution of a specific platform, then
 the ```npm``` command should be installed separately.
 
-### 4. Creation of the database and its principal user
-
-Webble World server saves all its objects, user-generated objects and user-generated files
-in a [mongoDB](https://www.mongodb.com/) database called by default ```wblwrld3``` which
-has as a principal user a user named ```webbler```. All these default names be changed
-by specifying different configuration values (see section [config.js]).
-
-The default password for the ```webbler``` user can be seen (and changed)  in the
-file ```secretsdb.json```. See also sections [config.js] and [secrets.js]
-for more information.
-
-The creation of the ```wblwrld3``` database and its ```webbler``` user can be automated
-by running the command ```mongo scripts/mongoshell.js```, where ```mongo``` is an
-interactive mongoDB client distributed together with the  mongoDB database and the script
-```scripts/mongoshell.js``` includes the required commands needed for the creation
-of the database and its principal user. Before the invocation of the ```mongo``` command,
-the mongoDB server has to be running already on the appropriate host and port.
-
-The ```scripts/mongoshell.js``` script contains default values for the name of the database,
-its principal user and the principal user's password. If those values are changed in
-the Webble World server's configuration, then the following command can be used to
-generate a new ```scripts/mongoshell.js``` file with the most up-to-date values:
-
-```cd scripts``` and then: ```node mongoshellgen.js```
-
-### 5. Initialization of the database with preexisting objects and values
-
-After the creation of Webble World server's database (```wblwrld3``` by default), the
-command ```node serverside/web-server.js --deployment maintenace``` initializes the
-database and populates it with a set of predefined objects that are either part
-of the server's functionality or were developed by the core team of the Webble World platform.
-
-### 6. Setup the third-party service API keys (optional)
+### 4. Setup the third-party service API keys (optional)
 
 The Webble World server uses some third party web services to:
 
@@ -140,7 +108,12 @@ The Webble World server uses some third party web services to:
   * google
   * Facebook
 
-In general, to utilize those third-party services, their corresponding API keys have to be obtained
+Setup of these third-party keys is optional. If their setup is skipped, then, the third-party login
+services will not work and the server will not be able to send any emails to users. Furthermore,
+the default secrets that are required for the database, the user sessions and the application are
+obtained from the predefined values in the ```serverside/secretsdb.json``` file.
+
+In general, to utilize the above third-party services, their corresponding API keys have to be obtained
 and setup in Webble World. For production deployments, it is recommended to export all those API
 keys and ids as environment variables (see also the sub-section [config.js]).
 
@@ -149,7 +122,7 @@ For "development" deployments on Windows and Unix the recommended way to store s
 
 To create the ```secretsdb.ejson``` file, the following directory has to be created first:
 
-* Windows: ```C:\Users\YOURUSERNAME\AppData\Local\wblwrld3```
+* Windows: ```C:\Users\YOUR_USERNAME\AppData\Local\wblwrld3```
 * Unix: ```~/wblwrld3```
 
 Subsequently, the file ```secretsdb.json```, located in this sub-directory has to be copied (as a template)
@@ -157,7 +130,7 @@ to the newly created ```wblwrld3``` sub-directory and edited to contain the corr
 
 Finally, the ```secretsdb.ejson``` file can be created from the ```secretsdb.json``` file by
 running the ```scripts/secretsdbgen.js``` script from inside the ```scripts``` sub-directory -
-i.e., ```cd scripts``` and then ```node secretsdbgen.js```.
+i.e., ```cd scripts``` and then, ```node secretsdbgen.js```.
 
 The following two sub-sections describe how to obtain and setup the required API keys in order to
 utilize the aforementioned third-party services in the Webble World platform.
@@ -235,6 +208,38 @@ The relevant entries in the ```secretsdb.json``` file are the following:
 
 The relevant environment variables that can be used in "production" deployments are:
 ```FACEBOOK_APP_ID``` and ```FACEBOOK_APP_SECRET```.
+
+### 5. Creation of the database and its principal user
+
+Webble World server saves all its objects, user-generated objects and user-generated files
+in a [mongoDB](https://www.mongodb.com/) database called by default ```wblwrld3``` which
+has as a principal user a user named ```webbler```. All these default names be changed
+by specifying different configuration values (see section [config.js]).
+
+The default password for the ```webbler``` user can be seen (and changed)  in the
+file ```secretsdb.json```. See also sections [config.js] and [secrets.js]
+for more information.
+
+The creation of the ```wblwrld3``` database and its ```webbler``` user can be automated
+by running the command ```mongo scripts/mongoshell.js```, where ```mongo``` is an
+interactive mongoDB client distributed together with the  mongoDB database and the script
+```scripts/mongoshell.js``` includes the required commands needed for the creation
+of the database and its principal user. Before the invocation of the ```mongo``` command,
+the mongoDB server has to be running already on the appropriate host and port.
+
+The ```scripts/mongoshell.js``` script contains default values for the name of the database,
+its principal user and the principal user's password. If those values are changed in
+the Webble World server's configuration, then the following command can be used to
+generate a new ```scripts/mongoshell.js``` file with the most up-to-date values:
+
+```cd scripts``` and then, ```node mongoshellgen.js```
+
+### 6. Initialization of the database with preexisting objects and values
+
+After the creation of Webble World server's database (```wblwrld3``` by default), the
+command ```node serverside/web-server.js --deployment maintenace``` initializes the
+database and populates it with a set of predefined objects that are either part
+of the server's functionality or were developed by the core team of the Webble World platform.
 
 ## Updates and maintenance
 
@@ -320,7 +325,7 @@ Only the first valid directory is considered for resolving the full path of the 
 The ```secretsdb.ejson``` file is created from the ```secretsdb.json``` file - that should be located
 in the same directory as the first - by running the script ```scripts/secretsdbgen.js```. Note that
 the script should be run under node.js inside the ```scripts``` sub-directory - i.e., ```cd scripts```
-and then: ```node secretsdbgen.js```.
+and then, ```node secretsdbgen.js```.
 
 If the file ```secretsdb.ejson``` is not found, then any available secrets are read from
 the file ```secretsdb.json```, which is located in the ```serverside``` directory.
@@ -475,7 +480,7 @@ the Webble World server's source and configuration files. As such they are mostl
 server on a new system and are never loaded or executed if they are not explicitly invoked by the user.
 
 Note that the scripts in this directory should be run from inside the ```scripts``` sub-directory. For example:
-```cd scripts``` and then: ```node secretsdbgen.js```.
+```cd scripts``` and then, e.g., ```node secretsdbgen.js```.
 
 ## Dependencies
 
