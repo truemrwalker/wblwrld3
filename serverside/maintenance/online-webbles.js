@@ -19,10 +19,18 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// online-webbles.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Autonomous maintenance script that fetches and stores all the Webbles published
+ * under https://wws.meme.hokudai.ac.jp that is the reference (central) deployment of Webble World.
+ *
+ * Apart from the database objects, any associated code or resource files are also fetched and
+ * stored in the local database. This script runs only when config.SYNC_ONLINE_WEBBLES is true
+ * and is thus recommended to invoke it with the following command:
+ * node serverside/web-server.js --deployment maintenance --sync-online-webbles 1
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var path = require('path');

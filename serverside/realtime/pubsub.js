@@ -19,10 +19,16 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// pubsub.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview  Implements a publish-subscribe channel as a redis queue and as a local EventEmitter.
+ *
+ * If it's possible to connect to a running redis server, the redis pub/sub is used, otherwise
+ * the local EventEmitter is used. The publish and subscribe channels are saved and made
+ * available to other components as app.locals.pub and app.locals.sub respectively.
+ * 
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 const Promise = require('bluebird');
 const EventEmitter = require('events');
 
@@ -63,7 +69,7 @@ class RedisPubSub {
             host: config.REDIS_HOST,
             port: config.REDIS_PORT,
             family: 4,
-            path: config.REDIS_PATH,
+            path: null,
             password: config.REDIS_PASS
         };
 

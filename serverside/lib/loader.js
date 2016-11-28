@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// loader.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Module loading utility functions.
+ * @module lib/loader
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 var path = require('path');
 
@@ -30,7 +32,7 @@ var xfs = require('./xfs');
 
 ////////////////////////////////////////////////////////////////////////
 // Utility functions
-//
+
 function filterAndhandleInorderScripts(allScripts, specificLoadOrderList, handlerCallback, initialValue) {
 	
 	if (specificLoadOrderList && specificLoadOrderList.length > 0) {
@@ -54,7 +56,21 @@ function filterAndhandleInorderScripts(allScripts, specificLoadOrderList, handle
 
 ////////////////////////////////////////////////////////////////////////
 // Main API
-//
+
+/**
+ * Loads and executes all Javascript files under "scriptDir" and its immediate sub-directories.
+ * @param {string} scriptDir - The directory that contains Javascript files.
+ * @param {Object} app - The express.js application object.
+ * @param {Object} config - The configuration object (config.js).
+ * @param {Object} mongoose - The mongoose library object.
+ * @param {Callback} gettext - A function that essentially wraps any translatable strings.
+ * @param {string[]} specificLoadOrderList - Whether some specific scripts should be executed in the
+ *    specified order - e.g., ["one.js", "two.js"].
+ * @param {*} extraArg0 - An extra argument to pass on when executing the loaded Javascript file.
+ * @param {*} extraArg1 - An extra argument to pass on when executing the loaded Javascript file.
+ * @returns {Promise} A promise that is resolved with an empty value if the loading and execution
+ *     succeeds or is rejected if there's an error.
+ */
 module.exports.executeAllScripts = function (scriptDir, app, config, mongoose, gettext, specificLoadOrderList, extraArg0, extraArg1) {
 	
 	if (!path.isAbsolute(scriptDir))
@@ -76,6 +92,18 @@ module.exports.executeAllScripts = function (scriptDir, app, config, mongoose, g
 
 //**********************************************************************
 
+/**
+ * Loads and executes all Javascript files under "scriptDir" and its immediate sub-directories synchronously.
+ * @param {string} scriptDir - The directory that contains Javascript files.
+ * @param {Object} app - The express.js application object.
+ * @param {Object} config - The configuration object (config.js).
+ * @param {Object} mongoose - The mongoose library object.
+ * @param {Callback} gettext - A function that essentially wraps any translatable strings.
+ * @param {string[]} specificLoadOrderList - Whether some specific scripts should be executed in the
+ *    specified order - e.g., ["one.js", "two.js"].
+ * @param {*} extraArg0 - An extra argument to pass on when executing the loaded Javascript file.
+ * @param {*} extraArg1 - An extra argument to pass on when executing the loaded Javascript file.
+ */
 module.exports.executeAllScriptsSync = function (scriptDir, app, config, mongoose, gettext, specificLoadOrderList, extraArg0, extraArg1) {
 	
 	if (!path.isAbsolute(scriptDir))

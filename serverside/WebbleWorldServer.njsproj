@@ -18,12 +18,15 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="keys\ca.crt" />
+    <Content Include="keys\README.md" />
+    <Content Include="keys\server.crt" />
+    <Content Include="keys\server.key" />
     <Content Include="README.md" />
     <Content Include="scripts\header.txt" />
     <Content Include="secretsdb.json" />
     <Compile Include="api\wiki.js" />
     <Compile Include="config.js" />
-    <Compile Include="control\_machine.js" />
     <Compile Include="control\autosync.js" />
     <Compile Include="api\files\zip.js" />
     <Compile Include="maintenance\images.js" />
@@ -31,8 +34,6 @@
     <Compile Include="maintenance\sitemap.js" />
     <Compile Include="maintenance\online-webbles.js" />
     <Compile Include="models\wiki.js" />
-    <Compile Include="models\machine.js" />
-    <Compile Include="models\message.js" />
     <Compile Include="realtime\pubsub.js" />
     <Compile Include="scripts\mongoshell.js" />
     <Compile Include="scripts\mongoshellgen.js" />
@@ -60,12 +61,10 @@
     <Compile Include="lib\gfs.js" />
     <Compile Include="lib\gravatar.js" />
     <Compile Include="lib\loader.js" />
-    <Compile Include="lib\meta.js" />
     <Compile Include="lib\util.js" />
     <Compile Include="lib\xfs.js" />
     <Compile Include="maintenance\files.js" />
     <Compile Include="maintenance\templates.js" />
-    <Compile Include="maintenance\users.js" />
     <Compile Include="models\group.js" />
     <Compile Include="models\post.js" />
     <Compile Include="models\user.js" />

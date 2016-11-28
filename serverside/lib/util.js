@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// util.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview General utility/convenience functions.
+ * @module lib/util
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var util = require('util');
 
 ////////////////////////////////////////////////////////////////////////
@@ -32,7 +34,15 @@ function gettext(msg) { return msg; }
 
 ////////////////////////////////////////////////////////////////////////
 // Array ops
-//
+
+/**
+ * @deprecated Use Array.map in new code
+ * Returns an array in which every element is the result of the application of func into input[i].
+ * Note that the input is modified in-place. An old reference to input will point to the new result.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {*[]} A modified array where each result[i] is equal to func(input[i]).
+ */
 module.exports.transform_ = function (input, func) {
 
 	var len = input.length;
@@ -41,6 +51,13 @@ module.exports.transform_ = function (input, func) {
 	return input;
 };
 
+/**
+ * @deprecated Use Array.map in new code
+ * Returns a new array in which every element is the result of the application of func into input[i].
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {*[]} A new array where each result[i] is equal to func(input[i]).
+ */
 module.exports.transform = function (input, func) {
 
 	var result = [];
@@ -50,6 +67,15 @@ module.exports.transform = function (input, func) {
 	return result;
 };
 
+/**
+ * Returns a new array in which every element is the result of the application of func into input[i].
+ * Also, any additional arguments passed to apply are also appended in every func() invocation.
+ * For example apply([1, 2, 3], (a, b) => a + b, 2), returns [3, 4, 5].
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @param {*} arguments - The extra arguments used when invoking "func".
+ * @returns {*[]} A new array where each result[i] is equal to func(input[i]).
+ */
 module.exports.apply = function (input, func) {
 
 	var result = [];
@@ -69,6 +95,12 @@ module.exports.apply = function (input, func) {
 	return result;
 };
 
+/**
+ * Determines whether any application of "func" over "input" is true.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {boolean} True if any "func" application onto input[i] is true, otherwise false.
+ */
 module.exports.any = function (input, func) {
 
 	var len = input.length;
@@ -79,6 +111,31 @@ module.exports.any = function (input, func) {
 	return false;
 };
 
+/**
+ * Determines whether any application of "func" over "input" is true. The difference with
+ * function "any" is that "func" is optional.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {boolean} True if any "func" application onto input[i] is true, otherwise false.
+ */
+module.exports.anyTrue = function (input, func) {
+
+    func = func || function (v) { return v; };
+
+    var len = input.length;
+    for (var i = 0; i < len; ++i) {
+        if (func(input[i]))
+            return true;
+    }
+    return false;
+};
+
+/**
+ * Determines whether all applications of "func" over "input" return true.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {boolean} True if all "func" applications onto input[i] are true, otherwise false.
+ */
 module.exports.all = function (input, func) {
 
 	var len = input.length;
@@ -89,6 +146,32 @@ module.exports.all = function (input, func) {
 	return true;
 };
 
+/**
+ * Determines whether all applications of "func" over "input" return true. The difference with
+ * function "all" is that "func" is optional.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {boolean} True if all "func" applications onto input[i] are true, otherwise false.
+ */
+module.exports.allTrue = function (input, func) {
+
+    func = func || function (v) { return v; };
+
+    var len = input.length;
+    for (var i = 0; i < len; ++i) {
+        if (!func(input[i]))
+            return false;
+    }
+    return true;
+};
+
+/**
+ * Returns a new array in which every element is the result of the application of func into input[i],
+ * but only the unique results are considered. Redundant results are omitted from the result.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {*[]} A new array where each result[i] is equal to func(input[i]) and unique.
+ */
 module.exports.unique = function (input, func) {
 
 	var result = [];
@@ -107,6 +190,13 @@ module.exports.unique = function (input, func) {
 	return result;
 };
 
+/**
+ * Returns a new array in which every element is input[i], iff func(input[i]) is true, otherwise
+ * that specific element "i" is omitted.
+ * @param {*[]} input - The input array onto which func is applied.
+ * @param {*} func - The function to apply onto each element of input.
+ * @returns {*[]} A new array where each result[i] is equal to input[i] if func(input[i]) is true.
+ */
 module.exports.filter = function (input, func) {
 
 	var result = [];
@@ -118,6 +208,12 @@ module.exports.filter = function (input, func) {
 	return result;
 };
 
+/**
+ * Returns the first index of "input" where the application of "pred" is true or -1.
+ * @param {*[]} input - The input array onto which pred is applied.
+ * @param {*} pred - The function to apply onto each element of input.
+ * @returns {number} The first index of "input", i, where pred(input[i]) == true or -1.
+ */
 module.exports.indexOf = function (input, pred) {
 
 	var len = input.length;
@@ -128,6 +224,12 @@ module.exports.indexOf = function (input, pred) {
 	return -1;
 };
 
+/**
+ * Returns the last index of "input" where the application of "pred" is true or -1.
+ * @param {*[]} input - The input array onto which pred is applied.
+ * @param {*} pred - The function to apply onto each element of input.
+ * @returns {number} The last index of "input", i, where pred(input[i]) == true or -1.
+ */
 module.exports.lastIndexOf = function (input, pred) {
 	
 	var len = input.length;
@@ -138,6 +240,14 @@ module.exports.lastIndexOf = function (input, pred) {
 	return -1;
 };
 
+/**
+ * Replaces or appends the "value" into the "input" array, depending on whether "pred" returns
+ * true for any pred(input[i], value).
+ * @param {*[]} input - The input array onto which pred is applied and "value" should be added.
+ * @param {*} value - The value to append or replace in "input".
+ * @param {*} pred - The function to apply with value and each element of input.
+ * @returns {*} The previous input[i] that "value" replaced or null if it didn't replace anything.
+ */
 module.exports.addOrReplace = function (input, value, pred) {
 
     var len = input.length;
@@ -153,36 +263,14 @@ module.exports.addOrReplace = function (input, value, pred) {
     return null;
 };
 
-//**********************************************************************
-// More specialized array ops
-//
-module.exports.anyTrue = function (input, func) {
-    
-    func = func || function (v) { return v; };
-
-	var len = input.length;
-	for (var i = 0; i < len; ++i) {
-		if (func(input[i]))
-			return true;
-	}
-	return false;
-};
-
-module.exports.allTrue = function (input, func) {
-    
-    func = func || function (v) { return v; };
-
-    var len = input.length;
-    for (var i = 0; i < len; ++i) {
-        if (!func(input[i]))
-            return false;
-    }
-    return true;
-};
-
 ////////////////////////////////////////////////////////////////////////
 // Common utility functions
-//
+
+/**
+ * Determines whether the given "email" parameter represents a valid email address.
+ * @param {string} email - A potential email address.
+ * @returns {boolean} True if "email" looks like a valid email address, false otherwise.
+ */
 module.exports.isEmailValid = function (email) {
 
 	//var regExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -192,6 +280,11 @@ module.exports.isEmailValid = function (email) {
 	return regExp.test(email);
 };
 
+/**
+ * Determines whether the given "username" parameter represents a valid username.
+ * @param {string} username - A potential username.
+ * @returns {boolean} True if "username" looks like a valid username, false otherwise.
+ */
 module.exports.isUsernameValid = function (username) {
 
     if (username === 'j') // Special case only for Jonas :)
@@ -201,6 +294,11 @@ module.exports.isUsernameValid = function (username) {
 	return regExp.test(username);
 };
 
+/**
+ * Determines whether the given "url" parameter represents a valid URL.
+ * @param {string} url - A potential URL.
+ * @returns {boolean} True if "url" looks like a valid URL, false otherwise.
+ */
 module.exports.isUrlValid = function (url) {
 
 	// based on jQuery plugin: Validation https://github.com/jzaefferer/jquery-validation/blob/master/jquery.validate.js
@@ -208,6 +306,11 @@ module.exports.isUrlValid = function (url) {
 	return regExp.test(url);
 };
 
+/**
+ * Determines whether the given "str" parameter represents a valid unsigned integer.
+ * @param {string} str - A string representing an unsigned integer.
+ * @returns {boolean} True if "str" looks like a valid unsigned integer.
+ */
 module.exports.isStringNumber = function (str) {
     
     for (var i = 0; i < str.length; ++i)
@@ -217,8 +320,16 @@ module.exports.isStringNumber = function (str) {
 };
 
 ////////////////////////////////////////////////////////////////////////
-// Rest-specific utility functions
-//
+// Other utility functions
+
+/**
+ * If an object has a toJSON() method it first calls it and then removes any properties
+ * that begin with underscore (_).
+ * @todo Probably this function should be moved to a more JSON-specific library file.
+ * @param {Object} obj - A Javascript object.
+ * @returns {Object} A new object that has all the "obj" properties, except those that
+ *     that start with an underscore (_).
+ */
 module.exports.stripObject = function (obj) {
 
     if ('toJSON' in obj) {
@@ -241,6 +352,18 @@ module.exports.stripObject = function (obj) {
     }
 };
 
+/**
+ * Builds an object representing a valid mongoose (mongodb) find() query from an express.js
+ * req.query object. For example the following invocation:
+ *     var query = util.buildQuery(req.query, [], 'workspace'), with req.query = {name: "foo"}
+ * Returns a mongodb query object similar to: {"workspace.name" : "foo"}
+ * @todo Probably this function should be moved to a more mongodb-specific library file.
+ * @param {Object} query - An express.js req.query object that contains the query parameters.
+ * @param {string[]} ignoreList - A list of properties to not try to match against db documents. 
+ * @param {string} namespace - The namespace (optionally) in which the given query params reside.
+ * @param {Object} aliasesObj - An optional map of property aliases.
+ * @returns {Object} A valid mongodb query that matches the given req.query property values.
+ */
 module.exports.buildQuery = function (query, ignoreList, namespace, aliasesObj) {
 
 	var start = (query.start && 1 * query.start) || 0;
@@ -291,8 +414,8 @@ module.exports.buildQuery = function (query, ignoreList, namespace, aliasesObj) 
 };
 
 ////////////////////////////////////////////////////////////////////////
-// Common utility classes
-//
+// REST utility classes and functions
+
 function RestError(message, statusCode) {
 	this.name = "RestError";
 	this.message = message || gettext("Unidentified error");
@@ -301,12 +424,33 @@ function RestError(message, statusCode) {
 RestError.prototype = new Error();
 RestError.prototype.constructor = RestError;
 
+/**
+ * Represents a REST invocation error.
+ * @todo Probably this function should be moved to a more REST-specific library file.
+ * @constructor
+ * @param {string} message - A message describing the error.
+ * @param {number} statusCode - The HTTP error code.
+ */
 module.exports.RestError = RestError;
 
+/**
+ * If the given error is NOT a RestError, a new RestError is returned with the given (optional)
+ * message and the HTTP error-code 500.
+ * @todo Probably this function should be moved to a more REST-specific library file.
+ * @param {Object} error - An instance of an Error.
+ * @param {string} message - An optional message describing the error.
+ */
 module.exports.toRestError = function (error, message) {
 	return error instanceof RestError ? error : new RestError(message, 500);
 };
 
+/**
+ * Sends the given error over the "res" express.js stream after an unsuccessful REST invocation.
+ * @todo Probably this function should be moved to a more REST-specific library file.
+ * @param {Object} res - An express.js "res" stream.
+ * @param {Object} error - An instance of an Error.
+ * @param {string} message - An optional message describing the error.
+ */
 module.exports.resSendError = function (res, error, message) {
 
 //	console.log("ERRR: ", error);

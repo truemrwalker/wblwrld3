@@ -19,10 +19,16 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// sitemap.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Autonomous maintenance script that creates the file app/sitemap.xml.
+ *
+ * The file is created under the config.APP_ROOT_DIR and contains links to each individual
+ * published Webble. These links are for making it easier for search engines to index the
+ * Webble World platform and its content.
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var fs = require('fs');

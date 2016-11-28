@@ -19,10 +19,24 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// files.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Autonomous maintenance script that synchronizes all the Webble Template files under the
+ * config.APP_ROOT_DIR/webbles/ sub-directory and all its sub-directories recursively.
+ *
+ * The script creates, modifies and deletes files in the database depending on their status on disk.
+ * This is important so that the Webble World development team can develop Webbles offline and commit
+ * them to the same repository as the main Webble World application. There's another component that
+ * synchronizes files, but does it in realtime when the server is running in "development" mode. That
+ * component is implemented in control/autosync.js.
+ *
+ * In addition to the above the script also backups (synchronizes) all the files in the database in a
+ * sub-directory called backup under the config.APP_ROOT_DIR directory.
+ * 
+ * Note that "DevWebbles" are normal Webbles that are unpublished (sometimes referred to as Sandbox Webbles).
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var path = require('path');

@@ -19,10 +19,14 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// webble.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Defines the mongoose schema of the Webble component.
+ *
+ * See also: http://mongoosejs.com/docs/guide.html
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 module.exports = function(app, config, mongoose, gettext) {

@@ -19,15 +19,17 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// dbutil.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Mongodb-specific utility functions.
+ * @module lib/dbutil
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 ////////////////////////////////////////////////////////////////////////
 // Private convenience functions
-//
+
 function gettext(msg) { return msg; }
 
 function extendArray(array, other) {
@@ -82,7 +84,13 @@ function promiseFirst(input, callback) {
 
 ////////////////////////////////////////////////////////////////////////
 // Public methods
-//
+
+/**
+ * Establishes a connection to the database with the given URL with the default connection parameters.
+ * @param {Object} mongoose - The mongoose object that encapsulates the database's functionality.
+ * @param {string} mongodbURL - The URL that points to the mongodb database server.
+ * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+ */
 module.exports.connect2 = function (mongoose, mongodbURL) {
 	
 	console.time("connect");
@@ -94,6 +102,12 @@ module.exports.connect2 = function (mongoose, mongodbURL) {
 	});
 };
 
+/**
+ * Establishes a connection to the database with the given URL.
+ * @param {Object} mongoose - The mongoose object that encapsulates the database's functionality.
+ * @param {string} mongodbURL - The URL that points to the mongodb database server.
+ * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+ */
 module.exports.connect = function (mongoose, mongodbURL) {
 	
 	console.time("connect");
@@ -135,10 +149,22 @@ module.exports.connect = function (mongoose, mongodbURL) {
 
 //**********************************************************************
 
+/**
+ * Executes a query if the given value is a database query or wraps the value in a promise if not.
+ * @param {*} value - The database query or plain value.
+ * @returns {Promise} A promise that is resolved with the result of the query execution.
+ */
 module.exports.execOrValue = function (value) {
     return ('exec' in value) ? value.exec() : Promise.resolve(value);
 };
 
+/**
+ * Creates a database query object that executes all the given subqueries until it obtains a "true"
+ * result - i.e., it implements a logical OR operation among the given queries.
+ * @constructor
+ * @param {Object[]} arguments - The sub-queries to "OR".
+ * @returns {Promise} A promise that is resolved with the result of the first non-null query execution.
+ */
 module.exports.qOR = function (/*variable args...*/) {
 
 	// Exec'able object
@@ -158,6 +184,13 @@ module.exports.qOR = function (/*variable args...*/) {
 
 //**********************************************************************
 
+/**
+ * Creates a database query object that executes all the given subqueries and aggregates all
+ * the obtained results into a result array.
+ * @constructor
+ * @param {Object[]} arguments - The sub-queries to aggregate.
+ * @returns {Promise} A promise that is resolved with an array of the results of all sub-query executions.
+ */
 module.exports.qAG = function (/*variable args...*/) {
 
 	// Exec'able object
@@ -179,6 +212,4 @@ module.exports.qAG = function (/*variable args...*/) {
             }, []);
         }
 	};
-
 };
-

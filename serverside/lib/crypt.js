@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// crypt.js
-// Created by Giannis Georgalis on 1/20/14
-//
+/**
+ * @overview Cryptographic utility functions.
+ * @module lib/crypt
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 var crypto = require('crypto');
 
@@ -30,13 +32,24 @@ Promise.promisifyAll(crypto);
 
 ////////////////////////////////////////////////////////////////////////
 // Common utility functions
-//
-module.exports.createHash = function(text) {
+
+/**
+ * Calculates the MD5 sum of the given text string.
+ * @param {string} text - The input text.
+ * @returns {string} The md5 hash of the given string.
+ */
+module.exports.createHash = function (text) {
 	return crypto.createHash('md5').update(text).digest('hex')
 };
 
 //**********************************************************************
 
+/**
+ * Encrypts the given text with the given seed.
+ * @param {string} text - The input text.
+ * @param {string} seed - A seed to use for the symmetric encryption.
+ * @returns {string} The encrypted representation of the given text.
+ */
 module.exports.encryptTextSync = function (text, seed) {
 	var cipher = crypto.createCipher('aes-128-cbc', seed);
 	var crypted = cipher.update(text, 'utf8', 'hex');
@@ -44,6 +57,12 @@ module.exports.encryptTextSync = function (text, seed) {
 	return crypted;
 };
 
+/**
+ * Decrypts the given encrypted text with the given seed.
+ * @param {string} cryptText - The encrypted text.
+ * @param {string} seed - A seed to use for the symmetric decryption.
+ * @returns {string} The plaintext representation of the given encrypted text.
+ */
 module.exports.decryptTextSync = function (cryptText, seed) {
 	try {
 		var decipher = crypto.createDecipher('aes-128-cbc', seed);
@@ -57,6 +76,11 @@ module.exports.decryptTextSync = function (cryptText, seed) {
 
 //**********************************************************************
 
+/**
+ * Returns a buffer with the specified number of random bytes.
+ * @param {number} nBytes - The number of random bytes to generate.
+ * @returns {Promise} A promise that is resolved with a buffer containing nBytes random bytes.
+ */
 module.exports.randomBytesAsync = function(nBytes) {
 	return crypto.randomBytesAsync(nBytes);
 };

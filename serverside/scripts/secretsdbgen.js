@@ -19,10 +19,14 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// secretsdbgen.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Generates an encrypted "secretsdb.ejson" file from a plain-text "secretsdb.json"
+ * file, which has to be located in a "wblwrld3" sub-directory under the directory which
+ * is contained in the "homeDir" variable.
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var path = require('path');
 var crypt = require('../lib/crypt');
 var fs = require('fs');

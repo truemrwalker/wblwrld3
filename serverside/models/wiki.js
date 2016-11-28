@@ -19,10 +19,14 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// wiki.js
-// Created by Giannis Georgalis on 12/11/14
-//
+/**
+ * @overview Defines the mongoose schema of the Wiki component.
+ *
+ * See also: http://mongoosejs.com/docs/guide.html
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 module.exports = function(app, config, mongoose, gettext) {

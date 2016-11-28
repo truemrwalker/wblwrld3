@@ -19,10 +19,15 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// interaction.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Defines and implements the routing of generic real-time interaction messages.
+ *
+ * These messages are used in Webble World for real-time collaboration between users sharing
+ * a workspace and for the implementation of the demonstrator /#/draw route.
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 ////////////////////////////////////////////////////////////////////////

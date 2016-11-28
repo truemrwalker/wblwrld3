@@ -19,10 +19,17 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// images.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Autonomous maintenance script that stores Webble, data-uri images as files and
+ * replaces their URL to point at those newly-created files.
+ *
+ * This is done purely for efficiency reasons since browsers can cache image files but cannot/
+ * should not cache Webble definition JSON objects that can become huge if they encode images
+ * as data-uris. See also: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../lib/util');

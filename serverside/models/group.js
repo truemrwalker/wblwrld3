@@ -19,10 +19,16 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// group.js
-// Created by Giannis Georgalis on 12/11/13
-//
+/**
+ * @overview Defines the mongoose schema of the Group component.
+ *
+ * Groups are hierarchical and can belong to more general, parent groups (_sec.groups). They are
+ * used for publishing webbles, calculating their trust value and for storing secrets (e.g. API keys).
+ * See also: http://mongoosejs.com/docs/guide.html
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 module.exports = function(app, config, mongoose, gettext) {

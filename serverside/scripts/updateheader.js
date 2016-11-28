@@ -19,10 +19,15 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// updateHeader.js
-// Created by Giannis Georgalis on 3/23/2015
-//
+/**
+ * @overview This script replaces or prepends the contents of the "header.txt" file as
+ * comments on top of all the Javascript and HTML files authored by the author of this
+ * file. Additionally, it expands the "#file" and "#date" strings into the file's basename
+ * and the current date respectively.
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var fs = require('fs');
 var path = require('path');
 

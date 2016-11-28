@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// gfs.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview mongodb's gridfs utility functions.
+ * @module lib/gfs
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('./util');
@@ -75,7 +77,12 @@ function genQuery(directory, filename, ownerId) {
 
 ////////////////////////////////////////////////////////////////////////
 // GFS class thing
-//
+
+/**
+ * Represents the module that exports all the gridfs-specific methods.
+ * @constructor
+ * @param {Object} mongoose - The mongoose object that encapsulates the database's functionality.
+ */
 module.exports.GFS = function (mongoose) {
 
     var gfs = GridFS(mongoose.connection.db, mongoose.mongo);
@@ -91,18 +98,32 @@ module.exports.GFS = function (mongoose) {
         return gfs.files.update(query, data);
     }
 
-	// Get a file
-	//
+	/**
+	 * Gets the file object identified by "fullPath" from the database.
+	 * @param {string} fullPath - The full path of the requested file object.
+	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved with the file object or null if not found.
+	 */
 	this.getFileWithPath = function(fullPath, ownerId) {
 		return gfs.findOneAsync({ filename: fullPath });
 	};
 
+	/**
+	 * Gets the file object identified by its "directory" and "filename" parts from the database.
+	 * @param {string} fullPath - The full path of the requested file object.
+	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved with the file object or null if not found.
+	 */
 	this.getFile = function(directory, filename, ownerId) {
 		return gfs.findOneAsync(genQuery(directory, filename, ownerId));
 	};
 
-	// Get multiple files
-	//
+	/**
+	 * Gets the all the file objects from the database, except those in the "excludeFileList".
+	 * @param {string[]} excludeFilesList - The full path of the files that should be omitted.
+	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved with an array of all the file objects.
+	 */
 	this.listAllFiles = function(excludeFilesList, ownerId) {
 
 		var options = {};
@@ -119,12 +140,22 @@ module.exports.GFS = function (mongoose) {
 		return Promise.resolve(gfs.files.find(options).toArray());
 	};
 
+	/**
+	 * Gets the all the file objects that are inside the directory "directory".
+	 * @param {string} directory - The directory that we want to get the files from.
+	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved with an array of all the file objects in "directory".
+	 */
 	this.getFiles = function(directory, ownerId) {
 		return Promise.resolve(gfs.files.find(genQuery(directory, null, ownerId)).toArray()); // ditto
 	};
 
-	// Move files
-	//
+	/**
+	 * Moves a file object that is already in the database to the directory "toDirectory".
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @param {string} toDirectory - The target directory.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.moveFileEntry = function(fileEntry, toDirectory) {
         
         var self = this;
@@ -147,6 +178,13 @@ module.exports.GFS = function (mongoose) {
 
 	};
 
+	/**
+	 * Moves all files in the directory "fromDirectory" to the directory "toDirectory".
+	 * @param {string} fromDirectory - The source directory.
+	 * @param {string} toDirectory - The target directory.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.moveFiles = function(fromDirectory, toDirectory, ownerId) {
 
 		var self = this;
@@ -158,15 +196,27 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
-	// Copy files
-	//
+	/**
+	 * Copies a file object that is already in the database to the directory "toDirectory".
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @param {string} toDirectory - The target directory.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.copyFileEntry = function(fileEntry, toDirectory, ownerId) {
 
 		var readStream = gfs.createReadStream(fileEntry);
 		return this.upload(readStream, toDirectory, fileEntry.metadata.filename, ownerId);
 	};
 
-	this.copyFiles = function(fromDirectory, toDirectory, ownerId) {
+	/**
+	 * Copies all files in the directory "fromDirectory" to the directory "toDirectory".
+	 * @param {string} fromDirectory - The source directory.
+	 * @param {string} toDirectory - The target directory.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
+    this.copyFiles = function (fromDirectory, toDirectory, ownerId) {
 
 		var self = this;
 		return self.getFiles(fromDirectory, undefined).then(function(files) {
@@ -177,8 +227,12 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
-	// Delete a file
-	//
+	/**
+	 * Deletes all files contained inside the directory "directory".
+	 * @param {string} directory - The source directory.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.deleteFiles = function(directory, ownerId) {
 
 		var self = this;
@@ -190,6 +244,13 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
+	/**
+	 * Deletes the file contained inside the given directory and has the given filename.
+	 * @param {string} directory - The source directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.deleteFile = function(directory, filename, ownerId) {
 
 		var self = this;
@@ -198,11 +259,20 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
+    /**
+	 * Deletes a file object that is already in the database.
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.deleteFileEntry = function(fileEntry) {
 		return gfs.removeAsync(fileEntry);
 	};
 
-	// Just for the occasional spring-cleaning & testing
+    /**
+	 * Wipes out all the files contained in the database.
+	 * Just for the occasional spring-cleaning & testing
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this._wipeOutEverythingForEverAndEverAndEver = function() {
 
 		var self = this;
@@ -215,8 +285,12 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
-	// Modify metadata
-	//
+    /**
+	 * Changes the ownership of a file object that is already in the database.
+	 * @param {Object} fileEntry - The file object that is already in the database.
+  	 * @param {Object} ownerId - The user's ObjectId (ownerIds are currently not utilized).
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.chownFileEntry = function(fileEntry, ownerId) {
 
 		return update({ _id: fileEntry._id }, { '$set': {
@@ -224,8 +298,14 @@ module.exports.GFS = function (mongoose) {
 		}});
 	};
 
-	// Create a write stream
-	//
+	/**
+	 * Opens or creates a file with the given filename in the given directory and returns a writable stream.
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @param {Date} mtime - The file's modification time (or empty for current time).
+	 * @returns {Promise} A promise that is resolved with the writable stream to the file's contents.
+	 */
 	this.createWriteStream = function(directory, filename, ownerId, mtime) {
 
 		var self = this;
@@ -255,21 +335,38 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
-	// Create a read stream
-	//
+	/**
+	 * Opens a file with the given filename in the given directory and returns a readable stream.
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved with a readable stream to the file's contents.
+	 */
 	this.createReadStream = function(directory, filename, ownerId) {
 
         return Promise.try(function () {
             return gfs.createReadStream(genQuery(directory, filename, ownerId)); // Not async operation, just value
         });
 	};
-	
+
+    /**
+	 * Obtains a readable stream to the file's content from a file object already in the database.
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @returns {Stream} A readable stream to the file's contents.
+	 */
 	this.createReadStreamFromFileEntrySync = function (fileEntry) {
 		return gfs.createReadStream(fileEntry);
 	};
 
-	// Upload
-	//
+	/**
+	 * Creates or updates a file from the contents read from the provided readable stream.
+	 * @param {Callback} readStreamFunc - A closure that returns a readable strean when invoked.
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @param {Date} mtime - The file's modification time (or empty for current time).
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
     this.uploadLazy = function (readStreamFunc, directory, filename, ownerId, mtime) {
 
         var self = this;
@@ -287,6 +384,15 @@ module.exports.GFS = function (mongoose) {
         });
     };
 
+    /**
+	 * Creates or updates a file from the contents read from the provided readable stream.
+	 * @param {Stream} readStream - A readable stream.
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @param {Date} mtime - The file's modification time (or empty for current time).
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
     this.upload = function (readStream, directory, filename, ownerId, mtime) {
 
 		var self = this;
@@ -303,6 +409,13 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
+    /**
+	 * Updates the file object's contents from the contents read from the provided readable stream.
+	 * @param {Stream} readStream - A readable stream.
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @param {Date} mtime - The file's modification time (or empty for current time).
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.uploadToFileEntry = function(readStream, fileEntry, mtime) {
         
         return update({ _id: fileEntry._id }, { '$set': { "metadata.mtime": mtime || new Date() } }).then(function (result) {
@@ -320,6 +433,15 @@ module.exports.GFS = function (mongoose) {
         });
 	};
 
+    /**
+	 * Creates or updates a file with content from the provided data (with the given encoding).
+	 * @param {*} data - The file's content.
+	 * @param {string} encoding - The given data's encoding (e.g., utf-8 if string).
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.uploadData = function(data, encoding, directory, filename, ownerId) {
 
 		var self = this;
@@ -337,8 +459,14 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
-	// Download
-	//
+    /**
+	 * Writes the contents of a file to the provided writable stream.
+	 * @param {Stream} writeStream - A writable stream.
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.download = function(writeStream, directory, filename, ownerId) {
 
 		var self = this;
@@ -355,6 +483,14 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
+    /**
+	 * Returns the contents of a file as an encoded object (with the given encoding).
+	 * @param {string} encoding - The target encoding (e.g., utf-8 if string).
+	 * @param {string} directory - The file's directory.
+	 * @param {string} filename - The file's filename.
+  	 * @param {Object} ownerId - Currently unused.
+	 * @returns {Promise} A promise that is resolved with the file's contents as a data object.
+	 */
 	this.downloadData = function(encoding, directory, filename, ownerId) {
 
 		var self = this;
@@ -371,6 +507,12 @@ module.exports.GFS = function (mongoose) {
 		});
 	};
 
+    /**
+	 * Writes the contents of a file to the provided writable stream.
+	 * @param {Stream} writeStream - A writable stream.
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
 	this.downloadFromFileEntry = function(writeStream, fileEntry) {
 
 		return new Promise(function(resolve, reject) {
@@ -385,6 +527,12 @@ module.exports.GFS = function (mongoose) {
 		});
     };
 
+    /**
+	 * Writes the contents of a file to the provided writable stream until the stream is 'closed'.
+	 * @param {Stream} writeStream - A writable stream.
+	 * @param {Object} fileEntry - The file object that is already in the database.
+	 * @returns {Promise} A promise that is resolved if the command succeeds and rejected if not.
+	 */
     this.downloadFromFileEntryUntilClosed = function (writeStream, fileEntry) {
         
         return new Promise(function (resolve, reject) {

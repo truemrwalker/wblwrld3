@@ -19,10 +19,19 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// secrets.js
-// Created by Giannis Georgalis on 3/23/2015
-//
+/**
+ * @overview Tries to load and decrypt the stored secrets and exposes them via a "get" method.
+ *
+ * It tries to decrypt and read stored secrets from a file named secretsdb.ejson.
+ * It searches this particular file in a sub-directory named wblwrld3 which in turn
+ * is located under the first valid directory contained into the "homeDir" variable.
+ *
+ * A secretsdb.ejson file can be created from a plain-text secretsdb.json file using
+ * the script "scripts/secretsdbgen.js".
+ * 
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var path = require('path');
 var crypt = require('./lib/crypt');
 var fs = require('fs');

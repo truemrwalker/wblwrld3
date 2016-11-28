@@ -19,10 +19,15 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// post.js
-// Created by Giannis Georgalis on 12/11/13
-//
+/**
+ * @overview Defines the mongoose schema of the Post component.
+ *
+ * Posts are used for Webble ratings and the FAQ subsystem of Webble World (Help->FAQ).
+ * See also: http://mongoosejs.com/docs/guide.html
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 module.exports = function(app, config, mongoose, gettext) {

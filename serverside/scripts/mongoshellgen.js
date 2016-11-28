@@ -19,10 +19,18 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// mongoshellgen.js
-// Created by Giannis Georgalis on 12/19/13
-//
+/**
+ * @overview Generates the "mongoshell.js" file, which is included in this directory
+ * and which is used for bootstrapping the Webble World server's mongodb database
+ * and its principal user. The mongoshell.js file has to be generated because it
+ * needs to be self-contained (not contain any external dependencies) since it is evaluated
+ * by the mongo shell program. Therefore, the present script, which can use the
+ * local libraries and read the configuration values and secrets, uses those to
+ * generate the self-contained "mongoshell.js" file with the correct values/parameters.
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var config = require('../config');
 var path = require('path');
 var fs = require('fs');

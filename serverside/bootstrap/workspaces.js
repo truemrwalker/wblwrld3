@@ -19,10 +19,16 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// workspaces.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview This file was used to create programmatically a workspace for testing purposes.
+ *
+ * At this point of Webble World development, however, we don't need it anymore. Nonetheless,
+ * the file is left here in case we do need, in the future, to actually bootstrap a new
+ * deployment of Webble World with some standard workspaces.
+ * 
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 module.exports = function(app, config, mongoose, gettext) {

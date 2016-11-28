@@ -19,10 +19,18 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// web-server.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview The entry point (main module) of the Webble World server.
+ *
+ * Its job is to:
+ * (a) initialize all the necessary components (e.g., database and express middleware)
+ * (b) depending on the deployment value (config.DEPLOYMENT) execute scripts contained
+ *     into the directories "bootstrap" or "maintenance"
+ * (c) depending on the deployment value (config.DEPLOYMENT) exit or start listening
+ *     for connections over http/https
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
 
 ////////////////////////////////////////////////////////////////////////
 // Startup utility functions

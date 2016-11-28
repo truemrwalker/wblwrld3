@@ -19,10 +19,20 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// templates.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Autonomous maintenance script that synchronizes all the Webble Templates under the
+ * config.APP_ROOT_DIR/webbles/ sub-directory and all its sub-directories recursively.
+ *
+ * The script creates, modifies and deletes Webble Template objects in the database depending on
+ * their status on disk. This is important to so that the Webble World development team can develop
+ * Webbles offline and commit them to the same repository as the main Webble World application.
+ * Note that Webble Templates are normal Webbles with "webble.defid == webble.templateid" that have
+ * no child/parent Webbles and are fully defined by separate Javascript, HTML and resource files.
+ * See the Webble World manual for more information (Help->Documentation).
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var path = require('path');

@@ -19,10 +19,15 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// chat.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Defines and implements the routing of simple real-time text messages exchanged between users.
+ *
+ * Currently these text messages are broadcasted to all users that are connected to Webble World
+ * via the chat component (Help->Open Chat).
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 ////////////////////////////////////////////////////////////////////////

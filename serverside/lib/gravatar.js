@@ -19,13 +19,22 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// gravatar.js
-// Created by Giannis Georgalis on 2/5/14
-//
+/**
+ * @overview Gravatar utility functions.
+ * @module lib/gravatar
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var crypto = require('crypto');
 var querystring = require('querystring');
 
+/**
+ * Returns a gravatar-hosted image URL for the given user's email address.
+ * @param {string} email - The user's email address.
+ * @param {string} options - gravatar-specific options (see gravatar documentation).
+ * @param {boolean} https - Whether to generate an https link (instead of an http one).
+ * @returns {string} A URL that points to the image that is associated with the specific user's email.
+ */
 module.exports.url = function (email, options, https) {
 
 	var baseURL = (https && "https://secure.gravatar.com/avatar/") || 'http://www.gravatar.com/avatar/';

@@ -19,10 +19,14 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// user.js
-// Created by Giannis Georgalis on 10/29/13
-//
+/**
+ * @overview Defines the mongoose schema of the User component.
+ *
+ * See also: http://mongoosejs.com/docs/guide.html
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 var crypto = require('crypto');
 

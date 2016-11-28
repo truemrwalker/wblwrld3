@@ -19,19 +19,101 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// config.js
-// Created by Giannis Georgalis on 10/30/13
-//
+/**
+ * @overview Contains and exposes all the configurable values and secrets.
+ *
+ * This file uses only secrets.js (that's its only in-project dependency) to read
+ * and expose all the available secrets and the other configuration options needed
+ * for the initialization and operation of the server. Therefore, all secrets utilized
+ * by other components are read via the config module and not via the secrets module directly.
+ * config options can be overriden by either environment variables or command-line arguments that
+ * are defined when the server entrypoint is invoked - e.g.:
+ *    node serverside/web-server.js --deployment maintenance --sync-online-webbles 1
+ *
+ * Command-line arguments can override environment variables and preset config.js values
+ * and environment variables can only override the preset config.js values.
+ *
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var path = require('path');
 var fs = require('fs');
 var sec = require('./secrets');
 
 module.exports = (function() {
 
-	////////////////////////////////////////////////////////////////////
-	// Preset, default configuration values
-	//
+    /**
+     * @namespace
+     * @property {string} PROJECT_ROOT_DIR - The root dir of the repository.
+     * @property {string} PROJECT_MANAGEMENT_DIR - The parent directory of the repository
+     *     that may contain management scripts (e.g., restart server, update repository, etc.).
+
+     * @property {string} SERVER_NAME - The name of the server (domain) that hosts the server.
+     * @property {string} SERVER_PORT - The unsecure port (HTTP) under which the server runs.
+     * @property {boolean} SERVER_BEHIND_REVERSE_PROXY - If there's a reverse proxy running in
+     *     front of the server instance (e.g. Nginx) this should be true.
+
+     * @property {string} SERVER_CA - If the server has an additional https endpoint, this points
+     *     to the file (relative to the SERVER_ROOT_DIR) that contains the CA's public key.
+     * @property {string} SERVER_KEY - If the server has an additional https endpoint, this points
+     *     to the file (relative to the SERVER_ROOT_DIR) that contains the domain's private key.
+     * @property {string} SERVER_CERT - If the server has an additional https endpoint, this points
+     *     to the file (relative to the SERVER_ROOT_DIR) that contains the domain's public key.
+     * @property {string} SERVER_PASSPHRASE - If applicable, this contains the server's private key's
+     *     passphrase.
+     * @property {string} SERVER_ROOT_DIR - The root directory of the server (i.e., "serverside").
+
+     * @property {string} MAIL_SERVICE - The mail service to use for sending emails via nodemailer.
+     * @property {string} MAIL_KEY - The mail service's secret API key that, if the mail service
+     *     is "mailgun" can be obtained from: https://documentation.mailgun.com/quickstart.html
+     * @property {string} MAIL_DOMAIN - The domain under which the email service and key account is
+     *     associated with (note that the key and domain are read as secrets).
+
+     * @property {string} APP_NAME - The name of the application.
+     * @property {string} APP_EMAIL_ADDRESS - The application's default email address.
+     * @property {string} APP_CRYPT_PASSWORD - A password that encrypts reset URLs sent to users that
+     *     have forgotten their password.
+     * @property {string} APP_ROOT_DIR - The root directory of the application (i.e., "app").
+
+     * @property {string} REDIS_HOST - The host (resolvable hostname or IP) on which redis server runs.
+     * @property {string} REDIS_PORT - The port under which the redis server is exposed.
+     * @property {string} REDIS_PASS - The redis server's password (if any).
+
+     * @property {string} MONGODB_HOST - The host (resolvable hostname or IP) on which mongodb server runs.
+     * @property {string} MONGODB_PORT - The port under which the mongodb server is exposed.
+     * @property {string} MONGODB_DB_NAME - The name of the database that the application uses.
+     * @property {string} MONGODB_DB_USERNAME - The username of the database's principal user.
+     * @property {string} MONGODB_DB_PASSWORD - The password of the database's principal user.
+
+     * @property {string} SESSION_KEY - The name of the cookie that tracks the session.
+     * @property {string} SESSION_SECRET - The secret used to encrypt the cookies that track the session.
+
+     * @property {string} TWITTER_CONSUMER_KEY - The application's twitter consumer key.
+     * @property {string} TWITTER_CONSUMER_SECRET - The application's twitter consumer secret, where both
+     *     the consumer key and secret can be obtained from here: https://dev.twitter.com/apps
+     * @property {string} GOOGLE_CLIENT_ID - The application's google client id.
+     * @property {string} GOOGLE_CLIENT_SECRET - The application's google client secret, where both the
+     *     client id and secret are generated for the application's domain and instructions are
+     *     available here: https://developers.google.com/identity/sign-in/web/devconsole-project
+     * @property {string} FACEBOOK_APP_ID - The application's facebook app id.
+     * @property {string} FACEBOOK_APP_SECRET - The application's facebook app secrete, where both the
+     *     app id and secret can be obtained from here: https://developers.facebook.com/apps
+
+     * @property {enum} DEPLOYMENT - Is one of 'development', 'production', 'testing', 'maintenance',
+     *    'bootstrap', where 'development' runs all the maintenance scripts and starts the server,
+     *    'production' just starts the server, 'testing' starts the server but may also enable additional
+     *    checks and debugging code, 'maintenance' runs all the maintenance scripts and exits,
+     *    'bootstrap' runs all the bootstrap scripts and exits.
+     * @property {boolean} SYNC_ONLINE_WEBBLES - ONLY when maintenance scripts are run, this value decides
+     *     whether all the published webbles on https://wws.meme.hokudai.ac.jp will be fetched and
+     *     merged into the local database.
+
+     * @property {string} MONGODB_URL - This is an automatically generated URL that points to the mongodb server.
+     * @property {string} SERVER_URL - This is an automatically generated URL that points to the local server instance.
+     * @property {string} SERVER_URL_PUBLIC - This is an automatically generated URL that points to the public server
+     *     instance which may be different, especially when the server is behind a reverse proxy (e.g., the private URL
+     *     may be: http://devmachine1.meme.hokudai.ac.jp:7000 and the public one https://wws.meme.hokudai.ac.jp).
+     */
 	var config = {
 
 		PROJECT_ROOT_DIR: path.join(__dirname, '..'),
@@ -55,21 +137,14 @@ module.exports = (function() {
 
 		// App settings
 		APP_NAME: 'wblwrld3',
-		APP_EMAIL_ADDRESS: 'wblwrld3 Bot <hello@webbleworld.com>',
+		APP_EMAIL_ADDRESS: 'Webble World Developer <thetruemrwalker@gmail.com>',
 		APP_CRYPT_PASSWORD: sec.get('app_password'),
 		APP_ROOT_DIR: path.join(__dirname, '../app'),
 
 		// DB and session settings
-        REDIS_PATH: null,
         REDIS_HOST: '127.0.0.1',
         REDIS_PORT: 6379,
         REDIS_PASS: sec.get('redis_password'),
-
-        DISQUE_PATH: null,
-        DISQUE_HOST: '127.0.0.1',
-        DISQUE_PORT: 7711,
-        DISQUE_PASS: sec.get('disque_password'),
-        DISQUE_MAIN_JOBQ: 'all.jobs',
 
 		MONGODB_DB_NAME: "wblwrld3",
 		MONGODB_DB_USERNAME: sec.get('mongo_db_username'),
@@ -91,13 +166,6 @@ module.exports = (function() {
 		FACEBOOK_APP_ID: sec.get('facebook_app_id'),
 		FACEBOOK_APP_SECRET: sec.get('facebook_app_secret'),
 		
-		EVERNOTE_ENABLE_PRODUCTION: false,
-		EVERNOTE_CONSUMER_KEY: sec.get('evernote_consumer_key'),
-		EVERNOTE_CONSUMER_SECRET: sec.get('evernote_consumer_secret'),
-
-		GITHUB_CLIENT_ID: sec.get('github_client_id'),
-		GITHUB_CLIENT_SECRET: sec.get('github_client_secret'),
-
 		// URLs are automatically generated by other values - the following are available:
 		//     MONGODB_URL, SERVER_URL, SERVER_URL_PUBLIC
 

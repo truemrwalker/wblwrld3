@@ -56,8 +56,9 @@ In general, the installation process consists of the following steps:
 3. Installation of the dependent software libraries
 4. Creation of the database and its principal user
 5. Initialization of the database with preexisting objects and values
+6. Setup the third-party service API keys (optional)
 
-### Cloning the Webble World Github repository
+### 1. Cloning the Webble World Github repository
 
 Webble World platform's source code is hosted on Github under the following URL:
 https://github.com/truemrwalker/wblwrld3
@@ -69,7 +70,7 @@ repository can be cloned in the local platform with the following command:
 git clone https://github.com/truemrwalker/wblwrld3.git
 ```
 
-### Installation of the dependent servers/tools
+### 2. Installation of the dependent servers/tools
 
 This depends on the target platform. Each tool's website contains packages and/or
 information for installing the tool on many different platforms and operating systems.
@@ -81,7 +82,7 @@ More information can be found on each tool's website:
 * [mongoDB](https://www.mongodb.com/)
 * [redis](http://redis.io/)
 
-### Installation of the dependent software libraries
+### 3. Installation of the dependent software libraries
 
 The Webble World server uses the [npm](https://www.npmjs.com/) tool for managing the
 software libraries on which it relies upon to deliver its functionality.
@@ -95,7 +96,7 @@ Usually, the ```npm``` command is bundled together with [node.js](https://nodejs
 If that's not the case for the default distribution of a specific platform, then
 the ```npm``` command should be installed separately.
 
-### Creation of the database and its principal user
+### 4. Creation of the database and its principal user
 
 Webble World server saves all its objects, user-generated objects and user-generated files
 in a [mongoDB](https://www.mongodb.com/) database called by default ```wblwrld3``` which
@@ -120,12 +121,119 @@ generate a new ```scripts/mongoshell.js``` file with the most up-to-date values:
 
 ```node scripts/mongoshellgen.js```
 
-### Initialization of the database with preexisting objects and values
+### 5. Initialization of the database with preexisting objects and values
 
 After the creation of Webble World server's database (```wblwrld3``` by default), the
 command ```node serverside/web-server.js --deployment maintenace``` initializes the
 database and populates it with a set of predefined objects that are either part
 of the server's functionality or were developed by the core team of the Webble World platform.
+
+### 6. Setup the third-party service API keys (optional)
+
+The Webble World server uses some third party web services to:
+
+* Send emails to users that have forgotten and want to reset their password via the following service:
+  * Mailgun
+
+* Allow users to register and login to Webble World using any of the following personal accounts:
+  * Twitter
+  * google
+  * Facebook
+
+In general, to utilize those third-party services, their corresponding API keys have to be obtained
+and setup in Webble World. For production deployments, it is recommended to export all those API
+keys and ids as environment variables (see also the sub-section [config.js]).
+
+For "development" deployments on Windows and Unix the recommended way to store secrets is to use the 
+```secretsdb.ejson``` file (notice the ```e``` in the ```.ejson``` extension).
+
+To create the ```secretsdb.ejson``` file, the following directory has to be created first:
+
+* Windows: ```C:\Users\YOURUSERNAME\AppData\Local\wblwrld3```
+* Unix: ```~/wblwrld3```
+
+Subsequently, the file ```secretsdb.json```, located in this sub-directory has to be copied (as a template)
+to the newly created ```wblwrld3``` sub-directory and edited to contain the correct API keys and secrets.
+
+Finally, the ```secretsdb.ejson``` file can be created from the ```secretsdb.json``` file by
+running the ```scripts/secretsdbgen.js``` script (```node scripts/secretsdbgen.js```).
+
+The following two sub-sections describe how to obtain and setup the required API keys in order to
+utilize the aforementioned third-party services in the Webble World platform.
+
+#### Setup Mailgun as the email provider
+
+The mail service's secret API key can be obtained from:
+https://documentation.mailgun.com/quickstart.html
+
+The relevant entries in the ```secretsdb.json``` file are the following:
+
+```
+	"mailgun_key": "<e.g., key-8faf723fd98faf78faf723fd98faf7>",
+	"mailgun_domain": "<e.g., sandbox2fbcc5033334559665988e399e74.mailgun.org>",
+```
+
+The relevant environment variables that can be used in "production" deployments are:
+ ```MAIL_KEY``` and ```MAIL_DOMAIN```.
+
+#### Login Providers
+
+Webble World supports the following login providers:
+
+1. Twitter
+2. Google
+3. Facebook
+
+For each of these third-party services to work, the appropriate API keys, secrets and/or ids have to be
+obtained from the appropriate third-party service website. For most of those keys, Webble World's
+endpoint (URL) has to be specified when creating the relevant keys. In this case, of course, two separate
+keys have to be created if Webble World needs to run on both development machines (```localhost```) or
+online servers (e.g., ```wws.meme.hokudai.ac.jp```). For example, the following endpoints would be
+valid endpoints for deploying Webble World on localhost or online respectively: 
+
+* ```https://localhost:7443```
+* ```https://wws.meme.hokudai.ac.jp```
+
+When created, the third party ids and secrets can be stored to either the ```secretsdb.json``` file or,
+alternatively, they can be exported via environment variables (recommended for "production" deployments).
+
+Specifically:
+
+The application's twitter consumer key and consumer secret can be obtained from: 
+https://dev.twitter.com/apps
+
+The relevant entries in the ```secretsdb.json``` file are the following:
+```
+	"twitter_consumer_key": "<e.g., 3r6wDMcRN3r6wDMcRN3r6wDMcRN>",
+	"twitter_consumer_secret": "<e.g., LRlQYHjP38LRlQYHjP38LRlQYHjP38LRlQYHjP38>",
+```
+
+The relevant environment variables that can be used in "production" deployments are:
+```TWITTER_CONSUMER_KEY``` and ```TWITTER_CONSUMER_SECRET```.
+
+
+Instructions on how to create an ID and secret for applications using Google's login service can be found here:
+https://developers.google.com/identity/sign-in/web/devconsole-project
+
+In this case, the relevant entries in the ```secretsdb.json``` file are the following:
+```
+	"google_client_id": "<e.g., 4493644936.apps.googleusercontent.com>",
+	"google_client_secret": "<e.g., KuTWc55KuTWc55KuTWc55KuTWc55KuTWc55>",
+```
+
+The relevant environment variables that can be used in "production" deployments are:
+```GOOGLE_CLIENT_ID``` and ```GOOGLE_CLIENT_SECRET```.
+
+Finally, ids and secrets for Facebook login can be obtained from: https://developers.facebook.com/apps
+
+The relevant entries in the ```secretsdb.json``` file are the following:
+```
+	"facebook_app_id": "<e.g., 23422342234223422342>",
+	"facebook_app_secret": "<e.g., f5efce81f5efce81f5efce81f5efce81f5efce81>"
+```
+
+The relevant environment variables that can be used in "production" deployments are:
+```FACEBOOK_APP_ID``` and ```FACEBOOK_APP_SECRET```.
 
 ## Updates and maintenance
 
