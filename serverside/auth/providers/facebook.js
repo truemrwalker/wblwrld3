@@ -33,14 +33,21 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-	function mergeFacebookProfile(user, token, refresh, profile) {
+    function mergeFacebookProfile(user, token, refresh, profile) {
 
-		user.name.first = user.name.first || profile.name.givenName;
-		user.name.last = user.name.last || profile.name.familyName;
+        if (!user.name.first || !user.name.last) {
+
+            if (!profile.name.givenName || !profile.name.familyName)
+                user.name.full = profile.displayName;
+            else {
+                user.name.first = profile.name.givenName;
+                user.name.last = profile.name.familyName;
+            }
+        }
 
 		user.gender = profile.gender;
 
-		var currEmail = profile.username + '@facebook.com';
+        var currEmail = (profile.username || user.name.first + '.' + user.name.last) + '@facebook.com';
 		if (!user.email || user.email[0] == '@')
 			user.email = currEmail;
 		if (currEmail != user.email && user.email_alts.indexOf(currEmail) == -1)

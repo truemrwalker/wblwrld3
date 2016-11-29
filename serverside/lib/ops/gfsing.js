@@ -316,7 +316,7 @@ module.exports = function (app, config, mongoose, gettext, auth) {
 	return {
 		
         /**
-         * Returns the conent of the file associated with the given object.
+         * Returns the content of the file associated with the given object.
          * @param {Request} req - The instance of an express.js request object that contains
          *     the attribute req.params.file or req.params[0] that contains the file's path.
          * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
