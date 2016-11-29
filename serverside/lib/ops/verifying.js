@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// verifying.js
-// Created by Giannis Georgalis on 2/6/14
-//
+/**
+ * @overview Ops module for verifying whether an object is trusted or not.
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -67,10 +69,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
-		//**************************************************************
-		// Query may be a plain document
-		//
-		verify: function(req, query) {
+        /**
+         * Determines whether the given object or the given query that evaluates to an object is trusted or not.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object|Object[]} query - A mongoose query that evaluates to an object (or an array of objects)
+         *     OR an object (or an array of objects) that are tested for "trust".
+         * @returns {Promise} A promise that is resolved with an array of boolean values that indicate whether the
+         *     object at position i is trustworthy or not.
+         */
+        verify: function (req, query) {
 
 			return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (objs) {
                 ensureObjectValid(req, objs);
@@ -114,12 +121,20 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Determines whether the given external object or the given query that evaluates to an external
+         * object is trusted or not, where an external object is an object that is hosted in another
+         * Webble World deployment than the current one.
+         * @todo This function is not yet implemented as Webble World currently lacks the ability to verify
+         *     external objects.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object|Object[]} query - A mongoose query that evaluates to an object (or an array of objects)
+         *     OR an object (or an array of objects) that are tested for "trust".
+         * @returns {Promise} A promise that is resolved with an array of boolean values that indicate whether the
+         *     object at position i is trustworthy or not.
+         */
 		verifyExternal: function (req, query) {
 
 		}
-
-		//**************************************************************
 	};
 };

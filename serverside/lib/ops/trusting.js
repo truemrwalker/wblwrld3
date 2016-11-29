@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// trusting.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Ops module for generating trust-links between objects.
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -61,6 +63,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Establishes or removes a trust link from an object to a specific group.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.body.group with the group-id of the target group and, optionally,
+         *     the attribute req.body.remove that indicates whether we want to establish or remove
+         *     the specified trust link (false or true, respectively).
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		modifyTrusts: function (req, query) {
 
 			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
@@ -85,8 +96,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Returns a list of all the groups that the given object trusts.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @returns {Promise} A promise that is resolved with an array of group-id values that indicate the
+         *     groups trusted by the current object.
+         */
 		getTrusts: function (req, query) {
 
 			return populateTrusts(query).then(function(obj) {
@@ -100,8 +116,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			});
 		},
 
-		//**************************************************************
-
+        /**
+         * Removes all the trust links that the given object had established in the past.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		clearTrusts: function (req, query) {
 
 			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {

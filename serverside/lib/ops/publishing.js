@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// publishing.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Ops module for publishing objects under specific groups.
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -108,6 +110,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Publishes an object under a specific group.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the optional attribute req.body.groups with an array of group-ids under which
+         *     the given object is published.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @param {Function} createNewObjFunc - A function (closure) that creates and returns an
+         *     object and which is invoked when the given object does not exist.
+         * @param {Function} checkAndupdateObjFunc - A function (closure) that modifies and returns
+         *     an object before the latter is published under the given groups.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
         publish: function (req, query, createNewObjFunc, checkAndupdateObjFunc) {
 
             return ('exec' in query ? query.exec() : Promise.resolve(query)).then(function (obj) {
@@ -158,8 +172,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
         },
 
-		//**************************************************************
-
+        /**
+         * Unpublishes the given object (i.e., it removes it completely from the database).
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		unpublish: function (req, query) {
 
             return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
@@ -168,8 +186,5 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 return obj.remove();
             });
 		}
-
-		//**************************************************************
-
 	};
 };

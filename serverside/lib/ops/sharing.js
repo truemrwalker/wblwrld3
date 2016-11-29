@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// sharing.js
-// Created by Giannis Georgalis on 2/6/14
-//
+/**
+ * @overview Ops module for sharing objects among users.
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -97,12 +99,26 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Updates the list of users that are allowed to modify the given object (share the object).
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.body.users with an array of usernames or emails of users and
+         *     the attribute req.query.delete that if present removes and if absent adds the
+         *     given users to the list of collaborators of the given object.
+         * @param {Query} query - A mongoose query that evaluates to an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		updateContributors: function (req, query) {
 			return addOrRemoveContributors(req, query, req.query.delete !== undefined);
 		},
 
-		//**************************************************************
-
+        /**
+         * Returns a list of all the users that are allowed to modify (share) the given object.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query} query - A mongoose query that evaluates to an object.
+         * @returns {Promise} A promise that is resolved with an array of user objects that represent
+         *     the users that are allowed to modify the current object.
+         */
 		getContributors: function (req, query) {
 
 			return query.populate('_contributors', 'name email username').exec().then(function (obj) {
@@ -112,8 +128,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Removes all the users that the given object is shared with (i.e., the users allowed to modify it).
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query} query - A mongoose query that evaluates to an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		clearContributors: function (req, query) {
 
 			return Promise.resolve(query.exec()).then(function (obj) {
@@ -124,8 +144,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Removes the current user from the list of users the given object is shared with.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query} query - A mongoose query that evaluates to an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		 removeCurrentUser: function(req, query) {
 
 			 return Promise.resolve(query.exec()).then(function (obj) {
@@ -143,8 +167,5 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 return obj.save();
             });
 		 }
-
-		//**************************************************************
-
 	};
 };

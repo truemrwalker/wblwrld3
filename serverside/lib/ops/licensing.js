@@ -19,10 +19,18 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// licensing.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Ops module for storing license keys (secrets in general) into objects.
+ *
+ * In addition to the objects themselves, keys can also be associated with (attached to)
+ * specific groups to which the object belongs (is published under), in which case,
+ * the "getKey" method for an object will be able to also retrieve the keys that belong
+ * to the groups that that specific object is published under.
+ * 
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -99,6 +107,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Adds, modifies or deletes a license key (secret) from the given object.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.body.realm with a string that represents the context of the secret,
+         *     the attribute req.body.resource with a string that represents a specific resource within
+         *         the given context (e.g. realm could be "google.com" and the resource, "maps"),
+         *     the attribute req.body.access_key with a string that represents the actual secret, and,
+         *     the attribute req.body.remove that indicates whether we want to add/modify or remove
+         *     the specified secret (false or true, respectively).
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		modifyKey: function (req, query) {
 
             return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
@@ -128,8 +148,17 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Finds and returns the key that is associated with the given object and which has
+         * the given "realm" and "resource" values.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.query.realm with a string that represents the context of the secret,
+         *     the attribute req.query.resource with a string that represents a specific resource within
+         *         the given context (e.g. realm could be "google.com" and the resource, "maps"),
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @returns {Promise} A promise that is resolved with the key-object that matches the given
+         *     "realm" and "resource".
+         */
 		getKey: function (req, query) {
 
             return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
@@ -142,8 +171,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Returns a list of all the keys that are associated with the given object.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @returns {Promise} A promise that is resolved with an array of all the key-objects that
+         *     are associated with (attached to) the given object.
+         */
 		listKeys: function (req, query) {
 
             return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {

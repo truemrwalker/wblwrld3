@@ -101,7 +101,6 @@
     <Folder Include="keys" />
     <Folder Include="lib" />
     <Folder Include="lib\ops" />
-    <Folder Include="logs" />
     <Folder Include="maintenance" />
     <Folder Include="models" />
     <Folder Include="control\" />

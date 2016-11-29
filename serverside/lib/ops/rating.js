@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// rating.js
-// Created by Giannis Georgalis on 2/7/14
-//
+/**
+ * @overview Ops module for rating and attaching comments (posts) to objects.
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -53,6 +55,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Adds a rating and an optional comment (post) to the given object.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.body.rating with a number between 1 and 10 and
+         *     the attribute req.body.post that adhers to the schema of the Post model (see models/post.js).
+         * @param {Query} query - A mongoose query that evaluates to an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		updateRatings: function (req, query) {
 
 			return Promise.resolve(query.exec()).then(function (obj) {
@@ -92,8 +102,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Returns a list of all the ratings and comments (posts) that are attached to the given object.
+         * @param {Request} req - The instance of an express.js request object that may contain a
+         *     req.query.q string value that filters (restricts) the result list by matching the
+         *     given query against the title, keywords, body and author of the attached posts.
+         * @param {Query} query - A mongoose query that evaluates to an object.
+         * @returns {Promise} A promise that is resolved with an array of post objects that represent
+         *     comments and ratings attached to the given object.
+         */
 		getRatings: function (req, query) {
 
 			return Promise.resolve(query.exec()).then(function (obj) {
@@ -121,8 +138,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Removes all the ratings (posts) that are attached to the given object.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query} query - A mongoose query that evaluates to an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		clearRatings: function (req, query) {
 
 			return Promise.resolve(query.exec()).then(function (obj) {

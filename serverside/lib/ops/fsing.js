@@ -19,10 +19,17 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// fsing.js
-// Created by Giannis Georgalis on 2/6/14
-//
+/**
+ * @overview Ops module for managing and associating files with objects.
+ *
+ * The files created and managed by this module appear on the system's filesystem
+ * 
+ * @deprecated This is a deprecated module, use gfsing.js instead which creates and manages
+ * the files in the mongodb database via its filesystem layer called grid-fs.
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var path = require('path');
@@ -218,18 +225,58 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Returns the conent of the file associated with the given object.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.params.file or req.params[0] that contains the file's path.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @param {string} targetPathPrefix - The file path's namespace (top-level directory).
+         * @returns {Promise} A promise that is resolved with a file-object that is associated
+         *     with the given object and is saved under the given path.
+         */
 		getFile: function (req, query, targetPathPrefix) {
 			return performOperationOnFile(req, query, targetPathPrefix, opGet);
-		},
+        },
+
+        /**
+         * Updates the content of the file associated with the given object.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.params.file or req.params[0] that contains the file's path
+         *     the attribute req.body.content that contains the file's content as a utf8 encoded string.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @param {string} targetPathPrefix - The file path's namespace (top-level directory).
+         * @returns {Promise} A promise that is resolved with a file-object that is associated
+         *     with the given object and is saved under the given path.
+         */
 		updateFile: function (req, query, targetPathPrefix) {
 			return performOperationOnFile(req, query, targetPathPrefix, opUpdate);
 		},
-		deleteFile: function (req, query, targetPathPrefix) {
+
+        /**
+         * Deletes the file associated with the given object.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.params.file or req.params[0] that contains the file's path.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @param {string} targetPathPrefix - The file path's namespace (top-level directory).
+         * @returns {Promise} A promise that is resolved with a file-object that only contains
+         *     the name of the deleted file without its "content".
+         */
+        deleteFile: function (req, query, targetPathPrefix) {
 			return performOperationOnFile(req, query, targetPathPrefix, opDelete);
 		},
 
-		//**************************************************************
-
+        /**
+         * Associates all the given files (contained in the request "req") with the given object.
+         * @param {Request} req - The instance of an express.js request object which must contain
+         *     the attribute req.files that contains an array of objects that represent the local
+         *     files to which the sent (given) files have been temporarily saved.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @param {string} targetPathPrefix - The file path's namespace (top-level directory).
+         * @param {Function} versionUpdater - A closure that accepts the target object and returns
+         *     (synchronously) the target version of that object to which the given files should be
+         *     associated with.
+   	     * @returns {Promise} A promise that is resolved with the updated object.
+         */
 		associateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
 			return ('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query)).then(function (obj) {
@@ -282,8 +329,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Returns a list of all the files that are associated with the given object.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @returns {Promise} A promise that is resolved with an array of strings that represent the
+         *     file paths that are associated with the given object.
+         */
 		associatedFiles: function (req, query, targetPathPrefix) {
 
 			return('exec' in query ? Promise.resolve(query.exec()) : Promise.resolve(query))
@@ -297,8 +349,16 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 				});
 		},
 
-		//**************************************************************
-
+        /**
+         * Disassociates all the files that are associated with the current version of the given object.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object OR an object.
+         * @param {string} targetPathPrefix - The file path's namespace (top-level directory).
+         * @param {Function} versionUpdater - A closure that accepts the target object and returns
+         *     (synchronously) the target version of that object to which it should revert to after
+         *     the files are disassociated from it (if the target version is 0 the object is removed).
+   	     * @returns {Promise} A promise that is resolved with the updated object.
+         */
 		disassociateFiles: function (req, query, targetPathPrefix, versionUpdater) {
 
 			return Promise.resolve(query.exec()).then(function (obj) {
@@ -342,8 +402,16 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Reassociates (moves) all the files that are associated with the given object "fromQuery" to the
+         * other given object "toQuery".
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} fromQuery - A mongoose query that evaluates to an object OR an object.
+         * @param {Query|Object} toQuery - A mongoose query that evaluates to an object OR an object.
+         * @param {string} fromTargetPathPrefix - The source namespace (top-level directory).
+         * @param {string} toTargetPathPrefix - The target namespace (top-level directory).
+   	     * @returns {Promise} A promise that is resolved with the target object.
+         */
 		reassociateFiles: function (req, fromQuery, toQuery, fromTargetPathPrefix, toTargetPathPrefix) {
 
 			return Promise.resolve([dbutil.execOrValue(fromQuery), dbutil.execOrValue(toQuery)]).spread(function (fromObj, toObj) {
@@ -374,8 +442,16 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             });
 		},
 
-		//**************************************************************
-
+        /**
+         * Copies all the files that are associated with the given object "fromQuery" and associates
+         * those copied files with the other given object "toQuery".
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} fromQuery - A mongoose query that evaluates to an object OR an object.
+         * @param {Query|Object} toQuery - A mongoose query that evaluates to an object OR an object.
+         * @param {string} fromPathPrefix - The source namespace (top-level directory).
+         * @param {string} toPathPrefix - The target namespace (top-level directory).
+   	     * @returns {Promise} A promise that is resolved with the target object.
+         */
 		copyFiles: function (req, fromQuery, toQuery, fromPathPrefix, toPathPrefix) {
 
 			return Promise.resolve([dbutil.execOrValue(fromQuery), dbutil.execOrValue(toQuery)]).spread(function (fromObj, toObj) {

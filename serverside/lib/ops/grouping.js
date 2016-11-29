@@ -19,10 +19,18 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// grouping.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview Ops module for managing the members of of Webble World groups.
+ *
+ * Members of a group can be any kind of object (e.g., users, webbles etc.) - even
+ * other groups (in which case a group that belongs to another one is its subgroup);
+ * this module, however, is mostly used for adding "users" as members of "groups",
+ * hence the addition of a notification "message" in the object's "task" list.
+ *
+ * @module ops
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../util');
@@ -53,6 +61,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	//
 	return {
 
+        /**
+         * Adds or removes the given object to or from the given group.
+         * @param {Request} req - The instance of an express.js request object that contains
+         *     the attribute req.body.remove that indicates whether we want to add or remove
+         *     the given object to/from the given group (false or true, respectively).
+         * @param {Query|Object} groupQuery - A mongoose query that evaluates to a group-object OR a group-object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an object.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		modifyGroupMember: function (req, groupQuery, query) {
 
 			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {
@@ -83,8 +100,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			});
 		},
 
-		//**************************************************************
-
+        /**
+         * Gets the list of the objects that belong to (are members of) the given group.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} groupQuery - A mongoose query that evaluates to a group-object OR a group-object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an array that contains all objects.
+   	     * @returns {Promise} A promise that is resolved with an array of objects that are members of
+         *     the given group.
+         */
 		getGroupMembers: function (req, groupQuery, query) {
 
 			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {
@@ -98,8 +121,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			});
 		},
 
-		//**************************************************************
-
+        /**
+         * Removes all the objects that belong to (are members of) the given group.
+         * @param {Request} req - The instance of an express.js request object.
+         * @param {Query|Object} groupQuery - A mongoose query that evaluates to a group-object OR a group-object.
+         * @param {Query|Object} query - A mongoose query that evaluates to an array that contains all objects.
+   	     * @returns {Promise} A promise that is resolved if the method succeeds and rejected if not.
+         */
 		clearGroupMembers: function (req, groupQuery, query) {
 
 			return ('exec' in groupQuery ? Promise.resolve(groupQuery.exec()) : Promise.resolve(groupQuery)).then(function(group) {

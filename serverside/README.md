@@ -165,8 +165,22 @@ keys have to be created if Webble World needs to run on both development machine
 online servers (e.g., ```wws.meme.hokudai.ac.jp```). For example, the following endpoints would be
 valid endpoints for deploying Webble World on localhost or online respectively: 
 
-* ```https://localhost:7443```
-* ```https://wws.meme.hokudai.ac.jp```
+* ``` https://localhost:7443 ```
+* ``` https://wws.meme.hokudai.ac.jp ```
+
+Note that in case the third-party services require the explit authorization of callback-URLs, the following
+callback URLs are implemented in the Webble World server for each of the above services:
+
+* ``` https://<server>/auth/twitter/callback ```
+* ``` https://<server>/auth/google/callback ```
+* ``` https://<server>/auth/facebook/callback ```
+
+Where ```<server>``` is the endpoint on which Webble World is deployed under. For example, for 
+```localhost``` and for the reference Webble World online deployment, the callbacks for the 
+google service would be the following:
+
+* ``` https://localhost:7443/auth/google/callback ```
+* ``` https://wws.meme.hokudai.ac.jp/auth/google/callback ```
 
 When created, the third party ids and secrets can be stored to either the ```secretsdb.json``` file or,
 alternatively, they can be exported via environment variables (recommended for "production" deployments).
@@ -185,9 +199,14 @@ The relevant entries in the ```secretsdb.json``` file are the following:
 The relevant environment variables that can be used in "production" deployments are:
 ```TWITTER_CONSUMER_KEY``` and ```TWITTER_CONSUMER_SECRET```.
 
-
 Instructions on how to create an ID and secret for applications using Google's login service can be found here:
 https://developers.google.com/identity/sign-in/web/devconsole-project
+
+Additionally, the "Google+ (login) API" has to be *enabled* in Google's application console and the correct callback
+URLs have to be configured. For example:
+
+* ``` https://localhost:7443/auth/google/callback ```
+* ``` https://wws.meme.hokudai.ac.jp/auth/google/callback ```
 
 In this case, the relevant entries in the ```secretsdb.json``` file are the following:
 ```
@@ -199,6 +218,12 @@ The relevant environment variables that can be used in "production" deployments 
 ```GOOGLE_CLIENT_ID``` and ```GOOGLE_CLIENT_SECRET```.
 
 Finally, ids and secrets for Facebook login can be obtained from: https://developers.facebook.com/apps
+
+In the facebook application console the ```Facebook Login``` *Product* has to be added to the application
+along with the correct facebook callback URLs. For example:
+
+* ``` https://localhost:7443/auth/facebook/callback ```
+* ``` https://wws.meme.hokudai.ac.jp/auth/facebook/callback ```
 
 The relevant entries in the ```secretsdb.json``` file are the following:
 ```
