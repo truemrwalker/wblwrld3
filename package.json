@@ -37,7 +37,7 @@
 		"passport-facebook": "latest",
 
 		"nodemailer": "latest",
-		"nodemailer-mailgun-transport" : "latest",
+		"nodemailer-smtp-transport" : "latest",
 
 		"mkdirp": "latest",
 		"tiddlywiki" : "latest"

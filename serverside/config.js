@@ -63,11 +63,13 @@ module.exports = (function() {
      *     passphrase.
      * @property {string} SERVER_ROOT_DIR - The root directory of the server (i.e., "serverside").
 
-     * @property {string} MAIL_SERVICE - The mail service to use for sending emails via nodemailer.
-     * @property {string} MAIL_KEY - The mail service's secret API key that, if the mail service
-     *     is "mailgun" can be obtained from: https://documentation.mailgun.com/quickstart.html
-     * @property {string} MAIL_DOMAIN - The domain under which the email service and key account is
-     *     associated with (note that the key and domain are read as secrets).
+     * @property {string} MAIL_HOST - The SMTP host to use for sending emails via nodemailer; see
+     *     also the following: https://github.com/nodemailer/nodemailer-smtp-transport for more information.
+     * @property {number} MAIL_PORT - The SMTP server's port.
+     * @property {boolean} MAIL_SECURE - Whether to use a secure connection to the SMTP host or not.
+     * @property {string} MAIL_USER - The username of the account used to authenticate to the SMTP host.
+     * @property {string} MAIL_PASS - The password of the account which is used to authenticate to the
+     *     SMTP server (note that the user and pass values are read as secrets).
 
      * @property {string} APP_NAME - The name of the application.
      * @property {string} APP_EMAIL_ADDRESS - The application's default email address.
@@ -131,9 +133,11 @@ module.exports = (function() {
 		SERVER_ROOT_DIR: __dirname,
 
 		// Mail settings
-		MAIL_SERVICE: 'mailgun',
-		MAIL_KEY: sec.get('mailgun_key'),
-		MAIL_DOMAIN: sec.get('mailgun_domain'),
+        MAIL_HOST: 'crow.meme.hokudai.ac.jp',
+        MAIL_PORT: 465,
+        MAIL_SECURE: true, // use SSL
+		MAIL_USER: sec.get('mail_user'),
+		MAIL_PASS: sec.get('mail_pass'),
 
 		// App settings
 		APP_NAME: 'wblwrld3',

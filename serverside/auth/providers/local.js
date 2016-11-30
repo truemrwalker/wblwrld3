@@ -29,7 +29,7 @@ var Promise = require("bluebird");
 var LocalStrategy = require('passport-local').Strategy;
 
 var nodemailer = require('nodemailer');
-var nodemailerMailgun = require('nodemailer-mailgun-transport');
+var smtpTransport = require('nodemailer-smtp-transport');
 
 var util = require('../../lib/util');
 var crypt = require('../../lib/crypt');
@@ -280,9 +280,11 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 							var subject = req.body.subject || gettext("Reset Account Password Request");
 							var text = req.body.text || gettext("Follow the link to login and change your password:");
 
-							var smtpTransport = nodemailer.createTransport(nodemailerMailgun({
-								service: config.MAIL_SERVICE,
-								auth: { api_key: config.MAIL_KEY, domain: config.MAIL_DOMAIN }
+							var transporter = nodemailer.createTransport(smtpTransport({
+                                host: config.MAIL_HOST,
+                                port: config.MAIL_PORT,
+                                secure: config.MAIL_SECURE,
+								auth: { user: config.MAIL_USER, pass: config.MAIL_PASS }
 							}));
 
 							// Create auto-login link
@@ -290,7 +292,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 							var seed = config.APP_CRYPT_PASSWORD + userIdHash.substring(5, 15);
 							var resetUrl = config.SERVER_URL_PUBLIC + '/auth/autologin/' + userIdHash + '/' + crypt.encryptTextSync(user.email, seed);
 
-							smtpTransport.sendMail({
+							transporter.sendMail({
 								from: config.APP_EMAIL_ADDRESS,
 								to: req.body.email,
 								subject: config.APP_NAME + ': ' + subject,
@@ -306,7 +308,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 								  res.status(200).send(gettext("Reset successful - please check your emails")); // Finally OK
 
 								// Dispose the object - we don't need it anymore
-								smtpTransport.close();
+								transporter.close();
 							});
 						}
 					});

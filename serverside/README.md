@@ -54,7 +54,7 @@ In general, the installation process consists of the following steps:
 1. Cloning the Webble World Github repository
 2. Installation of the dependent servers/tools
 3. Installation of the dependent software libraries
-4. Setup the third-party service API keys (optional)
+4. Setup the third-party service API keys and other secrets (optional)
 5. Creation of the database and its principal user
 6. Initialization of the database with preexisting objects and values
 
@@ -96,14 +96,12 @@ Usually, the ```npm``` command is bundled together with [node.js](https://nodejs
 If that's not the case for the default distribution of a specific platform, then
 the ```npm``` command should be installed separately.
 
-### 4. Setup the third-party service API keys (optional)
+### 4. Setup the third-party service API keys and other secrets (optional)
 
-The Webble World server uses some third party web services to:
+The Webble World server uses third party web services to:
 
-* Send emails to users that have forgotten and want to reset their password via the following service:
-  * Mailgun
-
-* Allow users to register and login to Webble World using any of the following personal accounts:
+1. Send emails to users that have forgotten and want to reset their password via an existing SMTP server
+2. Allow users to register and login to Webble World using any of the following personal accounts:
   * Twitter
   * google
   * Facebook
@@ -135,20 +133,57 @@ i.e., ```cd scripts``` and then, ```node secretsdbgen.js```.
 The following two sub-sections describe how to obtain and setup the required API keys in order to
 utilize the aforementioned third-party services in the Webble World platform.
 
-#### Setup Mailgun as the email provider
+#### Setup an SMTP server
 
-The mail service's secret API key can be obtained from:
-https://documentation.mailgun.com/quickstart.html
+To enable the Webble World server to send email messages, two things have to be setup in its configuration:
 
-The relevant entries in the ```secretsdb.json``` file are the following:
+1. The connection method to the target SMTP server
+2. The account via which the Webble World server authenticates to the target SMTP server
 
+To setup the connection method, the following configuration values need to be configured:
 ```
-	"mailgun_key": "<e.g., key-8faf723fd98faf78faf723fd98faf7>",
-	"mailgun_domain": "<e.g., sandbox2fbcc5033334559665988e399e74.mailgun.org>",
+	MAIL_HOST: "<e.g., smtp.hokudai.ac.jp>",
+	MAIL_PORT: <e.g., 465>,
+	MAIL_SECURE: <e.g., true>,
+```
+Of course, as with all other configuration options (see [config.js]), the above values can also
+be affected by the following environment variables: ```MAIL_HOST```, ```MAIL_PORT```, ```MAIL_SECURE```.
+
+To setup the credentials via which the Webble World server will be able to authenticate to the
+previously referenced SMTP server, the SMTP server account's username and password have to be specified
+as secrets.
+
+Therefore, the relevant entries in the ```secretsdb.json``` file are the following:
+```
+	"mail_user": "<e.g., webbler>",
+	"mail_pass": "<e.g., mySuperSecretAccountPass>",
 ```
 
 The relevant environment variables that can be used in "production" deployments are:
- ```MAIL_KEY``` and ```MAIL_DOMAIN```.
+ ```MAIL_USER``` and ```MAIL_PASS```.
+
+Furthermore, as described in [Nodemailer's](https://nodemailer.com/) 
+[Setup SMTP documentation page](https://nodemailer.com/2-0-0-beta/setup-smtp/), Gmail or other popular
+email providers may be used for configuring nodemailer's SMTP transport.
+
+For example, to enable the Webble World server to send emails via a user's Gmail account, 
+the following values may be used:
+```
+	MAIL_HOST: 'smtp.gmail.com',
+	MAIL_PORT: 465,
+	MAIL_SECURE: true,
+```
+
+Following that, the relevant entries in the ```secretsdb.json``` (or the corresponding environment
+variables) have to be set as follows:
+```
+	"mail_user": "<e.g., user@gmail.com>",
+	"mail_pass": "<e.g., myGoogleAccountPass>",
+```
+
+[Nodemailer's](https://nodemailer.com/) SMTP transport documentation and its 
+[github repository](https://github.com/nodemailer/nodemailer-smtp-transport) 
+have more information about the available transport methods and options.
 
 #### Login Providers
 
@@ -233,6 +268,42 @@ The relevant entries in the ```secretsdb.json``` file are the following:
 
 The relevant environment variables that can be used in "production" deployments are:
 ```FACEBOOK_APP_ID``` and ```FACEBOOK_APP_SECRET```.
+
+#### Other Secrets
+
+In addition to the above, the Webble World server uses a few more secrets to operate correctly.
+Those other secrets can be set to any value but, of course, have to be difficult to guess.
+
+The Webble World server uses an application (app) password to encrypt password reset URLs.
+
+The relevant entry in the ```secretsdb.json``` file is the following:
+```
+    "app_password" : "<e.g., mySuperSecretAppPass>",
+```
+
+The relevant environment variable that can be used in "production" deployments is:
+```APP_CRYPT_PASSWORD```.
+
+The credentials used to authenticate to the server's database (mongoDB) are also saved as
+secrets.
+
+Therefore, the relevant entries in the ```secretsdb.json``` file are the following:
+```
+    "mongo_db_username": "<e.g, webbler>",
+    "mongo_db_password": "<e.g., mySuperSecretMongoPass>",
+```
+
+The relevant environment variables that can be used in "production" deployments are:
+```MONGODB_DB_USERNAME``` and ```MONGODB_DB_PASSWORD```.
+
+Finally, the passphrase that is used for encrypting the session cookies can also be configured
+as a secret in Webble World and its entry in the ```secretsdb.json``` file is the following:
+```
+    "session_secret" : "<e.g., mySuperSecretSessionPass>",
+```
+
+The relevant environment variable that can be used in "production" deployments is:
+```SESSION_SECRET```.
 
 ### 5. Creation of the database and its principal user
 
@@ -707,17 +778,18 @@ via ```nodemailer``` to their email address.
 
 Following that link users are able to set a new password to their account.
 
-* See also: https://github.com/nodemailer/nodemailer
+* See also: https://nodemailer.com/
+* Github: https://github.com/nodemailer/nodemailer
 
-#### ```nodemailer-mailgun-transport```
+#### ```nodemailer-smtp-transport```
 
-This nodemailer sub-library (nodemailer backend) is used to send email messages via the
-[mailgun](http://www.mailgun.com/) email delivery service.
+This nodemailer sub-library (nodemailer backend) is used to send email messages via an
+accessible [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) server.
 
 As mentioned before, currently, emails are sent to users only when they want to reset their
 password.
 
-* See also: https://github.com/orliesaurus/nodemailer-mailgun-transport
+* See also: https://github.com/nodemailer/nodemailer-smtp-transport
 
 
 ### Specialized
