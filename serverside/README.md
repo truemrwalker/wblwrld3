@@ -281,8 +281,7 @@ The relevant entry in the ```secretsdb.json``` file is the following:
     "app_password" : "<e.g., mySuperSecretAppPass>",
 ```
 
-The relevant environment variable that can be used in "production" deployments is:
-```APP_CRYPT_PASSWORD```.
+The environment variable that can be used in "production" deployments is: ```APP_CRYPT_PASSWORD```.
 
 The credentials used to authenticate to the server's database (mongoDB) are also saved as
 secrets.
