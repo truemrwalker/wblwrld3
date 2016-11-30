@@ -301,8 +301,7 @@ as a secret in Webble World and its entry in the ```secretsdb.json``` file is th
     "session_secret" : "<e.g., mySuperSecretSessionPass>",
 ```
 
-The relevant environment variable that can be used in "production" deployments is:
-```SESSION_SECRET```.
+The relevant environment variable that can be used in "production" deployments is: ```SESSION_SECRET```.
 
 ### 5. Creation of the database and its principal user
 
