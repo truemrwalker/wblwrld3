@@ -19,10 +19,19 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// auth-socket.js
-// Created by Giannis Georgalis on 1/22/14
-//
+/**
+ * @overview Implements the logic for authenticating websocket connections.
+ *
+ * Since this is not explicitly supported by expressjs, this module explicitly examines
+ * the session cookies sent with websocket connection messages and determines whether
+ * they belong to an authenticated session or not. Some realtime functionality explicitly
+ * requires authenticated sockets and some (e.g., chat) does not care whether websockets
+ * belong to authenticated sessions or not.
+ * 
+ * @module auth
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 // Summon the cookieParser for parsing signed cookiez
@@ -84,7 +93,8 @@ module.exports = function(app, config, mongoose, gettext, io) {
 	}
 
 	////////////////////////////////////////////////////////////////////
-	// Authorization handshake
+    // Authorization handshake middleware that is invoked by the websockets
+    // library uppon client connection
 	//
 	io.use(function(socket, next) {
 
@@ -109,21 +119,6 @@ module.exports = function(app, config, mongoose, gettext, io) {
 			next(new Error(gettext("Unauthorized")));
 	});
 
-	////////////////////////////////////////////////////////////////////
-    // Enhance app with extra functions for checking internal state
-    //
-    app.getAllActiveUsers = function() {
-
-    var result = [];
-    var clientIds = Object.keys(io.connected);
-    for (var i = 0; i < clientIds.length; ++i) {
-
-        var client = io.connected[clientIds[i]];
-        result.push({ sessionID: client.handshake.sessionID, user: client.handshake.user });
-    }
-    return result;
-    };
-    
 	////////////////////////////////////////////////////////////////////
 	// Reload session details when somebody logs in or out
 	//
@@ -151,17 +146,41 @@ module.exports = function(app, config, mongoose, gettext, io) {
 		});
 	});
 
+    // Disabled: Used to notify other browser windows/tabs that a specific sesssion became authenticated.
+    //
 	//app.on('auth:user', function(userEmail) {
-
+    //
 	//	forEachAuthenicatedClient(function (socket) {
-
+    //
 	//		if (socket.handshake.user === userEmail)
 	//			socket.emit('auth:user');
 	//	});
 	//});
 
-	// Define and return the auth directive (middleware)
-	//
+    ////////////////////////////////////////////////////////////////////
+
+   /**
+    * Returns a list of all the users that are connected to the current Webble World server instance.
+    * @returns {Object[]} An array of connection objects that contain the current sessionID and the
+    *     current user that has established the session (if the user is authorized).
+    */
+    app.getAllActiveUsers = function () {
+
+        var result = [];
+        var clientIds = Object.keys(io.connected);
+        for (var i = 0; i < clientIds.length; ++i) {
+
+            var client = io.connected[clientIds[i]];
+            result.push({ sessionID: client.handshake.sessionID, user: client.handshake.user });
+        }
+        return result;
+    };
+
+   /**
+    * The main result of this module is the function that determines if a websocket is authenticated or not.
+    * @param {Socket} socket - The instance of a websocket object.
+    * @returns {boolean} True if the "socket" belongs to an authenticated session and false if not.
+    */
 	return function(socket) {
 		return !!socket.handshake.user;
 	};

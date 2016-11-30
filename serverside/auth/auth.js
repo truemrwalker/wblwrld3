@@ -19,10 +19,20 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// auth.js
-// Created by Giannis Georgalis on 10/30/13
-//
+/**
+ * @overview Implements the logic for authenticating users against the platform's accounts.
+ *
+ * This file/module is the main entry point that defines the basic auth API and delegates
+ * the specific authentication logic to the specialized providers under the providers/*
+ * sub-directory. It also returns an express-compatible middleware object to use in routes
+ * in order to enable fine-grained restricted access to authenticated users per-role. Currently,
+ * the supported roles are "usr", "dev", and "adm" which represent normal authenticated users,
+ * platform developers, and platform administrators respectively.
+ * 
+ * @module auth
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var path = require('path');
@@ -154,9 +164,15 @@ module.exports = function(app, config, mongoose, gettext) {
     });
 
 	////////////////////////////////////////////////////////////////////
-	// User-specific functions
-	//
-	app.get('/auth/user', function (req, res) {
+	// Basic auth API (routes)
+
+   /**
+    * REST endpoint that returns the current authenticated user.
+    * @param {Request} req - The instance of an express.js request object.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {Object} The user object that was authenticated against the current session.
+    */
+    app.get('/auth/user', function (req, res) {
 
 		if (req.isAuthenticated())
 			res.status(200).send(req.user.getSafeProps());
@@ -164,8 +180,12 @@ module.exports = function(app, config, mongoose, gettext) {
 			res.status(404).end();
 	});
 
-	//******************************************************************
-
+   /**
+    * REST endpoint that deletes the authenticated user's account.
+    * @param {Request} req - The instance of an express.js request object.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {number} HTTP status code 200 or 204 on success, 500 on error.
+    */
 	app.delete('/auth/user', function (req, res) {
 
 		if (req.isAuthenticated()) {
@@ -214,9 +234,13 @@ module.exports = function(app, config, mongoose, gettext) {
 			res.status(204).end(); // 204 (No Content) per RFC2616
 	});
 
-	////////////////////////////////////////////////////////////////////
-	// 'Logout' logic
-	//
+   /**
+    * REST endpoint that logs out the current authenticated user and after its successful
+    * invocation, subsequent requests over the specific session will be unauthenticated.
+    * @param {Request} req - The instance of an express.js request object.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {number} HTTP status code 200 success, 500 on error.
+    */
 	app.all('/auth/logout', function(req, res){
 
 		doLogout(req)
@@ -228,8 +252,15 @@ module.exports = function(app, config, mongoose, gettext) {
 			}).done();
 	});
 
-	// Define and return the auth directive whose fields conform to connect's middleware contract
-	//
+   /**
+    * The main result of this module is the object with express.js middleware functions that
+    * enable routes to (optionally) restrict access to specific roles.
+    * @returns {Object} The supported express.js middlewares are the following:
+    *     non - that allows access of a resource (route) to all users
+    *     usr - that allows access to all authenticated users
+    *     dev - that allows access to all users that are developers (currently the default for new accounts)
+    *     adm - that allows access to all users that are administrators of the Webble World platform.
+    */
 	return {
 
 		non: function(req, res, next) { // explicit no-auth policy

@@ -19,10 +19,15 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// google.js
-// Created by Giannis Georgalis on 10/30/13
-//
+/**
+ * @overview Implements the logic for authenticating users via Google+ login.
+ *
+ * See also: https://github.com/jaredhanson/passport-google-oauth
+ * 
+ * @module auth/providers
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
@@ -79,7 +84,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 	}
 
 	////////////////////////////////////////////////////////////////////
-	// Sayonara, if not configured
+	// Skip completely the setup of the library and routes if not configured
 	//
 	if (!config.GOOGLE_CLIENT_ID || !config.GOOGLE_CLIENT_SECRET)
 		return console.log("Auth: Google+ login is not configured and so it will be disabled");
@@ -110,15 +115,21 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		}
 	));
 
-	////////////////////////////////////////////////////////////////////
-	// Redirect the user to Google for authentication.  When complete, Google
-	// will redirect the user back to the application at "callbackURL"
-	//
+   	////////////////////////////////////////////////////////////////////
+	// Auth API (routes)
+
+   /**
+    * REST endpoint that redirects clients to google's authentication page and when
+    * complete, google will redirect the user back to the application at "callbackURL".
+    */
 	app.get('/auth/google', passport.authenticate('google'));
 
-	// Google will redirect the user to this URL after authentication.  Finish
-	// the process by verifying the assertion.  If valid, the user will be
-	// logged in.  Otherwise, authentication has failed.
+   /**
+    * REST endpoint that is invoked if the user was authenticated successfully.
+    * @param {Request} req - The instance of an express.js request object.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {Object} The user object that was authenticated against the current session.
+    */
 	app.get('/auth/google/callback', function (req, res) {
 
 		passport.authenticate('google', function(err, user, info) {
@@ -129,7 +140,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 				doneAuth(authError, req, res, info && info.message ? info.message : gettext("Could not authenticate"));
 			else if (req.user) { //---> Just connect account with current one
 
-				if (user) // WTF? -- it's probably already connected
+				if (user) // Account is probably already connected
 					doneAuth(authError, req, res, gettext("Account is already connected to Google account"));
 				else {
 					mergeGoogleProfile(req.user, info.accessToken, info.refreshToken, info.profile);

@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// local.js
-// Created by Giannis Georgalis on 10/30/13
-//
+/**
+ * @overview Implements the logic for authenticating users via local, password-based accounts.
+ * @module auth/providers
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -67,9 +69,18 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 	}));
 
 	////////////////////////////////////////////////////////////////////
-	// Login to account
-	//
-	app.post('/auth/local', function (req, res) {
+	// Auth API (routes)
+
+   /**
+    * REST endpoint that determines if the given username/email and password belong to a
+    * registered user and, if yes, authenticates the user against the current session.
+    * @param {Request} req - The instance of an express.js request object that contains
+    *     the attribute req.body.email with the email or username of the target user
+    *     the attribute req.body.password with the password of the target user.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {Object} The user object that was authenticated against the current session.
+    */
+    app.post('/auth/local', function (req, res) {
 		passport.authenticate('local', function (err, user, info) {
 
 			if (err)
@@ -82,9 +93,16 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		})(req, res);
 	});
 
-	////////////////////////////////////////////////////////////////////
-	// Register new or update account
-	//
+   /**
+    * REST endpoint that registers a new or updates an existing user account; if a new
+    * user account is created successfully, it authenticates the newly created user against
+    * the current session.
+    * @param {Request} req - The instance of an express.js request object that contains
+    *     the attribute req.body with a user object that adheres to the "User" mongoose
+    *     model (see models/user.js for more information).
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {Object} The user object that was authenticated against the current session.
+    */
 	app.post('/auth/register', function (req, res) {
 
 		Promise.try(function() {
@@ -228,9 +246,13 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 
 	});
 
-	////////////////////////////////////////////////////////////////////
-	// Create an autologin link to reset password
-	//
+   /**
+    * REST endpoint that creates a password-reset link and sends it to the user via email.
+    * @param {Request} req - The instance of an express.js request object that contains
+    *     the attribute req.body.email with the target user's email address.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {number} HTTP status code 200 on success, 500 on failure.
+    */
 	app.post('/auth/reset', function (req, res) {
 
 		if (!util.isEmailValid(req.body.email))
@@ -293,9 +315,14 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		}
 	});
 
-	////////////////////////////////////////////////////////////////////
-	// Autologin if everything is OK - this function of course redirects
-	//
+   /**
+    * REST endpoint that represents the password-reset link that was previously sent to a
+    * user and which, if determined valid, authenticates the user against the current session
+    * and redirects them directly to the password modification page of the Webble World client.
+    * @param {Request} req - The instance of an express.js request object.
+    * @param {Request} res - The instance of an express.js result object.
+    * @returns {*} Redirects to password-change page on success and to 404.html page on failure.
+    */
 	app.get('/auth/autologin/:id/:emailcrypted', function (req, res) {
 
 		var seed = config.APP_CRYPT_PASSWORD + (req.params.id.length > 15 ? req.params.id.substring(5, 15) : req.params.id);
@@ -317,6 +344,5 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		}).catch(function (e) {
 			res.redirect('/404.html');
 		});
-
 	});
 };
