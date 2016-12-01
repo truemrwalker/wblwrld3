@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+﻿#!/bin/bash
 
 DEFAULT_USER=wblwrld3
 
@@ -19,8 +19,8 @@ sudo npm install -g bower
 # Clone repository
 #
 sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https://github.com/truemrwalker/wblwrld3.git'
-sudo -H -u $DEFAULT_USER bash -c 'cd ~/www/wblwrld3/setup/server/nodes/runtime && ./update.sh'
-sudo -H -u $DEFAULT_USER bash -c 'cp ~/www/wblwrld3/setup/server/nodes/runtime/run.sh ~/www/wblwrld3'
+sudo -H -u $DEFAULT_USER bash -c 'cd ~/www/wblwrld3/setup/server/nodes/runtime && bash update.sh'
+sudo -H -u $DEFAULT_USER bash -c 'cp ~/www/wblwrld3/setup/server/nodes/runtime/run.sh ~/www/wblwrld3 && chmod +x ~/www/wblwrld3/run.sh'
 
 cat > /tmp/wblwrld3.service <<EOF
 [Unit]

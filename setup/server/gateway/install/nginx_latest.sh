@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 wget -O - http://nginx.org/keys/nginx_signing.key | sudo apt-key add -
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.pre-nginx

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+﻿#!/bin/bash
 
 #
 # We don't need the latest version - Ubuntu's default version is fine.
