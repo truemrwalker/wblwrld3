@@ -51,15 +51,15 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		usernameField: 'email',
 		passwordField: 'password'
 	}, function (username, password, done) {
-		
+
         User.findOne({ $or: [{ email: username }, { username: username }] }).exec().then(function (user) {
-			
+
 			if (!user)
 				done(null, null, { message: gettext("Incorrect username") });
 			else if (user._auth.providers.indexOf('local') == -1)
 				done(null, null, { message: gettext("You don't have a local account") });
 			else {
-				
+
 				return user.checkPasswordAsync(password).then(function (obj) {
 					done(null, obj, obj || { message: gettext("Incorrect password") });
 				});
@@ -125,86 +125,86 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 				throw new util.RestError(gettext("Passwords have to be at least 5 and at most 60 characters long"));
 
 		}).then(function () {
-			
+
 			return [!req.body.email ? null :  User.findOne({ email: req.body.email }).exec(),
 				!req.body.username ? null : User.findOne({ username: req.body.username.toLowerCase() }).exec()];
 
 		}).spread(function (userByEmail, userByUsername) {
-			
+
 			var user = req.user;
-			
+
 			if (user) {
-				
+
 				if (userByEmail && userByEmail._id !== user._id)
 					throw new util.RestError(gettext("This email is already used at another account")); //, 401);
-				
+
 				if (userByUsername && userByUsername._id !== user._id)
 					throw new util.RestError(gettext("This username is already taken")); //, 401);
-				
+
 				// Update main user information
 				//
 				if (req.body.name && req.body.name.split(' ').length >= 2)
 					user.name.full = req.body.name;
-				
+
 				if (req.body.username && util.isUsernameValid(req.body.username) && !user.username)
 					user.username = req.body.username;
-				
+
 				if (req.body.email && util.isEmailValid(req.body.email) && req.body.email != user.email) {
-					
+
 					if (user.email[0] != '@')
 						user.email_alts.push(user.email);
-					
+
 					user.email = req.body.email;
 				}
-				
+
 				if (user._auth.providers.indexOf('local') == -1)
 					user._auth.providers.push('local');
 			}
 			else {
-				
+
 				// Validity checks for new accounts
 				//
 				if (userByEmail || userByUsername)
 					throw new util.RestError(gettext("Account already taken")); //, 401);
-				
+
 				if (!req.body.name)
 					throw new util.RestError(gettext("Please provide your full name"));
-				
+
 				if (!req.body.email)
 					throw new util.RestError(gettext("Please provide your email"));
-				
+
 				if (!req.body.password)
 					throw new util.RestError(gettext("Please provide a password"));
-				
+
 				// Go ahead and create new user
 				//
 				user = new User();
-				
+
 				user.name.full = req.body.name;
 				if (req.body.username && util.isUsernameValid(req.body.username))
 					user.username = req.body.username;
 				user.email = req.body.email;
-				
+
 				user._auth.providers.push('local');
 			}
-			
+
 			// Do not update these values even if they are available in the body of the request
 			//
 			delete req.body._sec;
 			delete req.body._auth;
-			
+
 			delete req.body.name;
 			delete req.body.username;
 			delete req.body.email;
-			
+
 			// Update any other relevant values
 			//
 			Object.keys(req.body).forEach(function (key) {
-				
+
 				if (req.body[key] !== undefined) {
-					
+
 					if (typeof req.body[key] === 'object') {
-						
+
 						Object.keys(req.body[key]).forEach(function (subKey) {
 							user[key][subKey] = req.body[key][subKey];
 						});
@@ -213,11 +213,11 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 						user[key] = req.body[key];
 				}
 			});
-			
+
 			// Add a gravatar image if we don't have one util this point
 			//
 			if (user.image_urls.length === 0) {
-				
+
 				user.image_urls.push(gravatar.url(user.email, {
 					d: 'identicon',
 					s: 128
@@ -230,16 +230,16 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 			return !req.body.password ? user : user.setPasswordAsync(req.body.password);
 
 		}).then (function (user) {
-			
+
 			if (!user)
 				throw new util.RestError(gettext("Could not set password"));
-			
+
 			return user.save().then(function () {
 				doneAuth(null, req, res, user); // Everything's peachy...
 			});
 
 		}).catch(function (err) {
-			
+
 			err = util.toRestError(err, gettext("Cannot register user"));
 			doneAuth(err, req, res);
 		});
@@ -284,7 +284,8 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
                                 host: config.MAIL_HOST,
                                 port: config.MAIL_PORT,
                                 secure: config.MAIL_SECURE,
-								auth: { user: config.MAIL_USER, pass: config.MAIL_PASS }
+								auth: { user: config.MAIL_USER, pass: config.MAIL_PASS },
+								tls: { rejectUnauthorized: false }
 							}));
 
 							// Create auto-login link
@@ -330,10 +331,10 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 		var seed = config.APP_CRYPT_PASSWORD + (req.params.id.length > 15 ? req.params.id.substring(5, 15) : req.params.id);
 
 		User.findOne({ email: crypt.decryptTextSync(req.params.emailcrypted, seed) }).exec().then(function (user) {
-			
+
 			if (!user || user._auth.local.forgot == 0 || createUserIdHash(user) !== req.params.id)
 				throw new Error();
-			
+
 			return Promise.promisify(req.login, { context: req })(user).then(function () { // TODO: req methods should return promise
 
 				return crypt.randomBytesAsync(32).then(function (buff) {
