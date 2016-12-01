@@ -1,4 +1,9 @@
 #!/bin/sh
+
+#
+# Optionally to improve mongodb performance
+#
+
 ### BEGIN INIT INFO
 # Provides:          disable-transparent-hugepages
 # Required-Start:    $local_fs
