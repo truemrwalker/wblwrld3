@@ -45,7 +45,7 @@ sudo systemctl enable wblwrld3.service
 # Display some messages
 #
 echo "WARNING: Default password set for user $DEFAULT_USER. Please change with: sudo passwd $DEFAULT_USER"
-echo "WARNING: EDIT the file ~/www/wblwrld3/run.sh with the correct keys and configuration values"
+echo "WARNING: EDIT the file /home/$DEFAULT_USER/www/wblwrld3/run.sh with the correct keys and configuration values"
 echo "WARNING: Then start the service with: sudo systemctl start wblwrld3.service"
 echo "WARNING: Then check its output with: systemctl status wblwrld3.service -l"
 

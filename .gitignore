@@ -16,3 +16,4 @@ obj
 typings/
 sitemap.xml
 /app/wiki/
+/run.sh
