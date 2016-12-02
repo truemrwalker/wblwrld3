@@ -1,0 +1,14 @@
+﻿[Unit]
+Description=Webble World 3
+After=network.target mongod.service
+Documentation=https://github.com/truemrwalker/wblwrld3
+
+[Service]
+User=wblwrld3
+Group=users
+Restart=on-failure
+RestartSec=5
+ExecStart=/home/wblwrld3/www/wblwrld3/run.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -3,6 +3,20 @@
 This directory contains configuration files, scripts and instructions for deploying
 Webble World on different systems and platforms, under different deployment configurations.
 
+The resources contained here are only provided to streamline and simplify the deployment of
+Webble World for a few common deployment scenarios. Detailed instructions, explanations and
+more fine-grained deployment and configuration options can be found in the ```README.md``` file
+under the ```serverside``` sub-directory of the Webble World repository.
+
+In this context, the instructions, suggestions, scripts and configurations that appear in this
+directory only comprise a few possible deployment methodologies for the Webble World platform
+and should not be considered as the only or "ultimate" way to configure and deploy the platform.
+
+Particular emphasis has been put on the following two deployment methods:
+
+1. Development deployment under Microsoft Windows (see ```windows``` )
+2. Production deployment under Ubuntu 16.04 (systemd) (see ```server```)
+
 # Organization
 
 ## ```docker```
