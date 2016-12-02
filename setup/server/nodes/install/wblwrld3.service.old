@@ -1,0 +1,81 @@
+﻿#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          wblwrld3
+# Required-Start:    $network $remote_fs $local_fs
+# Required-Stop:     $network $remote_fs $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Stop/start wblwrld3
+### END INIT INFO
+
+#
+# Install with:
+# initctl reload-configuration
+#
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+if [ -L $0 ]; then
+    SCRIPTNAME=`/bin/readlink -f $0`
+else
+    SCRIPTNAME=$0
+fi
+
+sysconfig=`/usr/bin/basename $SCRIPTNAME`
+
+[ -r /etc/default/$sysconfig ] && . /etc/default/$sysconfig
+
+DESC=${DESC-Webble World}
+NAME=${NAME-wblwrld3}
+PIDFILE=${PIDFILE-/var/run/wblwrld3.pid}
+DAEMON=/home/wblwrld3/www/wblwrld3/run.sh
+DAEMON_ARGS=
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+do_start()
+{
+    start-stop-daemon --start --quiet --chuid wblwrld3 --background --pidfile $PIDFILE --exec $DAEMON -- \
+        $DAEMON_ARGS
+    RETVAL="$?"
+    return "$RETVAL"
+}
+
+do_stop()
+{
+    # Return
+    #   0 if daemon has been stopped
+    #   1 if daemon was already stopped
+    #   2 if daemon could not be stopped
+    #   other if a failure occurred
+    start-stop-daemon --stop --quiet --chuid wblwrld3 --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+    RETVAL="$?"
+    rm -f $PIDFILE
+    return "$RETVAL"
+}
+
+case "$1" in
+    start)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
+        do_start
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    stop)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+        do_stop
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    *)
+        echo "Usage: $SCRIPTNAME {start|stop}" >&2
+        exit 3
+        ;;
+esac
+
+exit $RETVAL

@@ -74,6 +74,7 @@
     <Content Include="server\nodes\install\mongodb_kernel_modifications.sh" />
     <Content Include="server\nodes\install\wblwrld3.service" />
     <Content Include="server\nodes\install\wblwrld3.sh" />
+    <Content Include="server\nodes\install\wblwrld3.service.old" />
     <Content Include="server\nodes\runtime\update.sh" />
     <Content Include="server\nodes\runtime\run.sh" />
     <Content Include="server\nodes\runtime\updateapp.sh" />
