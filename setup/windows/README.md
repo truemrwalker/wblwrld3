@@ -6,15 +6,14 @@ on Microsoft Windows systems.
 The scripts assume that Webble World is used for development purposes and thus sets up
 and deploys the server using its default "development" configuration values.
 
-# TLDR
+# Install Quick Reference
 
 1. Install: https://git-scm.com/download/win
 2. Install: https://nodejs.org/en/download/current/
 3. Install: https://www.mongodb.com/download-center
 4. Run: ```bootstrap.bat``` once
-5. Run: ```start.bat``` every time you need to run the server
-6. Visit: https://localhost:7443
-7: Run: ```update.bat``` every time you need to update the server
+5. Run: ```start.bat``` every time you need to run the server and visit https://localhost:7443
+6. Run: ```update.bat``` every time you need to update the server
 
 # Install
 

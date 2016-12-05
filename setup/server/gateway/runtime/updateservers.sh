@@ -3,7 +3,7 @@
 ########################################################################
 # List all webble world servers here - separated by space:
 #
-WEBBLE_WORLD_SERVERS='133.87.133.85 133.87.133.215'
+WEBBLE_WORLD_SERVERS='133.87.133.85 133.87.133.215 133.87.133.216'
 
 DEFAULT_USER=wblwrld3
 

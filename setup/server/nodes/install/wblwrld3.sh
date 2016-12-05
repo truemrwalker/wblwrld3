@@ -25,7 +25,7 @@ sudo -H -u $DEFAULT_USER bash -c 'cp ~/www/wblwrld3/setup/server/nodes/runtime/r
 cat > /tmp/wblwrld3.service <<EOF
 [Unit]
 Description=Webble World 3
-After=network.target mongod.service
+After=network.target # mongod.service
 Documentation=https://github.com/truemrwalker/wblwrld3
 
 [Service]

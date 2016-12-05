@@ -10,7 +10,11 @@
 
 #
 # Install with:
-# initctl reload-configuration
+# sudo cp wblwrld3.service.old /etc/init.d/wblwrld3
+# sudo chmod +x /etc/init.d/wblwrld3
+# sudo chown root:root /etc/init.d/wblwrld3
+# sudo update-rc.d wblwrld3 defaults
+# sudo update-rc.d wblwrld3 enable
 #
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
