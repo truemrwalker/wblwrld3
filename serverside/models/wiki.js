@@ -35,6 +35,7 @@ module.exports = function(app, config, mongoose, gettext) {
 
         id: { type: String, required: true, index: { unique: true } },
         name: String,
+        repository: String,
         description: String,
 
         public_url: String,

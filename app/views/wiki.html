@@ -67,7 +67,7 @@
                                     <a class="btn btn-default" ng-disabled="currWikiEmbedUrl" ng-click="openWiki(w)"><span translate>Open</span> <span class="fa fa-book"></span></a>
                                     <a class="btn btn-default" ng-disabled="!currWikiEmbedUrl" ng-click="closeWiki(w)"><span translate>Close</span></a>
                                     <!--<a class="btn btn-danger" ng-click="deleteWiki(w)"><span translate>Delete</span> <span class="fa fa-trash-o"></span></a>-->
-                                    <a class="btn btn-info" target="_blank" ng-href="/api/wiki/{{w.id}}/link"><span translate>Publish</span> <span class="fa fa-share"></span></a>
+                                    <a class="btn btn-info" ng-disabled="!currWikiEmbedUrl" ng-click="publishWiki(w)"><span translate>Publish</span> <span class="fa fa-upload"></span></a>
                                 </div>
                             </td>
 

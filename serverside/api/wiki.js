@@ -25,7 +25,14 @@
 //
 var Promise = require("bluebird");
 
+var os = require("os");
 var path = require("path");
+var fs = require('fs');
+var mkdirp = require('mkdirp');
+
+var mkdirpAsync = Promise.promisify(mkdirp);
+Promise.promisifyAll(fs);
+
 var util = require('../lib/util');
 
 ////////////////////////////////////////////////////////////////////////
@@ -44,7 +51,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     const knownTiddlerFields = ["bag", "created", "creator", "modified", "modifier", "permissions", "recipe", "revision", "tags", "text", "title", "type", "uri"];
 
     const openWikis = {};
+
     let wikiBootstrapper = null;
+    let nodegit = null;
+    let remoteGitCredentials = null;
 
     const createIndexHtmlArgs = [
         //"--savetiddlers", "[is[image]]", "images", "--setfield", "[is[image]]", "_canonical_uri", "$:/core/templates/canonical-uri-external-image", "text/plain",
@@ -60,34 +70,131 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         if (!wikiBootstrapper)
             wikiBootstrapper = require("tiddlywiki/boot/boot.js");
 
-        let tw = wikiBootstrapper.TiddlyWiki();
+        if (!nodegit)
+            nodegit = require('nodegit');
 
-        tw.boot.argv = [path.join(config.PROJECT_ROOT_DIR, "wiki", name)];
-        tw.boot.boot();
+        if (!remoteGitCredentials) {
 
-        if (!tw.boot.wikiTiddlersPath) {
-            tw.utils.warning("Warning: Wiki folder '" + tw.boot.wikiPath + "' does not exist or is missing a tiddlywiki.info file");
+            const sshKeysPath = path.join(process.env.HOME || process.env.USERPROFILE, ".ssh");
+            remoteGitCredentials = {
+
+                callbacks: {
+                    credentials: function (url, userName) {
+                        return nodegit.Cred.sshKeyNew(
+                            userName,
+                            path.join(sshKeysPath, "id_rsa.pub"),
+                            path.join(sshKeysPath, "id_rsa"),
+                            ""
+                        );
+                    },
+                    certificateCheck: () => 1 // github will fail cert check machines
+                }
+            };
         }
 
-        if (!tw.wiki.getTiddler("$:/plugins/tiddlywiki/tiddlyweb") || !tw.wiki.getTiddler("$:/plugins/tiddlywiki/filesystem")) {
-            tw.utils.warning("Warning: Plugins required for client-server operation (\"tiddlywiki/filesystem\" and \"tiddlywiki/tiddlyweb\") are missing from tiddlywiki.info file");
-        }
+        let wikiRepositoryPath = path.join(config.APP_ROOT_DIR, "tmp", "wiki", name);
+        return fs.statAsync(wikiRepositoryPath).catchReturn(null).then(function (stats) {
 
-        return openWikis[name] = tw;
+            if (stats && stats.isDirectory()) {
+
+                return nodegit.Repository.open(wikiRepositoryPath).then(function (repo) {
+                    return repo.fetchAll(remoteGitCredentials).then(function () {
+                        return repo.mergeBranches("master", "origin/master").then(() => repo);
+                    });
+                });
+            }
+            else {
+
+                return Wiki.findOne({ id: name }).lean().exec().then(function (wiki) {
+
+                    if (!wiki)
+                        throw new util.RestError(gettext("Requested object does not exist", 404));
+
+                    return mkdirpAsync(wikiRepositoryPath).then(function () {
+
+                        return nodegit.Clone(wiki.repository, wikiRepositoryPath, {
+                            fetchOpts: remoteGitCredentials
+                        });
+                    });
+                });
+            }
+
+        }).then(function (repo) {
+
+            let tw = wikiBootstrapper.TiddlyWiki();
+
+            tw.boot.argv = [wikiRepositoryPath];
+            tw.boot.boot();
+
+            if (!tw.boot.wikiTiddlersPath) {
+                tw.utils.warning("Warning: Wiki folder '" + tw.boot.wikiPath + "' does not exist or is missing a tiddlywiki.info file");
+            }
+
+            if (!tw.wiki.getTiddler("$:/plugins/tiddlywiki/tiddlyweb") || !tw.wiki.getTiddler("$:/plugins/tiddlywiki/filesystem")) {
+                tw.utils.warning("Warning: Plugins required for client-server operation (\"tiddlywiki/filesystem\" and \"tiddlywiki/tiddlyweb\") are missing from tiddlywiki.info file");
+            }
+
+            return { tw: tw, repo: repo };
+        });
     }
 
-    function closeWiki(name) {
+    function closeWiki(name, user) {
 
-        openWikis[name] = null;
-        delete openWikis[name];
+        if (openWikis.hasOwnProperty(name)) {
+
+            var repo = openWikis[name].repo;
+            return repo.refreshIndex().then(function (index) {
+
+                return index.addAll(".", 0).then(() => index.write()).then(() => index.writeTree()).then(function (oid) {
+
+                    return repo.getHeadCommit().then(function (parent) {
+
+                        if (parent !== null) // To handle a fresh repo with no commits
+                            parent = [parent];
+
+                        var authorName = (user && user.name && user.name.full) || "Unknown User";
+                        var authorEmail = (user && user.email) || config.APP_EMAIL_ADDRESS;
+
+                        var author = nodegit.Signature.now(authorName, authorEmail);
+                        var message = "Published from host: " + os.hostname();
+
+                        return repo.createCommit("HEAD", author, author, message, oid, parent);
+
+                    }).then(function (commitId) {
+
+                        console.log("NEW COMMIT:", commitId);
+
+                    }).then(function () {
+
+                        return repo.getRemote("origin").then(function (remote) {
+
+                            return remote.push(["refs/heads/master:refs/heads/master"], remoteGitCredentials);
+                        });
+                    });
+                });
+
+            }).then(function () {
+
+                console.log("PUSH succeeded");
+                delete openWikis[name];
+            });
+        }
+        else
+            return Promise.resolve();
     }
 
     function getWiki(name) {
 
         if (openWikis.hasOwnProperty(name))
-            return openWikis[name];
-        else
-            return openWiki(name);
+            return Promise.resolve(openWikis[name].tw);
+        else {
+
+            return openWiki(name).then(function (wiki) {
+
+                openWikis[name] = wiki;
+                return wiki.tw;
+            });
+        }
     }
 
     function normalizeWiki(wiki) {
@@ -105,6 +212,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
             if (!wikis)
                 throw new util.RestError(gettext("Cannot retrieve wikis"));
+
             res.json(util.transform_(wikis, normalizeWiki));
 
         }).catch(err => util.resSendError(res, err));
@@ -116,13 +224,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     app.delete('/api/wiki/:wiki', auth.usr, function (req, res) {
 
-        var name = req.params.wiki;
-        closeWiki(name);
-
-        res.status(200).send(gettext("OK"));
+        closeWiki(req.params.wiki, req.user).then(function () {
+            res.status(200).send(gettext("OK"));
+        }).catch(err => util.resSendError(res, err));
     });
 
-    app.get('/api/wiki/:wiki/link', function (req, res) {
+    app.get('/api/wiki/:wiki/deprecated_DISABLED', function (req, res) {
 
         var name = req.params.wiki;
 
@@ -138,8 +245,6 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             );
             commander.outputPath = path.join(config.APP_ROOT_DIR, "wiki", name);
             commander.execute();
-
-            closeWiki(name);
         }
         res.redirect("/wiki/" + name);
     });
@@ -169,6 +274,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
             .catch(err => util.resSendError(res, err));
     });
 
+    //******************************************************************
+
+    app.get('/api/wiki/:wiki/publish', auth.usr, function (req, res) {
+
+        closeWiki(req.params.wiki, req.user)
+            .then(() => res.status(200).send(gettext("Successfully published")))
+            .catch(err => util.resSendError(res, err));
+    });
+
    	////////////////////////////////////////////////////////////////////
     // TW-specific routes. For these to work there has to be a tiddler called:
     //      $:/config/tiddlyweb/host
@@ -189,134 +303,147 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         }
         else {
 
-            let tw = getWiki(req.params.wiki);
-            let wiki = tw.wiki;
+            getWiki(req.params.wiki).then(function (tw) {
 
-            res.writeHead(200, { "Content-Type": options.serveType });
-            var text = wiki.renderTiddler(options.renderType, options.rootTiddler);
-            res.end(text, "utf8");
+                let wiki = tw.wiki;
+
+                res.writeHead(200, { "Content-Type": options.serveType });
+                var text = wiki.renderTiddler(options.renderType, options.rootTiddler);
+                res.end(text, "utf8");
+            });
         }
     });
 
     app.get('/api/wiki/:wiki/status', auth.usr, function (req, res) {
 
-        let tw = getWiki(req.params.wiki);
-        let wiki = tw.wiki;
+        getWiki(req.params.wiki).then(function (tw) {
 
-        res.json({
+            let wiki = tw.wiki;
 
-            username: req.user && (req.user.username || req.user.name.full || req.user.email) || 'Anonymous',
-            space: { recipe: "default" },
-            tiddlywiki_version: tw.version
+            res.json({
+
+                username: req.user && (req.user.username || req.user.name.full || req.user.email) || 'Anonymous',
+                space: { recipe: "default" },
+                tiddlywiki_version: tw.version
+            });
         });
     });
 
     app.get('/api/wiki/:wiki/favicon.ico', function (req, res) {
 
-        let tw = getWiki(req.params.wiki);
-        let wiki = tw.wiki;
+        getWiki(req.params.wiki).then(function (tw) {
 
-        res.writeHead(200, { "Content-Type": "image/x-icon" });
-        var buffer = wiki.getTiddlerText("$:/favicon.ico", "");
-        res.end(buffer, "base64");
+            let wiki = tw.wiki;
+
+            res.writeHead(200, { "Content-Type": "image/x-icon" });
+            var buffer = wiki.getTiddlerText("$:/favicon.ico", "");
+            res.end(buffer, "base64");
+        });
     });
 
     app.get('/api/wiki/:wiki/recipes/default/tiddlers.json', auth.usr, function (req, res) {
 
-        let tw = getWiki(req.params.wiki);
-        let wiki = tw.wiki;
+        getWiki(req.params.wiki).then(function (tw) {
 
-        var tiddlers = [];
-        wiki.forEachTiddler({ sortField: "title" }, function (title, tiddler) {
+            let wiki = tw.wiki;
 
-            var tiddlerFields = {};
-            tw.utils.each(tiddler.fields, function (field, name) {
-                if (name !== "text") {
-                    tiddlerFields[name] = tiddler.getFieldString(name);
-                }
+            var tiddlers = [];
+            wiki.forEachTiddler({ sortField: "title" }, function (title, tiddler) {
+
+                var tiddlerFields = {};
+                tw.utils.each(tiddler.fields, function (field, name) {
+                    if (name !== "text") {
+                        tiddlerFields[name] = tiddler.getFieldString(name);
+                    }
+                });
+                tiddlerFields.revision = wiki.getChangeCount(title);
+                tiddlerFields.type = tiddlerFields.type || "text/vnd.tiddlywiki";
+                tiddlers.push(tiddlerFields);
             });
-            tiddlerFields.revision = wiki.getChangeCount(title);
-            tiddlerFields.type = tiddlerFields.type || "text/vnd.tiddlywiki";
-            tiddlers.push(tiddlerFields);
+            res.json(tiddlers);
         });
-
-        res.json(tiddlers);
     });
 
     app.get('/api/wiki/:wiki/recipes/default/tiddlers/:tiddler', auth.usr, function (req, res) {
 
-        let tw = getWiki(req.params.wiki);
-        let wiki = tw.wiki;
+        getWiki(req.params.wiki).then(function (tw) {
 
-        let title = req.params.tiddler;
-        let tiddler = wiki.getTiddler(title);
-        let tiddlerFields = {};
+            let wiki = tw.wiki;
 
-        if (tiddler) {
+            let title = req.params.tiddler;
+            let tiddler = wiki.getTiddler(title);
+            let tiddlerFields = {};
 
-            tw.utils.each(tiddler.fields, function (field, name) {
+            if (tiddler) {
 
-                var value = tiddler.getFieldString(name);
-                if (knownTiddlerFields.indexOf(name) !== -1) {
-                    tiddlerFields[name] = value;
-                } else {
-                    tiddlerFields.fields = tiddlerFields.fields || {};
-                    tiddlerFields.fields[name] = value;
-                }
-            });
-            tiddlerFields.revision = wiki.getChangeCount(title);
-            tiddlerFields.type = tiddlerFields.type || "text/vnd.tiddlywiki";
+                tw.utils.each(tiddler.fields, function (field, name) {
 
-            res.json(tiddlerFields);
-        }
-        else
-            res.status(404).end();
+                    var value = tiddler.getFieldString(name);
+                    if (knownTiddlerFields.indexOf(name) !== -1) {
+                        tiddlerFields[name] = value;
+                    } else {
+                        tiddlerFields.fields = tiddlerFields.fields || {};
+                        tiddlerFields.fields[name] = value;
+                    }
+                });
+                tiddlerFields.revision = wiki.getChangeCount(title);
+                tiddlerFields.type = tiddlerFields.type || "text/vnd.tiddlywiki";
+
+                res.json(tiddlerFields);
+            }
+            else
+                res.status(404).end();
+        });
     });
 
     //******************************************************************
 
     app.put('/api/wiki/:wiki/recipes/default/tiddlers/:tiddler', auth.usr, function (req, res) {
 
-        let tw = getWiki(req.params.wiki);
-        let wiki = tw.wiki;
+        getWiki(req.params.wiki).then(function (tw) {
 
-        let title = req.params.tiddler;
-        let fields = req.body;
+            let wiki = tw.wiki;
 
-        // Pull up any subfields in the `fields` object
-        if (fields.fields) {
+            let title = req.params.tiddler;
+            let fields = req.body;
 
-            tw.utils.each(fields.fields, function (field, name) {
-                fields[name] = field;
+            // Pull up any subfields in the `fields` object
+            if (fields.fields) {
+
+                tw.utils.each(fields.fields, function (field, name) {
+                    fields[name] = field;
+                });
+                delete fields.fields;
+            }
+
+            // Remove any revision field
+            delete fields.revision;
+
+            wiki.addTiddler(new tw.Tiddler(wiki.getCreationFields(), fields, { title: title }, wiki.getModificationFields()));
+            var changeCount = wiki.getChangeCount(title).toString();
+
+            res.writeHead(204, "OK", {
+                Etag: "\"default/" + encodeURIComponent(title) + "/" + changeCount + ":\"",
+                "Content-Type": "text/plain"
             });
-            delete fields.fields;
-        }
-
-        // Remove any revision field
-        delete fields.revision;
-
-        wiki.addTiddler(new tw.Tiddler(wiki.getCreationFields(), fields, { title: title }, wiki.getModificationFields()));
-        var changeCount = wiki.getChangeCount(title).toString();
-
-        res.writeHead(204, "OK", {
-            Etag: "\"default/" + encodeURIComponent(title) + "/" + changeCount + ":\"",
-            "Content-Type": "text/plain"
+            res.end();
         });
-        res.end();
     });
 
     app.delete('/api/wiki/:wiki/bags/default/tiddlers/:tiddler', auth.usr, function (req, res) {
 
-        let tw = getWiki(req.params.wiki);
-        let wiki = tw.wiki;
+        getWiki(req.params.wiki).then(function (tw) {
 
-        let title = req.params.tiddler;
+            let wiki = tw.wiki;
 
-        wiki.deleteTiddler(title);
+            let title = req.params.tiddler;
 
-        res.status(204).send(gettext("OK"));
+            wiki.deleteTiddler(title);
 
-        //res.writeHead(204, "OK", { "Content-Type": "text/plain" });
-        //res.end();
+            res.status(204).send(gettext("OK"));
+
+            //res.writeHead(204, "OK", { "Content-Type": "text/plain" });
+            //res.end();
+        });
     });
 };

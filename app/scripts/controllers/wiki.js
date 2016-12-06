@@ -57,6 +57,12 @@ function ($scope, $timeout, $http, gettext, confirm) {
         });
     };
 
+    $scope.publishWiki = function (w) {
+
+        $http.get("/api/wiki/" + encodeURIComponent(w.id) + "/publish").then(function () {
+        });
+    };
+
 	$scope.selectWiki = function(w) {
 
 		if (!w || ($scope.currTemplateId && $scope.currTemplateId === w.id)) {

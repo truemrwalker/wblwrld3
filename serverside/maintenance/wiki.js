@@ -43,7 +43,8 @@ module.exports = function (app, config, mongoose, gettext) {
     var Wiki = mongoose.model('Wiki');
     var User = mongoose.model('User');
 
-    var wikiDir = path.join(config.PROJECT_ROOT_DIR, 'wiki');
+    var wikiDir = path.join(config.APP_ROOT_DIR, 'wikis');
+
     var wikis = {};
 
     ////////////////////////////////////////////////////////////////////
@@ -57,15 +58,16 @@ module.exports = function (app, config, mongoose, gettext) {
 
     ////////////////////////////////////////////////////////////////////
 
-    return xfs.walk(wikiDir, function (baseDir, dirs, files) {
+    return xfs.getAllFiles(wikiDir, ".json", 1).then(function (files) {
 
-        if (files.length !== 1 || files[0] != 'tiddlywiki.info')
-            return false;
+        if (files && files.length) {
 
-        var id = path.basename(baseDir);
-        wikis[id] = path.join(baseDir, files[0]);
+            files.forEach(function (file) {
 
-        return true; // Handled - stop recursing into dirs
+                var id = path.basename(file, ".json");
+                wikis[id] = path.join(wikiDir, file);
+            });
+        }
 
     }).then(function () {
 
@@ -81,11 +83,16 @@ module.exports = function (app, config, mongoose, gettext) {
 
                     console.log("Removing wiki:", wiki.id);
                     promises.push(wiki.remove());
+                    delete wikis[wiki.id];
+                }
+                else if (!wiki.repository) {
+
+                    console.log("UPGRADING (removing and adding again) wiki:", wiki.id);
+                    promises.push(wiki.remove());
                 }
                 else { // maybe check if something changed on disk and modify online wiki accordingly
-
+                    delete wikis[wiki.id];
                 }
-                delete wikis[wiki.id];
             });
 
             Object.keys(wikis).forEach(function (id) {
@@ -99,6 +106,7 @@ module.exports = function (app, config, mongoose, gettext) {
                         var w = new Wiki({
                             id : id,
                             name: info.name || id,
+                            repository: info.repository,
                             description: info.description,
                             _owner: user
                         });

@@ -40,7 +40,8 @@
 		"nodemailer-smtp-transport" : "latest",
 
 		"mkdirp": "latest",
-		"tiddlywiki" : "latest"
+		"tiddlywiki" : "latest",
+		"nodegit": "latest"
 	},
 
 	"devDependencies": {
