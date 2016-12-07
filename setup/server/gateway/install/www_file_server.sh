@@ -15,6 +15,7 @@ echo $DEFAULT_USER:defaultpasswordtahtshouldbechanged | sudo chpasswd
 # Install bower
 #
 sudo npm install -g bower
+sudo npm install -g tiddlywiki
 
 # Clone repositories
 #
@@ -22,6 +23,7 @@ sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https:
 sudo -H -u $DEFAULT_USER bash -c 'cd ~/www/wblwrld3/setup/server/nodes/runtime && bash updateapp.sh'
 
 sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https://gitlab.com/giannis/hokudai-hop.git'
+sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https://gitlab.com/giannis/hokudai-hop-wiki.git'
 
 # Display some messages
 #

@@ -66,7 +66,8 @@
     <Content Include="server\gateway\install\nginx_latest.sh" />
     <Content Include="server\gateway\extra\server_key.sh" />
     <Content Include="server\gateway\runtime\update.sh" />
-    <Content Include="server\gateway\runtime\updateapps.sh" />
+    <Content Include="server\gateway\runtime\updatehop.sh" />
+    <Content Include="server\gateway\runtime\updateapp.sh" />
     <Content Include="server\gateway\runtime\updateservers.sh" />
     <Content Include="server\nodes\install\mongodb_latest.sh" />
     <Content Include="server\nodes\install\nodejs_latest.sh" />
