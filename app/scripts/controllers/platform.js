@@ -419,9 +419,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var eeWord_ = ['KUWAHARA', 'TANAKA', 'MADEINJAPAN'];
     var eeFunc_ = [
         function(){
-            $('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("https://wws.meme.hokudai.ac.jp/images/extra/mnk.jpg"); }</style>'));
-            $scope.bkgLogoClass = 'easterEgg';
-            alert('Micke Nicander Kuwahara made this, how about that!!');
+    		if(($scope.user != undefined ? $scope.user.name.last.toLowerCase() : '') != 'kuwahara'){
+				$('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("https://wws.meme.hokudai.ac.jp/images/extra/mnk.jpg"); }</style>'));
+				$scope.bkgLogoClass = 'easterEgg';
+				alert('Micke Nicander Kuwahara made this, how about that!!');
+			}
         },
         function(){
             $window.open('http://www.amazon.com/Meme-Media-Market-Architectures-Distributing/dp/0471453781/ref=sr_1_5?ie=UTF8&s=books&qid=1252565397&sr=8-5', '_blank');
@@ -1413,7 +1415,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 			}
 			if(isInSandbox == null){
-				if(whatTemplateId == whatWblDef.webble.defid && whatTemplateRevision == whatWblDef.webble.templaterevision){
+				if(whatWblDef.files && whatTemplateId == whatWblDef.webble.defid && whatTemplateRevision == whatWblDef.webble.templaterevision){
 					templateRevisionDetermination(whatTemplateId, whatTemplateRevision, whatWblDef, whatWblDef);
 				}
 				else{
