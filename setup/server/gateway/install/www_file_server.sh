@@ -20,7 +20,7 @@ sudo npm install -g tiddlywiki
 # Clone repositories
 #
 sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https://github.com/truemrwalker/wblwrld3.git'
-sudo -H -u $DEFAULT_USER bash -c 'cd ~/www/wblwrld3/setup/server/nodes/runtime && bash updateapp.sh'
+sudo -H -u $DEFAULT_USER bash -c 'cd ~/www/wblwrld3/setup/server/nodes/runtime && bash updateapp.sh || echo WARNING: non-zero return value: $?'
 
 sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https://gitlab.com/giannis/hokudai-hop.git'
 sudo -H -u $DEFAULT_USER bash -c 'mkdir -p ~/www && cd ~/www && git clone https://gitlab.com/giannis/hokudai-hop-wiki.git'
