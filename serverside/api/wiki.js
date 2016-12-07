@@ -49,13 +49,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
     };
 
     const knownTiddlerFields = ["bag", "created", "creator", "modified", "modifier", "permissions", "recipe", "revision", "tags", "text", "title", "type", "uri"];
-
     const openWikis = {};
-
-    let wikiBootstrapper = null;
-    let nodegit = null;
-    let remoteGitCredentials = null;
-
     const createIndexHtmlArgs = [
         //"--savetiddlers", "[is[image]]", "images", "--setfield", "[is[image]]", "_canonical_uri", "$:/core/templates/canonical-uri-external-image", "text/plain",
         //"--setfield", "[is[image]]", "text", "", "text/plain",
@@ -65,7 +59,11 @@ module.exports = function(app, config, mongoose, gettext, auth) {
   	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
-    function openWiki(name) {
+    let wikiBootstrapper = null;
+    let nodegit = null;
+    let remoteGitCredentials = null;
+
+    function ensureLibrariesInitialized() {
 
         if (!wikiBootstrapper)
             wikiBootstrapper = require("tiddlywiki/boot/boot.js");
@@ -91,6 +89,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 }
             };
         }
+    }
+
+    function openLocalRepository(name) {
 
         let wikiRepositoryPath = path.join(config.APP_ROOT_DIR, "tmp", "wiki", name);
         return fs.statAsync(wikiRepositoryPath).catchReturn(null).then(function (stats) {
@@ -99,7 +100,14 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
                 return nodegit.Repository.open(wikiRepositoryPath).then(function (repo) {
                     return repo.fetchAll(remoteGitCredentials).then(function () {
-                        return repo.mergeBranches("master", "origin/master").then(() => repo);
+                        return repo.mergeBranches("master", "origin/master").catch(function (index) {
+
+                            console.log("Reseting (--hard) local repo due to conflicts");
+                            return repo.getBranchCommit("origin/master").then(function (originHeadCommit) {
+                                return nodegit.Reset.reset(repo, originHeadCommit, nodegit.Reset.TYPE.HARD);
+                            });
+
+                        }).then(() => repo);
                     });
                 });
             }
@@ -118,12 +126,61 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                     });
                 });
             }
+        });
+    }
 
-        }).then(function (repo) {
+    function closeLocalRepository(repo, user) {
+
+        return repo.refreshIndex().then(function (index) {
+
+            return index.addAll(".", 0).then(() => index.write()).then(() => index.writeTree()).then(function (oid) {
+
+                return repo.getHeadCommit().then(function (parent) {
+
+                    if (parent !== null) // To handle a fresh repo with no commits
+                        parent = [parent];
+
+                    var authorName = (user && user.name && user.name.full) || "Unknown User";
+                    var authorEmail = (user && user.email) || config.APP_EMAIL_ADDRESS;
+
+                    var author = nodegit.Signature.now(authorName, authorEmail);
+                    var message = "Published from host: " + os.hostname();
+
+                    return repo.createCommit("HEAD", author, author, message, oid, parent);
+
+                }).then(function (commitId) {
+
+                    console.log("NEW COMMIT:", commitId);
+
+                }).then(function () {
+
+                    return repo.getRemote("origin").then(function (remote) {
+
+                        return remote.push(["refs/heads/master:refs/heads/master"], remoteGitCredentials).catch(function () {
+
+                            return repo.mergeBranches("master", "origin/master").catch(function (index) {
+
+                                console.log("Reseting (--hard) local repo due to conflicts");
+                                return repo.getBranchCommit("origin/master").then(function (originHeadCommit) {
+                                    return nodegit.Reset.reset(repo, originHeadCommit, nodegit.Reset.TYPE.HARD);
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    function openWiki(name) {
+
+        ensureLibrariesInitialized();
+
+        return openLocalRepository(name).then(function (repo) {
 
             let tw = wikiBootstrapper.TiddlyWiki();
 
-            tw.boot.argv = [wikiRepositoryPath];
+            tw.boot.argv = [repo.workdir()];
             tw.boot.boot();
 
             if (!tw.boot.wikiTiddlersPath) {
@@ -143,39 +200,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         if (openWikis.hasOwnProperty(name)) {
 
             var repo = openWikis[name].repo;
-            return repo.refreshIndex().then(function (index) {
+            return closeLocalRepository(repo, user).then(function () {
 
-                return index.addAll(".", 0).then(() => index.write()).then(() => index.writeTree()).then(function (oid) {
-
-                    return repo.getHeadCommit().then(function (parent) {
-
-                        if (parent !== null) // To handle a fresh repo with no commits
-                            parent = [parent];
-
-                        var authorName = (user && user.name && user.name.full) || "Unknown User";
-                        var authorEmail = (user && user.email) || config.APP_EMAIL_ADDRESS;
-
-                        var author = nodegit.Signature.now(authorName, authorEmail);
-                        var message = "Published from host: " + os.hostname();
-
-                        return repo.createCommit("HEAD", author, author, message, oid, parent);
-
-                    }).then(function (commitId) {
-
-                        console.log("NEW COMMIT:", commitId);
-
-                    }).then(function () {
-
-                        return repo.getRemote("origin").then(function (remote) {
-
-                            return remote.push(["refs/heads/master:refs/heads/master"], remoteGitCredentials);
-                        });
-                    });
-                });
-
-            }).then(function () {
-
-                console.log("PUSH succeeded");
+                console.log("CLOSED local repository:", name);
                 delete openWikis[name];
             });
         }
@@ -195,6 +222,21 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                 return wiki.tw;
             });
         }
+    }
+
+    function generateIndexHtmlFromWiki(tw, outputPath) {
+
+        return Promise.try(function () {
+
+            var commander = new tw.Commander(
+                createIndexHtmlArgs,
+                (err) => { if (err) tw.utils.error("Error: " + err) },
+                tw.wiki,
+                { output: process.stdout, error: process.stderr }
+            );
+            commander.outputPath = outputPath;
+            commander.execute();
+        });
     }
 
     function normalizeWiki(wiki) {
@@ -224,29 +266,6 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     app.delete('/api/wiki/:wiki', auth.usr, function (req, res) {
 
-        closeWiki(req.params.wiki, req.user).then(function () {
-            res.status(200).send(gettext("OK"));
-        }).catch(err => util.resSendError(res, err));
-    });
-
-    app.get('/api/wiki/:wiki/deprecated_DISABLED', function (req, res) {
-
-        var name = req.params.wiki;
-
-        if (openWikis.hasOwnProperty(name) && req.isAuthenticated()) {
-
-            var tw = openWikis[name];
-
-            var commander = new tw.Commander(
-                createIndexHtmlArgs,
-                (err) => { if (err) tw.utils.error("Error: " + err) },
-                tw.wiki,
-                { output: process.stdout, error: process.stderr }
-            );
-            commander.outputPath = path.join(config.APP_ROOT_DIR, "wiki", name);
-            commander.execute();
-        }
-        res.redirect("/wiki/" + name);
     });
 
     //******************************************************************
@@ -276,10 +295,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
     //******************************************************************
 
-    app.get('/api/wiki/:wiki/publish', auth.usr, function (req, res) {
+    app.get('/api/wiki/:wiki/save', auth.usr, function (req, res) {
 
         closeWiki(req.params.wiki, req.user)
-            .then(() => res.status(200).send(gettext("Successfully published")))
+            .then(() => res.status(200).send(gettext("Successfully saved")))
             .catch(err => util.resSendError(res, err));
     });
 

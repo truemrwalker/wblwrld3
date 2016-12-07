@@ -50,16 +50,10 @@ function ($scope, $timeout, $http, gettext, confirm) {
         $scope.currWikiEmbedUrl = "/api/wiki/" + encodeURIComponent(w.id) + "?embed=1";
     };
 
-    $scope.closeWiki = function (w) {
+    $scope.saveWiki = function (w) {
 
-        $http.delete("/api/wiki/" + encodeURIComponent(w.id)).then(function () {
+        $http.get("/api/wiki/" + encodeURIComponent(w.id) + "/save").then(function () {
             delete $scope.currWikiEmbedUrl;
-        });
-    };
-
-    $scope.publishWiki = function (w) {
-
-        $http.get("/api/wiki/" + encodeURIComponent(w.id) + "/publish").then(function () {
         });
     };
 
