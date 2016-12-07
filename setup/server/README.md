@@ -185,10 +185,141 @@ WEBBLE_WORLD_SERVERS='133.87.133.216 5.6.7.8'
 
 # Run
 
+## Run ```nginx``` on the "gateway" machine
+
+
+
+```
+sudo /etc/init.d/nginx start
+```
+
+
+
+```
+sudo /etc/init.d/nginx stop
+```
+
+
+
+```
+sudo /etc/init.d/nginx configtest
+```
+
+
+
+```
+sudo /etc/init.d/nginx reload
+```
+
+
+## Run mongodb and redis on a "node" machine 
+
+
+
+```
+sudo systemctl start redis-server.service
+```
+
+
+
+```
+sudo systemctl stop redis-server.service
+```
+
+
+
+```
+sudo systemctl restart redis-server.service
+```
+
+
+
+```
+sudo systemctl start mongod.service
+```
+
+
+
+```
+sudo systemctl stop mongod.service
+```
+
+
+
+```
+systemctl restart mongod.service
+```
+
+## Run the Webble World server on a "node" machine 
+
+
+
+```
+sudo systemctl start wblwrld3.service
+```
+
+
+
+```
+sudo systemctl stop wblwrld3.service
+```
+
+
+
+```
+sudo systemctl restart wblwrld3.service
+```
+
+
 # Update
+
+If the instructions in this file (```README.md```) are followed correctly, then all the machines
+in the Webble World cluster that serve requests either for the Webble World platform or the
+Hands-on Portal wiki can be updated via the ```gateway``` machine using the scripts located
+under the ```setup/gateway/runtime``` sub-directory.
+
+In this sense, executing the file ```setup/gateway/runtime/update.sh``` fetches from their respective
+git repositories and updates:
+
+1. The Webble World server instances that are running on all the "node" machines
+3. The Hands-on Portal wiki that is exported to a self-contained index.html file
+2. The "classic" Hands-on Portal website that contains a simple, static, javascript-less version of
+   the Hands-on Portal content
+
+If the ```update.sh``` file doesn't have its executable flag set, it can be run with the following
+command:
+
+```
+bash setup/gateway/runtime/update.sh
+```
+
+On the default Webble World cluster:
+
+* The Webble World cluster is available at: https://wws.meme.hokudai.ac.jp
+* The Hands-on Portal wiki is available at: https://hop.meme.hokudai.ac.jp/wiki
+* The Hands-on Portal classic website is available at: https://hop.meme.hokudai.ac.jp/classic
 
 ## Update the Webble World client application
 
+
+
+```
+bash setup/gateway/runtime/updateapp.sh
+```
+
 ## Update the Webble World servers
 
+
+
+```
+bash setup/gateway/runtime/updateservers.sh
+```
+
+
 ## Update the Hands-on Portal website and wiki
+
+
+
+```
+bash setup/gateway/runtime/updatehop.sh
+```

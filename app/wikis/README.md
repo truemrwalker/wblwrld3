@@ -41,10 +41,94 @@ More information on how the Hands-on Portal wiki can be independently deployed, 
 under the ```setup``` directory and specifically in the ```setup/server/README.md``` and 
 ```setup/server/gateway/runtime/updatehop.sh``` files.
 
+# Seting up the ```ssh``` keys for accessing the wiki's ```git``` repository
+
+
+
+```
+~/.ssh/id_rsa.pub
+```
+
+
+
+```
+~/.ssh/id_rsa
+```
+
+
 # Editing the Hands-on Portal wiki
+
+https://wws.meme.hokudai.ac.jp/#/wiki
 
 # Troubleshooting the Hands-on Portal wiki
 
+
+
+```
+sudo rm -fr /home/wblwrld3/www/wblwrld3/app/tmp/hop
+```
+
+
+
+```
+sudo rm -fr /home/wblwrld3/www/wblwrld3/app/tmp
+```
+
 # Alternative ways to edit the Hands-on Portal wiki
 
+
+
+```
+sudo npm install -g tiddlywiki
+```
+
+
+
+```
+git clone https://gitlab.com/giannis/hokudai-hop-wiki.git
+```
+
+From inside the repository's directory (```cd hokudai-hop-wiki```):
+
+```
+tiddlywiki --server
+```
+
+To export the wiki and generate a self-contained ```index.html``` file:
+
+```
+tiddlywiki --build index
+```
+
+The ```index.html``` file will be generated inside the sub-directory ```output```.
+
 # TiddlyWiki resources
+
+https://en.wikipedia.org/wiki/TiddlyWiki
+
+
+http://tiddlywiki.com/
+
+http://tiddlywiki.com/dev/
+
+https://github.com/TiddlyWiki/tiddlywiki
+
+## Basic editing
+
+http://www.richshumaker.com/tw5/FiveStepsToTiddlyWiki5.htm
+
+http://tiddlywiki.tiddlyspace.com/TiddlyWiki%20Markup
+
+http://www.tcm.phy.cam.ac.uk/~mdt26/PWT/hints.pdf
+
+https://www.cheatography.com/simon-fermor/cheat-sheets/tiddlywiki/
+
+## Macros and plugins
+
+http://www.networkworld.com/article/2263176/software/applications-tiddlywiki-macros-and-plugins.html
+
+http://tiddlywiki.com/dev/index.html#JavaScript%20Macros
+
+http://tiddlywiki.com/static/PluginMechanism.html
+
+http://tiddlywiki.tiddlyspace.com/Core%20Macros
