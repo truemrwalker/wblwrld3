@@ -801,18 +801,44 @@ maintenance scripts, which are located under the ```maintenace``` sub-directory.
 
 #### ```tiddlywiki```
 
-Tiddlywiki is used for editing and rendering the Wiki objects that are supported by the Webble
-World server. Wikis can be owned and shared among users. Currently, editing a Wiki object by its
-owners, results in the creation and modification of TiddlyWiki-specific files under the
-```/wiki/wiki_name``` directory. Wikis can be subsequently exported (published) to a self-contained
-HTML file, saved as ```/app/wiki/wiki_name/index.html```.
+[Tiddlywiki](http://tiddlywiki.com/) is used for editing and rendering the Wiki objects that are 
+supported by the Webble World server. Wikis can be owned and shared among multiple users. 
+Currently, editing a Wiki object by its owners, results in the creation and modification of 
+TiddlyWiki-specific files under a temporary directory (```app/tmp/wiki/wiki_name```) that is 
+[pulled](https://git-scm.com/docs/git-pull) (or [cloned](https://git-scm.com/docs/git-clone)) from the 
+Wiki's remote ```git``` repository. When a wiki is saved, all the changes to the wiki's files in
+the local repository (```app/tmp/wiki/wiki_name```) are packaged into a new 
+["commit" object](https://git-scm.com/docs/git-commit), which is then 
+[pushed](https://git-scm.com/docs/git-push) back to the wiki's remote repository.
 
+Wikis can also be exported (published) to a self-contained HTML file, saved as ```index.html```.
 That means that an exported (published) wiki can be subsequently accessed as a static file, served
-under the ```/wiki/wiki_name``` endpoint.
+via a typical file server.
+
+Although the Webble World server supports the creation and management of multiple wikis, currently,
+the wiki functionality is restricted only to the Hands-on Portal wiki via which multiple Webble
+World applications are showcased.
+
+The Hands-on Portal wiki is currently available under the following URL:
+
+http://hop.meme.hokudai.ac.jp
+
+Detailed information about Webble World wikis can be found in the file: ```app/wikis/README.md```.
 
 * See also: https://github.com/Jermolene/TiddlyWiki5
 * Main website: http://tiddlywiki.com/
 * Wikipedia entry: https://en.wikipedia.org/wiki/TiddlyWiki
+
+#### ```nodegit```
+
+[Nodegit](http://www.nodegit.org/) is used for implementing all the ```git```-related operations
+needed for accessing, modifying and saving the content of Webble World wikis.
+
+See also the previous section (```tiddlywiki```).
+
+* See also: https://github.com/nodegit/nodegit/
+* Main website: http://www.nodegit.org/
+* API documentation: http://www.nodegit.org/api/
 
 
 ### Development

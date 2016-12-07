@@ -53,6 +53,7 @@
     <Folder Include="views\" />
     <Folder Include="views\editors\" />
     <Folder Include="views\modalForms\" />
+    <Folder Include="wikis\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
@@ -118,6 +119,8 @@
     <Content Include="views\workSpaces.html" />
     <Content Include="webbleapidoc.html" />
     <Content Include="webbleinfo.html" />
+    <Content Include="wikis\hop.json" />
+    <Content Include="wikis\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\app.js" />

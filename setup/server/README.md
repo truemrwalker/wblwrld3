@@ -13,38 +13,55 @@ one Ubuntu server as the "gateway" and one or more Ubuntu servers as "nodes".
 
 ## Setup a "gateway" machine
 
-1. Install: nginx (or Run: ```bash gateway/install/nginx_latest.sh```)
-2. Install: nodejs (or Run: ```bash gateway/install/nodejs_latest.sh```)
-3. Copy: ```gateway/install/nginx.conf``` to ```/etc/nginx/```
-4. Copy: ```gateway/install/conf.d/*``` to ```/etc/nginx/conf.d/```
-5. Restart: nginx
-6. Run: ```gateway/install/www_file_server.sh```
-7. Change the password of the ```hokudai``` user
+1. Install: git (or run ```sudo apt-get install git```)
+2. Install: nginx (or Run: ```bash gateway/install/nginx_latest.sh```)
+3. Install: nodejs (or Run: ```bash gateway/install/nodejs_latest.sh```)
+4. Copy: ```gateway/install/nginx.conf``` to ```/etc/nginx/```
+5. Copy: ```gateway/install/conf.d/*``` to ```/etc/nginx/conf.d/```
+6. Restart: nginx
+7. Run: ```gateway/install/www_file_server.sh```
+8. Change the password of the ```hokudai``` user
 
 ## Setup a "node" machine that runs mongodb and redis
 
-1. Note the IP of the server as ```DB_SERVER_IP``` (e.g., by checking ```ifconfig```)
-2. Install: mongodb (or Run: ```bash nodes/install/mongodb_latest.sh```)
-3. Install: redis (or Run: ```bash nodes/install/redis.sh```)
-4. Edit: ```/etc/redis/redis.conf``` with line: ```bind DB_SERVER_IP```
-5. Edit: ```/etc/mongod.conf``` with line: ```bindIp DB_SERVER_IP```
-6. Restart: mongodb
-7. Restart: redis
+1. Install: git (or run ```sudo apt-get install git```)
+2. Note the IP of the server (e.g., ```1.2.3.4```)
+3. Install: mongodb (or Run: ```bash nodes/install/mongodb_latest.sh```)
+4. Install: redis (or Run: ```bash nodes/install/redis.sh```)
+5. Edit: ```/etc/redis/redis.conf``` with line: e.g., ```bind 1.2.3.4```
+6. Edit: ```/etc/mongod.conf``` with line: ```bindIp 1.2.3.4```
+7. Restart: mongodb
+8. Restart: redis
 
 ## Setup a "node" machine that runs the Webble World server
 
-1. Install: nodejs (or Run: ```bash nodes/install/nodejs_latest.sh```)
-2. Run: ```bash nodes/install/wblwrld3.sh```
-3. Edit: ```~wblwrld3/www/wblwrld3/run.sh``` with the correct ```DB_SERVER_IP``` and secrets
-4. Run: ```sudo systemctl start wblwrld3.service```
-5. Change the password of the ```wblwrld3``` user
-6. Note the IP of the machine as ```WW_SERVER_IP```
-7. Login to the "gateway" machine
-8. Edit: ```/etc/nginx/conf.d/wws.conf``` and add the ```WW_SERVER_IP``` to the ```main-app``` section
-9. Edit: ```gateway/runtime/updateservers.sh``` and append the ```WW_SERVER_IP``` at the 
-   ```WEBBLE_WORLD_SERVERS``` variable at the beginning of the file
+1. Install: git (or run ```sudo apt-get install git```)
+2. Install: nodejs (or Run: ```bash nodes/install/nodejs_latest.sh```)
+3. Run: ```bash nodes/install/wblwrld3.sh```
+4. Edit: ```~wblwrld3/www/wblwrld3/run.sh``` with the correct mongodb and redis machine IP
+   (e.g., ```1.2.3.4```) and secrets
+5. Run: ```sudo systemctl start wblwrld3.service```
+6. Change the password of the ```wblwrld3``` user
+7. Note the IP of the machine (e.g., ```5.6.7.8```)
+8. Login to the "gateway" machine
+9. Edit: ```/etc/nginx/conf.d/wws.conf``` and add the machine's IP (e.g., ```5.6.7.8```) 
+   to the ```main-app``` section
+10. Edit: ```gateway/runtime/updateservers.sh``` and append the machine's IP
+    (e.g., ```5.6.7.8```) at the ```WEBBLE_WORLD_SERVERS``` variable at the beginning of the file
 
 # Install
+
+First of all, to obtain the source distribution of the Webble World server and its dependencies, the
+[git](https://git-scm.com/) distributed version control system has to be available on the target
+machines. Therefore, if the ```git``` command is not available, the following page contains
+detailed information on installing it: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+Alternatively, on Debian and Ubuntu-based systems, the following command installs ```git``` on the
+target machine:
+
+```
+sudo apt-get install git
+```
 
 ## Setup a "gateway" machine
 
@@ -93,7 +110,7 @@ that need to be done to enable the Webble World server to function properly:
       (e.g., wws.meme.hokudai.ac.jp)
    3. The secrets for the application and for the session that should be common among all
       Webble World server instances
-   4. The ```host``` and ```port``` for the mongodb and redis servers
+   4. The ```host``` (e.g., ```1.2.3.4```) and ```port``` for the mongodb and redis servers
    5. The credentials for accessing the mongodb database
    6. The API ids and keys for utilizing the third-party login services (i.e., Google+, Twitter and Facebook)
    7. The target port of the Webble World server (that can be any available port on the target machine)
@@ -128,7 +145,7 @@ allow its remote, automated update in the future.
 2. The file ```gateway/runtime/updateservers.sh``` (inside this repository) has to be edited to
    include the new server at the end of the ```WEBBLE_WORLD_SERVERS``` variable
 
-For example, assuming that the machine's IP (can also be seen via ```ifconfig```) is 1.2.3.4, the following
+For example, assuming that the machine's IP (can also be seen via ```ifconfig```) is ```5.6.7.8```, the following
 line should be added in the ```/etc/nginx/conf.d/wws.conf``` that is located in the gateway server:
 
 ```
@@ -136,22 +153,42 @@ upstream main-app {
     ip_hash;
     server 133.87.133.85:7000 fail_timeout=1s; # Previous server instances
 
-	server 1.2.3.4; # Newly installed server instance
+	server 5.6.7.8; # Newly installed server instance
 }
 ```
 
-Also, to enable the automatic updating of all the Webble World server instances that run inside the 
-Webble World cluster, the new server's IP address has to be added at the beginning of the file
-```gateway/runtime/updateservers.sh```, which is located inside the repository. A better strategy, however,
+After the nginx configuration file, ```/etc/nginx/conf.d/wws.conf```, is updated, the following command
+can check whether the resulting configuration is syntactically correct or not:
+
+```
+sudo /etc/init.d/nginx configtest
+```
+
+Subsequently, if the output of the above command reports that the configuration is well-formed, then, 
+the following command will force the ```nginx``` server to load and apply the new configuration:
+
+```
+sudo /etc/init.d/nginx reload
+```
+
+Moreover, to enable the automatic updating of all the Webble World server instances that run inside the 
+Webble World cluster, the new server's IP address (e.g., ```5.6.7.8```) has to be added at the beginning of 
+the file ```gateway/runtime/updateservers.sh```, which is located inside the repository. A better strategy, however,
 is to copy the file ```gateway/runtime/updateservers.sh``` from the repository to the home directory of the 
-gateway's main user, (e.g., ```cp /home/hokudai/www/setup/server/gateway/runtime/updateservers.sh ~```) and make
-the required change on that copy. Then, inside the ```updateservers.sh``` file, the following line has to
-be edited:
+gateway's main user, (e.g., ```cp /home/hokudai/www/wblwrld3/setup/server/gateway/runtime/updateservers.sh ~```)
+and make the required change on that copy. Then, inside the ```updateservers.sh``` file, the following 
+line has to be edited:
 
 ```bash
-WEBBLE_WORLD_SERVERS='133.87.133.216 1.2.3.4'
+WEBBLE_WORLD_SERVERS='133.87.133.216 5.6.7.8'
 ```
 
 # Run
 
 # Update
+
+## Update the Webble World client application
+
+## Update the Webble World servers
+
+## Update the Hands-on Portal website and wiki

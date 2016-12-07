@@ -10,6 +10,9 @@ export SERVER_NAME=wws.meme.hokudai.ac.jp
 export APP_CRYPT_PASSWORD=
 export SESSION_SECRET=
 
+export MAIL_USER=
+export MAIL_PASS=
+
 export MONGODB_HOST=133.87.133.85
 export MONGODB_PORT=27017
 export MONGODB_DB_NAME=wblwrld3
