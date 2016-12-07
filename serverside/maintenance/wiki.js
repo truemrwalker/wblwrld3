@@ -22,8 +22,10 @@
 /**
  * @overview Autonomous maintenance script that creates or removes Wiki objects in the database.
  *
- * A Wiki is added to the database if it doesn't exist and there is a TiddlyWiki.info file under
- * the directory config.PROJECT_ROOT_DIR/wiki/WIKI_ID.
+ * A Wiki is added to the database if a specification file for it exists under the directory:
+ * config.APP_ROOT_DIR/wikis as WIKI_ID.json. This file contains the basic Wiki's metadata as
+ * defined in the mongoose model (see modes/wiki.js). Note that the actual content of each wiki
+ * is stored into an external git repository (wiki.repository).
  *
  * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
  */
