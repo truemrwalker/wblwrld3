@@ -119,6 +119,7 @@
     <Content Include="views\workSpaces.html" />
     <Content Include="webbleapidoc.html" />
     <Content Include="webbleinfo.html" />
+    <Content Include="wikis\test.json" />
     <Content Include="wikis\hop.json" />
     <Content Include="wikis\README.md" />
   </ItemGroup>

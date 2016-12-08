@@ -1,0 +1,6 @@
+{
+	"name": "Hands-off Portal",
+	"owner": "foo@foo.com",
+	"repository": "git@gitlab.com:giannis/hokudai-hop-wiki.git",
+	"description": "Hands-off portal for testing"
+}
