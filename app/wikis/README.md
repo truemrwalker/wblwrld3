@@ -44,6 +44,12 @@ under the ```setup``` directory and specifically in the ```setup/server/README.m
 # Seting up the ```ssh``` keys for accessing the wiki's ```git``` repository
 
 
+"Profile Settings" -> "SSH Keys"
+
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjruHGK/7OphK1xeLTEcoSIcN9L3QaGK7gIHdn8WKwqmTQTzmA1wBAkJh3Pv+iUc+Q2kui+GUeQMF4G/kbNJ9q2FLHGbFZgXpUm8Jlu4zat67X6QnOo1wa3c90L/hISHs1LxGcon/sCrnT/NDZT9uCG/cE0S5VLJQznWBzbf4BT+AylvuqbO91UOioYTCSoHcWlft27qugdmvOCRJOp+8oY09wrSBHpZDp9jrv9/MqEfOhsBNUtgEXsB9SlbqMtJ15lOrSYMkaGbJ8GqJUBk2QpQvaT+frk/l9GvsOgjAgeQ7+jTx44YY3oUU2hfW3LduFdL2nHNdRTnW9qhCw/ADT wblwrld3@g-Precision-M6500
+```
+
 
 ```
 ~/.ssh/id_rsa.pub
@@ -54,6 +60,35 @@ under the ```setup``` directory and specifically in the ```setup/server/README.m
 ```
 ~/.ssh/id_rsa
 ```
+
+First, using the newly setup password, the following command can be used to login as the ```wblwrld3``` user:
+
+```
+su - wblwrld3
+```
+
+After that, a new SSH key-pair can be generated using the following command:
+
+```
+ssh-keygen
+```
+
+As mentioned before, alternatively, the standard ```wblwrld3``` key-pair can be used for the current "node"
+machine's ```wblwrld3``` user. In this case, the following files have to be copied from another "node" machine
+that runs the Webble World server to the current machine, inside the ```wblwrld3``` user's ```.ssh``` directory:
+
+1. ```~wblwrld3/.ssh/id_rsa``` (private key)
+2. ```~wblwrld3/.ssh/id_rsa.pub``` (public key)
+
+The standard ```wblwrld3``` account's public key is the following:
+
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjruHGK/7OphK1xeLTEcoSIcN9L3QaGK7gIHdn8WKwqmTQTzmA1wBAkJh3Pv+iUc+Q2kui+GUeQMF4G/kbNJ9q2FLHGbFZgXpUm8Jlu4zat67X6QnOo1wa3c90L/hISHs1LxGcon/sCrnT/NDZT9uCG/cE0S5VLJQznWBzbf4BT+AylvuqbO91UOioYTCSoHcWlft27qugdmvOCRJOp+8oY09wrSBHpZDp9jrv9/MqEfOhsBNUtgEXsB9SlbqMtJ15lOrSYMkaGbJ8GqJUBk2QpQvaT+frk/l9GvsOgjAgeQ7+jTx44YY3oUU2hfW3LduFdL2nHNdRTnW9qhCw/ADT wblwrld3@g-Precision-M6500
+```
+
+Therefore, at the target, remote wiki repository, either the newly generated ```id_rsa.pub``` key or the standard public
+key mentioned above should be given read and write access. Refer to the remote git repository's manual on how to setup
+the aforementioned public key (e.g., for gitlab.com the setting is under: "Profile Settings" -> "SSH Keys").
 
 
 # Editing the Hands-on Portal wiki
@@ -78,15 +113,19 @@ sudo rm -fr /home/wblwrld3/www/wblwrld3/app/tmp
 
 
 
-```
-sudo npm install -g tiddlywiki
-```
-
-
 
 ```
 git clone https://gitlab.com/giannis/hokudai-hop-wiki.git
 ```
+
+## Editing the wiki files directly
+
+## Using tiddlywiki server
+
+```
+sudo npm install -g tiddlywiki
+```
+
 
 From inside the repository's directory (```cd hokudai-hop-wiki```):
 

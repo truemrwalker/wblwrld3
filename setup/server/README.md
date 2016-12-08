@@ -499,6 +499,14 @@ run on all the different "node" manchines of the Webble World cluster:
 bash setup/gateway/runtime/updateservers.sh
 ```
 
+There's another version of the above script that updates the servers using the ```hokudai``` user's
+account:
+
+```
+bash setup/gateway/runtime/updateservers2.sh
+```
+
+
 ## Update the Hands-on Portal website and wiki
 
 Finally, the following command, updates and generates all the files required for the Hands-on Portal website

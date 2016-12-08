@@ -40,7 +40,7 @@ DAEMON_ARGS=
 
 do_start()
 {
-    start-stop-daemon --start --quiet --chuid wblwrld3 --background --pidfile $PIDFILE --exec $DAEMON -- \
+    start-stop-daemon --start --quiet --user wblwrld3 --chuid wblwrld3 --background --pidfile $PIDFILE --make-pidfile --exec $DAEMON -- \
         $DAEMON_ARGS
     RETVAL="$?"
     return "$RETVAL"
@@ -53,7 +53,7 @@ do_stop()
     #   1 if daemon was already stopped
     #   2 if daemon could not be stopped
     #   other if a failure occurred
-    start-stop-daemon --stop --quiet --chuid wblwrld3 --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+    start-stop-daemon --stop --quiet --user wblwrld3 --chuid wblwrld3 --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
     RETVAL="$?"
     rm -f $PIDFILE
     return "$RETVAL"

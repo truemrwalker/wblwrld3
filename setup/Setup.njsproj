@@ -65,6 +65,7 @@
     <Content Include="server\gateway\nginx\nginx_modular_wws.conf" />
     <Content Include="server\gateway\install\nginx_latest.sh" />
     <Content Include="server\gateway\extra\server_key.sh" />
+    <Content Include="server\gateway\runtime\updateservers2.sh" />
     <Content Include="server\gateway\runtime\update.sh" />
     <Content Include="server\gateway\runtime\updatehop.sh" />
     <Content Include="server\gateway\runtime\updateapp.sh" />
