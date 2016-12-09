@@ -14,12 +14,12 @@ one Ubuntu server as the "gateway" and one or more Ubuntu servers as "nodes".
 ## Setup a "gateway" machine
 
 1. Install: git (or run ```sudo apt-get install git```)
-2. Install: nginx (or Run: ```bash setup/gateway/install/nginx_latest.sh```)
-3. Install: nodejs (or Run: ```bash setup/gateway/install/nodejs_latest.sh```)
-4. Copy: ```setup/gateway/install/nginx.conf``` to ```/etc/nginx/```
-5. Copy: ```setup/gateway/install/conf.d/*``` to ```/etc/nginx/conf.d/```
+2. Install: nginx (or Run: ```bash setup/server/gateway/install/nginx_latest.sh```)
+3. Install: nodejs (or Run: ```bash setup/server/gateway/install/nodejs_latest.sh```)
+4. Copy: ```setup/server/gateway/install/nginx.conf``` to ```/etc/nginx/```
+5. Copy: ```setup/server/gateway/install/conf.d/*``` to ```/etc/nginx/conf.d/```
 6. Restart: nginx
-7. Run: ```setup/gateway/install/www_file_server.sh```
+7. Run: ```setup/server/gateway/install/www_file_server.sh```
 8. Change the password of the ```hokudai``` user
 
 ## Setup a "node" machine that runs mongodb and redis
@@ -47,7 +47,7 @@ one Ubuntu server as the "gateway" and one or more Ubuntu servers as "nodes".
 9. Login to the "gateway" machine
 10. Edit: ```/etc/nginx/conf.d/wws.conf``` and add the machine's IP (e.g., ```5.6.7.8```) 
     to the ```main-app``` section
-11. Edit: ```setup/gateway/runtime/updateservers.sh``` and append the machine's IP
+11. Edit: ```setup/server/gateway/runtime/updateservers.sh``` and append the machine's IP
     (e.g., ```5.6.7.8```) at the ```WEBBLE_WORLD_SERVERS``` variable at the beginning of the file
 
 # Update Quick Reference
@@ -56,7 +56,7 @@ In general, running the following command (script) on the "gateway" machine upda
 applications running on the Webble World cluster: 
 
 ```
-bash ~hokudai/www/wblwrld3/setup/gateway/runtime/update.sh
+bash ~hokudai/www/wblwrld3/setup/server/gateway/runtime/update.sh
 ```
 
 The ```update.sh``` script just runs the three scripts mentioned below that update the three different
@@ -67,21 +67,21 @@ The following command (script) when invoked on the "gateway" updates the client-
 application that runs on the browser:
 
 ```
-bash ~hokudai/www/setup/gateway/runtime/updateapp.sh
+bash ~hokudai/www/setup/server/gateway/runtime/updateapp.sh
 ```
 
 The following command (script) when invoked on the "gateway" updates all the instances of the
 Webble World server that run on the "node" machines of the Webble World cluster:
 
 ```
-bash ~hokudai/www/setup/gateway/runtime/updateservers2.sh
+bash ~hokudai/www/setup/server/gateway/runtime/updateservers2.sh
 ```
 
 Finally, the following command (script) when invoked on the "gateway" updates the Hands-on Portal
 website and generates a static, read-only version of the Hands-on Portal wiki:
 
 ```
-bash ~hokudai/www/setup/gateway/runtime/updatehop.sh
+bash ~hokudai/www/setup/server/gateway/runtime/updatehop.sh
 ```
 
 # Install
@@ -112,19 +112,19 @@ Alternatively, on Debian and Ubuntu-based systems, the following script installs
 target machine:
 
 ```
-bash setup/gateway/install/nginx_latest.sh
+bash setup/server/gateway/install/nginx_latest.sh
 ```
 
 Subsequently, to configure nginx to correctly serve static files and dispatch requests, the following
 steps have to be performed:
 
-1. Copy the file ```setup/gateway/install/nginx.conf``` to ```/etc/nginx/```
-2. Copy the all the files in ```setup/gateway/install/conf.d/``` to ```/etc/nginx/conf.d/```
+1. Copy the file ```setup/server/gateway/install/nginx.conf``` to ```/etc/nginx/```
+2. Copy the all the files in ```setup/server/gateway/install/conf.d/``` to ```/etc/nginx/conf.d/```
 3. Reload nginx with the command: ```sudo /etc/init.d/nginx reload```
 
 Moreover, for HTTPS to work correctly the correct keys have to be configured in all the files under the 
 ```/etc/nginx/conf.d/``` folder of the target machine. The files in the repository, under the
-```setup/gateway/install/conf.d/``` directory contain a working HTTPS configuration and more information
+```setup/server/gateway/install/conf.d/``` directory contain a working HTTPS configuration and more information
 can be found at the following page:
 
 http://nginx.org/en/docs/http/configuring_https_servers.html
@@ -141,13 +141,13 @@ of the "gateway" machine as the file-server and load-balancer of the Webble Worl
 with the following script:
 
 ```
-bash setup/gateway/install/www_file_server.sh
+bash setup/server/gateway/install/www_file_server.sh
 ```
 
 The above script, creates a new user called ```hokudai```, fetches all the necessary files and installs all
 the necessary software libraries under the credentials of the ```hokudai``` user. The user ```hokudai``` is 
 created with a default (and weak) password after the execution of the 
-```setup/gateway/install/www_file_server.sh``` script and, thus, it should be changed by, e.g., using the
+```setup/server/gateway/install/www_file_server.sh``` script and, thus, it should be changed by, e.g., using the
 Following command:
 
 ```
@@ -492,9 +492,9 @@ The reason for this is that the two backup machines in the default Webble World 
 If the instructions in this file (```README.md```) are followed correctly, then all the machines
 in the Webble World cluster that serve requests either for the Webble World platform or the
 Hands-on Portal wiki can be updated via the ```gateway``` machine using the scripts located
-under the ```setup/gateway/runtime``` sub-directory.
+under the ```setup/server/gateway/runtime``` sub-directory.
 
-In this sense, executing the file ```setup/gateway/runtime/update.sh``` fetches from their respective
+In this sense, executing the file ```setup/server/gateway/runtime/update.sh``` fetches from their respective
 git repositories and updates:
 
 1. The Webble World server instances that are running on all the "node" machines
@@ -506,7 +506,7 @@ If the ```update.sh``` file doesn't have its executable flag set, it can be run 
 command:
 
 ```
-bash setup/gateway/runtime/update.sh
+bash setup/server/gateway/runtime/update.sh
 ```
 
 On the default Webble World cluster:
@@ -521,7 +521,7 @@ The following command updates only the client-side Webble World application that
 and communicates with the server through the Webble World server's REST API:
 
 ```
-bash setup/gateway/runtime/updateapp.sh
+bash setup/server/gateway/runtime/updateapp.sh
 ```
 
 ## Update the Webble World servers
@@ -530,14 +530,14 @@ The following command updates and hopefully restarts all the instances of the We
 run on all the different "node" manchines of the Webble World cluster:
 
 ```
-bash setup/gateway/runtime/updateservers.sh
+bash setup/server/gateway/runtime/updateservers.sh
 ```
 
 There's another version of the above script that updates the servers using the ```hokudai``` user's
 account:
 
 ```
-bash setup/gateway/runtime/updateservers2.sh
+bash setup/server/gateway/runtime/updateservers2.sh
 ```
 
 
@@ -547,5 +547,5 @@ Finally, the following command, updates and generates all the files required for
 and the Hands-on Portal wiki:
 
 ```
-bash setup/gateway/runtime/updatehop.sh
+bash setup/server/gateway/runtime/updatehop.sh
 ```
