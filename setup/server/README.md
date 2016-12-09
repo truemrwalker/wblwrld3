@@ -50,6 +50,40 @@ one Ubuntu server as the "gateway" and one or more Ubuntu servers as "nodes".
 11. Edit: ```setup/gateway/runtime/updateservers.sh``` and append the machine's IP
     (e.g., ```5.6.7.8```) at the ```WEBBLE_WORLD_SERVERS``` variable at the beginning of the file
 
+# Update Quick Reference
+
+In general, running the following command (script) on the "gateway" machine updates (and restarts) all 
+applications running on the Webble World cluster: 
+
+```
+bash ~hokudai/www/wblwrld3/setup/gateway/runtime/update.sh
+```
+
+The ```update.sh``` script just runs the three scripts mentioned below that update the three different
+applications that currently run on the Webble World cluster. For better, more fine-grained control,
+the following scripts can be invoked independently.
+
+The following command (script) when invoked on the "gateway" updates the client-side Webble World
+application that runs on the browser:
+
+```
+bash ~hokudai/www/setup/gateway/runtime/updateapp.sh
+```
+
+The following command (script) when invoked on the "gateway" updates all the instances of the
+Webble World server that run on the "node" machines of the Webble World cluster:
+
+```
+bash ~hokudai/www/setup/gateway/runtime/updateservers2.sh
+```
+
+Finally, the following command (script) when invoked on the "gateway" updates the Hands-on Portal
+website and generates a static, read-only version of the Hands-on Portal wiki:
+
+```
+bash ~hokudai/www/setup/gateway/runtime/updatehop.sh
+```
+
 # Install
 
 First of all, to obtain the source distribution of the Webble World server and its dependencies, the
