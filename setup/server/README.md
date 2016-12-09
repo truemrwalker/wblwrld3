@@ -67,21 +67,21 @@ The following command (script) when invoked on the "gateway" updates the client-
 application that runs on the browser:
 
 ```
-bash ~hokudai/www/setup/server/gateway/runtime/updateapp.sh
+bash ~hokudai/www/wblwrld3/setup/server/gateway/runtime/updateapp.sh
 ```
 
 The following command (script) when invoked on the "gateway" updates all the instances of the
 Webble World server that run on the "node" machines of the Webble World cluster:
 
 ```
-bash ~hokudai/www/setup/server/gateway/runtime/updateservers2.sh
+bash ~hokudai/www/wblwrld3/setup/server/gateway/runtime/updateservers2.sh
 ```
 
 Finally, the following command (script) when invoked on the "gateway" updates the Hands-on Portal
 website and generates a static, read-only version of the Hands-on Portal wiki:
 
 ```
-bash ~hokudai/www/setup/server/gateway/runtime/updatehop.sh
+bash ~hokudai/www/wblwrld3/setup/server/gateway/runtime/updatehop.sh
 ```
 
 # Install
