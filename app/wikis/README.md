@@ -300,6 +300,15 @@ TiddlyWiki:
 
 ## The Hands-on Portal TiddlyWiki
 
+The Hands-on Portal wiki is hosted under the following gitlab repository: 
+https://gitlab.com/giannis/hokudai-hop-wiki
+
+It can be cloned with the following command:
+
+```
+git clone https://gitlab.com/giannis/hokudai-hop-wiki.git
+```
+
 The Hands-on Portal wiki is a normal TiddlyWiki that has the following characteristics:
 
 1. Contains a ```$__config_tiddlyweb_host.tid```
@@ -322,18 +331,47 @@ title: $:/config/tiddlyweb/host
 $protocol$//$host$/api/wiki/hop/
 ```
 
+As mentioned previously, when the wiki is edited outside the Webble World platform, via the TiddlyWiki 
+server, the contents of that file should be temporarily deleted.
+
 ### Webble application macro
 
-Usage is ```<<webble-app id>```.
+The file:
 
-e.g.,
+```
+tiddlers/$__tags_Macro.tid
+```
+
+Contains a few Webble World and Hands-on Portal specific TiddlyWiki macros.
+
+For example the macro ```webble-app``` embeds a whole Webble World application (implemented as a Webble)
+inside the target TiddlyWiki post (called tiddler).
+
+The usage of the ```webble-app``` macro is: ```<<webble-app WEBBLE_ID>```.
+
+For example, the following text embeds the Webble World platform that only loads the fundamental webble:
 
 ```
 <<webble-app fundamental>>
 ```
 
-TODO: Add the other macros
+The file ```tiddlers/$__tags_Macro.tid``` contains more macros that can be used in the Hands-on Portal
+wiki.
 
 ### Webble World plugin
 
-TODO: Add description
+Apart from the macros the Hands-on Portal wiki also contains some widgets that are much more powerful than
+macros since they can run arbitrarily complex javascript code.
+
+These widgets are implemented inside a plugin called ```webbleworld```. The plugin with all its metadata is
+contained under the ```plugins/webbleworld``` sub-directory.
+
+An example usage of the widgets implemeted by the ```webbleworld``` plugin is the following:
+
+```
+<$webbleimage webble="supernovaclassifier"/>
+<$webblelist query="basic"/>
+```
+
+The javascript file ```plugins/webbleworld/webbleinfo.js``` implements those two widgets that can be used in
+the Hands-on Portal wiki inside any tiddler.
