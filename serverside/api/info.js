@@ -37,7 +37,8 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 			// Micke expects these two fields with these strings as they are
             dbStatus: 'Ready and responding',
-            webservicestatus: 'Ready and responding'
+            webservicestatus: 'Ready and responding',
+			happylevel: "Very happy"
         });
     });
 
