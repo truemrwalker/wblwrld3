@@ -369,6 +369,7 @@ contained under the ```plugins/webbleworld``` sub-directory.
 An example usage of the widgets implemeted by the ```webbleworld``` plugin is the following:
 
 ```
+<$webbledata webble="supernovaclassifier" ext=".jpg"/>
 <$webbleimage webble="supernovaclassifier"/>
 <$webblelist query="basic"/>
 ```

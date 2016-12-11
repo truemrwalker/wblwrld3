@@ -65,7 +65,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         if (groupNameCache && w._sec.groups)
             obj.groups = w._sec.groups.map(gId => groupNameCache[gId.toString()] || "Hidden");
 
-        console.log("***| RETURNING WEBBLE: ", w.webble.defid, "|***");
+        //console.log("***| RETURNING WEBBLE: ", w.webble.defid, "|***");
         return obj;
 	}
 
@@ -95,6 +95,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 			    { "webble.author" : q }
 		    ];
 	    }
+
+        // Allow webbles to be queried from different domains:
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
 	    if (req.query.count) {
 
