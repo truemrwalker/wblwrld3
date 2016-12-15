@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// workspaces.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview REST endpoints for creating and managing Workspaces.
+ * @module api
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../lib/util');
@@ -97,10 +99,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.get('/api/workspaces/:id', auth.usr, function (req, res) {
 
         Workspace.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (ws) {
-            
+
             if (!ws || !ws.isUserAuthorized(req.user))
                 throw new util.RestError(gettext("Workspace no longer exists"), 404);
-            
+
             res.json(normalizeFullWS(ws));
 
         }).catch(err => util.resSendError(res, err, gettext("Cannot retrieve workspace")));
@@ -109,22 +111,22 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.put('/api/workspaces/:id', auth.usr, function (req, res) {
 
 		Workspace.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (ws) {
-            
+
             if (!ws)
                 throw new util.RestError(gettext("Workspace no longer exists"), 404);
-            
+
             if (!ws.isUserAuthorized(req.user, true))
                 throw new util.RestError(gettext("Not authorized to change workspace"), 403);
-            
+
             // Just in case
             //
             delete req.body.workspace.creator;
-            
+
             if (!ws.isUserOwner(req.user))
                 delete req.body.workspace.name;
             else if (!ws.workspace.creator)
                 ws.workspace.creator = req.user.username || req.user.name.full;
-            
+
             // Finally, merge and save
             //
             ws.mergeWithObject(req.body.workspace);
@@ -138,13 +140,13 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.delete('/api/workspaces/:id', auth.usr, function (req, res) {
 
 		Workspace.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (ws) {
-            
+
             if (!ws)
                 throw new util.RestError(gettext("Cannot find workspace"), 204); // 204 (No Content) per RFC2616
-            
+
             if (!ws.isUserOwner(req.user))
                 throw new util.RestError(gettext("Not authorized to delete workspace"), 403); // Forbidden
-            
+
             return ws.remove().then(function () {
                 res.status(200).send(gettext("Successfully deleted")); // Everything OK
             });

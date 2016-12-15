@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// templates.js
-// Created by Giannis Georgalis on 12/12/13
-//
+/**
+ * @overview REST endpoints for getting information about published Webble templates.
+ * @module api/dev
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var path = require('path');

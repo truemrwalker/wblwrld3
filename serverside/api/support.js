@@ -19,10 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// support.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview REST endpoints for handling the QA/FAQ functionality of Webble World.
+ * @module api
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../lib/util');
@@ -110,10 +112,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.get('/api/support/qa/:id', auth.usr, function (req, res) {
 
         Post.findById(mongoose.Types.ObjectId(req.params.id)).lean().exec().then(function (post) {
-            
+
             if (!post || post._type !== 'qa')
                 throw new util.RestError(gettext("Question no longer exists"), 404);
-            
+
             res.json(normalizePost(post));
 
         }).catch(err => util.resSendError(res, err, gettext("Cannot get question")));
@@ -122,20 +124,20 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.put('/api/support/qa/:id', auth.usr, function (req, res) {
 
 		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
-            
+
             if (!post || post._type !== 'qa')
                 throw new util.RestError(gettext("Question no longer exists"), 404);
-            
+
             if (!req.body.qa)
                 throw new util.RestError(gettext("Malformed answer"));
-            
+
             post.post.comments.push({
                 author: req.body.qa.au || req.user.name.full,
                 body: req.body.qa.a,
                 _owner: req.user._id
             });
-            
-            return post.save().then(function () {       
+
+            return post.save().then(function () {
                 res.json(normalizePost(post));
             });
 
@@ -145,10 +147,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.delete('/api/support/qa/:id', auth.usr, function (req, res) {
 
 		Post.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (post) {
-            
+
             if (!post || post._type !== 'qa' || !post.isUserAuthorized(req.user))
                 throw new util.RestError(gettext("Question no longer exists"), 204); // 204 (No Content) per RFC2616
-            
+
             return post.remove().then(function () {
                 res.status(200).send(gettext("Successfully deleted")); // Everything OK
             });

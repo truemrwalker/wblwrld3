@@ -19,10 +19,16 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// users.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview REST endpoints for querying and getting information about user accounts.
+ *
+ * Registering new accounts and updating user-provided information is handled by the
+ * REST endpoints under the /auth path. See also: auth/providers/local.js
+ *
+ * @module api
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../lib/util');
@@ -102,9 +108,9 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	});
 
 	app.delete('/api/users/tasks/:id', auth.usr, function(req, res) {
-        
+
         var index = -1;
-        
+
         try {
             var id = mongoose.Types.ObjectId(req.params.id);
             index = util.indexOf(req.user._tasks, function (n) { return n._id.equals(id); });
@@ -128,7 +134,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.get('/api/users/groups', auth.usr, function(req, res) {
 
         req.user.populate('_sec.groups', '-_sec -_auth -_owner -_contributors').execPopulate().then(function (user) {
-            
+
             res.json(util.transform_(user._sec.groups, function (g) {
                 return g.toJSON();
             }));
@@ -139,15 +145,15 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.put('/api/users/groups', auth.usr, function(req, res) {
 
 		Promise.try(() => mongoose.Types.ObjectId(req.body.group)).then(function (gId) {
-            
+
             var index = req.user._sec.groups.indexOf(gId);
-            
+
             if (index === -1 || !req.body.remove)
                 throw util.RestError(gettext("Invalid Operation"));
             else {
-                
+
                 req.user._sec.groups.splice(index, 1);
-                
+
                 return req.user.save().then(function () {
                     res.status(200).send(gettext("OK"));
                 });

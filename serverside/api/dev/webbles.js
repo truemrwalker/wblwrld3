@@ -19,14 +19,12 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// webbles.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview REST endpoints for creating and managing Webble templates (also know as Sandbox/Dev Webbles).
+ * @module api/dev
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
 
-////////////////////////////////////////////////////////////////////////
-// Development webbles API for creating and exposing new templates
-//
 var Promise = require("bluebird");
 
 var path = require('path');
@@ -117,7 +115,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 		});
 
 		return newWebble.save().then(function (savedDoc) { // We need to save first to get an _id that we use for associating files
-            
+
             return fsOps.associateFiles(req,
 					savedDoc,
 					path.join(devWebbleDir, savedDoc._id.toString()),
@@ -250,12 +248,12 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.put('/api/dev/webbles/:id/publish', auth.dev, function(req, res) {
 
 		return DevWebble.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (fromW) {
-            
+
             if (!fromW || !fromW.isUserAuthorized(req.user))
                 throw new util.RestError(gettext("Webble does not exist"), 404);
-            
+
             var defid = fromW.webble.defid;
-            
+
             return publishingOps.publish(req, Webble.findOne({ "webble.defid": defid }), function () {
 
                 return new Webble({

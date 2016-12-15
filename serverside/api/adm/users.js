@@ -19,10 +19,19 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// users.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview REST endpoints for querying and getting information about user accounts.
+ *
+ * These endpoints provide more detailed information than those in api/users.js, however,
+ * they are only accessible to administrators (users with the 'adm' role) whereas the ones
+ * under /api/users.js are accessible to all users. Registering new accounts and updating
+ * user-provided information is handled by the REST endpoints under the /auth path.
+ * See also: auth/providers/local.js
+ *
+ * @module api/adm
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../../lib/util');

@@ -19,10 +19,16 @@
 // Additional restrictions may apply. See the LICENSE file for more information.
 //
 
-//
-// groups.js
-// Created by Giannis Georgalis on Fri Mar 27 2015 16:19:01 GMT+0900 (Tokyo Standard Time)
-//
+/**
+ * @overview REST endpoints for creating and managing groups.
+ *
+ * Although, in general, any Webble World server object (models/*.js) can belong to a group,
+ * currently, only other groups, users and webbles can be contained in groups.
+ *
+ * @module api
+ * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ */
+
 var Promise = require("bluebird");
 
 var util = require('../lib/util');
@@ -61,26 +67,26 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	function createGroup(req, isTopLevel) {
 
 		return (!req.params.id ? Promise.resolve(null) : Group.findById(mongoose.Types.ObjectId(req.params.id)).exec()).then(function (parentGroup) {
-            
+
             if (!isTopLevel) {
-                
+
                 if (!parentGroup)
                     throw new util.RestError(gettext("Parent group does not exist"), 404);
-                
+
                 if (!parentGroup.isUserAuthorized(req.user))
                     throw new util.RestError(gettext("You have no permission to create a subgroup"), 403); // Forbidden
             }
             else if (!req.user.hasRole('adm'))
                 throw new util.RestError(gettext("You have no permission to create a top-level group"), 403); // Forbidden
-            
+
             if (!req.body.group)
                 throw new util.RestError(gettext("Malformed group description"));
-            
+
             return (!req.body.owner ? Promise.resolve(req.user) : User.findOne({ $or: [{ email: req.body.owner }, { username: req.body.owner }] }).exec()).then(function (owner) {
-                
+
                 if (!owner)
                     throw new util.RestError(gettext("Could not resolve the new group's owner"));
-                
+
                 var group = new Group({
                     _sec: {
                         groups: parentGroup ? [parentGroup._id] : [],
@@ -89,7 +95,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
                     _owner: owner._id
                 });
                 group.mergeWithObject(req.body.group);
-                
+
                 return group.save().then(function () {
 
                     // Cache the name of the group we've just created and return it
@@ -144,10 +150,10 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.get('/api/groups/:id', auth.usr, function (req, res) {
 
         Group.findById(mongoose.Types.ObjectId(req.params.id)).lean().exec().then(function (group) {
-            
+
             if (!group)
                 throw new util.RestError(gettext("Group no longer exists"), 404);
-            
+
             res.json(normalizeGroup(group));
 
         }).catch(err => util.resSendError(res, err));
@@ -156,18 +162,18 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.put('/api/groups/:id', auth.usr, function (req, res) {
 
 		Group.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (group) {
-            
+
             if (!group)
                 throw new util.RestError(gettext("Group no longer exists"), 404);
-            
+
             if (!group.isUserAuthorized(req.user))
                 throw new util.RestError(gettext("You have no permission editing this group"), 403); // Forbidden
-            
+
             if (!req.body.group)
                 throw new util.RestError(gettext("Malformed group description"));
-            
+
             group.mergeWithObject(req.body.group);
-            
+
             return group.save().then(function () {
                 res.json(normalizeGroup(group));
             });
@@ -178,29 +184,29 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 	app.delete('/api/groups/:id', auth.usr, function (req, res) {
 
 		Group.findById(mongoose.Types.ObjectId(req.params.id)).exec().then(function (group) {
-            
+
             if (!group)
                 throw new util.RestError(gettext("Group no longer exists"), 204); // 204 (No Content) per RFC2616
-            
+
             return groupingOps.clearGroupMembers(req, group, dbutil.qAG(Webble.find({}), User.find({}))).then(function () {
-                
+
                 return Group.find({ "_sec.groups": group._id }).exec().then(function (subgroups) {
-                    
+
                     return Promise.all(util.transform_(subgroups, function (g) {
-                        
+
                         var index = g._sec.groups.indexOf(group._id);
                         if (index != -1)
                             g._sec.groups.splice(index, 1);
-                        
+
                         if (group._sec.groups.length > 0)
                             g._sec.groups.push(group._sec.groups[0]);
-                        
+
                         return g.save();
                     }));
                 });
 
             }).then(function () {
-                
+
                 return group.remove().then(function () {
                     res.status(200).send(gettext("Successfully deleted")); // Everything OK
                 });
@@ -234,7 +240,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/groups/:id/users', auth.usr, function (req, res) {
 
-        groupingOps.modifyGroupMember(req, Group.findById(getId(req)), 
+        groupingOps.modifyGroupMember(req, Group.findById(getId(req)),
             User.findOne({ $or: [{ email: req.body.user }, { username: req.body.user }] })).then(function () {
 
                 res.status(200).send(gettext("User added to group"));
@@ -259,7 +265,7 @@ module.exports = function(app, config, mongoose, gettext, auth) {
 
 	app.put('/api/groups/:id/webbles', auth.usr, function (req, res) {
 
-        groupingOps.modifyGroupMember(req, Group.findById(getId(req)), 
+        groupingOps.modifyGroupMember(req, Group.findById(getId(req)),
             Webble.findOne({ "webble.defid": req.body.webble })).then(function () {
 
                 res.status(200).send(gettext("Webble added to group"));
