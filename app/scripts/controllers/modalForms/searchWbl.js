@@ -566,10 +566,12 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
     // If so, that user will be allowed to delete the Webble
     //========================================================================================
     $scope.isOwned = function(index){
-        if(index >= 0 && $scope.formItems.searchResult.length > 0){
-            if(($scope.formItems.currentUser == $scope.formItems.searchResult[index].webble.author) && ($scope.formItems.searchResult[index].webble.defid != $scope.formItems.searchResult[index].webble.templateid)){
-                return true;
-            }
+		var index = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + index;
+
+        if(index >= 0 && $scope.formItems.searchResult.length > 0 && index < $scope.formItems.searchResult.length){
+			if(($scope.formItems.currentUser == $scope.formItems.searchResult[index].webble.author) && ($scope.formItems.searchResult[index].webble.defid != $scope.formItems.searchResult[index].webble.templateid)){
+				return true;
+			}
         }
 
         return false;
