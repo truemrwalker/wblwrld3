@@ -615,7 +615,7 @@ Registers an event listener for a specific event (see [availableWWEvents](#avail
 
 **Returning Data for each event type**
 
-* slotChanged: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
+* **slotChanged**: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
 * **deleted:** {targetId: [Instance Id for webble being deleted], timestamp: [a chronical timestamp value]}
 * **duplicated:** {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
 * **sharedModelDuplicated:** {targetId: [Instance Id for webble being duplicated], copyId: [Instance Id for Webble that is a copy], timestamp: [a chronological timestamp value]}
