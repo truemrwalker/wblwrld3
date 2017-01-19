@@ -2803,7 +2803,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			if(((new Date()).getTime() - unqueueingStartTime) > 20000){
 				$log.log('We have been managing event handlers for more than ' + (20 * unqueueingStartTimeCounter) + ' seconds now, and we are still not finished... Please be patient.');
 				if(!unqueueUntriggeredHandlersModal && unqueueingStartTimeCounter != 3 && !$scope.isLoggingEnabled){
-					$scope.showQIM(gettext("We have been managing event handlers for more than") + " " + (20 * unqueueingStartTimeCounter) + " " + gettext("seconds now, and we are still not finished...") + "\n\n" + gettext("Please be patient."), 1000000, {w: 300, h: 130}, undefined, wwConsts.lightPalette[(unqueueingStartTimeCounter - 1) % wwConsts.lightPalette.length].value);
+					$scope.showQIM(gettext("We have been managing event handlers for more than") + " " + (20 * unqueueingStartTimeCounter) + " " + gettext("seconds now, and we are still not finished...") + "\n\n" + gettext("Please be patient."), 25000, {w: 300, h: 130}, undefined, wwConsts.lightPalette[(unqueueingStartTimeCounter - 1) % wwConsts.lightPalette.length].value);
 				}
 				unqueueingStartTimeCounter++;
 				unqueueingStartTime = (new Date()).getTime();
@@ -2839,12 +2839,18 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				theCallbackObject.cb(theCallbackObject.ed);
 			}
 
-			if(queueOfHandlersToBeTriggered.length == 0 && ((new Date()).getTime() - unqueueingStartTime) > 30000){
+			if(queueOfHandlersToBeTriggered.length == 0){
 				if(unqueueUntriggeredHandlersModal || $scope.qimVisibility){
-					if(unqueueUntriggeredHandlersModal) { unqueueUntriggeredHandlersModal.dismiss(); }
-					$log.log('Currently Finished processing events... The platform is all yours.');
-					if(!$scope.isLoggingEnabled){
-						$scope.showQIM(gettext("Sorry for the delay, but now we are done. \n\n Enjoy your stay!"), 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
+					if(((new Date()).getTime() - unqueueingStartTime) > 30000){
+						if(unqueueUntriggeredHandlersModal) { unqueueUntriggeredHandlersModal.dismiss(); }
+						$log.log('Currently Finished processing events... The platform is all yours.');
+						if(!$scope.isLoggingEnabled){
+							$scope.showQIM(gettext("Sorry for the delay, but now we are done. \n\n Enjoy your stay!"), 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
+						}
+					}
+					else{
+						if(qimTimer_){ $timeout.cancel(qimTimer_); }
+						$('.quickInfoBox').hide(); $scope.qimVisibility = false;
 					}
 				}
 			}
