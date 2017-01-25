@@ -471,7 +471,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
 		if($event.keyCode != 18 && $event.keyCode != 16 && $event.keyCode != 13 && $event.keyCode != 17){
-            if($scope.executeMenuSelection('', {theAltKey: $event.altKey, theShiftKey: $event.shiftKey, theCtrlKey: $event.ctrlKey, theKey: fromKeyCode($event.keyCode)})){
+            if($scope.executeMenuSelection('', {theAltKey: $event.altKey, theShiftKey: $event.shiftKey, theCtrlKey: $event.ctrlKey, theKey: (($event.keyCode >= 186 && $event.keyCode <= 192) || ($event.keyCode >= 219 && $event.keyCode <= 222) || ($event.keyCode == 226)) ? $event.key : fromKeyCode($event.keyCode)})){
                 $event.preventDefault();
             }
             else{
@@ -483,7 +483,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                         }
                     }
                 }
-				$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: false}, timestamp: (new Date()).getTime()});
+				$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: (($event.keyCode >= 186 && $event.keyCode <= 192) || ($event.keyCode >= 219 && $event.keyCode <= 222) || ($event.keyCode == 226)) ? $event.key : fromKeyCode($event.keyCode), released: false}, timestamp: (new Date()).getTime()});
             }
         }
 
@@ -526,7 +526,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         if($event.keyCode == 17 && $scope.ctrlKeyIsDown){
             $scope.ctrlKeyIsDown = false;
         }
-		$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: fromKeyCode($event.keyCode), released: true}, timestamp: (new Date()).getTime()});
+		$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: (($event.keyCode >= 186 && $event.keyCode <= 192) || ($event.keyCode >= 219 && $event.keyCode <= 222) || ($event.keyCode == 226)) ? $event.key : fromKeyCode($event.keyCode), released: true}, timestamp: (new Date()).getTime()});
     };
     //========================================================================================
 
