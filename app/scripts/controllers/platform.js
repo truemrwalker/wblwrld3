@@ -1431,7 +1431,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						}
 
 						if(isInSandbox != null){
-							downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
+							downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, angular.copy(sortFileListInOrderOfLoading(isInSandbox.files)));
 						}
 						else{
 							forceResetDownloadFlagsAndMemories();
@@ -1442,11 +1442,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				}
 			}
 			else{
-				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(isInSandbox.files));
+				downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, angular.copy(sortFileListInOrderOfLoading(isInSandbox.files)));
 			}
 		}
 		else{
-			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, sortFileListInOrderOfLoading(["controllers.js", "styles.css", "view.html"]));
+			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, angular.copy(sortFileListInOrderOfLoading(["controllers.js", "styles.css", "view.html"])));
 		}
 	};
 	//========================================================================================
@@ -1458,7 +1458,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// out do the actual call for the template in question.
 	//========================================================================================
 	var templateRevisionDetermination = function(whatTemplateId, whatTemplateRevision, whatWblDef, data){
-		var wblTemplateFileList = sortFileListInOrderOfLoading(data.files);
+		var wblTemplateFileList = sortFileListInOrderOfLoading(angular.copy(data.files));
 		var topAvailableTemplateVersion = data.webble.templaterevision;
 		if(topAvailableTemplateVersion > whatTemplateRevision){
 			if(templateRevisionBehavior_ == Enum.availableOnePicks_templateRevisionBehaviors.askEverytime && !dontAskJustDoIt){
