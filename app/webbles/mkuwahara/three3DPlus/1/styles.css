@@ -1,0 +1,26 @@
+/*/=====================================================================================================================
+// Styles for 3D World Plus Container for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Classes === /*/
+
+.threeDPlusContainer{
+    border: 1px solid #000000;
+    background-color: #d3d3d3;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.threeDPlusHolder{
+    border: 1px solid #000000;
+    width: 500px;
+    height: 250px;
+    background-color: #ffffcc;
+    border-radius: 10px;
+}
+
+
+/*/ === END: Classes === /*/
+
+/*====================================================================================================================*/

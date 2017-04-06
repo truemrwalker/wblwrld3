@@ -1,0 +1,8 @@
+{
+    "name": "Basic three.js 3D Plus Webble",
+    "description": "This is a webble that can load and draw 3D objects and 3D data in numerous various ways, especially made for academic use",
+    "keywords": "3D",
+    "author": "truemrwalker",
+    "image": "images/wbls/3dpluswbl.png",
+    "noautogen": false
+}
