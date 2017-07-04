@@ -3531,6 +3531,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.waiting = function(isWaitingEnabled) {
 		if(isWaitingEnabled){
 			if(!waitingServiceDeactivated_) {
+				$('.progressIndicator').css("animation-play-state", "running");
+				$('.progressIndicator').show();
 				$scope.progressManager.isWorking = true;
 				$scope.mouseCursor = 'wait';
 			}
@@ -3540,6 +3542,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				return $scope.progressManager.isWorking;
 			}
 			else{
+				$('.progressIndicator').hide();
+				$('.progressIndicator').css("animation-play-state", "paused");
 				$scope.progressManager.isWorking = false;
 				$scope.mouseCursor = 'default';
 			}
@@ -4420,13 +4424,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		modalInstance.opened.then(function() { if(whatForm == Enum.aopForms.infoMsg){ platformAccessedMI = modalInstance; } });
         modalInstance.result.then(function (returnValue) {
             if(callbackFunc != undefined && callbackFunc != null){
-                callbackFunc(returnValue);
+            	$timeout(function () { callbackFunc(returnValue); }, 100);
             }
             isFormOpen_ = false;
 			platformAccessedMI = undefined;
         }, function () {
             if(callbackFunc != undefined && callbackFunc != null){
-                callbackFunc();
+				$timeout(function () { callbackFunc(); }, 100);
             }
             isFormOpen_ = false;
 			platformAccessedMI = undefined;

@@ -279,8 +279,18 @@ ul.rating {
     width:100px;
     height:100px;
     margin:-50px 0 0 -50px;
-
+	animation: 3s rotateProcInd linear infinite;
 }
+
+@keyframes rotateProcInd {
+	from {transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
+
+	/*0% {transform: rotate(0deg) scale(1.0, 1.0);}
+	50% {transform: rotate(180deg) scale(1.4, 1.4);}
+	100% {transform: rotate(360deg) scale(1.0, 1.0);}*/
+}
+
 /*/ === END: Progress Indicator Classes === /*/
 
 
