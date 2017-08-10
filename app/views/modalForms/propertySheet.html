@@ -95,8 +95,8 @@
 
             <!--Slider-->
             <div ng-switch-when="7">
-                {{item.sliderMinMax[0]}}<input type="range" ng-model="item.value" min="{{item.sliderMinMax[0]}}" max="{{item.sliderMinMax[1]}}" ng-disabled="item.disabledSettings == 1" style="margin: 0 4px 0 4px;">{{item.sliderMinMax[1]}}
-                <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 60px; min-width: 40px; margin-left: 5px;" />
+				<span style="font-weight: bold; display: inline-block;">{{item.sliderMinMax[0]}}</span><input type="range" ng-model="item.value" min="{{item.sliderMinMax[0]}}" max="{{item.sliderMinMax[1]}}" ng-disabled="item.disabledSettings == 1" style="margin: 0 4px 0 4px; width: 90%; display: inline-block;" data-show-value="true"><span style="font-weight: bold; display: inline-block;">{{item.sliderMinMax[1]}}</span>
+                <input class="formitem" type="text" ng-model="item.value" ng-disabled="true" style="width: 60px; min-width: 40px; margin-left: 5px; margin-top: 3px;" />
             </div>
 
             <!--Point-->

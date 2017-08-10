@@ -34,42 +34,4 @@
 </script>
 
 
-<script id="threewebworker" type="javascript/worker">
-    // This script won't be parsed by JS engines
-    // because its type is javascript/worker.
-    self.onmessage = function(e) {
-      self.postMessage('msg from worker');
-    };
-    // Rest of your worker code goes here.
-
-
-    /*var setParticleAttributes = function(dataValArr, sizeAttrArr, colorAttrArr){
-		var minSize = $scope.gimme("particleMinMaxSizes").min, maxSize = $scope.gimme("particleMinMaxSizes").max;
-		var sizeArrOk = (sizeAttrArr.length != undefined && sizeAttrArr.length == dataValArr.length);
-		var colorArrOk = (colorAttrArr.length != undefined && colorAttrArr.length == dataValArr.length * 4);
-
-		var pAlpha = $scope.gimme("particleMinMaxAlpha");
-		var ut = pAlpha.underThreshold, at = pAlpha.aboveThreshold, btma = pAlpha.betweenThresholdMax, btmi = pAlpha.betweenThresholdMin;
-		for( var i=0 ; i < dataValArr.length ; i++ ) {
-			var pct = ((dataValArr[i] - minValueThreshold) / thresholdRange);
-
-			if(sizeArrOk){
-				sizeAttrArr[i] = (dataValArr[i] < minValueThreshold) ? minSize : ((dataValArr[i] > maxValueThreshold) ? maxSize : (pct * maxSize));
-			}
-
-			if(colorArrOk){
-				var colVal = (dataValArr[i] < minValueThreshold) ? chromaticScale(0.0).rgb() : ((dataValArr[i] > maxValueThreshold) ? chromaticScale(1.0).rgb() : chromaticScale(pct).rgb());
-				var alphaVal = (dataValArr[i] < minValueThreshold) ? ut : ((dataValArr[i] > maxValueThreshold) ? at : ((pct * btma) + btmi));
-
-				colorAttrArr[ (i * 4) + 0 ] = colVal[0];
-				colorAttrArr[ (i * 4) + 1 ] = colVal[1];
-				colorAttrArr[ (i * 4) + 2 ] = colVal[2];
-				colorAttrArr[ (i * 4) + 3 ] = alphaVal;
-			}
-		}
-	};*/
-
-</script>
-
-
 <!--=================================================================================================================-->
