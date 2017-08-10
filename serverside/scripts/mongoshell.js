@@ -29,7 +29,7 @@
  *
  * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
  */
-var config = {"MONGODB_DB_NAME":"wblwrld3","MONGODB_DB_USERNAME":"webbler","MONGODB_DB_PASSWORD":"mySuperSecretMongoPass"};
+var config = {"MONGODB_DB_NAME":"wblwrld3","MONGODB_DB_USERNAME":"webbler","MONGODB_DB_PASSWORD":"CE71767C9CFA"};
 
 // See also:
 // http://docs.mongodb.org/manual/tutorial/write-scripts-for-the-mongo-shell/
