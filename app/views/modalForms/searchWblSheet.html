@@ -114,7 +114,7 @@
 				</div>
 				<div class="col-xs-2">
 					<button name="{{wblMeta.webble.defid}}" ng-click="loadWebble(wblMeta.webble.defid);" class="btn btn-primary btn-xs" translate>Load</button>
-					<button ng-show="isOwned($index);" ng-click="close('delete')" class="btn btn-danger btn-xs" translate>Delete</button>
+					<button ng-show="isOwned($index);" ng-click="deleteWebble(wblMeta.webble.defid, $index)" class="btn btn-danger btn-xs" translate>Delete</button>
 				</div>
 			</div>
 

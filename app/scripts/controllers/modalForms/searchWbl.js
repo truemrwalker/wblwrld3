@@ -731,22 +731,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
                 $scope.thePlatform.downloadWebbleDef($scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid);
             }
         }
-        else if (result == 'delete') {
-			buttonWasClicked = true;
-            var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
-
-            modalInstance.result.then(function () {
-                dbService.deleteWebbleDef($scope.formItems.searchResult[$scope.formItems.selectedWbl].webble.defid).then(function(data){
-                    $scope.formItems.searchResult.splice($scope.formItems.selectedWbl, 1);
-                    $scope.formItems.pageViewResult.splice($scope.formItems.selectedWbl - (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage), 1);
-                    $scope.formItems.selectedWbl = -1;
-                    $scope.formItems.noOfExistingWbls -= 1;
-                    $scope.formItems.totalItems -= 1;
-                },function(eMsg){
-                    $scope.serviceError(eMsg);
-                });
-            }, function () { });
-        }
         else if (result == 'cancel') {
             $location.search('webble', null);
             if(locationSearchWSMemo != undefined){
@@ -765,6 +749,29 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 	$scope.loadWebble = function (webbleDefId) {
 		buttonWasClicked = true;
 		$scope.thePlatform.downloadWebbleDef(webbleDefId);
+	};
+	//========================================================================================
+
+	//========================================================================================
+	// Load Webble
+	// When Load button is pressed the Webble for that button will be loaded
+	//========================================================================================
+	$scope.deleteWebble = function (webbleDefId, index) {
+		buttonWasClicked = true;
+		var selWblIndex = (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage) + index;
+		var modalInstance = $uibModal.open({templateUrl: 'views/modalForms/deleteSomething.html', windowClass: 'modal-wblwrldform small'});
+
+		modalInstance.result.then(function () {
+			dbService.deleteWebbleDef(webbleDefId).then(function(data){
+				$scope.formItems.searchResult.splice(selWblIndex, 1);
+				$scope.formItems.pageViewResult.splice(selWblIndex - (($scope.formItems.currentPage - 1) * $scope.formItems.itemsPerPage), 1);
+				$scope.formItems.selectedWbl = -1;
+				$scope.formItems.noOfExistingWbls -= 1;
+				$scope.formItems.totalItems -= 1;
+			},function(eMsg){
+				$scope.serviceError(eMsg);
+			});
+		}, function () { });
 	};
 	//========================================================================================
 
