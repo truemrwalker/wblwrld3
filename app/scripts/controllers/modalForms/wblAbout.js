@@ -212,7 +212,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $uibModalIns
 
 		if($scope.formData.templaterevision == data.webble.templaterevision){
 			var updateObj = {};
-			if($scope.formData.displayname != data.webble.displayname){
+			if($scope.formData.displayname != data.webble.displayname && !$scope.formData.newUnsavedDispNamePresent){
 				$scope.formData.displayname = data.webble.displayname;
 				updateObj['displayname'] = data.webble.displayname;
 			}

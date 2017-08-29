@@ -2447,6 +2447,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             theWbl.scope().theWblMetadata['keywords'] = returnData.keywords;
             theWbl.scope().theWblMetadata['image'] = returnData.image;
 			theWbl.scope().theWblMetadata['author'] = $scope.user.username;
+			theWbl.scope().wblStateFlags.newUnsavedDispNamePresent = false;
 
 			if(returnData.sandboxWblPublished){
 				quickSaveWSInternal();
