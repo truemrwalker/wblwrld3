@@ -194,8 +194,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     $scope.wblStateFlags = {
         pasteByUser: false,
 		customIOTarget: null,
-		readyToStoreUndos: false,
-		newUnsavedDispNamePresent: false
+		readyToStoreUndos: false
     };
 
     // A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
@@ -656,7 +655,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
                     if(p.key == 'displayname'){
                         if ($scope.theWblMetadata['displayname'] != p.value){
                             $scope.theWblMetadata['displayname'] = p.value;
-							$scope.wblStateFlags.newUnsavedDispNamePresent = true;
                         }
                     }
                     else{
@@ -787,7 +785,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		if(wblDefMetaData == undefined){ wblDefMetaData = {rating: 0, ratingCount: 0, image: '', created: undefined, updated: undefined, isShared: false, isTrusted: false, isVerified: false}; }
         return {
             displayname: $scope.theWblMetadata['displayname'],
-			newUnsavedDispNamePresent: $scope.wblStateFlags.newUnsavedDispNamePresent,
 			image: wblDefMetaData.image != "" ? wblDefMetaData.image : $scope.theWblMetadata['image'],
 			rating: wblDefMetaData.rating,
 			ratingCount: wblDefMetaData.ratingCount,
