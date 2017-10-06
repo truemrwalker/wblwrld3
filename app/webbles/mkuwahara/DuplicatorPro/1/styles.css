@@ -1,0 +1,26 @@
+/*/=====================================================================================================================
+// Styles for Duplicate Pro for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//====================================================================================================================*/
+
+/*/ === BEGIN: Duplicate Pro Classes === /*/
+
+.dupliPro{
+    width: 170px;
+    height: 32px;
+    background-color: #961c1c;
+    border: 2px solid black;
+    border-radius:5px;
+	text-align: center;
+}
+
+.dupliProTxt{
+    font-family: "Arial Black";
+    font-size: 18px;
+    font-weight: bold;
+	color: antiquewhite;
+}
+
+/*/ === END: Duplicate Pro Classes === /*/
+
+/*====================================================================================================================*/

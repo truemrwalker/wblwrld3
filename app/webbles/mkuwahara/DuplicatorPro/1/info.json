@@ -1,0 +1,8 @@
+{
+    "name": "Duplicator Pro",
+    "description": "This is a Webble that can generate (create duplicates of existing) Webbles according to certain specifications and configurations in a wide range of ways with a simple execution command. E.g. very useful for spawning game objects, but may have numerous use in all sorts of applications.",
+    "keywords": "duplicate spawn generate copy load pattern game tool",
+    "author": "truemrwalker",
+    "image": "images/wbls/duplicatePro.png",
+    "noautogen": false
+}

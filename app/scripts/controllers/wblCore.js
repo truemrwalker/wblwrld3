@@ -269,6 +269,22 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     ///////////////////////////////////////////////////////////////////////////////////////
 
 
+	//========================================================================================
+	// Mouse Enter Selection
+	// Allows to select a Webble by just hover above it if CTRL ALT keys are pressed.
+	//========================================================================================
+	var mouseEnterSelection = function(event){
+		if(event.altKey && event.ctrlKey){
+			if($scope.getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){
+				$scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
+			}
+			else{
+				$scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsMainClicked);
+			}
+		}
+	};
+	//========================================================================================
+
 
     //*****************************************************************************************************************
     //=== PRIVATE FUNCTIONS ===========================================================================================
@@ -1885,6 +1901,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
                     }
                 }
             }
+
+			// Enables quick toggle select of a webble by just hover above it (while holding the CTRL-ALT keys)
+			$scope.theView.mouseenter(mouseEnterSelection);
 
             // indicate that initiation has finished
             theInitiationState_ = bitflags.on(theInitiationState_, Enum.bitFlags_InitStates.InitFinished);

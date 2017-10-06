@@ -2390,11 +2390,11 @@ wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $uibModalInstance,
 
                 if(!isEmpty(eaDataRowItem.oParams.p4)){
                     if(eaDataRowItem.oParams.p4.left){
-                        stringRepresentation += ' ... [left: ' + eaDataRowItem.oParams.p4.left + ', top: ' + eaDataRowItem.oParams.p4.top + ', right: ' + eaDataRowItem.oParams.p4.right + ', bottom: ' + eaDataRowItem.oParams.p4.bottom + ']';
+                        stringRepresentation += '; ... [left: ' + eaDataRowItem.oParams.p4.left + ', top: ' + eaDataRowItem.oParams.p4.top + ', right: ' + eaDataRowItem.oParams.p4.right + ', bottom: ' + eaDataRowItem.oParams.p4.bottom + ']';
                     }
                     else if(eaDataRowItem.oParams.p4.repeat == true || eaDataRowItem.oParams.p4.repeat == false){
                         if(eaDataRowItem.oParams.p4.repeat == true){
-                            stringRepresentation += ' ... repeat = ' + eaDataRowItem.oParams.p4.repeat;
+                            stringRepresentation += '; ... repeat = ' + eaDataRowItem.oParams.p4.repeat;
                         }
                     }
                 }
@@ -2403,7 +2403,7 @@ wblwrld3App.controller('EAMForm_Ctrl', function($scope, $log, $uibModalInstance,
                     if(eaDataRowItem.oParams.p5.itemName){
                         stringRepresentation += ' ... ' + eaDataRowItem.oParams.p5.itemName;
                         if(eaDataRowItem.oParams.p3 != '' && (eaDataRowItem.oParams.p5.itemId == 'openws' || eaDataRowItem.oParams.p5.itemId == 'savewsas')){
-                            stringRepresentation += (eaDataRowItem.oParams.p3 ? ' ... ' + eaDataRowItem.oParams.p3 : '');
+                            stringRepresentation += ';' + (eaDataRowItem.oParams.p3 ? ' ... ' + eaDataRowItem.oParams.p3 : '');
                         }
                     }
                     else{
@@ -2662,7 +2662,7 @@ wblwrld3App.controller('EAMForm3_Ctrl', function($scope, $log, $uibModalInstance
             'Values, Value Identifiers and basic math allowed',
             'Slot Name (Blank = Any)',
             'Workspace Name',
-            'Template or Webble Id (Blank = Random)',
+            'Template/Webble Id or Display Name(for local duplicate) (Blank = Random (from online))',
             'Amount',
             'How Many?',
             'URL',
