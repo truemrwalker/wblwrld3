@@ -2836,7 +2836,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			if(queueOfHandlersToBeTriggered.length > 0){
 				var theCallbackObject = queueOfHandlersToBeTriggered.shift();
-				theCallbackObject.cb(theCallbackObject.ed);
+				try{ theCallbackObject.cb(theCallbackObject.ed); }catch(e){ $log.log("The Callback for the Webble event failed (and was ignored). The callback object that failed was the following:"); $log.log(angular.copy(theCallbackObject));  }
 			}
 
 			if(queueOfHandlersToBeTriggered.length == 0){

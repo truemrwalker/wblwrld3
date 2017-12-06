@@ -25,7 +25,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		Unidentified: 0,
 		Classic: 1,
 		SpaceDensity: 2,
-		SkyReflectivity: 3
+		SkyReflectivity: 3,
+		SpaceHalo: 4,
+		Tsunami: 5
 	};
 
 	// JSON 3D Points data
@@ -137,6 +139,184 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	//===================================================================================
 
 
+	//===================================================================================
+	// Data Dropped
+	// When data is dropped onto the 3D webble, this method handles what to do
+	//===================================================================================
+	function dataDropped(dataSourceInfo) {
+		var srcWebble = $scope.getWebbleByInstanceId(dataSourceInfo.webbleID); // getting the data source Webble
+		var accessorFunctionList = srcWebble.scope().gimme(dataSourceInfo.slotName); // this slot lists functions for all the data fields provided (this slot is normally called 'DataAccess')
+		var accessorFunctionsForDroppedField = accessorFunctionList[dataSourceInfo.fieldIdx]; // the functions for the field that was dragged and dropped
+		var displayNameSource = dataSourceInfo.sourceName; // what the data source thinks it should be called in menus etc.
+		var displayNameField = dataSourceInfo.fieldName; // what the data source thinks the data field should be called
+
+		info.innerHTML = "";
+		dataType = availableDataTypes.Unidentified;
+		liveData = []; geoLocationAvailable = false; allDataPointsSorted = [], loopDataSliceTracking = undefined;
+
+
+		var eachFieldSameNoOfItems = true;
+		for(var af = 1; af < accessorFunctionList.length; af++) {
+			if(accessorFunctionList[af].size != accessorFunctionList[0].size){
+				eachFieldSameNoOfItems = false;
+				break;
+			}
+		}
+
+		if(eachFieldSameNoOfItems){
+			var isHaloSimple = false, isHaloAdvanced = false;
+			for(var af = 1; af < accessorFunctionList.length; af++) {
+				if(accessorFunctionList[af].name == "bullock_spin"){
+					isHaloAdvanced = true;
+					break;
+				}
+				else if(accessorFunctionList[af].name == "(2) halo ID"){
+					isHaloSimple = true;
+					break;
+				}
+			}
+
+			if(isHaloSimple || isHaloAdvanced){
+				isHaloSimple ? $log.log("Its Space Halo (simple)") : $log.log("Its Space Halo (advanced)");
+
+				liveData = accessorFunctionList[0].val(0);
+
+				dataType = availableDataTypes.SpaceHalo;
+				info.innerHTML = "Prepare Rendering of Space Halo Data...";
+			}
+			else{
+				for(var af = 0; af < accessorFunctionList.length; af++) {
+					var fieldInfo = accessorFunctionList[af];
+					var types = fieldInfo.type; // this is a list of types that the data fits, normally only one or two items (e.g. ["date", "number"], ["latitude", "number"], ["string"])
+					// var listeningFunction = fieldInfo.listen; // this is a function to call if we want to start listening for updates whenever subsets of data are selected
+					var valueFunction = fieldInfo.val;  // this function tells us the value of data item
+					var selectionStatusFunction = fieldInfo.sel; // this function tells us the selection status of a data item (not selected, selected into subset 1, etc.)
+					var size = fieldInfo.size; // this is the number of data items available for this data field
+					// var pushingFunction = fieldInfo.newSel; // this is a function to call when we want to tell the data source that we have selected (new) subsets of data
+
+					if(liveData.length == 0){
+						liveData = new Array(size);
+						for(var itemIdx = 0; itemIdx < size; itemIdx++) { liveData[itemIdx] = new Array(accessorFunctionList.length); }
+					}
+
+					for(var itemIdx = 0; itemIdx < size; itemIdx++) {
+						var value = valueFunction(itemIdx); // this can be a string, a 3-dimensional array, a number, a date, etc. depending on the data type
+						var subset = selectionStatusFunction(itemIdx); // subset == 0 means that this data item is not selected, other values represent different subsets of data (integers > 0)
+
+						// if(subset == 0) {
+						// $log.log("subset = 0");
+						// 	// do something, e.g. draw data is washed out colors
+						// } else {
+						// $log.log(value);
+						// 	// do something, e.g. visualize the data
+						// }
+
+						liveData[itemIdx][af] = value;
+					}
+				}
+
+				dataType = availableDataTypes.Classic;
+				info.innerHTML = "Prepare Rendering of Classic point Data...";
+			}
+		}
+		else{
+			for(var af = 0; af < accessorFunctionList.length; af++) {
+				var fieldInfo = accessorFunctionList[af];
+				var types = fieldInfo.type; // this is a list of types that the data fits, normally only one or two items (e.g. ["date", "number"], ["latitude", "number"], ["string"])
+				// var listeningFunction = fieldInfo.listen; // this is a function to call if we want to start listening for updates whenever subsets of data are selected
+				var valueFunction = fieldInfo.val;  // this function tells us the value of data item
+				var selectionStatusFunction = fieldInfo.sel; // this function tells us the selection status of a data item (not selected, selected into subset 1, etc.)
+				var size = fieldInfo.size; // this is the number of data items available for this data field
+				// var pushingFunction = fieldInfo.newSel; // this is a function to call when we want to tell the data source that we have selected (new) subsets of data
+
+				if(fieldInfo.name == "reflectivity"){
+					liveData = [];
+					var xLongValFunc, yLatValFunc, zAltValFunc, xSize, ySize, zSize;
+					var tsValFunc, tsSize;
+					var reflValFunc, reflSize;
+					for(var i = 0; i < accessorFunctionList.length; i++) {
+						if(accessorFunctionList[i].name == "X coordinates"){ xLongValFunc = accessorFunctionList[i].val; xSize = accessorFunctionList[i].size; }
+						else if(accessorFunctionList[i].name == "Y coordinates"){ yLatValFunc = accessorFunctionList[i].val; ySize = accessorFunctionList[i].size; }
+						else if(accessorFunctionList[i].name == "Z coordinates"){ zAltValFunc = accessorFunctionList[i].val; zSize = accessorFunctionList[i].size; }
+						else if(accessorFunctionList[i].name == "Time Stamp"){ tsValFunc = accessorFunctionList[i].val; tsSize = accessorFunctionList[i].size; }
+					}
+					noOfDataPointsForEachXYZ = [xSize, ySize, zSize];
+
+					var longData = [], latData = [], altData = [], tsData = [], reflData = [];
+					for(var i = 0; i < xSize; i++) { longData.push(xLongValFunc(i)); }
+					for(var i = 0; i < ySize; i++) { latData.push(yLatValFunc(i)); }
+					for(var i = 0; i < zSize; i++) { altData.push(zAltValFunc(i)); }
+					for(var i = 0; i < tsSize; i++) { tsData.push(tsValFunc(i)); }
+					for(var i = 0; i < size; i++) { reflData.push(valueFunction(i)); }
+					liveData.push({long: {vals: longData}, lat: {vals: latData}, alt: {vals: altData}, data: reflData});
+					liveData.push({data: tsData});
+
+					var cdsSlot = $scope.getSlot("currentDataSet");
+					var dataTimeStamps = angular.copy(liveData[1].data).sort(function(a, b){return (new Date(a).getTime())-(new Date(b).getTime())});
+					for(var i = 0; i < dataTimeStamps.length; i++){ dataTimeStamps[i] = dataTimeStamps[i].toString(); }
+					for(var i = 0; i < liveData[1].data.length; i++){ liveData[1].data[i] = liveData[1].data[i].toString(); }
+					cdsSlot.setMetaData({inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: dataTimeStamps});
+					cdsSlot.setValue(dataTimeStamps[0]);
+					loopDataSliceTracking = {availableSlices: dataTimeStamps, currentSlice: 0};
+					var chromeArr = cloudyChroma;
+					if($scope.gimme("dBZColorsEnabled")){ chromeArr = dBZChromaNarrow; }
+					chromaticScale = chroma.scale(chromeArr).domain([0, 35, 65]);
+					$scope.getSlot("particleColorArray").setValue(chromeArr);
+					$scope.getSlot("glowAlphaTexture").setValue(3);
+
+					dataType = availableDataTypes.SkyReflectivity;
+					geoLocationAvailable = true;
+					info.innerHTML = "Prepare Rendering of Sky Reflectivity Data...";
+					break;
+				}
+				else if(fieldInfo.name == "Density 3D Array"){
+					liveData = [[fieldInfo.name, valueFunction(0)]];
+					$scope.getSlot("glowAlphaTexture").setValue(1);
+					dataType = availableDataTypes.SpaceDensity;
+					info.innerHTML = "Prepare Rendering of Space Density Data...";
+					break;
+				}
+				else if(fieldInfo.name == "Tsunami Flooding" || fieldInfo.name == "Tsunami damage"){
+					fieldInfo.name == "Tsunami Flooding" ? $log.log("Its tsunami flooding") : $log.log("Its tsunami damage");
+
+					liveData = [];
+					var xLongValFunc, yLatValFunc, zAltValFunc, xSize, ySize, zSize;
+					// var tsValFunc, tsSize;
+					// var reflValFunc, reflSize;
+					for(var i = 0; i < accessorFunctionList.length; i++) {
+						if(accessorFunctionList[i].name == "Latitude"){ xLongValFunc = accessorFunctionList[i].val; xSize = accessorFunctionList[i].size; }
+						else if(accessorFunctionList[i].name == "Longitude"){ yLatValFunc = accessorFunctionList[i].val; ySize = accessorFunctionList[i].size; }
+						else if(accessorFunctionList[i].name == "Z coordinates"){ zAltValFunc = accessorFunctionList[i].val; zSize = accessorFunctionList[i].size; }
+					}
+					noOfDataPointsForEachXYZ = [xSize, ySize, zSize];
+
+					liveData = valueFunction(0);
+
+					geoLocationAvailable = true;
+					dataType = availableDataTypes.Tsunami;
+					info.innerHTML = "Prepare Rendering of Tsunami Data...";
+					break;
+				}
+			}
+			if(liveData.length > 0){
+				camera.near = 0.000001;
+				camera.updateProjectionMatrix();
+			}
+		}
+
+		if(dataType == availableDataTypes.Unidentified){
+			liveData = ["Empty"];
+		  	info.innerHTML = "Rendering Data Unidentified and Ignored...";
+		}
+
+		$scope.set('jsonDataInfo', "DATA LOADED AND AVAILABLE. [ Data type: " + getKeyByValue(availableDataTypes, dataType) + " ]");
+
+		$timeout(function(){$scope.waiting(true);});
+		$timeout(isInfoTextDisplayedAsItShould);
+	}
+	//===================================================================================
+
+
 
     //=== METHODS & FUNCTIONS ===========================================================
 
@@ -186,87 +366,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			else if(eventData.slotName == 'AxesEnabled'){
 				if(eventData.slotValue && axes == undefined || !eventData.slotValue && axes !== undefined){
 					executeAxisVisbilityState();
-				}
-			}
-
-			// Recieve and interpret new 3d Points JSON Data and draw 3D ackordingly
-			else if(eventData.slotName == 'liveDataJSON'){
-
-				var isFake = false;
-				if(Object.keys(eventData.slotValue).length == undefined || eventData.slotValue.status == "empty"){
-					isFake = true;
-				}
-				else if(Object.keys(eventData.slotValue).length == 3) {
-					if (JSON.stringify(eventData.slotValue) == '{"fieldNames":["time","field 2"],"fieldTypes":["number","string"],"columns":[[1,"first"],[2,"second"],[2.5,"third"]]}') {
-						isFake = true;
-					}
-				}
-
-				if(!isEmpty(eventData.slotValue) && !isFake){
-					info.innerHTML = "";
-					var newData = angular.copy(eventData.slotValue);
-					liveData = []; geoLocationAvailable = false; allDataPointsSorted = [], loopDataSliceTracking = undefined;
-
-					if(eventData.slotValue.columns != undefined){
-						if(newData.columns.length > 0 && newData.columns[0].length > 0) {
-							for ( var n = 0; n < newData.columns[0].length; n ++ ) {
-								var newPoint = [];
-								for ( var i = 0; i < newData.columns.length; i ++ ) {
-									newPoint.push(newData.columns[i][n]);
-								}
-								liveData.push(newPoint);
-							}
-						}
-					}
-					else if(newData.length == 2 && newData[0].data.length > 0){
-						noOfDataPointsForEachXYZ = [newData[0].xdef.vals.length, newData[0].zdef.vals.length, newData[0].ydef.vals.length];
-						liveData = newData;
-						const newKeys = { xdef: "long", ydef: "lat", zdef: "alt" };
-						liveData[0] = renameKeys(newData[0], newKeys);
-						var cdsSlot = $scope.getSlot("currentDataSet");
-						var dataTimeStamps = angular.copy(liveData[1].data).sort(function(a, b){return (new Date(a).getTime())-(new Date(b).getTime())});
-						for(var i = 0; i < dataTimeStamps.length; i++){ dataTimeStamps[i] = dataTimeStamps[i].toString()}
-						for(var i = 0; i < liveData[1].data.length; i++){ liveData[1].data[i] = liveData[1].data[i].toString()}
-						cdsSlot.setMetaData({inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: dataTimeStamps});
-						cdsSlot.setValue(dataTimeStamps[0]);
-						loopDataSliceTracking = {availableSlices: dataTimeStamps, currentSlice: 0};
-						var chromeArr = cloudyChroma;
-						if($scope.gimme("dBZColorsEnabled")){ chromeArr = dBZChromaNarrow; }
-						chromaticScale = chroma.scale(chromeArr).domain([0, 35, 65]);
-						$scope.getSlot("particleColorArray").setValue(chromeArr);
-						$scope.getSlot("glowAlphaTexture").setValue(3);
-					}
-
-					if(liveData.length == 1 && liveData[0].length == 2 && liveData[0][0] == liveData[0][1].length){
-						$scope.getSlot("glowAlphaTexture").setValue(1);
-						dataType = availableDataTypes.SpaceDensity;
-						info.innerHTML = "Prepare Rendering of Space Density Data...";
-					}
-					else if(liveData.length > 0 && liveData[0].length >= 3){
-						dataType = availableDataTypes.Classic;
-						info.innerHTML = "Prepare Rendering of Classic point Data...";
-					}
-					else if(liveData.length == 2 && liveData[0].alt != undefined && liveData[1].name == "Time Stamp"){
-						dataType = availableDataTypes.SkyReflectivity;
-						geoLocationAvailable = true;
-						info.innerHTML = "Prepare Rendering of Sky Reflectivity Data...";
-					}
-					else{
-						dataType = availableDataTypes.Unidentified;
-						info.innerHTML = "Rendering Data Unidentified and Ignored...";
-					}
-
-					$scope.getSlot('liveDataJSON').setValue({status: 'loaded'});
-					$scope.set('jsonDataInfo', "DATA LOADED AND AVAILABLE. [ Data type: " + getKeyByValue(availableDataTypes, dataType) + " ]");
-
-					$scope.waiting(true);
-					isInfoTextDisplayedAsItShould();
-				}
-				else {
-					liveData = []; geoLocationAvailable = false; allDataPointsSorted = []; loopDataSliceTracking = undefined;
-					$scope.getSlot('liveDataJSON').setValue({status: 'empty'});
-					$scope.set('jsonDataInfo', "NO DATA LOADED");
-					clearDataFromScene();
 				}
 			}
 
@@ -323,9 +422,33 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				}
 			}
 
+			else if(eventData.slotName == 'mapCoordinates'){
+				if(eventData.slotValue.min != undefined && eventData.slotValue.max != undefined && eventData.slotValue.min.lat != undefined && eventData.slotValue.min.long != undefined && eventData.slotValue.max.lat != undefined && eventData.slotValue.max.long != undefined){
+					var reg = new RegExp("^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$");
+					if(reg.test(eventData.slotValue.min.lat + ", " + eventData.slotValue.min.long) && reg.test(eventData.slotValue.max.lat + ", " + eventData.slotValue.max.long)){
+						enableGeoLocationSupport();
+					}
+					else{
+						$scope.set("mapCoordinates", {min: {lat: 43.07502444153619, long: 141.3384810090065}, max: {lat: 43.07532224628538, long: 141.33888334035873}});
+					}
+				}
+				else{
+					$scope.set("mapCoordinates", {min: {lat: 43.07502444153619, long: 141.3384810090065}, max: {lat: 43.07532224628538, long: 141.33888334035873}});
+				}
+			}
+
 			else if(eventData.slotName == 'manualHeightMap'){
 				if(eventData.slotValue != currentHeightMap){
 					enableGeoLocationSupport();
+				}
+			}
+
+			else if(eventData.slotName == 'displacementScale'){
+				if(!isNaN(eventData.slotValue)){
+					enableGeoLocationSupport();
+				}
+				else {
+					$scope.set("displacementScale", 30);
 				}
 			}
 
@@ -347,7 +470,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				if(dataType == availableDataTypes.SpaceDensity){
 					if(eventData.slotValue.min != undefined && eventData.slotValue.max != undefined){
 						if(particles){
-							setParticleAttributes(particles.geometry.attributes.density.array, particles.geometry.attributes.size.array, []);
+							setParticleAttributes(particles.geometry.attributes.density.array, [], particles.geometry.attributes.size.array, []);
 							particles.geometry.attributes.size.needsUpdate = true;
 						}
 					}
@@ -366,9 +489,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						$scope.waiting(true);
 						$timeout(function () {
 							if(dataType == availableDataTypes.SkyReflectivity){ setParticleAttributes(particles.geometry.attributes.reflectivity.array, particles.geometry.attributes.customColor.array); }
-							else{ setParticleAttributes(particles.geometry.attributes.density.array, [], particles.geometry.attributes.customColor.array); }
+							else{ setParticleAttributes(particles.geometry.attributes.density.array, particles.geometry.attributes.customColor.array, []); }
 							particles.geometry.attributes.customColor.needsUpdate = true;
-							$scope.waiting(false);
+							$timeout(function(){$scope.waiting(false);});
 						}, 100);
 					}
 				} catch(e) {
@@ -382,7 +505,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						if(particles){
 							$scope.waiting(true);
 							$timeout(function () {
-								setParticleAttributes(particles.geometry.attributes.density.array, [], particles.geometry.attributes.customColor.array);
+								setParticleAttributes(particles.geometry.attributes.density.array, particles.geometry.attributes.customColor.array, []);
 								particles.geometry.attributes.customColor.needsUpdate = true;
 								$scope.waiting(false);
 							}, 100);
@@ -427,7 +550,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						thresholdRange = Math.abs(maxValueThreshold - minValueThreshold);
 
 						$timeout(function () {
-							setParticleAttributes(particles.geometry.attributes.density.array, [], particles.geometry.attributes.customColor.array);
+							setParticleAttributes(particles.geometry.attributes.density.array, particles.geometry.attributes.customColor.array, []);
 							particles.geometry.attributes.customColor.needsUpdate = true;
 							$scope.waiting(false);
 						}, 100);
@@ -439,7 +562,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				if(particles && dataType == availableDataTypes.SpaceDensity){
 					$scope.waiting(true);
 					$timeout(function () {
-						setParticleAttributes(particles.geometry.attributes.density.array, [], particles.geometry.attributes.customColor.array);
+						setParticleAttributes(particles.geometry.attributes.density.array, particles.geometry.attributes.customColor.array, []);
 						particles.geometry.attributes.customColor.needsUpdate = true;
 						$scope.waiting(false);
 					}, 100);
@@ -468,7 +591,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		// Webble Event Listeners: Was Pasted
 		$scope.registerWWEventListener(Enum.availableWWEvents.pasted, function(eventData){
-			// Fix so that Mouse interaction in child works as expected
+			// Fixes so that Mouse interaction in child works as expected
 			$scope.getParent().scope().theView.parent().draggable('option', 'cancel', '#threeDPlusHolder');
 		});
 
@@ -484,16 +607,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			undefined,
 			undefined
 		));
-
-		$scope.addSlot(new Slot('liveDataJSON',
-			{},
-			'JSON Data',
-			'JSON Data Object (which hopefully contains 3D translatable world Point data)',
-			$scope.theWblMetadata['templateid'],
-			undefined,
-			undefined
-		));
-		$scope.getSlot("liveDataJSON").setDisabledSetting(Enum.SlotDisablingState.PropertyVisibility);
 
 		$scope.addSlot(new Slot('jsonDataInfo',
 			"NO DATA LOADED",
@@ -529,7 +642,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			'Glow Alpha Texture',
 			'A glow effect texture for each data point',
 			"Sky Reflectivity & Space Density",
-			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["None", "spark.png", "gradient.png", "cloudy.png"]},
+			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["None", "spark.png", "gradient.png", "cloudy.png", "cloud.png", "smokeparticle.png"]},
 			undefined
 		));
 
@@ -575,7 +688,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			11,
 			'Map Zoom Level',
 			'The current zoom level for the Google static map being used (ranging from 1-22 where 11 being default)',
-			"Sky Reflectivity",
+			"Sky Reflectivity & Tsunami Damage",
 			undefined,
 			undefined
 		));
@@ -584,8 +697,17 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			"roadmap",
 			'Map Type',
 			'The current map type, such as road map or satellite image etc',
-			"Sky Reflectivity",
+			"Sky Reflectivity & Tsunami Damage",
 			{inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ["roadmap", "satellite", "hybrid", "terrain"]},
+			undefined
+		));
+
+		$scope.addSlot(new Slot('mapCoordinates',
+			{min: {lat: 43.07502444153619, long: 141.3384810090065}, max: {lat: 43.07532224628538, long: 141.33888334035873}},
+			'Map Coordinates',
+			'If map coordinates are not found in the data itself, these coordinates will be used instead when retrieving the map.',
+			"Sky Reflectivity & Tsunami Damage",
+			undefined,
 			undefined
 		));
 
@@ -593,8 +715,17 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			"",
 			'Height Map',
 			'Since there is currently no open web service for retrieving height maps for a specific region, the user needs to manually create and apply such a height map to get the altitude of a map area to show.',
-			"Sky Reflectivity",
+			"Sky Reflectivity & Tsunami Damage",
 			{inputType: Enum.aopInputTypes.ImagePick},
+			undefined
+		));
+
+		$scope.addSlot(new Slot('displacementScale',
+			50,
+			'Displacement Scale',
+			'This value tells how much the height map should displace the map, depending on the strength of the white areas of the height map. Higher value higher peaks, darker height map lower peaks',
+			"Sky Reflectivity & Tsunami Damage",
+			undefined,
 			undefined
 		));
 
@@ -602,7 +733,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			false,
 			'Map Backside Visible',
 			'If Enabled the map will be visible also on the backside of the plane, otherwise a dark soil texture will be used instead for representing the back side.',
-			"Sky Reflectivity",
+			"Sky Reflectivity & Tsunami Damage",
 			undefined,
 			undefined
 		));
@@ -611,7 +742,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			0,
 			'Loop Time Slices',
 			'If set to 0 no looping will be enabled, but any other positive vaIue will indicate the number of seconds before the data set for the next time slice will be loaded. When reaching the end the first data set will be reloaded and the looping continues.',
-			"Sky Reflectivity",
+			"Sky Reflectivity & Tsunami Damage",
 			undefined,
 			undefined
 		));
@@ -688,6 +819,19 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
         $scope.theView.parent().draggable('option', 'cancel', '#threeDPlusHolder');
         threeDPlusHolder.bind('contextmenu',function(){ if(!$scope.altKeyIsDown){return false;} });
 
+        // set up a droppable event to catch
+		$scope.theView.find('.threeDPlusHolder').droppable({
+			tolerance: 'pointer',
+			drop: function(e, ui){
+				if(e.target.id == "threeDPlusHolder") {
+					e.preventDefault();
+					var dataSourceInfo = null;
+					try{ dataSourceInfo = JSON.parse(ui.draggable.attr('id')); } catch(err){ /*Don't need to do anything*/ }
+					if(dataSourceInfo != null && dataSourceInfo.webbleID != undefined){ dataDropped(dataSourceInfo); }
+				}
+			}
+		});
+
 		// WebGL presence check
 		if (Detector.webgl) {
 			init3D();
@@ -732,7 +876,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		($scope.theView.parent().find('#threeDPlusHolder')[ 0 ]).appendChild(renderer.domElement);
 
 		// camera
-		camera = new THREE.PerspectiveCamera(75, parseInt($scope.gimme('threeDPlusHolder:width')) / parseInt($scope.gimme('threeDPlusHolder:height')), 0.000001, 100000);
+		camera = new THREE.PerspectiveCamera(75, parseInt($scope.gimme('threeDPlusHolder:width')) / parseInt($scope.gimme('threeDPlusHolder:height')), 0.1, 100000);
 		camera.position.set(0, 0, 15);
 		camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -902,6 +1046,160 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			// If LiveData exists, then try to draw it
 			if(!isEmpty(liveData)) {
+
+				// TSUNAMI
+				if(dataType == availableDataTypes.Tsunami){
+					// var noOfPoints = noOfDataPointsForEachXYZ[0]*noOfDataPointsForEachXYZ[1]*noOfDataPointsForEachXYZ[2];
+                    //
+					// shaderMaterial = createShaderMaterial();
+                    //
+					// // Particle geometry
+					// dotsGeometry = new THREE.BufferGeometry();
+                    //
+					// allDataPointsSorted = [];
+					// positions = []; colors = []; sizes = []; reflectivities = []; matrixLocations = []; mapCoordinates = [];
+					// positions = new Float32Array( noOfPoints * 3 );
+					// colors = new Float32Array( noOfPoints * 4 );
+					// sizes = new Float32Array( noOfPoints );
+					// reflectivities = new Float32Array( noOfPoints );
+					// matrixLocations = new Uint32Array( noOfPoints * 3 );
+					// mapCoordinates = new Float32Array( noOfPoints * 3 );
+                    //
+					// var posArrIndex = 0, reflArrIndex = 0;
+					// var particleDist = 1; var halfLat = liveData[0].data[0][0].length / 2; var halfLong = liveData[0].data[0][0][0].length / 2;
+					// var currDataSet = liveData[1].data.indexOf($scope.gimme("currentDataSet"));
+					// for( var a=0 ; a < liveData[0].data[currDataSet].length ; a++ ) {  // iterate all altitudes
+					// 	for (var la = 0; la < liveData[0].data[currDataSet][a].length; la++) {  // iterate all latitudes
+					// 		for (var lo = 0; lo < liveData[0].data[currDataSet][a][la].length; lo++) {  // iterate all longitudes
+					// 			sizes[reflArrIndex] = 10;
+                    //
+					// 			var reflectivity = liveData[0].data[currDataSet][a][la][lo];
+					// 			allDataPointsSorted.push(reflectivity);
+					// 			reflectivities[reflArrIndex++] = reflectivity;
+                    //
+					// 			positions[ posArrIndex + 0 ] = (lo * particleDist) - halfLong;
+					// 			positions[ posArrIndex + 1 ] = (a * (particleDist * 1)) + 15;
+					// 			positions[ posArrIndex + 2 ] = (la * particleDist) - halfLat;
+                    //
+					// 			matrixLocations[ posArrIndex + 0 ] = la;
+					// 			matrixLocations[ posArrIndex + 1 ] = lo;
+					// 			matrixLocations[ posArrIndex + 2 ] = a;
+                    //
+					// 			mapCoordinates[ posArrIndex + 0 ] = liveData[0].lat.vals[la];
+					// 			mapCoordinates[ posArrIndex + 1 ] = liveData[0].long.vals[lo];
+					// 			mapCoordinates[ posArrIndex + 2 ] = liveData[0].alt.vals[a];
+                    //
+					// 			posArrIndex += 3;
+					// 		}
+					// 	}
+					// }
+                    //
+					// centerPoint = new THREE.Vector3(0 , noOfDataPointsForEachXYZ[1] / 4, 0);
+					// allDataPointsSorted.sort(function(a, b){return a-b});
+                    //
+					// setParticleAttributes(reflectivities, colors);
+                    //
+					// dotsGeometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+					// dotsGeometry.addAttribute( 'size', new THREE.BufferAttribute( sizes, 1 ) );
+					// dotsGeometry.addAttribute( 'customColor', new THREE.BufferAttribute( colors, 4 ) );
+					// dotsGeometry.addAttribute( 'reflectivity', new THREE.BufferAttribute( reflectivities, 1 ) );
+					// dotsGeometry.addAttribute( 'matrixLocation', new THREE.BufferAttribute( matrixLocations, 3 ) );
+					// dotsGeometry.addAttribute( 'mapCoordinate', new THREE.BufferAttribute( mapCoordinates, 3 ) );
+                    //
+					// particles = new THREE.Points( dotsGeometry, shaderMaterial );
+					// particles.geometry.boundingBox = null;
+					// scene.add( particles );
+                    //
+					// info2.innerHTML = $scope.gimme("currentDataSet");
+                    //
+					centerPoint = new THREE.Vector3(0 , noOfDataPointsForEachXYZ[1] / 4, 0);
+					var xWidth = (noOfDataPointsForEachXYZ[0] > 400 ? 400 : noOfDataPointsForEachXYZ[0]);
+					var yLength = (noOfDataPointsForEachXYZ[1] > 400 ? 400 : noOfDataPointsForEachXYZ[1]);
+					var zHeight = (noOfDataPointsForEachXYZ[2] <= 10 ? 200 : noOfDataPointsForEachXYZ[2]);
+					$log.log(zHeight);
+					if($scope.gimme("objectTargetEnabled")){
+						camera.position.set(0, yLength / 2, zHeight / 2);
+						camera.lookAt(centerPoint);
+						controls.target = centerPoint;
+					}
+					else{
+						camera.position.set(0, yLength / 1.5, zHeight / 1.5);
+						camera.lookAt(new THREE.Vector3(0, 0, 0));
+						controls.target = new THREE.Vector3(0, 0, 0);
+					}
+
+					$log.log("Not finished coding the drawing for Tsunami data");
+				}
+
+				// SPACE HALOS
+				else if(dataType == availableDataTypes.SpaceHalo){
+					// var ldb = liveData[0][1], noOfPoints = ldb.length * ldb[0].length * ldb[0][0].length;
+                    //
+					// shaderMaterial = createShaderMaterial();
+                    //
+					// // Particle geometry
+					// dotsGeometry = new THREE.BufferGeometry();
+                    //
+					// allDataPointsSorted = [];
+					// positions = []; colors = []; sizes = []; densities = []; matrixLocations = [];
+					// positions = new Float32Array( noOfPoints * 3 );
+					// colors = new Float32Array( noOfPoints * 4 );
+					// sizes = new Float32Array( noOfPoints );
+					// densities = new Float32Array( noOfPoints );
+					// matrixLocations = new Uint32Array( noOfPoints * 3 );
+                    //
+					// var posArrIndex = 0, densArrIndex = 0;
+					// var particleDist = $scope.gimme("particleDistance");
+					// for( var i=0 ; i < ldb.length ; i++ ) {
+					// 	for (var k = 0; k < ldb[i].length; k++) {
+					// 		for (var n = 0; n < ldb[i][k].length; n++) {
+					// 			var density = ldb[i][k][n];
+					// 			allDataPointsSorted.push(density);
+					// 			densities[densArrIndex++] = density;
+                    //
+					// 			positions[ posArrIndex + 0 ] = i * particleDist;
+					// 			positions[ posArrIndex + 1 ] = k * particleDist;
+					// 			positions[ posArrIndex + 2 ] = n * particleDist;
+                    //
+					// 			matrixLocations[ posArrIndex + 0 ] = i;
+					// 			matrixLocations[ posArrIndex + 1 ] = k;
+					// 			matrixLocations[ posArrIndex + 2 ] = n;
+                    //
+					// 			posArrIndex += 3;
+					// 		}
+					// 	}
+					// }
+					// centerPoint = new THREE.Vector3((ldb.length * particleDist) / 2 , (ldb[0].length * particleDist) / 2, (ldb[0][0].length * particleDist) / 2);
+                    //
+					// allDataPointsSorted.sort(function(a, b){return a-b});
+					// minValueThreshold = allDataPointsSorted[Math.floor(allDataPointsSorted.length * $scope.gimme("minThreshold"))];
+					// maxValueThreshold = allDataPointsSorted[Math.floor(allDataPointsSorted.length * $scope.gimme("maxThreshold")) - 1];
+					// thresholdRange = Math.abs(maxValueThreshold - minValueThreshold);
+                    //
+					// setParticleAttributes(densities, colors, sizes);
+                    //
+					// dotsGeometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+					// dotsGeometry.addAttribute( 'size', new THREE.BufferAttribute( sizes, 1 ) );
+					// dotsGeometry.addAttribute( 'customColor', new THREE.BufferAttribute( colors, 4 ) );
+					// dotsGeometry.addAttribute( 'density', new THREE.BufferAttribute( densities, 1 ) );
+					// dotsGeometry.addAttribute( 'matrixLocation', new THREE.BufferAttribute( matrixLocations, 3 ) );
+                    //
+					// particles = new THREE.Points( dotsGeometry, shaderMaterial );
+					// particles.geometry.boundingBox = null;
+					// scene.add( particles );
+                    //
+					// camera.position.set((ldb.length * particleDist) + (ldb.length/20), (ldb[0].length * particleDist) + (ldb[0].length/20), (ldb[0][0].length * particleDist) + (ldb[0][0].length/20));
+					// if($scope.gimme("objectTargetEnabled")){
+					// 	camera.lookAt(centerPoint);
+					// 	controls.target = centerPoint;
+					// }
+					// else{
+					// 	camera.lookAt(new THREE.Vector3(0, 0, 0));
+					// 	controls.target = new THREE.Vector3(0, 0, 0);
+					// }
+
+					$log.log("Not finished coding the drawing for Space Halo data");
+				}
 
 				// SKY REFLECTIVITY
 				if(dataType == availableDataTypes.SkyReflectivity){
@@ -1276,12 +1574,20 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					mapPlane = undefined;
 				}
 
-				var mapCenter = [liveData[0].lat.vals[0] + ((liveData[0].lat.vals[liveData[0].lat.vals.length -1] - liveData[0].lat.vals[0]) / 2), liveData[0].long.vals[0] + ((liveData[0].long.vals[liveData[0].long.vals.length -1] - liveData[0].long.vals[0]) / 2)];
+				var mapCenter;
+				if(dataType == availableDataTypes.SkyReflectivity){
+					mapCenter = [liveData[0].lat.vals[0] + ((liveData[0].lat.vals[liveData[0].lat.vals.length -1] - liveData[0].lat.vals[0]) / 2), liveData[0].long.vals[0] + ((liveData[0].long.vals[liveData[0].long.vals.length -1] - liveData[0].long.vals[0]) / 2)];
+				}
+				else if(dataType == availableDataTypes.Tsunami){
+					var mc = $scope.gimme("mapCoordinates");
+					mapCenter = [mc.min.lat + ((mc.max.lat - mc.min.lat) / 2), mc.min.long + ((mc.max.long - mc.min.long) / 2)];
+				}
+
 				currentMapZoom = $scope.gimme("mapZoom");
 				currentMapType = $scope.gimme("mapType");
 				currentHeightMap = $scope.gimme("manualHeightMap");
 				if(currentHeightMap == ""){ currentHeightMap = internalFilesPath + '/images/Flat_HeightMap.png'}
-				var dispScale = 50;
+				var dispScale = $scope.gimme("displacementScale");
 				var planeFront = 'http://maps.google.com/maps/api/staticmap?center=' + mapCenter[0] + ',' + mapCenter[1] + '&zoom=' + currentMapZoom + '&size=512x512&scale=2&maptype=' + currentMapType + '&sensor=false&language=&markers=';
 				var planeBack = ($scope.gimme("backsideMapEnabled")) ? planeFront : internalFilesPath + '/images/soil.png';
 
@@ -1298,7 +1604,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				 				loader.load(
 				 					planeBack,
 				 					function ( textureBack ) {
-				 						var geometry = new THREE.PlaneGeometry(noOfDataPointsForEachXYZ[0], noOfDataPointsForEachXYZ[1], noOfDataPointsForEachXYZ[0]/2, noOfDataPointsForEachXYZ[1]/2);
+				 						var geometry = new THREE.PlaneGeometry((noOfDataPointsForEachXYZ[0] > 400 ? 400 : noOfDataPointsForEachXYZ[0]), (noOfDataPointsForEachXYZ[1] > 400 ? 400 : noOfDataPointsForEachXYZ[1]), (noOfDataPointsForEachXYZ[0] > 400 ? 400 : noOfDataPointsForEachXYZ[0])/2, (noOfDataPointsForEachXYZ[1] > 400 ? 400 : noOfDataPointsForEachXYZ[1])/2);
 				 						var materials = [new THREE.MeshPhongMaterial({map: mapImageTexture, displacementMap: mapTerrianTexture, displacementScale: dispScale, side: THREE.FrontSide}), new THREE.MeshPhongMaterial({map: textureBack, displacementMap: mapTerrianTexture, displacementScale: dispScale, side: THREE.BackSide})];
 
 				 						for (var i = 0, len = geometry.faces.length; i < len; i++) {
@@ -1459,7 +1765,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if (targetName != ""){
 			//=== Clear Data Slot ====================================
 			if (targetName == $scope.customInteractionBalls[0].name){ //clearData
-				$scope.set('liveDataJSON', {});
+				liveData = []; geoLocationAvailable = false; allDataPointsSorted = []; loopDataSliceTracking = undefined;
+				$scope.set('jsonDataInfo', "NO DATA LOADED");
+				clearDataFromScene();
 			}
 			//=============================================
 
@@ -1481,7 +1789,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	//===================================================================================
 	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
 		if(itemName == $scope.customMenu[0].itemId){  //clearData
-			$scope.set('liveDataJSON', {});
+			liveData = []; geoLocationAvailable = false; allDataPointsSorted = []; loopDataSliceTracking = undefined;
+			$scope.set('jsonDataInfo', "NO DATA LOADED");
+			clearDataFromScene();
 		}
 
 		else if(itemName == $scope.customMenu[1].itemId){  //nextTimeSlice
@@ -1491,6 +1801,90 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	//===================================================================================
 
     //=== CTRL MAIN CODE ======================================================================
+
+	//temporary backup  .... remove when dropping works
+	// Recieve and interpret new 3d Points JSON Data and draw 3D ackordingly
+	/*else if(eventData.slotName == 'liveDataJSON'){
+
+        var isFake = false;
+        if(Object.keys(eventData.slotValue).length == undefined || eventData.slotValue.status == "empty"){
+            isFake = true;
+        }
+        else if(Object.keys(eventData.slotValue).length == 3) {
+            if (JSON.stringify(eventData.slotValue) == '{"fieldNames":["time","field 2"],"fieldTypes":["number","string"],"columns":[[1,"first"],[2,"second"],[2.5,"third"]]}') {
+                isFake = true;
+            }
+        }
+
+        if(!isEmpty(eventData.slotValue) && !isFake){
+            info.innerHTML = "";
+            var newData = angular.copy(eventData.slotValue);
+            liveData = []; geoLocationAvailable = false; allDataPointsSorted = [], loopDataSliceTracking = undefined;
+
+            if(eventData.slotValue.columns != undefined){
+                if(newData.columns.length > 0 && newData.columns[0].length > 0) {
+                    for ( var n = 0; n < newData.columns[0].length; n ++ ) {
+                        var newPoint = [];
+                        for ( var i = 0; i < newData.columns.length; i ++ ) {
+                            newPoint.push(newData.columns[i][n]);
+                        }
+                        liveData.push(newPoint);
+                    }
+                }
+            }
+            else if(newData.length == 2 && newData[0].data.length > 0){
+                noOfDataPointsForEachXYZ = [newData[0].xdef.vals.length, newData[0].zdef.vals.length, newData[0].ydef.vals.length];
+                liveData = newData;
+                const newKeys = { xdef: "long", ydef: "lat", zdef: "alt" };
+                liveData[0] = renameKeys(newData[0], newKeys);
+                var cdsSlot = $scope.getSlot("currentDataSet");
+                var dataTimeStamps = angular.copy(liveData[1].data).sort(function(a, b){return (new Date(a).getTime())-(new Date(b).getTime())});
+                for(var i = 0; i < dataTimeStamps.length; i++){ dataTimeStamps[i] = dataTimeStamps[i].toString()}
+                for(var i = 0; i < liveData[1].data.length; i++){ liveData[1].data[i] = liveData[1].data[i].toString()}
+                cdsSlot.setMetaData({inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: dataTimeStamps});
+                cdsSlot.setValue(dataTimeStamps[0]);
+                loopDataSliceTracking = {availableSlices: dataTimeStamps, currentSlice: 0};
+                var chromeArr = cloudyChroma;
+                if($scope.gimme("dBZColorsEnabled")){ chromeArr = dBZChromaNarrow; }
+                chromaticScale = chroma.scale(chromeArr).domain([0, 35, 65]);
+                $scope.getSlot("particleColorArray").setValue(chromeArr);
+                $scope.getSlot("glowAlphaTexture").setValue(3);
+            }
+
+            if(liveData.length == 1 && liveData[0].length == 2 && liveData[0][0] == liveData[0][1].length){
+                $scope.getSlot("glowAlphaTexture").setValue(1);
+                dataType = availableDataTypes.SpaceDensity;
+                info.innerHTML = "Prepare Rendering of Space Density Data...";
+            }
+            else if(liveData.length > 0 && liveData[0].length >= 3){
+                dataType = availableDataTypes.Classic;
+                info.innerHTML = "Prepare Rendering of Classic point Data...";
+            }
+            else if(liveData.length == 2 && liveData[0].alt != undefined && liveData[1].name == "Time Stamp"){
+                dataType = availableDataTypes.SkyReflectivity;
+                geoLocationAvailable = true;
+                info.innerHTML = "Prepare Rendering of Sky Reflectivity Data...";
+            }
+            else{
+                dataType = availableDataTypes.Unidentified;
+                info.innerHTML = "Rendering Data Unidentified and Ignored...";
+            }
+
+            $scope.getSlot('liveDataJSON').setValue({status: 'loaded'});
+            $scope.set('jsonDataInfo', "DATA LOADED AND AVAILABLE. [ Data type: " + getKeyByValue(availableDataTypes, dataType) + " ]");
+
+            $scope.waiting(true);
+            isInfoTextDisplayedAsItShould();
+        }
+        else {
+            liveData = []; geoLocationAvailable = false; allDataPointsSorted = []; loopDataSliceTracking = undefined;
+            $scope.getSlot('liveDataJSON').setValue({status: 'empty'});
+            $scope.set('jsonDataInfo', "NO DATA LOADED");
+            clearDataFromScene();
+        }
+    }*/
+
+
 
 });
 //=======================================================================================
