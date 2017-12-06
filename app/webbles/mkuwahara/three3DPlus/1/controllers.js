@@ -1049,6 +1049,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 				// TSUNAMI
 				if(dataType == availableDataTypes.Tsunami){
+
+					//FIX THIS PART FIRST!!!!!
+
 					// var noOfPoints = noOfDataPointsForEachXYZ[0]*noOfDataPointsForEachXYZ[1]*noOfDataPointsForEachXYZ[2];
                     //
 					// shaderMaterial = createShaderMaterial();
