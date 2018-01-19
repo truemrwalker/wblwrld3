@@ -94,7 +94,8 @@
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Definition Description:</span></div>
-			<div class="col-xs-8"><span style="font-weight: normal; white-space: pre-wrap;" ng-bind-html='formData.description | translate'></span></div>
+			<div class="col-xs-8"><span style="font-weight: normal; white-space: pre-wrap;" ng-bind-html='formData.description.substr(0,2500) | translate'></span></div>
+			<span ng-show="wblMeta.webble.description.length > 2500">...</span>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.description | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 

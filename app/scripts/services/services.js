@@ -2378,6 +2378,14 @@ ww3Services.factory('valMod', function(localStorageService) {
 			}
 			if(killSpot != -1){ theArray.splice(killSpot, 1); }
 			return theArray;
+		},
+		//Change the key names of a object if given the object to change and an object mapping current key with a string of the new key name; e.g. const newKeys = { OldKeyName1: "NewKeyName1", OldKeyName2: "NewKeyName2" };
+		renameKeys: function(obj, newKeys) {
+			const keyValues = Object.keys(obj).map(key => {
+				const newKey = newKeys[key] || key;
+				return { [newKey]: obj[key] };
+			});
+			return Object.assign({}, ...keyValues);
 		}
     }
 });

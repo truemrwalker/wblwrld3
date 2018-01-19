@@ -79,13 +79,13 @@
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Description:</span></div>
-            <div class="col-xs-7"><textarea class="formitem" rows="3" ng-model="formItems.currDesc"></textarea></div>
+            <div class="col-xs-7"><textarea class="formitem" rows="3" ng-model="formItems.currDesc" maxlength="2500"></textarea></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currDesc | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Keywords:</span></div>
-            <div class="col-xs-7"><input class="formitem" type="text" ng-model="formItems.currKeywords"></div>
+            <div class="col-xs-7"><input class="formitem" type="text" ng-model="formItems.currKeywords" maxlength="200"></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currKeywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 

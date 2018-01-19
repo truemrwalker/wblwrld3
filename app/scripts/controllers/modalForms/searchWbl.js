@@ -457,6 +457,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 	// Get a small list of high ranked webbles for pleasing display.
 	//========================================================================================
 	var getKeywordsList =  function(whatKeywordsString) {
+		whatKeywordsString = whatKeywordsString.substr(0,500);
 		var keywordsList = [];
 		if(whatKeywordsString.search(';') != -1){
 			keywordsList = whatKeywordsString.split(';');
