@@ -104,41 +104,43 @@
 
             <form name="registerForm" novalidate ng-submit="formRegister()" class="form-horizontal" autocomplete="off">
 
-                <div class="form-group">
-                    <label for="name" class="control-label col-xs-3" translate>Name</label>
-                    <div class="col-xs-8">
-                        <input type="text" class="form-control formitem" ng-model="registerData.name" placeholder="{{'Full Name'|translate}}" id="name" name="name" required  ng-minlength="5" autofocus="autofocus"/>
-                    </div>
-                </div>
+				<h4 translate>Please <a href="mailto:mkuwahara@meme.hokudai.ac.jp?subject=Webble Account Request">mail us</a> for a Webble World Account request with some info about yourself.</h4>
 
-                <div class="form-group">
-                    <label for="username" class="control-label col-xs-3" translate>Username</label>
-                    <div class="col-xs-8">
-                        <input type="text" class="form-control formitem" ng-model="registerData.username" placeholder="theo1821" id="username" name="username" ng-required="false"/>
-                        <span class="help-block hint" translate>You have to set a username to be able to publish webbles</span>
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label for="name" class="control-label col-xs-3" translate>Name</label>-->
+                    <!--<div class="col-xs-8">-->
+                        <!--<input type="text" class="form-control formitem" ng-model="registerData.name" placeholder="{{'Full Name'|translate}}" id="name" name="name" required  ng-minlength="5" autofocus="autofocus"/>-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <label for="email" class="control-label col-xs-3" translate>Email</label>
-                    <div class="col-xs-8">
-                        <input type="email" class="form-control" ng-model="registerData.email" placeholder="{{'john@example.com'|translate}}" name="email" required/>
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label for="username" class="control-label col-xs-3" translate>Username</label>-->
+                    <!--<div class="col-xs-8">-->
+                        <!--<input type="text" class="form-control formitem" ng-model="registerData.username" placeholder="theo1821" id="username" name="username" ng-required="false"/>-->
+                        <!--<span class="help-block hint" translate>You have to set a username to be able to publish webbles</span>-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <label for="password" class="control-label col-xs-3" translate>Password</label>
-                    <div class="col-xs-8">
-                        <input type="password" id="password" name="password" class="form-control" ng-model="registerData.password" placeholder="{{'Password'|translate}}" required ng-minlength="5" ng-maxlength="60"/>
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label for="email" class="control-label col-xs-3" translate>Email</label>-->
+                    <!--<div class="col-xs-8">-->
+                        <!--<input type="email" class="form-control" ng-model="registerData.email" placeholder="{{'john@example.com'|translate}}" name="email" required/>-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <label for="confirmPassword" class="control-label col-xs-3" translate>Confirm your password</label>
-                    <div class="col-xs-8">
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="registerData.confirmPassword" placeholder="{{'Confirm Password'|translate}}" confirm-value="registerData.password"/>
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label for="password" class="control-label col-xs-3" translate>Password</label>-->
+                    <!--<div class="col-xs-8">-->
+                        <!--<input type="password" id="password" name="password" class="form-control" ng-model="registerData.password" placeholder="{{'Password'|translate}}" required ng-minlength="5" ng-maxlength="60"/>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="form-group">-->
+                    <!--<label for="confirmPassword" class="control-label col-xs-3" translate>Confirm your password</label>-->
+                    <!--<div class="col-xs-8">-->
+                        <!--<input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="registerData.confirmPassword" placeholder="{{'Confirm Password'|translate}}" confirm-value="registerData.password"/>-->
+                    <!--</div>-->
+                <!--</div>-->
 
 <!--
                 <div class="form-group">
@@ -154,7 +156,7 @@
                 <div class="form-group">
                     <div class="col-md-offset-2 col-xs-8">
                         <a class="btn btn-default" ng-click="formCancel()" translate>Cancel</a>
-                        <button type="submit" ng-disabled="registerForm.$invalid" class="btn btn-primary" translate>Submit</button>
+                        <!--<button type="submit" ng-disabled="registerForm.$invalid" class="btn btn-primary" translate>Submit</button>-->
                     </div>
                 </div>
 
