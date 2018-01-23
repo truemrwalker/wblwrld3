@@ -138,14 +138,14 @@ function($q, $rootScope, $http, $window, $timeout, socket) {
 
         // All methods return a promise
         //
-        register: function(registerData) {
-            var self = this;
-
-            return $http.post('/auth/register', registerData)
-                .success(function(data, status, headers, config) {
-                    doAuthSuccessful(self, data);
-                });
-        },
+        // register: function(registerData) {
+        //     var self = this;
+        //
+        //     return $http.post('/auth/register', registerData)
+        //         .success(function(data, status, headers, config) {
+        //             doAuthSuccessful(self, data);
+        //         });
+        // },
 
         update: function(profileData) {
 	        return this.register(profileData);

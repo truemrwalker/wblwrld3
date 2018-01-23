@@ -69,7 +69,7 @@ function ($scope, $timeout, $http, gettext, confirm) {
             $scope.currWiki = w;
             $scope.currWikiId = w.id;
 
-            //$scope.setContributors(w);
+            $scope.setContributors(w);
 		}
 	};
 

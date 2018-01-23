@@ -106,24 +106,24 @@ function ($scope, $window, $location, gettext, gettextCatalog, authOfferToRegist
 	 * Starts the registration process with the register form's input data
 	 */
     $scope.formRegister = function() {
-        $scope.busyMessage = gettext("Checking Data for Signing Up...");
-
-        authService.register($scope.registerData).then(
-            function(response) {
-
-                clearForms();
-                $scope.$close(gettext("Signed up and logged in successfully"));
-            },
-            function error(response) {
-
-                $scope.busyMessage = null;
-                $scope.serverErrorMessage = response.data;
-                //$scope.registerForm.username.$setValidity('server', false);
-            },
-            function() {
-                // Notify...
-            }
-        );
+        // $scope.busyMessage = gettext("Checking Data for Signing Up...");
+        //
+        // authService.register($scope.registerData).then(
+        //     function(response) {
+        //
+        //         clearForms();
+        //         $scope.$close(gettext("Signed up and logged in successfully"));
+        //     },
+        //     function error(response) {
+        //
+        //         $scope.busyMessage = null;
+        //         $scope.serverErrorMessage = response.data;
+        //         //$scope.registerForm.username.$setValidity('server', false);
+        //     },
+        //     function() {
+        //         // Notify...
+        //     }
+        // );
     };
 
 	/**
