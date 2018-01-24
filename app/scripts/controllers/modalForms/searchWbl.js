@@ -49,6 +49,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
         maxRate: 10,
         isReversed: true,
 		hideUntrusted: false,
+		hideUnvetted: true,
         searchResult: [],
         typeAheadResult: [],
         pageViewResult: [],
@@ -490,12 +491,16 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 				mru['slimEnabled'] = $scope.formItems.slimEnabled;
 				mru['keywordsList'] = getKeywordsList(mru.webble.keywords);
 				mru.webble.description = valMod.urlifyWithImages(mru.webble.description);
+				mru['is_vetted'] = (mru.webble.author == "truemrwalker" || mru.webble.author == "j" || mru.webble.author == "area51" || mru.webble.author == $scope.formItems.currentUser);
             }
 
             $scope.formItems.searchResult = resp.data;
             $scope.formItems.totalItems = $scope.formItems.searchResult.length;
             $scope.formItems.currentPage = 1;
             $scope.formItems.pageViewResult = $scope.formItems.searchResult;
+
+            $log.log($scope.formItems.pageViewResult);
+
             latestSearchStr = 'aperitifPack';
 
             $('#searchBox').focus();
@@ -598,6 +603,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 					wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
 					wbl.webble.description = valMod.urlifyWithImages(wbl.webble.description);
+					wbl['is_vetted'] = (wbl.webble.author == "truemrwalker" || wbl.webble.author == "j" || wbl.webble.author == "area51" || wbl.webble.author == $scope.formItems.currentUser);
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
@@ -630,6 +636,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 						wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 						wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
 						wbl.webble.description = valMod.urlifyWithImages(wbl.webble.description);
+						wbl['is_vetted'] = (wbl.webble.author == "truemrwalker" || wbl.webble.author == "j" || wbl.webble.author == "area51" || wbl.webble.author == $scope.formItems.currentUser);
                     }
 
                     $scope.formItems.searchResult = resp.data;
