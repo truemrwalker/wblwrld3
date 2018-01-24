@@ -84,6 +84,9 @@
 			<input id="hideUntrusted" class="formitem" type="checkbox" ng-model="formItems.hideUntrusted" />
 			<span style="margin-left: 10px; font-size: 10px;" translate>Slim Display</span>
 			<input id="slimEnabled" class="formitem" type="checkbox" ng-model="formItems.slimEnabled" ng-change="toggleSlimEnabled()"/>
+
+			<!--<span style="margin-left: 10px; font-size: 10px;" translate>Hide Unvetted</span>-->
+			<!--<input id="hideUnvetted" class="formitem" type="checkbox" ng-model="formItems.hideUnvetted" />-->
         </div>
         <div class="col-xs-4">
 			<span ng-show="formItems.numPages > 1" style="margin-top: 3px; margin-right: 7px; font-weight: bold; font-size: 14px; float: left">{{formItems.currentPage}}/{{formItems.numPages}}</span>
@@ -99,7 +102,7 @@
         </div>
     </div>
 
-    <div id="itemBox" ng-hide="formItems.hideUntrusted && !wblMeta.is_trusted" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)"
+    <div id="itemBox" ng-hide="(formItems.hideUntrusted && !wblMeta.is_trusted) || (formItems.hideUnvetted && !wblMeta.is_vetted)" class="keepTheDistanceBelow" ng-repeat="wblMeta in formItems.pageViewResult" ng-mouseenter="mouseEnterLeave($index, true);" ng-mouseleave="mouseEnterLeave($index, false)"
           ng-style="{'background-color': wblMeta.selectColor}" style="border-bottom: 3px dashed #808080;" >         <!--ng-dblclick="close('submit');"  And ng-click="selectWbl($index);"  Removed due to double effect with hm-double-tap and hm-tap-->
 
 		<div hm-double-tap="close('submit');" hm-tap="selectWbl($index);" name="{{wblMeta.webble.defid}}" dragdrop-metadata="{{wblMeta.webble.image}}">
