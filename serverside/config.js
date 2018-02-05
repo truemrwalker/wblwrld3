@@ -122,7 +122,7 @@ module.exports = (function() {
 		PROJECT_MANAGEMENT_DIR: path.join(__dirname, '../..'),
 
 		// Server specific settings
-		SERVER_NAME: 'localhost',
+		SERVER_NAME: '127.0.0.1',
 		SERVER_PORT: 7000,
 		SERVER_BEHIND_REVERSE_PROXY: false,
 

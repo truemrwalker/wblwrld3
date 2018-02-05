@@ -24,7 +24,7 @@
 		"bluebird": "latest",
 		"socket.io": "latest",
 
-		"mongoose": "latest",
+		"mongoose": "4.8.4",
 		"gridfs-stream": "latest",
 		"connect-mongo": "latest",
 		"tar-stream": "latest",

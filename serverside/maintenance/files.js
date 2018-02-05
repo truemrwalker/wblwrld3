@@ -47,6 +47,8 @@ var libGfs = require('../lib/gfs');
 var util = require('../lib/util');
 var xfs = require('../lib/xfs');
 
+var mime = require('mime');
+
 var mkdirpAsync = Promise.promisify(mkdirp);
 Promise.promisifyAll(fs);
 
@@ -318,7 +320,7 @@ module.exports = function(app, config, mongoose, gettext) {
 	//return gfs._wipeOutEverythingForEverAndEverAndEver();
 
     return syncLocalWebbleFiles(webbleDir)
-        .then(syncBackupFiles).catch(err => console.error("File Sync Error:", err, "--", err.stack));
+        .then(syncBackupFiles).catch(err => console.error("File Sync Error:", err, "\n\n -- \n\n", err.stack));
 
 	////////////////////////////////////////////////////////////////////
 };
