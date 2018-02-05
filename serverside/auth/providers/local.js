@@ -28,8 +28,8 @@
 var Promise = require("bluebird");
 var LocalStrategy = require('passport-local').Strategy;
 
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
+// var nodemailer = require('nodemailer');
+// var smtpTransport = require('nodemailer-smtp-transport');
 
 var util = require('../../lib/util');
 var crypt = require('../../lib/crypt');
@@ -295,37 +295,42 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 							var subject = req.body.subject || gettext("Reset Account Password Request");
 							var text = req.body.text || gettext("Follow the link to login and change your password:");
 
-							var transporter = nodemailer.createTransport(smtpTransport({
-                                host: config.MAIL_HOST,
-                                port: config.MAIL_PORT,
-                                secure: config.MAIL_SECURE,
-								auth: { user: config.MAIL_USER, pass: config.MAIL_PASS },
-								tls: { rejectUnauthorized: false }
-							}));
+				// 			var transporter = nodemailer.createTransport(smtpTransport({
+                                // host: config.MAIL_HOST,
+                                // port: config.MAIL_PORT,
+                                // secure: config.MAIL_SECURE,
+				// 				auth: { user: config.MAIL_USER, pass: config.MAIL_PASS },
+				// 				tls: { rejectUnauthorized: false }
+				// 			}));
 
 							// Create auto-login link
 							var userIdHash = createUserIdHash(user);
 							var seed = config.APP_CRYPT_PASSWORD + userIdHash.substring(5, 15);
 							var resetUrl = config.SERVER_URL_PUBLIC + '/auth/autologin/' + userIdHash + '/' + crypt.encryptTextSync(user.email, seed);
 
-							transporter.sendMail({
-								from: config.APP_EMAIL_ADDRESS,
-								to: req.body.email,
-								subject: config.APP_NAME + ': ' + subject,
-								text: text + '\n\n' + resetUrl
+						    
+						    res.status(500).send(gettext("Password reset e-mails are currently disabled. Please e-mail the Webble World support address if you need to reset your password."));
 
-							}, function(error, response) {
 
-								console.log('EMAIL RESPONSE FOR TARGET:', req.body.email, 'ERROR:', error, 'RESPONSE:', response);
 
-								if (error)
-								  res.status(500).send(gettext("Could not send email"));
-								else
-								  res.status(200).send(gettext("Reset successful - please check your emails")); // Finally OK
+							// transporter.sendMail({
+							// 	from: config.APP_EMAIL_ADDRESS,
+							// 	to: req.body.email,
+							// 	subject: config.APP_NAME + ': ' + subject,
+							// 	text: text + '\n\n' + resetUrl
 
-								// Dispose the object - we don't need it anymore
-								transporter.close();
-							});
+							// }, function(error, response) {
+
+							// 	console.log('EMAIL RESPONSE FOR TARGET:', req.body.email, 'ERROR:', error, 'RESPONSE:', response);
+
+							// 	if (error)
+							// 	  res.status(500).send(gettext("Could not send email"));
+							// 	else
+							// 	  res.status(200).send(gettext("Reset successful - please check your emails")); // Finally OK
+
+							// 	// Dispose the object - we don't need it anymore
+							// 	transporter.close();
+							// });
 						}
 					});
 				}
