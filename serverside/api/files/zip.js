@@ -48,7 +48,22 @@ module.exports = function(app, config, mongoose, gettext, auth) {
         if (!baseDir || !baseName || baseDir.length == 0 || baseName.length == 0)
             return res.status(404).end();
 
-        var directoryToZip = path.join(config.APP_ROOT_DIR, baseDir, baseName);
+	    //-- this is not very safe (can zip and download any folder
+	    //-- in the serverside installation app directory)
+            // var directoryToZip = path.join(config.APP_ROOT_DIR, baseDir, baseName);
+	    
+
+	    // this is pretty restrictive (only allows A to Z and
+	    // numbers in filenamea and directory names, but let's be
+	    // overly restrictive to avoid spending lots of time on
+	    // sanitizing user input.
+            directoryToZip = path.join(config.APP_ROOT_DIR, baseDir.replace(/[^A-Za-z0-9\/\\]/g, "_"), baseName.replace(/[^A-Za-z0-9]/g, "_"));
+
+	    if(baseDir.substr(0, 4) != "data") { // everything we want people to download should be under this folder
+		return res.status(404).end();
+	    }
+	    
+
 
         return fs.statAsync(directoryToZip).then(function (stat) {
 
