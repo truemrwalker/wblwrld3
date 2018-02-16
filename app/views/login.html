@@ -104,9 +104,10 @@
 
             <form name="registerForm" novalidate ng-submit="formRegister()" class="form-horizontal" autocomplete="off">
 
-				<!--<h4 translate>Please <a href="mailto:mkuwahara@meme.hokudai.ac.jp?subject=Webble Account Request">mail us</a> for a Webble World Account request with some info about yourself.</h4>-->
+				<p translate>If you wish to request for a Webble World account in order to develop and publish your own Webbles, please mail us at: <br><b>mkuwahara[at]meme.hokudai.ac.jp</b><br> together with some short info about yourself and your intentions with using Webble World (work, research, hobby, entertainment, games etc), as well as a username request, and we will then create an account for you as soon as possible and mail you back with login details.</p>
+				<p translate>Thanks for your interest.<br>/Webble World Team</p>
 
-                <div class="form-group">
+                <!--<div class="form-group">
                     <label for="name" class="control-label col-xs-3" translate>Name</label>
                     <div class="col-xs-8">
                         <input type="text" class="form-control formitem" ng-model="registerData.name" placeholder="{{'Full Name'|translate}}" id="name" name="name" required  ng-minlength="5" autofocus="autofocus"/>
@@ -173,7 +174,7 @@
 
                         <li ng-show="registerForm.confirmPassword.$error.confirmValue" translate>Passwords do not match</li>
                     </ul>
-                </uib-alert>
+                </uib-alert>-->
 
             </form>
         </uib-tab>
