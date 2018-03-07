@@ -78,7 +78,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     var dropZ = {'left':300, 'top':0, 'right':400, 'bottom':500, "forMapping":{'name':'Z', 'type':['number']}, "label":"Z coordinates", "rotate":true};
     var dropY = {'left':400, 'top':0, 'right':500, 'bottom':500, "forMapping":{'name':'Y', 'type':['latitude','number']}, "label":"Y Coordinates", "rotate":true};
     var dropX = {'left':500, 'top':0, 'right':600, 'bottom':500, "forMapping":{'name':'X', 'type':['longitude','number']}, "label":"X coordinates", "rotate":true};
-    
+
     var allDropZones = [dropVal, drop3D, dropZ, dropY, dropX];
 
     var droppedDataMappings = []; // to keep track of what has been dropped on us so far
@@ -125,11 +125,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				 12:{"color":"#FFF5EE","gradient":[{"pos":0,"color":"#FFFDFC"},{"pos":0.75,"color":"#FFF5EE"}]},
 				 13:{"color":"#00FFFF","gradient":[{"pos":0,"color":"#CCFFFF"},{"pos":0.75,"color":"#00FFFF"}]},
 				 14:{"color":"#000000","gradient":[{"pos":0,"color":"#CCCCCC"},{"pos":0.75,"color":"#000000"}]}}};
-    var groupColors = {}; // cache the colors above 
+    var groupColors = {}; // cache the colors above
 
-    
+
     var cubeNo = -1; // when we have more than one cube of 3D data but only render one, this is used to keep track of which one
-    
+
     var classicThreshold = 1000; // if we have more values than this, draw data with points instead of objects
     var independentScaling = false;
 
@@ -165,7 +165,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     function convertLatLngToUtm(lat, lon) {
 	var latitude = lat; // * 180 / Math.PI;
 	var longitude = lon; // * 180 / Math.PI;
-    
+
 	if (latitude > 84 || latitude < -80) {
 	    throw new RangeError('latitude out of range (must be between 80 deg S and 84 deg N)');
 	}
@@ -385,7 +385,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if(typeof colorKey[0] != 'string' && colorKey[0].length > 1) { // colors and limits
     		    colorKey.sort(function (a,b) { return a[0] - b[0]; });
 		}
-		
+
 		if(colorMethod == 2) {// using color key
 		    for(var src = 0; src < droppedDataMappings.length; src++) {
     			if(droppedDataMappings[src].active) {
@@ -820,18 +820,18 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Group Color + Alpha (min to max)", "Group Color + Alpha (histogram)", "Color Key"]},
 				undefined
 			       ));
-	
+
         $scope.addSlot(new Slot('ColorKey',
-				colorKey, 
+				colorKey,
 				"Color Key",
 				'The color key (mapping from value to color) to use when "Color Method" is set to "Color Key".',
 				$scope.theWblMetadata['templateid'],
 				undefined,
 				undefined
 			       ));
-	
+
         $scope.addSlot(new Slot('ClassicModeThreshold',
-				classicThreshold, 
+				classicThreshold,
 				"Classic Mode Threshold",
 				'If there are more objects (data values) than this, draw data with points instead of objects.',
 				$scope.theWblMetadata['templateid'],
@@ -840,7 +840,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			       ));
 
         $scope.addSlot(new Slot('ScaleAxesIndependently',
-				independentScaling, 
+				independentScaling,
 				"Scale Axes Independently",
 				'If true, the scales of each axis will be set independently, otherwise they will use the same scaling (i.e. set this to false if the data on each axis has the same measuring unit, for example distances in meteres).',
 				$scope.theWblMetadata['templateid'],
@@ -867,7 +867,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    warning.innerText = "Your Browser does not support WebGL and can therefore not display 3D graphics. \nWe recommend that you change browser.";
 	    ($scope.theView.parent().find('#threeDPlusHolder')[ 0 ]).appendChild(warning);
 	}
-	
+
 	updateDropZonesSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height'))); // Jonas
 	$scope.setupDroppable(); // start listening to drag&drop events
     };
@@ -954,7 +954,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	requestAnimationFrame( animate );
 
 	light.position.copy( camera.position );
-	
+
 	if(controls !== undefined){
 	    controls.update();
 	}
@@ -1076,7 +1076,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var haveValues = false;
 
     	if(colorScheme !== null && colorScheme !== undefined
-	   && colorScheme.hasOwnProperty("skin") 
+	   && colorScheme.hasOwnProperty("skin")
 	   && colorScheme.skin.hasOwnProperty("color")) {
 	    var temp = hexColorToRGBAvec(colorScheme.skin.color, 1);
 	    // var bgCol = temp[0] * 255 * 255 + temp[1] * 255 + temp[2];
@@ -1092,7 +1092,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    for(var c = 0; c < droppedDataInfo.size3D; c++) {
 		// find first selected 3D data set
 		var ldb = droppedDataInfo.fun3D(c);
-		
+
 		if(ldb !== null) {
 		    var groupId = droppedDataInfo.selFun3D(c);
 		    if(groupId > 0) {
@@ -1103,7 +1103,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    }
 	}
 	var noOfPoints = 0;
-	
+
 	if(have3D && cubeNo >= 0) {
 	    noOfPoints = droppedDataInfo.size3Dv / droppedDataInfo.size3D; // conservative estimate, we may use fewer
 	}
@@ -1120,14 +1120,14 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    positions = []; matrixLocations = [];
 	    positions = new Float32Array( noOfPoints * 3 );
 	    matrixLocations = new Uint32Array( noOfPoints * 3 );
-	} 
+	}
 
 	if(have3D) {
 	    cubeNo = -1;
 	    for(var c = 0; c < droppedDataInfo.size3D; c++) {
 		// find first selected 3D data set
 		var ldb = droppedDataInfo.fun3D(c);
-		
+
 		if(ldb !== null) {
 		    var groupId = droppedDataInfo.selFun3D(c);
 		    if(groupId > 0) {
@@ -1153,7 +1153,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		   || droppedDataInfo.type == droppedDataInfoTypes.latlonz3D
 		   || droppedDataInfo.type == droppedDataInfoTypes.latlonzval3D
-		  ) { 
+		  ) {
 		    haveX = true;
 		    haveY = true;
 		    haveZ = true;
@@ -1209,10 +1209,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			    var minY = droppedDataInfo.funY(0);
 
 			    maxY = droppedDataInfo.funY(droppedDataInfo.sizeY - 1);
-			    
+
 			    if(geoLocationAvailable) {
 				minY = latToY(minY);
-				
+
 				maxY = latToY(maxY);
 			    }
 			}
@@ -1220,11 +1220,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		    if(haveZ) {
 			var minZ = droppedDataInfo.funZ(0);
-			
+
 			maxZ = droppedDataInfo.funZ(droppedDataInfo.sizeZ - 1);
 		    }
-		    
-		    if(maxX > minX) { 
+
+		    if(maxX > minX) {
 			scaleX = 1000 / (maxX - minX);
 		    }
 		    if(maxY > minY) {
@@ -1241,7 +1241,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    }
 		}
 	    } // cubeNo >= 0
-	} 
+	}
 
 	colors = []; sizes = []; densities = [];
 	colors = new Float32Array( noOfPoints * 4 );
@@ -1261,9 +1261,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	if(have3D) {
 	    if(cubeNo >= 0) {
 		var c = cubeNo;
-		
+
 		var ldb = droppedDataInfo.fun3D(c);
-		
+
 		for( var i=0 ; i < ldb.length ; i++ ) {
 		    // // if we have z-value data, check if z is selected
 		    // var zGroup = 1;
@@ -1291,7 +1291,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			    // }
 
 			    var density = ldb[i][k][n];
-			    
+
 			    if(density !== null) {
 
 				densitySum += density;
@@ -1306,21 +1306,21 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				    densityMin = Math.min(densityMin, density);
 				    densityMax = Math.max(densityMax, density);
 				}
-				
+
 				densities[densArrIndex++] = density;
 
 				if(!keepScene) {
-				    
+
 				    if(haveX && haveY) {
 					var posY = droppedDataInfo.funY(k);
 					var posX = droppedDataInfo.funX(n);
-					
+
 					if(droppedDataInfo.latlon) {
 					    var temp = convertLatLngToUtm(posY, posX);
 					    posX = temp[0];
 					    posY = temp[1];
 					}
-					
+
 					positions[ posArrIndex + 2 ] = ((maxY - minY) - (posY - minY)) * scaleY;
 					positions[ posArrIndex + 0 ] = (posX - minX) * scaleX;
 
@@ -1352,11 +1352,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					// positions[ posArrIndex + 1 ] = i * particleDist;
 					positions[ posArrIndex + 1 ] = i * scaleZ;
 				    }
-				    
+
 				    matrixLocations[ posArrIndex + 1 ] = i;
 				    matrixLocations[ posArrIndex + 2 ] = k;
 				    matrixLocations[ posArrIndex + 0 ] = n;
-				    
+
 				    posArrIndex += 3;
 				} // if value in cell not null
 			    } // if not keepScene
@@ -1378,15 +1378,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		haveX = true;
 		haveY = true;
 		haveZ = true;
-		haveValues = false;		
+		haveValues = false;
 	    }
 	    if(droppedDataInfo.type == droppedDataInfoTypes.xyval
 	       || droppedDataInfo.type == droppedDataInfoTypes.latlonval) {
 		haveX = true;
 		haveY = true;
 		haveZ = false;
-		haveValues = true;		
-	    }		
+		haveValues = true;
+	    }
 
 	    for( var i=0 ; i < droppedDataInfo.sizeX; i++ ) {
 
@@ -1409,13 +1409,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    v = 1;
 		}
 
-		if(x !== null 
+		if(x !== null
 		   && y !== null
 		   && z !== null
 		   && v !== null) {
 
 		    var density = v;
-		    
+
 		    densitySum += density;
 		    densitySqSum += density*density;
 		    N += 1;
@@ -1442,14 +1442,14 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				if(haveY) {
 				    y = latToY(y);
 				}
-			    }			    
+			    }
 			}
 
 			if(i == 0) {
 			    minX = x;
 			    minY = y;
 			    minZ = z;
-			    
+
 			    maxX = x;
 			    maxY = y;
 			    maxZ = z;
@@ -1462,15 +1462,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			    maxY = Math.max(maxY, y);
 			    maxZ = Math.max(maxZ, z);
 			}
-			
+
 			positions[ posArrIndex + 2 ] = y;
 			positions[ posArrIndex + 0 ] = x;
 			positions[ posArrIndex + 1 ] = z;
-			
+
 			matrixLocations[ posArrIndex + 1 ] = i;
 			matrixLocations[ posArrIndex + 2 ] = i;
 			matrixLocations[ posArrIndex + 0 ] = i;
-			
+
 			posArrIndex += 3;
 		    } // if not keepScene
 		} // if x,y,z, and value are not null
@@ -1481,7 +1481,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		var scaleY = 1;
 		var scaleZ = 1;
 
-		if(maxX > minX) { 
+		if(maxX > minX) {
 		    scaleX = 1000 / (maxX - minX);
 		}
 		if(maxY > minY) {
@@ -1490,7 +1490,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if(maxZ > minZ) {
 		    scaleZ = 1000 / (maxZ - minZ);
 		}
-		
+
 		if(!independentScaling) {
 		    scaleX = Math.min(scaleX, scaleY, scaleZ);
 		    scaleY = scaleX;
@@ -1528,7 +1528,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    dotsGeometry.addAttribute( 'customColor', new THREE.BufferAttribute( colors, 4 ) );
 	    dotsGeometry.addAttribute( 'density', new THREE.BufferAttribute( densities, 1 ) );
 	    dotsGeometry.addAttribute( 'matrixLocation', new THREE.BufferAttribute( matrixLocations, 3 ) );
-	    
+
 	    particles = new THREE.Points( dotsGeometry, shaderMaterial );
 	    particles.geometry.boundingBox = null;
 	    scene.add( particles );
@@ -1571,7 +1571,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     var redrawScene = function(){
 	redrawSceneHelper(false);
     }
-    
+
     function redrawSceneHelper(keepScene) {
         if(scene){
 	    $log.log("redrawScene");
@@ -1605,12 +1605,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	       || droppedDataInfo.type == droppedDataInfoTypes.xyz3D
 	       || droppedDataInfo.type == droppedDataInfoTypes.xyval3D
 	       || droppedDataInfo.type == droppedDataInfoTypes.xyzval3D
-	       
+
 	       || droppedDataInfo.type == droppedDataInfoTypes.latlon3D
 	       || droppedDataInfo.type == droppedDataInfoTypes.latlonz3D
 	       || droppedDataInfo.type == droppedDataInfoTypes.latlonval3D
 	       || droppedDataInfo.type == droppedDataInfoTypes.latlonzval3D
-	      ) { 
+	      ) {
 		// a 3D cube full of values, for example the space data
 
 		$log.log("redraw scene with 3D data (space density?) as points cloud");
@@ -1624,7 +1624,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		      || droppedDataInfo.type == droppedDataInfoTypes.latlonzval
 		      || droppedDataInfo.type == droppedDataInfoTypes.latlonz
 		      || droppedDataInfo.type == droppedDataInfoTypes.latlonval
-		     ) { 
+		     ) {
 		// lots of tuples of x, y, z (location), and values, for example halos in space,
 		// but not tuples with latitude and longitude
 
@@ -1635,13 +1635,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		} else {
 		    $log.log("redraw scene with 'xyzval' data (tuples, halos?) in classic mode");
-		
+
 		    if(droppedDataInfo.latlon) {
 			geoLocationAvailable = true;
-		    } else {		    
+		    } else {
 			geoLocationAvailable = false;
 		    }
-		    
+
 		    var meshSize = $scope.gimme("DataPointSize");
 		    if(isNaN(meshSize)) {
 			meshSize = 1;
@@ -1659,7 +1659,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    var minV = 0;
 
 		    var scale = 1;
-		    
+
 		    if(droppedDataInfo.type == droppedDataInfoTypes.xyzval) {
 			maxV = droppedDataInfo.funValues(0);
 			minV = maxV;
@@ -1680,7 +1680,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    }
 
 		    var first = true;
-		    
+
 		    for(var idx = 0; idx < droppedDataInfo.sizeX; idx++) {
 			var val = 1;
 			var name = idx;
@@ -1691,7 +1691,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			var x = droppedDataInfo.funX(idx);
 			var y = droppedDataInfo.funY(idx);
-			var z = 1; 
+			var z = 1;
 			if(droppedDataInfo.type == droppedDataInfoTypes.xyzval
 			   || droppedDataInfo.type == droppedDataInfoTypes.xyz) {
 			    z = droppedDataInfo.funZ(idx);
@@ -1720,9 +1720,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				maxZ = Math.max(maxZ, z);
 				minZ = Math.min(minZ, z);
 			    }
-			    
+
 			    var groupId = droppedDataInfo.selFunX(idx);
-			    
+
 			    var material = null;
 			    if(groupColors.hasOwnProperty(groupId)) {
 				material = new THREE.MeshLambertMaterial( {
@@ -1739,7 +1739,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				    opacity: 0.8
 				} );
 			    }
-			    
+
 			    var geometry = geometry1; // size = meshSize
 			    if(droppedDataInfo.type == droppedDataInfoTypes.xyzval) { // we have values, make size depend on value
 				var rad = ((val - minV) / (maxV - minV) * meshSize * 2 + meshSize) / 2; // this looks OK
@@ -1778,7 +1778,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    }
 
 	    enableGeoLocationSupport();
-	    
+
 	    animate();
 	    $scope.waiting(false);
 
@@ -1834,7 +1834,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		}
 	    }
 	}
-    }	
+    }
 
     //-------
     // Jonas: this color related stuff could be cleaned up a bit
@@ -1844,7 +1844,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	if(typeof color === 'string'
 	   && color.length == 7) {
-	    
+
 	    var r = parseInt(color.substr(1,2), 16) / 255;
 	    var g = parseInt(color.substr(3,2), 16) / 255;
 	    var b = parseInt(color.substr(5,2), 16) / 255;
@@ -1891,7 +1891,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	if(colorMethod == 1) { // using histograms
     	    var len = allValues.length;
     	    var idx = Math.max(0, binLookup(allValues, val, 0, len));
-	    
+
 	    if(groupColors.hasOwnProperty(groupId)) {
     		var crgba = groupColors[groupId];
 	    } else {
@@ -1922,7 +1922,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	    var idx = 0;
     	    if(colorKey && colorKey.length > 0) {
     		if(typeof colorKey[0] != 'string' && colorKey[0].length > 1) { // colors and limits
-		    
+
 		    if(val <= colorKey[0][0]) {
 			idx = 0;
 		    } else if(val >= colorKey[colorKey.length - 1][1]) {
@@ -1935,7 +1935,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     			    }
     			}
 		    }
-		    
+
     		    var cc = colorKey[idx][2];
     		    if(cc.length == 9) { // contains alpha
     			var alphaCC = parseInt(cc.substr(7,2), 16);
@@ -1981,7 +1981,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    minSize = $scope.gimme("particleMinMaxSizes").min;
 	    maxSize = $scope.gimme("particleMinMaxSizes").max;
 	    sizeSpan = maxSize - minSize;
-	    
+
 	    sizeArrOk = (sizeAttrArr.length != undefined && sizeAttrArr.length == dataValArr.length);
 	    pAlpha = $scope.gimme("particleMinMaxAlpha");
 	    ut = pAlpha.underThreshold; at = pAlpha.aboveThreshold; btma = pAlpha.betweenThresholdMax; btmi = pAlpha.betweenThresholdMin;
@@ -1994,15 +1994,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	    var val = Math.min(Math.max(minValueThreshold, dataValArr[i]), maxValueThreshold);
 	    var pct = (val - minValueThreshold) / thresholdRange;
-	    
-	    if(sizeArrOk){ 
-		sizeAttrArr[i] = minSize + sizeSpan * pct; 
+
+	    if(sizeArrOk){
+		sizeAttrArr[i] = minSize + sizeSpan * pct;
 	    }
 
 	    if(colorArrOk){
 		var colVal, alphaVal;
 
-		
+
 		//-------
 		// Jonas: I changed a lot of stuff here, but the whole function should probably be rewritten later.
 		//-------
@@ -2016,7 +2016,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    // y = k
 		    // x = n
 		    // z = i
-		    // posArrIndex + 1 
+		    // posArrIndex + 1
 
 		    // matrixLocations[ posArrIndex + 1 ] = i;
 		    // matrixLocations[ posArrIndex + 2 ] = k;
@@ -2037,18 +2037,18 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		    // 	// this only works when there are no null values
 
-		    // case droppedDataInfoTypes.val3D: 
+		    // case droppedDataInfoTypes.val3D:
 		    // 	var itemIdx = cubeNo * dataValArr.length + i;
 		    // 	groupId = droppedDataInfo.selFunValues(itemIdx);
 		    // 	break;
-			
+
 		    // case droppedDataInfoTypes.xy3D:
 		    // case droppedDataInfoTypes.latlon3D:
 		    // 	var z = Math.floor(i / droppedDataInfo.sizeX / droppedDataInfo.sizeY);
 		    // 	var rem = i - z * droppedDataInfo.sizeX * droppedDataInfo.sizeY
 		    // 	var y = Math.floor(rem / droppedDataInfo.sizeX);
 		    // 	var x = rem - y * droppedDataInfo.sizeX;
-			
+
 		    // 	groupId = droppedDataInfo.selFunY(y);
 		    // 	if(groupId > 0) {
 		    // 	    groupId = droppedDataInfo.selFunX(x);
@@ -2066,7 +2066,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    // 	if(groupId > 0) {
 		    // 	    groupId = droppedDataInfo.selFunY(y);
 		    // 	}
-		    // 	if(groupId > 0) { 
+		    // 	if(groupId > 0) {
 		    // 	    groupId = droppedDataInfo.selFunX(x);
 		    // 	}
 		    // 	break;
@@ -2100,11 +2100,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			var itemIdx = cubeNo * Math.floor(droppedDataInfo.size3Dv / droppedDataInfo.size3D) + cubeXidx + droppedDataInfo.sizeX*(cubeYidx + droppedDataInfo.sizeY*cubeZidx);
 			groupId = droppedDataInfo.selFunValues(itemIdx);
 			break;
-			
+
 		    case droppedDataInfoTypes.xy3D:
 		    case droppedDataInfoTypes.latlon3D:
 			var cubeYidx = matrixLocations[posArrIndex+2];
-			
+
 			groupId = droppedDataInfo.selFunY(cubeYidx);
 			if(groupId > 0) {
 			    var cubeXidx = matrixLocations[posArrIndex];
@@ -2121,7 +2121,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			    var cubeYidx = matrixLocations[posArrIndex+2];
 			    groupId = droppedDataInfo.selFunY(cubeYidx);
 			}
-			if(groupId > 0) { 
+			if(groupId > 0) {
 			    var cubeXidx = matrixLocations[posArrIndex];
 			    groupId = droppedDataInfo.selFunX(cubeXidx);
 			}
@@ -2152,12 +2152,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    } // switch droppedDataInfo.type
 
 		    var allValues = [minValueThreshold, maxValueThreshold];
-		    
+
 		    colVal = groupAndValTo3Dcolor(val, groupId, allValues, alphaVal);
 
 		    if(groupId <= 0) {
 			alphaVal *= 0.01;
-			
+
 			// colVal = [0, 0, 0];
 			// alphaVal = 0;
 		    } else {
@@ -2446,7 +2446,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	dropVal.top = margH;
 	dropVal.right = margW + zoneW * 2;
 	dropVal.bottom = margH + zoneH;
-	
+
 	drop3D.left = margW;
 	drop3D.top = margH * 2 + zoneH;
 	drop3D.right = margW + zoneW * 2;
@@ -2521,7 +2521,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    dropVal.top = margH;
 	    dropVal.right = margW + zoneW * 2;
 	    dropVal.bottom = margH + zoneH;
-	    
+
 	    drop3D.left = margW;
 	    drop3D.top = margH * 2 + zoneH;
 	    drop3D.right = margW + zoneW * 2;
@@ -2546,14 +2546,14 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	    var fontSize = 11; // get this from CSS, maybe?
 	    var textColor = "black"; // get this from CSS, maybe?
-	    
+
 	    if(hover) {
 
 		dropCtx.save();
 		dropCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
 		dropCtx.fillRect(0,0, W, H);
 		dropCtx.restore();
-		
+
 		var fnt = "bold " + (fontSize + 5) + "px Arial";
 		dropCtx.font = fnt;
 		dropCtx.fillStyle = textColor;
@@ -2620,7 +2620,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 
     $scope.setupDroppable = function () {
-	$scope.theView.find('#theDropCanvas').droppable({ 
+	$scope.theView.find('#theDropCanvas').droppable({
 	    over: function(e, ui) {
 		if(e.target.id == "theDropCanvas") {
 		    updateDropZones(1, true);
@@ -2639,16 +2639,16 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    var xpos = e.offsetX;
 		    var ypos = e.offsetY;
 		    var ok = false;
-		    
+
 		    var x = e.originalEvent.pageX - $(this).offset().left;
-		    var y = e.originalEvent.pageY - $(this).offset().top; 
-		    
+		    var y = e.originalEvent.pageY - $(this).offset().top;
+
 		    xpos = x;
 		    ypos = y;
 
 		    for(var d = 0; !ok && d < allDropZones.length; d++) {
 			var dropZone = allDropZones[d];
-			
+
 			if(xpos <= dropZone.right
 			   && xpos >= dropZone.left
 			   && ypos >= dropZone.top
@@ -2656,12 +2656,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			    f = dropZone.forMapping;
 			    ok = true;
-			} 
+			}
 		    }
 
 		    if(ok) {
 			dataDropped(ui.draggable.attr('id'), f);
-		    } 
+		    }
 		}
 
 		updateDropZones(0.3, false);
@@ -2691,10 +2691,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	    if(dataDropTypeCheck(dataSourceInfo.type, targetField.type)) {
 
 		var srcWebble = $scope.getWebbleByInstanceId(dataSourceInfo.webbleID);
-		
+
     		var accessorFunctionList = srcWebble.scope().gimme(dataSourceInfo.slotName);
     		var accessorFunctions = accessorFunctionList[dataSourceInfo.fieldIdx];
-		
+
     		var displayNameS = dataSourceInfo.sourceName;
     		var displayNameF = dataSourceInfo.fieldName;
 
@@ -2726,17 +2726,17 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			       && droppedDataMappings[mapSrcIdx].newSelections !== null) {
     				droppedDataMappings[mapSrcIdx].newSelections(myInstanceId, null, false); // let them know we are no longer actively visualizing (which we maybe were before)
     			    }
-			    
+
     			    var onlyOne = true;
     			    for(var ii = 0; ii < droppedDataMappings[mapSrcIdx].map.length; ii++) {
     				if(ii != i && droppedDataMappings[mapSrcIdx].map[ii].srcIdx == droppedDataMappings[mapSrcIdx].map[i].srcIdx) {
     				    // same data field is present on a different axis or similar
     				    onlyOne = false;
     				}
-    			    } 
+    			    }
     			    if(onlyOne) {
     				//  if this was the only field listening to updates, stop listening to updates
-				if(droppedDataMappings[mapSrcIdx].map[i].hasOwnProperty("listen") 
+				if(droppedDataMappings[mapSrcIdx].map[i].hasOwnProperty("listen")
 				   && droppedDataMappings[mapSrcIdx].map[i].listen !== null) {
     				    droppedDataMappings[mapSrcIdx].map[i].listen(myInstanceId, false, null, null, []);
 				}
@@ -2806,7 +2806,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    var funY = null;
 	    var funZ = null;
 	    var funValues = null;
-	    
+
 	    var selFun3D = null;
 	    var selFunX = null;
 	    var selFunY = null;
@@ -2821,7 +2821,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "3D") {
     		    have3D = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, drop3D.forMapping.type)) {
 			have3D = false;
@@ -2850,7 +2850,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "X") {
     		    haveX = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropX.forMapping.type)) {
 			haveX = false;
@@ -2858,7 +2858,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			sizeX = fieldInfo.size;
 			funX = fieldInfo.val;
 			selFunX = fieldInfo.sel;
-			
+
 			if(fieldInfo.type.indexOf("longitude") >= 0) {
 			    haveLongitude = true;
 			}
@@ -2868,7 +2868,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "Y") {
     		    haveY = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropY.forMapping.type)) {
 			haveY = false;
@@ -2876,7 +2876,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			sizeY = fieldInfo.size;
 			funY = fieldInfo.val;
 			selFunY = fieldInfo.sel;
-			
+
 			if(fieldInfo.type.indexOf("latitude") >= 0) {
 			    haveLatitude = true;
 			}
@@ -2886,7 +2886,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "Z") {
     		    haveZ = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropZ.forMapping.type)) {
 			haveZ = false;
@@ -2900,7 +2900,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "Values") {
     		    haveValues = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropVal.forMapping.type)) {
 			haveValues = false;
@@ -2933,7 +2933,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyzval3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -3000,7 +3000,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyz3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -3063,7 +3063,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyval3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funValues = funValues;
@@ -3126,7 +3126,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xy3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.fun3D = fun3D;
@@ -3140,7 +3140,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		droppedDataInfo.sizeZ = size3Dz;
 		droppedDataInfo.size3D = size3D;
 		droppedDataInfo.size3Dv = size3Dv;
-		
+
 		//-------
 		// Jonas: this part should probably be rewritten
 		//-------
@@ -3233,7 +3233,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    	dataType = availableDataTypes.SpaceDensity;
 	    	info.innerHTML = "Prepare Rendering of Space Density Data...";
 		//-------
-		
+
 		var ls2 = []; // fields to listen to
     		for(var ff = 0; ff < droppedDataMappings[src].map.length; ff++) {
 		    if(droppedDataMappings[src].map[ff].name == "3D"
@@ -3261,7 +3261,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyzval;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -3325,7 +3325,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyz;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -3385,7 +3385,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyval;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funValues = funValues;
@@ -3414,7 +3414,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    	    info.innerHTML = "Prepare Rendering of Classic point Data...";
 		}
 		//-------
-		
+
 		var ls2 = []; // fields to listen to
     		for(var ff = 0; ff < droppedDataMappings[src].map.length; ff++) {
 		    if(droppedDataMappings[src].map[ff].name == "Values"
@@ -3448,9 +3448,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    // 		dataType = availableDataTypes.Unidentified;
 	    // 		info.innerHTML = "Rendering Data Unidentified and Ignored...";
 
-	    // liveData = []; 
-	    geoLocationAvailable = false; 
-	    allDataPointsSorted = []; 
+	    // liveData = [];
+	    geoLocationAvailable = false;
+	    allDataPointsSorted = [];
 	    loopDataSliceTracking = undefined;
 
 	    // $scope.getSlot('liveDataJSON').setValue({status: 'empty'});
@@ -3459,7 +3459,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	}
     }
 
-    
+
     //====================================================================================================
     // ------------------- reacting to changes in other components
     //====================================================================================================
@@ -3471,7 +3471,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    checkMappingsAndParseData();
 	}
     }
-    
+
     var lastSeenSelectionSeqNo = -1;
     function redrawOnNewSelections(seqNo) {
 	$log.log("redrawOnNewSelections " + seqNo);
