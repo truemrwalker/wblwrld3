@@ -1044,8 +1044,8 @@ Downloads a webble identified by its unique name, either from server of from mem
 
 ```JavaScript
 // Loads a Webble from the internal Webble Server and when it arrives make it (or at least its latest template) say its name in the console
-$scope.downloadWebbleDef("genericCharts", function(newWbl){
-	$log.log( newWbl.scope().getWebbleFullName() + " has arrived!" );
+$scope.downloadWebbleDef("genericCharts", function(newWblDef){
+	$log.log( newWblDef.wbl.scope().getWebbleFullName() + " has arrived!" );
 });
 ```
 ###_executeMenuSelection_ ![Method][meth]
