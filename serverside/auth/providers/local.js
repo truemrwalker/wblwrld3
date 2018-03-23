@@ -163,11 +163,14 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 			else {
 
 
-			    // ---------------------
-			    // This line added temporarily to inform people that adding new users is currently disabled.
-			    // ---------------------
-			    throw new util.RestError(gettext("Sorry, we do not allow registration of new users right now.")); //, 401);
-			    // ---------------------
+			    // // ---------------------
+			    // // Add this line to (temporarily)
+			    // // disable user registration and to inform
+			    // // people that adding new users is
+			    // // currently disabled.
+			    // // ---------------------
+			    // throw new util.RestError(gettext("Sorry, we do not allow registration of new users right now.")); //, 401);
+			    // // ---------------------
 			    
 				// Validity checks for new accounts
 				//
@@ -187,19 +190,20 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 				//
 
 			    // ---------------------
-			    // This code removed temporarily to disallow adding new users.
+			    // Remove this code to (temporarily) disallow adding new users.
 			    // ---------------------
 
-				// user = new User();
+				user = new User();
 
-				// user.name.full = req.body.name;
-				// if (req.body.username && util.isUsernameValid(req.body.username))
-				// 	user.username = req.body.username;
-				// user.email = req.body.email;
+				user.name.full = req.body.name;
+				if (req.body.username && util.isUsernameValid(req.body.username))
+					user.username = req.body.username;
+				user.email = req.body.email;
 
-				// user._auth.providers.push('local');
+				user._auth.providers.push('local');
 
 			    // ---------------------
+			    // Stop removing here.
 			    // ---------------------
 			}
 
