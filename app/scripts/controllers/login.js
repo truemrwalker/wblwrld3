@@ -30,6 +30,11 @@ ww3Controllers.controller('LoginCtrl', [ '$scope', '$window', '$location', 'gett
 function ($scope, $window, $location, gettext, gettextCatalog, authOfferToRegisterByDefault, authService) {
 
 	////////////////////////////////////////////////////////////////////
+	// Properties
+	//
+	$scope.formData = {host: location.host};
+
+	////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//
 

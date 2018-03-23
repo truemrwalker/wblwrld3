@@ -62,8 +62,8 @@
             <div class="col-xs-4"><span class="formTitle" translate>Save Target:</span></div>
             <div class="col-xs-7">
                 <fieldset class="formitem">
-                    <input type="radio" style="vertical-align: text-bottom;" name="saveTarget" id="online" value="online" ng-model="formItems.saveTarget" checked="checked" />
-                    <label for="online" translate>Online Public Server</label>
+                    <input ng-show="formItems.isLoggedIn" type="radio" style="vertical-align: text-bottom;" name="saveTarget" id="online" value="online" ng-model="formItems.saveTarget" checked="checked" />
+                    <label ng-show="formItems.isLoggedIn" for="online" translate>Online Public Server</label>
                     <input type="radio" name="saveTarget" id="local" value="local" ng-model="formItems.saveTarget" />
                     <label for="local" translate>Local Computer</label>
                 </fieldset>
@@ -89,7 +89,7 @@
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currKeywords | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
-        <div class="row keepTheDistanceBelow">
+        <div ng-show="formItems.isLoggedIn" class="row keepTheDistanceBelow">
             <div class="col-xs-4"><span class="formTitle" translate>Add Publishing Groups:</span></div>
             <div class="col-xs-7"><select class="formitem" ng-model="formItems.selectedPubGroups" multiple ng-options="pubGr.name for pubGr in formItems.pubGroups" style="padding-left: 3px; padding-top: 1px; width: 100%"></select></div>
             <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{infoTooltip.currPubGroups | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>

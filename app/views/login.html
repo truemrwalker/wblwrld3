@@ -104,77 +104,83 @@
 
             <form name="registerForm" novalidate ng-submit="formRegister()" class="form-horizontal" autocomplete="off">
 
-				<p translate>If you wish to request for a Webble World account in order to develop and publish your own Webbles, please mail us at: <br><b>mkuwahara[at]meme.hokudai.ac.jp</b><br> together with some short info about yourself and your intentions with using Webble World (work, research, hobby, entertainment, games etc), as well as a username request, and we will then create an account for you as soon as possible and mail you back with login details.</p>
-				<p translate>Thanks for your interest.<br>/Webble World Team</p>
+				<span ng-if="formData.host == 'wws.meme.hokudai.ac.jp'">
+					<p translate>If you wish to request for a Webble World account in order to develop and publish your own Webbles, please mail us at: <br><b>mkuwahara[at]meme.hokudai.ac.jp</b><br> together with some short info about yourself and your intentions with using Webble World (work, research, hobby, entertainment, games etc), as well as a username request, and we will then create an account for you as soon as possible and mail you back with login details.</p>
+					<p translate>Thanks for your interest.<br>/Webble World Team</p>
+				</span>
 
-                <!--<div class="form-group">
-                    <label for="name" class="control-label col-xs-3" translate>Name</label>
-                    <div class="col-xs-8">
-                        <input type="text" class="form-control formitem" ng-model="registerData.name" placeholder="{{'Full Name'|translate}}" id="name" name="name" required  ng-minlength="5" autofocus="autofocus"/>
+				<span ng-if="formData.host != 'wws.meme.hokudai.ac.jp'">
+
+					<div class="form-group">
+                        <label for="name" class="control-label col-xs-3" translate>Name</label>
+                        <div class="col-xs-8">
+                            <input type="text" class="form-control formitem" ng-model="registerData.name" placeholder="{{'Full Name'|translate}}" id="name" name="name" required  ng-minlength="5" autofocus="autofocus"/>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="username" class="control-label col-xs-3" translate>Username</label>
-                    <div class="col-xs-8">
-                        <input type="text" class="form-control formitem" ng-model="registerData.username" placeholder="theo1821" id="username" name="username" ng-required="false"/>
-                        <span class="help-block hint" translate>You have to set a username to be able to publish webbles</span>
+                    <div class="form-group">
+                        <label for="username" class="control-label col-xs-3" translate>Username</label>
+                        <div class="col-xs-8">
+                            <input type="text" class="form-control formitem" ng-model="registerData.username" placeholder="theo1821" id="username" name="username" ng-required="false"/>
+                            <span class="help-block hint" translate>You have to set a username to be able to publish webbles</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="email" class="control-label col-xs-3" translate>Email</label>
-                    <div class="col-xs-8">
-                        <input type="email" class="form-control" ng-model="registerData.email" placeholder="{{'john@example.com'|translate}}" name="email" required/>
+                    <div class="form-group">
+                        <label for="email" class="control-label col-xs-3" translate>Email</label>
+                        <div class="col-xs-8">
+                            <input type="email" class="form-control" ng-model="registerData.email" placeholder="{{'john@example.com'|translate}}" name="email" required/>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="password" class="control-label col-xs-3" translate>Password</label>
-                    <div class="col-xs-8">
-                        <input type="password" id="password" name="password" class="form-control" ng-model="registerData.password" placeholder="{{'Password'|translate}}" required ng-minlength="5" ng-maxlength="60"/>
+                    <div class="form-group">
+                        <label for="password" class="control-label col-xs-3" translate>Password</label>
+                        <div class="col-xs-8">
+                            <input type="password" id="password" name="password" class="form-control" ng-model="registerData.password" placeholder="{{'Password'|translate}}" required ng-minlength="5" ng-maxlength="60"/>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="confirmPassword" class="control-label col-xs-3" translate>Confirm your password</label>
-                    <div class="col-xs-8">
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="registerData.confirmPassword" placeholder="{{'Confirm Password'|translate}}" confirm-value="registerData.password"/>
+                    <div class="form-group">
+                        <label for="confirmPassword" class="control-label col-xs-3" translate>Confirm your password</label>
+                        <div class="col-xs-8">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="registerData.confirmPassword" placeholder="{{'Confirm Password'|translate}}" confirm-value="registerData.password"/>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-					<label for="promotions" class="control-label col-xs-3"><a translate href="docs/ToS.pdf" target="_blank">I read and agree to the usage terms of the platform</a></label>
-                    <div class="col-xs-8">
-                    	<input class="formitem" type="checkbox" ng-model="registerData.promotions" id="promotions" name="promotions"/>
+                    <div class="form-group">
+                        <label for="promotions" class="control-label col-xs-3"><a translate href="docs/ToS.pdf" target="_blank">I read and agree to the usage terms of the platform</a></label>
+                        <div class="col-xs-8">
+                            <input class="formitem" type="checkbox" ng-model="registerData.promotions" id="promotions" name="promotions"/>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-xs-8">
-                        <a class="btn btn-default" ng-click="formCancel()" translate>Cancel</a>
-                        <button type="submit" ng-disabled="registerForm.$invalid" class="btn btn-primary" translate>Submit</button>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-xs-8">
+                            <a class="btn btn-default" ng-click="formCancel()" translate>Cancel</a>
+                            <button type="submit" ng-disabled="registerForm.$invalid" class="btn btn-primary" translate>Submit</button>
+                        </div>
                     </div>
-                </div>
 
-                <uib-alert type="danger" ng-show="serverErrorMessage || (registerForm.$invalid && registerForm.name.$dirty && registerForm.email.$dirty && registerForm.password.$dirty && registerForm.confirmPassword.$dirty)">
-                    <strong translate>Please correct the following errors:</strong>
-                    <ul style="margin-left:20px; margin-top:5px;">
-                        <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
+                    <uib-alert type="danger" ng-show="serverErrorMessage || (registerForm.$invalid && registerForm.name.$dirty && registerForm.email.$dirty && registerForm.password.$dirty && registerForm.confirmPassword.$dirty)">
+                        <strong translate>Please correct the following errors:</strong>
+                        <ul style="margin-left:20px; margin-top:5px;">
+                            <li ng-show="serverErrorMessage">{{serverErrorMessage|translate}}</li>
 
-                        <li ng-show="registerForm.name.$error.required" translate>Your name is required - how should I call you?</li>
-                        <li ng-show="registerForm.name.$error.minlength" translate>Please provide a (decent) name</li>
+                            <li ng-show="registerForm.name.$error.required" translate>Your name is required - how should I call you?</li>
+                            <li ng-show="registerForm.name.$error.minlength" translate>Please provide a (decent) name</li>
 
-                        <li ng-show="registerForm.email.$error.required" translate>Email is required</li>
-                        <li ng-show="registerForm.email.$error.email" translate>Email is not valid</li>
+                            <li ng-show="registerForm.email.$error.required" translate>Email is required</li>
+                            <li ng-show="registerForm.email.$error.email" translate>Email is not valid</li>
 
-                        <li ng-show="registerForm.password.$error.required" translate>Password is required</li>
-                        <li ng-show="registerForm.password.$error.minlength" translate>Password must be at least 5 characters long</li>
-                        <li ng-show="registerForm.password.$error.maxlength" translate>Password must be at most 60 characters long</li>
+                            <li ng-show="registerForm.password.$error.required" translate>Password is required</li>
+                            <li ng-show="registerForm.password.$error.minlength" translate>Password must be at least 5 characters long</li>
+                            <li ng-show="registerForm.password.$error.maxlength" translate>Password must be at most 60 characters long</li>
 
-                        <li ng-show="registerForm.confirmPassword.$error.confirmValue" translate>Passwords do not match</li>
-                    </ul>
-                </uib-alert>-->
+                            <li ng-show="registerForm.confirmPassword.$error.confirmValue" translate>Passwords do not match</li>
+                        </ul>
+                    </uib-alert>
+
+				</span>
 
             </form>
         </uib-tab>

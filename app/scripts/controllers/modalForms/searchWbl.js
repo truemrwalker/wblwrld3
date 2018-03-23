@@ -499,8 +499,6 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
             $scope.formItems.currentPage = 1;
             $scope.formItems.pageViewResult = $scope.formItems.searchResult;
 
-            $log.log($scope.formItems.pageViewResult);
-
             latestSearchStr = 'aperitifPack';
 
             $('#searchBox').focus();

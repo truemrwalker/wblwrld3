@@ -59,7 +59,7 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $uibModalI
     $scope.formItems = {
         currDefId: theWblDef.webble.defid,
         newDefId: '',
-        saveTarget: 'online',
+        saveTarget: (theWblDef.webble.author != "UNDEFINED" ? 'online' : 'local'),//'online',
         currDisplayName: theWblDef.webble.displayname,
         currDesc: theWblDef.webble.description,
         currKeywords: theWblDef.webble.keywords,
@@ -67,7 +67,8 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $uibModalI
         imgType: 'auto',
         isSameAuthor: formContent.isSameAuthor,
         pubGroups: [],
-        selectedPubGroups: []
+        selectedPubGroups: [],
+		isLoggedIn: (theWblDef.webble.author != "UNDEFINED" ? true : false)
     };
 
     // Information tooltip texts
@@ -318,11 +319,13 @@ ww3Controllers.controller('publishWebbleSheetCtrl', function ($scope, $uibModalI
         }
     });
 
-    dbService.getMyGroups().then(function(myGroups){
-        $scope.formItems.pubGroups = myGroups;
-    },function(eMsg){
-        $scope.errorMsg = eMsg;
-    });
+	if($scope.formItems.isLoggedIn){
+		dbService.getMyGroups().then(function(myGroups){
+		    $scope.formItems.pubGroups = myGroups;
+		},function(eMsg){
+		    $scope.errorMsg = eMsg;
+		});
+	}
 
 });
 //======================================================================================================================

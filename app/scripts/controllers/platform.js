@@ -1603,6 +1603,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			if(libItemExt == 'css'){
 				$.ajax({url: libItem,
 					success: function(){
+						libItem = libItem + '?v=' + whatTemplateRevision;
 						$('<link rel="stylesheet" type="text/css" href="' + libItem + '" >').appendTo("head");
 					},
 					complete: function(){
@@ -1633,7 +1634,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //========================================================================================
     var downloadWblTemplatePartTwo = function(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList){
 		if(wblTemplateFileList.int[0] == appPaths.webbleCSS){
-			var wblTemplateCSSFile = wblTemplateFileList.int.splice(0, 1);
+			var wblTemplateCSSFile = wblTemplateFileList.int.splice(0, 1) + '?v=' + whatTemplateRevision;
 			$('<link rel="stylesheet" type="text/css" href="' + corePath + wblTemplateCSSFile + '" >').appendTo("head");
 			loadTemplatesInternalJavaScripts(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
 		}
@@ -1681,6 +1682,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 	};
 	//========================================================================================
+
 
 	//========================================================================================
 	// Sort File List In Order Of Loading
@@ -2420,11 +2422,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 
         var theWblDef = whatWebble.scope().createWblDef(true);
-        theWblDef.webble.author = $scope.user.username;
+        theWblDef.webble.author = ($scope.user != undefined ? $scope.user.username : "UNDEFINED");
 
         return {
             wblDef: theWblDef,
-            isSameAuthor: $scope.user.username == whatWebble.scope().theWblMetadata['author'],
+            isSameAuthor: ($scope.user != undefined ? $scope.user.username == whatWebble.scope().theWblMetadata['author'] : false),
             theWblElement: autoGenImageFrame,
             sandboxWblList: availableSandboxWebbles_
         };
@@ -2439,6 +2441,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var publishWebbleReturned = function(returnData){
         $scope.getWSE().find('#autoGenImageFrame').remove();
         if(returnData){
+        	$log.log(returnData);
 			$scope.waiting(true);
             var theWbl = $scope.getWebbleByInstanceId(returnData.instanceid);
             theWbl.scope().theWblMetadata['defid'] = returnData.defid;
@@ -2446,7 +2449,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             theWbl.scope().theWblMetadata['description'] = returnData.description;
             theWbl.scope().theWblMetadata['keywords'] = returnData.keywords;
             theWbl.scope().theWblMetadata['image'] = returnData.image;
-			theWbl.scope().theWblMetadata['author'] = $scope.user.username;
+			theWbl.scope().theWblMetadata['author'] = ($scope.user != undefined ? $scope.user.username : "UNDEFINED");//$scope.user.username;
 
 			if(returnData.sandboxWblPublished){
 				quickSaveWSInternal();
@@ -2477,7 +2480,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
 
 			$scope.waiting(false);
-			$scope.showQIM(gettext("Webble Successfully Published"));
+			$scope.user != undefined ? $scope.showQIM(gettext("Webble Successfully Published")) : $scope.showQIM(gettext("Webble Successfully Saved"));
         }
 		if(lastMainSelectedWbl != undefined){ lastMainSelectedWbl.scope().setSelectionState(Enum.availableOnePicks_SelectTypes.AsMainClicked); lastMainSelectedWbl = undefined; }
     };
@@ -3533,13 +3536,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			if(!waitingServiceDeactivated_) {
 				$('.progressIndicator').css("animation-play-state", "running");
 				$('.progressIndicator').show();
-				$scope.progressManager.isWorking = true;
 				$scope.mouseCursor = 'wait';
+				$scope.progressManager.isWorking = true;
 			}
 		}
 		else{
 			if(isWaitingEnabled == undefined){
-				return $scope.progressManager.isWorking;
+				return $('.progressIndicator').is(":visible");
 			}
 			else{
 				$('.progressIndicator').hide();
@@ -4135,7 +4138,21 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         }
         else{
-            $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Not Available"), content: gettext("You must be logged in to Webble World in order to save Workspaces and publish Webbles. Please sign in and try again.")}, null);
+            //$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Not Available"), content: gettext("You must be logged in to Webble World in order to save Workspaces and publish Webbles. Please sign in and try again.")}, null);
+			var allFamily = $scope.getAllDescendants(whatWbl);
+			allFamily = allFamily.concat($scope.getAllAncestors(whatWbl));
+			for(var i = 0, w; w = allFamily[i]; i++){
+				if((parseInt(w.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PUBLISH, 10)) !== 0){
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Publish Webble Attempt Failed"), content: gettext("One or more of the Webbles included in the publish attempt is protected from publishing and therefore this operation is canceled.")}, null);
+					return false;
+				}
+			}
+
+			if(whatWbl.scope().getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){ lastMainSelectedWbl = whatWbl; }
+			$scope.resetSelections();
+			$timeout(function(){$scope.openForm(Enum.aopForms.publishWebble, getPublishWebbleContent(whatWbl), publishWebbleReturned);}, 100);
+			$timeout(function(){$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Only 'Save to Local Computer' Available"), content: gettext("Since you are not logged in to Webble World, you cannot publish Webbles Online, only save to local computer. If you wish to publish online, please sign in and try again.")}, null);}, 100);
+
         }
     };
     //========================================================================================
@@ -4622,7 +4639,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>Enter</strong>:' + gettextCatalog.getString("In the Webble Browser the Enter Key execute a search or load the selected Webble, and in some other forms the enter key executes a submit, though not in all.") + '<br>' +
 					'<strong>Alt+' + gettextCatalog.getString("Arrow Keys") + '</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
 					'<strong>Alt (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>' +
-					'<strong>Alt+Ctrl+Num 0</strong>:' + gettextCatalog.getString("In case some Webbles have attempted to lock down the system this 'Panic Feature' returns a lost Webble World Main menu and sets the user to highest level of Developer in order to get back to work.") + '<br>' }
+					'<strong>Alt+Ctrl+Num 0</strong>:' + gettextCatalog.getString("In case some Webbles have attempted to lock down the system this 'Panic Feature' returns a lost Webble World Main menu and sets the user to highest level of Developer in order to get back to work.") + '<br>' +
+					'<strong>Alt+Ctrl+Selection+Mouse</strong>:' + gettextCatalog.getString("If you want to move a webble with children, without moving the children, select the webble, hold CTRL + ALT and move the Webble in Question. The children may shake a little, but more or less stay in place.") + '<br>' }
 			);
         }
 		//Toggle Main Menu visibility

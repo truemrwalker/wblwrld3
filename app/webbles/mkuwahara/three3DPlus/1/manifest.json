@@ -1,5 +1,5 @@
 {
 	"libs": [
-	    "three.min.js", "TrackballControls.js"
+	    "three.min.js"
 	]
 }

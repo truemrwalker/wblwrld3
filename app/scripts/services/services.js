@@ -1155,7 +1155,6 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
             "sublinks": [
                 {"sublink_itemName": "toggleconn", "title": gettext("Toggle Connection View"), "shortcut": "(Alt+Num9)", "visibility_enabled": true},
                 {"sublink_itemName": "wsinfo", "title": gettext("Active Workspace Info"), "shortcut": "(Alt+W)", "visibility_enabled": true},
-				{"sublink_itemName": "shortcutinfo", "title": gettext("Shortcut Keys Info"), "shortcut": "(Alt+F1)", "visibility_enabled": true},
                 {"sublink_itemName": "fullscrn", "title": gettext("Toggle Fullscreen"), "shortcut": "(Alt+F)", "visibility_enabled": true}
             ]},
         {"itemName": "help", "title": gettext("Help"), "description": "", "visibility_enabled": true,
@@ -1164,6 +1163,7 @@ ww3Services.factory('menuItemsFactoryService', function (gettext) {
 				{"sublink_itemName": "apidoc", "title": gettext("API Documentation"), "shortcut": "(Alt+Shift+M)", "visibility_enabled": true},
 				{"sublink_itemName": "tutorials", "title": gettext("Tutorial Vids"), "shortcut": "(Alt+Shift+U)", "visibility_enabled": true},
                 {"sublink_itemName": "faq", "title": gettext("FAQ"), "shortcut": "(Alt+Shift+F)", "visibility_enabled": true},
+				{"sublink_itemName": "shortcutinfo", "title": gettext("Shortcut Keys Info"), "shortcut": "(Alt+F1)", "visibility_enabled": true},
                 {"sublink_itemName": "openchat", "title": gettext("Open Chat"), "shortcut": "(Alt+C)", "visibility_enabled": true},
                 {"sublink_itemName": "support", "title": gettext("Support"), "shortcut": "(Alt+H)", "visibility_enabled": true},
 				{"sublink_itemName": "community", "title": gettext("Developer Community"), "shortcut": "(Alt+Shift+C)", "visibility_enabled": true},
