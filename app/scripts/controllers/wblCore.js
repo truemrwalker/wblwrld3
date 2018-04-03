@@ -678,6 +678,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
                             if(slot == p.key){
                                 if (theSlots_[slot].getValue() != p.value && p.disabledSettings < Enum.SlotDisablingState.PropertyEditing){
                                     var itsOk = true;
+
                                     if(theParent_ && (slot == 'root:left' || slot == 'root:top') && p.value.toString().search('%') != -1){
                                         $log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]));
 										$scope.showQIM($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]), 4000, {w: 250, h: 90});
@@ -686,7 +687,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
                                     if(itsOk && slot.search('color') != -1 && (theSlots_[slot].getValue().toString().search('#') != -1 || theSlots_[slot].getValue().toString().search('rgb') != -1)){
                                         if(colorService.rgbStrToHex(theSlots_[slot].getValue()) == p.value){
-                                            itsOk = false;
+											itsOk = false;
                                         }
                                         else{
                                             if(p.value[0] == '#' && p.value.length > 7){

@@ -492,7 +492,7 @@ ww3Services.factory('wwConsts', ['colorService', function(colorService) {
 //=================================================================================
 // Color hex and RGB value converter service.
 //=================================================================================
-ww3Services.factory('colorService', function() {
+ww3Services.factory('colorService', function($log) {
     var toHex = function(n) {
         n = parseInt(n,10);
         if (isNaN(n)) return "00";
@@ -506,6 +506,10 @@ ww3Services.factory('colorService', function() {
         },
         rgbStrToHex: function(rgbStr) {
             var RGBArray;
+			if(rgbStr[0] == '#'){
+				return rgbStr;
+			}
+
             if(rgbStr.search('rgba') != -1){
                 RGBArray = rgbStr.replace(' ', '').replace('rgba(', '').replace(')', '').split(',');
                 return "#" + toHex(RGBArray[3]*255) + toHex(RGBArray[0]) + toHex(RGBArray[1]) + toHex(RGBArray[2]);

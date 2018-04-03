@@ -18,6 +18,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // JQuery Elements
     var threeDPlusContainer, threeDPlusHolder;
 	var dropCanvas = null; //Drag & Drop of data fields
+	var selectCanvas, selectCtx;
     var info;
 
     // Watches for specific non-webble value changes
@@ -51,7 +52,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	// Mouse 3D-world Interaction
 	var raycaster, intersects, INTERSECTED;
-	var mouse, mouse_click, isMouseClicked = false, intersectedMemory = new Array( 5 );
+	var mouse, mouse_click, isMouseClicked = false, intersectedMemory = new Array( 5 ), intSecAreaMem = [];
+	var isMouseDown = false, startMouseClickX = startMouseClickY = 0, currMouseMoveX = currMouseMoveY = 0, selectionAreaData = [];
+	var SELECT_COLOR = [1.0, 1.0, 0.0, 1.0];
 
 	// data drop zone properties
 	var dropVal = {'left':0, 'top':0, 'right':300, 'bottom':250, "forMapping":{'name':'Values', 'type':['number']}, "label":"Values", "rotate":false};
@@ -176,6 +179,29 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		mouse.x = ( event.offsetX / renderer.domElement.width ) * 2 - 1;
 		mouse.y = - ( event.offsetY / renderer.domElement.height ) * 2 + 1;
+
+		// Enable controller again if it has been turned off
+		if((!$scope.ctrlKeyIsDown || !$scope.altKeyIsDown) && !controls.enabled){ controls.enabled = true; }
+
+		if(isMouseDown){
+			if($scope.shiftKeyIsDown){
+				currMouseMoveX = event.offsetX;
+				currMouseMoveY = event.offsetY;
+				selectionAreaData[1] = [mouse.x, mouse.y];
+				selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
+				selectCtx.beginPath();
+				selectCtx.rect(startMouseClickX, startMouseClickY, (currMouseMoveX - startMouseClickX), (currMouseMoveY - startMouseClickY));
+				selectCtx.stroke();
+			}
+
+			if($scope.altKeyIsDown){
+				selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
+				var point = [event.offsetX, event.offsetY];
+				selectionAreaData.push(point);
+				selectCtx.lineTo(point[0], point[1] );
+				selectCtx.stroke();
+			}
+		}
     }
     //===================================================================================
 
@@ -188,19 +214,118 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     function on3DMouseClick( event ) {
 		if($scope.ctrlKeyIsDown){
 			isMouseClicked = true;
-			event.stopImmediatePropagation();
+			if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly){ event.stopImmediatePropagation(); }
 
 			mouse_click.x =  ( event.offsetX / renderer.domElement.width ) * 2 - 1;
 			mouse_click.y =  - ( event.offsetY / renderer.domElement.height ) * 2 + 1;
 
-			// mouse_click = new THREE.Vector3(
-			// 	( event.offsetX / renderer.domElement.width ) * 2 - 1,   //x
-			// 	- ( event.offsetY / renderer.domElement.height ) * 2 + 1,  //y
-			// 	0.5  //z
-			// );
+			selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+
+			if($scope.shiftKeyIsDown || $scope.altKeyIsDown){
+				isMouseDown = true;
+				controls.enabled = false;
+				selectCtx.strokeStyle = getColorContrast();
+				selectCtx.setLineDash([6]);
+				selectCtx.lineWidth = 3;
+				selectCtx.globalAlpha=0.5
+
+				if($scope.shiftKeyIsDown){
+					startMouseClickX = event.offsetX;
+					startMouseClickY = event.offsetY;
+					selectionAreaData = [[mouse_click.x, mouse_click.y], [mouse_click.x, mouse_click.y]];
+				}
+
+				if($scope.altKeyIsDown){
+					selectCtx.beginPath();
+					selectCtx.moveTo(event.offsetX, event.offsetY);
+					selectionAreaData = [[event.offsetX, event.offsetY]];
+				}
+			}
 		}
     }
     //===================================================================================
+
+
+	//===================================================================================
+	// Mouse Up event handler for within the 3D view
+	//===================================================================================
+	function on3DMouseUp( event ) {
+    	if(isMouseDown){
+    		isMouseDown = false;
+			selectCtx.closePath();
+
+			if(particles){
+				var distArr = [camera.position.distanceTo( centerPoint ), camera.position.distanceTo( particles.geometry.boundingBox.min ), camera.position.distanceTo( particles.geometry.boundingBox.max )];
+				var minDist = Math.min(...distArr);
+				var stepSizeDef = [2 / selectCanvas[0].width, 2 / selectCanvas[0].height];
+				var stepSizeMod = [
+					(minDist < 100) ? (stepSizeDef[0] * 5) : ((minDist < 300) ? (stepSizeDef[0] * 3) : ((minDist < 500) ? stepSizeDef[0] : (stepSizeDef[0] / 2) )),
+					(minDist < 100) ? (stepSizeDef[1] * 5) : ((minDist < 300) ? (stepSizeDef[1] * 3) : ((minDist < 500) ? stepSizeDef[1] : (stepSizeDef[1] / 2) ))
+				];
+
+				if(selectionAreaData.length == 2){
+					var minX = 1, minY = 1, maxX = -1, maxY = -1;
+					for(var i = 0, sad; sad = selectionAreaData[i]; i++){
+						if(sad[0] < minX){ minX = sad[0] }
+						if(sad[0] > maxX){ maxX = sad[0] }
+						if(sad[1] < minY){ minY = sad[1] }
+						if(sad[1] > maxY){ maxY = sad[1] }
+					}
+
+					var cx = minX, cy = minY;
+					selectionAreaData = [];
+					while(cy < maxY){
+						while(cx < maxX){
+							selectionAreaData.push(new THREE.Vector2(cx, cy));
+							cx += stepSizeMod[0];
+						}
+						cx = minX;
+						cy += stepSizeMod[1];
+					}
+				}
+				else if(selectionAreaData.length > 2){
+					selectCtx.stroke();
+
+					var cx = 0, cy = 0;
+					var insideSelArea = selectionAreaData;
+					selectionAreaData = [];
+					tempiTempoData = [];
+					while(cy < selectCanvas[0].height){
+						while(cx < selectCanvas[0].width){
+							if(isInside([cx, cy], insideSelArea)){
+								selectionAreaData.push(new THREE.Vector2((cx * stepSizeDef[0]) - 1, -((cy * stepSizeDef[1]) - 1)));
+							}
+							cx += 1;
+						}
+						cx = 0;
+						cy += 1;
+					}
+				}
+
+				// if(selectionAreaData.length > 10000){
+				// 	var insideSelArea = selectionAreaData;
+				// 	selectionAreaData = [];
+				// 	var jump = insideSelArea.length / 10000;
+				// 	var counter = 0;
+				// 	for(var i = 0; i < insideSelArea.length; i++){
+				// 		counter++;
+				// 		if(counter > jump){
+				// 			selectionAreaData.push(insideSelArea[i]);
+				// 			counter = 0;
+				// 		}
+				// 	}
+				// }
+
+				$log.log("sends " + selectionAreaData.length + " points to be intersected");
+
+				displayHourglassBeforeUpdateSelection();
+			}
+			else{
+				selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+			}
+    	}
+	}
+	//===================================================================================
 
 
 	//========================================================================================
@@ -334,6 +459,19 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     //===================================================================================
 
 
+	//===================================================================================
+	// Display Hourglass Before Redraw
+	// Makes sure the loading screen has been updated and rendered correctly before
+	// calling the calculation heavy Redraw function.
+	//===================================================================================
+	function displayHourglassBeforeUpdateSelection() {
+		if(!$scope.waiting()){ $scope.waiting(true); info[0].innerHTML = "Updating Data Point Selections..."; }
+		if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	selectionAreaData.unshift("Ready"); }, 100); }
+		else{ $timeout(function () { displayHourglassBeforeUpdateSelection(); }, 10); }
+	}
+	//===================================================================================
+
+
 
     //=== METHODS & FUNCTIONS ===========================================================
 
@@ -344,6 +482,8 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	// Assigning jquery access elements and other access parameters
         threeDPlusContainer = $scope.theView.parent().find("#threeDPlusContainer");
         threeDPlusHolder = $scope.theView.parent().find("#threeDPlusHolder");
+		selectCanvas = $scope.theView.parent().find('#theSelectCanvas');
+		selectCtx = selectCanvas[0].getContext('2d');
         internalFilesPath = $scope.getTemplatePath($scope.theWblMetadata['templateid'], $scope.theWblMetadata['templaterevision']);
 
 		$.ajax({url: internalFilesPath + '/images/GeoData/Coordinates.json',
@@ -439,7 +579,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				if(newCM != colorMethod) {
 					colorMethod = newCM;
 					for(var src = 0; src < droppedDataMappings.length; src++) {
-						$log.log(droppedDataMappings[src].active);
 						if(droppedDataMappings[src].active) {
 							$timeout(function () { displayHourglassBeforeRedrawScene(false); });
 							break;
@@ -457,7 +596,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    	}
 
 			else if(eventData.slotName == "localGlobalColorEqual") {
-	    		$log.log("localGlobalColorEqual");
 				if(eventData.slotValue){ $scope.set("threeDPlusHolder:background-color", colorScheme.skin.color); }
 			}
 
@@ -957,6 +1095,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		mouse_click = new THREE.Vector2();
 		threeDPlusHolder[0].addEventListener( 'mousemove', on3DMouseMove, false );
 		threeDPlusHolder[0].addEventListener( 'mousedown', on3DMouseClick, false );
+		threeDPlusHolder[0].addEventListener( 'mouseup', on3DMouseUp, false );
 
 		// controls
 		setCameraControls();
@@ -995,23 +1134,29 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		// Raycast Mouse interaction
 		//--------------------------------------
 		if(particles != undefined && isMouseClicked) {
+			var geometry = particles.geometry;
+			var attributes = geometry.attributes;
 
-		 	var geometry = particles.geometry;
-		 	var attributes = geometry.attributes;
-		 	raycaster.setFromCamera( mouse_click, camera );
-		 	intersects = raycaster.intersectObject( particles, true );
+			if(!isMouseDown){
+				raycaster.setFromCamera( mouse_click, camera );
+				intersects = raycaster.intersectObject( particles );
 
-			var onlyVisibleIntersects = [];
-			for(var i = 0; i < intersects.length; i++){
-				var index = intersects[i].index;
-				if(attributes.customColor.array[index * 4 + 3 ] > 0){
-					onlyVisibleIntersects.push(intersects[i]);
+				var onlyVisibleIntersects = [];
+				for(var i = 0; i < intersects.length; i++){
+					var index = intersects[i].index;
+					if(attributes.customColor.array[index * 4 + 3 ] > 0){
+						onlyVisibleIntersects.push(intersects[i]);
+					}
 				}
+				intersects = onlyVisibleIntersects;
 			}
-			intersects = onlyVisibleIntersects;
 
-		 	if ( intersects.length > 0 ) {
-		 		$log.log(intersects.length);
+			for (var i = 0, isam; isam = intSecAreaMem[i]; i++){
+				attributes.customColor.array[ isam[0] * 4 + 0 ] = isam[1]; attributes.customColor.array[ isam[0] * 4 + 1 ] = isam[2]; attributes.customColor.array[ isam[0] * 4 + 2 ] = isam[3]; attributes.customColor.array[ isam[0] * 4 + 3 ] = isam[4];
+				attributes.size.array[ isam[0] ] = isam[5];
+			}
+
+		 	if ( intersects.length > 0 && controls.enabled) {
 		 		if ( INTERSECTED != intersects[ 0 ].index ) {
 		 			if(INTERSECTED != null && INTERSECTED != undefined && intersectedMemory[0] != undefined){
 		 				attributes.customColor.array[ INTERSECTED * 4 + 0 ] = intersectedMemory[0]; attributes.customColor.array[ INTERSECTED * 4 + 1 ] = intersectedMemory[1]; attributes.customColor.array[ INTERSECTED * 4 + 2 ] = intersectedMemory[2]; attributes.customColor.array[ INTERSECTED * 4 + 3 ] = intersectedMemory[3];
@@ -1020,22 +1165,14 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		 			INTERSECTED = intersects[ 0 ].index;
 		 			intersectedMemory[0] = attributes.customColor.array[ INTERSECTED * 4 + 0 ]; intersectedMemory[1] = attributes.customColor.array[ INTERSECTED * 4 + 1 ]; intersectedMemory[2] = attributes.customColor.array[ INTERSECTED * 4 + 2 ]; intersectedMemory[3] = attributes.customColor.array[ INTERSECTED * 4 + 3 ];
 		 			intersectedMemory[4] = attributes.size.array[ INTERSECTED ];
-		 			attributes.customColor.array[ INTERSECTED * 4 + 0 ] = 1.0; attributes.customColor.array[ INTERSECTED * 4 + 1 ] = 0.0; attributes.customColor.array[ INTERSECTED * 4 + 2 ] = 0.0; attributes.customColor.array[ INTERSECTED * 4 + 3 ] = 1.0;
-		 			attributes.size.array[ INTERSECTED ] = attributes.size.array[ INTERSECTED ] * 4;
+		 			attributes.customColor.array[ INTERSECTED * 4 + 0 ] = SELECT_COLOR[0]; attributes.customColor.array[ INTERSECTED * 4 + 1 ] = SELECT_COLOR[1]; attributes.customColor.array[ INTERSECTED * 4 + 2 ] = SELECT_COLOR[2]; attributes.customColor.array[ INTERSECTED * 4 + 3 ] = SELECT_COLOR[3];
+		 			attributes.size.array[ INTERSECTED ] = attributes.size.array[ INTERSECTED ] * 2;
 		 			attributes.customColor.needsUpdate = true;
 		 			attributes.size.needsUpdate = true;
 
-		 			var location;
 		 			var dataValue = attributes.dataValue.array[ INTERSECTED ];
-					if(attributes.mapCoordinate) {
-						location = "[" + attributes.mapCoordinate.array[ INTERSECTED * 3 + 0 ] + "][" + attributes.mapCoordinate.array[ INTERSECTED * 3 + 1 ] + "][" + attributes.mapCoordinate.array[ INTERSECTED * 3 + 2 ] + "]";
-					}
-					else{
-						location = "[" + attributes.matrixLocation.array[ INTERSECTED * 3 + 0 ] + "][" + attributes.matrixLocation.array[ INTERSECTED * 3 + 1 ] + "][" + attributes.matrixLocation.array[ INTERSECTED * 3 + 2 ] + "]";
-					}
 
-					$log.log(location + ": " + dataValue);
-		 			info[0].innerHTML = location + ": " + dataValue;
+		 			info[0].innerHTML = dataValue;
 		 		}
 		 	} else {
 		 		if(INTERSECTED != null && INTERSECTED != undefined && intersectedMemory[0] != undefined){
@@ -1047,9 +1184,71 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					info[0].innerHTML = "";
 		 		};
 		 	}
-
-		 	isMouseClicked = false;
 		}
+		isMouseClicked = false;
+		intersects = [];
+
+		if(particles != undefined && selectionAreaData.length > 0 && selectionAreaData[0] == "Ready"){
+			selectionAreaData[0] = "Running";
+			var geometry = particles.geometry;
+			var attributes = geometry.attributes;
+
+			var intersectsArea = [];
+			for(var i = 1, vmp; vmp = selectionAreaData[i]; i++){
+				raycaster.setFromCamera( vmp, camera );
+				intersectsArea = intersectsArea.concat(raycaster.intersectObject( particles ));
+			}
+			selectionAreaData = [];
+
+			var intersectsAreaNoDoubles = [];
+			for(var i = 0, ia; ia = intersectsArea[i]; i++){
+				var addOk = true;
+				for(var j = 0, iand; iand = intersectsAreaNoDoubles[j]; j++){
+					if(iand.index == ia.index){
+						addOk = false;
+					}
+				}
+
+				if(addOk){
+					intersectsAreaNoDoubles.push(ia);
+				}
+			}
+
+			var onlyVisibleIntersects = [];
+			for(var i = 0; i < intersectsAreaNoDoubles.length; i++){
+				var index = intersectsAreaNoDoubles[i].index;
+				if(attributes.customColor.array[index * 4 + 3 ] > 0){
+					onlyVisibleIntersects.push(intersectsAreaNoDoubles[i]);
+				}
+			}
+			intersectsAreaNoDoubles = onlyVisibleIntersects;
+
+			$log.log(intersectsAreaNoDoubles.length + " number of points selected");
+
+			for (var i = 0, isam; isam = intSecAreaMem[i]; i++){
+				attributes.customColor.array[ isam[0] * 4 + 0 ] = isam[1]; attributes.customColor.array[ isam[0] * 4 + 1 ] = isam[2]; attributes.customColor.array[ isam[0] * 4 + 2 ] = isam[3]; attributes.customColor.array[ isam[0] * 4 + 3 ] = isam[4];
+				attributes.size.array[ isam[0] ] = isam[5];
+			}
+			intSecAreaMem = [];
+			if ( intersectsAreaNoDoubles.length > 0 ) {
+				for (var i = 0, iand; iand = intersectsAreaNoDoubles[i]; i++){
+					var INTSEC = iand.index;
+					var iam = new Array( 6 );
+					iam[0] = INTSEC;
+					iam[1] = attributes.customColor.array[ INTSEC * 4 + 0 ]; iam[2] = attributes.customColor.array[ INTSEC * 4 + 1 ]; iam[3] = attributes.customColor.array[ INTSEC * 4 + 2 ]; iam[4] = attributes.customColor.array[ INTSEC * 4 + 3 ];
+					iam[5] = attributes.size.array[ INTSEC ];
+					intSecAreaMem.push(iam);
+					attributes.customColor.array[ INTSEC * 4 + 0 ] = SELECT_COLOR[0]; attributes.customColor.array[ INTSEC * 4 + 1 ] = SELECT_COLOR[1]; attributes.customColor.array[ INTSEC * 4 + 2 ] = SELECT_COLOR[2]; attributes.customColor.array[ INTSEC * 4 + 3 ] = SELECT_COLOR[3];
+					attributes.size.array[ INTSEC ] = attributes.size.array[ INTSEC ] * 2;
+				}
+			}
+			attributes.customColor.needsUpdate = true;
+			attributes.size.needsUpdate = true;
+
+			selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+			$timeout(function () { $scope.waiting(false); info[0].innerHTML = "" });
+		}
+
 		//--------------------------------------
 
 		renderer.render(scene, camera);
@@ -1591,7 +1790,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			particles = new THREE.Points( dotsGeometry, shaderMaterial );
 			particles.renderOrder = 10;
-			particles.geometry.boundingBox = null;
+			particles.geometry.computeBoundingBox();
 			particles.name = 'Particles';
 			scene.add( particles );
 
@@ -2012,7 +2211,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	// Clear Data From Scene
 	// Removes all data related meshes and geometry and resets the background
 	//========================================================================================
-	var clearDataFromScene = function() {
+	$scope.clearData = function() {
 		droppedDataMappings = [];
 		droppedDataInfo = {type: "none"};
 		cubeNo = -1;
@@ -2414,14 +2613,26 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		}
 
 		// Set text contrast
-		var rgb = chroma(scene.background.getHexString()).rgba()
-		var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) / 1000);
-		var fore = [((o > 125) ? 'darkgreen' : 'yellow'), ((o > 125) ? 'darkred' : 'pink'), ((o > 125) ? 'black' : 'white')];
+		var fore = [getColorContrast(undefined, ['darkgreen', 'yellow']), getColorContrast(undefined, ['darkred', 'pink']), getColorContrast()];
 		for(var i = 0; i < info.length; i++){ $(info[i]).css('color', fore[i]); }
 
 	};
 	//========================================================================================
 
+
+	//========================================================================================
+	// Get Color Contrast
+	// gets the contrast color of either the background color or an optional color sent as
+	// a hex string parameter and an optional two color array if black and white is not enough.
+	//========================================================================================
+	var getColorContrast = function(inColor, contrastOptionArray ){
+		if(inColor == undefined){ inColor = scene.background.getHexString() };
+		if(contrastOptionArray == undefined){ contrastOptionArray = ['black', 'white'] };
+		var rgb = chroma(inColor).rgba()
+		var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) / 1000);
+		return ((o > 125) ? contrastOptionArray[0] : contrastOptionArray[1]);
+	};
+	//========================================================================================
 
 
 	//========================================================================================
@@ -2462,6 +2673,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			controls.addEventListener( 'change', render );
 			info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)w";
 		}
+
+		var tPoint = new THREE.Vector3(0,0,0);
+		if(camCtrl == CameraInteractionMode.Orbit && $scope.gimme("objectTargetEnabled") == true){
+			tPoint = centerPoint;
+		}
+		if(controls.target){ controls.target = tPoint; }
+		camera.lookAt(tPoint);
 	};
 	//========================================================================================
 
@@ -2479,6 +2697,28 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			}
 		}
 		return isAnyActive;
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Is Inside
+	// Returns true if a point is inside a polygon area of points
+	//========================================================================================
+	function isInside(point, polyArea) {
+		var x = point[0], y = point[1];
+
+		var inside = false;
+		for (var i = 0, j = polyArea.length - 1; i < polyArea.length; j = i++) {
+			var xi = polyArea[i][0], yi = polyArea[i][1];
+			var xj = polyArea[j][0], yj = polyArea[j][1];
+
+			var intersect = ((yi > y) != (yj > y))
+				&& (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+			if (intersect) inside = !inside;
+		}
+
+		return inside;
 	};
 	//========================================================================================
 
@@ -2515,6 +2755,8 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if(dropCanvas) {
 			dropCanvas.width = W + border * 2;
 			dropCanvas.height = H + border * 2;
+			selectCanvas[0].width = dropCanvas.width - 22;
+			selectCanvas[0].height = dropCanvas.height - 22;
 		}
 
 		var margW = 20;
@@ -3577,7 +3819,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if (targetName != ""){
 			//=== Clear Data Slot ====================================
 			if (targetName == $scope.customInteractionBalls[0].name){ //clearData
-				clearDataFromScene();
+				$scope.clearData();
 			}
 			//=============================================
 		}
@@ -3593,7 +3835,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     //===================================================================================
 	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
 		if(itemName == $scope.customMenu[0].itemId){  //clearData
-			clearDataFromScene();
+			$scope.clearData();
 		}
 
 		if(itemName == $scope.customMenu[1].itemId){  //Toggle Info Text visibility
