@@ -1,0 +1,118 @@
+<!--====================================================================================================================
+    // View for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
+    // Created By: [WEBBLE TEMPLATE AUTHOR]
+    //===================================================================================================================-->
+
+<!--IMPORTANT NOTE: Only have one div (or other containing element) in the outer area as the one and only main container
+    for all elements that might follow (or not)
+    <div>[Other Content]</div>-->
+
+<!--IMPORTANT NOTE 2: If you wish to include your own libraries and files, either from CDN or uploaded to the template
+    do NOT include them in this HTML file (as one might think) but instead list them in the manifest
+    file included in the Webble Dev Pack-->
+
+<!--For AngularJS power the outer element must include 'ng-controller' which point to the controller function as it is
+    named in the controllers file-->
+
+<div id="medEvent" ng-controller="medEventWebbleCtrl" ng-click="tobEventMouseClick()" ng-mouseleave="tobEventMouseLeave()" ng-mouseenter="tobEventMouseEnter()">
+<!-- <div id="medEvent" ng-controller="medEventWebbleCtrl"> -->
+  <span ng-switch="internalMedEventGenre">
+    <div ng-switch-when="ball">
+      <div ng-style=internalMedEventStyle>
+      <span id="eventTextSpan">{{internalMedEventText}}</span>
+      </div>
+      <div ng-if="shadowMode" ng-style=shadowStyle></div>
+    </div>
+    <div ng-switch-when="s">
+      <span ng-style=internalMedEventStyle>S</span>
+      <span ng-if="shadowMode" ng-style="shadowStyle">S</span>
+    </div>
+    <div ng-switch-when="arr">
+      <!-- <span ng-style=internalMedEventStyle>&#x21e9;</span> -->
+      <!-- <span ng-if="shadowMode" ng-style="shadowStyle">&#x21e9;</span> -->
+      <span ng-style=internalMedEventStyle>&#x2193;</span>
+      <span ng-if="shadowMode" ng-style="shadowStyle">&#x2193;</span>
+    </div>
+    <div ng-switch-when="radio" ng-style=outerBoxStyle>
+      <div id="firstBox" ng-style=internalFirstBoxStyle>&#x2622;</div>
+      <div id="eventTextSpan" ng-style=internalMedEventStyle>{{internalMedEventText}}</div>
+      <div id="shadowDiv" ng-if="shadowMode" ng-style="shadowStyle"></div>
+      <div id="microEvents">
+	<span ng-repeat="microEvent in microEvents">
+	  <span ng-style="{'color': getMicroEventColor(microEvent.id), position: 'absolute', left: getMicroEventPosition(microEvent.id), 'top': internalNoofPixelsH - 4 + 'px'}">&#9673;</span>
+	</span>
+	
+	<span ng-if="microEvents.length" ng-style="{'border': '1px dashed black', 'background-color':'grey', 'position':'absolute', 'left':0, 'top':(internalNoofPixelsH+5).toString() + 'px', 'width':totalWidth.toString()+'px', 'height':'1px'}">
+	</span>
+	
+      </div>
+    </div>
+    <div ng-switch-when="rectangle" ng-style=outerBoxStyle>
+      <div id="firstBox" ng-style=internalFirstBoxStyle>{{internalFirstBoxText}}</div>
+      <div id="eventTextSpan" ng-style=internalMedEventStyle>{{internalMedEventText}}</div>
+      <div id="shadowDiv" ng-if="shadowMode" ng-style="shadowStyle"></div>
+      <div id="microEvents">
+	<span ng-repeat="microEvent in microEvents">
+	  <span ng-style="{'color': getMicroEventColor(microEvent.id), position: 'absolute', left: getMicroEventPosition(microEvent.id), 'top': internalNoofPixelsH - 4 + 'px'}">&#9673;</span>
+	</span>
+	
+	<span ng-if="microEvents.length" ng-style="{'border': '1px dashed black', 'background-color':'grey', 'position':'absolute', 'left':0, 'top':(internalNoofPixelsH+5).toString() + 'px', 'width':totalWidth.toString()+'px', 'height':'1px'}">
+	</span>
+	
+      </div>
+    </div>
+
+    <div ng-switch-when="vertical">
+      <div ng-style=internalMedEventStyle></div>
+      <div ng-if="shadowMode" ng-style=shadowStyle></div>
+    </div>
+    
+    <div ng-switch-when="triangle">
+      <div ng-style=internalTriangleStyle>
+	<span id="eventTextSpan">{{internalMedEventText}}</span>
+      </div>
+      <div ng-if="shadowMode" ng-style=shadowStyle></div>
+    </div>
+
+    <div ng-switch-when="diamond">
+      <div ng-style=upperTriangleStyle></div>
+      <div ng-style=lowerTriangleStyle></div>
+      <span id="eventTextSpan">{{internalMedEventText}}</span>
+      
+      <div ng-if="shadowMode" ng-style=upperTriangleShadowStyle></div>
+      <div ng-if="shadowMode" ng-style=lowerTriangleShadowStyle></div>
+    </div>
+    
+    <div ng-switch-when="randomizer">
+      <div ng-style=upperTriangleStyle></div>
+      <div ng-style=internalMedEventStyle></div>
+      <div ng-style=lowerTriangleStyle></div>
+
+      <div ng-if="shadowMode" ng-style=upperTriangleShadowStyle></div>
+      <div ng-if="shadowMode" ng-style=internalMedEventShadowStyle></div>
+      <div ng-if="shadowMode" ng-style=lowerTriangleShadowStyle></div>
+    </div>
+    
+    <div ng-switch-when="parallel">
+      <div ng-style=internalMedEventStyle></div>
+      <div ng-if="shadowMode" ng-style=shadowStyle></div>
+    </div>
+
+    <div ng-switch-default>
+      <span id="eventTextSpan">Default: {{internalMedEventText}}</span>
+    </div> 
+
+  </span>    
+ 
+  <div ng-if="internalLabelText != ''" id="label" ng-style=internalLabelStyle>
+    <span id="labelTextSpan">{{internalLabelText;}}</span>
+  </div>
+  <div ng-if="internalArmLabelText != ''" id="armLabel" ng-style=internalArmLabelStyle>
+    <span id="armTextSpan">{{internalArmLabelText;}}</span>
+  </div>
+
+  <div ng-if=statusMarkerMode id="statusMarker" ng-style="{'background-color':statusMarkerColor, 'position':'absolute', 'left':statusMarkerLeft, 'top':statusMarkerTop, 'height':'10px', 'width':'10px', 'border': '1px solid black', 'border-radius':'5px', 'color': 'black', 'z-index':'5'}">
+  </div>
+</div>
+
+<!--=================================================================================================================-->

@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"TOBTimeline",
+ "description":"The TOB timeline. Used by the Trial Outline Builder work board and the patient board.",
+ "keywords":"TOB",
+ "author":"tob"
+}

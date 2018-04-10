@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"TOBPatientboard",
+ "description":"TOBPatientboard is the window that contains the treatment plan of one specific patient (similar to the TOB workboard which has an overview of the whole trial) in the Trial Outline Builder",
+ "keywords":"TOB",
+ "author":"tob"
+}
