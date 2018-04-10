@@ -171,6 +171,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	$scope.BlockAddUndo = function(){ blockAllAddUndoUntilWeSayOtherwise_ = true; };
 	$scope.UnblockAddUndo = function(){ blockAllAddUndoUntilWeSayOtherwise_ = false; };
 	var hardcoreMenuNonBlock = false;
+	$scope.vettingSetting = { vettingIsEnabled: false, vettedUsers: [] };
     //-------------------------------
 
 
@@ -1033,6 +1034,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				sharedWS_NoQIM_Enabled_ = false;
 			}
 		}
+
+		if(wblwrldSystemOverrideSettings.vettingIsEnabled === true){
+			$scope.vettingSetting.vettingIsEnabled = true;
+			$scope.vettingSetting.vettedUsers = wblwrldSystemOverrideSettings.vettedUsers
+		}
+
 
         // Configure quick language change button if needed
         if(gettextCatalog.currentLanguage.search('en') == -1){

@@ -49,7 +49,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
         maxRate: 10,
         isReversed: true,
 		hideUntrusted: false,
-		hideUnvetted: true,
+		hideUnvetted: $scope.thePlatform.vettingSetting.vettingIsEnabled,
         searchResult: [],
         typeAheadResult: [],
         pageViewResult: [],
@@ -491,7 +491,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 				mru['slimEnabled'] = $scope.formItems.slimEnabled;
 				mru['keywordsList'] = getKeywordsList(mru.webble.keywords);
 				mru.webble.description = valMod.urlifyWithImages(mru.webble.description);
-				mru['is_vetted'] = (mru.webble.author == "truemrwalker" || mru.webble.author == "j" || mru.webble.author == "area51" || mru.webble.author == $scope.formItems.currentUser);
+				mru['is_vetted'] = getIsVetted(mru.webble.author);
             }
 
             $scope.formItems.searchResult = resp.data;
@@ -511,6 +511,31 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
         });
     };
     //========================================================================================
+
+
+	//========================================================================================
+	// Get Is Vetted
+	// Return weather the Webble should be considered vetted or not and therefore be visible
+	// in the browser.
+	//========================================================================================
+	var getIsVetted =  function(wblAuthor) {
+		var isVetted = true;
+		if($scope.thePlatform.vettingSetting.vettingIsEnabled){
+			isVetted = false;
+			for(var i = 0, vu ; vu = $scope.thePlatform.vettingSetting.vettedUsers[i]; i++){
+				if(vu == wblAuthor){
+					isVetted = true;
+					break;
+				}
+			}
+			if(!isVetted && wblAuthor == $scope.formItems.currentUser){
+				isVetted = true;
+			}
+		}
+
+		return isVetted;
+	};
+	//========================================================================================
 
 
 
@@ -601,7 +626,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 					wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
 					wbl.webble.description = valMod.urlifyWithImages(wbl.webble.description);
-					wbl['is_vetted'] = (wbl.webble.author == "truemrwalker" || wbl.webble.author == "j" || wbl.webble.author == "area51" || wbl.webble.author == $scope.formItems.currentUser);
+					wbl['is_vetted'] = getIsVetted(wbl.webble.author);
                 }
                 $scope.formItems.searchResult = $scope.formItems.typeAheadResult;
                 $scope.formItems.currentPage = 1;
@@ -634,7 +659,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 						wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 						wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
 						wbl.webble.description = valMod.urlifyWithImages(wbl.webble.description);
-						wbl['is_vetted'] = (wbl.webble.author == "truemrwalker" || wbl.webble.author == "j" || wbl.webble.author == "area51" || wbl.webble.author == $scope.formItems.currentUser);
+						wbl['is_vetted'] = getIsVetted(wbl.webble.author);
                     }
 
                     $scope.formItems.searchResult = resp.data;
