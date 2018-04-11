@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"TOBApp",
+ "description":"This is a Webble that wraps the whole TOB (Trial Outline Builder) application.\r\nWrapping the whole application in one Webble is useful when running inside the ObTiMA system.\r\nThe behavior of the application can be changed by adding the 'tobMode' (='design', 'patient', or 'analysis') option, the 'trialStatus' (='RUNNING' or 'DEVELOPMENT'), and the 'inObtima' option (='true' or 'false') as parameters in the URL.",
+ "keywords":"TOB, ObTiMA",
+ "author":"tob"
+}

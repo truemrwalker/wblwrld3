@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"TOBMedEvent",
+ "description":"TOBMedEvent is a graphical representation of one treatment event for the Trial Outline Builder.",
+ "keywords":"TOB",
+ "author":"tob"
+}
