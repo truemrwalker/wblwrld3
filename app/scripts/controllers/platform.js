@@ -421,7 +421,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var eeFunc_ = [
         function(){
     		if(($scope.user != undefined ? $scope.user.name.last.toLowerCase() : '') != 'kuwahara'){
-				$('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("https://wws.meme.hokudai.ac.jp/images/extra/mnk.jpg"); }</style>'));
+				$('html > head').append($('<style>.easterEgg { background: center / 239px 222px no-repeat fixed url("https://honorpay.org/user_pics/323.jpg"); }</style>'));
 				$scope.bkgLogoClass = 'easterEgg';
 				alert('Micke Nicander Kuwahara made this, how about that!!');
 			}

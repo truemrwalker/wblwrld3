@@ -42,7 +42,7 @@
     <div class="bubbleInfo" ng-class="putBelow" ng-show="getBubbleTxtVisibility()" style="z-index: 10000;" ng-style="{'left': getBubbleTxtPos().x, 'top': getBubbleTxtPos().y}">{{getBubbleTxt() | translate}}</div>
 
 	<!--THESE ARE ICONS FOR INFORMING USER OF CURRENT WORKSPACE STATE-->
-    <div style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
+    <div ng-show="shouldWorkspaceStateIconsBeVisible()" style="position: fixed; right: 5px; top: 100px;" ng-style="{'top': getAdjustedTopPos()}">
         <img src="images/icons/untrusted.png" ng-show="getIsUntrustedWblsExisting()" tooltip-placement="left" tooltip-append-to-body="true" uib-tooltip="{{noTrustIconInfo | translate}} {{getListAsStringOfUniqueUntrustedWbls()}}">
 		<br>
 		<img src="images/icons/sandbox.png" ng-show="getIsSandboxPresent()" tooltip-placement="left" tooltip-append-to-body="true" uib-tooltip="{{sandboxPresentIconInfo | translate}} {{getListAsStringOfLoadedSandboxWebbles()}}">

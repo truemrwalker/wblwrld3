@@ -33,6 +33,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	// three.js objects
 	var scene, camera, renderer; //Main
+	var camFrustum = new THREE.Frustum(); //Selection support
 	var light, lightAmb; //Lights
 	var controls, clock, defaultControlSpeed = 10, camPosOrigin; //Camera controls
 	var particles, dotsGeometry, axes, mapPlane; //Meshes & Geometries
@@ -44,16 +45,24 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var CameraInteractionMode = { Fly: 0, Orbit: 1, Trackball: 2 }; //Available types of camera control modes
 	var pixelColorBlending = { None: 0, Normal: 1, Additive: 2, Subtractive: 3, Multiply: 4};
 	var availableTextures = {None: 0, Spark: 1, FadingCircle: 2, Cloud_1: 3, Cloud_2: 4, Smoke: 5};
-	var predefinedColorSchemes = { None: 0, dBZ_Few: 1, dBZ_Many: 2, Tsunami_Flood: 3, Tsunami_Damage: 4};
 	var colorMethodOptions = { GroupColAlphaMinMax: 0, GroupColAlphaHisto: 1, ColorKey: 2 };
 	var droppedDataInfoTypes = { none: 0, only3D: 1, latlon3D: 2, latlonval: 3, latlonval3D: 4, latlonz: 5, latlonz3D: 6, latlonzval: 7, latlonzval3D: 8, val3D: 9, xy3D: 10, xyval: 11, xyval3D: 12, xyz: 13, xyz3D: 14, xyzval: 15, xyzval3D: 16 };
 	var distributionTypes = {Linear: 0, Logarithmic: 1};
 	var valueAffectAttributes = {None: 0, Size: 1, Opacity: 2, Both: 3};
+	var selectTypes = {None: 0, OneClick: 1, SquareArea: 2, FreehandArea: 3};
+
+	// Predefined Slot settings for optimal visualization (based on data type)
+	var availablePredefVisualConfig = [
+		{name: "None", slotConfigs: []},
+		{name: "Tsunami", slotConfigs: [{name: "particleMinSize", value: 10}, {name: "particleMaxSize", value: 30}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 2}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
+		{name: "Space", slotConfigs: [{name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 15}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.8}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 18}, {name: "threeDPlusHolder:background-color", value: "#000000"}]},
+		{name: "Clouds", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Cloud_2}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 75}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.5}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 16}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
+	];
 
 	// Mouse 3D-world Interaction
-	var raycaster, intersects, INTERSECTED;
-	var mouse, mouse_click, isMouseClicked = false, intersectedMemory = new Array( 5 ), intSecAreaMem = [];
-	var isMouseDown = false, startMouseClickX = startMouseClickY = 0, currMouseMoveX = currMouseMoveY = 0, selectionAreaData = [];
+	var raycaster, INTERSECTED;
+	var mouse_click, intersectedMemory = new Array( 5 ), intSecAreaMem = [];
+	var selectionAreaData = [], selelectionType = selectTypes.None;
 	var SELECT_COLOR = [1.0, 1.0, 0.0, 1.0];
 
 	// data drop zone properties
@@ -90,59 +99,59 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	};
 	var groupColors = {}; // cache the colors above
 	var predefinedColorKeySets = [   // Color Chroma series (for data value color hues)
-		// Tohoku Tsunami flooding data colors
-		[[0.058, 0.5, "#2892C7"], [0.501, 1.0, "#60A3B5"], [1.001, 1.5, "#8CB8A4"],   [1.501, 2.0, "#B1CC91"],   [2.001, 3.0, "#D7E37D"],   [3.001, 4.0, "#FAFA64"],   [4.001, 6.0, "#FFD64F"], [6.001, 8.0, "#FCA43F"],   [8.001, 10.0, "#F77A2D"],   [10.001, 12.0, "#F24D1F"],   [12.001, 15.0, "#E81014"],   [0.0, 0.0095, "#FFFFFF00"]].sort(function (a,b) { return a[0] - b[0]; }),
+		// 1 Tohoku Tsunami flooding data colors
+		{ name: "Tsunami Flooding Data", pcks: [[0.058, 0.5, "#2892C7"], [0.501, 1.0, "#60A3B5"], [1.001, 1.5, "#8CB8A4"],   [1.501, 2.0, "#B1CC91"],   [2.001, 3.0, "#D7E37D"],   [3.001, 4.0, "#FAFA64"],   [4.001, 6.0, "#FFD64F"], [6.001, 8.0, "#FCA43F"],   [8.001, 10.0, "#F77A2D"],   [10.001, 12.0, "#F24D1F"],   [12.001, 15.0, "#E81014"],   [0.0, 0.0095, "#FFFFFF00"]].sort(function (a,b) { return a[0] - b[0]; }) },
 
-		// Tohoku Tsunami structure damage data colors
-		[[0.237, 8, "#2191CB"], [8.001, 16.0, "#74ABAD"], [16.001, 24, "#ACC993"],   [24.001, 32.0, "#E3EB75"],   [32.001, 40.0, "#FCDE56"],   [40.001, 48.0, "#FCA03D"],   [48.001, 56.0, "#F56325"], [56.001, 64.0, "#E81014"], [0.0, 0.0095, "#FFFFFF00"]].sort(function (a,b) { return a[0] - b[0]; }),
+		// 2 Tohoku Tsunami structure damage data colors
+		{ name: "Tsunami Structure Damage Data", pcks: [[0.237, 8, "#2191CB"], [8.001, 16.0, "#74ABAD"], [16.001, 24, "#ACC993"],   [24.001, 32.0, "#E3EB75"],   [32.001, 40.0, "#FCDE56"],   [40.001, 48.0, "#FCA03D"],   [48.001, 56.0, "#F56325"], [56.001, 64.0, "#E81014"], [0.0, 0.0095, "#FFFFFF00"]].sort(function (a,b) { return a[0] - b[0]; }) },
 
-		// JMA weather radar data
-		[[-100, 0.01, "#00000000"], [0.01, 1, "#F2F2FF"], [1, 5, "#A0D2FF"], [5, 10, "#218CFF"], [10, 20, "#0041FF"], [20, 30, "#FAF500"], [30, 50, "#FF9900"], [50, 80, "#FF2800"], [80, 100000, "#B40068"]],
+		// 3 JMA weather radar data
+		{ name: "JMA Weather Radar Data", pcks: [[-100, 0.01, "#00000000"], [0.01, 1, "#F2F2FF"], [1, 5, "#A0D2FF"], [5, 10, "#218CFF"], [10, 20, "#0041FF"], [20, 30, "#FAF500"], [30, 50, "#FF9900"], [50, 80, "#FF2800"], [80, 100000, "#B40068"]] },
 
-		// JMA weather radar colors (same colors as JMA radar data), no numeric limits, just colors
-		["#F2F2FF", "#A0D2FF", "#218CFF", "#0041FF", "#FAF500", "#FF9900", "#FF2800", "#B40068"],
+		// 4 JMA weather radar colors (same colors as JMA radar data), no numeric limits, just colors
+		{ name: "JMA Weather Radar Data (No Numeric Limits)", pcks: ["#F2F2FF", "#A0D2FF", "#218CFF", "#0041FF", "#FAF500", "#FF9900", "#FF2800", "#B40068"] },
 
-		// JMA weather radar colors - accumulated rainfall in mm (same colors as JMA radar data)
-		[[0, 0.5, "#00000000"], [0.5, 10, "#F2F2FF"], [10, 20, "#A0D2FF"], [20, 50, "#218CFF"], [50, 100, "#0041FF"], [100, 200, "#FAF500"], [200, 300, "#FF9900"], [300, 400, "#FF2800"], [400, 100000, "#B40068"]],
+		// 5 JMA weather radar colors - accumulated rainfall in mm (same colors as JMA radar data)
+		{ name: "JMA Weather Radar Data - Accumulated Rainfall in mm", pcks: [[0, 0.5, "#00000000"], [0.5, 10, "#F2F2FF"], [10, 20, "#A0D2FF"], [20, 50, "#218CFF"], [50, 100, "#0041FF"], [100, 200, "#FAF500"], [200, 300, "#FF9900"], [300, 400, "#FF2800"], [400, 100000, "#B40068"]] },
 
-		// JMA weather radar colors - snow depth in cm (same colors as JMA radar data)
-		[[-1, 0, "#00000000"], [0.05, 0.1, "#F2F2FF"], [0.1, 5, "#A0D2FF"], [5, 20, "#218CFF"], [20, 50, "#0041FF"], [50, 100, "#FAF500"], [100, 150, "#FF9900"], [150, 200, "#FF2800"], [200, 100000, "#B40068"]],
+		// 6 JMA weather radar colors - snow depth in cm (same colors as JMA radar data)
+		{ name: "JMA Weather Radar Data - Snow Depth in cm", pcks: [[-1, 0, "#00000000"], [0.05, 0.1, "#F2F2FF"], [0.1, 5, "#A0D2FF"], [5, 20, "#218CFF"], [20, 50, "#0041FF"], [50, 100, "#FAF500"], [100, 150, "#FF9900"], [150, 200, "#FF2800"], [200, 100000, "#B40068"]] },
 
-		// JMA weather radar colors - temperature data
-		[[-300, -15, "#002080"],[-15, -10, "#0041FF"],[-10, -5, "#0096FF"],[-5, 0, "#B9EBFF"],[0, 5, "#FFFFF0"],[5, 10, "#FFFF96"],[10, 15, "#FAF500"],[15, 20, "#FF9900"],[20, 25, "#FF2800"], [25, 6000, "#B40068"]],
+		// 7 JMA weather radar colors - temperature data
+		{ name: "JMA Weather Radar Data - Temperature", pcks: [[-300, -15, "#002080"],[-15, -10, "#0041FF"],[-10, -5, "#0096FF"],[-5, 0, "#B9EBFF"],[0, 5, "#FFFFF0"],[5, 10, "#FFFF96"],[10, 15, "#FAF500"],[15, 20, "#FF9900"],[20, 25, "#FF2800"], [25, 6000, "#B40068"]] },
 
-		// JMA weather radar colors - wind speed data
-		[[0, 5, "#F2F2FF"], [5, 10, "#0041FF"], [10, 15, "#FAF500"], [15, 20, "#FF9900"], [20, 25, "#FF2800"], [25, 3000, "#B6046A"]],
+		// 8 JMA weather radar colors - wind speed data
+		{ name: "JMA Weather Radar Data - Wind Speed", pcks: [[0, 5, "#F2F2FF"], [5, 10, "#0041FF"], [10, 15, "#FAF500"], [15, 20, "#FF9900"], [20, 25, "#FF2800"], [25, 3000, "#B6046A"]] },
 
-		// JMA weather radar colors - Sunlight
-		[[0, 70, "#242450"], [70, 80, "#454A77"], [80, 90, "#CED2F3"], [90, 100, "#EEEEFF"], [100, 110, "#FFF0B4"], [110, 120, "#FFF000"], [120, 130, "#FF9900"], [130, 10000, "#FF1A1A"]],
+		// 9 JMA weather radar colors - Sunlight
+		{ name: "JMA Weather Radar Data - Sunlight", pcks: [[0, 70, "#242450"], [70, 80, "#454A77"], [80, 90, "#CED2F3"], [90, 100, "#EEEEFF"], [100, 110, "#FFF0B4"], [110, 120, "#FFF000"], [120, 130, "#FF9900"], [130, 10000, "#FF1A1A"]] },
 
-		// JMA weather radar colors - comparative (%) (from rainfall image)
-		[[0, 10, "#783705"], [10, 20, "#F5780F"], [20, 50, "#FFC846"], [50, 100, "#FFE5BF"], [100, 150, "#49F3D6"], [150, 250, "#1FCCAF"], [250, 400, "#009980"], [400, 10000, "#004D40"]],
+		// 10 JMA weather radar colors - comparative (%) (from rainfall image)
+		{ name: "JMA Weather Radar Data - Comparative Image (%)", pcks: [[0, 10, "#783705"], [10, 20, "#F5780F"], [20, 50, "#FFC846"], [50, 100, "#FFE5BF"], [100, 150, "#49F3D6"], [150, 250, "#1FCCAF"], [250, 400, "#009980"], [400, 10000, "#004D40"]] },
 
-		// NEXRAD colors
-		["#73FEFF", "#38D5FF", "#0880FF", "#73FA79", "#39D142", "#3DA642", "#248F01", "#0B4100", "#FFFB01", "#FCA942", "#F94C01", "#AC1942", "#AB28AA", "#D82DA9", "#F985FF"],
+		// 11 NEXRAD colors
+		{ name: "NEXRAD Data", pcks: ["#73FEFF", "#38D5FF", "#0880FF", "#73FA79", "#39D142", "#3DA642", "#248F01", "#0B4100", "#FFFB01", "#FCA942", "#F94C01", "#AC1942", "#AB28AA", "#D82DA9", "#F985FF"] },
 
-		// NEXRAD scale (mm/hour)
-		[[0, 0.07, "#00000000"], [0.07, 0.15, "#73FEFF"], [0.15, 0.32, "#38D5FF"], [0.32, 0.65, "#0880FF"], [0.65, 1.3, "#73FA79"], [1.3, 2.7, "#39D142"], [2.7, 5.6, "#3DA642"], [5.6, 12, "#248F01"], [12, 24, "#0B4100"], [24, 49, "#FFFB01"], [49, 100, "#FCA942"], [100, 205, "#F94C01"], [205, 421, "#AC1942"], [421, 865, "#AB28AA"], [865, 1776, "#D82DA9"], [1776, 1000000, "#F985FF"]],
+		// 12 NEXRAD scale (mm/hour)
+		{ name: "NEXRAD Data - Scale (mm/hour)", pcks: [[0, 0.07, "#00000000"], [0.07, 0.15, "#73FEFF"], [0.15, 0.32, "#38D5FF"], [0.32, 0.65, "#0880FF"], [0.65, 1.3, "#73FA79"], [1.3, 2.7, "#39D142"], [2.7, 5.6, "#3DA642"], [5.6, 12, "#248F01"], [12, 24, "#0B4100"], [24, 49, "#FFFB01"], [49, 100, "#FCA942"], [100, 205, "#F94C01"], [205, 421, "#AC1942"], [421, 865, "#AB28AA"], [865, 1776, "#D82DA9"], [1776, 1000000, "#F985FF"]] },
 
-		// WSI Radar colors
-		["#72f842", "#39d000", "#2ba500", "#3da642", "#248f01", "#1d7600", "#0b4100", "#fffb01", "#fca942", "#fcaa7a", "#aa7942", "#f94c01", "#d81e00", "#ac1942", "#f952aa"],
+		// 13 WSI Radar colors
+		{ name: "WSI Radar Data", pcks: ["#72f842", "#39d000", "#2ba500", "#3da642", "#248f01", "#1d7600", "#0b4100", "#fffb01", "#fca942", "#fcaa7a", "#aa7942", "#f94c01", "#d81e00", "#ac1942", "#f952aa"] },
 
-		// WSI Radar (mm/hour)
-		[[0, 0.07, "#00000000"], [0.07, 0.15, "#72f842"], [0.15, 0.32, "#39d000"], [0.32, 0.65, "#2ba500"], [0.65, 1.3, "#3da642"], [1.3, 2.7, "#248f01"], [2.7, 5.6, "#1d7600"], [5.6, 12, "#0b4100"], [12, 24, "#fffb01"], [24, 49, "#fca942"], [49, 100, "#fcaa7a"], [100, 205, "#aa7942"], [205, 421, "#f94c01"], [421, 865, "#d81e00"], [865, 1776, "#ac1942"], [1776, 1000000, "#f952aa"]],
+		// 14 WSI Radar (mm/hour)
+		{ name: "WSI Radar Data (mm/hour)", pcks: [[0, 0.07, "#00000000"], [0.07, 0.15, "#72f842"], [0.15, 0.32, "#39d000"], [0.32, 0.65, "#2ba500"], [0.65, 1.3, "#3da642"], [1.3, 2.7, "#248f01"], [2.7, 5.6, "#1d7600"], [5.6, 12, "#0b4100"], [12, 24, "#fffb01"], [24, 49, "#fca942"], [49, 100, "#fcaa7a"], [100, 205, "#aa7942"], [205, 421, "#f94c01"], [421, 865, "#d81e00"], [865, 1776, "#ac1942"], [1776, 1000000, "#f952aa"]] },
 
-		// NOAA dBZ scale for weather radar
-		[[-30, -25, "#CCFDFF"], [-24.999, -20.0, "#CC99C6"], [-19.999, -15, "#99679B"],   [-14.999, -10.0, "#6B326F"],   [-9.999, -5.0, "#CCCB99"],   [-4.999, 0, "#989D64"],   [0.001, 5.0, "#636465"], [5.001, 10.0, "#02E9E7"], [10.001, 15.0, "#009EF2"], [15.001, 20.0, "#0702F2"], [20.001, 25.0, "#03FC03"], [25.001, 30.0, "#00C300"], [30.001, 35.0, "#008D00"], [35.001, 40.0, "#FBF904"], [40.001, 45.0, "#E4BB00"], [45.001, 50.0, "#FA9807"], [50.001, 55.0, "#FD0000"], [55.001, 60.0, "#CA0500"], [60.001, 65.0, "#BB0000"], [65.001, 70.0, "#F601FE"], [70.001, 75.0, "#9953C8"], [75.001, 100.0, "#FFFFFF"]],
+		// 15 NOAA dBZ scale for weather radar
+		{ name: "NOAA dBZ Scale for Weather Radar", pcks: [[-30, -25, "#CCFDFF"], [-24.999, -20.0, "#CC99C6"], [-19.999, -15, "#99679B"],   [-14.999, -10.0, "#6B326F"],   [-9.999, -5.0, "#CCCB99"],   [-4.999, 0, "#989D64"],   [0.001, 5.0, "#636465"], [5.001, 10.0, "#02E9E7"], [10.001, 15.0, "#009EF2"], [15.001, 20.0, "#0702F2"], [20.001, 25.0, "#03FC03"], [25.001, 30.0, "#00C300"], [30.001, 35.0, "#008D00"], [35.001, 40.0, "#FBF904"], [40.001, 45.0, "#E4BB00"], [45.001, 50.0, "#FA9807"], [50.001, 55.0, "#FD0000"], [55.001, 60.0, "#CA0500"], [60.001, 65.0, "#BB0000"], [65.001, 70.0, "#F601FE"], [70.001, 75.0, "#9953C8"], [75.001, 100.0, "#FFFFFF"]] },
 
-		// Natural clouds
-		[[-100, 0.01, '#00000000'], [0.01, 30, '#ffffff'], [30, 50, '#eeeeee'], [50, 80, '#43464c'], [80, 100000, '#111111']],
+		// 16 Natural clouds
+		{ name: "Natural Clouds", pcks: [[-100, 0.01, '#00000000'], [0.01, 30, '#ffffff'], [30, 50, '#eeeeee'], [50, 80, '#43464c'], [80, 100000, '#111111']] },
 
-		// Natural Water
-		[[0.0, 0.0095, "#FFFFFF00"], [0.237, 16.0, "#3ADEFF"], [16.001, 40.0, "#54A1FF"], [40.001, 64.0, "#3D3AFF"]],
+		// 17 Natural Water
+		{ name: "Natural Water", pcks: [[0.0, 0.0095, "#FFFFFF00"], [0.237, 16.0, "#3ADEFF"], [16.001, 40.0, "#54A1FF"], [40.001, 64.0, "#3D3AFF"]] },
 
-		// Natural gas clouds in Space
-		[[-10, 1, "#FFFFFF00"], [1.001, 30.0, "#3C202F22"], [30.001, 80.0, "#E27A79"], [80.001, 130.0, "#ECB888"], [130.001, 200.0, "#F75145"], [200.001, 1000.0, "#ffffff"]]
+		// 18 Natural gas clouds in Space
+		{ name: "Natural Gas Clouds in Space", pcks: [[-10, 1, "#FFFFFF00"], [1.001, 30.0, "#3C202F22"], [30.001, 80.0, "#E27A79"], [80.001, 130.0, "#ECB888"], [130.001, 200.0, "#F75145"], [200.001, 1000.0, "#ffffff"]] }
 	];
 
 	// 3D Data properties
@@ -177,30 +186,24 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     function on3DMouseMove( event ) {
 		event.preventDefault();
 
-		mouse.x = ( event.offsetX / renderer.domElement.width ) * 2 - 1;
-		mouse.y = - ( event.offsetY / renderer.domElement.height ) * 2 + 1;
-
 		// Enable controller again if it has been turned off
 		if((!$scope.ctrlKeyIsDown || !$scope.altKeyIsDown) && !controls.enabled){ controls.enabled = true; }
 
-		if(isMouseDown){
-			if($scope.shiftKeyIsDown){
-				currMouseMoveX = event.offsetX;
-				currMouseMoveY = event.offsetY;
-				selectionAreaData[1] = [mouse.x, mouse.y];
-				selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
-				selectCtx.beginPath();
-				selectCtx.rect(startMouseClickX, startMouseClickY, (currMouseMoveX - startMouseClickX), (currMouseMoveY - startMouseClickY));
-				selectCtx.stroke();
-			}
-
-			if($scope.altKeyIsDown){
-				selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
-				var point = [event.offsetX, event.offsetY];
-				selectionAreaData.push(point);
-				selectCtx.lineTo(point[0], point[1] );
-				selectCtx.stroke();
-			}
+		if(selelectionType == selectTypes.SquareArea){//$scope.shiftKeyIsDown
+			// currMouseMoveX = event.offsetX;
+			// currMouseMoveY = event.offsetY;
+			selectionAreaData[1] = [event.offsetX, event.offsetY];
+			selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
+			selectCtx.beginPath();
+			selectCtx.rect(selectionAreaData[0][0], selectionAreaData[0][1], (selectionAreaData[1][0] - selectionAreaData[0][0]), (selectionAreaData[1][1] - selectionAreaData[0][1]));
+			selectCtx.stroke();
+		}
+		else if(selelectionType == selectTypes.FreehandArea){//$scope.altKeyIsDown
+			selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
+			var point = [event.offsetX, event.offsetY];
+			selectionAreaData.push(point);
+			selectCtx.lineTo(point[0], point[1] );
+			selectCtx.stroke();
 		}
     }
     //===================================================================================
@@ -213,7 +216,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     //===================================================================================
     function on3DMouseClick( event ) {
 		if($scope.ctrlKeyIsDown){
-			isMouseClicked = true;
+			selelectionType = selectTypes.OneClick;
 			if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly){ event.stopImmediatePropagation(); }
 
 			mouse_click.x =  ( event.offsetX / renderer.domElement.width ) * 2 - 1;
@@ -222,7 +225,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
 
 			if($scope.shiftKeyIsDown || $scope.altKeyIsDown){
-				isMouseDown = true;
 				controls.enabled = false;
 				selectCtx.strokeStyle = getColorContrast();
 				selectCtx.setLineDash([6]);
@@ -230,12 +232,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				selectCtx.globalAlpha=0.5
 
 				if($scope.shiftKeyIsDown){
-					startMouseClickX = event.offsetX;
-					startMouseClickY = event.offsetY;
-					selectionAreaData = [[mouse_click.x, mouse_click.y], [mouse_click.x, mouse_click.y]];
+					selelectionType = selectTypes.SquareArea;
+					selectionAreaData = [[event.offsetX, event.offsetY], [event.offsetX, event.offsetY]];
 				}
 
 				if($scope.altKeyIsDown){
+					selelectionType = selectTypes.FreehandArea;
 					selectCtx.beginPath();
 					selectCtx.moveTo(event.offsetX, event.offsetY);
 					selectionAreaData = [[event.offsetX, event.offsetY]];
@@ -250,81 +252,19 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	// Mouse Up event handler for within the 3D view
 	//===================================================================================
 	function on3DMouseUp( event ) {
-    	if(isMouseDown){
-    		isMouseDown = false;
+		if(selelectionType != selectTypes.None){
 			selectCtx.closePath();
 
 			if(particles){
-				var distArr = [camera.position.distanceTo( centerPoint ), camera.position.distanceTo( particles.geometry.boundingBox.min ), camera.position.distanceTo( particles.geometry.boundingBox.max )];
-				var minDist = Math.min(...distArr);
-				var stepSizeDef = [2 / selectCanvas[0].width, 2 / selectCanvas[0].height];
-				var stepSizeMod = [
-					(minDist < 100) ? (stepSizeDef[0] * 5) : ((minDist < 300) ? (stepSizeDef[0] * 3) : ((minDist < 500) ? stepSizeDef[0] : (stepSizeDef[0] / 2) )),
-					(minDist < 100) ? (stepSizeDef[1] * 5) : ((minDist < 300) ? (stepSizeDef[1] * 3) : ((minDist < 500) ? stepSizeDef[1] : (stepSizeDef[1] / 2) ))
-				];
-
-				if(selectionAreaData.length == 2){
-					var minX = 1, minY = 1, maxX = -1, maxY = -1;
-					for(var i = 0, sad; sad = selectionAreaData[i]; i++){
-						if(sad[0] < minX){ minX = sad[0] }
-						if(sad[0] > maxX){ maxX = sad[0] }
-						if(sad[1] < minY){ minY = sad[1] }
-						if(sad[1] > maxY){ maxY = sad[1] }
-					}
-
-					var cx = minX, cy = minY;
-					selectionAreaData = [];
-					while(cy < maxY){
-						while(cx < maxX){
-							selectionAreaData.push(new THREE.Vector2(cx, cy));
-							cx += stepSizeMod[0];
-						}
-						cx = minX;
-						cy += stepSizeMod[1];
-					}
-				}
-				else if(selectionAreaData.length > 2){
-					selectCtx.stroke();
-
-					var cx = 0, cy = 0;
-					var insideSelArea = selectionAreaData;
-					selectionAreaData = [];
-					tempiTempoData = [];
-					while(cy < selectCanvas[0].height){
-						while(cx < selectCanvas[0].width){
-							if(isInside([cx, cy], insideSelArea)){
-								selectionAreaData.push(new THREE.Vector2((cx * stepSizeDef[0]) - 1, -((cy * stepSizeDef[1]) - 1)));
-							}
-							cx += 1;
-						}
-						cx = 0;
-						cy += 1;
-					}
-				}
-
-				// if(selectionAreaData.length > 10000){
-				// 	var insideSelArea = selectionAreaData;
-				// 	selectionAreaData = [];
-				// 	var jump = insideSelArea.length / 10000;
-				// 	var counter = 0;
-				// 	for(var i = 0; i < insideSelArea.length; i++){
-				// 		counter++;
-				// 		if(counter > jump){
-				// 			selectionAreaData.push(insideSelArea[i]);
-				// 			counter = 0;
-				// 		}
-				// 	}
-				// }
-
-				$log.log("sends " + selectionAreaData.length + " points to be intersected");
-
 				displayHourglassBeforeUpdateSelection();
+				//makeSelection();
 			}
 			else{
 				selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+				selelectionType = selectTypes.None;
 			}
     	}
-	}
+	};
 	//===================================================================================
 
 
@@ -414,7 +354,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} catch(e) {
 			// probably not something for us, ignore this drop
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -428,7 +368,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			lastSeenDataSeqNo = seqNo;
 			checkMappingsAndParseData();
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -442,7 +382,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			lastSeenSelectionSeqNo = seqNo;
 			$timeout(function () { displayHourglassBeforeRedrawScene(true); });
 		}
-	}
+	};
 	//====================================================================================================
 
 
@@ -460,15 +400,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 
 	//===================================================================================
-	// Display Hourglass Before Redraw
+	// Display Hourglass Before Update Selection
 	// Makes sure the loading screen has been updated and rendered correctly before
 	// calling the calculation heavy Redraw function.
 	//===================================================================================
 	function displayHourglassBeforeUpdateSelection() {
 		if(!$scope.waiting()){ $scope.waiting(true); info[0].innerHTML = "Updating Data Point Selections..."; }
-		if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	selectionAreaData.unshift("Ready"); }, 100); }
+		if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	makeSelection(); }, 100); }
 		else{ $timeout(function () { displayHourglassBeforeUpdateSelection(); }, 10); }
-	}
+	};
 	//===================================================================================
 
 
@@ -543,7 +483,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			else if(eventData.slotName == 'predefinedColorKey'){
 	    		if(eventData.slotValue > 0){
-					$scope.set("ColorKey", predefinedColorKeySets[eventData.slotValue - 1]);
+					$scope.set("ColorKey", predefinedColorKeySets[eventData.slotValue - 1].pcks);
 				}
 			}
 
@@ -564,7 +504,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 				var isSame = -1;
 				for(var i = 0; i < predefinedColorKeySets.length; i++){
-					if(JSON.stringify(predefinedColorKeySets[i]) == JSON.stringify(colorKey)){
+					if(JSON.stringify(predefinedColorKeySets[i].pcks) == JSON.stringify(colorKey)){
 						isSame = i;
 						break;
 					}
@@ -597,6 +537,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			else if(eventData.slotName == "localGlobalColorEqual") {
 				if(eventData.slotValue){ $scope.set("threeDPlusHolder:background-color", colorScheme.skin.color); }
+			}
+
+			else if(eventData.slotName == "predefVisualConfig") {
+				for(var i = 0; i < availablePredefVisualConfig[eventData.slotValue].slotConfigs.length; i++){
+					$scope.set(availablePredefVisualConfig[eventData.slotValue].slotConfigs[i].name, availablePredefVisualConfig[eventData.slotValue].slotConfigs[i].value);
+					$scope.getSlot(eventData.slotName).setValue(0);
+				}
 			}
 
 	    	else if(eventData.slotName == 'particleAlphaTexture' || eventData.slotName == 'PixelColorBlending'){
@@ -785,6 +732,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			undefined
 		));
 
+		$scope.addSlot(new Slot('predefVisualConfig',
+			0,
+			'Predefined Visual Configuration',
+			'Sets multiple slots to its optimal value to best visualize certain types of data',
+			$scope.theWblMetadata['templateid'],
+			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: [availablePredefVisualConfig[0].name, availablePredefVisualConfig[1].name, availablePredefVisualConfig[2].name, availablePredefVisualConfig[3].name]},
+			undefined
+		));
+
 		//*** Particle Properties (base values)
 		$scope.addSlot(new Slot('particleAlphaTexture',
 			availableTextures.Spark,
@@ -944,11 +900,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		));
 
 		$scope.addSlot(new Slot('predefinedColorKey',
-			predefinedColorSchemes.None,
+			0,
 			'Predefined Color Key Sets',
 			'Predefined options of the color key scale being used from lower to higher values of a particle.',
 			"Data Group Visualization",
-			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Manual Input", "Tohoku Flooding", "Tohoku Structural Damage", "JMA Radar Data", "JMA Colors", "JMA Accumulated Rainfall", "JMA Snow Depth (cm)", "JMA Temperature", "JMA Wind Speed", "JMA Sunlight (relative)", "JMA Comparative (%)", "NEXRAD Colors", "NEXRAD (mm/h)", "WSI Radar Colors", "WSI Radar (mm/h)", "NOAA Radar Reflection", "Natural Clouds", "Natural Water", "Natural Space"]},
+			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: getPCKNameArray()},
 			undefined
 		));
 
@@ -979,8 +935,8 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 								if(newVal > 0){
 									$timeout(function () {
 										changeTime = (new Date()).getTime();
-										ckElemI.val(JSON.stringify(predefinedColorKeySets[newVal - 1]));
-										ckElemT.val(JSON.stringify(predefinedColorKeySets[newVal - 1]));
+										ckElemI.val(JSON.stringify(predefinedColorKeySets[newVal - 1].pcks));
+										ckElemT.val(JSON.stringify(predefinedColorKeySets[newVal - 1].pcks));
 										cmElem.val(2).change();
 									});
 								}
@@ -1089,9 +1045,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		light.name = 'Directional_Light';
 		scene.add( light );
 
+		//??? Maybe nice to have
+		//var gridHelper = new THREE.GridHelper(10, 10);
+		// scene.add(gridHelper);
+
 		// Particle Interaction
 		raycaster = new THREE.Raycaster();
-		mouse = new THREE.Vector2();
 		mouse_click = new THREE.Vector2();
 		threeDPlusHolder[0].addEventListener( 'mousemove', on3DMouseMove, false );
 		threeDPlusHolder[0].addEventListener( 'mousedown', on3DMouseClick, false );
@@ -1130,127 +1089,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // Doing the time tick periodic rendering of the scene
     //========================================================================================
 	var render = function() {
-
-		// Raycast Mouse interaction
-		//--------------------------------------
-		if(particles != undefined && isMouseClicked) {
-			var geometry = particles.geometry;
-			var attributes = geometry.attributes;
-
-			if(!isMouseDown){
-				raycaster.setFromCamera( mouse_click, camera );
-				intersects = raycaster.intersectObject( particles );
-
-				var onlyVisibleIntersects = [];
-				for(var i = 0; i < intersects.length; i++){
-					var index = intersects[i].index;
-					if(attributes.customColor.array[index * 4 + 3 ] > 0){
-						onlyVisibleIntersects.push(intersects[i]);
-					}
-				}
-				intersects = onlyVisibleIntersects;
-			}
-
-			for (var i = 0, isam; isam = intSecAreaMem[i]; i++){
-				attributes.customColor.array[ isam[0] * 4 + 0 ] = isam[1]; attributes.customColor.array[ isam[0] * 4 + 1 ] = isam[2]; attributes.customColor.array[ isam[0] * 4 + 2 ] = isam[3]; attributes.customColor.array[ isam[0] * 4 + 3 ] = isam[4];
-				attributes.size.array[ isam[0] ] = isam[5];
-			}
-
-		 	if ( intersects.length > 0 && controls.enabled) {
-		 		if ( INTERSECTED != intersects[ 0 ].index ) {
-		 			if(INTERSECTED != null && INTERSECTED != undefined && intersectedMemory[0] != undefined){
-		 				attributes.customColor.array[ INTERSECTED * 4 + 0 ] = intersectedMemory[0]; attributes.customColor.array[ INTERSECTED * 4 + 1 ] = intersectedMemory[1]; attributes.customColor.array[ INTERSECTED * 4 + 2 ] = intersectedMemory[2]; attributes.customColor.array[ INTERSECTED * 4 + 3 ] = intersectedMemory[3];
-		 				attributes.size.array[ INTERSECTED ] = intersectedMemory[4];
-		 			};
-		 			INTERSECTED = intersects[ 0 ].index;
-		 			intersectedMemory[0] = attributes.customColor.array[ INTERSECTED * 4 + 0 ]; intersectedMemory[1] = attributes.customColor.array[ INTERSECTED * 4 + 1 ]; intersectedMemory[2] = attributes.customColor.array[ INTERSECTED * 4 + 2 ]; intersectedMemory[3] = attributes.customColor.array[ INTERSECTED * 4 + 3 ];
-		 			intersectedMemory[4] = attributes.size.array[ INTERSECTED ];
-		 			attributes.customColor.array[ INTERSECTED * 4 + 0 ] = SELECT_COLOR[0]; attributes.customColor.array[ INTERSECTED * 4 + 1 ] = SELECT_COLOR[1]; attributes.customColor.array[ INTERSECTED * 4 + 2 ] = SELECT_COLOR[2]; attributes.customColor.array[ INTERSECTED * 4 + 3 ] = SELECT_COLOR[3];
-		 			attributes.size.array[ INTERSECTED ] = attributes.size.array[ INTERSECTED ] * 2;
-		 			attributes.customColor.needsUpdate = true;
-		 			attributes.size.needsUpdate = true;
-
-		 			var dataValue = attributes.dataValue.array[ INTERSECTED ];
-
-		 			info[0].innerHTML = dataValue;
-		 		}
-		 	} else {
-		 		if(INTERSECTED != null && INTERSECTED != undefined && intersectedMemory[0] != undefined){
-		 			attributes.customColor.array[ INTERSECTED * 4 + 0 ] = intersectedMemory[0]; attributes.customColor.array[ INTERSECTED * 4 + 1 ] = intersectedMemory[1]; attributes.customColor.array[ INTERSECTED * 4 + 2 ] = intersectedMemory[2]; attributes.customColor.array[ INTERSECTED * 4 + 3 ] = intersectedMemory[3];
-		 			attributes.size.array[ INTERSECTED ] = intersectedMemory[4];
-		 			INTERSECTED = null;
-		 			attributes.customColor.needsUpdate = true;
-		 			attributes.size.needsUpdate = true;
-					info[0].innerHTML = "";
-		 		};
-		 	}
-		}
-		isMouseClicked = false;
-		intersects = [];
-
-		if(particles != undefined && selectionAreaData.length > 0 && selectionAreaData[0] == "Ready"){
-			selectionAreaData[0] = "Running";
-			var geometry = particles.geometry;
-			var attributes = geometry.attributes;
-
-			var intersectsArea = [];
-			for(var i = 1, vmp; vmp = selectionAreaData[i]; i++){
-				raycaster.setFromCamera( vmp, camera );
-				intersectsArea = intersectsArea.concat(raycaster.intersectObject( particles ));
-			}
-			selectionAreaData = [];
-
-			var intersectsAreaNoDoubles = [];
-			for(var i = 0, ia; ia = intersectsArea[i]; i++){
-				var addOk = true;
-				for(var j = 0, iand; iand = intersectsAreaNoDoubles[j]; j++){
-					if(iand.index == ia.index){
-						addOk = false;
-					}
-				}
-
-				if(addOk){
-					intersectsAreaNoDoubles.push(ia);
-				}
-			}
-
-			var onlyVisibleIntersects = [];
-			for(var i = 0; i < intersectsAreaNoDoubles.length; i++){
-				var index = intersectsAreaNoDoubles[i].index;
-				if(attributes.customColor.array[index * 4 + 3 ] > 0){
-					onlyVisibleIntersects.push(intersectsAreaNoDoubles[i]);
-				}
-			}
-			intersectsAreaNoDoubles = onlyVisibleIntersects;
-
-			$log.log(intersectsAreaNoDoubles.length + " number of points selected");
-
-			for (var i = 0, isam; isam = intSecAreaMem[i]; i++){
-				attributes.customColor.array[ isam[0] * 4 + 0 ] = isam[1]; attributes.customColor.array[ isam[0] * 4 + 1 ] = isam[2]; attributes.customColor.array[ isam[0] * 4 + 2 ] = isam[3]; attributes.customColor.array[ isam[0] * 4 + 3 ] = isam[4];
-				attributes.size.array[ isam[0] ] = isam[5];
-			}
-			intSecAreaMem = [];
-			if ( intersectsAreaNoDoubles.length > 0 ) {
-				for (var i = 0, iand; iand = intersectsAreaNoDoubles[i]; i++){
-					var INTSEC = iand.index;
-					var iam = new Array( 6 );
-					iam[0] = INTSEC;
-					iam[1] = attributes.customColor.array[ INTSEC * 4 + 0 ]; iam[2] = attributes.customColor.array[ INTSEC * 4 + 1 ]; iam[3] = attributes.customColor.array[ INTSEC * 4 + 2 ]; iam[4] = attributes.customColor.array[ INTSEC * 4 + 3 ];
-					iam[5] = attributes.size.array[ INTSEC ];
-					intSecAreaMem.push(iam);
-					attributes.customColor.array[ INTSEC * 4 + 0 ] = SELECT_COLOR[0]; attributes.customColor.array[ INTSEC * 4 + 1 ] = SELECT_COLOR[1]; attributes.customColor.array[ INTSEC * 4 + 2 ] = SELECT_COLOR[2]; attributes.customColor.array[ INTSEC * 4 + 3 ] = SELECT_COLOR[3];
-					attributes.size.array[ INTSEC ] = attributes.size.array[ INTSEC ] * 2;
-				}
-			}
-			attributes.customColor.needsUpdate = true;
-			attributes.size.needsUpdate = true;
-
-			selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
-			$timeout(function () { $scope.waiting(false); info[0].innerHTML = "" });
-		}
-
-		//--------------------------------------
-
 		renderer.render(scene, camera);
 	};
     //========================================================================================
@@ -2072,6 +1910,96 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 
 	//========================================================================================
+	// Make Selection
+	// Depending on mouse interaction figure out which data points have been selected and
+	// make them thus.
+	//========================================================================================
+	var makeSelection = function(){
+		var attributes = particles.geometry.attributes;
+		var insideParticles = [];
+		camFrustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
+
+		if(selelectionType == selectTypes.OneClick){
+			raycaster.setFromCamera( mouse_click, camera );
+			var intersects = raycaster.intersectObject( particles );
+
+			for(var i = 0; i < intersects.length; i++){
+				var index = intersects[i].index;
+				if(attributes.customColor.array[index * 4 + 3 ] > 0){
+					insideParticles.push(intersects[i].index);
+				}
+			}
+			insideParticles = [insideParticles[0]];
+		}
+
+		else if(selelectionType == selectTypes.SquareArea){
+			var minX = 100000, minY = 100000, maxX = -1, maxY = -1;
+			for(var i = 0, sad; sad = selectionAreaData[i]; i++){
+				if(sad[0] < minX){ minX = sad[0] }
+				if(sad[0] > maxX){ maxX = sad[0] }
+				if(sad[1] < minY){ minY = sad[1] }
+				if(sad[1] > maxY){ maxY = sad[1] }
+			}
+
+			for(var i = 0; i < attributes.dataValue.count; i++){
+				var pos = new THREE.Vector3(attributes.position.array[ i * 3 + 0], attributes.position.array[ i * 3 + 1], attributes.position.array[ i * 3 + 2]);
+				var screenXYPos = toScreenXY(pos);
+				if(screenXYPos.x > minX && screenXYPos.x < maxX && screenXYPos.y > minY && screenXYPos.y < maxY){
+					if(attributes.customColor.array[i * 4 + 3 ] > 0){
+						if (camFrustum.containsPoint(pos)) {
+							insideParticles.push(i);
+						}
+					}
+				}
+			}
+		}
+		else if(selelectionType == selectTypes.FreehandArea){
+			selectCtx.stroke();
+
+			for(var i = 0; i < attributes.dataValue.count; i++){
+				var pos = new THREE.Vector3(attributes.position.array[ i * 3 + 0], attributes.position.array[ i * 3 + 1], attributes.position.array[ i * 3 + 2]);
+				var screenXYPos = toScreenXY(pos);
+
+				if(isInside([screenXYPos.x, screenXYPos.y], selectionAreaData)){
+					if(attributes.customColor.array[i * 4 + 3 ] > 0){
+						if (camFrustum.containsPoint(pos)) {
+							insideParticles.push(i);
+						}
+					}
+				}
+			}
+		}
+
+		$log.log(insideParticles.length + " number of points inside the selected area");
+
+		for (var i = 0, isam; isam = intSecAreaMem[i]; i++){
+			attributes.customColor.array[ isam[0] * 4 + 0 ] = isam[1]; attributes.customColor.array[ isam[0] * 4 + 1 ] = isam[2]; attributes.customColor.array[ isam[0] * 4 + 2 ] = isam[3]; attributes.customColor.array[ isam[0] * 4 + 3 ] = isam[4];
+			attributes.size.array[ isam[0] ] = isam[5];
+		}
+		intSecAreaMem = [];
+		if ( insideParticles.length > 0 ) {
+			for (var i = 0; i < insideParticles.length; i++){
+				var INTSEC = insideParticles[i];
+				var iam = new Array( 6 );
+				iam[0] = INTSEC;
+				iam[1] = attributes.customColor.array[ INTSEC * 4 + 0 ]; iam[2] = attributes.customColor.array[ INTSEC * 4 + 1 ]; iam[3] = attributes.customColor.array[ INTSEC * 4 + 2 ]; iam[4] = attributes.customColor.array[ INTSEC * 4 + 3 ];
+				iam[5] = attributes.size.array[ INTSEC ];
+				intSecAreaMem.push(iam);
+				attributes.customColor.array[ INTSEC * 4 + 0 ] = SELECT_COLOR[0]; attributes.customColor.array[ INTSEC * 4 + 1 ] = SELECT_COLOR[1]; attributes.customColor.array[ INTSEC * 4 + 2 ] = SELECT_COLOR[2]; attributes.customColor.array[ INTSEC * 4 + 3 ] = SELECT_COLOR[3];
+				attributes.size.array[ INTSEC ] = attributes.size.array[ INTSEC ] * 2;
+			}
+		}
+		attributes.customColor.needsUpdate = true;
+		attributes.size.needsUpdate = true;
+
+		selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+		selelectionType = selectTypes.None;
+		$timeout(function () { $scope.waiting(false); info[0].innerHTML = "" });
+	};
+	//========================================================================================
+
+
+	//========================================================================================
 	// Enable Geo Location Support
 	// Turns on or off the visibility of all geo location support, such as a map plane and a
 	// blue sky etc.
@@ -2720,6 +2648,38 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		return inside;
 	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// To Screen XY
+	// Gets a vector3 world position and returns its 2D XY position inside the rendering div
+	// (0,0 is the top left corner of the rendering div and not the screen of the web window)
+	//========================================================================================
+	function toScreenXY (position) {
+		var pos = position.clone();
+		var projScreenMat = new THREE.Matrix4();
+		projScreenMat.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+		pos.applyMatrix4(projScreenMat);
+
+		return { x: ( pos.x + 1 ) * renderer.domElement.width / 2, y: ( - pos.y + 1) * renderer.domElement.height / 2 };
+	}
+	//========================================================================================
+
+
+	//========================================================================================
+	// Get Predefined Color Key Name Array
+	// Creates an array of name for each predefined color key set with manual input to
+	// start with.
+	//========================================================================================
+	function getPCKNameArray (position) {
+		var pckNames = ["Manual Input"];
+		for(var i = 0; i < predefinedColorKeySets.length; i++){
+			pckNames.push(predefinedColorKeySets[i].name);
+		}
+
+		return pckNames;
+	}
 	//========================================================================================
 
 

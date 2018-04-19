@@ -129,9 +129,9 @@ ww3Services.factory('templateService', ['$q', '$upload', '$http', function($q, $
 		deleteFile: function(id, file) {
 			return $http.delete('/api/dev/webbles/' + id + '/files/' + encodeURIComponent(file));
 		},
-			
+
 		//**************************************************************
-			
+
 		exportArchive: function () {
 			return $http.get('/api/takeout/devwebbles');
 		},

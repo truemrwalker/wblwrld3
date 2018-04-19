@@ -1,14 +1,13 @@
-//REMOVE ALL COMMENTS FROM THIS FILE IF YOU WILL USE IT, OTHERWISE IT WILL NOT WORK
-// If you use (own or 3rd party) files and libraries found from some online repsoitory, store the urls here under the
-// libs item as a list (array) of strings. Include the whole path. Remember comma sign between each item if more than one.
-// The third party file should NOT begin with 'use strict';, or it will not work, if it does, remove it
-// 3rd party files that are stored in the Webble folder does not need to be added to the manifest (as in earlier versions) since they are found
-// anyway in the file folder, UNLESS, the order of the files is of importance, then add those files to the manifest in order to instruct the Webble world
-// system of the order in which to load files. Manifest files will always load first in the described order before any other Webble files.
-// If this file is not used it can be discarded and thrown away and is not needed by the system.
-
 {
-    "libs": [
-        "ONLY FILENAME TO FILE FOUND INSIDE WEBBLE TEMPLATE OR ABSOLUTE FILE PATH FOR FILE FOUND OUTSIDE WEBBLE TEMPLATE"
-    ]
+	"libs": [
+		"TYPE ONLY FILENAME TO A FILE FOUND INSIDE WEBBLE TEMPLATE OR ABSOLUTE FILE PATH FOR FILE FOUND OUTSIDE THE WEBBLE TEMPLATE.",
+		"IF YOU USE (OWN OR 3RD PARTY) FILES & LIBRARIES FROM AN ONLINE REPOSITORY, TYPE THE URL HERE.",
+		"REMEMBER THE COMMA SIGN (,) BETWEEN EACH ITEM IF MORE THAN ONE.",
+		"THE THIRD PARTY FILE SHOULD >>NOT<< BEGIN WITH 'use strict';, OR IT WILL NOT WORK. IF IT DOES, REMOVE IT!",
+		"3RD PARTY FILES THAT ARE STORED IN THE WEBBLE FOLDER DOES NOT NEED TO BE ADDED TO THE MANIFEST SINCE THEY ARE FOUND ANYWAY",
+		">>UNLESS<< THE ORDER OF THE FILES ARE OF IMPORTANCE< THEN ADD THOSE FILES TO THE MANIFEST TO INSTRUCT WEBBLE WORLD IN WHAT ORDER TO LOAD THE FILES",
+		"MANIFEST FILES WILL ALWAYS LOAD FIRST.",
+		"IF THIS FILE IS NOT USED IT CAN BE DISCARDED AND THROWN AWAY AND IS NOT NEEDED BY THE SYSTEM.",
+		"REMOVE ALL COMMENTS FROM THIS FILE BEFORE USING IT!!!"
+	]
 }

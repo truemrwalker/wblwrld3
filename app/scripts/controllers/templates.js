@@ -26,8 +26,8 @@
  *
  * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
  */
-ww3Controllers.controller('TemplatesCtrl', ['$scope', '$timeout', 'gettext', 'templates', 'templateService', 'confirm',
-function ($scope, $timeout, gettext, templates, templateService, confirm) {
+ww3Controllers.controller('TemplatesCtrl', ['$scope', '$timeout', '$log', 'gettext', 'templates', 'templateService', 'confirm',
+function ($scope, $timeout, $log, gettext, templates, templateService, confirm) {
 
     ////////////////////////////////////////////////////////////////////
     // Utility functions
@@ -86,7 +86,7 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 	$scope.filesToUploadAreArchives = false;
 
 	$scope.onFilesAdded = function(files) {
-        
+
 	    var updatedFiles = $scope.filesToUpload.concat(files);
 	    processFilesToUpload(updatedFiles);
 	    $scope.filesToUpload = !$scope.filesToUploadAreArchives ? updatedFiles :
@@ -192,6 +192,15 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 
 		var mode = f.substr(f.lastIndexOf('.') + 1).toLowerCase();
 		return mode == 'js' ? 'javascript' : mode == 'md' ? 'markdown' : mode == 'txt' ? 'text' : mode;
+	}
+
+	function getReadableJSON(jsonString) {
+		var jsonString = jsonString.replace(/{/g, '{\n\t', "");
+		var jsonString = jsonString.replace(/\[/g, '[\n\t\t', "");
+		var jsonString = jsonString.replace(/",/g, '",\n\t\t', "");
+		var jsonString = jsonString.replace(/\]/g, '\n\t]', "");
+		var jsonString = jsonString.replace(/}/g, '\n}', "");
+		return jsonString;
 	}
 
 	$scope.editorLoaded = function(editor) {
@@ -301,7 +310,7 @@ function ($scope, $timeout, gettext, templates, templateService, confirm) {
 			$scope.currFile = f;
 			$scope.currFileMode = getMode(f);
 			$scope.currFileHandler = "editor";
-			$scope.currFileContent = resp.data;
+			$scope.currFileContent = ($scope.currFileMode == "json") ? getReadableJSON(JSON.stringify(resp.data)) : resp.data;
 			$scope.currFileNew = true;
 
 			$scope.filesUploaded.push($scope.currFile);

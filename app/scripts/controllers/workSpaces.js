@@ -287,6 +287,15 @@ ww3Controllers.controller('WorkSpacesCtrl', function($scope, $log, $uibModal, $t
     //========================================================================================
 
 
+	//========================================================================================
+	// Should Workspace State Icons Be Visible
+	//========================================================================================
+	$scope.shouldWorkspaceStateIconsBeVisible = function(){
+		return ((parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) && $scope.user;
+	};
+	//========================================================================================
+
+
 
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
