@@ -41,6 +41,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var shaderMaterial, uniforms; // Shaders & Materials
 	var positions, colors, sizes, matrixLocations, mapCoordinates, dataValues;  //Point Particle information
 
+	// Additional system control objects (3rd party etc)
+	var videoRecorder, isBusyCaptureMovieFrame = false;
+
 	// Enumeration Definitions
 	var CameraInteractionMode = { Fly: 0, Orbit: 1, Trackball: 2 }; //Available types of camera control modes
 	var pixelColorBlending = { None: 0, Normal: 1, Additive: 2, Subtractive: 3, Multiply: 4};
@@ -1013,38 +1016,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     //=== THREE.JS BASIC FUNCTIONS ======================================================================
 
-	var videoRecorder;
     //========================================================================================
     // Initiate 3D
     // Initiates the scene, renderer and the camera controller for 3D drawing.
     //========================================================================================
 	var init3D = function() {
-		// ??? Needed to save an image of current scene view
-		//renderer = new THREE.WebGLRenderer({ alpha: false, preserveDrawingBuffer: true });
-		//var imgData = renderer.domElement.toDataURL();
-
-		/*function takeScreenshot() {
-			// For screenshots to work with WebGL renderer, preserveDrawingBuffer should be set to true.
-			// open in new window like this
-			var w = window.open('', '');
-			w.document.title = "Screenshot";
-			//w.document.body.style.backgroundColor = "red";
-			var img = new Image();
-			img.src = renderer.domElement.toDataURL();
-			w.document.body.appendChild(img);
-
-			// download file like this.
-			//var a = document.createElement('a');
-			//a.href = renderer.domElement.toDataURL().replace("image/png", "image/octet-stream");
-			//a.download = 'canvas.png'
-			//a.click();
-		}*/
-
-		// ??? save image sequense as a webmovie
-		videoRecorder = new Whammy.Video(15);
-		//encoder.add(context or canvas or dataURL);
-		//encoder.compile(function(output){});
-		//var url = (window.webkitURL || window.URL).createObjectURL(output);
 
 		// renderer
 		renderer = new THREE.WebGLRenderer({ alpha: false, preserveDrawingBuffer: true });
@@ -1111,28 +1087,34 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	};
     //========================================================================================
 
-	
-	var filmingStatus = 0
+
     //========================================================================================
     // Render
     // Doing the time tick periodic rendering of the scene
     //========================================================================================
 	var render = function() {
 
-		// Testing image extraction and movie making
-		if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && filmingStatus < 2){
-			filmingStatus = 2;
+		// Capture Movie frames (if SHIFT down and not busy)
+		if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && !isBusyCaptureMovieFrame){
+			if(videoRecorder == undefined){
+				$log.log("Start Recording of Movie Frames");
+				videoRecorder = new Whammy.Video(15);
+			}
+			isBusyCaptureMovieFrame = true;
 			$timeout(function () {
 				videoRecorder.add(renderer.domElement.toDataURL("image/webp"));
-				filmingStatus = 1;
+				isBusyCaptureMovieFrame = false;
 			});
 		}
 
-		if(!$scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && filmingStatus == 1){
-			filmingStatus = 0;
+		// Compile Movie from captured frames (if no key down and frames captured)
+		if(!$scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && videoRecorder != undefined && videoRecorder.frames.length > 0){
 			$timeout(function () {
+				$log.log("Stop Recording of Movie Frames");
+				$log.log("Creating Movie of " + videoRecorder.frames.length + " frames captured.");
 				videoRecorder.compile(false, function(output){
 					download(output, "3DWebbleVideoTest", "video/webm");
+					videoRecorder = undefined;
 				});
 			});
 		}
