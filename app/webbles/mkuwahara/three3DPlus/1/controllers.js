@@ -590,12 +590,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						$scope.getSlot('customGeoMapImage').setDisabledSetting(Enum.SlotDisablingState.None);
 						$scope.getSlot('customHeightMapImage').setDisabledSetting(Enum.SlotDisablingState.None);
 					}
-					enableGeoLocationSupport();
+					$timeout(function () { enableGeoLocationSupport(); })
 				}
 			}
 
 			else if(eventData.slotName == 'backsideMapEnabled' || eventData.slotName == 'customGeoMapImage' || eventData.slotName == 'customHeightMapImage' || eventData.slotName == 'heightMapStrength' || eventData.slotName == 'mapOpacity'){
-				enableGeoLocationSupport();
+				$timeout(function () { enableGeoLocationSupport(); })
 			}
 
 			else if(eventData.slotName == 'cameraControllerMode'){
@@ -1013,13 +1013,41 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     //=== THREE.JS BASIC FUNCTIONS ======================================================================
 
+	var videoRecorder;
     //========================================================================================
     // Initiate 3D
     // Initiates the scene, renderer and the camera controller for 3D drawing.
     //========================================================================================
 	var init3D = function() {
+		// ??? Needed to save an image of current scene view
+		//renderer = new THREE.WebGLRenderer({ alpha: false, preserveDrawingBuffer: true });
+		//var imgData = renderer.domElement.toDataURL();
+
+		/*function takeScreenshot() {
+			// For screenshots to work with WebGL renderer, preserveDrawingBuffer should be set to true.
+			// open in new window like this
+			var w = window.open('', '');
+			w.document.title = "Screenshot";
+			//w.document.body.style.backgroundColor = "red";
+			var img = new Image();
+			img.src = renderer.domElement.toDataURL();
+			w.document.body.appendChild(img);
+
+			// download file like this.
+			//var a = document.createElement('a');
+			//a.href = renderer.domElement.toDataURL().replace("image/png", "image/octet-stream");
+			//a.download = 'canvas.png'
+			//a.click();
+		}*/
+
+		// ??? save image sequense as a webmovie
+		videoRecorder = new Whammy.Video(15);
+		//encoder.add(context or canvas or dataURL);
+		//encoder.compile(function(output){});
+		//var url = (window.webkitURL || window.URL).createObjectURL(output);
+
 		// renderer
-		renderer = new THREE.WebGLRenderer({ alpha: false });
+		renderer = new THREE.WebGLRenderer({ alpha: false, preserveDrawingBuffer: true });
 		renderer.setSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
 		($scope.theView.parent().find('#threeDPlusHolder')[ 0 ]).appendChild(renderer.domElement);
 
@@ -1083,12 +1111,32 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	};
     //========================================================================================
 
-
+	
+	var filmingStatus = 0
     //========================================================================================
     // Render
     // Doing the time tick periodic rendering of the scene
     //========================================================================================
 	var render = function() {
+
+		// Testing image extraction and movie making
+		if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && filmingStatus < 2){
+			filmingStatus = 2;
+			$timeout(function () {
+				videoRecorder.add(renderer.domElement.toDataURL("image/webp"));
+				filmingStatus = 1;
+			});
+		}
+
+		if(!$scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && filmingStatus == 1){
+			filmingStatus = 0;
+			$timeout(function () {
+				videoRecorder.compile(false, function(output){
+					download(output, "3DWebbleVideoTest", "video/webm");
+				});
+			});
+		}
+
 		renderer.render(scene, camera);
 	};
     //========================================================================================
@@ -2570,6 +2618,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	//========================================================================================
 	var setCameraControls = function(){
 		var camCtrl = $scope.gimme("cameraControllerMode");
+		var sys = BrowserDetect;
 		if(controls){ controls.dispose(); controls = undefined; }
 		if(clock){ clock = undefined; }
 
@@ -2587,7 +2636,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			controls = new THREE.OrbitControls( camera, threeDPlusHolder[0] );
 			controls.zoomSpeed = defaultControlSpeed / 10;
 			controls.autoRotate = $scope.gimme('autoOrbit');
-			info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)";
+
+			if(sys.device != "Custom PC"){
+				info[2].innerHTML = "Orbit Controls (Orbit: One Finger, Zoom: Two Fingers, Pan: Three Fingers)";
+			}
+			else{
+				info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)";
+			}
 		}
 		else if(camCtrl == CameraInteractionMode.Trackball){
 			controls = new THREE.TrackballControls( camera, threeDPlusHolder[0] );
