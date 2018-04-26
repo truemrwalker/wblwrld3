@@ -36,7 +36,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var camFrustum = new THREE.Frustum(); //Selection support
 	var light, lightAmb; //Lights
 	var controls, clock, defaultControlSpeed = 10, camPosOrigin; //Camera controls
-	var particles, dotsGeometry, axes, mapPlane; //Meshes & Geometries
+	var particles, dotsGeometry, axes, gridsContainer, mapPlane; //Meshes & Geometries
 	var mapPlaneColorTexture, mapPlaneDisplacementTexture; //Textures
 	var shaderMaterial, uniforms; // Shaders & Materials
 	var positions, colors, sizes, matrixLocations, mapCoordinates, dataValues;  //Point Particle information
@@ -53,6 +53,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var distributionTypes = {Linear: 0, Logarithmic: 1};
 	var valueAffectAttributes = {None: 0, Size: 1, Opacity: 2, Both: 3};
 	var selectTypes = {None: 0, OneClick: 1, SquareArea: 2, FreehandArea: 3};
+	var mapFetchingStates = {Ready: 0, Busy: 1, WillRepeat: 2};
 
 	// Predefined Slot settings for optimal visualization (based on data type)
 	var availablePredefVisualConfig = [
@@ -178,6 +179,8 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var independentScaling = false; //If true, the scales of each axis will be set independently, otherwise they will use the same scaling (i.e. set this to false if the data on each axis has the same measuring unit, for example distances in meters).
 	var lastSeenDataSeqNo = -1;
 	var lastSeenSelectionSeqNo = -1;
+	var mapFetchingStatus = mapFetchingStates.Ready;
+	var maxMax = 1000; //The max distance in any XYZ direction that any data point is from origo
 
 
 
@@ -193,8 +196,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if((!$scope.ctrlKeyIsDown || !$scope.altKeyIsDown) && !controls.enabled){ controls.enabled = true; }
 
 		if(selelectionType == selectTypes.SquareArea){//$scope.shiftKeyIsDown
-			// currMouseMoveX = event.offsetX;
-			// currMouseMoveY = event.offsetY;
 			selectionAreaData[1] = [event.offsetX, event.offsetY];
 			selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
 			selectCtx.beginPath();
@@ -260,7 +261,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			if(particles){
 				displayHourglassBeforeUpdateSelection();
-				//makeSelection();
 			}
 			else{
 				selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
@@ -484,6 +484,20 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				}
 			}
 
+			else if(eventData.slotName == 'gridEnabled'){
+				if(eventData.slotValue && gridsContainer == undefined || !eventData.slotValue && gridsContainer !== undefined){
+					executeGridVisbilityState();
+				}
+			}
+
+			else if(eventData.slotName == 'gridProperties'){
+				if($scope.gimme("gridEnabled") && gridsContainer !== undefined){
+					scene.remove(gridsContainer);
+					gridsContainer = undefined;
+					executeGridVisbilityState();
+				}
+			}
+
 			else if(eventData.slotName == 'predefinedColorKey'){
 	    		if(eventData.slotValue > 0){
 					$scope.set("ColorKey", predefinedColorKeySets[eventData.slotValue - 1].pcks);
@@ -703,6 +717,38 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			independentScaling,
 			"Scale Axes Independently",
 			'If true, the scales of each axis will be set independently, otherwise they will use the same scaling (i.e. set this to false if the data on each axis has the same measuring unit, for example distances in meteres).',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
+		//???
+		$scope.addSlot(new Slot('gridEnabled',
+			false,
+			'Grid Enabled',
+			'Shows or hides X, Y and Z Grids in the 3D space',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
+		$scope.addSlot(new Slot('gridProperties',
+			{
+				dimensions: { w:2405, d:1000, h:800 },
+				colors: { xw: "red", yh: "green", zd: "blue", globalTransparency: 0.4 },
+				labels: {
+					x: ['', "\'14","\'13","\'12","\'11","\'10","\'09","\'08","\'07","\'06","\'05"],
+					y: ["2%", "4%", "6%", "8%"],
+					z: ["1-month","3-month","6-month","1-year","2-year","3-year","5-year","7-year","10-year", "20-year","30-year"]
+				},
+				centerPointOrigoOffset: {
+					x: 0,
+					y: 0,
+					z: 0
+				}
+			},
+			'Grid Properties',
+			'Various properties that constitute the grid, such as dimensions, colors and labels',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -1000,6 +1046,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if (Detector.webgl) {
 			init3D();
 			executeAxisVisbilityState();
+			executeGridVisbilityState();
 			$timeout(function () { displayHourglassBeforeRedrawScene(false); });
 		} else {
 			var warning = Detector.getWebGLErrorMessage();
@@ -1095,28 +1142,30 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var render = function() {
 
 		// Capture Movie frames (if SHIFT down and not busy)
-		if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && !isBusyCaptureMovieFrame){
-			if(videoRecorder == undefined){
-				$log.log("Start Recording of Movie Frames");
-				videoRecorder = new Whammy.Video(15);
-			}
-			isBusyCaptureMovieFrame = true;
-			$timeout(function () {
-				videoRecorder.add(renderer.domElement.toDataURL("image/webp"));
-				isBusyCaptureMovieFrame = false;
-			});
-		}
-
-		// Compile Movie from captured frames (if no key down and frames captured)
-		if(!$scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && videoRecorder != undefined && videoRecorder.frames.length > 0){
-			$timeout(function () {
-				$log.log("Stop Recording of Movie Frames");
-				$log.log("Creating Movie of " + videoRecorder.frames.length + " frames captured.");
-				videoRecorder.compile(false, function(output){
-					download(output, "3DWebbleVideoTest", "video/webm");
-					videoRecorder = undefined;
+		if(!$scope.getIsFormOpen){
+			if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && !isBusyCaptureMovieFrame){
+				if(videoRecorder == undefined){
+					$log.log("Start Recording of Movie Frames");
+					videoRecorder = new Whammy.Video(15);
+				}
+				isBusyCaptureMovieFrame = true;
+				$timeout(function () {
+					videoRecorder.add(renderer.domElement.toDataURL("image/webp"));
+					isBusyCaptureMovieFrame = false;
 				});
-			});
+			}
+
+			// Compile Movie from captured frames (if no key down and frames captured)
+			if(!$scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && videoRecorder != undefined && videoRecorder.frames.length > 0){
+				$timeout(function () {
+					$log.log("Stop Recording of Movie Frames");
+					$log.log("Creating Movie of " + videoRecorder.frames.length + " frames captured.");
+					videoRecorder.compile(false, function(output){
+						download(output, "3DWebbleVideoTest", "video/webm");
+						videoRecorder = undefined;
+					});
+				});
+			}
 		}
 
 		renderer.render(scene, camera);
@@ -1649,6 +1698,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if(!keepScene) {
 			$log.log("centerPoint = new THREE.Vector3(" + ((maxX - minX) * scaleX / 2) + ", " +((maxZ - minZ) * scaleZ / 2) + ", " + ((maxY - minY) * scaleY / 2) + ")");
 			centerPoint = new THREE.Vector3((maxX - minX) * scaleX / 2 , (maxZ - minZ) * scaleZ / 2, (maxY - minY) * scaleY / 2);
+			maxMax = Math.max((Math.abs(minX) * scaleX), (Math.abs(maxX) * scaleX), (Math.abs(minY) * scaleY), (Math.abs(maxY) * scaleY), (Math.abs(minZ) * scaleZ), (Math.abs(maxZ) * scaleZ));
 
 			dotsGeometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
 			dotsGeometry.addAttribute( 'size', new THREE.BufferAttribute( sizes, 1 ) );
@@ -2005,6 +2055,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		for (var i = 0, isam; isam = intSecAreaMem[i]; i++){
 			attributes.customColor.array[ isam[0] * 4 + 0 ] = isam[1]; attributes.customColor.array[ isam[0] * 4 + 1 ] = isam[2]; attributes.customColor.array[ isam[0] * 4 + 2 ] = isam[3]; attributes.customColor.array[ isam[0] * 4 + 3 ] = isam[4];
 			attributes.size.array[ isam[0] ] = isam[5];
+			info[1].innerHTML = "";
 		}
 		intSecAreaMem = [];
 		if ( insideParticles.length > 0 ) {
@@ -2017,6 +2068,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				intSecAreaMem.push(iam);
 				attributes.customColor.array[ INTSEC * 4 + 0 ] = SELECT_COLOR[0]; attributes.customColor.array[ INTSEC * 4 + 1 ] = SELECT_COLOR[1]; attributes.customColor.array[ INTSEC * 4 + 2 ] = SELECT_COLOR[2]; attributes.customColor.array[ INTSEC * 4 + 3 ] = SELECT_COLOR[3];
 				attributes.size.array[ INTSEC ] = attributes.size.array[ INTSEC ] * 2;
+				if(insideParticles.length == 1 && attributes.position.array[ INTSEC * 3 + 0 ] != undefined){ info[1].innerHTML = "x: " + attributes.position.array[ INTSEC * 3 + 0 ] + ", y: " + attributes.position.array[ INTSEC * 3 + 1 ] + ", z: " + attributes.position.array[ INTSEC * 3 + 2 ] }
 			}
 		}
 		attributes.customColor.needsUpdate = true;
@@ -2036,121 +2088,126 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	//========================================================================================
 	var enableGeoLocationSupport = function(){
 		if(scene){
+			if(mapPlane != undefined){
+				light.target.position.set( 0, 0, 0 );
+				scene.remove(mapPlane);
+				mapPlane = undefined;
+			}
+
 			var preDefArea = $scope.gimme("preDefinedGeoArea");
 			var custGeoMap = $scope.gimme("customGeoMapImage");
 			var custHeightMap = $scope.gimme("customHeightMapImage");
-
 			if(preDefArea != "None" || custGeoMap != "" || custHeightMap != ""){
-				lightAmb.intensity = 1.0;
-				light.intensity = 0.1;
+				if(mapFetchingStatus == mapFetchingStates.Ready){
+					mapFetchingStatus = mapFetchingStates.Busy;
+					lightAmb.intensity = 1.0;
+					light.intensity = 0.1;
 
-				if(mapPlane != undefined){
-					scene.remove(mapPlane);
-					mapPlane = undefined;
-				}
+					var planeFront, heightMap, coords = $scope.gimme("customMinMaxCoordinates");
+					if(preDefArea != "None"){
+						planeFront = internalFilesPath + '/images/GeoData/' + preDefArea + '-map.jpg';
+						heightMap = internalFilesPath + '/images/GeoData/' + preDefArea + '-disp.png';
+						if(predefCoords != undefined) { coords = predefCoords[preDefArea]; }
+					}
+					else{
+						planeFront = (custGeoMap != "" ? custGeoMap : internalFilesPath + '/images/Empty_GeoMap.png');
+						heightMap = (custHeightMap != "" ? custHeightMap : internalFilesPath + '/images/Flat_HeightMap.png');
+						if(coords.max == undefined || coords.min == undefined || coords.max.lat == undefined) { coords = defaultCoord; }
+					}
 
-				var planeFront, heightMap, coords = $scope.gimme("customMinMaxCoordinates");
-				if(preDefArea != "None"){
-					planeFront = internalFilesPath + '/images/GeoData/' + preDefArea + '-map.jpg';
-					heightMap = internalFilesPath + '/images/GeoData/' + preDefArea + '-disp.png';
-					if(predefCoords != undefined) { coords = predefCoords[preDefArea]; }
+					var planeBack = ($scope.gimme("backsideMapEnabled")) ? planeFront : internalFilesPath + '/images/soil.png';
+
+					var loader = new THREE.TextureLoader();
+					loader.crossOrigin = '';
+					loader.load(
+						planeFront,
+						function ( textureFront ) {
+							mapPlaneColorTexture = textureFront;
+							loader.load(
+								heightMap,
+								function ( textureTopology ) {
+									mapPlaneDisplacementTexture = textureTopology;
+									loader.load(
+										planeBack,
+										function ( textureBack ) {
+											var geoPosMin = convertLatLngToUtm(coords.min.lat, coords.min.lon);
+											var geoPosMax = convertLatLngToUtm(coords.max.lat, coords.max.lon);
+											var scale = ((1000 / (geoPosMax[0]-geoPosMin[0])) < (1000 / (geoPosMax[1]-geoPosMin[1])) ? (1000 / (geoPosMax[0]-geoPosMin[0])) : (1000 / (geoPosMax[1]-geoPosMin[1])));
+
+											// Getting the XYZ positions for each corner from real world coordinates
+											var cld = geoPosMin;											//Corner-Left-Down
+											var clu = convertLatLngToUtm(coords.min.lat, coords.max.lon);   //Corner-Left-Up
+											var crd = convertLatLngToUtm(coords.max.lat, coords.min.lon);	//Corner-Right-Down
+											var cru = geoPosMax;											//Corner-Right-Up
+
+											// Creating the geometry vertices, scaled and translated similar to the data
+											var geometry = new THREE.Geometry();
+											geometry.vertices.push(new THREE.Vector3((cld[0]-cld[0]) * scale,0,(cru[1]-cld[1]) * scale)); //cld
+											geometry.vertices.push(new THREE.Vector3((clu[0]-cld[0]) * scale,0,(cru[1]-clu[1]) * scale)); //clu
+											geometry.vertices.push(new THREE.Vector3((crd[0]-cld[0]) * scale,0,(cru[1]-crd[1]) * scale)); //crd
+											geometry.vertices.push(new THREE.Vector3((cru[0]-cld[0]) * scale,0,(cru[1]-cru[1]) * scale)); //cru
+
+											// Creating the geometry faces and the UV coordinates
+											geometry.faces.push( new THREE.Face3(2,0,1) );
+											geometry.faces.push( new THREE.Face3(1,3,2) );
+											geometry.faceVertexUvs[0].push([ new THREE.Vector2(0,1), new THREE.Vector2(0,0), new THREE.Vector2(1,0) ]);
+											geometry.faceVertexUvs[0].push([ new THREE.Vector2(1,0), new THREE.Vector2(1,1), new THREE.Vector2(0,1) ]);
+
+											// Create a new instance of the subdivision modifier and pass the number of divisions, and if shape should be retained and then apply it to the geometry.
+											var modifier = new THREE.SubdivisionModifier(7, true);
+											modifier.modify( geometry );
+
+											// Make the faces double sided with independant textures for each side
+											for (var i = 0, len = geometry.faces.length; i < len; i++) {
+												var face = geometry.faces[i].clone();
+												face.materialIndex = 1;
+												geometry.faces.push(face);
+												geometry.faceVertexUvs[0].push(geometry.faceVertexUvs[0][i].slice(0));
+											}
+
+											// Creating the materials (using textures) for the geometry
+											var displacementScale = coords.highestPointMeter * scale * 2; // double it for a more visual effect ...but not reality accuracy
+											var materials = [new THREE.MeshPhongMaterial({map: mapPlaneColorTexture, displacementMap: mapPlaneDisplacementTexture, displacementScale: displacementScale, side: THREE.FrontSide, depthWrite: false, transparent: ($scope.gimme("mapOpacity") < 1), opacity: $scope.gimme("mapOpacity")}), new THREE.MeshPhongMaterial({map: textureBack, side: THREE.BackSide, depthWrite: false, transparent: ($scope.gimme("mapOpacity") < 1), opacity: $scope.gimme("mapOpacity")})];
+
+											// Creating a mesh using the geometry and materials created above and add it to the scene
+											mapPlane = new THREE.Mesh( geometry, new THREE.MultiMaterial(materials) ) ;
+											mapPlane.renderOrder = 0;
+											mapPlane.isMap = true;
+
+											if(particles == undefined){
+												var xPos = geometry.vertices[1].x / 2;
+												centerPoint = new THREE.Vector3( xPos, 0, geometry.vertices[0].z / 2);
+												camera.position.set(xPos, xPos, geometry.vertices[0].z);
+												camPosOrigin = {x: camera.position.x, y: camera.position.y, z: camera.position.z};
+												camera.lookAt(centerPoint);
+												if(controls.target){ controls.target = centerPoint; }
+											}
+											light.target = mapPlane;
+											scene.add( mapPlane );
+
+											var willRepeatMapFetch = (mapFetchingStatus == mapFetchingStates.WillRepeat);
+											mapFetchingStatus = mapFetchingStates.Ready;
+											if(willRepeatMapFetch){ enableGeoLocationSupport(); }
+										},
+										function ( xhr ) { /*Do nothing */},
+										function ( xhr ) { $log.log( 'An error happened when loading soil texture' ); }
+									);
+								},
+								function ( xhr ) { /*Do nothing */},
+								function ( xhr ) { $log.log( 'An error happened when loading terrain topology texture' ); }
+							);
+						},
+						function ( xhr ) { /*Do nothing */},
+						function ( xhr ) { $log.log( 'An error happened when loading map texture' ); }
+					);
 				}
 				else{
-					planeFront = (custGeoMap != "" ? custGeoMap : internalFilesPath + '/images/Empty_GeoMap.png');
-					heightMap = (custHeightMap != "" ? custHeightMap : internalFilesPath + '/images/Flat_HeightMap.png');
-					if(coords.max == undefined || coords.min == undefined || coords.max.lat == undefined) { coords = defaultCoord; }
+					mapFetchingStatus = mapFetchingStates.WillRepeat;
 				}
-
-				var planeBack = ($scope.gimme("backsideMapEnabled")) ? planeFront : internalFilesPath + '/images/soil.png';
-
-				var loader = new THREE.TextureLoader();
-				loader.crossOrigin = '';
-				loader.load(
-					planeFront,
-					function ( textureFront ) {
-						mapPlaneColorTexture = textureFront;
-						loader.load(
-							heightMap,
-							function ( textureTopology ) {
-								mapPlaneDisplacementTexture = textureTopology;
-								loader.load(
-									planeBack,
-									function ( textureBack ) {
-										var geoPosMin = convertLatLngToUtm(coords.min.lat, coords.min.lon);
-										var geoPosMax = convertLatLngToUtm(coords.max.lat, coords.max.lon);
-										var scale = ((1000 / (geoPosMax[0]-geoPosMin[0])) < (1000 / (geoPosMax[1]-geoPosMin[1])) ? (1000 / (geoPosMax[0]-geoPosMin[0])) : (1000 / (geoPosMax[1]-geoPosMin[1])));
-
-										// Getting the XYZ positions for each corner from real world coordinates
-										var cld = geoPosMin;											//Corner-Left-Down
-										var clu = convertLatLngToUtm(coords.min.lat, coords.max.lon);   //Corner-Left-Up
-										var crd = convertLatLngToUtm(coords.max.lat, coords.min.lon);	//Corner-Right-Down
-										var cru = geoPosMax;											//Corner-Right-Up
-
-										// Creating the geometry vertices, scaled and translated similar to the data
-										var geometry = new THREE.Geometry();
-										geometry.vertices.push(new THREE.Vector3((cld[0]-cld[0]) * scale,0,(cru[1]-cld[1]) * scale)); //cld
-										geometry.vertices.push(new THREE.Vector3((clu[0]-cld[0]) * scale,0,(cru[1]-clu[1]) * scale)); //clu
-										geometry.vertices.push(new THREE.Vector3((crd[0]-cld[0]) * scale,0,(cru[1]-crd[1]) * scale)); //crd
-										geometry.vertices.push(new THREE.Vector3((cru[0]-cld[0]) * scale,0,(cru[1]-cru[1]) * scale)); //cru
-
-										// Creating the geometry faces and the UV coordinates
-										geometry.faces.push( new THREE.Face3(2,0,1) );
-										geometry.faces.push( new THREE.Face3(1,3,2) );
-										geometry.faceVertexUvs[0].push([ new THREE.Vector2(0,1), new THREE.Vector2(0,0), new THREE.Vector2(1,0) ]);
-										geometry.faceVertexUvs[0].push([ new THREE.Vector2(1,0), new THREE.Vector2(1,1), new THREE.Vector2(0,1) ]);
-
-										// Create a new instance of the subdivision modifier and pass the number of divisions, and if shape should be retained and then apply it to the geometry.
-										var modifier = new THREE.SubdivisionModifier(7, true);
-										modifier.modify( geometry );
-
-										// Make the faces double sided with independant textures for each side
-										for (var i = 0, len = geometry.faces.length; i < len; i++) {
-											var face = geometry.faces[i].clone();
-											face.materialIndex = 1;
-											geometry.faces.push(face);
-											geometry.faceVertexUvs[0].push(geometry.faceVertexUvs[0][i].slice(0));
-										}
-
-										// Creating the materials (using textures) for the geometry
-										var displacementScale = coords.highestPointMeter * scale * 2; // double it for a more visual effect ...but not reality accuracy
-										var materials = [new THREE.MeshPhongMaterial({map: mapPlaneColorTexture, displacementMap: mapPlaneDisplacementTexture, displacementScale: displacementScale, side: THREE.FrontSide, depthWrite: false, transparent: ($scope.gimme("mapOpacity") < 1), opacity: $scope.gimme("mapOpacity")}), new THREE.MeshPhongMaterial({map: textureBack, side: THREE.BackSide, depthWrite: false, transparent: ($scope.gimme("mapOpacity") < 1), opacity: $scope.gimme("mapOpacity")})];
-
-										// Creating a mesh using the geometry and materials created above and add it to the scene
-										mapPlane = new THREE.Mesh( geometry, new THREE.MultiMaterial(materials) ) ;
-										mapPlane.renderOrder = 0;
-										mapPlane.name = 'Map_Plane';
-										scene.add( mapPlane );
-
-										if(particles == undefined){
-											var xPos = geometry.vertices[1].x / 2;
-											centerPoint = new THREE.Vector3( xPos, 0, geometry.vertices[0].z / 2);
-											camera.position.set(xPos, xPos, geometry.vertices[0].z);
-											camPosOrigin = {x: camera.position.x, y: camera.position.y, z: camera.position.z};
-											camera.lookAt(centerPoint);
-											if(controls.target){ controls.target = centerPoint; }
-										}
-										light.target = mapPlane;
-									},
-									function ( xhr ) { /*Do nothing */},
-									function ( xhr ) { $log.log( 'An error happened when loading soil texture' ); }
-								);
-							},
-							function ( xhr ) { /*Do nothing */},
-							function ( xhr ) { $log.log( 'An error happened when loading terrain topology texture' ); }
-						);
-					},
-					function ( xhr ) { /*Do nothing */},
-					function ( xhr ) { $log.log( 'An error happened when loading map texture' ); }
-				);
 			}
 			else {
 				lightAmb.intensity = 0.1;
 				light.intensity = 1.0;
-
-				if(mapPlane != undefined){
-					scene.remove(scene.getObjectByName('Map_Plane'));
-					mapPlane = undefined;
-				}
 
 				if(particles == undefined) {
 					var ccm = $scope.gimme("cameraControllerMode");
@@ -2433,8 +2490,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // Creates a set of 6 axes starting from the origo point in all postive and negative
     // x,y,z directions of a specified length.
     //========================================================================================
-	var buildAxes = function( length ) {
+	var buildAxes = function() {
 		var axes = new THREE.Object3D();
+		var length = maxMax * 1.2;
+		if(length < 1000){length = 1000;}
 
 		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( length, 0, 0 ), 0xFF0000, false ) ); // +X
 		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( -length, 0, 0 ), 0xFF0000, true) ); // -X
@@ -2456,13 +2515,237 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if(scene){
 			// Make sure the visibility of x y z axes is correct
 			if($scope.gimme("AxesEnabled") && axes == undefined){
-				axes = buildAxes( 1000 );
+				axes = buildAxes();
 				axes.name = 'Axes';
 				scene.add(axes);
 			}
 			else if(!$scope.gimme("AxesEnabled") && axes !== undefined){
 				scene.remove(axes);
 				axes = undefined;
+			}
+
+			animate();
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Label Axis
+	// Creates a label for each grid axis for each step
+	//========================================================================================
+	function labelGridAxis(width, data, direction){
+		var separator = 2*width/data.length,
+			p = {
+				x:0,
+				y:0,
+				z:0
+			},
+			dobj = new THREE.Object3D();
+
+		for ( var i = 0; i < data.length; i ++ ) {
+			var label = makeTextSprite(data[i]);
+
+			label.position.set(p.x,p.y,p.z);
+
+			dobj.add( label );
+			if (direction=="y"){
+				p[direction]+=separator;
+			}else{
+				p[direction]-=separator;
+			}
+
+		}
+		return dobj;
+	}
+	//========================================================================================
+
+
+	//========================================================================================
+	// Make Text Sprite
+	// Creates a Text sprite to display along the grid side
+	// This was written by Lee Stemkoski
+	// https://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
+	//========================================================================================
+	var makeTextSprite = function( message, parameters ){
+		if ( parameters === undefined ) parameters = {};
+
+		var fontface = parameters["fontface"] || "Helvetica";
+		var fontsize = parameters["fontsize"] || 70;
+		var canvas = document.createElement('canvas');
+		var context = canvas.getContext('2d');
+		context.font = fontsize + "px " + fontface;
+
+		// get size data (height depends only on font size)
+		var metrics = context.measureText( message );
+		var textWidth = metrics.width;
+
+		// text color
+		context.fillStyle = "rgba(0, 0, 0, 1.0)";
+		context.fillText( message, 0, fontsize);
+
+		// canvas contents will be used for a texture
+		var texture = new THREE.Texture(canvas)
+		texture.minFilter = THREE.LinearFilter;
+		texture.needsUpdate = true;
+
+		var spriteMaterial = new THREE.SpriteMaterial({ map: texture, useScreenCoordinates: false});
+		var sprite = new THREE.Sprite( spriteMaterial );
+		sprite.scale.set(100,50,1.0);
+		return sprite;
+	}
+	//========================================================================================
+
+
+	//========================================================================================
+	// Create A Grid
+	// Creates a grid based on the options parameters provided
+	// e.g. opts: { height: 500, width: 500, linesHeight: 10, linesWidth: 10, color: 0xFF0000 }
+	//========================================================================================
+	var createAGrid = function(opts){
+		var gridTransparency = $scope.gimme("gridProperties").colors.globalTransparency;
+
+		var config = opts || {
+			height: 500,
+			width: 500,
+			linesHeight: 10,
+			linesWidth: 10,
+			color: 0xDD006C
+		};
+
+		var material = new THREE.LineBasicMaterial({
+			color: config.color,
+			transparent: (gridTransparency != 1.0),
+			opacity: gridTransparency
+		});
+
+		var gridObject = new THREE.Object3D(),
+			gridGeo= new THREE.Geometry(),
+			stepw = 2*config.width/config.linesWidth,
+			steph = 2*config.height/config.linesHeight;
+
+		//width
+		for ( var i = - config.width; i <= config.width; i += stepw ) {
+			gridGeo.vertices.push( new THREE.Vector3( - config.height, i,0 ) );
+			gridGeo.vertices.push( new THREE.Vector3(  config.height, i,0 ) );
+
+		}
+		//height
+		for ( var i = - config.height; i <= config.height; i += steph ) {
+			gridGeo.vertices.push( new THREE.Vector3( i,- config.width,0 ) );
+			gridGeo.vertices.push( new THREE.Vector3( i, config.width, 0 ) );
+		}
+
+		var line = new THREE.Line( gridGeo, material, THREE.LinePieces );
+		gridObject.add(line);
+
+		return gridObject;
+	}
+	//========================================================================================
+
+
+	//========================================================================================
+	// Build Grids
+	// Creates a set of 3 grids centered in Origo
+	// x,y,z directions of a specified length.
+	//========================================================================================
+	var buildGrids = function( ) {
+		var gridProps = $scope.gimme("gridProperties");
+		var gridDimensions = gridProps.dimensions;
+		var gridColors = gridProps.colors;
+		var gridLabels = gridProps.labels;
+		var origoOffset = gridProps.centerPointOrigoOffset;
+
+		var width = gridDimensions.w/2;
+		var depth = gridDimensions.d/2;
+		var height = gridDimensions.h/2;
+		var a = gridLabels.y.length;
+		var b = gridLabels.x.length;
+		var c = gridLabels.z.length;
+
+		var boundingGrid = new THREE.Object3D();
+
+		// x-y width back wall
+		var newGridXY = createAGrid({
+			height: width,
+			width: height,
+			linesHeight: b,
+			linesWidth: a,
+			color: new THREE.Color( gridColors.xw )
+		});
+		//newGridXY.position.y = height;
+		newGridXY.position.z = -depth;
+		boundingGrid.add(newGridXY);
+
+		// x-z depth floor
+		var newGridYZ = createAGrid({
+			height: width,
+			width: depth,
+			linesHeight: b,
+			linesWidth: c,
+			color: new THREE.Color( gridColors.zd )
+		});
+		newGridYZ.rotation.x = Math.PI/2;
+		newGridYZ.position.y = -height;
+		boundingGrid.add(newGridYZ);
+
+		// y-z height side wall
+		var newGridXZ = createAGrid({
+			height: depth,
+			width: height,
+			linesHeight:c,
+			linesWidth: a,
+			color: new THREE.Color( gridColors.yh )
+		});
+		newGridXZ.position.x = width;
+		//newGridXZ.position.y = height;
+		newGridXZ.rotation.y = Math.PI/2;
+		boundingGrid.add(newGridXZ);
+
+		var labelsW = labelGridAxis(width, gridLabels.x,"x");
+		labelsW.position.x = width+40;
+		labelsW.position.y = -height -40;
+		labelsW.position.z = depth;
+		boundingGrid.add(labelsW);
+
+		var labelsH = labelGridAxis(height, gridLabels.y,"y");
+		labelsH.position.x = width;
+		labelsH.position.y = - height +(2*height/a)-20;
+		labelsH.position.z = depth;
+		boundingGrid.add(labelsH);
+
+		var labelsD = labelGridAxis(depth, gridLabels.z, "z");
+		labelsD.position.x = width;
+		labelsD.position.y = -(height)-40;
+		labelsD.position.z = depth-40;
+		boundingGrid.add(labelsD);
+
+		boundingGrid.position.x = origoOffset.x;
+		boundingGrid.position.y = origoOffset.y;
+		boundingGrid.position.z = origoOffset.z;
+
+		scene.add(boundingGrid);
+
+		return boundingGrid;
+	};
+	//========================================================================================
+
+
+	//========================================================================================
+	// Execute Grid Visbility State
+	// Turns on or off the visibility of the x y z grids depending on its current enabled state
+	//========================================================================================
+	var executeGridVisbilityState = function (){
+		if(scene){
+			// Make sure the visibility of x y z axes is correct
+			if($scope.gimme("gridEnabled") && gridsContainer == undefined){
+				gridsContainer = buildGrids( );
+				gridsContainer.name = 'Grids';
+				scene.add(gridsContainer);
+			}
+			else if(!$scope.gimme("gridEnabled") && gridsContainer !== undefined){
+				scene.remove(gridsContainer);
+				gridsContainer = undefined;
 			}
 
 			animate();
