@@ -58,9 +58,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	// Predefined Slot settings for optimal visualization (based on data type)
 	var availablePredefVisualConfig = [
 		{name: "None", slotConfigs: []},
-		{name: "Tsunami", slotConfigs: [{name: "particleMinSize", value: 10}, {name: "particleMaxSize", value: 30}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 2}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
-		{name: "Space", slotConfigs: [{name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 15}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.8}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 18}, {name: "threeDPlusHolder:background-color", value: "#000000"}]},
+		{name: "Tsunami", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 10}, {name: "particleMaxSize", value: 30}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 2}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
+		{name: "Space", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 15}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.8}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 18}, {name: "threeDPlusHolder:background-color", value: "#000000"}]},
 		{name: "Clouds", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Cloud_2}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 75}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.5}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 16}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
+		{name: "Space - No Color", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 2}, {name: "particleMaxSize", value: 27}, {name: "particleMinAlpha", value: 1}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 19}, {name: "threeDPlusHolder:background-color", value: "#000000"}]}
 	];
 
 	// Mouse 3D-world Interaction
@@ -155,7 +156,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		{ name: "Natural Water", pcks: [[0.0, 0.0095, "#FFFFFF00"], [0.237, 16.0, "#3ADEFF"], [16.001, 40.0, "#54A1FF"], [40.001, 64.0, "#3D3AFF"]] },
 
 		// 18 Natural gas clouds in Space
-		{ name: "Natural Gas Clouds in Space", pcks: [[-10, 1, "#FFFFFF00"], [1.001, 30.0, "#3C202F22"], [30.001, 80.0, "#E27A79"], [80.001, 130.0, "#ECB888"], [130.001, 200.0, "#F75145"], [200.001, 1000.0, "#ffffff"]] }
+		{ name: "Natural Gas Clouds in Space", pcks: [[-10, 1, "#FFFFFF00"], [1.001, 30.0, "#3C202F22"], [30.001, 80.0, "#E27A79"], [80.001, 130.0, "#ECB888"], [130.001, 200.0, "#F75145"], [200.001, 1000.0, "#ffffff"]] },
+
+		// 19 Colorless stars in Space
+		{ name: "Colorless Light in Space", pcks: [[ -10, 1, "#FFFFFF22" ], [ 1.001, 30, "#22222288" ], [ 30.001, 80, "#777777BB" ], [ 80.001, 130, "#AAAAAAFF" ], [ 130.001, 200, "#DDDDDDFF" ], [ 200.001, 1000, "#FFFFFFFF" ] ] }
 	];
 
 	// 3D Data properties
@@ -786,7 +790,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			'Predefined Visual Configuration',
 			'Sets multiple slots to its optimal value to best visualize certain types of data',
 			$scope.theWblMetadata['templateid'],
-			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: [availablePredefVisualConfig[0].name, availablePredefVisualConfig[1].name, availablePredefVisualConfig[2].name, availablePredefVisualConfig[3].name]},
+			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: [availablePredefVisualConfig[0].name, availablePredefVisualConfig[1].name, availablePredefVisualConfig[2].name, availablePredefVisualConfig[3].name, availablePredefVisualConfig[4].name]},
 			undefined
 		));
 
@@ -1142,7 +1146,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var render = function() {
 
 		// Capture Movie frames (if SHIFT down and not busy)
-		if(!$scope.getIsFormOpen){
+		if(!$scope.getIsFormOpen()){
 			if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && !isBusyCaptureMovieFrame){
 				if(videoRecorder == undefined){
 					$log.log("Start Recording of Movie Frames");
@@ -2895,7 +2899,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			controls.rollSpeed = defaultControlSpeed / 10;
 			controls.autoForward = false;
 			controls.dragToLook = true;
-			info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera)";
+			info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera) ( HOLD SHIFT: Record Movie)";
 		}
 		else if(camCtrl == CameraInteractionMode.Orbit){
 			controls = new THREE.OrbitControls( camera, threeDPlusHolder[0] );
@@ -2906,7 +2910,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				info[2].innerHTML = "Orbit Controls (Orbit: One Finger, Zoom: Two Fingers, Pan: Three Fingers)";
 			}
 			else{
-				info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)";
+				info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera) ( HOLD SHIFT: Record Movie)";
 			}
 		}
 		else if(camCtrl == CameraInteractionMode.Trackball){
@@ -2919,7 +2923,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			controls.staticMoving = true;
 			controls.dynamicDampingFactor = 0.3;
 			controls.addEventListener( 'change', render );
-			info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)w";
+			info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera) ( HOLD SHIFT: Record Movie)";
 		}
 
 		var tPoint = new THREE.Vector3(0,0,0);
