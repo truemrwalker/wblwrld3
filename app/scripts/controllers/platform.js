@@ -2945,6 +2945,32 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
 	//========================================================================================
+	// Set Text Selection Mode
+	// This method make change the current dragging vs text selection mode in a text element
+	// in a Webble.
+	//========================================================================================
+	$scope.setTextSelectionMode = function (txtSelEnabled, wbl, txtElemId){
+		var elArray = document.body.getElementsByTagName('div');
+		for(var i = 0; i < elArray.length; i++){
+			var el = elArray[i];
+			el.onselectstart = el.ondragstart = el.ondrag = el.oncontextmenu = el.onmousedown = el.onmouseup = function(){ return true };
+		}
+
+		if(wbl != undefined){
+			if(txtSelEnabled){
+				wbl.parent().draggable('option', 'cancel', txtElemId);
+				wbl.parent().find(txtElemId).css("cursor", "text");
+			}
+			else{
+				wbl.parent().draggable('option', 'cancel', '');
+				wbl.parent().find(txtElemId).css("cursor", "pointer");
+			}
+		}
+	}
+	//========================================================================================
+
+
+	//========================================================================================
     // Get Template Path
     // This method gets the path to the template as either from the sandbox if a webble by
     // the defined id exists there or otherwise from the default repository.
