@@ -1732,6 +1732,22 @@ for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
 	}
 }
 ```
+###setTextSelectionMode ![Method][meth]
+This method make sets the current dragging vs text selection mode in a text element in a Webble.
+
+####setTextSelectionMode(txtSelEnabled, wbl, txtElemId)
+
+* **Parameters:**
+    * txtSelEnabled (Boolean) True of False if text is selectable or not (if text can be selected it cannot drag the Webble anymore)
+	* wbl (Webble Pointer) The Webble View that one wish to affect
+	* txtElemId (String) The Element ID of the text element one wish to affect
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Enables text selection on a specific text element in a specific Webble
+$scope.setTextSelectionMode(true, $scope.theView, "#squareTxt");
+```
 ###_setPlatformBkgColor_ ![Method][meth]
 Quick way to set the current background color of the platform. This setting only lasts before next change or end of the user session. It will not affect the users default background color in future sessions.
 
