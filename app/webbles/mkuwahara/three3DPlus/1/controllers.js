@@ -2138,13 +2138,34 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    for(var j = 0; j < insideParticles.length; j++) { 
 		var i = insideParticles[j];
 
-		var cubeXidx = matrixLocations[i * 3];
-		var cubeYidx = matrixLocations[i * 3 + 2];
-		var cubeZidx = matrixLocations[i * 3 + 1];
-		
-		var itemIdx = cubeNo * Math.floor(droppedDataInfo.size3Dv / droppedDataInfo.size3D) + cubeXidx + droppedDataInfo.sizeX*(cubeYidx + droppedDataInfo.sizeY*cubeZidx);
-		insideParticlesIdxs.push(itemIdx);
-	    }	    
+		if(droppedDataInfo.type == droppedDataInfoTypes.only3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.val3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.xy3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.xyz3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.xyval3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.xyzval3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.latlon3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.latlonz3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.latlonval3D
+		   || droppedDataInfo.type == droppedDataInfoTypes.latlonzval3D
+		  ) {
+		    var cubeXidx = matrixLocations[i * 3];
+		    var cubeYidx = matrixLocations[i * 3 + 2];
+		    var cubeZidx = matrixLocations[i * 3 + 1];
+		    
+		    var itemIdx = cubeNo * Math.floor(droppedDataInfo.size3Dv / droppedDataInfo.size3D) + cubeXidx + droppedDataInfo.sizeX*(cubeYidx + droppedDataInfo.sizeY*cubeZidx);
+		    insideParticlesIdxs.push(itemIdx);
+		} else if(droppedDataInfo.type == droppedDataInfoTypes.xyzval
+			  || droppedDataInfo.type == droppedDataInfoTypes.xyz
+			  || droppedDataInfo.type == droppedDataInfoTypes.xyval
+			  || droppedDataInfo.type == droppedDataInfoTypes.latlonzval
+			  || droppedDataInfo.type == droppedDataInfoTypes.latlonz
+			  || droppedDataInfo.type == droppedDataInfoTypes.latlonval) {
+
+		    var itemIdx = matrixLocations[i * 3];
+		    insideParticlesIdxs.push(itemIdx);
+		}
+	    } 
 	}
 	
 	updateLocalSelections(selectAll);
