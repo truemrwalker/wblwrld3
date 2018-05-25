@@ -2264,10 +2264,22 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						minY = Math.min(minY, curMinmaxCounts.minY);
 						maxY = Math.max(maxY, curMinmaxCounts.maxY);
 
-						if((minX != curMinmaxCounts.minX && (oldcounts === null || oldcounts.x1 != minX))
-						   || (maxX != curMinmaxCounts.maxX && (oldcounts === null || oldcounts.x2 != maxX))
-						   || (minY != curMinmaxCounts.minY && (oldcounts === null || oldcounts.y1 != minY))
-						   || (maxY != curMinmaxCounts.maxY && (oldcounts === null || oldcounts.y2 != maxY))
+						if(oldcounts !== null) {
+						    var mapMinX = Math.min(curMinmaxCounts.minX, oldcounts.x1);
+						    var mapMaxX = Math.max(curMinmaxCounts.maxX, oldcounts.x2);
+						    var mapMinY = Math.min(curMinmaxCounts.minY, oldcounts.y1);
+						    var mapMaxY = Math.max(curMinmaxCounts.maxY, oldcounts.y2);
+						} else {
+						    var mapMinX = curMinmaxCounts.minX;
+						    var mapMaxX = curMinmaxCounts.maxX;
+						    var mapMinY = curMinmaxCounts.minY;
+						    var mapMaxY = curMinmaxCounts.maxY;
+						}
+						    
+						if(minX != mapMinX 
+						   || maxX != mapMaxX
+						   || minY != mapMinY 
+						   || maxY != mapMaxY
 						  ) {
 						    needToRedrawDataToo = true;
 						}
