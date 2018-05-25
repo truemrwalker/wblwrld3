@@ -1,6 +1,6 @@
 {
 	"Coordinates": {
 		"Kobe": {"min": {"lat": 34.6, "lon": 135.08}, "max": {"lat": 34.77895657281008, "lon": 135.34181325414244}, "eastlingDistMeter": 19900, "northlingDistMeter": 23960, "highestPointMeter": 931},
-		"Tohoku": {"min": {"lat": 33.38472625520925, "lon": 133.32595825195312}, "max": {"lat": 33.597748814379344, "lon": 133.70361328125}, "eastlingDistMeter": 35060, "northlingDistMeter": 23590, "highestPointMeter": 919}
+		"Kochi": {"min": {"lat": 33.38472625520925, "lon": 133.32595825195312}, "max": {"lat": 33.597748814379344, "lon": 133.70361328125}, "eastlingDistMeter": 35060, "northlingDistMeter": 23590, "highestPointMeter": 919}
 	}
 }

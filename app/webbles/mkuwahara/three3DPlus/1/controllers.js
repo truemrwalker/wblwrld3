@@ -113,10 +113,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     var groupColors = {}; // cache the colors above
 
     var predefinedColorKeySets = [   // Color Chroma series (for data value color hues)
-	// 1 Tohoku Tsunami flooding data colors
+	// 1 Tohoku-dai Tsunami flooding data colors
 	{ name: "Tsunami Flooding Data", pcks: [[0.058, 0.5, "#2892C7"], [0.501, 1.0, "#60A3B5"], [1.001, 1.5, "#8CB8A4"],   [1.501, 2.0, "#B1CC91"],   [2.001, 3.0, "#D7E37D"],   [3.001, 4.0, "#FAFA64"],   [4.001, 6.0, "#FFD64F"], [6.001, 8.0, "#FCA43F"],   [8.001, 10.0, "#F77A2D"],   [10.001, 12.0, "#F24D1F"],   [12.001, 15.0, "#E81014"],   [0.0, 0.0095, "#FFFFFF00"]].sort(function (a,b) { return a[0] - b[0]; }) },
 
-	// 2 Tohoku Tsunami structure damage data colors
+	// 2 Tohoku-dai Tsunami structure damage data colors
 	{ name: "Tsunami Structure Damage Data", pcks: [[0.237, 8, "#2191CB"], [8.001, 16.0, "#74ABAD"], [16.001, 24, "#ACC993"],   [24.001, 32.0, "#E3EB75"],   [32.001, 40.0, "#FCDE56"],   [40.001, 48.0, "#FCA03D"],   [48.001, 56.0, "#F56325"], [56.001, 64.0, "#E81014"], [0.0, 0.0095, "#FFFFFF00"]].sort(function (a,b) { return a[0] - b[0]; }) },
 
 	// 3 JMA weather radar data
@@ -181,7 +181,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     var nullCountsVals = 0;
     var minmaxCounts3D = [];
     var minmaxCountsVals = [];
+    var minmaxCountsMap = null;
     var curMinmaxCounts = null;
+    
 
     //??? OLD JSON 3D Points data TODO: do something better with these
     var minValueThreshold = 0.1, maxValueThreshold = 0.9, thresholdRange = 0;
@@ -904,7 +906,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				'Geographical Area',
 				'Predefined 3D map setups for a number of regions with Open Street maps and Terrain height maps (as well as distance measurements)',
 				"Geography",
-				{inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ["None", "Kobe", "Tohoku"]},
+				{inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ["None", "Kobe", "Kochi"]},
 				undefined
 			       ));
 
@@ -1258,6 +1260,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    scene.remove(particles);
 		    particles = undefined;
 		}
+
+		if(minmaxCountsMap !== null) { // we may need to redraw the map if we have new data (because the position of the map may then change)
+		    $timeout(function () { enableGeoLocationSupport(); });
+		}
+
 	    }
 
 	    // a 3D cube full of values, for example the space data
@@ -1436,12 +1443,31 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			scaleZ = 1000 / curMinmaxCounts.spanZ;
 		    }
 
+		    if(minmaxCountsMap !== null && droppedDataInfo.latlon) {
+			minX = Math.min(minX, minmaxCountsMap.minX);
+			maxX = Math.max(maxX, minmaxCountsMap.maxX);
+			minY = Math.min(minY, minmaxCountsMap.minY);
+			maxY = Math.max(maxY, minmaxCountsMap.maxY);
+
+			if(maxX > minX) { 
+			    scaleX = 1000 / (maxX - minX);
+			} else {
+			    scaleX = particleDist;
+			}
+			if(maxY > minY) {
+			    scaleY = 1000 / (maxY - minY);
+			} else {
+			    scaleX = particleDist;
+			}
+		    }
+
 		    if(!independentScaling) {
 			scaleX = Math.min(scaleX, scaleY, scaleZ);
 			scaleY = scaleX;
 			scaleZ = scaleX;
 		    }
 
+		    $log.log("MAP Redraw points (3d) using (" + minX + ", " + minY + "), (" + maxX + ", " + maxY + "), " + scaleX + "-" + scaleY + "-" + scaleZ);
 		    // $log.log("3D min [" + minX + "," + minY + "," + minZ + "], max [" + maxX + "," + maxY + "," + maxZ + "], scale [" + scaleX + "," + scaleY + "," + scaleZ + "]");
 		}
 	    } // cubeNo >= 0
@@ -1460,7 +1486,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		var ldb = droppedDataInfo.fun3D(c);
 
-		var spanY = curMinmaxCounts.spanY;
+		if(!keepScene) {
+		    var spanY = maxY - minY;
+		    if(spanY == 0) {
+			spanY = 1;
+		    }
+		}
 
 		for( var i=0 ; i < ldb.length ; i++ ) {
 		    // // if we have z-value data, check if z is selected
@@ -1577,6 +1608,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	    if(!keepScene) {
 
+		var particleDist = 3.0; // TODO: look this over and do something better?
+
+		var scaleX = particleDist;
+		var scaleY = particleDist;
+		var scaleZ = particleDist;
+
 		var minX = curMinmaxCounts.minX;
 		var minY = curMinmaxCounts.minY;
 		var minZ = curMinmaxCounts.minZ;
@@ -1585,11 +1622,6 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		var maxY = curMinmaxCounts.maxY;
 		var maxZ = curMinmaxCounts.maxZ;
 
-		var scaleX = 1;
-		var scaleY = 1;
-		var scaleZ = 1;
-
-		var spanY = curMinmaxCounts.spanY;
 
 		if(maxX > minX) { 
 		    scaleX = 1000 / curMinmaxCounts.spanX;
@@ -1601,16 +1633,40 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    scaleZ = 1000 / curMinmaxCounts.spanZ;
 		}
 
+		if(minmaxCountsMap !== null && droppedDataInfo.latlon) {
+		    minX = Math.min(minX, minmaxCountsMap.minX);
+		    maxX = Math.max(maxX, minmaxCountsMap.maxX);
+		    minY = Math.min(minY, minmaxCountsMap.minY);
+		    maxY = Math.max(maxY, minmaxCountsMap.maxY);
+
+		    if(maxX > minX) { 
+			scaleX = 1000 / (maxX - minX);
+		    } else {
+			scaleX = particleDist;
+		    }
+		    if(maxY > minY) {
+			scaleY = 1000 / (maxY - minY);
+		    } else {
+			scaleX = particleDist;
+		    }
+		}
+
+		var spanY = maxY - minY;
+		if(spanY == 0) {
+		    spanY = 1;
+		}
+
 		if(!independentScaling) {
 		    scaleX = Math.min(scaleX, scaleY, scaleZ);
 		    scaleY = scaleX;
 		    scaleZ = scaleX;
 		}
 
+		$log.log("MAP Redraw points (vals) using (" + minX + ", " + minY + "), (" + maxX + ", " + maxY + "), " + scaleX + "-" + scaleY + "-" + scaleZ);
 		// $log.log("Values min [" + minX + "," + minY + "," + minZ + "], max [" + maxX + "," + maxY + "," + maxZ + "], scale [" + scaleX + "," + scaleY + "," + scaleZ + "]");
 	    }
 
-	    for( var i=0 ; i < droppedDataInfo.sizeX; i++ ) {
+	    for(var i=0 ; i < droppedDataInfo.sizeX; i++ ) {
 
 		var x = droppedDataInfo.funX(i);
 		var y = droppedDataInfo.funY(i);
@@ -2103,6 +2159,18 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // blue sky etc.
     //========================================================================================
     var enableGeoLocationSupport = function(){
+
+	var oldcounts = null;
+	if(minmaxCountsMap !== null) {
+	    oldcounts = {"x1":minmaxCountsMap.minX,
+			 "x2":minmaxCountsMap.maxX,
+			 "y1":minmaxCountsMap.minY,
+			 "y2":minmaxCountsMap.maxY};
+	}
+	var needToRedrawDataToo = false;
+
+	minmaxCountsMap = null; // reset this (possibly unnecessary), and fill it with current values if we still have a map
+
 	if(scene){
 	    if(mapPlane != undefined){
 		light.target.position.set( 0, 0, 0 );
@@ -2131,6 +2199,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			if(coords.max == undefined || coords.min == undefined || coords.max.lat == undefined) { coords = defaultCoord; }
 		    }
 
+		    var geoPosMin = convertLatLngToUtm(coords.min.lat, coords.min.lon);
+		    var geoPosMax = convertLatLngToUtm(coords.max.lat, coords.max.lon);
+		    minmaxCountsMap = {"minX":Math.min(geoPosMin[0], geoPosMax[0]), "maxX":Math.max(geoPosMin[0], geoPosMax[0]),
+				       "minY":Math.min(geoPosMin[1], geoPosMax[1]), "maxY":Math.max(geoPosMin[1], geoPosMax[1])};
+
+
 		    var planeBack = ($scope.gimme("backsideMapEnabled")) ? planeFront : internalFilesPath + '/images/soil.png';
 
 		    var loader = new THREE.TextureLoader();
@@ -2148,7 +2222,79 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					function ( textureBack ) {
 					    var geoPosMin = convertLatLngToUtm(coords.min.lat, coords.min.lon);
 					    var geoPosMax = convertLatLngToUtm(coords.max.lat, coords.max.lon);
-					    var scale = ((1000 / (geoPosMax[0]-geoPosMin[0])) < (1000 / (geoPosMax[1]-geoPosMin[1])) ? (1000 / (geoPosMax[0]-geoPosMin[0])) : (1000 / (geoPosMax[1]-geoPosMin[1])));
+
+					    minmaxCountsMap = {"minX":Math.min(geoPosMin[0], geoPosMax[0]), "maxX":Math.max(geoPosMin[0], geoPosMax[0]),
+							       "minY":Math.min(geoPosMin[1], geoPosMax[1]), "maxY":Math.max(geoPosMin[1], geoPosMax[1])};
+
+ 					    var particleDist = 3.0;// TODO: do something better here
+
+					    var minX = minmaxCountsMap.minX;
+					    var minY = minmaxCountsMap.minY;
+
+					    var maxX = minmaxCountsMap.maxX;
+					    var maxY = minmaxCountsMap.maxY;
+
+					    var scaleX = particleDist;
+					    var scaleY = particleDist;
+					    
+					    if(curMinmaxCounts !== null && droppedDataInfo.latlon) {
+						minX = Math.min(minX, curMinmaxCounts.minX);
+						maxX = Math.max(maxX, curMinmaxCounts.maxX);
+						minY = Math.min(minY, curMinmaxCounts.minY);
+						maxY = Math.max(maxY, curMinmaxCounts.maxY);
+
+						if((minX != curMinmaxCounts.minX && (oldcounts === null || oldcounts.x1 != minX))
+						   || (maxX != curMinmaxCounts.maxX && (oldcounts === null || oldcounts.x2 != maxX))
+						   || (minY != curMinmaxCounts.minY && (oldcounts === null || oldcounts.y1 != minY))
+						   || (maxY != curMinmaxCounts.maxY && (oldcounts === null || oldcounts.y2 != maxY))
+						  ) {
+						    needToRedrawDataToo = true;
+						}
+					    }
+
+					    if(needToRedrawDataToo) {
+						$log.log("Need to redraw data MAP");
+						$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+					    } else {
+						$log.log("Skip redrawing data, they are already fine MAP");
+					    }
+
+					    if(maxX > minX) { 
+						scaleX = 1000 / (maxX - minX);
+					    }
+					    var spanY = 1;
+					    if(maxY > minY) {
+						spanY = maxY - minY;
+						scaleY = 1000 / spanY;
+					    }
+
+					    var scaleZ = scaleX;
+					    if(curMinmaxCounts !== null) { 
+						if(curMinmaxCounts.maxZ > curMinmaxCounts.minZ) {
+						    scaleZ = 1000 / curMinmaxCounts.spanZ;
+						}
+					    }
+
+					    if(!independentScaling) {
+						scaleX = Math.min(scaleX, scaleY, scaleZ);
+						scaleY = scaleX;
+						scaleZ = scaleX;
+					    }
+
+					    $log.log("MAP enableGeo using (" 
+						     + minX 
+						     + ", " 
+						     + minY 
+						     + "), (" 
+						     + maxX 
+						     + ", " 
+						     + maxY 
+						     + "), " 
+						     + scaleX 
+						     + "-" 
+						     + scaleY 
+						     + "-" 
+						     + scaleZ);
 
 					    // Getting the XYZ positions for each corner from real world coordinates
 					    var cld = geoPosMin;											//Corner-Left-Down
@@ -2158,10 +2304,16 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 					    // Creating the geometry vertices, scaled and translated similar to the data
 					    var geometry = new THREE.Geometry();
-					    geometry.vertices.push(new THREE.Vector3((cld[0]-cld[0]) * scale,0,(cru[1]-cld[1]) * scale)); //cld
-					    geometry.vertices.push(new THREE.Vector3((clu[0]-cld[0]) * scale,0,(cru[1]-clu[1]) * scale)); //clu
-					    geometry.vertices.push(new THREE.Vector3((crd[0]-cld[0]) * scale,0,(cru[1]-crd[1]) * scale)); //crd
-					    geometry.vertices.push(new THREE.Vector3((cru[0]-cld[0]) * scale,0,(cru[1]-cru[1]) * scale)); //cru
+					    geometry.vertices.push(new THREE.Vector3((cld[0]-minX) * scaleX,0,(spanY - (cld[1] - minY)) * scaleY)); //cld
+					    geometry.vertices.push(new THREE.Vector3((clu[0]-minX) * scaleX,0,(spanY - (clu[1] - minY)) * scaleY)); //clu
+					    geometry.vertices.push(new THREE.Vector3((crd[0]-minX) * scaleX,0,(spanY - (crd[1] - minY)) * scaleY)); //crd
+					    geometry.vertices.push(new THREE.Vector3((cru[0]-minX) * scaleX,0,(spanY - (cru[1] - minY)) * scaleY)); //cru
+
+
+					    // $log.log("drawing map at pixels " + ((cld[0]-minX) * scaleX) + ", " + ((spanY - (cld[1] - minY)) * scaleY));
+					    // $log.log("drawing map at pixels " + ((clu[0]-minX) * scaleX) + ", " + ((spanY - (clu[1] - minY)) * scaleY));
+					    // $log.log("drawing map at pixels " + ((crd[0]-minX) * scaleX) + ", " + ((spanY - (crd[1] - minY)) * scaleY));
+					    // $log.log("drawing map at pixels " + ((cru[0]-minX) * scaleX) + ", " + ((spanY - (cru[1] - minY)) * scaleY));
 
 					    // Creating the geometry faces and the UV coordinates
 					    geometry.faces.push( new THREE.Face3(2,0,1) );
@@ -2182,7 +2334,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					    }
 
 					    // Creating the materials (using textures) for the geometry
-					    var displacementScale = coords.highestPointMeter * scale * 2; // double it for a more visual effect ...but not reality accuracy
+
+					    // TODO: which scale to use here?? scaleZ is actual meters, so everything will look ridiculously flat when not zooming in
+					    var displacementScale = coords.highestPointMeter * scaleZ * 2; // double it for a more visual effect ...but not reality accuracy
+
 					    var materials = [new THREE.MeshPhongMaterial({map: mapPlaneColorTexture, displacementMap: mapPlaneDisplacementTexture, displacementScale: displacementScale, side: THREE.FrontSide, depthWrite: false, transparent: ($scope.gimme("mapOpacity") < 1), opacity: $scope.gimme("mapOpacity")}), new THREE.MeshPhongMaterial({map: textureBack, side: THREE.BackSide, depthWrite: false, transparent: ($scope.gimme("mapOpacity") < 1), opacity: $scope.gimme("mapOpacity")})];
 
 					    // Creating a mesh using the geometry and materials created above and add it to the scene
@@ -2234,7 +2389,31 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		}
 	    }
 	}
-    };
+
+	if(oldcounts !== null && 
+	   curMinmaxCounts !== null && droppedDataInfo.latlon
+	   && minmaxCountsMap === null) {
+
+	    var minX = Math.min(curMinmaxCounts.minX, oldcounts.x1);
+	    var maxX = Math.max(curMinmaxCounts.maxX, oldcounts.x2);
+	    var minY = Math.min(curMinmaxCounts.minY, oldcounts.y1);
+	    var maxY = Math.max(curMinmaxCounts.maxY, oldcounts.y2);
+	    if(minX != curMinmaxCounts.minX
+	       || maxX != curMinmaxCounts.maxX
+	       || minY != curMinmaxCounts.minY
+	       || maxY != curMinmaxCounts.maxY
+	      ) {
+		needToRedrawDataToo = true;
+	    }
+ 	}
+
+	if(needToRedrawDataToo) {
+	    $log.log("Need to redraw data MAP");
+	    $timeout(function () { displayHourglassBeforeRedrawScene(false); });
+	} else {
+	    $log.log("Skip redrawing data, they are already fine MAP");
+	}
+     };
     //========================================================================================
 
 
