@@ -1,0 +1,8 @@
+{
+    "name": "Video Recorder Webble",
+    "description": "This Webble lets you record a video of all Webble actions as a screen capture of the workspace area. (All webble content cannot be recorded, but many can.)",
+    "keywords": "video record screen capture",
+    "author": "truemrwalker",
+    "image": "images/wbls/videoRecorderWbl.png",
+    "noautogen": false
+}

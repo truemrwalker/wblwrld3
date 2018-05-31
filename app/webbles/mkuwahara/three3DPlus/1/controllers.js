@@ -27,11 +27,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 
     // Basic Webble Properties
-
     var internalFilesPath;
 
     // Webble Menu and Interaction Balls
-    $scope.customMenu = [{itemId: 'clearData', itemTxt: 'Clear Data Slot'}, {itemId: 'toggleInfoVisibility', itemTxt: 'Toggle Info Text Visibility (Showing)'}];
+    $scope.customMenu = [{itemId: 'clearData', itemTxt: 'Clear Data Slot'}, {itemId: 'toggleInfoVisibility', itemTxt: 'Toggle Info Text Visibility (Showing)'}, {itemId: 'vidRec', itemTxt: 'Start Video Recording'}];
     $scope.customInteractionBalls = [{index: 4, name: 'clearData', tooltipTxt: 'Clear Data Slot'}];
 
     // three.js objects
@@ -45,7 +44,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     var positions, colors, sizes, matrixLocations, mapCoordinates, dataValues;  //Point Particle information
 
     // Additional system control objects (3rd party etc)
-    var videoRecorder, isBusyCaptureMovieFrame = false;
+    var videoRecorder, isBusyCaptureMovieFrame = false, recVidEnabled = false;
 
     // Enumeration Definitions
     var CameraInteractionMode = { Fly: 0, Orbit: 1, Trackball: 2 }; //Available types of camera control modes
@@ -60,11 +59,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     // Predefined Slot settings for optimal visualization (based on data type)
     var availablePredefVisualConfig = [
-	{name: "None", slotConfigs: []},
-	{name: "Tsunami", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 10}, {name: "particleMaxSize", value: 30}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 2}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
-	{name: "Space", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 15}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.8}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 18}, {name: "threeDPlusHolder:background-color", value: "#000000"}]},
-	{name: "Clouds", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Cloud_2}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 75}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.5}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 16}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
-	{name: "Space - No Color", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 2}, {name: "particleMaxSize", value: 27}, {name: "particleMinAlpha", value: 1}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 19}, {name: "threeDPlusHolder:background-color", value: "#000000"}]}
+		{name: "None", slotConfigs: []},
+		{name: "Tsunami", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 10}, {name: "particleMaxSize", value: 30}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 2}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
+		{name: "Space", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 15}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.8}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 18}, {name: "threeDPlusHolder:background-color", value: "#000000"}]},
+		{name: "Clouds", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Cloud_2}, {name: "particleMinSize", value: 1}, {name: "particleMaxSize", value: 75}, {name: "particleMinAlpha", value: 0}, {name: "particleMaxAlpha", value: 0.5}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 16}, {name: "threeDPlusHolder:background-color", value: "#94eef8"}]},
+		{name: "Space - No Color", slotConfigs: [{name: "particleAlphaTexture", value: availableTextures.Spark}, {name: "particleMinSize", value: 2}, {name: "particleMaxSize", value: 27}, {name: "particleMinAlpha", value: 1}, {name: "particleMaxAlpha", value: 1}, {name: "ColorMethod", value: colorMethodOptions.ColorKey}, {name: "predefinedColorKey", value: 19}, {name: "threeDPlusHolder:background-color", value: "#000000"}]}
     ];
 
     // Mouse 3D-world Interaction
@@ -89,25 +88,25 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     var colorKey = [ "#73feff", "#38d5ff", "#0880ff", "#73fa79", "#39d142", "#3da642", "#248f01", "#0b4100", "#fffb01", "#fca942", "#f94c01", "#ac1942", "#ab28aa", "#d82da9", "#f985ff"];
     var colorScheme = {
-	"skin":{"text":"#000000","color":"#fff2e6","border":"#663300","gradient":[{"pos":0,"color":"#ffffff"},{"pos":0.75,"color":"#fff2e6"},{"pos":1,"color":"#fff2e6"}]},
-	"selection":{"color":"#ffbf80","border":"#ffa64d","gradient":[{"pos":0,"color":"#ffd9b3"},{"pos":1,"color":"#ffbf80"}]},
-	"groups":{
-	    0:{"color":"#A9A9A9","gradient":[{"pos":0,"color":"#EEEEEE"},{"pos":0.75,"color":"#A9A9A9"}]},
-	    1:{"color":"#0000FF","gradient":[{"pos":0,"color":"#CCCCFF"},{"pos":0.75,"color":"#0000FF"}]},
-	    2:{"color":"#7FFF00","gradient":[{"pos":0,"color":"#E5FFCC"},{"pos":0.75,"color":"#7FFF00"}]},
-	    3:{"color":"#8A2BE2","gradient":[{"pos":0,"color":"#E8D5F9"},{"pos":0.75,"color":"#8A2BE2"}]},
-	    4:{"color":"#FF7F50","gradient":[{"pos":0,"color":"#FFE5DC"},{"pos":0.75,"color":"#FF7F50"}]},
-	    5:{"color":"#DC143C","gradient":[{"pos":0,"color":"#F8D0D8"},{"pos":0.75,"color":"#DC143C"}]},
-	    6:{"color":"#006400","gradient":[{"pos":0,"color":"#CCE0CC"},{"pos":0.75,"color":"#006400"}]},
-	    7:{"color":"#483D8B","gradient":[{"pos":0,"color":"#DAD8E8"},{"pos":0.75,"color":"#483D8B"}]},
-	    8:{"color":"#FF1493","gradient":[{"pos":0,"color":"#FFD0E9"},{"pos":0.75,"color":"#FF1493"}]},
-	    9:{"color":"#1E90FF","gradient":[{"pos":0,"color":"#D2E9FF"},{"pos":0.75,"color":"#1E90FF"}]},
-	    10:{"color":"#FFD700","gradient":[{"pos":0,"color":"#FFF7CC"},{"pos":0.75,"color":"#FFD700"}]},
-	    11:{"color":"#8B4513","gradient":[{"pos":0,"color":"#E8DAD0"},{"pos":0.75,"color":"#8B4513"}]},
-	    12:{"color":"#FFF5EE","gradient":[{"pos":0,"color":"#FFFDFC"},{"pos":0.75,"color":"#FFF5EE"}]},
-	    13:{"color":"#00FFFF","gradient":[{"pos":0,"color":"#CCFFFF"},{"pos":0.75,"color":"#00FFFF"}]},
-	    14:{"color":"#000000","gradient":[{"pos":0,"color":"#CCCCCC"},{"pos":0.75,"color":"#000000"}]}
-	}
+		"skin":{"text":"#000000","color":"#fff2e6","border":"#663300","gradient":[{"pos":0,"color":"#ffffff"},{"pos":0.75,"color":"#fff2e6"},{"pos":1,"color":"#fff2e6"}]},
+		"selection":{"color":"#ffbf80","border":"#ffa64d","gradient":[{"pos":0,"color":"#ffd9b3"},{"pos":1,"color":"#ffbf80"}]},
+		"groups":{
+			0:{"color":"#A9A9A9","gradient":[{"pos":0,"color":"#EEEEEE"},{"pos":0.75,"color":"#A9A9A9"}]},
+			1:{"color":"#0000FF","gradient":[{"pos":0,"color":"#CCCCFF"},{"pos":0.75,"color":"#0000FF"}]},
+			2:{"color":"#7FFF00","gradient":[{"pos":0,"color":"#E5FFCC"},{"pos":0.75,"color":"#7FFF00"}]},
+			3:{"color":"#8A2BE2","gradient":[{"pos":0,"color":"#E8D5F9"},{"pos":0.75,"color":"#8A2BE2"}]},
+			4:{"color":"#FF7F50","gradient":[{"pos":0,"color":"#FFE5DC"},{"pos":0.75,"color":"#FF7F50"}]},
+			5:{"color":"#DC143C","gradient":[{"pos":0,"color":"#F8D0D8"},{"pos":0.75,"color":"#DC143C"}]},
+			6:{"color":"#006400","gradient":[{"pos":0,"color":"#CCE0CC"},{"pos":0.75,"color":"#006400"}]},
+			7:{"color":"#483D8B","gradient":[{"pos":0,"color":"#DAD8E8"},{"pos":0.75,"color":"#483D8B"}]},
+			8:{"color":"#FF1493","gradient":[{"pos":0,"color":"#FFD0E9"},{"pos":0.75,"color":"#FF1493"}]},
+			9:{"color":"#1E90FF","gradient":[{"pos":0,"color":"#D2E9FF"},{"pos":0.75,"color":"#1E90FF"}]},
+			10:{"color":"#FFD700","gradient":[{"pos":0,"color":"#FFF7CC"},{"pos":0.75,"color":"#FFD700"}]},
+			11:{"color":"#8B4513","gradient":[{"pos":0,"color":"#E8DAD0"},{"pos":0.75,"color":"#8B4513"}]},
+			12:{"color":"#FFF5EE","gradient":[{"pos":0,"color":"#FFFDFC"},{"pos":0.75,"color":"#FFF5EE"}]},
+			13:{"color":"#00FFFF","gradient":[{"pos":0,"color":"#CCFFFF"},{"pos":0.75,"color":"#00FFFF"}]},
+			14:{"color":"#000000","gradient":[{"pos":0,"color":"#CCCCCC"},{"pos":0.75,"color":"#000000"}]}
+		}
     };
 
     var groupColors = {}; // cache the colors above
@@ -183,7 +182,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     var minmaxCountsVals = [];
     var minmaxCountsMap = null;
     var curMinmaxCounts = null;
-    
+
 
     //??? OLD JSON 3D Points data TODO: do something better with these
     var minValueThreshold = 0.1, maxValueThreshold = 0.9, thresholdRange = 0;
@@ -211,25 +210,25 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // Mouse move event handler for within the 3D view
     //===================================================================================
     function on3DMouseMove( event ) {
-	event.preventDefault();
+		event.preventDefault();
 
-	// Enable controller again if it has been turned off
-	if((!$scope.ctrlKeyIsDown || !$scope.altKeyIsDown) && !controls.enabled){ controls.enabled = true; }
+		// Enable controller again if it has been turned off
+		if((!$scope.ctrlKeyIsDown || !$scope.altKeyIsDown) && !controls.enabled){ controls.enabled = true; }
 
-	if(selelectionType == selectTypes.SquareArea){//$scope.shiftKeyIsDown
-	    selectionAreaData[1] = [event.offsetX, event.offsetY];
-	    selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
-	    selectCtx.beginPath();
-	    selectCtx.rect(selectionAreaData[0][0], selectionAreaData[0][1], (selectionAreaData[1][0] - selectionAreaData[0][0]), (selectionAreaData[1][1] - selectionAreaData[0][1]));
-	    selectCtx.stroke();
-	}
-	else if(selelectionType == selectTypes.FreehandArea){//$scope.altKeyIsDown
-	    selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
-	    var point = [event.offsetX, event.offsetY];
-	    selectionAreaData.push(point);
-	    selectCtx.lineTo(point[0], point[1] );
-	    selectCtx.stroke();
-	}
+		if(selelectionType == selectTypes.SquareArea){//$scope.shiftKeyIsDown
+			selectionAreaData[1] = [event.offsetX, event.offsetY];
+			selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
+			selectCtx.beginPath();
+			selectCtx.rect(selectionAreaData[0][0], selectionAreaData[0][1], (selectionAreaData[1][0] - selectionAreaData[0][0]), (selectionAreaData[1][1] - selectionAreaData[0][1]));
+			selectCtx.stroke();
+		}
+		else if(selelectionType == selectTypes.FreehandArea){//$scope.altKeyIsDown
+			selectCtx.clearRect(0,0,selectCanvas[0].width,selectCanvas[0].height);
+			var point = [event.offsetX, event.offsetY];
+			selectionAreaData.push(point);
+			selectCtx.lineTo(point[0], point[1] );
+			selectCtx.stroke();
+		}
     }
     //===================================================================================
 
@@ -240,35 +239,35 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // click position is stored.
     //===================================================================================
     function on3DMouseClick( event ) {
-	if($scope.ctrlKeyIsDown){
-	    selelectionType = selectTypes.OneClick;
-	    if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly){ event.stopImmediatePropagation(); }
+		if($scope.ctrlKeyIsDown){
+			selelectionType = selectTypes.OneClick;
+			if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly){ event.stopImmediatePropagation(); }
 
-	    mouse_click.x =  ( event.offsetX / renderer.domElement.width ) * 2 - 1;
-	    mouse_click.y =  - ( event.offsetY / renderer.domElement.height ) * 2 + 1;
+			mouse_click.x =  ( event.offsetX / renderer.domElement.width ) * 2 - 1;
+			mouse_click.y =  - ( event.offsetY / renderer.domElement.height ) * 2 + 1;
 
-	    selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+			selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
 
-	    if($scope.shiftKeyIsDown || $scope.altKeyIsDown){
-		controls.enabled = false;
-		selectCtx.strokeStyle = getColorContrast();
-		selectCtx.setLineDash([6]);
-		selectCtx.lineWidth = 3;
-		selectCtx.globalAlpha=0.5
+			if($scope.shiftKeyIsDown || $scope.altKeyIsDown){
+			controls.enabled = false;
+			selectCtx.strokeStyle = getColorContrast();
+			selectCtx.setLineDash([6]);
+			selectCtx.lineWidth = 3;
+			selectCtx.globalAlpha=0.5
 
-		if($scope.shiftKeyIsDown){
-		    selelectionType = selectTypes.SquareArea;
-		    selectionAreaData = [[event.offsetX, event.offsetY], [event.offsetX, event.offsetY]];
+			if($scope.shiftKeyIsDown){
+				selelectionType = selectTypes.SquareArea;
+				selectionAreaData = [[event.offsetX, event.offsetY], [event.offsetX, event.offsetY]];
+			}
+
+			if($scope.altKeyIsDown){
+				selelectionType = selectTypes.FreehandArea;
+				selectCtx.beginPath();
+				selectCtx.moveTo(event.offsetX, event.offsetY);
+				selectionAreaData = [[event.offsetX, event.offsetY]];
+			}
+			}
 		}
-
-		if($scope.altKeyIsDown){
-		    selelectionType = selectTypes.FreehandArea;
-		    selectCtx.beginPath();
-		    selectCtx.moveTo(event.offsetX, event.offsetY);
-		    selectionAreaData = [[event.offsetX, event.offsetY]];
-		}
-	    }
-	}
     }
     //===================================================================================
 
@@ -276,17 +275,17 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // Mouse Up event handler for within the 3D view
     //===================================================================================
     function on3DMouseUp( event ) {
-	if(selelectionType != selectTypes.None){
-	    selectCtx.closePath();
+		if(selelectionType != selectTypes.None){
+			selectCtx.closePath();
 
-	    if(particles){
-		displayHourglassBeforeUpdateSelection();
-	    }
-	    else{
-		selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
-		selelectionType = selectTypes.None;
-	    }
-    	}
+			if(particles){
+				displayHourglassBeforeUpdateSelection();
+			}
+			else{
+				selectCtx.clearRect(0, 0, selectCanvas[0].width, selectCanvas[0].height);
+				selelectionType = selectTypes.None;
+			}
+		}
     };
     //===================================================================================
 
@@ -295,87 +294,87 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // When data is dropped onto the 3D webble, this method handles what to do.
     //========================================================================================
     function dataDropped(dataSourceInfoStr, targetField) {
-	try {
-    	    var dataSourceInfo = JSON.parse(dataSourceInfoStr); // data arrives in string format, make it an object
+		try {
+				var dataSourceInfo = JSON.parse(dataSourceInfoStr); // data arrives in string format, make it an object
 
-    	    if(dataDropTypeCheck(dataSourceInfo.type, targetField.type)) {
+				if(dataDropTypeCheck(dataSourceInfo.type, targetField.type)) {
 
-		var srcWebble = $scope.getWebbleByInstanceId(dataSourceInfo.webbleID);
-		
-    		var accessorFunctionList = srcWebble.scope().gimme(dataSourceInfo.slotName);
-    		var accessorFunctions = accessorFunctionList[dataSourceInfo.fieldIdx];
-		
-    		var displayNameS = dataSourceInfo.sourceName;
-    		var displayNameF = dataSourceInfo.fieldName;
+			var srcWebble = $scope.getWebbleByInstanceId(dataSourceInfo.webbleID);
 
-    		var somethingChanged = false;
+				var accessorFunctionList = srcWebble.scope().gimme(dataSourceInfo.slotName);
+				var accessorFunctions = accessorFunctionList[dataSourceInfo.fieldIdx];
 
-    		var newSrc = true;
-    		var mapSrcIdx = 0;
-    		for(var i = 0; i < droppedDataMappings.length; i++) {
-    		    if(droppedDataMappings[i].srcID == dataSourceInfo.webbleID) {
-    			newSrc = false;
-    			mapSrcIdx = i;
-    			break;
-    		    }
-    		}
-    		if(newSrc) {
-    		    mapSrcIdx = droppedDataMappings.length;
-    		    droppedDataMappings.push({'srcID':dataSourceInfo.webbleID, 'map':[], 'active':false, 'clean':true, 'slotName':dataSourceInfo.slotName});
-    		    somethingChanged = true;
-    		}
+				var displayNameS = dataSourceInfo.sourceName;
+				var displayNameF = dataSourceInfo.fieldName;
 
-    		var found = false;
-    		for(var i = 0; i < droppedDataMappings[mapSrcIdx].map.length; i++) {
-    		    if(droppedDataMappings[mapSrcIdx].map[i].name == targetField.name) { // already had something mapped here
-    			if(droppedDataMappings[mapSrcIdx].map[i].srcIdx == dataSourceInfo.fieldIdx) {
-    			    // same field dropped in same place again, nothing to do
-    			} else {
-    			    // inform previous source that we are no longer using the data
-    			    if(droppedDataMappings[mapSrcIdx].hasOwnProperty("newSelections")
-			       && droppedDataMappings[mapSrcIdx].newSelections !== null) {
-    				droppedDataMappings[mapSrcIdx].newSelections(myInstanceId, null, false); // let them know we are no longer actively visualizing (which we maybe were before)
-    			    }
-			    
-    			    var onlyOne = true;
-    			    for(var ii = 0; ii < droppedDataMappings[mapSrcIdx].map.length; ii++) {
-    				if(ii != i && droppedDataMappings[mapSrcIdx].map[ii].srcIdx == droppedDataMappings[mapSrcIdx].map[i].srcIdx) {
-    				    // same data field is present on a different axis or similar
-    				    onlyOne = false;
-    				}
-    			    } 
-    			    if(onlyOne) {
-    				//  if this was the only field listening to updates, stop listening to updates
-				if(droppedDataMappings[mapSrcIdx].map[i].hasOwnProperty("listen") 
-				   && droppedDataMappings[mapSrcIdx].map[i].listen !== null) {
-    				    droppedDataMappings[mapSrcIdx].map[i].listen(myInstanceId, false, null, null, []);
+				var somethingChanged = false;
+
+				var newSrc = true;
+				var mapSrcIdx = 0;
+				for(var i = 0; i < droppedDataMappings.length; i++) {
+					if(droppedDataMappings[i].srcID == dataSourceInfo.webbleID) {
+					newSrc = false;
+					mapSrcIdx = i;
+					break;
+					}
 				}
-    			    }
+				if(newSrc) {
+					mapSrcIdx = droppedDataMappings.length;
+					droppedDataMappings.push({'srcID':dataSourceInfo.webbleID, 'map':[], 'active':false, 'clean':true, 'slotName':dataSourceInfo.slotName});
+					somethingChanged = true;
+				}
 
-    			    // replace old mapping
-    			    droppedDataMappings[mapSrcIdx].map[i].srcIdx = dataSourceInfo.fieldIdx;
-    			    droppedDataMappings[mapSrcIdx].clean = false;
-    			    somethingChanged = true;
-    			}
-    			found = true;
-    			break;
-    		    }
-    		}
+				var found = false;
+				for(var i = 0; i < droppedDataMappings[mapSrcIdx].map.length; i++) {
+					if(droppedDataMappings[mapSrcIdx].map[i].name == targetField.name) { // already had something mapped here
+					if(droppedDataMappings[mapSrcIdx].map[i].srcIdx == dataSourceInfo.fieldIdx) {
+						// same field dropped in same place again, nothing to do
+					} else {
+						// inform previous source that we are no longer using the data
+						if(droppedDataMappings[mapSrcIdx].hasOwnProperty("newSelections")
+					   && droppedDataMappings[mapSrcIdx].newSelections !== null) {
+						droppedDataMappings[mapSrcIdx].newSelections(myInstanceId, null, false); // let them know we are no longer actively visualizing (which we maybe were before)
+						}
 
-    		if(!found) {
-    		    droppedDataMappings[mapSrcIdx].map.push({'srcIdx':dataSourceInfo.fieldIdx, 'name':targetField.name, 'listen':null});
-    		    droppedDataMappings[mapSrcIdx].clean = false;
-    		    somethingChanged = true;
-    		}
+						var onlyOne = true;
+						for(var ii = 0; ii < droppedDataMappings[mapSrcIdx].map.length; ii++) {
+						if(ii != i && droppedDataMappings[mapSrcIdx].map[ii].srcIdx == droppedDataMappings[mapSrcIdx].map[i].srcIdx) {
+							// same data field is present on a different axis or similar
+							onlyOne = false;
+						}
+						}
+						if(onlyOne) {
+						//  if this was the only field listening to updates, stop listening to updates
+					if(droppedDataMappings[mapSrcIdx].map[i].hasOwnProperty("listen")
+					   && droppedDataMappings[mapSrcIdx].map[i].listen !== null) {
+							droppedDataMappings[mapSrcIdx].map[i].listen(myInstanceId, false, null, null, []);
+					}
+						}
 
-    		if(somethingChanged) {
-    		    checkMappingsAndParseData();
-    		}
+						// replace old mapping
+						droppedDataMappings[mapSrcIdx].map[i].srcIdx = dataSourceInfo.fieldIdx;
+						droppedDataMappings[mapSrcIdx].clean = false;
+						somethingChanged = true;
+					}
+					found = true;
+					break;
+					}
+				}
 
-	    }
-	} catch(e) {
-	    // probably not something for us, ignore this drop
-	}
+				if(!found) {
+					droppedDataMappings[mapSrcIdx].map.push({'srcIdx':dataSourceInfo.fieldIdx, 'name':targetField.name, 'listen':null});
+					droppedDataMappings[mapSrcIdx].clean = false;
+					somethingChanged = true;
+				}
+
+				if(somethingChanged) {
+					checkMappingsAndParseData();
+				}
+
+			}
+		} catch(e) {
+			// probably not something for us, ignore this drop
+		}
     }
     //========================================================================================
 
@@ -384,11 +383,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // reacting to changes in other components (new data forcing a redraw)
     //========================================================================================
     function redrawOnNewData(seqNo) {
-	$log.log("redrawOnNewData " + seqNo);
-	if(lastSeenDataSeqNo != seqNo) {
-	    lastSeenDataSeqNo = seqNo;
-	    checkMappingsAndParseData();
-	}
+		$log.log("redrawOnNewData " + seqNo);
+		if(lastSeenDataSeqNo != seqNo) {
+			lastSeenDataSeqNo = seqNo;
+			checkMappingsAndParseData();
+		}
     }
     //========================================================================================
 
@@ -398,11 +397,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // reacting to changes in other components (new selection forcing a redraw)
     //========================================================================================
     function redrawOnNewSelections(seqNo) {
-	$log.log("redrawOnNewSelections " + seqNo);
-	if(lastSeenSelectionSeqNo != seqNo) {
-	    lastSeenSelectionSeqNo = seqNo;
-	    $timeout(function () { displayHourglassBeforeRedrawScene(true); });
-	}
+		$log.log("redrawOnNewSelections " + seqNo);
+		if(lastSeenSelectionSeqNo != seqNo) {
+			lastSeenSelectionSeqNo = seqNo;
+			$timeout(function () { displayHourglassBeforeRedrawScene(true); });
+		}
     }
     //========================================================================================
 
@@ -413,9 +412,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // calling the calculation heavy Redraw function.
     //===================================================================================
     function displayHourglassBeforeRedrawScene(keepScene) {
-	if(!$scope.waiting()){ $scope.waiting(true); info[0].innerHTML = "Loading Data Points..."; }
-	if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	redrawScene(keepScene); }, 100); }
-	else{ $timeout(function () { displayHourglassBeforeRedrawScene(keepScene); }, 10); }
+		if(!$scope.waiting()){ $scope.waiting(true); info[0].innerHTML = "Loading Data Points..."; }
+		if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	redrawScene(keepScene); }, 100); }
+		else{ $timeout(function () { displayHourglassBeforeRedrawScene(keepScene); }, 10); }
     }
     //===================================================================================
 
@@ -426,9 +425,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // calling the calculation heavy Redraw function.
     //===================================================================================
     function displayHourglassBeforeUpdateSelection() {
-	if(!$scope.waiting()){ $scope.waiting(true); info[0].innerHTML = "Updating Data Point Selections..."; }
-	if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	makeSelection(); }, 100); }
-	else{ $timeout(function () { displayHourglassBeforeUpdateSelection(); }, 10); }
+		if(!$scope.waiting()){ $scope.waiting(true); info[0].innerHTML = "Updating Data Point Selections..."; }
+		if($scope.waiting() && info[0].innerHTML != ""){ $timeout(function () {	makeSelection(); }, 100); }
+		else{ $timeout(function () { displayHourglassBeforeUpdateSelection(); }, 10); }
     };
     //===================================================================================
 
@@ -442,684 +441,688 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	// Assigning jquery access elements and other access parameters
         threeDPlusContainer = $scope.theView.parent().find("#threeDPlusContainer");
         threeDPlusHolder = $scope.theView.parent().find("#threeDPlusHolder");
-	selectCanvas = $scope.theView.parent().find('#theSelectCanvas');
-	selectCtx = selectCanvas[0].getContext('2d');
+		selectCanvas = $scope.theView.parent().find('#theSelectCanvas');
+		selectCtx = selectCanvas[0].getContext('2d');
         internalFilesPath = $scope.getTemplatePath($scope.theWblMetadata['templateid'], $scope.theWblMetadata['templaterevision']);
 
-	$.ajax({url: internalFilesPath + '/images/GeoData/Coordinates.json',
-		success: function(data){
-		    if(data["Coordinates"]){
-			predefCoords = data["Coordinates"];
-		    }
-		},
-		error: function(){
-		    $log.error("Failed loading predefined map coordinates file, please use custom coordinates slot instead");
-		}
-	       });
-
-        // Three pre defines
-	centerPoint = new THREE.Vector3(0,0,0);
-
-	// Shortcut internal data cache for optimizations
-	myInstanceId = $scope.getInstanceId();
-
-	// Info text divs (array of three elements in the top left and right corner and the bottom)
-	info = createInfoElements();
-
-	// Webble Event Listener: Slot Change
-	$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-	    // Resize 3D Viewport if Webble size change
-	    if(eventData.slotName == 'threeDPlusHolder:width' || eventData.slotName == 'threeDPlusHolder:height'){
-                if(renderer && $scope.gimme('threeDPlusHolder:width') != null && $scope.gimme('threeDPlusHolder:height') != null){
-                    renderer.setSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
-                    if(controls !== undefined && $scope.gimme("cameraControllerMode") == CameraInteractionMode.Trackball){ controls.handleResize(); }
-		    updateDropZonesSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
-                }
-	    }
-
-	    if(eventData.slotName == 'threeDPlusHolder:background-color'){
-	    	$timeout(function () {
-	    	    if($scope.gimme("localGlobalColorEqual")){ colorScheme.skin.color = eventData.slotValue; }
-		    if(scene){ setBackgroundColor(); }
-	    	}, 100);
-	    }
-
-	    if(eventData.slotName == 'threeDPlusContainer:background-color'){
-	    	if(scene){ colorScheme.skin.border = eventData.slotValue; }
-	    }
-
-	    else if(eventData.slotName == 'AxesEnabled'){
-		if(eventData.slotValue && axes == undefined || !eventData.slotValue && axes !== undefined){
-		    executeAxisVisbilityState();
-		}
-	    }
-
-	    else if(eventData.slotName == "ScaleAxesIndependently") {
-		if(eventData.slotValue != independentScaling) {
-		    independentScaling = eventData.slotValue;
-		    $timeout(function () { displayHourglassBeforeRedrawScene(false); });
-		}
-	    }
-
-	    else if(eventData.slotName == 'gridEnabled'){
-		if(eventData.slotValue && gridsContainer == undefined || !eventData.slotValue && gridsContainer !== undefined){
-		    executeGridVisbilityState();
-		}
-	    }
-
-	    else if(eventData.slotName == 'gridProperties'){
-		if($scope.gimme("gridEnabled") && gridsContainer !== undefined){
-		    scene.remove(gridsContainer);
-		    gridsContainer = undefined;
-		    executeGridVisbilityState();
-		}
-	    }
-
-	    else if(eventData.slotName == 'predefinedColorKey'){
-	    	if(eventData.slotValue > 0){
-		    $scope.set("ColorKey", predefinedColorKeySets[eventData.slotValue - 1].pcks);
-		}
-	    }
-
-	    else if(eventData.slotName == "ColorKey") {
-		colorKey = eventData.slotValue;
-		if(typeof colorKey[0] != 'string' && colorKey[0].length > 1) { // colors and limits
-		    colorKey.sort(function (a,b) { return a[0] - b[0]; });
-		}
-
-		if(colorMethod == colorMethodOptions.ColorKey) {
-		    for(var src = 0; src < droppedDataMappings.length; src++) {
-			if(droppedDataMappings[src].active) {
-			    $timeout(function () { displayHourglassBeforeRedrawScene(false); });
-			    break;
-			}
-		    }
-		}
-
-		var isSame = -1;
-		for(var i = 0; i < predefinedColorKeySets.length; i++){
-		    if(JSON.stringify(predefinedColorKeySets[i].pcks) == JSON.stringify(colorKey)){
-			isSame = i;
-			break;
-		    }
-		}
-		var pck = $scope.gimme("predefinedColorKey");
-		if(isSame == -1 && pck != 0){ $scope.set("predefinedColorKey", 0); }
-		else if(isSame > -1 && isSame != (pck - 1)){ $scope.getSlot("predefinedColorKey").setValue((isSame + 1)); }
-	    }
-
-	    else if(eventData.slotName == "ColorMethod") {
-		var newCM = eventData.slotValue;
-		if(newCM != colorMethod) {
-		    colorMethod = newCM;
-		    for(var src = 0; src < droppedDataMappings.length; src++) {
-			if(droppedDataMappings[src].active) {
-			    $timeout(function () { displayHourglassBeforeRedrawScene(false); });
-			    break;
-			}
-		    }
-		}
-	    }
-
-	    else if(eventData.slotName == "ColorScheme") {
-		colorScheme = eventData.slotValue;
-		buildColorCache();
-		$scope.getSlot("threeDPlusContainer:background-color").setValue(colorScheme.skin.border);
-		if($scope.gimme("localGlobalColorEqual")){ $scope.getSlot("threeDPlusHolder:background-color").setValue(colorScheme.skin.color); }
-		$timeout(function () { displayHourglassBeforeRedrawScene(false); });
-	    }
-
-	    else if(eventData.slotName == "localGlobalColorEqual") {
-		if(eventData.slotValue){ $scope.set("threeDPlusHolder:background-color", colorScheme.skin.color); }
-	    }
-
-	    else if(eventData.slotName == "predefVisualConfig") {
-		for(var i = 0; i < availablePredefVisualConfig[eventData.slotValue].slotConfigs.length; i++){
-		    $scope.set(availablePredefVisualConfig[eventData.slotValue].slotConfigs[i].name, availablePredefVisualConfig[eventData.slotValue].slotConfigs[i].value);
-		    $scope.getSlot(eventData.slotName).setValue(0);
-		}
-	    }
-
-	    else if(eventData.slotName == 'particleAlphaTexture' || eventData.slotName == 'PixelColorBlending'){
-		if(particles){
-		    particles.material = createShaderMaterial();
-		}
-	    }
-
-	    else if(eventData.slotName == 'particleMinSize' || eventData.slotName == 'particleMaxSize'){
-		if(!isNaN(eventData.slotValue)){
-		    if(particles){
-			setParticleAttributes(particles.geometry.attributes.dataValue.array, [], particles.geometry.attributes.size.array);
-			particles.geometry.attributes.size.needsUpdate = true;
-		    }
-		}
-		else{
-		    $scope.set(eventData.slotName, (eventData.slotName == 'particleMinSize' ? 0.1 : 3.0));
-		}
-	    }
-
-	    else if(eventData.slotName == 'particleMinAlpha' || eventData.slotName == 'particleMaxAlpha'){
-		if(!isNaN(eventData.slotValue)){
-		    if(particles){
-			setParticleAttributes(particles.geometry.attributes.dataValue.array, particles.geometry.attributes.customColor.array, []);
-			particles.geometry.attributes.customColor.needsUpdate = true;
-		    }
-		}
-		else{
-		    $scope.set(eventData.slotName, (eventData.slotName == 'particleMinAlpha' ? 0.0 : 1.0));
-		}
-	    }
-
-	    else if(eventData.slotName == "particleAttributesDistributionType" || eventData.slotName == "particleAttributesValueAffect") {
-		$timeout(function () { displayHourglassBeforeRedrawScene(false); });
-	    }
-
-	    else if(eventData.slotName == 'preDefinedGeoArea'){
-	    	if($scope.gimme('customGeoMapImage') != null && $scope.gimme('customHeightMapImage') != null){
-		    if(eventData.slotValue != "None"){
-			$scope.getSlot('customGeoMapImage').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
-			$scope.getSlot('customHeightMapImage').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
-		    }
-		    else{
-			$scope.getSlot('customGeoMapImage').setDisabledSetting(Enum.SlotDisablingState.None);
-			$scope.getSlot('customHeightMapImage').setDisabledSetting(Enum.SlotDisablingState.None);
-		    }
-		    $timeout(function () { enableGeoLocationSupport(); })
-		}
-	    }
-
-	    else if(eventData.slotName == 'backsideMapEnabled' || eventData.slotName == 'customGeoMapImage' || eventData.slotName == 'customHeightMapImage' || eventData.slotName == 'heightMapStrength' || eventData.slotName == 'mapOpacity'){
-		$timeout(function () { enableGeoLocationSupport(); })
-	    }
-
-	    else if(eventData.slotName == 'cameraControllerMode'){
-	    	if(renderer){
-		    setCameraControls();
-		}
-	    }
-
-	    else if(eventData.slotName == 'objectTargetEnabled'){
-		if(controls != undefined){
-		    var tPoint = new THREE.Vector3(0,0,0);
-		    if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && eventData.slotValue == true){
-			tPoint = centerPoint;
-		    }
-		    if(controls.target){ controls.target = tPoint; }
-		    camera.lookAt(tPoint);
-		}
-	    }
-
-	    else if(eventData.slotName == 'autoOrbit'){
-		if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && controls != undefined){
-		    controls.autoRotate = eventData.slotValue;
-		}
-	    }
-	    
-	    else if(eventData.slotName == 'SelectAll'){
-		if(eventData.slotValue) {
-		    $scope.selectAll();
-		    $scope.set("SelectAll",false);
-		}
-	    }
-
-    	    else if(eventData.slotName == 'MultipleSelectionsDifferentGroups') {
-    		updateLocalSelections(false);
-	    }
-	    
-	    else if(eventData.slotName == 'ClearData') {
-		if(eventData.slotValue) {
-		    $scope.clearData();
-		    $scope.set("ClearData",false);
-		}
-	    }
-
-	});
-
-
-	// Webble Event Listeners: Was Pasted
-	$scope.registerWWEventListener(Enum.availableWWEvents.pasted, function(eventData){
-	    // Fix so that Mouse interaction in child works as expected
-	    $scope.getParent().scope().theView.parent().draggable('option', 'cancel', '#threeDPlusHolder');
-	});
-
-
-	// Webble Event Listeners: Key Down
-	$scope.registerWWEventListener(Enum.availableWWEvents.keyDown, function(eventData){
-	    if(eventData.key.released){
-		if(eventData.key.code == 107){ //+
-		    if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly && controls.movementSpeed){
-			controls.movementSpeed += 10; controls.rollSpeed = controls.movementSpeed / 100;
-			info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera)";
-		    }
-		    else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && controls.zoomSpeed){
-			if($scope.shiftKeyIsDown){ controls.zoomSpeed += 10; }
-			else{ controls.zoomSpeed += 1; }
-			info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)";
-		    }
-		    else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Trackball && controls.zoomSpeed){
-			if($scope.shiftKeyIsDown){ controls.zoomSpeed += 10; controls.rotateSpeed += 10; controls.panSpeed += 10; }
-			else{ controls.zoomSpeed += 1; controls.rotateSpeed += 1; controls.panSpeed += 1; }
-			info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)";
-		    }
-		}
-		else if(eventData.key.code == 109){ //-
-		    if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly && controls.movementSpeed && controls.movementSpeed > 10){
-			controls.movementSpeed -= 10; controls.rollSpeed = controls.movementSpeed / 100;
-			info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera)";
-		    }
-		    else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && controls.zoomSpeed){
-			if($scope.shiftKeyIsDown && controls.zoomSpeed > 10){ controls.zoomSpeed -= 10; }
-			else if(controls.zoomSpeed > 1){ controls.zoomSpeed -= 1; }
-			info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)"
-		    }
-		    else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Trackball && controls.zoomSpeed){
-			if($scope.shiftKeyIsDown && controls.zoomSpeed > 10){ controls.zoomSpeed -= 10; controls.rotateSpeed -= 10; controls.panSpeed -= 10; }
-			else if(controls.zoomSpeed > 1){ controls.zoomSpeed -= 1; controls.rotateSpeed -= 1; controls.panSpeed -= 1; }
-			info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)";
-		    }
-		}
-		else if(eventData.key.code == 110 && camera && camPosOrigin){
-		    var ccm = $scope.gimme("cameraControllerMode");
-		    if(ccm == CameraInteractionMode.Orbit || ccm == CameraInteractionMode.Trackball){ controls.reset() }
-		    camera.position.set(camPosOrigin.x, camPosOrigin.y, camPosOrigin.z);
-
-		    if($scope.gimme("objectTargetEnabled")){
-			camera.lookAt(centerPoint);
-			if(controls.target){ controls.target = centerPoint; }
-		    }
-		    else{
-			camera.lookAt(new THREE.Vector3(0, 0, 0));
-			if(controls.target){ controls.target = new THREE.Vector3(0, 0, 0); }
-		    }
-		}
-	    }
-	});
-
-
-	// SLOTS
-	//=======
-
-	//*** Global Slots
-	$scope.addSlot(new Slot('AxesEnabled',
-				true,
-				'Axes Enabled',
-				'Shows or hides X, Y and Z axes in the 3D space',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('ScaleAxesIndependently',
-				independentScaling,
-				"Scale Axes Independently",
-				'If true, the scales of each axis will be set independently, otherwise they will use the same scaling (i.e. set this to false if the data on each axis has the same measuring unit, for example distances in meteres).',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	//???
-	$scope.addSlot(new Slot('gridEnabled',
-				false,
-				'Grid Enabled',
-				'Shows or hides X, Y and Z Grids in the 3D space',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('gridProperties',
-				{
-				    dimensions: { w:2405, d:1000, h:800 },
-				    colors: { xw: "red", yh: "green", zd: "blue", globalTransparency: 0.4 },
-				    labels: {
-					x: ['', "\'14","\'13","\'12","\'11","\'10","\'09","\'08","\'07","\'06","\'05"],
-					y: ["2%", "4%", "6%", "8%"],
-					z: ["1-month","3-month","6-month","1-year","2-year","3-year","5-year","7-year","10-year", "20-year","30-year"]
-				    },
-				    centerPointOrigoOffset: {
-					x: 0,
-					y: 0,
-					z: 0
-				    }
-				},
-				'Grid Properties',
-				'Various properties that constitute the grid, such as dimensions, colors and labels',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('cameraControllerMode',
-				CameraInteractionMode.Orbit,
-				"Camera Controller Mode",
-				'The type of camera controller to be used for moving around and look at the data',
-				$scope.theWblMetadata['templateid'],
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Fly", "Orbit", "Trackball"]},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('objectTargetEnabled',
-				true,
-				'Orbit Data Enabled',
-				'(FOR ORBIT CONTROL ONLY) If enabled the Orbit control will spin around the center of the current loaded data, otherwise around the center of the world (0,0,0)',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('autoOrbit',
-				false,
-				'Auto Orbit',
-				'(FOR ORBIT CONTROL ONLY) If enabled the camera will automatically orbit around the orbit center, otherwise manual orbit only',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('predefVisualConfig',
-				0,
-				'Predefined Visual Configuration',
-				'Sets multiple slots to its optimal value to best visualize certain types of data',
-				$scope.theWblMetadata['templateid'],
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: [availablePredefVisualConfig[0].name, availablePredefVisualConfig[1].name, availablePredefVisualConfig[2].name, availablePredefVisualConfig[3].name, availablePredefVisualConfig[4].name]},
-				undefined
-			       ));
-
-	//*** Particle Properties (base values)
-	$scope.addSlot(new Slot('particleAlphaTexture',
-				availableTextures.Spark,
-				'Particle Alpha Texture',
-				'A texture for each data point',
-				"Particle Properties",
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["None", "Spark", "Fading Circle", "Cloud 1", "Cloud 2", "Smoke"]},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('PixelColorBlending',
-				pixelColorBlending.Normal,
-				'Pixel Color Blending',
-				'How pixels on top of each other should blend',
-				"Particle Properties",
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["No Blending", "Normal", "Additive", "Subtractive", "Multiply"]},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('particleMinSize',
-				10,
-				'Particle Minimum Size',
-				'The minimum size of an individual particle, as modified by data values',
-				"Particle Properties",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('particleMaxSize',
-				30,
-				'Particle Maximum Size',
-				'The maximum size of an individual particle, as modified by data values',
-				"Particle Properties",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('particleMinAlpha',
-				0.0,
-				'Particle Minimum Opacity',
-				'The minimum opacity of an individual particle, as modified by data values',
-				"Particle Properties",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('particleMaxAlpha',
-				1.0,
-				'Particle Maximum Opacity',
-				'The maximum opacity of an individual particle, as modified by data values',
-				"Particle Properties",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('particleAttributesDistributionType',
-				distributionTypes.Linear,
-				'Data Distribution Type',
-				'Type of distribution for applying attribute (size, color, alpha etc) differences based on data values',
-				"Particle Properties",
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Linear", "Logarithmic"]},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('particleAttributesValueAffect',
-				valueAffectAttributes.Both,
-				'Data Value Attribute Affect',
-				'What attributes of the particle points that are being affected by the data value',
-				"Particle Properties",
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["None", "Size", "Opacity", "Both"]},
-				undefined
-			       ));
-
-
-	//*** Geographic map display Attributes
-	$scope.addSlot(new Slot('preDefinedGeoArea',
-				"None",
-				'Geographical Area',
-				'Predefined 3D map setups for a number of regions with Open Street maps and Terrain height maps (as well as distance measurements)',
-				"Geography",
-				{inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ["None", "Kobe", "Kochi"]},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('customGeoMapImage',
-				"",
-				'Geo Map Image Link',
-				'Link to a custom Geo Map image, if the provided areas is not enough',
-				"Geography",
-				{inputType: Enum.aopInputTypes.ImagePick},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('customHeightMapImage',
-				"",
-				'Height Map Image Link',
-				'Link to a custom Height Map image, if the provided areas is not enough',
-				"Geography",
-				{inputType: Enum.aopInputTypes.ImagePick},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('customMinMaxCoordinates',
-				defaultCoord,
-				'Custom Min/Max Geo Coordinates',
-				'Custom Min/Max Geo Coordinates if such coordinates are not already found in the data. Use format "[[lat-min, long-min], [lat-max, long-max]]"',
-				"Geography",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('backsideMapEnabled',
-				false,
-				'Map Backside Visible',
-				'If Enabled the map will be visible also on the backside of the plane, otherwise a dark soil texture will be used instead for representing the back side.',
-				"Geography",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('mapOpacity',
-				1.0,
-				'Map Opacity',
-				'The trancparency of the map image. 1 is fully opaque, and 0 is 100% transparent.',
-				"Geography",
-				undefined,
-				undefined
-			       ));
-
-
-	//*** Data Grouping and Selection Slots
-	$scope.addSlot(new Slot('ColorScheme',
-				colorScheme,
-				"Color Scheme",
-				'Input Slot. Mapping group numbers to colors.',
-				"Data Group Visualization",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('localGlobalColorEqual',
-				false,
-				"Sync Background Colors",
-				'If checked the Webble will sync the local background color with the global (skin color) and use the skin color, if not, the local background color will be used instead and skin will be ignored ',
-				"Data Group Visualization",
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('ColorMethod',
-				colorMethod,
-				"Color Method",
-				'How to pick colors for the data.',
-				"Data Group Visualization",
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Group Color + Alpha (min to max)", "Group Color + Alpha (histogram)", "Color Key"]},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('predefinedColorKey',
-				0,
-				'Predefined Color Key Sets',
-				'Predefined options of the color key scale being used from lower to higher values of a particle.',
-				"Data Group Visualization",
-				{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: getPCKNameArray()},
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('ColorKey',
-				colorKey,
-				"Color Key",
-				'The color key (mapping from value to color) to use when "Color Method" is set to "Color Key".',
-				"Data Group Visualization",
-				undefined,
-				undefined
-			       ));
-
-
-	$scope.addSlot(new Slot('MultipleSelectionsDifferentGroups',
-				true,
-				"Multiple Selections -> Different Groups",
-				'If true, multiple selections will generate subsets of data in different colors. If false, the subsets of data will just be "selected" and "not selected".',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('SelectAll',
-				false,
-				"Select All",
-				'Slot to quickly reset all selections to select all available data.',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-
-	$scope.addSlot(new Slot('ClearData',
-				false,
-				"Clear Data",
-				'Slot to quickly reset to having no data.',
-				$scope.theWblMetadata['templateid'],
-				undefined,
-				undefined
-			       ));
-	//=======
-
-
-	// If Property form is open, make sure color key changes is visualised properly inside the form in real time
-	$scope.$watch(function(){ return ($scope.getIsFormOpen()); }, function(newValue, oldValue) {
-	    if(newValue == true){
-		$timeout(function () {
-		    // Color Key and Color scheme elements
-		    var pckElem = $('[uib-tooltip=predefinedColorKey]').siblings().find('select');
-		    var ckElemI = $('[uib-tooltip=ColorKey]').siblings().first().find('input');
-		    var ckElemT = $('[uib-tooltip=ColorKey]').siblings().first().find('textarea');
-		    var cmElem = $('[uib-tooltip=ColorMethod]').siblings().find('select');
-
-		    if(pckElem.length > 0){
-			watchingForPredefinedColorKeyChanges = $scope.$watch(function(){ return pckElem.prop('selectedIndex'); }, function(newVal, oldVal) {
-			    if(newVal != oldVal && ((new Date()).getTime() - changeTime) > 1000){
-				if(newVal > 0){
-				    $timeout(function () {
-					changeTime = (new Date()).getTime();
-					ckElemI.val(JSON.stringify(predefinedColorKeySets[newVal - 1].pcks));
-					ckElemT.val(JSON.stringify(predefinedColorKeySets[newVal - 1].pcks));
-					cmElem.val(2).change();
-				    });
+		$.ajax({url: internalFilesPath + '/images/GeoData/Coordinates.json',
+			success: function(data){
+				if(data["Coordinates"]){
+				predefCoords = data["Coordinates"];
 				}
-			    }
-			}, true);
+			},
+			error: function(){
+				$log.error("Failed loading predefined map coordinates file, please use custom coordinates slot instead");
+			}
+			   });
 
-			watchingForColorKeyChanges = $scope.$watch(function(){ return [ckElemI.val(), ckElemT.text()]; }, function(newVal, oldVal) {
-			    if(newVal != oldVal && ((new Date()).getTime() - changeTime) > 1000){
-				$timeout(function () { changeTime = (new Date()).getTime(); pckElem.val(0).change(); });
-			    }
-			}, true);
-		    }
+			// Three pre defines
+		centerPoint = new THREE.Vector3(0,0,0);
 
-		    // Map related elements
-		    var pgaElem = $('[uib-tooltip=preDefinedGeoArea]').siblings().find('select');
-		    var gmilElem = $('[uib-tooltip=customGeoMapImage]').parent();
-		    var hmilElem = $('[uib-tooltip=customHeightMapImage]').parent();
-		    var gcElem = $('[uib-tooltip=customMinMaxCoordinates]').parent();
+		// Shortcut internal data cache for optimizations
+		myInstanceId = $scope.getInstanceId();
 
-		    if(pgaElem.length > 0){
-			watchingForPredefinedGeoAreaChanges = $scope.$watch(function(){ return pgaElem.prop('selectedIndex'); }, function(newVal, oldVal) {
-			    if(newVal != oldVal){
-				if(newVal > 0){
-				    $timeout(function () {
-					gmilElem.hide();
-					hmilElem.hide()
-					gcElem.hide();
-				    });
+		// Info text divs (array of three elements in the top left and right corner and the bottom)
+		info = createInfoElements();
+
+		// Webble Event Listener: Slot Change
+		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			// Resize 3D Viewport if Webble size change
+			if(eventData.slotName == 'threeDPlusHolder:width' || eventData.slotName == 'threeDPlusHolder:height'){
+					if(renderer && $scope.gimme('threeDPlusHolder:width') != null && $scope.gimme('threeDPlusHolder:height') != null){
+						renderer.setSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
+						if(controls !== undefined && $scope.gimme("cameraControllerMode") == CameraInteractionMode.Trackball){ controls.handleResize(); }
+				updateDropZonesSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
+					}
+			}
+
+			if(eventData.slotName == 'threeDPlusHolder:background-color'){
+				$timeout(function () {
+					if($scope.gimme("localGlobalColorEqual")){ colorScheme.skin.color = eventData.slotValue; }
+				if(scene){ setBackgroundColor(); }
+				}, 100);
+			}
+
+			if(eventData.slotName == 'threeDPlusContainer:background-color'){
+				if(scene){ colorScheme.skin.border = eventData.slotValue; }
+			}
+
+			else if(eventData.slotName == 'AxesEnabled'){
+			if(eventData.slotValue && axes == undefined || !eventData.slotValue && axes !== undefined){
+				executeAxisVisbilityState();
+			}
+			}
+
+			else if(eventData.slotName == "ScaleAxesIndependently") {
+			if(eventData.slotValue != independentScaling) {
+				independentScaling = eventData.slotValue;
+				$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+			}
+			}
+
+			else if(eventData.slotName == 'gridEnabled'){
+			if(eventData.slotValue && gridsContainer == undefined || !eventData.slotValue && gridsContainer !== undefined){
+				executeGridVisbilityState();
+			}
+			}
+
+			else if(eventData.slotName == 'gridProperties'){
+			if($scope.gimme("gridEnabled") && gridsContainer !== undefined){
+				scene.remove(gridsContainer);
+				gridsContainer = undefined;
+				executeGridVisbilityState();
+			}
+			}
+
+			else if(eventData.slotName == 'predefinedColorKey'){
+				if(eventData.slotValue > 0){
+				$scope.set("ColorKey", predefinedColorKeySets[eventData.slotValue - 1].pcks);
+			}
+			}
+
+			else if(eventData.slotName == "ColorKey") {
+			colorKey = eventData.slotValue;
+			if(typeof colorKey[0] != 'string' && colorKey[0].length > 1) { // colors and limits
+				colorKey.sort(function (a,b) { return a[0] - b[0]; });
+			}
+
+			if(colorMethod == colorMethodOptions.ColorKey) {
+				for(var src = 0; src < droppedDataMappings.length; src++) {
+				if(droppedDataMappings[src].active) {
+					$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+					break;
+				}
+				}
+			}
+
+			var isSame = -1;
+			for(var i = 0; i < predefinedColorKeySets.length; i++){
+				if(JSON.stringify(predefinedColorKeySets[i].pcks) == JSON.stringify(colorKey)){
+				isSame = i;
+				break;
+				}
+			}
+			var pck = $scope.gimme("predefinedColorKey");
+			if(isSame == -1 && pck != 0){ $scope.set("predefinedColorKey", 0); }
+			else if(isSame > -1 && isSame != (pck - 1)){ $scope.getSlot("predefinedColorKey").setValue((isSame + 1)); }
+			}
+
+			else if(eventData.slotName == "ColorMethod") {
+			var newCM = eventData.slotValue;
+			if(newCM != colorMethod) {
+				colorMethod = newCM;
+				for(var src = 0; src < droppedDataMappings.length; src++) {
+				if(droppedDataMappings[src].active) {
+					$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+					break;
+				}
+				}
+			}
+			}
+
+			else if(eventData.slotName == "ColorScheme") {
+			colorScheme = eventData.slotValue;
+			buildColorCache();
+			$scope.getSlot("threeDPlusContainer:background-color").setValue(colorScheme.skin.border);
+			if($scope.gimme("localGlobalColorEqual")){ $scope.getSlot("threeDPlusHolder:background-color").setValue(colorScheme.skin.color); }
+			$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+			}
+
+			else if(eventData.slotName == "localGlobalColorEqual") {
+			if(eventData.slotValue){ $scope.set("threeDPlusHolder:background-color", colorScheme.skin.color); }
+			}
+
+			else if(eventData.slotName == "predefVisualConfig") {
+			for(var i = 0; i < availablePredefVisualConfig[eventData.slotValue].slotConfigs.length; i++){
+				$scope.set(availablePredefVisualConfig[eventData.slotValue].slotConfigs[i].name, availablePredefVisualConfig[eventData.slotValue].slotConfigs[i].value);
+				$scope.getSlot(eventData.slotName).setValue(0);
+			}
+			}
+
+			else if(eventData.slotName == 'particleAlphaTexture' || eventData.slotName == 'PixelColorBlending'){
+			if(particles){
+				particles.material = createShaderMaterial();
+			}
+			}
+
+			else if(eventData.slotName == 'particleMinSize' || eventData.slotName == 'particleMaxSize'){
+			if(!isNaN(eventData.slotValue)){
+				if(particles){
+				setParticleAttributes(particles.geometry.attributes.dataValue.array, [], particles.geometry.attributes.size.array);
+				particles.geometry.attributes.size.needsUpdate = true;
+				}
+			}
+			else{
+				$scope.set(eventData.slotName, (eventData.slotName == 'particleMinSize' ? 0.1 : 3.0));
+			}
+			}
+
+			else if(eventData.slotName == 'particleMinAlpha' || eventData.slotName == 'particleMaxAlpha'){
+			if(!isNaN(eventData.slotValue)){
+				if(particles){
+				setParticleAttributes(particles.geometry.attributes.dataValue.array, particles.geometry.attributes.customColor.array, []);
+				particles.geometry.attributes.customColor.needsUpdate = true;
+				}
+			}
+			else{
+				$scope.set(eventData.slotName, (eventData.slotName == 'particleMinAlpha' ? 0.0 : 1.0));
+			}
+			}
+
+			else if(eventData.slotName == "particleAttributesDistributionType" || eventData.slotName == "particleAttributesValueAffect") {
+			$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+			}
+
+			else if(eventData.slotName == 'preDefinedGeoArea'){
+				if($scope.gimme('customGeoMapImage') != null && $scope.gimme('customHeightMapImage') != null){
+				if(eventData.slotValue != "None"){
+				$scope.getSlot('customGeoMapImage').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
+				$scope.getSlot('customHeightMapImage').setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
 				}
 				else{
-				    $timeout(function () {
-					gmilElem.show();
-					hmilElem.show()
-					gcElem.show();
-				    });
+				$scope.getSlot('customGeoMapImage').setDisabledSetting(Enum.SlotDisablingState.None);
+				$scope.getSlot('customHeightMapImage').setDisabledSetting(Enum.SlotDisablingState.None);
 				}
-			    }
-			}, true);
-		    }
-		}, 500);
-	    }
-	    else{
-		if(watchingForPredefinedColorKeyChanges != undefined){ watchingForPredefinedColorKeyChanges(); watchingForPredefinedColorKeyChanges = undefined; }
-		if(watchingForColorKeyChanges != undefined){ watchingForColorKeyChanges(); watchingForColorKeyChanges = undefined; }
-		if(watchingForPredefinedGeoAreaChanges != undefined){ watchingForPredefinedGeoAreaChanges(); watchingForPredefinedGeoAreaChanges = undefined; }
-	    }
-	}, true);
+				$timeout(function () { enableGeoLocationSupport(); })
+			}
+			}
+
+			else if(eventData.slotName == 'backsideMapEnabled' || eventData.slotName == 'customGeoMapImage' || eventData.slotName == 'customHeightMapImage' || eventData.slotName == 'heightMapStrength' || eventData.slotName == 'mapOpacity'){
+			$timeout(function () { enableGeoLocationSupport(); })
+			}
+
+			else if(eventData.slotName == 'cameraControllerMode'){
+				if(renderer){
+				setCameraControls();
+			}
+			}
+
+			else if(eventData.slotName == 'objectTargetEnabled'){
+			if(controls != undefined){
+				var tPoint = new THREE.Vector3(0,0,0);
+				if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && eventData.slotValue == true){
+				tPoint = centerPoint;
+				}
+				if(controls.target){ controls.target = tPoint; }
+				camera.lookAt(tPoint);
+			}
+			}
+
+			else if(eventData.slotName == 'autoOrbit'){
+			if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && controls != undefined){
+				controls.autoRotate = eventData.slotValue;
+			}
+			}
+
+			else if(eventData.slotName == 'SelectAll'){
+			if(eventData.slotValue) {
+				$scope.selectAll();
+				$scope.set("SelectAll",false);
+			}
+			}
+
+				else if(eventData.slotName == 'MultipleSelectionsDifferentGroups') {
+				updateLocalSelections(false);
+			}
+
+			else if(eventData.slotName == 'ClearData') {
+			if(eventData.slotValue) {
+				$scope.clearData();
+				$scope.set("ClearData",false);
+			}
+			}
+
+		});
 
 
-	// Webble initiations
-	$scope.setResizeSlots('threeDPlusHolder:width', 'threeDPlusHolder:height');
-	$scope.theView.parent().draggable('option', 'cancel', '#threeDPlusHolder');
-	threeDPlusHolder.bind('contextmenu',function(){ if(!$scope.altKeyIsDown){return false;} });
+		// Webble Event Listeners: Was Pasted
+		$scope.registerWWEventListener(Enum.availableWWEvents.pasted, function(eventData){
+			// Fix so that Mouse interaction in child works as expected
+			$scope.getParent().scope().theView.parent().draggable('option', 'cancel', '#threeDPlusHolder');
+		});
 
-	buildColorCache();
+		// Webble Event Listeners: Key Down
+		$scope.registerWWEventListener(Enum.availableWWEvents.keyDown, function(eventData){
+			if(eventData.key.released){
+				if(eventData.key.code == 107){ //+
+					if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly && controls.movementSpeed){
+					controls.movementSpeed += 10; controls.rollSpeed = controls.movementSpeed / 100;
+					info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera)";
+					}
+					else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && controls.zoomSpeed){
+					if($scope.shiftKeyIsDown){ controls.zoomSpeed += 10; }
+					else{ controls.zoomSpeed += 1; }
+					info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)";
+					}
+					else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Trackball && controls.zoomSpeed){
+					if($scope.shiftKeyIsDown){ controls.zoomSpeed += 10; controls.rotateSpeed += 10; controls.panSpeed += 10; }
+					else{ controls.zoomSpeed += 1; controls.rotateSpeed += 1; controls.panSpeed += 1; }
+					info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)";
+					}
+				}
+				else if(eventData.key.code == 109){ //-
+					if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Fly && controls.movementSpeed && controls.movementSpeed > 10){
+					controls.movementSpeed -= 10; controls.rollSpeed = controls.movementSpeed / 100;
+					info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera)";
+					}
+					else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Orbit && controls.zoomSpeed){
+					if($scope.shiftKeyIsDown && controls.zoomSpeed > 10){ controls.zoomSpeed -= 10; }
+					else if(controls.zoomSpeed > 1){ controls.zoomSpeed -= 1; }
+					info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)"
+					}
+					else if($scope.gimme("cameraControllerMode") == CameraInteractionMode.Trackball && controls.zoomSpeed){
+					if($scope.shiftKeyIsDown && controls.zoomSpeed > 10){ controls.zoomSpeed -= 10; controls.rotateSpeed -= 10; controls.panSpeed -= 10; }
+					else if(controls.zoomSpeed > 1){ controls.zoomSpeed -= 1; controls.rotateSpeed -= 1; controls.panSpeed -= 1; }
+					info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right)";
+					}
+				}
+				else if(eventData.key.code == 110 && camera && camPosOrigin){
+					var ccm = $scope.gimme("cameraControllerMode");
+					if(ccm == CameraInteractionMode.Orbit || ccm == CameraInteractionMode.Trackball){ controls.reset() }
+					camera.position.set(camPosOrigin.x, camPosOrigin.y, camPosOrigin.z);
 
-	// WebGL presence check
-	if (Detector.webgl) {
-	    init3D();
-	    executeAxisVisbilityState();
-	    executeGridVisbilityState();
-	    $timeout(function () { displayHourglassBeforeRedrawScene(false); });
-	} else {
-	    var warning = Detector.getWebGLErrorMessage();
-	    warning.innerText = "Your Browser does not support WebGL and can therefore not display 3D graphics. \nWe recommend that you change browser.";
-	    ($scope.theView.parent().find('#threeDPlusHolder')[ 0 ]).appendChild(warning);
-	}
+					if($scope.gimme("objectTargetEnabled")){
+					camera.lookAt(centerPoint);
+					if(controls.target){ controls.target = centerPoint; }
+					}
+					else{
+					camera.lookAt(new THREE.Vector3(0, 0, 0));
+					if(controls.target){ controls.target = new THREE.Vector3(0, 0, 0); }
+					}
+				}
+				//If video is being recorded then ESC key will stop that
+				else if(recVidEnabled && eventData.key.code == 27){
+					recVidEnabled = false;
+					$scope.customMenu[2].itemTxt = 'Start Video Recording';
+				}
+			}
+		});
 
-	updateDropZonesSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
-	$scope.setupDroppable(); // start listening to drag&drop events
+
+		// SLOTS
+		//=======
+
+		//*** Global Slots
+		$scope.addSlot(new Slot('AxesEnabled',
+					true,
+					'Axes Enabled',
+					'Shows or hides X, Y and Z axes in the 3D space',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('ScaleAxesIndependently',
+					independentScaling,
+					"Scale Axes Independently",
+					'If true, the scales of each axis will be set independently, otherwise they will use the same scaling (i.e. set this to false if the data on each axis has the same measuring unit, for example distances in meteres).',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		//???
+		$scope.addSlot(new Slot('gridEnabled',
+					false,
+					'Grid Enabled',
+					'Shows or hides X, Y and Z Grids in the 3D space',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('gridProperties',
+					{
+						dimensions: { w:2405, d:1000, h:800 },
+						colors: { xw: "red", yh: "green", zd: "blue", globalTransparency: 0.4 },
+						labels: {
+						x: ['', "\'14","\'13","\'12","\'11","\'10","\'09","\'08","\'07","\'06","\'05"],
+						y: ["2%", "4%", "6%", "8%"],
+						z: ["1-month","3-month","6-month","1-year","2-year","3-year","5-year","7-year","10-year", "20-year","30-year"]
+						},
+						centerPointOrigoOffset: {
+						x: 0,
+						y: 0,
+						z: 0
+						}
+					},
+					'Grid Properties',
+					'Various properties that constitute the grid, such as dimensions, colors and labels',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('cameraControllerMode',
+					CameraInteractionMode.Orbit,
+					"Camera Controller Mode",
+					'The type of camera controller to be used for moving around and look at the data',
+					$scope.theWblMetadata['templateid'],
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Fly", "Orbit", "Trackball"]},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('objectTargetEnabled',
+					true,
+					'Orbit Data Enabled',
+					'(FOR ORBIT CONTROL ONLY) If enabled the Orbit control will spin around the center of the current loaded data, otherwise around the center of the world (0,0,0)',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('autoOrbit',
+					false,
+					'Auto Orbit',
+					'(FOR ORBIT CONTROL ONLY) If enabled the camera will automatically orbit around the orbit center, otherwise manual orbit only',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('predefVisualConfig',
+					0,
+					'Predefined Visual Configuration',
+					'Sets multiple slots to its optimal value to best visualize certain types of data',
+					$scope.theWblMetadata['templateid'],
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: [availablePredefVisualConfig[0].name, availablePredefVisualConfig[1].name, availablePredefVisualConfig[2].name, availablePredefVisualConfig[3].name, availablePredefVisualConfig[4].name]},
+					undefined
+					   ));
+
+		//*** Particle Properties (base values)
+		$scope.addSlot(new Slot('particleAlphaTexture',
+					availableTextures.Spark,
+					'Particle Alpha Texture',
+					'A texture for each data point',
+					"Particle Properties",
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["None", "Spark", "Fading Circle", "Cloud 1", "Cloud 2", "Smoke"]},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('PixelColorBlending',
+					pixelColorBlending.Normal,
+					'Pixel Color Blending',
+					'How pixels on top of each other should blend',
+					"Particle Properties",
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["No Blending", "Normal", "Additive", "Subtractive", "Multiply"]},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('particleMinSize',
+					10,
+					'Particle Minimum Size',
+					'The minimum size of an individual particle, as modified by data values',
+					"Particle Properties",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('particleMaxSize',
+					30,
+					'Particle Maximum Size',
+					'The maximum size of an individual particle, as modified by data values',
+					"Particle Properties",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('particleMinAlpha',
+					0.0,
+					'Particle Minimum Opacity',
+					'The minimum opacity of an individual particle, as modified by data values',
+					"Particle Properties",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('particleMaxAlpha',
+					1.0,
+					'Particle Maximum Opacity',
+					'The maximum opacity of an individual particle, as modified by data values',
+					"Particle Properties",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('particleAttributesDistributionType',
+					distributionTypes.Linear,
+					'Data Distribution Type',
+					'Type of distribution for applying attribute (size, color, alpha etc) differences based on data values',
+					"Particle Properties",
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Linear", "Logarithmic"]},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('particleAttributesValueAffect',
+					valueAffectAttributes.Both,
+					'Data Value Attribute Affect',
+					'What attributes of the particle points that are being affected by the data value',
+					"Particle Properties",
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["None", "Size", "Opacity", "Both"]},
+					undefined
+					   ));
+
+
+		//*** Geographic map display Attributes
+		$scope.addSlot(new Slot('preDefinedGeoArea',
+					"None",
+					'Geographical Area',
+					'Predefined 3D map setups for a number of regions with Open Street maps and Terrain height maps (as well as distance measurements)',
+					"Geography",
+					{inputType: Enum.aopInputTypes.ComboBoxUseValue, comboBoxContent: ["None", "Kobe", "Kochi"]},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('customGeoMapImage',
+					"",
+					'Geo Map Image Link',
+					'Link to a custom Geo Map image, if the provided areas is not enough',
+					"Geography",
+					{inputType: Enum.aopInputTypes.ImagePick},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('customHeightMapImage',
+					"",
+					'Height Map Image Link',
+					'Link to a custom Height Map image, if the provided areas is not enough',
+					"Geography",
+					{inputType: Enum.aopInputTypes.ImagePick},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('customMinMaxCoordinates',
+					defaultCoord,
+					'Custom Min/Max Geo Coordinates',
+					'Custom Min/Max Geo Coordinates if such coordinates are not already found in the data. Use format "[[lat-min, long-min], [lat-max, long-max]]"',
+					"Geography",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('backsideMapEnabled',
+					false,
+					'Map Backside Visible',
+					'If Enabled the map will be visible also on the backside of the plane, otherwise a dark soil texture will be used instead for representing the back side.',
+					"Geography",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('mapOpacity',
+					1.0,
+					'Map Opacity',
+					'The trancparency of the map image. 1 is fully opaque, and 0 is 100% transparent.',
+					"Geography",
+					undefined,
+					undefined
+					   ));
+
+
+		//*** Data Grouping and Selection Slots
+		$scope.addSlot(new Slot('ColorScheme',
+					colorScheme,
+					"Color Scheme",
+					'Input Slot. Mapping group numbers to colors.',
+					"Data Group Visualization",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('localGlobalColorEqual',
+					false,
+					"Sync Background Colors",
+					'If checked the Webble will sync the local background color with the global (skin color) and use the skin color, if not, the local background color will be used instead and skin will be ignored ',
+					"Data Group Visualization",
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('ColorMethod',
+					colorMethod,
+					"Color Method",
+					'How to pick colors for the data.',
+					"Data Group Visualization",
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ["Group Color + Alpha (min to max)", "Group Color + Alpha (histogram)", "Color Key"]},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('predefinedColorKey',
+					0,
+					'Predefined Color Key Sets',
+					'Predefined options of the color key scale being used from lower to higher values of a particle.',
+					"Data Group Visualization",
+					{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: getPCKNameArray()},
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('ColorKey',
+					colorKey,
+					"Color Key",
+					'The color key (mapping from value to color) to use when "Color Method" is set to "Color Key".',
+					"Data Group Visualization",
+					undefined,
+					undefined
+					   ));
+
+
+		$scope.addSlot(new Slot('MultipleSelectionsDifferentGroups',
+					true,
+					"Multiple Selections -> Different Groups",
+					'If true, multiple selections will generate subsets of data in different colors. If false, the subsets of data will just be "selected" and "not selected".',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('SelectAll',
+					false,
+					"Select All",
+					'Slot to quickly reset all selections to select all available data.',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+
+		$scope.addSlot(new Slot('ClearData',
+					false,
+					"Clear Data",
+					'Slot to quickly reset to having no data.',
+					$scope.theWblMetadata['templateid'],
+					undefined,
+					undefined
+					   ));
+		//=======
+
+
+		// If Property form is open, make sure color key changes is visualised properly inside the form in real time
+		$scope.$watch(function(){ return ($scope.getIsFormOpen()); }, function(newValue, oldValue) {
+			if(newValue == true){
+			$timeout(function () {
+				// Color Key and Color scheme elements
+				var pckElem = $('[uib-tooltip=predefinedColorKey]').siblings().find('select');
+				var ckElemI = $('[uib-tooltip=ColorKey]').siblings().first().find('input');
+				var ckElemT = $('[uib-tooltip=ColorKey]').siblings().first().find('textarea');
+				var cmElem = $('[uib-tooltip=ColorMethod]').siblings().find('select');
+
+				if(pckElem.length > 0){
+				watchingForPredefinedColorKeyChanges = $scope.$watch(function(){ return pckElem.prop('selectedIndex'); }, function(newVal, oldVal) {
+					if(newVal != oldVal && ((new Date()).getTime() - changeTime) > 1000){
+					if(newVal > 0){
+						$timeout(function () {
+						changeTime = (new Date()).getTime();
+						ckElemI.val(JSON.stringify(predefinedColorKeySets[newVal - 1].pcks));
+						ckElemT.val(JSON.stringify(predefinedColorKeySets[newVal - 1].pcks));
+						cmElem.val(2).change();
+						});
+					}
+					}
+				}, true);
+
+				watchingForColorKeyChanges = $scope.$watch(function(){ return [ckElemI.val(), ckElemT.text()]; }, function(newVal, oldVal) {
+					if(newVal != oldVal && ((new Date()).getTime() - changeTime) > 1000){
+					$timeout(function () { changeTime = (new Date()).getTime(); pckElem.val(0).change(); });
+					}
+				}, true);
+				}
+
+				// Map related elements
+				var pgaElem = $('[uib-tooltip=preDefinedGeoArea]').siblings().find('select');
+				var gmilElem = $('[uib-tooltip=customGeoMapImage]').parent();
+				var hmilElem = $('[uib-tooltip=customHeightMapImage]').parent();
+				var gcElem = $('[uib-tooltip=customMinMaxCoordinates]').parent();
+
+				if(pgaElem.length > 0){
+				watchingForPredefinedGeoAreaChanges = $scope.$watch(function(){ return pgaElem.prop('selectedIndex'); }, function(newVal, oldVal) {
+					if(newVal != oldVal){
+					if(newVal > 0){
+						$timeout(function () {
+						gmilElem.hide();
+						hmilElem.hide()
+						gcElem.hide();
+						});
+					}
+					else{
+						$timeout(function () {
+						gmilElem.show();
+						hmilElem.show()
+						gcElem.show();
+						});
+					}
+					}
+				}, true);
+				}
+			}, 500);
+			}
+			else{
+			if(watchingForPredefinedColorKeyChanges != undefined){ watchingForPredefinedColorKeyChanges(); watchingForPredefinedColorKeyChanges = undefined; }
+			if(watchingForColorKeyChanges != undefined){ watchingForColorKeyChanges(); watchingForColorKeyChanges = undefined; }
+			if(watchingForPredefinedGeoAreaChanges != undefined){ watchingForPredefinedGeoAreaChanges(); watchingForPredefinedGeoAreaChanges = undefined; }
+			}
+		}, true);
+
+
+		// Webble initiations
+		$scope.setResizeSlots('threeDPlusHolder:width', 'threeDPlusHolder:height');
+		$scope.theView.parent().draggable('option', 'cancel', '#threeDPlusHolder');
+		threeDPlusHolder.bind('contextmenu',function(){ if(!$scope.altKeyIsDown){return false;} });
+
+		buildColorCache();
+
+		// WebGL presence check
+		if (Detector.webgl) {
+			init3D();
+			executeAxisVisbilityState();
+			executeGridVisbilityState();
+			$timeout(function () { displayHourglassBeforeRedrawScene(false); });
+		} else {
+			var warning = Detector.getWebGLErrorMessage();
+			warning.innerText = "Your Browser does not support WebGL and can therefore not display 3D graphics. \nWe recommend that you change browser.";
+			($scope.theView.parent().find('#threeDPlusHolder')[ 0 ]).appendChild(warning);
+		}
+
+		updateDropZonesSize(parseInt($scope.gimme('threeDPlusHolder:width')), parseInt($scope.gimme('threeDPlusHolder:height')));
+		$scope.setupDroppable(); // start listening to drag&drop events
     };
     //===================================================================================
 
@@ -1204,34 +1207,33 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     //========================================================================================
     var render = function() {
 
-	// Capture Movie frames (if SHIFT down and not busy)
-	if(!$scope.getIsFormOpen()){
-	    if($scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && !isBusyCaptureMovieFrame){
-		if(videoRecorder == undefined){
-		    $log.log("Start Recording of Movie Frames");
-		    videoRecorder = new Whammy.Video(15);
-		}
-		isBusyCaptureMovieFrame = true;
-		$timeout(function () {
-		    videoRecorder.add(renderer.domElement.toDataURL("image/webp"));
-		    isBusyCaptureMovieFrame = false;
-		});
-	    }
+		// Capture Movie frames (if SHIFT down and not busy)
 
-	    // Compile Movie from captured frames (if no key down and frames captured)
-	    if(!$scope.shiftKeyIsDown && !$scope.ctrlKeyIsDown && !$scope.altKeyIsDown && videoRecorder != undefined && videoRecorder.frames.length > 0){
-		$timeout(function () {
-		    $log.log("Stop Recording of Movie Frames");
-		    $log.log("Creating Movie of " + videoRecorder.frames.length + " frames captured.");
-		    videoRecorder.compile(false, function(output){
-			download(output, "3DWebbleVideoTest", "video/webm");
-			videoRecorder = undefined;
-		    });
-		});
-	    }
-	}
+			if(recVidEnabled && !isBusyCaptureMovieFrame){
+				if(videoRecorder == undefined){
+					$log.log("Start Recording of Movie Frames");
+					videoRecorder = new Whammy.Video(15);
+				}
+				isBusyCaptureMovieFrame = true;
+				$timeout(function () {
+					videoRecorder.add(renderer.domElement.toDataURL("image/webp"));
+					isBusyCaptureMovieFrame = false;
+				});
+			}
 
-	renderer.render(scene, camera);
+			// Compile Movie from captured frames (if no key down and frames captured)
+			if(!recVidEnabled && videoRecorder != undefined && videoRecorder.frames.length > 0){
+				$timeout(function () {
+					$log.log("Stop Recording of Movie Frames");
+					$log.log("Creating Movie of " + videoRecorder.frames.length + " frames captured.");
+					videoRecorder.compile(false, function(output){
+						download(output, "3DWebbleVideoTest", "video/webm");
+						videoRecorder = undefined;
+					});
+				});
+			}
+
+		renderer.render(scene, camera);
     };
     //========================================================================================
 
@@ -1361,7 +1363,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    positions = []; matrixLocations = [];
 	    positions = new Float32Array( noOfPoints * 3 );
 	    matrixLocations = new Uint32Array( noOfPoints * 3 );
-	} 
+	}
 
 	if(have3D) {
 	    cubeNo = -1;
@@ -1394,7 +1396,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 		   || droppedDataInfo.type == droppedDataInfoTypes.latlonz3D
 		   || droppedDataInfo.type == droppedDataInfoTypes.latlonzval3D
-		  ) { 
+		  ) {
 		    haveX = true;
 		    haveY = true;
 		    haveZ = true;
@@ -1411,7 +1413,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    // var maxX = (ldb[0][0].length - 1);
 		    // var maxY = (ldb[0].length - 1);
 		    // var maxZ = (ldb.length - 1);
-		    
+
 		    curMinmaxCounts = minmaxCounts3D[cubeNo];
 
 		    var minX = curMinmaxCounts.minX;
@@ -1433,7 +1435,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    var scaleY = particleDist;
 		    var scaleZ = particleDist;
 
-		    if(maxX > minX) { 
+		    if(maxX > minX) {
 			scaleX = 1000 / curMinmaxCounts.spanX;
 		    }
 		    if(maxY > minY) {
@@ -1449,7 +1451,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			minY = Math.min(minY, minmaxCountsMap.minY);
 			maxY = Math.max(maxY, minmaxCountsMap.maxY);
 
-			if(maxX > minX) { 
+			if(maxX > minX) {
 			    scaleX = 1000 / (maxX - minX);
 			} else {
 			    scaleX = particleDist;
@@ -1471,7 +1473,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    // $log.log("3D min [" + minX + "," + minY + "," + minZ + "], max [" + maxX + "," + maxY + "," + maxZ + "], scale [" + scaleX + "," + scaleY + "," + scaleZ + "]");
 		}
 	    } // cubeNo >= 0
-	} 
+	}
 
 	colors = []; sizes = []; dataValues = [];
 	colors = new Float32Array( noOfPoints * 4 );
@@ -1536,7 +1538,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					    posX = temp[0];
 					    posY = temp[1];
 					}
-					
+
 					positions[ posArrIndex + 2 ] = (spanY - (posY - minY)) * scaleY;
 					positions[ posArrIndex + 0 ] = (posX - minX) * scaleX;
 
@@ -1596,15 +1598,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		haveX = true;
 		haveY = true;
 		haveZ = true;
-		haveValues = false;		
+		haveValues = false;
 	    }
 	    if(droppedDataInfo.type == droppedDataInfoTypes.xyval
 	       || droppedDataInfo.type == droppedDataInfoTypes.latlonval) {
 		haveX = true;
 		haveY = true;
 		haveZ = false;
-		haveValues = true;		
-	    }		
+		haveValues = true;
+	    }
 
 	    if(!keepScene) {
 
@@ -1623,7 +1625,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		var maxZ = curMinmaxCounts.maxZ;
 
 
-		if(maxX > minX) { 
+		if(maxX > minX) {
 		    scaleX = 1000 / curMinmaxCounts.spanX;
 		}
 		if(maxY > minY) {
@@ -1639,7 +1641,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    minY = Math.min(minY, minmaxCountsMap.minY);
 		    maxY = Math.max(maxY, minmaxCountsMap.maxY);
 
-		    if(maxX > minX) { 
+		    if(maxX > minX) {
 			scaleX = 1000 / (maxX - minX);
 		    } else {
 			scaleX = particleDist;
@@ -1687,7 +1689,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    v = 1;
 		}
 
-		if(x !== null 
+		if(x !== null
 		   && y !== null
 		   && z !== null
 		   && v !== null) {
@@ -1705,7 +1707,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 				if(haveY) {
 				    y = latToY(y);
 				}
-			    }			    
+			    }
 			}
 
 			positions[ posArrIndex + 2 ] = (spanY - (y - minY)) * scaleY;
@@ -1835,7 +1837,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	var alphaSpan = btma - btmi;
 
-	
+
 	// var allValues = [minValueThreshold, maxValueThreshold];
 	var allValues = [curMinmaxCounts.minV, curMinmaxCounts.maxV];
 	if(colorArrOk && colorMethod == 1) { // histograms
@@ -1850,21 +1852,21 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	    // var val = Math.min(Math.max(minValueThreshold, dataValArr[i]), maxValueThreshold);
 	    var val = dataValArr[i];
-	    var pct = 1; 
-	    
+	    var pct = 1;
+
 	    if(curMinmaxCounts !== null) {
 		pct = (val - curMinmaxCounts.minV) / curMinmaxCounts.spanV;
 	    } else {
 		pct = 1;
 	    }
-	    
-	    if(sizeArrOk){ 
-		sizeAttrArr[i] = minSize + sizeSpan * pct; 
+
+	    if(sizeArrOk){
+		sizeAttrArr[i] = minSize + sizeSpan * pct;
 	    }
 
 	    if(colorArrOk){
 		var colVal, alphaVal;
-		
+
 		//-------
 		// Jonas: I changed a lot of stuff here, but the whole function should probably be rewritten later.
 		//-------
@@ -1878,7 +1880,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    // y = k
 		    // x = n
 		    // z = i
-		    // posArrIndex + 1 
+		    // posArrIndex + 1
 
 		    // matrixLocations[ posArrIndex + 1 ] = i;
 		    // matrixLocations[ posArrIndex + 2 ] = k;
@@ -1899,18 +1901,18 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			// 	// this only works when there are no null values
 
-			// case droppedDataInfoTypes.val3D: 
+			// case droppedDataInfoTypes.val3D:
 			// 	var itemIdx = cubeNo * dataValArr.length + i;
 			// 	groupId = droppedDataInfo.selFunValues(itemIdx);
 			// 	break;
-			
+
 			// case droppedDataInfoTypes.xy3D:
 			// case droppedDataInfoTypes.latlon3D:
 			// 	var z = Math.floor(i / droppedDataInfo.sizeX / droppedDataInfo.sizeY);
 			// 	var rem = i - z * droppedDataInfo.sizeX * droppedDataInfo.sizeY
 			// 	var y = Math.floor(rem / droppedDataInfo.sizeX);
 			// 	var x = rem - y * droppedDataInfo.sizeX;
-			
+
 			// 	groupId = droppedDataInfo.selFunY(y);
 			// 	if(groupId > 0) {
 			// 	    groupId = droppedDataInfo.selFunX(x);
@@ -1928,7 +1930,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			// 	if(groupId > 0) {
 			// 	    groupId = droppedDataInfo.selFunY(y);
 			// 	}
-			// 	if(groupId > 0) { 
+			// 	if(groupId > 0) {
 			// 	    groupId = droppedDataInfo.selFunX(x);
 			// 	}
 			// 	break;
@@ -1962,11 +1964,11 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			var itemIdx = cubeNo * Math.floor(droppedDataInfo.size3Dv / droppedDataInfo.size3D) + cubeXidx + droppedDataInfo.sizeX*(cubeYidx + droppedDataInfo.sizeY*cubeZidx);
 			groupId = droppedDataInfo.selFunValues(itemIdx);
 			break;
-			
+
 		    case droppedDataInfoTypes.xy3D:
 		    case droppedDataInfoTypes.latlon3D:
 			var cubeYidx = matrixLocations[posArrIndex+2];
-			
+
 			groupId = droppedDataInfo.selFunY(cubeYidx);
 			if(groupId > 0) {
 			    var cubeXidx = matrixLocations[posArrIndex];
@@ -1983,7 +1985,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			    var cubeYidx = matrixLocations[posArrIndex+2];
 			    groupId = droppedDataInfo.selFunY(cubeYidx);
 			}
-			if(groupId > 0) { 
+			if(groupId > 0) {
 			    var cubeXidx = matrixLocations[posArrIndex];
 			    groupId = droppedDataInfo.selFunX(cubeXidx);
 			}
@@ -2012,7 +2014,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			break;
 
 		    } // switch droppedDataInfo.type
-		    
+
 		    if(groupId <= 0) {
 			colVal = [0, 0, 0, 0];
 			alphaVal = 0;
@@ -2127,7 +2129,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 
 	var selectAll = false;
-	if(insideParticles.length <= 0 || 
+	if(insideParticles.length <= 0 ||
 	   insideParticles.length == attributes.dataValue.count) {
 	    selectAll = true;
 	}
@@ -2135,7 +2137,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	insideParticlesIdxs = [];
 
 	if(!selectAll) {
-	    for(var j = 0; j < insideParticles.length; j++) { 
+	    for(var j = 0; j < insideParticles.length; j++) {
 		var i = insideParticles[j];
 
 		if(droppedDataInfo.type == droppedDataInfoTypes.only3D
@@ -2152,7 +2154,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    var cubeXidx = matrixLocations[i * 3];
 		    var cubeYidx = matrixLocations[i * 3 + 2];
 		    var cubeZidx = matrixLocations[i * 3 + 1];
-		    
+
 		    var itemIdx = cubeNo * Math.floor(droppedDataInfo.size3Dv / droppedDataInfo.size3D) + cubeXidx + droppedDataInfo.sizeX*(cubeYidx + droppedDataInfo.sizeY*cubeZidx);
 		    insideParticlesIdxs.push(itemIdx);
 		} else if(droppedDataInfo.type == droppedDataInfoTypes.xyzval
@@ -2165,9 +2167,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    var itemIdx = matrixLocations[i * 3];
 		    insideParticlesIdxs.push(itemIdx);
 		}
-	    } 
+	    }
 	}
-	
+
 	updateLocalSelections(selectAll);
 
     };
@@ -2257,7 +2259,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 					    var scaleX = particleDist;
 					    var scaleY = particleDist;
-					    
+
 					    if(curMinmaxCounts !== null && droppedDataInfo.latlon) {
 						minX = Math.min(minX, curMinmaxCounts.minX);
 						maxX = Math.max(maxX, curMinmaxCounts.maxX);
@@ -2275,10 +2277,10 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						    var mapMinY = curMinmaxCounts.minY;
 						    var mapMaxY = curMinmaxCounts.maxY;
 						}
-						    
-						if(minX != mapMinX 
+
+						if(minX != mapMinX
 						   || maxX != mapMaxX
-						   || minY != mapMinY 
+						   || minY != mapMinY
 						   || maxY != mapMaxY
 						  ) {
 						    needToRedrawDataToo = true;
@@ -2292,7 +2294,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						$log.log("Skip redrawing data, they are already fine MAP");
 					    }
 
-					    if(maxX > minX) { 
+					    if(maxX > minX) {
 						scaleX = 1000 / (maxX - minX);
 					    }
 					    var spanY = 1;
@@ -2302,7 +2304,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					    }
 
 					    var scaleZ = scaleX;
-					    if(curMinmaxCounts !== null) { 
+					    if(curMinmaxCounts !== null) {
 						if(curMinmaxCounts.maxZ > curMinmaxCounts.minZ) {
 						    scaleZ = 1000 / curMinmaxCounts.spanZ;
 						}
@@ -2314,19 +2316,19 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 						scaleZ = scaleX;
 					    }
 
-					    $log.log("MAP enableGeo using (" 
-						     + minX 
-						     + ", " 
-						     + minY 
-						     + "), (" 
-						     + maxX 
-						     + ", " 
-						     + maxY 
-						     + "), " 
-						     + scaleX 
-						     + "-" 
-						     + scaleY 
-						     + "-" 
+					    $log.log("MAP enableGeo using ("
+						     + minX
+						     + ", "
+						     + minY
+						     + "), ("
+						     + maxX
+						     + ", "
+						     + maxY
+						     + "), "
+						     + scaleX
+						     + "-"
+						     + scaleY
+						     + "-"
 						     + scaleZ);
 
 					    // Getting the XYZ positions for each corner from real world coordinates
@@ -2423,7 +2425,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    }
 	}
 
-	if(oldcounts !== null && 
+	if(oldcounts !== null &&
 	   curMinmaxCounts !== null && droppedDataInfo.latlon
 	   && minmaxCountsMap === null) {
 
@@ -2584,7 +2586,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	if(colorMethod == colorMethodOptions.GroupColAlphaHisto) {
     	    var len = allValues.length;
     	    var idx = Math.max(0, binLookup(allValues, val, 0, len));
-	    
+
 	    var prop = 1;
 	    if(len > 1) {
 		prop = idx / (len-1);
@@ -2622,7 +2624,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	    var idx = 0;
     	    if(colorKey && colorKey.length > 0) {
     		if(typeof colorKey[0] != 'string' && colorKey[0].length > 1) { // colors and limits
-		    
+
 		    if(val <= colorKey[0][0]) {
 			idx = 0;
 		    } else if(val >= colorKey[colorKey.length - 1][1]) {
@@ -2635,7 +2637,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     			    }
     			}
 		    }
-		    
+
     		    var cc = colorKey[idx][2];
     		    if(cc.length == 9) { // contains alpha
     			var alphaCC = parseInt(cc.substr(7,2), 16);
@@ -3131,7 +3133,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    controls.rollSpeed = defaultControlSpeed / 10;
 	    controls.autoForward = false;
 	    controls.dragToLook = true;
-	    info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera) ( HOLD SHIFT: Record Movie)";
+	    info[2].innerHTML = "Fly Controls (movement speed: " + controls.movementSpeed + " (Num +/-)) (WASD: move, R|F: up | down, Q|E: roll, up|down: pitch, left|right: yaw) ( .(dot): Reset Camera)";
 	}
 	else if(camCtrl == CameraInteractionMode.Orbit){
 	    controls = new THREE.OrbitControls( camera, threeDPlusHolder[0] );
@@ -3142,7 +3144,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		info[2].innerHTML = "Orbit Controls (Orbit: One Finger, Zoom: Two Fingers, Pan: Three Fingers)";
 	    }
 	    else{
-		info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera) ( HOLD SHIFT: Record Movie)";
+		info[2].innerHTML = "Orbit Controls (zoom speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Orbit: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)";
 	    }
 	}
 	else if(camCtrl == CameraInteractionMode.Trackball){
@@ -3155,7 +3157,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    controls.staticMoving = true;
 	    controls.dynamicDampingFactor = 0.3;
 	    controls.addEventListener( 'change', render );
-	    info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera) ( HOLD SHIFT: Record Movie)";
+	    info[2].innerHTML = "Trackball Controls (Movement speed: " + controls.zoomSpeed + " (Num +/- (hold Shift for large steps))) (Rotate: Mouse left, Zoom: Mouse Middle, Pan: Mouse Right) ( .(dot): Reset Camera)";
 	}
 
 	var tPoint = new THREE.Vector3(0,0,0);
@@ -3304,7 +3306,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	dropVal.top = margH;
 	dropVal.right = margW + zoneW * 2;
 	dropVal.bottom = margH + zoneH;
-	
+
 	drop3D.left = margW;
 	drop3D.top = margH * 2 + zoneH;
 	drop3D.right = margW + zoneW * 2;
@@ -3393,7 +3395,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    dropVal.top = margH;
 	    dropVal.right = margW + zoneW * 2;
 	    dropVal.bottom = margH + zoneH;
-	    
+
 	    drop3D.left = margW;
 	    drop3D.top = margH * 2 + zoneH;
 	    drop3D.right = margW + zoneW * 2;
@@ -3418,14 +3420,14 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	    var fontSize = 11; // get this from CSS, maybe?
 	    var textColor = "black"; // get this from CSS, maybe?
-	    
+
 	    if(hover) {
 
 		dropCtx.save();
 		dropCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
 		dropCtx.fillRect(0,0, W, H);
 		dropCtx.restore();
-		
+
 		var fnt = "bold " + (fontSize + 5) + "px Arial";
 		dropCtx.font = fnt;
 		dropCtx.fillStyle = textColor;
@@ -3497,7 +3499,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // Creates the drop zone event listening for data drops
     //========================================================================================
     $scope.setupDroppable = function () {
-	$scope.theView.find('#theDropCanvas').droppable({ 
+	$scope.theView.find('#theDropCanvas').droppable({
 	    over: function(e, ui) {
 		if(e.target.id == "theDropCanvas") {
 		    updateDropZones(1, true);
@@ -3516,16 +3518,16 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		    var xpos = e.offsetX;
 		    var ypos = e.offsetY;
 		    var ok = false;
-		    
+
 		    var x = e.originalEvent.pageX - $(this).offset().left;
-		    var y = e.originalEvent.pageY - $(this).offset().top; 
-		    
+		    var y = e.originalEvent.pageY - $(this).offset().top;
+
 		    xpos = x;
 		    ypos = y;
 
 		    for(var d = 0; !ok && d < allDropZones.length; d++) {
 			var dropZone = allDropZones[d];
-			
+
 			if(xpos <= dropZone.right
 			   && xpos >= dropZone.left
 			   && ypos >= dropZone.top
@@ -3533,12 +3535,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 			    f = dropZone.forMapping;
 			    ok = true;
-			} 
+			}
 		    }
 
 		    if(ok) {
 			dataDropped(ui.draggable.attr('id'), f);
-		    } 
+		    }
 		}
 
 		updateDropZones(0.3, false);
@@ -3611,7 +3613,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	    var funY = null;
 	    var funZ = null;
 	    var funValues = null;
-	    
+
 	    var selFun3D = null;
 	    var selFunX = null;
 	    var selFunY = null;
@@ -3630,7 +3632,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "3D") {
     		    have3D = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, drop3D.forMapping.type)) {
 			have3D = false;
@@ -3659,7 +3661,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "X") {
     		    haveX = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropX.forMapping.type)) {
 			haveX = false;
@@ -3667,7 +3669,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			sizeX = fieldInfo.size;
 			funX = fieldInfo.val;
 			selFunX = fieldInfo.sel;
-			
+
 			if(fieldInfo.type.indexOf("longitude") >= 0) {
 			    haveLongitude = true;
 			}
@@ -3677,7 +3679,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "Y") {
     		    haveY = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropY.forMapping.type)) {
 			haveY = false;
@@ -3685,7 +3687,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 			sizeY = fieldInfo.size;
 			funY = fieldInfo.val;
 			selFunY = fieldInfo.sel;
-			
+
 			if(fieldInfo.type.indexOf("latitude") >= 0) {
 			    haveLatitude = true;
 			}
@@ -3695,7 +3697,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "Z") {
     		    haveZ = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropZ.forMapping.type)) {
 			haveZ = false;
@@ -3709,7 +3711,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     		if(droppedDataMappings[src].map[f].name == "Values") {
     		    haveValues = true;
-		    
+
     		    var fieldInfo = ls[droppedDataMappings[src].map[f].srcIdx];
 		    if(droppedDataMappings[src].map[f].srcIdx >= ls.length || !dataDropTypeCheck(fieldInfo.type, dropVal.forMapping.type)) {
 			haveValues = false;
@@ -3741,7 +3743,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyzval3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -3798,7 +3800,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyz3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -3850,7 +3852,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyval3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funValues = funValues;
@@ -3902,7 +3904,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xy3D;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.fun3D = fun3D;
@@ -4018,7 +4020,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyzval;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -4068,7 +4070,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyz;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funZ = funZ;
@@ -4114,7 +4116,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    droppedDataInfo.type = droppedDataInfoTypes.xyval;
 		}
-		
+
 		droppedDataInfo.funX = funX;
 		droppedDataInfo.funY = funY;
 		droppedDataInfo.funValues = funValues;
@@ -4163,7 +4165,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // Goes through the data once to count how many points we have
     // that have NULL values for their coordinates or measurements
     // (i.e. how many of the points we will be unable to draw).
-    // 
+    //
     // The count of NULL values needs to be done per 3D-cube (if we
     // have more than one) or once for the whole set of data if we
     // have separate arrays of X/Y/Z/Values.
@@ -4173,13 +4175,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     	var haveY = false;
     	var haveZ = false;
     	var haveValues = false;
-	
+
     	nullCounts3D = [];
     	nullCountsVals = 0;
 
     	minmaxCounts3D = [];
     	minmaxCountsVals = null;
-	
+
     	if(have3D) {
     	    if(droppedDataInfo.type == droppedDataInfoTypes.xy3D
     	       || droppedDataInfo.type == droppedDataInfoTypes.xyval3D
@@ -4195,7 +4197,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     	       || droppedDataInfo.type == droppedDataInfoTypes.latlonz3D
     	       || droppedDataInfo.type == droppedDataInfoTypes.latlonzval3D
-    	      ) { 
+    	      ) {
     		haveX = true;
     		haveY = true;
     		haveZ = true;
@@ -4217,7 +4219,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     			    if(density === null) {
     				nullCount += 1;
     			    } else {
-				
+
     				var posX = n;
     				var posY = k;
     				var posZ = i;
@@ -4241,7 +4243,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     					posX = droppedDataInfo.funX(n);
     				    }
     				}
-				
+
     				if(haveZ) {
     				    posZ = droppedDataInfo.funZ(i);
     				}
@@ -4271,7 +4273,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     			} // for each X
     		    } // for each Y
     		} // for each Z
-		
+
     		nullCounts3D.push(nullCount);
     		if(c >= minmaxCounts3D.length) {
     		    minmaxCounts3D.push({'minV':0, 'maxV':0, 'spanV':1,
@@ -4314,15 +4316,15 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     		haveX = true;
     		haveY = true;
     		haveZ = true;
-    		haveValues = false;		
+    		haveValues = false;
     	    }
     	    if(droppedDataInfo.type == droppedDataInfoTypes.xyval
     	       || droppedDataInfo.type == droppedDataInfoTypes.latlonval) {
     		haveX = true;
     		haveY = true;
     		haveZ = false;
-    		haveValues = true;		
-    	    }		
+    		haveValues = true;
+    	    }
 
     	    for( var i=0 ; i < droppedDataInfo.sizeX; i++ ) {
     		var x = droppedDataInfo.funX(i);
@@ -4344,13 +4346,13 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     		    v = 1;
     		}
 
-    		if(x === null 
+    		if(x === null
     		   || y === null
     		   || z === null
     		   || v === null) {
     		    nullCount += 1;
     		} else {
-		    
+
     		    if(droppedDataInfo.latlon) {
     			if(haveX && haveY) {
     			    var temp = convertLatLngToUtm(y, x);
@@ -4363,7 +4365,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     			}
 		    }
 
-    		    if(x === null 
+    		    if(x === null
     		       || y === null) {
     			nullCount += 1;
     		    } else {
@@ -4384,7 +4386,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     			}
     		    }
     		} // if x, y, z, val are not null
-    	    } // for each point 
+    	    } // for each point
 
     	    nullCountsVals = nullCount;
 
@@ -4420,7 +4422,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     //=== Jonas New Stuff ===============================================================================
 
     //========================================================================================
-    // Fake Drop 
+    // Fake Drop
     // A way for other Webbles to fake a drag&drop event of data onto
     // this Webble.  This sets up a connection to a data source Webble
     // just as if the user had dropped some data field on the
@@ -4432,7 +4434,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
 	for(var d = 0; !ok && d < allDropZones.length; d++) {
 	    var dropZone = allDropZones[d];
-	    
+
 	    if(dropZone.forMapping.name == vizualizationFieldName) {
 		f = dropZone.forMapping;
 		ok = true;
@@ -4461,7 +4463,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	       && oldMappings[src].listen !== null) {
 		oldMappings[src].listen(myInstanceId, false, null, null, []);
 	    }
-	    
+
 	    for(var i = 0; i < oldMappings[src].map.length; i++) {
 		if(oldMappings[src].map[i].hasOwnProperty("listen")
 		   && oldMappings[src].map[i].listen !== null) {
@@ -4479,7 +4481,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		oldMappings[src].newSelections(myInstanceId, null, false, true);
 	    }
 	}
-	
+
 	droppedDataInfo = {type: "none"};
 	cubeNo = -1;
     };
@@ -4487,7 +4489,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     //========================================================================================
     // Select All
-    // 
+    //
     // Selects all the data (resetting any previous seletions).
     // ========================================================================================
     $scope.selectAll = function() {
@@ -4498,7 +4500,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     //========================================================================================
     // Update Local Selections
-    // 
+    //
     // This tells the parent Webble that we have new user selections
     // (and prepares our own callback function that the parent will
     // later use to check selection status of individual points).
@@ -4510,8 +4512,8 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	//     grouping = newGrouping;
 	//     dirty = true;
 	// }
-	
-	for(var src = 0; src < droppedDataMappings.length; src++) { 
+
+	for(var src = 0; src < droppedDataMappings.length; src++) {
 	    if(droppedDataMappings[src].active) {
 		var srcsrc = src;
 
@@ -4538,12 +4540,12 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 
     //========================================================================================
     // My Selection Status
-    // 
+    //
     // Callback function used by the parent Webble to query if a point
     // is in the user selected area or not.
     // ========================================================================================
     function mySelectionStatus(src, idx) {
-	var grouping = $scope.gimme('MultipleSelectionsDifferentGroups'); 
+	var grouping = $scope.gimme('MultipleSelectionsDifferentGroups');
 
 	if(droppedDataMappings[src].active) {
 	    if(insideParticlesIdxs.length > 0) {
@@ -4553,7 +4555,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		} else {
 		    return 0;
 		}
-	    } else { 
+	    } else {
 		return 1; // no selection, treat everything as selected
 	    }
 	}
@@ -4644,7 +4646,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	var northing = K0 * (m + n * latTan * (a2 / 2 +
 					       a4 / 24 * (5 - latTan2 + 9 * c + 4 * c * c) +
 					       a6 / 720 * (61 - 58 * latTan2 + latTan4 + 600 * c - 330 * E_P2)));
-	// if (latitude < 0) { 
+	// if (latitude < 0) {
 	//     northing += 1e7;
 	// }
 
@@ -4706,16 +4708,27 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
     // If this function is empty and unused it can safely be deleted.
     //===================================================================================
     $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
-	if(itemName == $scope.customMenu[0].itemId){  //clearData
-	    $scope.clearData();
-	}
+		if(itemName == $scope.customMenu[0].itemId){  //clearData
+			$scope.clearData();
+		}
 
-	if(itemName == $scope.customMenu[1].itemId){  //Toggle Info Text visibility
-	    for(var i = 0; i < info.length; i++){
-		$(info[i]).toggle();
-	    }
-	    $scope.customMenu[1].itemTxt = 'Toggle Info Text Visibility (' + ($(info[2]).is(":visible") ? 'Showing' : 'Hidden') + ')';
-	}
+		else if(itemName == $scope.customMenu[1].itemId){  //Toggle Info Text visibility
+			for(var i = 0; i < info.length; i++){
+			$(info[i]).toggle();
+			}
+			$scope.customMenu[1].itemTxt = 'Toggle Info Text Visibility (' + ($(info[2]).is(":visible") ? 'Showing' : 'Hidden') + ')';
+		}
+
+		else if(itemName == $scope.customMenu[2].itemId){  //Start/Stop Video Recording
+			if(recVidEnabled){
+				recVidEnabled = false;
+				$scope.customMenu[2].itemTxt = 'Start Video Recording';
+			}
+			else{
+				$scope.customMenu[2].itemTxt = 'Stop Video Recording (ESC)';
+				recVidEnabled = true;
+			}
+		}
     };
     //===================================================================================
 

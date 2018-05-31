@@ -206,6 +206,10 @@ wblwrld3App.controller('fundamentalWebbleCtrl', function($scope, $log, Slot, Enu
         // EXAMPLE: $scope.theView.parent().draggable('option', 'cancel', '#squareTxt');
         // EXAMPLE: $scope.theView.parent().find('#squareTxt').bind('contextmenu',function(){ return false; });
 
+		//TODO: If you want some text element (<span> <p> etc) of your webble to have its text selectable and possible to highlight, it is not enough to just turn of dragging, instead use this method
+		// $scope.setTextSelectionMode([BOOLEAN / OFF or ON], [WEBBLE VIEW], "#ID_OF_ELEMENT");
+		// EXAMPLE: $scope.setTextSelectionMode(true, $scope.theView, "#squareTxt");
+
 		//TODO: There are two ways to listen for internal and external Webble events and Webble value changes.
 		//TODO: Either you register a internal Event listener as seen below, which specifies the event, the target
 		//TODO: (undefined = self, instanceId for targeted Webble or null = all Webbles) and (optional) only for slot

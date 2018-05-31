@@ -1,0 +1,17 @@
+<!--====================================================================================================================
+// View for Video Recorder Webble Template for Webble World v3.0 (2013)
+// Created By: truemrwalker
+//===================================================================================================================-->
+
+
+<div id="VidRcrdContainer" class="vidrec_base" ng-controller="videoRecorderWebbleCtrl">
+
+	<button id="VidRcrdBtn" class="btn vidrec_btn btn-default" ng-click="clicking($event);" >
+		<img id="VidRcrdImage" class="vidrec_img" ng-src="{{vidRecVals.imgSrc}}" style="height: auto;" />
+	</button>
+	<button id="StpManualRecBtn" ng-show="gimme('recordMode') > 0" class="btn vidrec_btn btn-default" ng-click="clickingStp($event);" >
+		<img id="StpManualRecImage" class="vidrec_img" src="{{vidRecVals.stpManRecSrc}}" style="height: auto;" />
+	</button>
+</div>
+
+<!--=================================================================================================================-->
