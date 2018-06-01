@@ -1,0 +1,3 @@
+{
+    "libs": ["pako.js", "zip.js", "z-worker.js", "deflate.js", "inflate.js", "pako_codecs.js"]
+}

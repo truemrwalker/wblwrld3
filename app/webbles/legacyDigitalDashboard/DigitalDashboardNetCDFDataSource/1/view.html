@@ -1,0 +1,30 @@
+<!--====================================================================================================================
+// View for DigitalDashboard for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+//===================================================================================================================-->
+
+<div id="netCDSData" ng-controller="netCDFDataWebbleCtrl">
+  <div id="fieldsToDrag">
+    <div ng-style="dataListStyle">
+      <p>{{pluginName}}<br/>
+	File: {{dragNdropData.file}}<br/>
+	{{dragNdropData.rows}} rows of data.<br/>
+	{{dragNdropData.cols}} columns.<br/>
+      </p>
+      <ul style="list-style-type:none">
+	<li id="{{field.id}}" ng-repeat="field in dragNdropData.fields" class="digitalDashboardDataSourceDataDrag">{{field.name}}</li>
+      </ul>
+    </div>
+  </div>
+
+  <input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
+
+  <div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt">
+    Drop Data File Here
+  </div>
+  
+  <!-- <span id="displayText">{{displayText}}</span> -->
+
+</div>
+
+<!--=================================================================================================================-->

@@ -1,0 +1,23 @@
+/*/=====================================================================================================================
+// Styles for DigitalDashboard for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+//====================================================================================================================*/
+
+/*/ === BEGIN: Fundamental Classes === /*/
+
+.backgroundBox {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: arial;
+    background-color: black;
+    color: red;
+    border-style: solid;
+    border-color: red;
+    width: 300;
+    height: 200;
+}
+
+/*/ === End: Fundamental Classes === /*/
+
