@@ -410,7 +410,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	}
 
 	neededChildren["DigitalDashboardPluginLinearRegression"] = 1;
-	neededChildren["DigitalDashboardPluginLinearRegressionTikhonov"] = 1;
+	neededChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = 1;
 
 	checkIfWebblesAreStillLoaded();
 	duplicateNeededWebblesAgain();
@@ -509,8 +509,8 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	    plugin.scope().set("root:left", 900);
 	}
 
-	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"].length; i++) {
-	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"][i]);
+	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"].length; i++) {
+	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][i]);
 	    plugin.scope().set("DrawingArea:width", 800);
 	    plugin.scope().set("DrawingArea:height", 300);
 
@@ -536,7 +536,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	   || loadedChildren["DigitalDashboard"][0] <= 0
 	   || loadedChildren["DigitalDashboardPluginScatterPlots"][0] <= 0
 	   || loadedChildren["DigitalDashboardPluginLinearRegression"][0] <= 0
-	   || loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"][0] <= 0
+	   || loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][0] <= 0
 	   ) {
 	    return;
 	}
@@ -639,7 +639,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// linear regression, regularization
 	plugin = {};
 	plugin.grouping = true;
-	plugin.name = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"][0]).scope().gimme("PluginName");
+	plugin.name = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][0]).scope().gimme("PluginName");
 	plugin.sets = [{"fields":[{"name":"Dependent","assigned":[],"template":false,"added":false},{"name":"Regressor 1","assigned":[],"template":false,"added":false},{"name":"Optional Regressors","assigned":[],"template":true,"added":false}]}];
 
 	plugin.sets[0].fields[0].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":set.fieldList[dependents[0]].name}];
@@ -678,8 +678,8 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegression"][i]);
 	    plugin.scope().set('DataValuesSetFilled', []);
 	}
-	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"].length; i++) {
-	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"][i]);
+	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"].length; i++) {
+	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][i]);
 	    plugin.scope().set('DataValuesSetFilled', []);
 	}
     }
@@ -695,8 +695,8 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegression"][i]);
 	    plugin.scope().set("SelectAll", !plugin.scope().gimme("SelectAll"));
 	}
-	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"].length; i++) {
-	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"][i]);
+	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"].length; i++) {
+	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][i]);
 	    plugin.scope().set("SelectAll", !plugin.scope().gimme("SelectAll"));
 	}
     }
@@ -757,8 +757,8 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	    plugin.scope().set("root:left", 900);
 	}
 
-	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"].length; i++) {
-	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"][i]);
+	for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"].length; i++) {
+	    var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][i]);
 	    plugin.scope().set("DrawingArea:width", 800);
 	    plugin.scope().set("DrawingArea:height", 300);
 	    plugin.scope().paste(dashboard);
@@ -876,7 +876,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	loadedChildren["DigitalDashboardPluginItemSetMining"] = [];
 	loadedChildren["DigitalDashboardPluginParallelCoordinateHolder"] = [];
 	loadedChildren["DigitalDashboardPluginLinearRegression"] = [];
-	loadedChildren["DigitalDashboardPluginLinearRegressionTikhonov"] = [];
+	loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = [];
 	loadedChildren["DigitalDashboardCSVDataSource"] = [];
 	loadedChildren["DigitalDashboardSmartDataSource"] = [];
 
@@ -890,7 +890,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	webbleDefNames["DigitalDashboardPluginItemSetMining"] = "DigitalDashboardPluginItemSetMining";
 	webbleDefNames["DigitalDashboardPluginParallelCoordinateHolder"] = "DigitalDashboardPluginParallelCoordinateHolder";
 	webbleDefNames["DigitalDashboardPluginLinearRegression"] = "DigitalDashboardPluginLinearRegression";
-	webbleDefNames["DigitalDashboardPluginLinearRegressionTikhonov"] = "DigitalDashboardPluginLinearRegressionTikhonov";
+	webbleDefNames["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = "DigitalDashboardPluginLinearRegressionTikhonovRegularization";
 
 	webbleDefNames["SoftSensorAppPlantVisualizer"] = "SoftSensorAppPlantVisualizer";
 
@@ -904,7 +904,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 
 	neededChildren["DigitalDashboardPluginScatterPlots"] = 1;
 	neededChildren["DigitalDashboardPluginLinearRegression"] = 1;
-	neededChildren["DigitalDashboardPluginLinearRegressionTikhonov"] = 1;
+	neededChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = 1;
 
 	neededChildren["SoftSensorAppPlantVisualizer"] = 1;
 
