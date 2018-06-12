@@ -429,7 +429,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	barChart.scope().set("PluginName", "Bar Chart");
 	barChart.scope().paste(dashboard);
 
-	var step1 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][0]);
+	var step1 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][0]);
 	step1.scope().set("root:top", rows[5]);
 	step1.scope().set("root:left", cols[5]);
 	step1.scope().set("DrawingArea:width", vizWidth);
@@ -439,7 +439,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	step1.scope().set("PluginName", "StepCurve");
 	step1.scope().paste(dashboard);
 
-	var step2 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][1]);
+	var step2 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][1]);
 	step2.scope().set("root:top", rows[6]);
 	step2.scope().set("root:left", cols[6]);
 	step2.scope().set("DrawingArea:width", vizWidth);
@@ -538,7 +538,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	// barChart.scope().set("PluginName", "Bar Chart");
 	// barChart.scope().paste(dashboard);
 
-	// var step1 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][0]);
+	// var step1 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][0]);
 	// step1.scope().set("root:top", thirdRowTop + 20);
 	// step1.scope().set("root:left", thirdRowLeft + secondRowWidth + 20);
 	// step1.scope().set("DrawingArea:width", secondRowWidth - 5);
@@ -548,7 +548,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	// step1.scope().set("PluginName", "StepCurve");
 	// step1.scope().paste(dashboard);
 
-	// var step2 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][1]);
+	// var step2 = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][1]);
 	// step2.scope().set("root:top", thirdRowTop + 40);
 	// step2.scope().set("root:left", thirdRowLeft + secondRowWidth + 40);
 	// step2.scope().set("DrawingArea:width", secondRowWidth - 5);
@@ -599,7 +599,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	neededChildren["DigitalDashboardPluginParallelCoordinateHolder"] = 1;
 	neededChildren["DigitalDashboardPluginScatterPlots"] = 1;
 	neededChildren["DigitalDashboardPluginBarChart"] = 1;
-	neededChildren["DigitalDashboardPluginStepCurve"] = 2;
+	neededChildren["DigitalDashboardPluginAccHistograms"] = 2;
 	neededChildren["DigitalDashboardSmartDataSource"] = 1;
 
 	for(var w in neededChildren) {
@@ -638,7 +638,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 													    );
 			     var par = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginParallelCoordinateHolder"][0]);
 			     par.scope().set("Logarithmic", [false, true, true, false, false, false]);
-			     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][0]);
+			     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][0]);
 			     step.scope().set("UseLogaritmicCounts", false);
 			     dashboard.scope().selectAll();
 			 });
@@ -711,7 +711,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 			 {
 			     var par = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginParallelCoordinateHolder"][0]);
 			     par.scope().set("Logarithmic", logs);
-			     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][0]);
+			     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][0]);
 			     step.scope().set("UseLogaritmicCounts", true);
 			     $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboard"][0]).scope().set("Mapping", temp);
 			     dashboard.scope().selectAll();			     
@@ -936,16 +936,16 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	    barChart.scope().set("DrawingArea:height", vizHeight);
 	}
 
-	if(loadedChildren["DigitalDashboardPluginStepCurve"].length > 0) {
-	    var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][0]);
+	if(loadedChildren["DigitalDashboardPluginAccHistograms"].length > 0) {
+	    var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][0]);
 	    step.scope().set("root:top", rows[5]);
 	    step.scope().set("root:left", cols[5]);
 	    step.scope().set("DrawingArea:width", vizWidth);
 	    step.scope().set("DrawingArea:height", vizHeight);
 	}
 
-	if(loadedChildren["DigitalDashboardPluginStepCurve"].length > 1) {
-	    var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][1]);
+	if(loadedChildren["DigitalDashboardPluginAccHistograms"].length > 1) {
+	    var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][1]);
 	    step.scope().set("root:top", rows[6]);
 	    step.scope().set("root:left", cols[6]);
 	    step.scope().set("DrawingArea:width", vizWidth);
@@ -1031,16 +1031,16 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 	//     barChart.scope().set("DrawingArea:height", secondRowHeight - fontSize - 5);
 	// }
 
-	// if(loadedChildren["DigitalDashboardPluginStepCurve"].length > 0) {
-	//     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][0]);
+	// if(loadedChildren["DigitalDashboardPluginAccHistograms"].length > 0) {
+	//     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][0]);
 	//     step.scope().set("root:top", thirdRowTop + 20);
 	//     step.scope().set("root:left", thirdRowLeft + secondRowWidth + 20);
 	//     step.scope().set("DrawingArea:width", secondRowWidth - 5);
 	//     step.scope().set("DrawingArea:height", secondRowHeight - fontSize - 5);
 	// }
 
-	// if(loadedChildren["DigitalDashboardPluginStepCurve"].length > 1) {
-	//     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginStepCurve"][1]);
+	// if(loadedChildren["DigitalDashboardPluginAccHistograms"].length > 1) {
+	//     var step = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginAccHistograms"][1]);
 	//     step.scope().set("root:top", thirdRowTop + 40);
 	//     step.scope().set("root:left", thirdRowLeft + secondRowWidth + 40);
 	//     step.scope().set("DrawingArea:width", secondRowWidth - 5);
