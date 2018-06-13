@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardBinaryDataSource",
+ "description":"A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads data in the Rockstar binary format and a format used for 3D space density data in the Hands-on Portal project.",
+ "keywords":"DigitalDashboard,data,Rockstar,density data",
+ "author":"legacyDigitalDashboard"
+}

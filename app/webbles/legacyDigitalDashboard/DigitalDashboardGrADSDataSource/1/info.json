@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardGrADSDataSource",
+ "description":"A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads data in the GrADS binary format.",
+ "keywords":"DigitalDashboard,data,GrADS",
+ "author":"legacyDigitalDashboard"
+}

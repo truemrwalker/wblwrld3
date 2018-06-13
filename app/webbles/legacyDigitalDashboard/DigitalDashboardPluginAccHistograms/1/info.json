@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginAccHistograms",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots accumulated histograms or step curves.",
+ "keywords":"DigitalDashboard,Visualization",
+ "author":"legacyDigitalDashboard"
+}

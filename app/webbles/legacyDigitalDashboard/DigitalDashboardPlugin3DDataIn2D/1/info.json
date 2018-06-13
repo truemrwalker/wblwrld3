@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPlugin3DDataIn2D",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots 3D data in 2D, for example by showing level curves.",
+ "keywords":"DigitalDashboard,Visualization,3D",
+ "author":"legacyDigitalDashboard"
+}

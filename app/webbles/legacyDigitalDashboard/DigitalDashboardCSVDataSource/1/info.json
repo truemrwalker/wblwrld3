@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardCSVDataSource",
+ "description":"A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads CSV format data.",
+ "keywords":"DigitalDashboard,data,CSV",
+ "author":"legacyDigitalDashboard"
+}

@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginBarChart",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Draws bar charts.",
+ "keywords":"DigitalDashboard,Visualization",
+ "author":"legacyDigitalDashboard"
+}

@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginMap",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots data on top of a map, using the Google Maps API. Can draw lines, dots, and heat maps.",
+ "keywords":"DigitalDashboard,Visualization,map,Google Maps",
+ "author":"legacyDigitalDashboard"
+}

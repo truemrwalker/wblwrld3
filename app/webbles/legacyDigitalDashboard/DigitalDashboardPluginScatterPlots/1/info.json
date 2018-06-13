@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginScatterPlots",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots two dimensional data in scatter plots.",
+ "keywords":"DigitalDashboard,Visualization",
+ "author":"legacyDigitalDashboard"
+}

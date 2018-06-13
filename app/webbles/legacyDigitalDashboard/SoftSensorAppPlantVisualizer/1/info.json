@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"SoftSensorAppPlantVisualizer",
+ "description":"A Webble that can show a schematic view of a chemical plant (or something else) with sensor locations. Clicking on the sensor location turns the sensors on/off.",
+ "keywords":"DigitalDashboard,Hands-on Portal,hop,chemical plant,soft sensors",
+ "author":"legacyDigitalDashboard"
+}

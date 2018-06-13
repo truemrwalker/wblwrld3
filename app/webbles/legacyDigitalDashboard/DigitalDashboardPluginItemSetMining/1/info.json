@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginItemSetMining",
+ "description":"Data mining component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Does item set mining (or rule mining) of data and presents a list of the mined item sets. Uses the fp growth algoritm.",
+ "keywords":"DigitalDashboard,data mining",
+ "author":"legacyDigitalDashboard"
+}

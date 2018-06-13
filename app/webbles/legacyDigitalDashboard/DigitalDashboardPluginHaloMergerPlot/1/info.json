@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginHaloMergerPlot",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots scatter plots with different size of different dots. Can also connect different subsets of data with line. Intended to show halos in space moving over time and merging into larger halos, in the Hands-on Portal project.",
+ "keywords":"DigitalDashboard,Visualization",
+ "author":"legacyDigitalDashboard"
+}

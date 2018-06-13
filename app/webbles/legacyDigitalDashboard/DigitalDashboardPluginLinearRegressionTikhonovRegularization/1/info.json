@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginLinearRegressionTikhonovRegularization",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Does linear regression of data using Tikhonov regularization and plots the training data and the extrapolation from the regression for data not in the training data in a time series plot.",
+ "keywords":"DigitalDashboard,Visualization,linear regression,data mining",
+ "author":"legacyDigitalDashboard"
+}

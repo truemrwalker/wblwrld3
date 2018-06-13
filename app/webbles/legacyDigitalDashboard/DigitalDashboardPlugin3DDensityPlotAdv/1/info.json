@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPlugin3DDensityPlotAdv",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots 3D data in a sort of fake 3D (the front view in 2D, the side view in 2D, and the top view in 2D) and allows slicing out smaller blocks by clicking and draggin.",
+ "keywords":"DigitalDashboard,Visualization,3D",
+ "author":"legacyDigitalDashboard"
+}

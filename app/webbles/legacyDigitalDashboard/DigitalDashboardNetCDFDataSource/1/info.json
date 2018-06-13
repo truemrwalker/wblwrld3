@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardNetCDFDataSource",
+ "description":"A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads data in the NetCDF binary format.",
+ "keywords":"DigitalDashboard,data,NetCDF",
+ "author":"legacyDigitalDashboard"
+}

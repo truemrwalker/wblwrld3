@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginHeatMap",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Draws heat maps. Can do clustering of the rows and/or columns. Allows selection of rows, columns, or cells based on the value in the cell. Can generate item set data based on selected cells.",
+ "keywords":"DigitalDashboard,Visualization",
+ "author":"legacyDigitalDashboard"
+}

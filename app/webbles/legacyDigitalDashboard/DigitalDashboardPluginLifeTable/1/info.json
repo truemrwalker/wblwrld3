@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginLifeTable",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Draws 'Life Tables', which means it plots the number of (or % of) patients in the data that are still alive (or still relapse free etc.) as a function of time.",
+ "keywords":"DigitalDashboard,Visualization,TOB",
+ "author":"legacyDigitalDashboard"
+}

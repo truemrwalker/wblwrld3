@@ -1,0 +1,10 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboard",
+ "description":"A superparent component that coordinates communication between components that provide data and components that visualize data, so the visualization components do not need to know anything about the data components and also do not need to know about the other visualization components. Also coordinates updates between the visualizations so that if a subset of data is selected in one visualization, all other visualizations that visualize the same data will be updated.
+
+Expects at least one data component (for example the DigitalDashboardSmartDataSource) and one visualization component (for example the DigitalDashboardPluginScatterPlots) to be connected as children.",
+ "keywords":"DigitalDashboard,Visualization",
+ "author":"legacyDigitalDashboard"
+}

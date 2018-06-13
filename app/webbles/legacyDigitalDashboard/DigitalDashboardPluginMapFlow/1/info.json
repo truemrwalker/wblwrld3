@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginMapFlow",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Draws trajectory data on a world map. Uses the Google Maps API.",
+ "keywords":"DigitalDashboard,Visualization,map,Google Maps,trajectories",
+ "author":"legacyDigitalDashboard"
+}

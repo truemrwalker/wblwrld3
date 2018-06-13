@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardPluginParallelCoordinateHolder",
+ "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Plots multi dimensional data using parallel coordinates.",
+ "keywords":"DigitalDashboard,Visualization,parallel coordinates",
+ "author":"legacyDigitalDashboard"
+}
