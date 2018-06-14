@@ -47,7 +47,8 @@ var libGfs = require('../lib/gfs');
 var util = require('../lib/util');
 var xfs = require('../lib/xfs');
 
-var mime = require('mime');
+// var mime = require('mime');
+var mime = require('mime-types');
 
 var mkdirpAsync = Promise.promisify(mkdirp);
 Promise.promisifyAll(fs);

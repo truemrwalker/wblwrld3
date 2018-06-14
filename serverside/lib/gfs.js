@@ -29,7 +29,7 @@ var Promise = require("bluebird");
 
 var util = require('./util');
 
-var mime = require('mime');
+var mime = require('mime-types');
 var path = require('path');
 
 var GridFS = require('gridfs-stream');
