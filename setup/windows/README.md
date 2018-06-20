@@ -48,6 +48,12 @@ Then, inside the "setup/windows" folder run (or double-click) the following scri
 bootstrap.bat
 ```
 
+Some Windows machine may throw some error messages during the node.js packages installations, but these errors will not affect Webble World in any way and can be completely ignored. If you would like to remove most if these errors anyway, you can run the following command line in the command window before you run bootstrap.bat.
+
+```
+npm install --global --production windows-build-tools
+```
+
 # Run
 
 After the installation, Webble World can be started by running the following script:
