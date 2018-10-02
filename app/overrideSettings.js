@@ -65,7 +65,7 @@ var wblwrldSystemOverrideSettings = {
     pageTitle: "",                      // Title bar text
     aboutInfoText: "",                  // About App Text
     autoLoadedWebblePath: "",           // relative or absolute path for a webble (app or any) that should be loaded automatically
-	vettingIsEnabled: true,				// If set to true, only Webbles own by oneself or made by users in the vettingUsers list (below) will appear in the Weble browser, all others will be hidden.
+	vettingIsEnabled: true,				// If set to true, only Webbles own by oneself or made by users in the vettingUsers list (below) will appear in the Weble browser, all others will be hidden. (public servers should probably be set to true)
 	vettedUsers: []                     // list (array) of user names that the system will acknowledge as safe and who's Webbles will be visible to anybody (eg. ["best-User", "secondBest-User"])
 };
 //--------------------------------------------------------------------------------------------
