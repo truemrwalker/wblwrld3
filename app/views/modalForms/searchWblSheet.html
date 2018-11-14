@@ -98,6 +98,7 @@
     <div class="row">
         <div class="col-xs-12">
             <span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;">{{textParts.resultTitle | translate}} </span><span style="color: darkred; font-size: 1.2em; font-weight: normal; padding-bottom: -20px;" >{{formItems.searchCriteriaVariable}} {{formItems.searchCriteriaStatic | translate}} {{formItems.searchStrResult}}</span>
+			<span ng-show="thePlatform.vettingSetting.vettingIsEnabled" style="color: blue; font-size: 0.7em; font-weight: normal; padding-bottom: -20px;">[{{textParts.searchInfo}}]</span>
             <hr style="border-color: darkred; height: 1px; margin: 0 0 10px 0; padding: 0;">
         </div>
     </div>

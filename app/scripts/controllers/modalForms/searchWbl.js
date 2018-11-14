@@ -71,6 +71,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
         resultTitle: gettext("Result:"),
         suggestionTxt: gettext("A variety of Webbles that might be of interest."),
         searchResultTxt: gettext("found by free text search of all fields containing search string"),
+		searchInfo: gettext("Only Vetted Visible"),
         starRatingTxt: [
             gettext("Terrible"),
             gettext("Very Bad"),
