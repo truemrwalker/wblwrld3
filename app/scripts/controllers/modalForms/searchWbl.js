@@ -338,6 +338,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 					wbl['slimEnabled'] = $scope.formItems.slimEnabled;
 					wbl['keywordsList'] = getKeywordsList(wbl.webble.keywords);
 					wbl.webble.description = valMod.urlifyWithImages(wbl.webble.description);
+					wbl['is_vetted'] = getIsVetted(wbl.webble.author);
                 }
 
                 $scope.formItems.searchResult = $scope.formItems.searchResult.concat(resp.data);
