@@ -69,6 +69,7 @@ var wblwrldSystemOverrideSettings = {
 	vettedUsers: [        				// list (array) of user names that the system will acknowledge as safe and who's Webbles will be visible to anybody (eg. ["best-User", "secondBest-User"])
 		"truemrwalker",					// default vetted users are original Hokkaido University Webble developers, found in the core Webble World Server Setup. May be removed if those Webbles are not required.
 		"legacyDigitalDashboard",
+		"digitalDashboardTNG",
 		"tob"
 	]
 };

@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"hopAppYoshidaHaloMerge3D",
+ "description":"The Hands-on Portal Halo Merge application loader is used to load the Webbles necessary for the Halo Merge application developed for the Hands-on Portal project.\n\nThis Webble will also react to resizing of the browser window and try to resize and move the visualization Webbles around to fit the new browser window size.",
+ "keywords":"Digital Dashboard, Hands-on Portal, hop, Yoshida group, app, dashboardTNG",
+ "author":"digitalDashboardTNG"
+}

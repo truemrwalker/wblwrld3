@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"hopVizLifeTableWebble",
+ "description":"The Hands-on Portal Life Table visualization Webble shows data in Life Tables.\n\nLife tables are used in medicine, to see how well patients are doing in studies for example comparing different treatments. It plots the number of patients still alive as a function of time from the time the patient was diagnosed with a problem (or how many are relapse free etc.).\n\nThe Webble expects data to be provided by a Hands-on Portal data Webble, for example the hopFileDataWebble.\n\nTo start visualizing data, load some data (by for instance dropping a data file from the file system on the hopFileDataWebble) and then drag-and-drop the data field name you want to visualize from the list of data fields displayed by the data Webble and drop it on the corresponding area that lights up when the you drag something over the Life Table Webble, e.g. drop data corresponding to the date of diagnosis on the \"Date of Diagnosis\" area and data corresponding to date of death on the \"Date of Death\" area. The Life Table needs either \"Time to Death\" data or date of diagnosis data together with date of death data. LFU data is optional.\n\nTo change various options, right-click on the Webble and select \"Properties\".",
+ "keywords":"Digital Dashboard, Hands-on Portal, hop, dashboardTNG, visualization, viz",
+ "author":"digitalDashboardTNG"
+}

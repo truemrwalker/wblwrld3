@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"hopVizHaloMergeWebble",
+ "description":"The Hands-on Portal Halo Merge visualization Webble shows halos in space merging over time.\n\nIt expects data to be provided by a Hands-on Portal data Webble, for example the hopFileDataWebble.\n\nTo start visualizing data, load some data (by for instance dropping a data file from the file system on the hopFileDataWebble) and then drag-and-drop the data field name you want to visualize from the list of data fields displayed by the data Webble and drop it on the corresponding area that lights up when the you drag something over the Halo Merge Webble, e.g. drop the size data on the area that says \"size\". The Halo Merge Webble needs at least x coordinates, y coordinates, and sizes to display anything. Adding ID, Child ID (which halos are descendants of  which), and time will draw lines between halos that are ancestors/descendants.\n\nYou can zoom the visualization with the \"z\" (zoom in) and \"x\" (zoom out) keys, or the \"+\" and \"-\" keys.\n\nWhen zoomed, the view port can be panned around with either the arrow keys or with \"w\" (pan up), \"s\" (pan down), \"a\" (pan left), and \"d\" (pan right).\n\nTo change various options, right-click on the Webble and select \"Properties\".",
+ "keywords":"Digital Dashboard, Hands-on Portal, hop, dashboardTNG, visualization, viz",
+ "author":"digitalDashboardTNG"
+}

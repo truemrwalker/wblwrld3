@@ -1,0 +1,3 @@
+The Hands-on Portal Himawari application loader is used to load the Webbles necessary for the Himawari application developed for the Hands-on Portal project.
+
+This Webble will also react to resizing of the browser window and try to resize and move the visualization Webbles around to fit the new browser window size.

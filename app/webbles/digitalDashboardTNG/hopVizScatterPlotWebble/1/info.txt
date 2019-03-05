@@ -1,0 +1,10 @@
+The Hands-on Portal Scatter Plot visualization Webble shows various types of data in a scatter plot.
+
+It expects data to be provided by a Hands-on Portal data Webble, for example the hopFileDataWebble.
+
+To start visualizing data, load some data (by for instance dropping a data file from the file system on the hopFileDataWebble) and then drag-and-drop the data field name you want to visualize from the list of data fields displayed by the data Webble and drop it on the area corresponding to the x-axis or the y-axis depending on where you want to see the data. The Scatter Plot Webble needs data for both the x-axis and the y-axis before it starts visualizing anything.
+
+You can zoom the visualization with the "z" (zoom in) and "x" (zoom out) keys, or the "+" and "-" keys.
+When zoomed, the view port can be panned around with either the arrow keys or with "w" (pan up), "s" (pan down), "a" (pan left), and "d" (pan right).
+
+To change various options, right-click on the Webble and select "Properties".

@@ -1,0 +1,1 @@
+The Hands-on Portal File Data Webble reads data from files (either local files or online files accessible from a URL) and presents the file contents in a way that is understood by the Hands-on Portal visualization Webbles.

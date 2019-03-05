@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"hopFileDataWebble",
+ "description":"The Hands-on Portal File Data Webble reads data from files (either local files or online files accessible from a URL) and presents the file contents in a way that is understood by the Hands-on Portal visualization Webbles.\n\nFiles can be loaded by adding a URL in the text input box, dropping a file from the file system in the \"Drop Data File Here\" area, or browsing to the file by clicking on the \"Choose Files\" button.\n\nOnce a file has been loaded, you can drag-and-drop data from this Webble onto visualization Webbles, for example the HopVizBarChart Webble.\n\nThis Webble can read a variety of file types, including csv files, GrADS files, netCDF files, Rockstar files, and more. The files can be in a zip archive and still load.\n\nFor programmers, there is a README.txt file that specifies how to write Webbles that are compatible with this Webble and how they can access the data.",
+ "keywords":"Digital Dashboard, Hands-on Portal, hop, dashboardTNG, data, files, zip, lzh, csv, rockstar, grads, netCDF",
+ "author":"digitalDashboardTNG"
+}

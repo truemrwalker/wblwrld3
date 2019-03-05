@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"hopVizLoopHistogramWebble",
+ "description":"The Hands-on Portal Life Table visualization Webble shows data in a histogram and can automatically change the selected subset of data to give you a kind of movie of visualizations of different subsets of data.\n\nThe Webble expects data to be provided by a Hands-on Portal data Webble, for example the hopFileDataWebble.\n\nTo change various options, right-click on the Webble and select \"Properties\".",
+ "keywords":"Digital Dashboard, Hands-on Portal, hop, dashboardTNG, visualization, viz",
+ "author":"digitalDashboardTNG"
+}
