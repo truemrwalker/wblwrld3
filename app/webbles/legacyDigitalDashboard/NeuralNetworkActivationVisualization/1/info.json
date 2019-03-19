@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"NeuralNetworkActivationVisualization",
+ "description":"A Webble shows the activation paths in neural networks on specific input data. Used in a prototype application for the Hands-on Portal.",
+ "keywords":"Hands-on Portal,hop,neural networks,DNN,visualization",
+ "author":"legacyDigitalDashboard"
+}

@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"NeuralNetworkInput",
+ "description":"A Webble that reads Profeat or GIST data and can send this data to the NeuralNetworkActivationVisualization. Used in a prototype application for the Hands-on Portal.",
+ "keywords":"Hands-on Portal,hop,neural networks,DNN,visualization",
+ "author":"legacyDigitalDashboard"
+}

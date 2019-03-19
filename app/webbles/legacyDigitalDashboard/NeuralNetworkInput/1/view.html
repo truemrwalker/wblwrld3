@@ -1,0 +1,22 @@
+<!--====================================================================================================================
+    // View for NeuralNetworkInput for Webble World v3.0 (2013)
+    // Created By: Jonas Sjobergh
+    //===================================================================================================================-->
+
+<div id="neuralNetworkInputWebble" ng-controller="neuralNetworkInputWebbleCtrl">
+  <div id="selectionHolder" width="200" height="50" style="pointer-events:visible;">
+    <div id="DrawingArea" style="pointer-events:none;">
+      <canvas id="theCanvas" style="pointer-events:none;" width="200" height="50"></canvas>
+    </div>
+  </div>
+
+  <input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
+
+  <div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt">
+    Drop Data File Here
+  </div>
+
+  <span id="displayText">{{displayText}}: {{dataSetName}}</span>
+</div>
+
+<!--=================================================================================================================-->

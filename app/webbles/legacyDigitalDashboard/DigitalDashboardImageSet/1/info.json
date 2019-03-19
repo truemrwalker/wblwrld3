@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/notFound.png",
+ "name":"DigitalDashboardImageSet",
+ "description":"A Webble that takes sets of images and allows you to create the difference between two images in different ways. Used in a prototype application for the Hands-on Portal.",
+ "keywords":"DigitalDashboard,Hands-on Portal,hop,images",
+ "author":"legacyDigitalDashboard"
+}
