@@ -24,7 +24,7 @@
 /**
  * Assures that a specific value is equal to another one
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 angular.module('wblwrld3App').directive('confirmValue', function () {
 	return {

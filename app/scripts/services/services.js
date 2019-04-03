@@ -373,6 +373,7 @@ ww3Services.factory('wwConsts', ['colorService', function(colorService) {
         workspaceQuickSavePathLastName: "_wsQuickSave",
         workspaceInternalSavePathName: "wsInternalSave",
         localhostCoreAddresses: "localhost:7000/",
+		currentOnlineServer: "https://192.168.12.186:7443/",
         randomSeed: 1,
         palette: [
             {name: "red", value: colorService.rgbToHex(255, 0, 0)},

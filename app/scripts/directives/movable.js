@@ -24,7 +24,7 @@
 /**
  * Enables an element to move (be dragged) freely inside its containing page
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Directives.directive('movable', ['$document', function($document) {
 	return {

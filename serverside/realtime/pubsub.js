@@ -26,7 +26,7 @@
  * the local EventEmitter is used. The publish and subscribe channels are saved and made
  * available to other components as app.locals.pub and app.locals.sub respectively.
  * 
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 const Promise = require('bluebird');

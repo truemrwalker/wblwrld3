@@ -24,7 +24,7 @@
 /**
  * Implements the interaction logic of the chaotic draw component
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Directives.directive("drawing", [ 'socket', function(socket){
 	return {

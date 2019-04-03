@@ -24,7 +24,7 @@
 /**
  * Scrolls the containing element to bring the target element to the top of the page
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Directives.directive('keepOnTop', [ '$window', '$timeout', function($window, $timeout){
 	return {

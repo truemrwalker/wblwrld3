@@ -22,7 +22,7 @@
 /**
  * @overview REST endpoints for getting information about published Webble templates.
  * @module api/dev
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

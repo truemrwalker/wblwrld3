@@ -22,7 +22,7 @@
 /**
  * @overview REST endpoints for creating zip archives from local directories.
  * @module api/files
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

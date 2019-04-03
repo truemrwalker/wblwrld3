@@ -22,7 +22,7 @@
 /**
  * @overview REST endpoints for getting the contents of files associated with Webbles.
  * @module api/files
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

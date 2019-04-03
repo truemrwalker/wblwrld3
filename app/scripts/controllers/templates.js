@@ -24,7 +24,7 @@
 /**
  * Controller for the template creation component (which is also a rudimentary IDE)
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('TemplatesCtrl', ['$scope', '$timeout', '$log', 'gettext', 'templates', 'templateService', 'confirm',
 function ($scope, $timeout, $log, gettext, templates, templateService, confirm) {

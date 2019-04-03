@@ -25,7 +25,7 @@
  * file. Additionally, it expands the "#file" and "#date" strings into the file's basename
  * and the current date respectively.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var fs = require('fs');

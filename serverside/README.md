@@ -197,11 +197,11 @@ For each of these third-party services to work, the appropriate API keys, secret
 obtained from the appropriate third-party service website. For most of those keys, Webble World's
 endpoint (URL) has to be specified when creating the relevant keys. In this case, of course, two separate
 keys have to be created if Webble World needs to run on both development machines (```localhost```) or
-online servers (e.g., ```wws.meme.hokudai.ac.jp```). For example, the following endpoints would be
+online servers (e.g., ```CURRENT ONLINE SERVER```). For example, the following endpoints would be
 valid endpoints for deploying Webble World on localhost or online respectively: 
 
 * ``` https://localhost:7443 ```
-* ``` https://wws.meme.hokudai.ac.jp ```
+* ``` CURRENT ONLINE SERVER ```
 
 Note that in case the third-party services require the explit authorization of callback-URLs, the following
 callback URLs are implemented in the Webble World server for each of the above services:
@@ -215,7 +215,7 @@ Where ```<server>``` is the endpoint on which Webble World is deployed under. Fo
 google service would be the following:
 
 * ``` https://localhost:7443/auth/google/callback ```
-* ``` https://wws.meme.hokudai.ac.jp/auth/google/callback ```
+* ``` CURRENT ONLINE SERVER/auth/google/callback ```
 
 When created, the third party ids and secrets can be stored to either the ```secretsdb.json``` file or,
 alternatively, they can be exported via environment variables (recommended for "production" deployments).
@@ -241,7 +241,7 @@ Additionally, the "Google+ (login) API" has to be *enabled* in Google's applicat
 URLs have to be configured. For example:
 
 * ``` https://localhost:7443/auth/google/callback ```
-* ``` https://wws.meme.hokudai.ac.jp/auth/google/callback ```
+* ``` CURRENT ONLINE SERVER/auth/google/callback ```
 
 In this case, the relevant entries in the ```secretsdb.json``` file are the following:
 ```
@@ -258,7 +258,7 @@ In the facebook application console the ```Facebook Login``` *Product* has to be
 along with the correct facebook callback URLs. For example:
 
 * ``` https://localhost:7443/auth/facebook/callback ```
-* ``` https://wws.meme.hokudai.ac.jp/auth/facebook/callback ```
+* ``` CURRENT ONLINE SERVER/auth/facebook/callback ```
 
 The relevant entries in the ```secretsdb.json``` file are the following:
 ```
@@ -354,7 +354,7 @@ Most user-generated objects and files stored in the database are related to Webb
 platform's main components, called *webbles*. Additionally, the reference, main deployment of
 Webble World platform is accessible at the following URL:
 
-https://wws.meme.hokudai.ac.jp
+CURRENT ONLINE SERVER
 
 Since the reference deployment of Webble World is supposed to contain the definitive collection
 of *webbles*, there is a maintenance configuration option (off by default) to synchronize the
@@ -363,7 +363,7 @@ central database with the local one:
 ```node serverside/web-server.js --deployment maintenance --sync-online-webbles 1```
 
 After the successful invocation of the above command, all published components (webbles) on the
-https://wws.meme.hokudai.ac.jp server are also made available to the local server instance.
+CURRENT ONLINE SERVER server are also made available to the local server instance.
 
 # General Organization
 
@@ -553,7 +553,7 @@ This sub-directory contains the public and private keys needed for the initializ
 server's ```https``` endpoint. Of course, the keys inside that directory are self-signed, have expired and are meant
 only for testing and development purposes.
 
-The reference deployment of Webble World, running under https://wws.meme.hokudai.ac.jp uses a different, valid and
+The reference deployment of Webble World, running under CURRENT ONLINE SERVER uses a different, valid and
 widely trusted certificate.
 
 ### ```lib```
@@ -651,7 +651,7 @@ responsible for serving the Webble World SPA client's files and assets, and, thu
 #### ```request```
 
 This library is used specifically for performing REST requests to the definitive deployment of
-the Webble World server (under the https://wws.meme.hokudai.ac.jp endpoint) in order to obtain
+the Webble World server (under the CURRENT ONLINE SERVER endpoint) in order to obtain
 and synchronize the user-generated objects and files that represent the platforms components
 (webbles). It is, thus, utilized only when the following command is invoked:
 

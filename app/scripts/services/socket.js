@@ -24,7 +24,7 @@
 /**
  * Socket Factory based on https://github.com/btford/angular-socket-io
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.provider('socketFactory', function () {
 
@@ -103,7 +103,7 @@ ww3Services.provider('socketFactory', function () {
  * Instantiation of the factory as the 'socket' service for realtime communication
  * among the clients that is arbitrated by the server
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('socket', function (socketFactory) {
     return socketFactory();

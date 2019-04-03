@@ -22,7 +22,7 @@
 /**
  * @overview Gravatar utility functions.
  * @module lib/gravatar
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var crypto = require('crypto');

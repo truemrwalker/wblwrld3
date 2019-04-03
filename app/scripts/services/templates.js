@@ -24,7 +24,7 @@
 /**
  * The template server resource
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('Template', ['$resource', function($resource) {
 	return $resource('/api/dev/webbles/:id', { id: '@id' });
@@ -33,7 +33,7 @@ ww3Services.factory('Template', ['$resource', function($resource) {
 /**
  * The template loader pattern that can be used for multiple instantiations/requests
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('TemplatesLoader', ['Template', '$q', 'gettext', function(Template, $q, gettext) {
 	return function() {
@@ -55,7 +55,7 @@ ww3Services.factory('TemplatesLoader', ['Template', '$q', 'gettext', function(Te
  * The template service for creating and modifying templates BUT ALSO
  * for retrieving and editing individual files within templates
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('templateService', ['$q', '$upload', '$http', function($q, $upload, $http) {
 	return {

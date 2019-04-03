@@ -26,7 +26,7 @@
  * published Webble. These links are for making it easier for search engines to index the
  * Webble World platform and its content.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");
@@ -59,7 +59,7 @@ module.exports = function (app, config, mongoose, gettext) {
             stream.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n');
 
             webbles.forEach(function (w) {
-                stream.write('<url><loc>https://wws.meme.hokudai.ac.jp/webbleinfo.html?wbl=' + w.webble.defid + '</loc></url>\n');
+                stream.write('<url><loc>https://192.168.12.186:7443/webbleinfo.html?wbl=' + w.webble.defid + '</loc></url>\n');
             });
 
             stream.end('</urlset>\n');

@@ -25,7 +25,7 @@
  * Currently these text messages are broadcasted to all users that are connected to Webble World
  * via the chat component (Help->Open Chat).
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

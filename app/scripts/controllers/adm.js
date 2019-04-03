@@ -25,7 +25,7 @@
  * Controller for the app & server's administration interface.
  * This interface is available only to administrators.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('AdmCtrl', [ '$scope', '$interval', 'gettext', 'confirm', 'server', 'UserAccounts', 'ActiveSessions',
 function ($scope, $interval, gettext, confirm, server, UserAccounts, ActiveSessions) {

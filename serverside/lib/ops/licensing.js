@@ -28,7 +28,7 @@
  * to the groups that that specific object is published under.
  * 
  * @module ops
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

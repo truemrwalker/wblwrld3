@@ -26,7 +26,7 @@
  * used for publishing webbles, calculating their trust value and for storing secrets (e.g. API keys).
  * See also: http://mongoosejs.com/docs/guide.html
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

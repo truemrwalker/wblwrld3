@@ -26,7 +26,7 @@
  * interceptors. Otherwise the service wouldn't be able to be loaded directly
  * since that would throw circular dependency errors in angular's core
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('authServiceDelayed', ['$injector', function($injector) {
 
@@ -40,7 +40,7 @@ ww3Services.factory('authServiceDelayed', ['$injector', function($injector) {
  * Authentication and user information service.
  * Based (loosely) on http://espeo.pl/authentication-in-angularjs-application/
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('authService', ['$q', '$rootScope', '$http', '$window', '$timeout', 'socket',
 function($q, $rootScope, $http, $window, $timeout, socket) {
@@ -267,6 +267,6 @@ function($q, $rootScope, $http, $window, $timeout, socket) {
 /**
  * Convenience constant/service to use as a default action in user interfaces
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.constant('authOfferToRegisterByDefault', false);

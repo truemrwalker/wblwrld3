@@ -29,7 +29,7 @@
  * (c) depending on the deployment value (config.DEPLOYMENT) exit or start listening
  *     for connections over http/https
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 ////////////////////////////////////////////////////////////////////////

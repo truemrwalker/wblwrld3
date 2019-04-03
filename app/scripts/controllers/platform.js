@@ -5225,7 +5225,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
         else if(sublink == 'bugreport' || (whatKeys.theAltKey && whatKeys.theKey == 'NUM 7')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
-                $window.location = "mailto:mkuwahara@meme.hokudai.ac.jp?subject=Webble World Bug Report";
+                $window.location = "mailto:micke.kuwahara@ist.hokudai.ac.jp?subject=Webble World Bug Report";
             }
         }
         else if(sublink == 'about' || (whatKeys.theAltKey && whatKeys.theKey == 'NUM 5')){

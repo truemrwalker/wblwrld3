@@ -73,7 +73,7 @@ The contents of a wiki file have the following form:
 * The attribute "repository" must contain a URL to a repository accessible via SSH
 
 Since a wiki's repository is accessed via ```SSH```, the appropriate key-pair must be setup. In the
-reference deployment of Webble World - under the URL: https://wws.meme.hokudai.ac.jp - all instances
+reference deployment of Webble World - under the URL: CURRENT ONLINE SERVER - all instances
 of the Webble World server, via which repositories are accessed, have the following public key:
 
 ```
@@ -123,7 +123,7 @@ is under: "Profile Settings" -> "SSH Keys").
 A wiki object is only visible to its owner under the ```/#/wiki``` path. For example: 
 
  * https://localhost:7443/#/wiki
- * https://wws.meme.hokudai.ac.jp/#/wiki (at the reference Webble World deployment)
+ * CURRENT ONLINE SERVER/#/wiki (at the reference Webble World deployment)
 
 Via the presented User Interface (UI), the owner can then perform one of the following four operations:
 

@@ -25,7 +25,7 @@
  * Two visualization directives and their helper services
  * VERY EXPERIMENTAL -- DO NOT USE
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 ////////////////////////////////////////////////////////////////////////

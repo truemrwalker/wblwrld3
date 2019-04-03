@@ -23,7 +23,7 @@
  * @overview Deprecated REST endpoints for performing update operations on the server.
  * @deprecated
  * @module api/adm
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

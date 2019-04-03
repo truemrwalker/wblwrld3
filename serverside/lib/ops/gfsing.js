@@ -26,7 +26,7 @@
  * but are instead saved into mongodb database via its filesystem layer called grid-fs.
  * 
  * @module ops
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

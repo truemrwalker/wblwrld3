@@ -30,4 +30,4 @@ job_runtests:
 job_deploy:
   stage: deploy
   script:
-    - 'curl -X GET http://dev.meme.hokudai.ac.jp/wws-deploy'
+    - 'curl -X GET CURRENT_ONLINE_SERVER/wws-deploy'

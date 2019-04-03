@@ -176,7 +176,7 @@ wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, $timeout,
 		));
 
 		$scope.addSlot(new Slot('mediaSrc',
-			randomNum == 1 ? 'https://wws.meme.hokudai.ac.jp/media/intro.mp4' : 'http://k003.kiwi6.com/hotlink/hwukwylzbf/ThankYouForTheMusic.mp3',
+			randomNum == 1 ? 'https://192.168.12.186:7443/media/intro.mp4' : 'http://k003.kiwi6.com/hotlink/hwukwylzbf/ThankYouForTheMusic.mp3',
 			'Media Link',
 			'The source link for the media file to be played',
 			$scope.theWblMetadata['templateid'],

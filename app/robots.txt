@@ -1,4 +1,4 @@
 # robotstxt.org
 
 User-agent: *
-Sitemap: https://wws.meme.hokudai.ac.jp/sitemap.xml
+Sitemap: https://SOMEWHERE/sitemap.xml

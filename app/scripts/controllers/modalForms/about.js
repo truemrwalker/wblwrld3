@@ -41,7 +41,7 @@ ww3Controllers.controller('AboutSheetCtrl', function ($scope, $uibModalInstance,
     $scope.version = wwDef.WWVERSION;
 
 	$scope.socialMedia = {
-		Url: "https://wws.meme.hokudai.ac.jp/",
+		Url: "https://192.168.12.186:7443/",
 		Text: gettext("Webble World, meme media object tool for building and using Webble applications")
 	};
 

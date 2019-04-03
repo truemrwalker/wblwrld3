@@ -24,7 +24,7 @@
 /**
  * The users server resource
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('Users', ['$resource', function($resource) {
 
@@ -34,7 +34,7 @@ ww3Services.factory('Users', ['$resource', function($resource) {
 /**
  * The user accounts server resource
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('UserAccounts', ['$resource', function($resource) {
 
@@ -44,7 +44,7 @@ ww3Services.factory('UserAccounts', ['$resource', function($resource) {
 /**
  * The active sessions server resource
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('ActiveSessions', ['$resource', function($resource) {
 
@@ -55,7 +55,7 @@ ww3Services.factory('ActiveSessions', ['$resource', function($resource) {
  * userPrefs service that controls many aspects of the functionality of the user's account.
  * Essentially, this service drives the persistent functionality behind the Profile Settings UI
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('userPrefs', ['$http', '$q', function($http, $q) {
 

@@ -25,7 +25,7 @@
  * Server management service that controls and displays some aspects of the server's operation.
  * This functionality is exclusively available to administrators.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('server', ['$http', '$q', function($http, $q) {
 

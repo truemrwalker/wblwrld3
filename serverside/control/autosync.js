@@ -30,7 +30,7 @@
  * but only does it at startup when the server is run under "maintenance" or "development" mode. That
  * component is implemented in maintenance/files.js.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

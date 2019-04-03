@@ -2,59 +2,47 @@
 	"name": "wblwrld3",
 	"description": "Webble World 3",
 	"version": "3.1.0",
-	"homepage": "https://wws.meme.hokudai.ac.jp",
+	"homepage": "https://192.168.12.186:7443",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/truemrwalker/wblwrld3.git"
 	},
-
 	"dependencies": {
-
-		"mime": "latest",
-		"mime-types": "latest",
-		"express": "latest",
-		"express-session": "latest",
-		"body-parser": "latest",
+		"archiver": "latest",
+		"bluebird": "latest",
+		"body-parser": "^1.18.3",
 		"busboy": "latest",
+		"connect-mongo": "latest",
 		"cookie": "latest",
 		"cookie-parser": "latest",
-		"serve-static": "latest",
-		"request": "latest",
-		"archiver": "latest",
-
-		"bluebird": "latest",
-		"socket.io": "latest",
-
-		"mongoose": "4.8.4",
+		"express": "^4.16.4",
+		"express-session": "^1.15.6",
 		"gridfs-stream": "latest",
-		"connect-mongo": "latest",
-		"tar-stream": "latest",
-		"redis" : "latest",
-
+		"mime": "latest",
+		"mime-types": "latest",
+		"mkdirp": "latest",
+		"mongoose": "4.8.4",
+		"nodegit": "latest",
+		"nodemailer": "latest",
+		"nodemailer-smtp-transport": "latest",
 		"passport": "latest",
+		"passport-facebook": "latest",
+		"passport-google-oauth": "latest",
 		"passport-local": "latest",
 		"passport-twitter": "latest",
-		"passport-google-oauth": "latest",
-		"passport-facebook": "latest",
-
-		"nodemailer": "latest",
-		"nodemailer-smtp-transport" : "latest",
-
-		"mkdirp": "latest",
-		"tiddlywiki" : "latest",
-		"nodegit": "latest"
+		"redis": "latest",
+		"request": "^2.88.0",
+		"serve-static": "^1.13.2",
+		"socket.io": "latest",
+		"tar-stream": "latest",
+		"tiddlywiki": "latest"
 	},
-
 	"devDependencies": {
-
-		"chokidar" : "latest",
-
-		"grunt": "latest",
-		"grunt-angular-gettext" : "latest"
+		"chokidar": "latest",
+		"grunt": "^1.0.3",
+		"grunt-angular-gettext": "latest"
 	},
-
 	"scripts": {
-
 		"test": "grunt test",
 		"start": "node serverside/web-server.js",
 		"bootstrap": "node serverside/web-server.js --deployment bootstrap"

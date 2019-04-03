@@ -23,7 +23,7 @@ spec:
         - name: DEPLOYMENT
           value: testing
         - name: SERVER_NAME
-          value: wws.meme.hokudai.ac.jp
+          value: 192.168.12.186:7443
         - name: PORT
           value: "7000"
         - name: SERVER_BEHIND_REVERSE_PROXY

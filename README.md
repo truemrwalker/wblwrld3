@@ -15,7 +15,7 @@ IF YOU JUST WANT TO DEVELOP WEBBLE TEMPLATES THEN VISIT WEBBLE WORLD ONLINE AND 
 EDITOR. NO NEED TO STAY HERE ANY FURTHER!
 
 Visit Webble World 3 Online at:
-https://wws.meme.hokudai.ac.jp
+https://webble.nysol.jp/
 
 Webbles are interactive digital objects that resides inside
 Webble World which is a new web-based knowledge media

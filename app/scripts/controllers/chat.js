@@ -24,7 +24,7 @@
 /**
  * Controller for the real-time chat component
  * 
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('ChatCtrl', ['$scope', '$timeout', 'gettext', 'authService', 'socket', '$rootScope',
 function ($scope, $timeout, gettext, authService, socket, $rootScope) {

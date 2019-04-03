@@ -22,7 +22,7 @@
 /**
  * @overview Mongodb-specific utility functions.
  * @module lib/dbutil
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

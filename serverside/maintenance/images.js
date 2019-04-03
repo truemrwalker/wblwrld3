@@ -27,7 +27,7 @@
  * should not cache Webble definition JSON objects that can become huge if they encode images
  * as data-uris. See also: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

@@ -34,7 +34,7 @@
  * 
  * Note that "DevWebbles" are normal Webbles that are unpublished (sometimes referred to as Sandbox Webbles).
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

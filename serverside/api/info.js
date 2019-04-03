@@ -23,7 +23,7 @@
  * @overview REST endpoints for potentially providing useful information about the current
  * Webble World server instance and the services it's connected to.
  * @module api
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

@@ -22,7 +22,7 @@
 /**
  * @overview Ops module for rating and attaching comments (posts) to objects.
  * @module ops
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

@@ -28,7 +28,7 @@
  * local libraries and read the configuration values and secrets, uses those to
  * generate the self-contained "mongoshell.js" file with the correct values/parameters.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var config = require('../config');

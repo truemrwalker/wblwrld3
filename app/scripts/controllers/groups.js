@@ -24,7 +24,7 @@
 /**
  * Group management controller that drives the view groups.html
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('GroupsCtrl', ['$scope', '$http', 'gettext', 'authService', 'confirm', 'Users', 'UserAccounts',
 function ($scope, $http, gettext, authService, confirm, Users, UserAccounts) {

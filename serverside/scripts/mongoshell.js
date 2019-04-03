@@ -27,9 +27,9 @@
  * the configuration values and secrets, uses those to generate this, self-contained
  * "mongoshell.js" file with the correct values/parameters.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
-var config = {"MONGODB_DB_NAME":"wblwrld3","MONGODB_DB_USERNAME":"webbler","MONGODB_DB_PASSWORD":"mySuperSecretMongoPass"};
+var config = {"MONGODB_DB_NAME":"wblwrld3","MONGODB_DB_USERNAME":"webbler","MONGODB_DB_PASSWORD":"CE71767C9CFA"};
 
 // See also:
 // http://docs.mongodb.org/manual/tutorial/write-scripts-for-the-mongo-shell/

@@ -22,7 +22,7 @@
 /**
  * @overview Ops module for verifying whether an object is trusted or not.
  * @module ops
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

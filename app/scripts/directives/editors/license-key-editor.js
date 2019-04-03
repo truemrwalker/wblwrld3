@@ -24,7 +24,7 @@
 /**
  * Within a form, provides the controls necessary for viewing and managing license keys
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Directives.directive('licenseKeyEditor', [ '$timeout', 'gettext', 'confirm', 'licenseService',
 function($timeout, gettext, confirm, licenseService){

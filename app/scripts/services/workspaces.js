@@ -25,7 +25,7 @@
  * The workspace server resource
  * NOTE: This is not used at all. Micke uses the 'dbService' instead
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('Workspace', ['$resource', function($resource) {
 
@@ -39,7 +39,7 @@ ww3Services.factory('Workspace', ['$resource', function($resource) {
  * The workspace loader pattern that can be used for multiple instantiations/requests
  * NOTE: This is not used at all. Micke uses the 'dbService' instead
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('WorkspacesLoader', ['Workspace', '$q', 'gettext', function(Workspace, $q, gettext) {
 	return function() {

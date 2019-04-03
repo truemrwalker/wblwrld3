@@ -40,7 +40,7 @@ volume to be accessible by all the nodes in the Kubernetes cluster.
 ## ```server```
 
 The scripts in this directory, reflect the current (updated) Webble World reference deployment 
-on the URL: https://wws.meme.hokudai.ac.jp
+on the URL: CURRENT ONLINE SERVER
 
 Essentially, there is one gateway server that terminates HTTPS/2 connections and load-balances
 the requests over multiple instances of the Webble World server that run on multiple "nodes" servers.

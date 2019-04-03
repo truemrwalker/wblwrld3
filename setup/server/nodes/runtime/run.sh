@@ -5,7 +5,7 @@
 set -e
 
 export DEPLOYMENT=testing
-export SERVER_NAME=wws.meme.hokudai.ac.jp
+export SERVER_NAME=192.168.12.186:7443
 
 export APP_CRYPT_PASSWORD=
 export SESSION_SECRET=

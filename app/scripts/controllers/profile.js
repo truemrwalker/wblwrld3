@@ -24,7 +24,7 @@
 /**
  * Profile Settings controller that drives the view-structure profile.html
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('ProfileCtrl', [ '$scope', 'gettext', 'authService', 'userPrefs', 'confirm', 'wwConsts',
 function ($scope, gettext, authService, userPrefs, confirm, wwConsts) {

@@ -24,7 +24,7 @@
 /**
  * Management of third-party licenses
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('licenseService', ['$q', '$http', 'gettext', function($q, $http, gettext) {
 

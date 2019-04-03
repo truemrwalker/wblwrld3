@@ -243,7 +243,7 @@ that need to be done to enable the Webble World server to function properly:
    has to be edited to contain the correct values and secrets for the following
    1. The deployment mode that should be either ```testing``` or ```production```
    2. The server name that should be the domain via which the gateway can be accessed
-      (e.g., wws.meme.hokudai.ac.jp)
+      (e.g., CURRENT ONLINE SERVER)
    3. The secrets for the application and for the session that should be common among all
       Webble World server instances
    4. The ```host``` (e.g., ```1.2.3.4```) and ```port``` for the mongodb and redis servers
@@ -511,9 +511,9 @@ bash setup/server/gateway/runtime/update.sh
 
 On the default Webble World cluster:
 
-* The Webble World cluster is available at: https://wws.meme.hokudai.ac.jp
-* The Hands-on Portal wiki is available at: https://hop.meme.hokudai.ac.jp/wiki
-* The Hands-on Portal classic website is available at: https://hop.meme.hokudai.ac.jp/classic
+* The Webble World cluster is available at: CURRENT ONLINE SERVER
+* The Hands-on Portal wiki is available at: CURRENT ONLINE HOP SERVER/wiki
+* The Hands-on Portal classic website is available at: CURRENT ONLINE HOP SERVER/classic
 
 ## Update the Webble World client application
 

@@ -21,14 +21,14 @@
 
 /**
  * @overview Autonomous maintenance script that fetches and stores all the Webbles published
- * under https://wws.meme.hokudai.ac.jp that is the reference (central) deployment of Webble World.
+ * under CURRENT ONLINE SERVER that is the reference (central) deployment of Webble World.
  *
  * Apart from the database objects, any associated code or resource files are also fetched and
  * stored in the local database. This script runs only when config.SYNC_ONLINE_WEBBLES is true
  * and is thus recommended to invoke it with the following command:
  * node serverside/web-server.js --deployment maintenance --sync-online-webbles 1
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");
@@ -44,7 +44,7 @@ module.exports = function(app, config, mongoose, gettext) {
     if (!config.SYNC_ONLINE_WEBBLES)
         return;
 
-    const onlineWebbleWorldServer = "https://wws.meme.hokudai.ac.jp";
+    const onlineWebbleWorldServer = "https://192.168.12.186:7443";
 
 	var Webble = mongoose.model('Webble');
 	var User = mongoose.model('User');

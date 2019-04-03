@@ -7,7 +7,7 @@
 // WEBBLE CONTROLLER
 // This is the Main controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, Enum) {
+wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, gettext) {
 
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
@@ -17,6 +17,18 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
     var mapContainer, mapCanvas;
     var map, currentPlace, placesService, infowindow;
     var markers = [], listeners = [];
+
+
+	//TODO: If your Webble is using an api that requires a personal Access key to work, we recommend that you do not share your personal key in your Webble for everyone to use. Instead you should store the
+	//TODO: needed keys in your user profile and request them here, meaning that if another Webble World User is using this (your) Webble, they too need to have a valid access key of their own, stored in
+	//TODO: their profile for the Webble to work, and your access keys will not be abused.
+	//TODO: The realm could for example be 'google' and the resource could for example be 'map'.
+	//TODO: In order to allow others to use the Webble with their own keys, the realm and resource should be declared in the Webble description.
+	//TODO: If there are some crucial dependencies between loading the API and the init of the Webble this code may better serve inside the coreCall_Init function to avoid breaks.
+
+	var myAccessKeyForSomething;
+
+
 
     //=== EVENT HANDLERS ================================================================
     var onMouseDown = function(e){
@@ -119,7 +131,32 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
         $scope.setDefaultSlot('searchStr');
 
         mapCanvas.bind('mousedown', onMouseDown);
+
+		// dbService.getMyAccessKey("googleapis", "maps").then(
+		// 	function(returningKey) {
+		// 		if(returningKey){
+		// 			var myAccessKeyForSomething = returningKey;
+		// 			// DO WHAT YOU ARE SUPPOSED TO DO TO ACCESS THE API WITH THE KEYS YOU RETRIEVED.
+		// 			// For example:
+		// 			var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
+		// 			$log.log(myAccessKeyForSomething);
+		// 			$timeout(
+		// 				$.getScript( urlPath +  myAccessKeyForSomething)
+		// 					.always(function( jqxhr, settings, exception ) {
+
 		$timeout(function(){initializeGoogleMap();});
+
+		//					})
+		// 			);
+		// 		}
+		// 		else{
+		// 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm and resource saved in your user profile.")}, null);
+		// 		}
+		// 	},
+		// 	function (err) {
+		// 		$log.log("ERROR: " + err);
+		// 	}
+		// );
     };
     //===================================================================================
 

@@ -22,7 +22,7 @@
 /**
  * @overview Implements the logic for authenticating users via local, password-based accounts.
  * @module auth/providers
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

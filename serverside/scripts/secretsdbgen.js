@@ -24,7 +24,7 @@
  * file, which has to be located in a "wblwrld3" sub-directory under the directory which
  * is contained in the "homeDir" variable.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var path = require('path');

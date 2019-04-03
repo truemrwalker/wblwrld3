@@ -30,7 +30,7 @@
  * no child/parent Webbles and are fully defined by separate Javascript, HTML and resource files.
  * See the Webble World manual for more information (Help->Documentation).
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

@@ -3,7 +3,7 @@
 # Based on node
 
 FROM node:6-onbuild
-MAINTAINER Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+MAINTAINER Giannis Georgalis
 
 # Bundle app source
 

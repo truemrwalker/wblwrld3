@@ -4,7 +4,7 @@
 
 #FROM node:0.10-onbuild
 FROM ubuntu:14.04
-MAINTAINER Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+MAINTAINER Giannis Georgalis
 
 ########################################################################
 # Basic environment: Python, mongodb and ubuntu's nodejs version

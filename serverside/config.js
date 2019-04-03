@@ -33,7 +33,7 @@
  * Command-line arguments can override environment variables and preset config.js values
  * and environment variables can only override the preset config.js values.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var path = require('path');
@@ -107,14 +107,14 @@ module.exports = (function() {
      *    checks and debugging code, 'maintenance' runs all the maintenance scripts and exits,
      *    'bootstrap' runs all the bootstrap scripts and exits.
      * @property {boolean} SYNC_ONLINE_WEBBLES - ONLY when maintenance scripts are run, this value decides
-     *     whether all the published webbles on https://wws.meme.hokudai.ac.jp will be fetched and
+     *     whether all the published webbles on CURRENT ONLINE SERVER will be fetched and
      *     merged into the local database.
 
      * @property {string} MONGODB_URL - This is an automatically generated URL that points to the mongodb server.
      * @property {string} SERVER_URL - This is an automatically generated URL that points to the local server instance.
      * @property {string} SERVER_URL_PUBLIC - This is an automatically generated URL that points to the public server
      *     instance which may be different, especially when the server is behind a reverse proxy (e.g., the private URL
-     *     may be: http://devmachine1.meme.hokudai.ac.jp:7000 and the public one https://wws.meme.hokudai.ac.jp).
+     *     may be: http://devmachine1.SOMEWHERE:7000 and the public one CURRENT ONLINE SERVER).
      */
 	var config = {
 
@@ -133,7 +133,7 @@ module.exports = (function() {
 		SERVER_ROOT_DIR: __dirname,
 
 		// Mail settings
-        MAIL_HOST: 'crow.meme.hokudai.ac.jp',
+        MAIL_HOST: 'CURRENT MAIL SERVER',
         MAIL_PORT: 465,
         MAIL_SECURE: true, // use SSL
 		MAIL_USER: sec.get('mail_user'),
@@ -141,7 +141,7 @@ module.exports = (function() {
 
 		// App settings
 		APP_NAME: 'wblwrld3',
-		APP_EMAIL_ADDRESS: 'Webble World Developer <mkuwahara@meme.hokudai.ac.jp>',
+		APP_EMAIL_ADDRESS: 'Webble World Developer <micke.kuwahara@ist.hokudai.ac.jp>',
 		APP_CRYPT_PASSWORD: sec.get('app_password'),
 		APP_ROOT_DIR: path.join(__dirname, '../app'),
 

@@ -24,7 +24,7 @@
 /**
  * A convience service for enabling components to request verification from the user
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Services.factory('confirm', ['$rootScope', '$uibModal', 'gettext', function($rootScope, $uibModal, gettext) {
 	return {

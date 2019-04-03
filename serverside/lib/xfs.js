@@ -22,7 +22,7 @@
 /**
  * @overview Utility/convenience functions for listing files under directories.
  * @module lib/xfs
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

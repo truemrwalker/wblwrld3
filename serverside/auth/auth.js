@@ -30,7 +30,7 @@
  * platform developers, and platform administrators respectively.
  * 
  * @module auth
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

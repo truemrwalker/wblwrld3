@@ -27,7 +27,7 @@
  * defined in the mongoose model (see modes/wiki.js). Note that the actual content of each wiki
  * is stored into an external git repository (wiki.repository).
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

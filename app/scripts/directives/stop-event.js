@@ -24,7 +24,7 @@
 /**
  * Prevents the given event from propagating beyond the target element
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Directives.directive('stopEvent', function () {
     return {

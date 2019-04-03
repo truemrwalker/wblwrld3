@@ -25,7 +25,7 @@
  * These messages are used in Webble World for real-time collaboration between users sharing
  * a workspace and for the implementation of the demonstrator /#/draw route.
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

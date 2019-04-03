@@ -24,7 +24,7 @@
 /**
  * Controller for the webble visualization component
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('DataCtrl', [ '$scope', '$http', 'gettext', function ($scope, $http, gettext) {
 

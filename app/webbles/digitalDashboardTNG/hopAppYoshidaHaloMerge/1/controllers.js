@@ -8,7 +8,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('hopAppHaloMergeAppLoaderWebbleCtrl', function($scope, $log, Slot, Enum, $location, $timeout) {
+wblwrld3App.controller('hopAppHaloMergeAppLoaderWebbleCtrl', function($scope, $log, Slot, Enum, $location, $timeout, wwConsts) {
     //=== PROPERTIES ====================================================================
     $scope.stylesToSlots = {
         hopAppHaloMergeAppLoaderWebble: ['width', 'height', 'background-color', 'border', 'border-radius', 'opacity'],
@@ -91,7 +91,7 @@ wblwrld3App.controller('hopAppHaloMergeAppLoaderWebbleCtrl', function($scope, $l
 	if(urlLower.indexOf("/portal/") >= 0) {
 	    inPortal = true;
 	} else {
-	    if(urlLower.indexOf("https://wws.meme.hokudai.ac.jp/#/app") >= 0) {
+		if(urlLower.indexOf(wwConsts.currentOnlineServer + "#/app") >= 0) {
 		inPortal = false;
 	    } else {
 		inPortal = true;

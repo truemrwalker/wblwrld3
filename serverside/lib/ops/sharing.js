@@ -22,7 +22,7 @@
 /**
  * @overview Ops module for sharing objects among users.
  * @module ops
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");

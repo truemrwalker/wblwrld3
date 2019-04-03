@@ -24,7 +24,7 @@
 /**
  * Login controller that provides the login for the login and registration forms
  *
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 ww3Controllers.controller('LoginCtrl', [ '$scope', '$window', '$location', 'gettext', 'gettextCatalog', 'authOfferToRegisterByDefault', 'authService',
 function ($scope, $window, $location, gettext, gettextCatalog, authOfferToRegisterByDefault, authService) {

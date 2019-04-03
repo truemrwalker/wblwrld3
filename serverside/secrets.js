@@ -29,7 +29,7 @@
  * A secretsdb.ejson file can be created from a plain-text secretsdb.json file using
  * the script "scripts/secretsdbgen.js".
  * 
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var path = require('path');

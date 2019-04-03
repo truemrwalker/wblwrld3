@@ -22,7 +22,7 @@
 /**
  * @overview General utility/convenience functions.
  * @module lib/util
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var util = require('util');

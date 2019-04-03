@@ -25,7 +25,7 @@
  * See also: https://github.com/jaredhanson/passport-facebook
  * 
  * @module auth/providers
- * @author Giannis Georgalis <jgeorgal@meme.hokudai.ac.jp>
+ * @author Giannis Georgalis
  */
 
 var Promise = require("bluebird");
