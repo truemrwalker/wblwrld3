@@ -8,7 +8,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('imageDiffAppWebbleCtrl', function($scope, $log, Slot, Enum, $location, $timeout) {
+wblwrld3App.controller('imageDiffAppWebbleCtrl', function($scope, $log, Slot, Enum, $location, $timeout, wwConsts) {
     // $scope is needed for angularjs to work properly and should not be removed. Slot is a Webble World
     // available Service and is needed for any form of Slot manipulation inside this template and should neither be
     // removed.
@@ -82,10 +82,10 @@ wblwrld3App.controller('imageDiffAppWebbleCtrl', function($scope, $log, Slot, En
 	if(urlLower.indexOf("/portal/") >= 0) {
 	    inPortal = true;
 	} else {
-	    if(urlLower.indexOf("https://wws.meme.hokudai.ac.jp/#/app") >= 0) {
-		inPortal = false;
+	    if(urlLower.indexOf(wwConsts.currentOnlineServer + "#/app") >= 0) {
+			inPortal = false;
 	    } else {
-		inPortal = true;
+			inPortal = true;
 	    }
 	}
 
