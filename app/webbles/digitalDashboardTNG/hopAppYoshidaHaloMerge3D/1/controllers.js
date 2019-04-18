@@ -91,15 +91,16 @@ wblwrld3App.controller('hopAppHalomerge3dAppLoaderWebbleCtrl', function($scope, 
 	var urlLower = url.toString().toLowerCase();
 	inPortal = false;
 
-	if(urlLower.indexOf("/portal/") >= 0) {
-	    inPortal = true;
-	} else {
-		if(urlLower.indexOf(wwConsts.currentOnlineServer + "#/app") >= 0) {
-		inPortal = false;
-	    } else {
-		inPortal = true;
-	    }
-	}
+		if(urlLower.indexOf("/wiki/") >= 0 || urlLower.indexOf(":7447") >= 0) {
+			inPortal = true;
+		}
+		// else {
+		// 	if(urlLower.indexOf(wwConsts.currentOnlineServer + "#/app") >= 0) {
+		// 		inPortal = false;
+		//     } else {
+		// 		inPortal = true;
+		//     }
+		// }
 
 	debugLog("In Portal: " + inPortal);
 

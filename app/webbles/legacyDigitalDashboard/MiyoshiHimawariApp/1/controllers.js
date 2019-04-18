@@ -71,25 +71,26 @@ wblwrld3App.controller('himawariVizAppWebbleCtrl', function($scope, $log, Slot, 
 	// -------- Guess if we are running in the Hands-on Portal or in Webble World ----
 	// ===============================================================================
 
-	var url = (window.location != window.parent.location)
-            ? document.referrer
-            : document.location;
+		var url = (window.location != window.parent.location)
+				? document.referrer
+				: document.location;
 
-	debugLog("I believe my parent is on URL: " + url);
-	var urlLower = url.toString().toLowerCase();
-	inPortal = false;
-
-	if(urlLower.indexOf("/portal/") >= 0) {
-	    inPortal = true;
-	} else {
-		if(urlLower.indexOf(wwConsts.currentOnlineServer + "#/app") >= 0) {
+		debugLog("I believe my parent is on URL: " + url);
+		var urlLower = url.toString().toLowerCase();
 		inPortal = false;
-	    } else {
-		inPortal = true;
-	    }
-	}
 
-	debugLog("In Portal: " + inPortal);
+		if(urlLower.indexOf("/wiki/") >= 0 || urlLower.indexOf(":7447") >= 0) {
+			inPortal = true;
+		}
+		// else {
+		// 	if(urlLower.indexOf(wwConsts.currentOnlineServer + "#/app") >= 0) {
+		// 		inPortal = false;
+		//     } else {
+		// 		inPortal = true;
+		//     }
+		// }
+
+		debugLog("In Portal: " + inPortal);
 
 	// ===============================================================================
 	// -------- When running in the Hands-on Portal, turn off menus etc. -------------

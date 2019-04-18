@@ -58,9 +58,9 @@ wblwrld3App.controller("patientboardWebbleCtrl", function ($scope, $log, Slot, E
 
     $scope.doDebugLogging = true;
     function debugLog(message) {
-	if($scope.doDebugLogging) {
-	    $log.log("TOBPatientboard: " + message);
-	}
+		if($scope.doDebugLogging) {
+			$log.log("TOBPatientboard: " + message);
+		}
     };
 
     //=== EVENT HANDLERS ================================================================
@@ -68,118 +68,118 @@ wblwrld3App.controller("patientboardWebbleCtrl", function ($scope, $log, Slot, E
     var forceSlotSetForPositions = false;
 
     var updateLayout = function() {
-	if(currentRoot !== null) {
-	    if(currentRoot.webble !== null) {
-		var prot = currentRoot.webble.scope().getProtection();
-		var oldProt = prot;
-		prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
-		currentRoot.webble.scope().setProtection(prot);
-	    }
-
-    	    currentRoot.totalH = getHeight(currentRoot);
-
-    	    if(currentRoot.isBranch) {
-		if(currentRoot.webble !== null) {
-    		    currentRoot.webble.scope().set('NoOfUnits', currentRoot.totalH);
-		}
-    	    }
-
-    	    if(currentRoot.left != leftSpace) {
-    		currentRoot.left = leftSpace;
-		if(currentRoot.webble !== null) {
-    		    currentRoot.webble.scope().silentMoveLeft(currentRoot.left + currentRoot.offsetUnits * scaleFactor);
-		}
-    	    }
-    	    if(currentRoot.top != topSpace) {
-    		currentRoot.top = topSpace;
-		if(currentRoot.webble !== null) {
-    		    currentRoot.webble.scope().silentMoveTop(currentRoot.top);
-		}
-    	    }
-    	    
-    	    if(forceSlotSetForPositions) {
-		if(currentRoot.webble !== null) {
-		    currentRoot.webble.scope().silentMove(currentRoot.left + currentRoot.offsetUnits * scaleFactor, currentRoot.top);
-		}
-    	    }
-
-	    if(currentRoot.webble !== null) {
-		currentRoot.webble.scope().setProtection(oldProt);
-	    }
-
-    	    moveChildren(currentRoot);
-	}
-    	totalDays = countDays(currentRoot);
-    	if(theTimeline !== null) {
-    	    theTimeline.scope().set('NoOfDays', totalDays);
-
-	    // remove later
-	    var prot = theTimeline.scope().getProtection();
-	    prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
-	    theTimeline.scope().setProtection(prot);
-
-	    theTimeline.scope().set('root:left', '0px');
-	    theTimeline.scope().set('root:top', '30px');
-    	}
-
-	if(listOfExceptionalEvents.length > 0) {
-	    var y = topSpace + exceptionalEventMargin;
-	    if(currentRoot !== null) {
-		y += currentRoot.totalH;
-	    }
-
-	    for(var i = 0; i < listOfExceptionalEvents.length; i++) {
-		var s = listOfExceptionalEvents[i];
-		if(s.webble !== null) {
-		    // var prot = s.webble.scope().getProtection();
-		    // var oldProt = prot;
-		    // prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
-		    // s.webble.scope().setProtection(prot);
-
-		    var x = s.exceptionalDayOffset * scaleFactor + leftSpace;
-		    var day = s.exceptionalDayOffset;
-		    var yshift = 0;
-
-		    // debugLog("updateLayout exceptionals " + i + ", day " + day + ", armrank " + s.armrank);
-
-		    for(var other = 0; other < listOfExceptionalEvents.length; other++) {
-			if(other != i && listOfExceptionalEvents[other].exceptionalDayOffset == day && listOfExceptionalEvents[other].armrank < s.armrank) {
-			    yshift += listOfExceptionalEvents[other].totalH + 10;
+		if(currentRoot !== null) {
+			if(currentRoot.webble !== null) {
+			var prot = currentRoot.webble.scope().getProtection();
+			var oldProt = prot;
+			prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
+			currentRoot.webble.scope().setProtection(prot);
 			}
-		    }
-		    // debugLog("updateLayout exceptionals " + i + ", day " + day + ", yshift " + yshift);
-		    
-		    // s.webble.scope().set('root:left', x);
-		    s.webble.scope().silentMoveLeft(x);
+
+				currentRoot.totalH = getHeight(currentRoot);
+
+				if(currentRoot.isBranch) {
+			if(currentRoot.webble !== null) {
+					currentRoot.webble.scope().set('NoOfUnits', currentRoot.totalH);
+			}
+				}
+
+				if(currentRoot.left != leftSpace) {
+				currentRoot.left = leftSpace;
+			if(currentRoot.webble !== null) {
+					currentRoot.webble.scope().silentMoveLeft(currentRoot.left + currentRoot.offsetUnits * scaleFactor);
+			}
+				}
+				if(currentRoot.top != topSpace) {
+				currentRoot.top = topSpace;
+			if(currentRoot.webble !== null) {
+					currentRoot.webble.scope().silentMoveTop(currentRoot.top);
+			}
+				}
+
+				if(forceSlotSetForPositions) {
+			if(currentRoot.webble !== null) {
+				currentRoot.webble.scope().silentMove(currentRoot.left + currentRoot.offsetUnits * scaleFactor, currentRoot.top);
+			}
+				}
+
+			if(currentRoot.webble !== null) {
+			currentRoot.webble.scope().setProtection(oldProt);
+			}
+
+				moveChildren(currentRoot);
+		}
+			totalDays = countDays(currentRoot);
+			if(theTimeline !== null) {
+				theTimeline.scope().set('NoOfDays', totalDays);
+
+			// remove later
+			var prot = theTimeline.scope().getProtection();
+			prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
+			theTimeline.scope().setProtection(prot);
+
+			theTimeline.scope().set('root:left', '0px');
+			theTimeline.scope().set('root:top', '30px');
+			}
+
+		if(listOfExceptionalEvents.length > 0) {
+			var y = topSpace + exceptionalEventMargin;
+			if(currentRoot !== null) {
+			y += currentRoot.totalH;
+			}
+
+			for(var i = 0; i < listOfExceptionalEvents.length; i++) {
+			var s = listOfExceptionalEvents[i];
+			if(s.webble !== null) {
+				// var prot = s.webble.scope().getProtection();
+				// var oldProt = prot;
+				// prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
+				// s.webble.scope().setProtection(prot);
+
+				var x = s.exceptionalDayOffset * scaleFactor + leftSpace;
+				var day = s.exceptionalDayOffset;
+				var yshift = 0;
+
+				// debugLog("updateLayout exceptionals " + i + ", day " + day + ", armrank " + s.armrank);
+
+				for(var other = 0; other < listOfExceptionalEvents.length; other++) {
+				if(other != i && listOfExceptionalEvents[other].exceptionalDayOffset == day && listOfExceptionalEvents[other].armrank < s.armrank) {
+					yshift += listOfExceptionalEvents[other].totalH + 10;
+				}
+				}
+				// debugLog("updateLayout exceptionals " + i + ", day " + day + ", yshift " + yshift);
+
+				// s.webble.scope().set('root:left', x);
+				s.webble.scope().silentMoveLeft(x);
 
 
-		    if(s.type == 'biop' || s.type == 'blood' || s.type == 'imag') {
-			// s.webble.scope().set('root:top', y + 80);
-			s.webble.scope().silentMoveTop(y + 50 + yshift);
-		    } else {
-			// s.webble.scope().set('root:top', y);
-			s.webble.scope().silentMoveTop(y + yshift);
-		    }
+				if(s.type == 'biop' || s.type == 'blood' || s.type == 'imag') {
+				// s.webble.scope().set('root:top', y + 80);
+				s.webble.scope().silentMoveTop(y + 50 + yshift);
+				} else {
+				// s.webble.scope().set('root:top', y);
+				s.webble.scope().silentMoveTop(y + yshift);
+				}
 
-		    // s.webble.scope().setProtection(oldProt);
-		}		    
-	    }
-	}
-	
-	//debugLog("----------------- update finished:");
-    	//printTree(currentRoot);
-    	forceSlotSetForPositions = false;
+				// s.webble.scope().setProtection(oldProt);
+			}
+			}
+		}
+
+		//debugLog("----------------- update finished:");
+			//printTree(currentRoot);
+			forceSlotSetForPositions = false;
     };
 
     var getShadowFromWebble = function(child) {
-	var i = 0;
-	for(i = 0; i < listOfAllChildren.length; i++) {
-	    //	    debugLog("checking pos " + i + ", " + (listOfAllChildren[i].webble == child) + " " + (listOfAllChildren[i].webble === child)); 
-	    if(listOfAllChildren[i] !== null && listOfAllChildren[i].webble === child) {
-		return listOfAllChildren[i];
-	    }
-	}
-	return null;
+		var i = 0;
+		for(i = 0; i < listOfAllChildren.length; i++) {
+			//	    debugLog("checking pos " + i + ", " + (listOfAllChildren[i].webble == child) + " " + (listOfAllChildren[i].webble === child));
+			if(listOfAllChildren[i] !== null && listOfAllChildren[i].webble === child) {
+			return listOfAllChildren[i];
+			}
+		}
+		return null;
     };
 
 
@@ -188,254 +188,255 @@ wblwrld3App.controller("patientboardWebbleCtrl", function ($scope, $log, Slot, E
     $scope.databaseCRFfunction = null;
     
     var getAvailableCRFs = function() {
-	if($scope.databaseCRFfunction === null) {
-	    return [{id: 1, name:"Surgery CRF", selection:false, content:[{pos:0, question:"Surgery Date", type:"Date"}, {pos:1, question:"Removed Tumor Volume", type:"Number"}]}, {id: 13, name:"Radio CRF", selection:false, content:[{pos:0, question:"Radio Therapy Date", type:"Date"}, {pos:1, question:"Radio Therapy Dose", type:"Number"}]}, {id: 22, name:"Chemo CRF", selection: false, content:[{pos:0, question:"Chemo Therapy Date", type:"Date"}, {pos:1, question:"Dose", type:"Number"}, {pos:2, question:"Medicine", type:"Text"}]}, {id: 20, name:"Registration CRF", selection: false, content:[{pos:0, question:"Registration Date", type:"Date"}, {pos:1, question:"Body Weight", type:"Number"}, {pos:2, question:"Blood Type", type:"Text"}]}];
-	} else {
-	    return $scope.databaseCRFfunction();
-	}
+		if($scope.databaseCRFfunction === null) {
+			return [{id: 1, name:"Surgery CRF", selection:false, content:[{pos:0, question:"Surgery Date", type:"Date"}, {pos:1, question:"Removed Tumor Volume", type:"Number"}]}, {id: 13, name:"Radio CRF", selection:false, content:[{pos:0, question:"Radio Therapy Date", type:"Date"}, {pos:1, question:"Radio Therapy Dose", type:"Number"}]}, {id: 22, name:"Chemo CRF", selection: false, content:[{pos:0, question:"Chemo Therapy Date", type:"Date"}, {pos:1, question:"Dose", type:"Number"}, {pos:2, question:"Medicine", type:"Text"}]}, {id: 20, name:"Registration CRF", selection: false, content:[{pos:0, question:"Registration Date", type:"Date"}, {pos:1, question:"Body Weight", type:"Number"}, {pos:2, question:"Blood Type", type:"Text"}]}];
+		} else {
+			return $scope.databaseCRFfunction();
+		}
     };
     // var getAvailableCRFs = function() {
     // 	return [{id: 1, name:"Surgery CRF", selection:false, content:[{pos:0, question:"Surgery Date", type:"Date"}, {pos:1, question:"Removed Tumor Volume", type:"Number"}]}, {id: 13, name:"Radio CRF", selection:false, content:[{pos:0, question:"Radio Therapy Date", type:"Date"}, {pos:1, question:"Radio Therapy Dose", type:"Number"}]}, {id: 22, name:"Chemo CRF", selection: false, content:[{pos:0, question:"Chemo Therapy Date", type:"Date"}, {pos:1, question:"Dose", type:"Number"}, {pos:2, question:"Medicine", type:"Text"}]}, {id: 20, name:"Registration CRF", selection: false, content:[{pos:0, question:"Registration Date", type:"Date"}, {pos:1, question:"Body Weight", type:"Number"}, {pos:2, question:"Blood Type", type:"Text"}]}];
     // };
 
     var instanciateCRF = function(shadow, crfTemplateId) {
-	var i = 0;
-	var availableCRFlist = getAvailableCRFs();
-	var crfTemplate = null;
+		var i = 0;
+		var availableCRFlist = getAvailableCRFs();
+		var crfTemplate = null;
 
-	for(i = 0; i < availableCRFlist.length; i++) {
-	    if(availableCRFlist[i].id == crfTemplateId) {
-		crfTemplate = availableCRFlist[i];
-		break;
-	    }
-	}
-	
-	if(crfTemplate === null) {
-	    $scope.openForm(Enum.aopForms.infoMsg, {title: 'CRF not found', content: 'An event has been added where the template event has a template CRF that cannot be found, so the CRF instance for this event could not be created. This means that the trial is broken (events and CRFs are inconcistent).'});
-	} else {
+		for(i = 0; i < availableCRFlist.length; i++) {
+			if(availableCRFlist[i].id == crfTemplateId) {
+			crfTemplate = availableCRFlist[i];
+			break;
+			}
+		}
 
-	    var crfInstance = {};
-	    crfInstance.crfTemplate = crfTemplate;
-	    crfInstance.event = shadow;
+		if(crfTemplate === null) {
+			$scope.openForm(Enum.aopForms.infoMsg, {title: 'CRF not found', content: 'An event has been added where the template event has a template CRF that cannot be found, so the CRF instance for this event could not be created. This means that the trial is broken (events and CRFs are inconcistent).'});
+		} else {
 
-	    crfInstance.id = 0;
+			var crfInstance = {};
+			crfInstance.crfTemplate = crfTemplate;
+			crfInstance.event = shadow;
 
-	    crfInstance.content = [];
-	    
-	    for(i = 0; i < crfTemplate.content.length; i++) {
-		var q = {};
-		q.answer = null;
-		q.pos = crfTemplate.content[i].pos;
-		
-		crfInstance.content.push(q);
-	    }
-	    return crfInstance;
-	}
+			crfInstance.id = 0;
 
-	return null;
+			crfInstance.content = [];
+
+			for(i = 0; i < crfTemplate.content.length; i++) {
+			var q = {};
+			q.answer = null;
+			q.pos = crfTemplate.content[i].pos;
+
+			crfInstance.content.push(q);
+			}
+			return crfInstance;
+		}
+
+		return null;
     };
 
     var instanciateMicroEvent = function(shadow, microEventTemplate) {
-	var i = 0;
-	var availableCRFlist = getAvailableCRFs();	
-	var crfTemplate = null;
+		var i = 0;
+		var availableCRFlist = getAvailableCRFs();
+		var crfTemplate = null;
 
-	var microEventInstance = {};
+		var microEventInstance = {};
 
-	microEventInstance.crf = null;
-	microEventInstance.day = microEventTemplate.day;
-	microEventInstance.id = shadow.microEvents.length; // Todo!
-	microEventInstance.crfName = "";
+		microEventInstance.crf = null;
+		microEventInstance.day = microEventTemplate.day;
+		microEventInstance.id = shadow.microEvents.length; // Todo!
+		microEventInstance.crfName = "";
 
-	debugLog("instanciateMicroEvent day " + microEventInstance.day + ", crf " + microEventTemplate.crf);
+		debugLog("instanciateMicroEvent day " + microEventInstance.day + ", crf " + microEventTemplate.crf);
 
-	if(microEventTemplate.crf !== null) {
+		if(microEventTemplate.crf !== null) {
 
-	    for(i = 0; i < availableCRFlist.length; i++) {
-		if(availableCRFlist[i].id == microEventTemplate.crf) {
-		    crfTemplate = availableCRFlist[i];
-		    break;
+			for(i = 0; i < availableCRFlist.length; i++) {
+			if(availableCRFlist[i].id == microEventTemplate.crf) {
+				crfTemplate = availableCRFlist[i];
+				break;
+			}
+			}
+
+			if(crfTemplate === null) {
+			$scope.openForm(Enum.aopForms.infoMsg, {title: 'CRF not found', content: 'An event has been added where the template event has a template CRF that cannot be found, so the CRF instance for this event could not be created. This means that the trial is broken (events and CRFs are inconcistent).'});
+			} else {
+
+			var crfInstance = {};
+			crfInstance.crfTemplate = crfTemplate;
+			crfInstance.event = shadow;
+
+			crfInstance.id = 0;
+
+			crfInstance.content = [];
+
+			for(i = 0; i < crfTemplate.content.length; i++) {
+				var q = {};
+				q.answer = null;
+				q.pos = crfTemplate.content[i].pos;
+
+				crfInstance.content.push(q);
+			}
+			microEventInstance.crf = crfInstance;
+			microEventInstance.crfName = crfTemplate.name;
+			}
 		}
-	    }
-	    
-	    if(crfTemplate === null) {
-		$scope.openForm(Enum.aopForms.infoMsg, {title: 'CRF not found', content: 'An event has been added where the template event has a template CRF that cannot be found, so the CRF instance for this event could not be created. This means that the trial is broken (events and CRFs are inconcistent).'});
-	    } else {
 
-		var crfInstance = {};
-		crfInstance.crfTemplate = crfTemplate;
-		crfInstance.event = shadow;
-		
-		crfInstance.id = 0;
+		debugLog("instanciateMicroEvent day " + microEventInstance.day + ", crf " + microEventTemplate.crf);
 
-		crfInstance.content = [];
-		
-		for(i = 0; i < crfTemplate.content.length; i++) {
-		    var q = {};
-		    q.answer = null;
-		    q.pos = crfTemplate.content[i].pos;
-		    
-		    crfInstance.content.push(q);
-		}
-		microEventInstance.crf = crfInstance;
-		microEventInstance.crfName = crfTemplate.name;
-	    }
-	}
-
-	debugLog("instanciateMicroEvent day " + microEventInstance.day + ", crf " + microEventTemplate.crf);
-
-	return microEventInstance;
+		return microEventInstance;
     };
 
     var addEvent = function (webble) {
-	var shadow = findShadowForWebble(webble, currentRoot);
-	
-	if(shadow === null) {
-	    var eventType = webble.scope().gimme('MedEventType');
+		var shadow = findShadowForWebble(webble, currentRoot);
 
-	    var i = 0;
-	    for(i = 0; i < listOfExceptionalEvents.length; i++) {
-		var s = listOfExceptionalEvents[i];
-		if(s.type == eventType && s.webble === null) {
-		    shadow = s;
-		    break;
+		if(shadow === null) {
+			var eventType = webble.scope().gimme('MedEventType');
+
+			var i = 0;
+			for(i = 0; i < listOfExceptionalEvents.length; i++) {
+			var s = listOfExceptionalEvents[i];
+			if(s.type == eventType && s.webble === null) {
+				shadow = s;
+				break;
+			}
+			}
 		}
-	    }
-	}
-	
-	if(shadow === null) {
-	    var eventType = webble.scope().gimme('MedEventType');
 
-	    debugLog("received new event that does not fit any event I am waiting for. " + eventType);
-	    printTree(currentRoot);
-	    for(var idx = 0; idx < listOfExceptionalEvents.length; idx++) {
-		debugLog("exceptional event " + listOfExceptionalEvents[idx].type + " " + listOfExceptionalEvents[idx].exceptionalDayOffset);
-	    }
-	    
-	    $scope.openForm(Enum.aopForms.infoMsg, {title: 'Unexpected Event Added', content: 'An event has been added that was not expected.'});
-	} else {
-	    shadow.webble = webble;
-	    setChildProtectionsAndMenuItems(shadow, shadow.webble);
-	    forceSlotSetForPositions = true;
-	    updateLayout();
-	    forceSlotSetForPositions = false;
+		if(shadow === null) {
+			var eventType = webble.scope().gimme('MedEventType');
 
-	    debugLog("Start listening to messages from child");
-	    
-	    saveTrial(); // need to update our saved state with things stored in the Webble, like the label
+			debugLog("received new event that does not fit any event I am waiting for. " + eventType);
+			printTree(currentRoot);
+			for(var idx = 0; idx < listOfExceptionalEvents.length; idx++) {
+			debugLog("exceptional event " + listOfExceptionalEvents[idx].type + " " + listOfExceptionalEvents[idx].exceptionalDayOffset);
+			}
 
-	    webble.scope().tellParent = {}; // clear out old messages 
-            var sentinel = $scope.$watch(function(){ return webble.scope().tellParent;}, function(newVal, oldVal) {
-		childSlotChange(shadow, newVal)
-	    }, true);
-	    
-	    shadow.sentinel = sentinel;
-	}
+			$scope.openForm(Enum.aopForms.infoMsg, {title: 'Unexpected Event Added', content: 'An event has been added that was not expected.'});
+		} else {
+			shadow.webble = webble;
+			setChildProtectionsAndMenuItems(shadow, shadow.webble);
+			forceSlotSetForPositions = true;
+			updateLayout();
+			forceSlotSetForPositions = false;
+
+			debugLog("Start listening to messages from child");
+
+			saveTrial(); // need to update our saved state with things stored in the Webble, like the label
+
+			webble.scope().tellParent = {}; // clear out old messages
+				var sentinel = $scope.$watch(function(){ return webble.scope().tellParent;}, function(newVal, oldVal) {
+			childSlotChange(shadow, newVal)
+			}, true);
+
+			shadow.sentinel = sentinel;
+		}
     };
 
     var setArmOrder = function(shadow, state) {
-	var webble = shadow.webble;
-	if(webble !== null) {
-	    var ios = webble.scope().theInteractionObjects;
-	    for(var i = 0, io; i < ios.length; i++){
-		io = ios[i];
+		var webble = shadow.webble;
+		if(webble !== null) {
+			var ios = webble.scope().theInteractionObjects;
+			for(var i = 0, io; i < ios.length; i++){
+				io = ios[i];
 
-		if(io.scope().getName() == 'armOrder'){
-		    io.scope().setIsEnabled(state);
+				if(io.scope().getName() == 'armOrder'){
+					io.scope().setIsEnabled(state);
+				}
+			}
 		}
-	    }
-        }	
     };
 
     var setChildProtectionsAndMenuItems = function(shadow, webble) {
-	var prot = webble.scope().getProtection();
+		var prot = webble.scope().getProtection();
 
-	//	    debugLog("TOBpatientboard: Going to fix protections on webble " + shadow.id + " which is '" + prot + "' now");
+		//	    debugLog("TOBpatientboard: Going to fix protections on webble " + shadow.id + " which is '" + prot + "' now");
 
-	prot = prot | Enum.bitFlags_WebbleProtection.CHILD_CONNECT;
-	prot = prot | Enum.bitFlags_WebbleProtection.DELETE;
-	prot = prot | Enum.bitFlags_WebbleProtection.PUBLISH;
-	prot = prot | Enum.bitFlags_WebbleProtection.DUPLICATE;
-	prot = prot | Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT;
-	prot = prot | Enum.bitFlags_WebbleProtection.SHAREDMODELDUPLICATE;
-	// prot = prot | Enum.bitFlags_WebbleProtection.;
+		prot = prot | Enum.bitFlags_WebbleProtection.CHILD_CONNECT;
+		prot = prot | Enum.bitFlags_WebbleProtection.DELETE;
+		prot = prot | Enum.bitFlags_WebbleProtection.PUBLISH;
+		prot = prot | Enum.bitFlags_WebbleProtection.DUPLICATE;
+		prot = prot | Enum.bitFlags_WebbleProtection.PARENT_DISCONNECT;
+		prot = prot | Enum.bitFlags_WebbleProtection.SHAREDMODELDUPLICATE;
+		// prot = prot | Enum.bitFlags_WebbleProtection.;
 
-	if(shadow.isCurrentlyExceptional) {
-	    prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
-	} else {
-	    prot = prot | Enum.bitFlags_WebbleProtection.MOVE;
-	}
-
-	webble.scope().setProtection(prot);
-
-	webble.scope().set("autoSlotConnEnabled", false);
-	webble.scope().connectSlots('','', {send: false, receive: false});
-
-	var ios = webble.scope().theInteractionObjects;
-	for(var i = 0, io; i < ios.length; i++){
-	    io = ios[i];
-            if(io.scope().getName() == 'Resize'){
-                io.scope().setIsEnabled(false);
-            }
-            if(io.scope().getName() == 'Rotate'){
-                io.scope().setIsEnabled(false);
-            }
-            if(io.scope().getName() == 'patActivate'){
-		io.scope().setIsEnabled(false);
-	    }
-            if(io.scope().getName() == 'noofDays'){
-		io.scope().setIsEnabled(false);
-	    }
-
-            if(io.scope().getName() == 'armOrder'){
 		if(shadow.isCurrentlyExceptional) {
-		    io.scope().setIsEnabled(true);
+			prot = prot & ~Enum.bitFlags_WebbleProtection.MOVE; // clear the protection flag
 		} else {
-		    io.scope().setIsEnabled(false);
+			prot = prot | Enum.bitFlags_WebbleProtection.MOVE;
 		}
-	    }
-        }
 
-	webble.scope().addPopupMenuItemDisabled('EditCustomMenuItems');
-	webble.scope().addPopupMenuItemDisabled('EditCustomInteractionObjects');
-	webble.scope().addPopupMenuItemDisabled('Bundle');
-	webble.scope().addPopupMenuItemDisabled('BringFwd');
-	webble.scope().addPopupMenuItemDisabled('ConnectSlots');
-	webble.scope().addPopupMenuItemDisabled('Protect');
-	webble.scope().addPopupMenuItemDisabled('AddCustomSlots');
-	webble.scope().addPopupMenuItemDisabled('About');
+		webble.scope().setProtection(prot);
 
-	webble.scope().addPopupMenuItemDisabled('patActivate');
+		webble.scope().set("autoSlotConnEnabled", false);
+		webble.scope().connectSlots('','', {send: false, receive: false});
 
-	webble.scope().addPopupMenuItemDisabled('Props');
-	webble.scope().addPopupMenuItemDisabled('tobdelete');
-	webble.scope().addPopupMenuItemDisabled('tobduplicate');
-	webble.scope().addPopupMenuItemDisabled('tobdeletesubtree');
-	webble.scope().addPopupMenuItemDisabled('tobduplicatesubtree');
-	webble.scope().addPopupMenuItemDisabled('connectCRF');
+		var ios = webble.scope().theInteractionObjects;
+		for(var i = 0, io; i < ios.length; i++){
+			io = ios[i];
+				if(io.scope().getName() == 'Resize'){
+					io.scope().setIsEnabled(false);
+				}
+				if(io.scope().getName() == 'Rotate'){
+					io.scope().setIsEnabled(false);
+				}
+				if(io.scope().getName() == 'patActivate'){
+			io.scope().setIsEnabled(false);
+			}
+				if(io.scope().getName() == 'noofDays'){
+			io.scope().setIsEnabled(false);
+			}
 
-	// remove later
-	webble.scope().removePopupMenuItemDisabled('Protect');
+				if(io.scope().getName() == 'armOrder'){
+			if(shadow.isCurrentlyExceptional) {
+				io.scope().setIsEnabled(true);
+			} else {
+				io.scope().setIsEnabled(false);
+			}
+			}
+			}
 
+		webble.scope().addPopupMenuItemDisabled('EditCustomMenuItems');
+		webble.scope().addPopupMenuItemDisabled('EditCustomInteractionObjects');
+		webble.scope().addPopupMenuItemDisabled('Bundle');
+		webble.scope().addPopupMenuItemDisabled('BringFwd');
+		webble.scope().addPopupMenuItemDisabled('ConnectSlots');
+		webble.scope().addPopupMenuItemDisabled('Protect');
+		webble.scope().addPopupMenuItemDisabled('AddCustomSlots');
+		webble.scope().addPopupMenuItemDisabled('About');
 
-	webble.scope().addPopupMenuItemDisabled('assignStartEnd')
+		webble.scope().addPopupMenuItemDisabled('patActivate');
 
-	if(shadow.microEvents.length > 0) {
-	    shadow.webble.scope().removePopupMenuItemDisabled('microEvents');
-	} else {
-	    shadow.webble.scope().addPopupMenuItemDisabled('microEvents');
-	}
-	shadow.webble.scope().set("MicroEvents", shadow.microEvents);
+		webble.scope().addPopupMenuItemDisabled('Props');
+		webble.scope().addPopupMenuItemDisabled('tobdelete');
+		webble.scope().addPopupMenuItemDisabled('tobduplicate');
+		webble.scope().addPopupMenuItemDisabled('tobdeletesubtree');
+		webble.scope().addPopupMenuItemDisabled('tobduplicatesubtree');
+		webble.scope().addPopupMenuItemDisabled('connectCRF');
 
-	if(shadow.crfs.length <= 0) {
-	    setShadeOut(shadow, webble, true, 'red');
-	    shadow.webble.scope().addPopupMenuItemDisabled('openCRF');
-	} else {
-	    setShadeOut(shadow, webble, false, 'red');
-	    shadow.webble.scope().removePopupMenuItemDisabled('openCRF');
-	}
+		// remove later
+		webble.scope().removePopupMenuItemDisabled('Protect');
 
-	//	    debugLog("TOBpatientboard: Set protections on webble " + shadow.id + " to be '" + prot + "' now");
+		webble.scope().addPopupMenuItemDisabled('assignStartEnd')
+
+		if(shadow.microEvents.length > 0) {
+			shadow.webble.scope().removePopupMenuItemDisabled('microEvents');
+		} else {
+			shadow.webble.scope().addPopupMenuItemDisabled('microEvents');
+		}
+		shadow.webble.scope().set("MicroEvents", shadow.microEvents);
+
+		if(shadow.crfs.length <= 0) {
+			setShadeOut(shadow, webble, true, 'red');
+			shadow.webble.scope().addPopupMenuItemDisabled('openCRF');
+		} else {
+			setShadeOut(shadow, webble, false, 'red');
+			shadow.webble.scope().removePopupMenuItemDisabled('openCRF');
+		}
+
+		webble.scope().removePopupMenuItemDisabled('Props');
+
+		//	    debugLog("TOBpatientboard: Set protections on webble " + shadow.id + " to be '" + prot + "' now");
     };
 
     var setShadeOut = function(shadow, webble, status, color) {
@@ -510,151 +511,151 @@ wblwrld3App.controller("patientboardWebbleCtrl", function ($scope, $log, Slot, E
     };
 
     $scope.loadTrial = function(trialData, workBoardCurrentRoot, workBoardListOfExceptionalEvents) {
-	debugLog("loadTrialData().\n" + trialData);
+		debugLog("loadTrialData().\n" + trialData);
 
-	var data = trialData;
-	if(typeof trialData === 'string') {
-	    data = JSON.parse(trialData);
-	}
-	var i = 0;
-	var event = null;
-	var newShadow = null;
-	var ls = [];
-	var e = 0;
-
-	clearTrial();
-
-	if(data && data.trial && data.patient && data.events) {
-
-	    $scope.set("Trial", data.trial);
-	    $scope.set("Patient", data.patient);
-
-	    haveBeenActivated = true;
-
-	    for(e = 0; e < data.events.length; e++) {
-		event = data.events[e];
-    		newShadow = {};
-    		newShadow.webble = null;
-		newShadow.sentinel = null;
-
-		newShadow.left = 0;
-		newShadow.top = 0;
-
-		newShadow.id = listOfAllChildren.length;
-    		listOfAllChildren.push(newShadow);
-		newShadow.dbId = event.dbId;
-
-		newShadow.templateEventId = event.template_id;
-		newShadow.templateEventDbId = event.template_dbId;
-		newShadow.templateEvent = findTemplateShadow(newShadow.templateEventDbId, workBoardCurrentRoot, workBoardListOfExceptionalEvents);
-
-		var oldShadow = newShadow.templateEvent;
-		if(oldShadow !== null) {
-		    oldShadow.isActivated = true;
-
-    		    newShadow.w = oldShadow.w; // bug!?
-    		    newShadow.h = oldShadow.h;
-    		    newShadow.d = oldShadow.d;
-
-    		    newShadow.offsetUnits = oldShadow.offsetUnits;
-
-    		    newShadow.offsets = [];
-    		    newShadow.offsets[0] = [oldShadow.offsets[0][0], oldShadow.offsets[0][1]];
-    		    newShadow.children = [];
-
-    		    newShadow.totalH = oldShadow.totalH;
-
-    		    newShadow.isBranch = oldShadow.isBranch;
-
-    		    newShadow.type = oldShadow.type;
-
-		    newShadow.startDate = {};
-		    newShadow.startDate.crf = oldShadow.startDate.crf;
-		    newShadow.startDate.q = oldShadow.startDate.q;
-
-		    newShadow.endDate = {};
-		    newShadow.endDate.crf = oldShadow.endDate.crf;
-		    newShadow.endDate.q = oldShadow.endDate.q;
-
-		    newShadow.crfs = [];
-		    var crfTemplates = getAvailableCRFs();
-
-		    for(i = 0; i < event.crfs.length; i++) {
-			var crfInstance = {};
-			for(var tmpl = 0; tmpl < crfTemplates.length; tmpl++) {
-			    if(crfTemplates[tmpl].id == event.crfs[i].template_id) {
-				crfInstance.crfTemplate = crfTemplates[tmpl]; // find somewhere
-				break;
-			    }
-			}
-			crfInstance.event = newShadow;
-			crfInstance.id = event.crfs[i].id;
-			crfInstance.content = event.crfs[i].content;
-
-			newShadow.crfs.push(crfInstance);
-		    }
-
-		    newShadow.microEvents = [];
-		    if(oldShadow.microEvents.length > 0) {
-			for(i = 0; i < event.microEvents.length; i++) {
-			    newShadow.microEvents.push(event.microEvents[i]); // need to instanciate CRFs here too, fix!
-			}
-		    }
-
-		    if(oldShadow.offsets.length > 0) {
-			if(oldShadow.type == 'ptc') {
-			    newShadow.offsets = [];
-			    for(i = 0; i < oldShadow.offsets.length; i++) {
-				newShadow.offsets.push(oldShadow.offsets[i]);
-			    }
-			}
-		    }
-		    
-		    newShadow.isCurrentlyExceptional = oldShadow.isCurrentlyExceptional;
-
-		    if (newShadow.isCurrentlyExceptional){ 
-			newShadow.exceptionalDayOffset = event.exceptionalDayOffset;
-			listOfExceptionalEvents.push(newShadow);
-		    } else {
-			insertEventInTree(newShadow);
-		    }
-
-    		    updateLayout();
-
-		    var prot = oldShadow.webble.scope().getProtection();
-		    var oldProt = prot;
-		    prot = prot & ~Enum.bitFlags_WebbleProtection.DUPLICATE; // clear the protection flag
-		    oldShadow.webble.scope().setProtection(prot);
-
-		    oldShadow.webble.scope().duplicate({x: 15, y: 15}, undefined);
-
-		    oldShadow.webble.scope().setProtection(oldProt);
-
-		    newShadow.armrank = event.armrank;
-		    newShadow.parallelrank = event.parallelrank;
-		    newShadow.mandatory = event.mandatory;
-		    var temp = event.treatmentelement.split(";");
-		    newShadow.eventColor = temp[0];
-		    newShadow.eventText =  temp[1];
-		    newShadow.treatmentarmlabel = event.treatmentarmlabel;
-		    newShadow.label = event.label;
+		var data = trialData;
+		if(typeof trialData === 'string') {
+			data = JSON.parse(trialData);
 		}
-	    }
+		var i = 0;
+		var event = null;
+		var newShadow = null;
+		var ls = [];
+		var e = 0;
 
-	    // now that all children should be in the children lists, sort these list to the correct order
-	    for(e = 0; e < listOfAllChildren.length; e++) {
-		newShadow = listOfAllChildren[e];
-		if(newShadow !== null && newShadow.children.length > 1) {
-		    if(newShadow.type == 'ptc') {
-			newShadow.children.sort( function(a, b) { return a.parallelrank - b.parallelrank; } );
-		    } else {
-			debugLog("Load event, we have an event with an armrank != 0. This should not happen.");
-			newShadow.children.sort( function(a, b) { return a.armrank - b.armrank; } );
-		    }
+		clearTrial();
+
+		if(data && data.trial && data.patient && data.events) {
+
+			$scope.set("Trial", data.trial);
+			$scope.set("Patient", data.patient);
+
+			haveBeenActivated = true;
+
+			for(e = 0; e < data.events.length; e++) {
+			event = data.events[e];
+				newShadow = {};
+				newShadow.webble = null;
+			newShadow.sentinel = null;
+
+			newShadow.left = 0;
+			newShadow.top = 0;
+
+			newShadow.id = listOfAllChildren.length;
+				listOfAllChildren.push(newShadow);
+			newShadow.dbId = event.dbId;
+
+			newShadow.templateEventId = event.template_id;
+			newShadow.templateEventDbId = event.template_dbId;
+			newShadow.templateEvent = findTemplateShadow(newShadow.templateEventDbId, workBoardCurrentRoot, workBoardListOfExceptionalEvents);
+
+			var oldShadow = newShadow.templateEvent;
+			if(oldShadow !== null) {
+				oldShadow.isActivated = true;
+
+					newShadow.w = oldShadow.w; // bug!?
+					newShadow.h = oldShadow.h;
+					newShadow.d = oldShadow.d;
+
+					newShadow.offsetUnits = oldShadow.offsetUnits;
+
+					newShadow.offsets = [];
+					newShadow.offsets[0] = [oldShadow.offsets[0][0], oldShadow.offsets[0][1]];
+					newShadow.children = [];
+
+					newShadow.totalH = oldShadow.totalH;
+
+					newShadow.isBranch = oldShadow.isBranch;
+
+					newShadow.type = oldShadow.type;
+
+				newShadow.startDate = {};
+				newShadow.startDate.crf = oldShadow.startDate.crf;
+				newShadow.startDate.q = oldShadow.startDate.q;
+
+				newShadow.endDate = {};
+				newShadow.endDate.crf = oldShadow.endDate.crf;
+				newShadow.endDate.q = oldShadow.endDate.q;
+
+				newShadow.crfs = [];
+				var crfTemplates = getAvailableCRFs();
+
+				for(i = 0; i < event.crfs.length; i++) {
+				var crfInstance = {};
+				for(var tmpl = 0; tmpl < crfTemplates.length; tmpl++) {
+					if(crfTemplates[tmpl].id == event.crfs[i].template_id) {
+					crfInstance.crfTemplate = crfTemplates[tmpl]; // find somewhere
+					break;
+					}
+				}
+				crfInstance.event = newShadow;
+				crfInstance.id = event.crfs[i].id;
+				crfInstance.content = event.crfs[i].content;
+
+				newShadow.crfs.push(crfInstance);
+				}
+
+				newShadow.microEvents = [];
+				if(oldShadow.microEvents.length > 0) {
+				for(i = 0; i < event.microEvents.length; i++) {
+					newShadow.microEvents.push(event.microEvents[i]); // need to instanciate CRFs here too, fix!
+				}
+				}
+
+				if(oldShadow.offsets.length > 0) {
+				if(oldShadow.type == 'ptc') {
+					newShadow.offsets = [];
+					for(i = 0; i < oldShadow.offsets.length; i++) {
+					newShadow.offsets.push(oldShadow.offsets[i]);
+					}
+				}
+				}
+
+				newShadow.isCurrentlyExceptional = oldShadow.isCurrentlyExceptional;
+
+				if (newShadow.isCurrentlyExceptional){
+				newShadow.exceptionalDayOffset = event.exceptionalDayOffset;
+				listOfExceptionalEvents.push(newShadow);
+				} else {
+				insertEventInTree(newShadow);
+				}
+
+					updateLayout();
+
+				var prot = oldShadow.webble.scope().getProtection();
+				var oldProt = prot;
+				prot = prot & ~Enum.bitFlags_WebbleProtection.DUPLICATE; // clear the protection flag
+				oldShadow.webble.scope().setProtection(prot);
+
+				oldShadow.webble.scope().duplicate({x: 15, y: 15}, undefined);
+
+				oldShadow.webble.scope().setProtection(oldProt);
+
+				newShadow.armrank = event.armrank;
+				newShadow.parallelrank = event.parallelrank;
+				newShadow.mandatory = event.mandatory;
+				var temp = event.treatmentelement.split(";");
+				newShadow.eventColor = temp[0];
+				newShadow.eventText =  temp[1];
+				newShadow.treatmentarmlabel = event.treatmentarmlabel;
+				newShadow.label = event.label;
+			}
+			}
+
+			// now that all children should be in the children lists, sort these list to the correct order
+			for(e = 0; e < listOfAllChildren.length; e++) {
+			newShadow = listOfAllChildren[e];
+			if(newShadow !== null && newShadow.children.length > 1) {
+				if(newShadow.type == 'ptc') {
+				newShadow.children.sort( function(a, b) { return a.parallelrank - b.parallelrank; } );
+				} else {
+				debugLog("Load event, we have an event with an armrank != 0. This should not happen.");
+				newShadow.children.sort( function(a, b) { return a.armrank - b.armrank; } );
+				}
+			}
+			}
 		}
-	    }
-	}
-	updateLayout();
+		updateLayout();
     };
 
     $scope.activate = function (oldShadow) {
@@ -1156,64 +1157,64 @@ wblwrld3App.controller("patientboardWebbleCtrl", function ($scope, $log, Slot, E
 
 
     var findShadowForAlreadyAddedWebble = function(webble, node) {
-	if(node === null) {
-	    return null;
-	}
+		if(node === null) {
+			return null;
+		}
 
-	if(node.webble === webble) {
-	    return node;
-	}
+		if(node.webble === webble) {
+			return node;
+		}
 
-	var i = 0;
-	for(i = 0; i < node.children.length; i++) {
-	    var res = findShadowForAlreadyAddedWebble(webble, node.children[i]);
-	    if(res !== null) {
-		return res;
-	    }
-	}
-	return null;
+		var i = 0;
+		for(i = 0; i < node.children.length; i++) {
+			var res = findShadowForAlreadyAddedWebble(webble, node.children[i]);
+			if(res !== null) {
+			return res;
+			}
+		}
+		return null;
     };
 
 
     var findShadowForWebble = function(webble, node) {
-	//	debugLog("findShadowForWebble ");
+		//	debugLog("findShadowForWebble ");
 
-	if(node === null) {
-	    return null;
-	}
-
-	if(node.webble === null) {
-	    var eventType = webble.scope().gimme('MedEventType');
-	    var units = webble.scope().gimme('NoOfUnits');
-	    var offsetUnits = webble.scope().gimme('OffsetNoofUnits');
-
-	    if(node.isBranch) {
-		//    		debugLog(node.type + "." + node.id + " has no webble! " + eventType + " " + units + " " + offsetUnits + " vs. " + node.type + " " + node.h + " " + node.offsetUnits);
-		if(eventType == node.type
-		   // && units == node.h
-		   && offsetUnits == node.offsetUnits) {
-		    //		    debugLog("FOUND a fitting webble " + node.type + "." + node.id);
-    		    return node;
+		if(node === null) {
+			return null;
 		}
-	    } else {
-		//    		debugLog(node.type + "." + node.id + " has no webble! " + eventType + " " + units + " " + offsetUnits + " vs. " + node.type + " " + node.d + " " + node.offsetUnits);
-		if(eventType == node.type
-		   && units == node.d
-		   && offsetUnits == node.offsetUnits) {
-		    //		    debugLog("FOUND a fitting webble " + node.type + "." + node.id);
-    		    return node;
-		}	    
-	    }
-	}
 
-	var i = 0;
-	for(i = 0; i < node.children.length; i++) {
-	    var res = findShadowForWebble(webble, node.children[i]);
-	    if(res !== null) {
-		return res;
-	    }
-	}
-	return null;
+		if(node.webble === null) {
+			var eventType = webble.scope().gimme('MedEventType');
+			var units = webble.scope().gimme('NoOfUnits');
+			var offsetUnits = webble.scope().gimme('OffsetNoofUnits');
+
+			if(node.isBranch) {
+			//    		debugLog(node.type + "." + node.id + " has no webble! " + eventType + " " + units + " " + offsetUnits + " vs. " + node.type + " " + node.h + " " + node.offsetUnits);
+			if(eventType == node.type
+			   // && units == node.h
+			   && offsetUnits == node.offsetUnits) {
+				//		    debugLog("FOUND a fitting webble " + node.type + "." + node.id);
+					return node;
+			}
+			} else {
+			//    		debugLog(node.type + "." + node.id + " has no webble! " + eventType + " " + units + " " + offsetUnits + " vs. " + node.type + " " + node.d + " " + node.offsetUnits);
+			if(eventType == node.type
+			   && units == node.d
+			   && offsetUnits == node.offsetUnits) {
+				//		    debugLog("FOUND a fitting webble " + node.type + "." + node.id);
+					return node;
+			}
+			}
+		}
+
+		var i = 0;
+		for(i = 0; i < node.children.length; i++) {
+			var res = findShadowForWebble(webble, node.children[i]);
+			if(res !== null) {
+				return res;
+			}
+		}
+		return null;
     };
 
 
