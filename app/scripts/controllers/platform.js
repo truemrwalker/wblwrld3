@@ -4656,7 +4656,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
         //==== NON-MENU KEYBOARD ============================
-        if (sublink == 'shortcutinfo' || (whatKeys.theAltKey && whatKeys.theKey == 'F1')){
+        if (sublink == 'shortcutinfo' || (whatKeys.theKey == 'F1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1'))){
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Non-Menu Shortcut Keys"), content:
 					'<strong>Alt+F1</strong>:' + gettextCatalog.getString("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
 					'<strong>Alt+F2</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
@@ -4677,7 +4677,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			);
         }
 		//Toggle Main Menu visibility
-        else if (sublink == 'altf2' || (whatKeys.theAltKey && whatKeys.theKey == 'F2')){
+        else if (sublink == 'altf2' || (whatKeys.theKey == 'F2' || (whatKeys.theAltKey && whatKeys.theKey == 'F2'))){
             if((parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)){
                 platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
@@ -4685,16 +4685,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
         }
-        else if (sublink == 'altf3' || (whatKeys.theAltKey && whatKeys.theKey == 'F3'))
-        {
+        else if (sublink == 'altf3' || (whatKeys.theKey == 'F3' || (whatKeys.theAltKey && whatKeys.theKey == 'F3'))){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited && currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 $scope.isLoggingEnabled = !$scope.isLoggingEnabled;
                 wwGlobals.loggingEnabled = $scope.isLoggingEnabled;
                 localStorageService.add('isLoggingEnabled', $scope.isLoggingEnabled.toString());
             }
         }
-        else if (sublink == 'altf5' || (whatKeys.theAltKey && whatKeys.theKey == 'F5'))
-        {
+        else if (sublink == 'altf5' || (whatKeys.theKey == 'F5' || (whatKeys.theAltKey && whatKeys.theKey == 'F5'))){
             if($scope.getActiveWebbles().length > 0){
                 var rootPathName = 'guest';
                 if($scope.user){
@@ -4705,8 +4703,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.showQIM(gettext("Current workspace quick saved"));
             }
         }
-        else if (sublink == 'altf6' || (whatKeys.theAltKey && whatKeys.theKey == 'F6'))
-        {
+        else if (sublink == 'altf6' || (whatKeys.theKey == 'F6' || (whatKeys.theAltKey && whatKeys.theKey == 'F6'))){
             $scope.cleanActiveWS();
             var rootPathName = 'guest';
             if($scope.user){
@@ -4730,12 +4727,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 $scope.showQIM(gettext("No Quick-Save Workspace in Storage"));
             }
         }
-        else if (sublink == 'altf8' || (whatKeys.theKey == 'F8' || (whatKeys.theAltKey && whatKeys.theKey == 'F8')))
-        {
+        else if (sublink == 'altf8' || (whatKeys.theKey == 'F8' || (whatKeys.theAltKey && whatKeys.theKey == 'F8'))){
             $scope.downloadWebbleDef("fundamental");
         }
-        else if (sublink == 'altf9' || (whatKeys.theKey == 'F9' || (whatKeys.theAltKey && whatKeys.theKey == 'F9')))
-        {
+        else if (sublink == 'altf9' || (whatKeys.theKey == 'F9' || (whatKeys.theAltKey && whatKeys.theKey == 'F9'))){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited && currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
                 if(gettextCatalog.currentLanguage.search('en') == -1){
                     gettextCatalog.currentLanguage = 'en';
@@ -4749,8 +4744,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         }
-        else if (sublink == 'altf10' || (whatKeys.theAltKey && whatKeys.theKey == 'F10'))
-        {
+        else if (sublink == 'altf10' || (whatKeys.theKey == 'F10' || (whatKeys.theAltKey && whatKeys.theKey == 'F10'))){
 			var beforeLang = gettextCatalog.currentLanguage;
             $scope.openForm(Enum.aopForms.langChange, null, function(){
                 if(gettextCatalog.currentLanguage.search('en') == -1){

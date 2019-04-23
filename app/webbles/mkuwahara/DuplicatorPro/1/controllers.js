@@ -215,6 +215,15 @@ wblwrld3App.controller('duplicateProWblCtrl', function($scope, $log, $timeout, S
 			undefined
 		));
 
+		$scope.addSlot(new Slot('enableOriginalSameParent',
+			false,
+			'Assign Origin Parent Enabled',
+			'When checked all the duplicates will be assigned the same parent as the original Webble has',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
         $scope.setResizeSlots('dupliPro:width', 'dupliPro:height');
     };
     //===================================================================================
@@ -261,6 +270,13 @@ wblwrld3App.controller('duplicateProWblCtrl', function($scope, $log, $timeout, S
 				}
 
 				justLoadedWblData.wbl.scope().set(duplExecConfig.txt.slotName, txtToPrint);
+			}
+
+			if($scope.gimme("enableOriginalSameParent")){
+				var origParent = wblDuplTemplate.scope().getParent();
+				if(origParent != undefined){
+					justLoadedWblData.wbl.scope().paste(origParent);
+				}
 			}
 		}
 
