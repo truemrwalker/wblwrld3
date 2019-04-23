@@ -2067,7 +2067,7 @@ wblwrld3App.controller('EAM_Ctrl', function($scope, $log, $location, Slot, Enum,
                         }
                     }
                     else if(ac.operation == 'Delete'){
-                        $scope.requestDeleteWebble(t);
+                        $scope.requestDeleteWebble(t, undefined, true);
                     }
                     else if(ac.operation == 'Duplicate'){
                         if(ac.oParams.p1 == 'Default'){

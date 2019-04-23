@@ -4214,7 +4214,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Request Delete Webble
     // This method deletes a specified webble from the system.
     //========================================================================================
-    $scope.requestDeleteWebble = function(target, callbackFunc){
+    $scope.requestDeleteWebble = function(target, callbackFunc, noWaitIndicator){
         if($scope.getLOIEnabled() && !$scope.getEmitLockEnabled() && $scope.user){
 			socket.emit('interaction:comm', {id: currWS_.id, user: ($scope.user.username ? $scope.user.username : $scope.user.email), op: Enum.transmitOps.deleteWbl, target: target.scope().getInstanceId()});
         }
@@ -4231,8 +4231,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			}
 		}
 
-
-		if(!$scope.waiting()){
+		if(!noWaitIndicator && !$scope.waiting()){
 			$timeout(function(){$scope.waiting(true);});
 		}
 
