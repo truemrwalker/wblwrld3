@@ -1617,6 +1617,8 @@ Deletes a specified webble from the system. (the last (optional) parameter is a 
     * target (Webble Pointer) the Webble that is targeted for the operation
 	* callbackFunc (Function) Callback function that will be called when the Webble has been deleted
 	    * OPTIONAL
+	* noWaitIndicator (Boolean) If True no waiting indicator will be shown while deleting the Webble in question.
+	    * OPTIONAL
 * **Returns:**
     * (Boolean) True or False whether the attempt to delete was successful or not
 
