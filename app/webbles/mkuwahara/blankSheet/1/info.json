@@ -1,6 +1,6 @@
 {
     "name": "Blank Sheet Webble",
-    "description": "This is a Webble with no real HTML or CSS content that do not do much, but it allows you to add your own CSS, HTML and even JavaScript. It is as the name tells a blank sheet that you can fill with your own quick web design without having to build your own, slightly more complex, template.",
+    "description": "This is a Webble with no real HTML or CSS content that do not do much, but it allows you to add your own CSS, HTML and even JavaScript. It is as the name tells a blank sheet that you can fill with your own quick web design without having to build your own, slightly more complex, template. Make sure your outer layer in the HTML part is DIV or similar (You do not need any HTML or BODY tags. Also make sure that you give each element an id value if you want to apply any Javascript to it. (e.g. <div id='experiment'>). In the CSS part, it is best to use class names for a set of css rules (e.g. #experiment {}). In the JavaScript part make sure you look for specific id within the actual Webble and not in Webble World as a whole by using: $scope.theView.parent().find('[ELEMENT ID]').",
     "keywords": "empty customize html javascript css blank",
     "author": "truemrwalker",
     "image": "images/wbls/blankPaper.png"

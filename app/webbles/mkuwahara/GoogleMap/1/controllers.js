@@ -18,16 +18,34 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
     var map, currentPlace, placesService, infowindow;
     var markers = [], listeners = [];
 
-
-	//TODO: If your Webble is using an api that requires a personal Access key to work, we recommend that you do not share your personal key in your Webble for everyone to use. Instead you should store the
-	//TODO: needed keys in your user profile and request them here, meaning that if another Webble World User is using this (your) Webble, they too need to have a valid access key of their own, stored in
-	//TODO: their profile for the Webble to work, and your access keys will not be abused.
-	//TODO: The realm could for example be 'google' and the resource could for example be 'map'.
-	//TODO: In order to allow others to use the Webble with their own keys, the realm and resource should be declared in the Webble description.
-	//TODO: If there are some crucial dependencies between loading the API and the init of the Webble this code may better serve inside the coreCall_Init function to avoid breaks.
-
-	var myAccessKeyForSomething;
-
+    var noOfInitCalls = 0;
+    var wblDefMem = undefined;
+	dbService.getMyAccessKey("www.google.com", "maps").then(
+       function(returningKey) {
+           if(returningKey){
+                 var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
+                 $.getScript( urlPath +  returningKey)
+                   .always(function( jqxhr, settings, exception ) {
+                   		if(noOfInitCalls < 2){$scope.coreCall_Init(wblDefMem);}
+                 });
+           }
+           else{
+               $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm (www.google.com) and resource (maps) saved in your user profile. So we loaded a very limited non-api map instead.")}, null);
+			   $.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&callback=isNaN")
+				   .always(function( jqxhr, settings, exception ) {
+					   if(noOfInitCalls < 2){$scope.coreCall_Init(wblDefMem);}
+				   });
+           }
+       },
+       function (err) {
+           $log.log("ERROR: " + err);
+		   $scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No User and Access Key Found"), content: gettext("This Webble requires a logged in user and a valid Google Map API key to function properly and neither were found, so we loaded a very limited non-api map instead.")}, null);
+		   $.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&callback=isNaN")
+			   .always(function( jqxhr, settings, exception ) {
+				   if(noOfInitCalls < 2){$scope.coreCall_Init(wblDefMem);}
+			   });
+       }
+   );
 
 
     //=== EVENT HANDLERS ================================================================
@@ -43,6 +61,11 @@ wblwrld3App.controller('googleMapCtrl', function($scope, $log, $timeout, Slot, E
     // Webble template Initialization
     //===================================================================================
     $scope.coreCall_Init = function(theInitWblDef){
+    	//Make sure to run init call only ones even though it will be called twice (once from webble core and once from within this Webble)
+    	noOfInitCalls++;
+    	if(theInitWblDef != undefined){ wblDefMem = theInitWblDef; }
+    	if(noOfInitCalls < 2){ return; }
+
         mapContainer = $scope.theView.parent().find("#googleMapContainer");
         mapCanvas = $scope.theView.parent().find("#map-canvas");
 

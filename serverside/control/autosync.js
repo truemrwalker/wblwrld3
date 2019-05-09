@@ -65,7 +65,7 @@ function startFsMonitor(webbleDir, mongoose) {
                 .then(() => console.log("DEBUG: Deleted file:", localFile))
                 .catch(err => console.log("Error Deleting file:", err));
         }
-        else if (!stat.isFile() || filename.toLowerCase() == 'info.json') {
+        else if (!stat.isFile()/* || filename.toLowerCase() == 'info.json'*/) {
 
             console.log("DEBUG: Skipping file:", localFile);
             return Promise.resolve();

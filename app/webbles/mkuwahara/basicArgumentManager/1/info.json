@@ -1,6 +1,6 @@
 {
     "name": "Basic Argument Manager",
-    "description": "This is a Webble where the user can combine arguments and do basic mathematical operations on them and get a result. \nAlso very useful when formatting and generating data into for example specific JSON structures or arrays or building any form of dynamic texts etc.",
+    "description": "<p>This is a Webble where the user can combine arguments and do basic mathematical operations on them and get a result.</p><p>Also very useful when formatting and generating data into for example specific JSON structures or arrays or building any form of dynamic texts etc.</p>",
     "keywords": "arguments math operations plus minus division multiply strings, json, array",
     "author": "truemrwalker",
     "image": "images/wbls/basicArgs.png"

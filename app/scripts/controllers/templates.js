@@ -287,14 +287,14 @@ function ($scope, $timeout, $log, gettext, templates, templateService, confirm) 
 	};
 
 	$scope.newTemplateFiles = [
-		{ name: 'view.html', help: gettext("How the Webble view is structured") },
+		{ name: 'view.html', help: gettext("How the Webble is structured") },
 		{ name: 'styles.css', help: gettext("How the Webble looks") },
-		{ name: 'controllers.js', help: gettext("All your controller are belong to us") },
-		{ name: 'directives.js', help: gettext("All your directive are belong to us") },
-		{ name: 'filters.js', help: gettext("All your filter are belong to us") },
-		{ name: 'services.js', help: gettext("All your service are belong to us") },
-		{ name: 'manifest.json', help: gettext("Define external dependencies") },
-		{ name: 'README.md', help: gettext("Write something that nobody will read, MD-style!") }
+		{ name: 'controllers.js', help: gettext("What the Webble can do") },
+		{ name: 'directives.js', help: gettext("Fancy ways the Webble can do it in") },
+		{ name: 'filters.js', help: gettext("Fancy ways the Webble can display things in") },
+		{ name: 'services.js', help: gettext("Fancy ways the Webble can get its content") },
+		{ name: 'manifest.json', help: gettext("How the Webble defined external dependencies") },
+		{ name: 'README.md', help: gettext("Optional development and user information regarding this Webble") }
 	];
 
 	$scope.missingFile = function(fValue) {
