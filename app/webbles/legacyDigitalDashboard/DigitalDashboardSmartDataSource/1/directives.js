@@ -1,46 +1,55 @@
 //====================================================================================================================
-// Directives for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
-// Created By: [WEBBLE TEMPLATE AUTHOR]
+// Directives for Digital Dashboard Smart Data Source for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================
 
-// AngularJS Directives are powerful and very useful, but is never necessary. This file can be completely excluded in
-// the final template. But if you have them and use them it is here where you put them.
-// Remember to bind them to the wblwrld3App module to work properly as seen below in the example.
 
 //=======================================================================================
-
+// DATA DRAGGABLE
+// This Directive makes it possible to drag data fields from this Webble in order
+// to drop it onto various dashboard plugins.
+//=======================================================================================
 wblwrld3App.directive('dataDraggable', function() {
-    return {
-        link: function(scope, element, attrs) {
-	    console.log("linking draggable element");
-	    
-	    element.draggable = true;
+	return {
+		link: function(scope, element, attrs) {
+			console.log("linking draggable element");
 
-            element.draggable({
-		helper:"clone"
-	    });
+			element.draggable = true;
 
-	    element.mouseenter(function(event){
-                element.find('#li').css('font-style', 'italic');
-            });
-	    
-            element.mouseleave(function(event){
-                element.find('#li').css('font-style', 'normal ');
-            });
-        }
-    };
-});
+			element.draggable({
+				helper:"clone"
+			});
 
-wblwrld3App.directive('dataDroppable', function() {
-    return {
-        link: function(scope, element, attrs) {
-            element.droppable({
-		drop: function(e, ui){
-		    console.log("dropped item is: '" + ui.draggable.attr('id') + "'");
+			element.mouseenter(function(event){
+				element.find('#li').css('font-style', 'italic');
+			});
+
+			element.mouseleave(function(event){
+				element.find('#li').css('font-style', 'normal ');
+			});
 		}
-	    });
-	}
-    };
+	};
 });
+//=======================================================================================
+
+
+//=======================================================================================
+// DATA DROPPABLE
+// This Directive makes it possible to drop data files onto this Webble in order
+// to load new data.
+//=======================================================================================
+wblwrld3App.directive('dataDroppable', function() {
+	return {
+		link: function(scope, element, attrs) {
+			element.droppable({
+				drop: function(e, ui){
+					console.log("dropped item is: '" + ui.draggable.attr('id') + "'");
+				}
+			});
+		}
+	};
+});
+//=======================================================================================
 
 //====================================================================================================================

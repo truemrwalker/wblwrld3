@@ -1,8 +1,8 @@
 {
- "noautogen":false,
- "image":"images/notFound.png",
- "name":"DigitalDashboardSmartDataSource",
- "description":"A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads data in various formats, including CSV, JSON, Rockstar, and more.",
- "keywords":"DigitalDashboard,data,CSV",
- "author":"legacyDigitalDashboard"
+	"noautogen":false,
+	"image":"images/wbls/digitalDashboardSmartDataSource.png",
+	"name":"Digital Dashboard Smart Data Source",
+	"description":"<p>A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads data in various formats, including CSV, JSON, Rockstar, and more.</p><p style='color: red;'>This is Legacy Dashboard 2.0 Webble which is, not yet but close in line, to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles.</p>",
+	"keywords":"DigitalDashboard,data,CSV",
+	"author":"legacyDigitalDashboard"
 }

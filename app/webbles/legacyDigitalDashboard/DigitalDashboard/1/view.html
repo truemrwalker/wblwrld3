@@ -1,129 +1,138 @@
 <!--====================================================================================================================
-    // View for DigitalDashboard for Webble World v3.0 (2013)
-    // Created By: Jonas Sjobergh
-    //===================================================================================================================-->
+// View for DigitalDashboard for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
+//===================================================================================================================-->
 
+<!--==============================================================-->
+<!-- MAIN WEBBLE VIEW										 	  -->
+<!--==============================================================-->
 <div id="digitalDashboard" ng-controller="digitalDashboardWebbleCtrl">
-  <div id="dashboardBackgroundBox" class="backgroundBox">
-    Digital Dashboard
-  </div>
-  <button ng-click="selectAll()">Select All</button>
+	<div id="dashboardBackgroundBox" class="backgroundBox">
+    	Digital Dashboard
+  	</div>
+  	<button ng-click="selectAll()">Select All</button>
 </div>
+<!--=================================================================================================================-->
 
+
+
+<!--==============================================================-->
+<!-- FORMS													 	  -->
+<!--==============================================================-->
 
 <!--==============================================================-->
 <!--***** Connect fields, Data Source & Visualization Plugin *****-->
 <!--==============================================================-->
-
 <script type="text/ng-template" id="connectionFieldsForm.html">
-  <div id="connectionFieldsForm" class="container-fluid padcontent"  data-formclass="connectionform">
+	<div id="connectionFieldsForm" class="container-fluid padcontent"  data-formclass="connectionform">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;">Cancel</button>
-        <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;">Apply</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle">Connect Data fields and Visualization input fields</h4></div>
-    </div>
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;">Cancel</button>
+				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;">Apply</button>
+		  	</div>
+		  	<div class="col-xs-9"><h4 class="formTitle">Connect Data fields and Visualization input fields</h4></div>
+		</div>
 
-    <h4>{{formProps.pluginName}}</h4>
-    <p>
-      <input type="checkbox" ng-model="formProps.pluginGrouping"> Multiple selections should get different colors.
-    </p>
+		<h4>{{formProps.pluginName}}</h4>
+		<p>
+			<input type="checkbox" ng-model="formProps.pluginGrouping"> Multiple selections should get different colors.
+		</p>
 
-    <div ng-repeat="pluginSet in formProps.pluginSets">
-      <div class="dividerLineAbove">
-	<div class="row" style="padding-left: 14px; padding-right: 14px;" ng-repeat="set in pluginSet.dataSets">
-	  <table>
-            <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="field in set.fields">
-              <td ng-style="{'padding':5}">{{field.name}}</td>
-	      <td ng-if="!field.template" ng-style="{'padding':7}">Data: <select ng-model="field.input" ng-options="input.id as input.name for input in field.inputList"></td>
-	      <td ng-if="field.template" ng-style="{'padding':7}"><button ng-click="addField(pluginSet, set, field)" class="btn btn-default">Add more fields like this</button></td>
-	      <td ng-if="field.added" ng-style="{'padding':7}"><button ng-click="removeField(pluginSet, set, field)" class="btn btn-default">Remove this field</button></td>
-            </tr>
-	  </table>
-	</div>
-	<div class="dividerLineAbove">
-	</div>
-      </div>
-    </div>
+		<div ng-repeat="pluginSet in formProps.pluginSets">
+		  	<div class="dividerLineAbove">
+				<div class="row" style="padding-left: 14px; padding-right: 14px;" ng-repeat="set in pluginSet.dataSets">
+					<table>
+						<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="field in set.fields">
+							<td ng-style="{'padding':5}">{{field.name}}</td>
+							<td ng-if="!field.template" ng-style="{'padding':7}">Data: <select ng-model="field.input" ng-options="input.id as input.name for input in field.inputList"></td>
+							<td ng-if="field.template" ng-style="{'padding':7}"><button ng-click="addField(pluginSet, set, field)" class="btn btn-default">Add more fields like this</button></td>
+							<td ng-if="field.added" ng-style="{'padding':7}"><button ng-click="removeField(pluginSet, set, field)" class="btn btn-default">Remove this field</button></td>
+						</tr>
+					</table>
+				</div>
+				<div class="dividerLineAbove">
+				</div>
+		  	</div>
+		</div>
     
-  </div>
+  	</div>
 </script>
 <!--==============================================================-->
 
 <!--==================================================-->
 <!--******** Connect from Data to Visualizations *****-->
 <!--==================================================-->
-
 <script type="text/ng-template" id="connectionData2VizForm.html">
-  <div id="connectionData2VizForm" class="container-fluid padcontent"  data-formclass="connectionform">
+	<div id="connectionData2VizForm" class="container-fluid padcontent"  data-formclass="connectionform">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('close')" class="btn btn-primary" style="margin-bottom: 3px;">Close</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle">Choose visualizations for Data</h4></div>
-    </div>
+		<div class="row">
+		  	<div class="col-xs-3">
+				<button ng-click="close('close')" class="btn btn-primary" style="margin-bottom: 3px;">Close</button>
+		  	</div>
+		  	<div class="col-xs-9"><h4 class="formTitle">Choose visualizations for Data</h4></div>
+		</div>
 
-    <div ng-repeat="dataSource in formProps.dataSources">
-      <div class="dividerLineAbove">
-	<h4>{{dataSource.name}}</h4>
-	<div class="row" style="padding-left: 14px; padding-right: 14px;">
-	  <table>
-            <tr ng-repeat="plugin in formProps.plugins" ng-style="{'background-color': getRowBkgColor($index)}" ng-if="differentIds(dataSource, plugin)">
-              <td ng-style="{'padding':5}">{{plugin.name}}</td>
-	      <td ng-if="!plugin.acceptsMultipleSources" ng-style="{'padding':7}"><button ng-click="connectFields(dataSource, plugin)" class="btn btn-primary">Choose what to show</button></td>
-            </tr>
-	  </table>
-	</div>
-	<div class="dividerLineAbove">
-	</div>
-      </div>      
-    </div>
-  </div>
+		<div ng-repeat="dataSource in formProps.dataSources">
+		  	<div class="dividerLineAbove">
+				<h4>{{dataSource.name}}</h4>
+				<div class="row" style="padding-left: 14px; padding-right: 14px;">
+		  			<table>
+						<tr ng-repeat="plugin in formProps.plugins" ng-style="{'background-color': getRowBkgColor($index)}" ng-if="differentIds(dataSource, plugin)">
+				  			<td ng-style="{'padding':5}">{{plugin.name}}</td>
+			  				<td ng-if="!plugin.acceptsMultipleSources" ng-style="{'padding':7}"><button ng-click="connectFields(dataSource, plugin)" class="btn btn-primary">Choose what to show</button></td>
+						</tr>
+		  			</table>
+				</div>
+				<div class="dividerLineAbove">
+				</div>
+		  	</div>
+		</div>
+
+  	</div>
 </script>
 <!--==============================================================-->
 
 <!--==================================================-->
 <!--****** Connect Visualization inputs and Data *****-->
 <!--==================================================-->
-
 <script type="text/ng-template" id="connectionViz2DataForm.html">
-  <div id="connectionViz2DataForm" class="container-fluid padcontent"  data-formclass="connectionform">
+	<div id="connectionViz2DataForm" class="container-fluid padcontent"  data-formclass="connectionform">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('close')" class="btn btn-primary" style="margin-bottom: 3px;">Close</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle">Choose data for Visualization Inputs</h4></div>
-    </div>
+		<div class="row">
+		  	<div class="col-xs-3">
+				<button ng-click="close('close')" class="btn btn-primary" style="margin-bottom: 3px;">Close</button>
+		  	</div>
+		  	<div class="col-xs-9"><h4 class="formTitle">Choose data for Visualization Inputs</h4></div>
+		</div>
 
-    <div ng-repeat="plugin in formProps.plugins">
-      <div class="dividerLineAbove">
-	<h4>{{plugin.name}}</h4>
-	<div>
-	  <input type="checkbox" ng-model="plugin.grouping"> Multiple selections should get different colors.
-	</div>
-	<div class="row" style="padding-left: 14px; padding-right: 14px;">
-	  <table ng-if="!plugin.acceptsMultipleSources">
-            <tr ng-repeat="dataSource in formProps.dataSources" ng-style="{'background-color': getRowBkgColor($index)}" ng-if="differentIds(dataSource, plugin)">
-	      <td ng-style="{'padding':5}">{{dataSource.name}}</td>
-	      <td ng-style="{'padding':7}"><button ng-click="connectFields(dataSource, plugin)" class="btn btn-primary">Choose Data</button></td>
-	      <td ng-style="{'padding':7}"><button ng-click="clearFields(dataSource, plugin)" class="btn btn-default">Clear Data from this Source</button></td>
-            </tr>
-	  </table>
-	  <table ng-if="plugin.acceptsMultipleSources">
-            <tr>
-	      <td ng-style="{'padding':7}"><button ng-click="connectFieldsMultiple(plugin, formProps.dataSources)" class="btn btn-primary">Choose Data From Multiple Sources</button></td>
-            </tr>
-	  </table>
-	</div>
-	<div class="dividerLineAbove">
-	</div>
-      </div>
-    </div>
-  </div>
+		<div ng-repeat="plugin in formProps.plugins">
+		  	<div class="dividerLineAbove">
+				<h4>{{plugin.name}}</h4>
+				<div>
+		  			<input type="checkbox" ng-model="plugin.grouping"> Multiple selections should get different colors.
+				</div>
+				<div class="row" style="padding-left: 14px; padding-right: 14px;">
+		  			<table ng-if="!plugin.acceptsMultipleSources">
+						<tr ng-repeat="dataSource in formProps.dataSources" ng-style="{'background-color': getRowBkgColor($index)}" ng-if="differentIds(dataSource, plugin)">
+			  				<td ng-style="{'padding':5}">{{dataSource.name}}</td>
+							<td ng-style="{'padding':7}"><button ng-click="connectFields(dataSource, plugin)" class="btn btn-primary">Choose Data</button></td>
+			  				<td ng-style="{'padding':7}"><button ng-click="clearFields(dataSource, plugin)" class="btn btn-default">Clear Data from this Source</button></td>
+						</tr>
+					</table>
+					<table ng-if="plugin.acceptsMultipleSources">
+						<tr>
+			  				<td ng-style="{'padding':7}"><button ng-click="connectFieldsMultiple(plugin, formProps.dataSources)" class="btn btn-primary">Choose Data From Multiple Sources</button></td>
+						</tr>
+		  			</table>
+				</div>
+				<div class="dividerLineAbove">
+				</div>
+			</div>
+		</div>
+
+  	</div>
 </script>
 <!--==============================================================-->
 

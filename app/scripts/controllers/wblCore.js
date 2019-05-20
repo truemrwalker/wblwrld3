@@ -1928,7 +1928,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	//========================================================================================
 	$scope.registerWWEventListener = function(eventType, callbackFunc, targetId, targetData){
 		targetId = (targetId === undefined) ? instanceId_ : targetId;
-		if(eventType == Enum.availableWWEvents.keyDown || eventType == Enum.availableWWEvents.loadingWbl || eventType == Enum.availableWWEvents.mainMenuExecuted){targetId = null}
+		if(eventType == Enum.availableWWEvents.keyDown || eventType == Enum.availableWWEvents.loadingWbl || eventType == Enum.availableWWEvents.mainMenuExecuted){ targetId = null; }
 		return $scope.regWblWrldListener(instanceId_, eventType, callbackFunc, targetId, targetData);
 	};
 	//========================================================================================

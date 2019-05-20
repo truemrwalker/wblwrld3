@@ -1,8 +1,8 @@
 {
- "noautogen":false,
- "image":"images/notFound.png",
- "name":"DigitalDashboard",
- "description":"The Digital Dashboard super parent Webble. Connect Digital Dashboard data Webbles and visualization Webbles to this Webble as children, and the Digital Dashboard super parent Webble will coordinate between them. When selections are made in one child Webble, the parent will inform all visualization components that they may need to redraw etc.",
- "keywords":"DigitalDashboard",
- "author":"legacyDigitalDashboard"
+	"noautogen":false,
+	"image":"images/wbls/digitalDashboard.png",
+	"name":"Digital Dashboard Master",
+	"description":"<p>The Digital Dashboard super parent Webble. Connect Digital Dashboard data Webbles and visualization Webbles to this Webble as children, and the Digital Dashboard super parent Webble will coordinate between them. When selections are made in one child Webble, the parent will inform all visualization components that they may need to redraw etc.</p><p style='color: red;'>This is Legacy Dashboard 2.0 Webble which is, not yet but close in line, to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles.</p>",
+	"keywords":"DigitalDashboard",
+	"author":"legacyDigitalDashboard"
 }

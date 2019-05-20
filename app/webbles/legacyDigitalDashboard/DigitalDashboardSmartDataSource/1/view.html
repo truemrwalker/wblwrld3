@@ -1,34 +1,31 @@
 <!--====================================================================================================================
-    View for DigitalDashboard for Webble World v3.0 (2013)
-    Created By: Jonas Sjobergh
-    ===================================================================================================================-->
+// View for DigitalDashboard for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
+//===================================================================================================================-->
 
+<!--==============================================================-->
+<!-- MAIN WEBBLE VIEW										 	  -->
+<!--==============================================================-->
 <div id="smartData" ng-controller="smartDataWebbleCtrl">
-  <div id="fieldsToDrag">
-    <div ng-style="dataListStyle">
-      <p>{{pluginName}}<br/>
-	File: {{dragNdropData.file}}<br/>
-	{{dragNdropData.rows}} rows of data.<br/>
-	{{dragNdropData.cols}} columns.<br/>
-      </p>
-      <ul style="list-style-type:none">
-	<li id="{{field.id}}" ng-repeat="field in dragNdropData.fields" class="digitalDashboardSmartDataSourceDataDrag">{{field.name}}</li>
-      </ul>
-    </div>
-  </div>
+	<div id="fieldsToDrag">
+		<div ng-style="dataListStyle">
+			<p>{{pluginName}}<br/>
+				File: {{dragNdropData.file}}<br/>
+				{{dragNdropData.rows}} rows of data.<br/>
+				{{dragNdropData.cols}} columns.<br/>
+			</p>
+			<ul style="list-style-type:none">
+				<li id="{{field.id}}" ng-repeat="field in dragNdropData.fields" class="digitalDashboardSmartDataSourceDataDrag">{{field.name}}</li>
+			</ul>
+		</div>
+	</div>
 
-  <!-- <div id="dropZone" width="350px" height="70px" padding="10px" border="1px solid #aaaaaa" class="dataDrop"> -->
-  <!-- </div> -->
-  
-  <input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
+	<input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
 
-  <div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt">
-    Drop Data File Here
-  </div>
-  
-  <!-- <span id="displayText">{{displayText}}</span> -->
-  <!-- <button ng-click="fixDraggable()" class="btn btn-primary" style="margin-bottom: 3px;">run fixDraggable</button> -->
-
+	<div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt">
+		Drop Data File Here
+	</div>
 </div>
 
 <!--=================================================================================================================-->
