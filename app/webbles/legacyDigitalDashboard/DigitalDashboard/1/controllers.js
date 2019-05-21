@@ -13,54 +13,54 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	//=== PROPERTIES ====================================================================
 
 	$scope.stylesToSlots = {
-    	dashboardBackgroundBox: ['width', 'height', 'background-color', 'border', 'border-radius', 'font-size', 'color', 'font-family', 'opacity']
-    };
+		dashboardBackgroundBox: ['width', 'height', 'background-color', 'border', 'border-radius', 'font-size', 'color', 'font-family', 'opacity']
+	};
 
-    $scope.customMenu = [{itemId: 'connectDataToPlugin', itemTxt: 'Data -> Visualizations'}, {itemId: 'connectPluginAndData', itemTxt: 'Visualizations -> Data'}];
+	$scope.customMenu = [{itemId: 'connectDataToPlugin', itemTxt: 'Data -> Visualizations'}, {itemId: 'connectPluginAndData', itemTxt: 'Visualizations -> Data'}];
 
-    $scope.customInteractionBalls = [];
+	$scope.customInteractionBalls = [];
 
-    var myInstanceId = -1;
+	var myInstanceId = -1;
 
-    var listOfDataSources = []; // data sources have: {id (Webble ID), name (for menus etc.), dataSets}. 
-    // The 'dataSets' is an array of sets. 
-    // Sets have {name, idSlot, fields}. The index can be used to identify them. 
-    // The 'fields' is an array of fields, each field has {name, type (array with strings with typenames), slot (slotname)}.
-    // The order in the 'fields' array is important.
+	var listOfDataSources = []; // data sources have: {id (Webble ID), name (for menus etc.), dataSets}.
+	// The 'dataSets' is an array of sets.
+	// Sets have {name, idSlot, fields}. The index can be used to identify them.
+	// The 'fields' is an array of fields, each field has {name, type (array with strings with typenames), slot (slotname)}.
+	// The order in the 'fields' array is important.
 
-    var listOfPlugins = []; // plugins have: {id (Webble ID), name, active (flag to show if it is currently use), grouping (flag to show if separate groups should be separate groups globally too, get different colors), format}
-    // The 'format' is an array for sets, each sets have {filled (flag to show if this has data assigned), sources (array of assigned sources when filled), fields (an array)}
-    // A field has {idSlot (slotname), name, type (array of strings), slot (slotname), assigned}
-    // 'assigned' is a dictionary mapping assigned[ dataSource.id.toString() + " " + index in the 'dataSets'] --> [dataSource.id, index in 'dataSets', index in the 'fields' of the dataSet]
+	var listOfPlugins = []; // plugins have: {id (Webble ID), name, active (flag to show if it is currently use), grouping (flag to show if separate groups should be separate groups globally too, get different colors), format}
+	// The 'format' is an array for sets, each sets have {filled (flag to show if this has data assigned), sources (array of assigned sources when filled), fields (an array)}
+	// A field has {idSlot (slotname), name, type (array of strings), slot (slotname), assigned}
+	// 'assigned' is a dictionary mapping assigned[ dataSource.id.toString() + " " + index in the 'dataSets'] --> [dataSource.id, index in 'dataSets', index in the 'fields' of the dataSet]
 
-    var nextDataID = 0; // for giving globally unique IDs to data items
-    var mapOfDataIDsToUniqueIDs = {}; // mapOfDataIDsToUniqueIDs[ dataSource.id (string) ] [ idSlot (slotname) ] --> array with IDs to use instead of the IDs in that slot
-    var selectionStatusOfIDs = []; // vector with vectors with selection statuses, [group ID on plugin 1, group ID on plugin 2, etc.]
+	var nextDataID = 0; // for giving globally unique IDs to data items
+	var mapOfDataIDsToUniqueIDs = {}; // mapOfDataIDsToUniqueIDs[ dataSource.id (string) ] [ idSlot (slotname) ] --> array with IDs to use instead of the IDs in that slot
+	var selectionStatusOfIDs = []; // vector with vectors with selection statuses, [group ID on plugin 1, group ID on plugin 2, etc.]
 
-    var mapPluginNameToId = {};
-    var mapDataSourceNameToId = {};
-    var mapPluginIdToIdx = {}; // Webble ID to index of listOfPlugins
-    var mapDataSourceIdToIdx = {}; // Webble ID to index of listOfDataSources
+	var mapPluginNameToId = {};
+	var mapDataSourceNameToId = {};
+	var mapPluginIdToIdx = {}; // Webble ID to index of listOfPlugins
+	var mapDataSourceIdToIdx = {}; // Webble ID to index of listOfDataSources
 
-    var currentColors = {};
+	var currentColors = {};
 
-    var internalMappingSetTo = {};
-    
-    var fullyLoaded = false;
-    var childrenToWaitFor = 0;
+	var internalMappingSetTo = {};
 
-    var pasteListeners = [];
-    // var loadListenIDs = [];
-    var selfListeners = [];
-    var globalPasteInterestList = [];
+	var fullyLoaded = false;
+	var childrenToWaitFor = 0;
+
+	var pasteListeners = [];
+	// var loadListenIDs = [];
+	var selfListeners = [];
+	var globalPasteInterestList = [];
 
 	$scope.doDebugLogging = true;
 
 
-    //=== EVENT HANDLERS ================================================================
+	//=== EVENT HANDLERS ================================================================
 
 
-    //=== METHODS & FUNCTIONS ===========================================================
+	//=== METHODS & FUNCTIONS ===========================================================
 
 	//===================================================================================
 	// Webble template Initialization
@@ -324,10 +324,10 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method write debug log messages for this Webble if doDebugLogging is enabled.
 	//===================================================================================
 	function debugLog(message) {
-    	if($scope.doDebugLogging) {
-    		$log.log("DigitalDashboard: " + message);
-    	}
-    };
+		if($scope.doDebugLogging) {
+			$log.log("DigitalDashboard: " + message);
+		}
+	};
 	//===================================================================================
 
 
@@ -337,7 +337,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// (if the same workspace is loaded twice, these are not reset properly, so we have
 	// to do it ourselves...)
 	//===================================================================================
-    function resetVars() {
+	function resetVars() {
 		myInstanceId = -1;
 		listOfDataSources = [];
 		listOfPlugins = [];
@@ -358,7 +358,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		fullyLoaded = false;
 		childrenToWaitFor = 0;
 		pasteListeners = [];
-    };
+	};
 	//===================================================================================
 
 
@@ -366,7 +366,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// Build Plugin List For Forms
 	// This method builds the list of plugins for the forms
 	//===================================================================================
-    function buildPluginListForForms() {
+	function buildPluginListForForms() {
 		// debugLog("buildPluginListForForms");
 		var plugins = [];
 
@@ -406,7 +406,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			plugins.push(plugin);
 		}
 		return plugins;
-    };
+	};
 	//===================================================================================
 
 
@@ -414,8 +414,8 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// Build Data Source List For forms
 	// This method builds the list of data sources for the forms
 	//===================================================================================
-    function buildDataSourceListForForms() {
-    	// debugLog("buildDataSourceListForForms");
+	function buildDataSourceListForForms() {
+		// debugLog("buildDataSourceListForForms");
 		var dataSources = [];
 
 		for(var ds = 0; ds < listOfDataSources.length; ds++) {
@@ -443,7 +443,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			dataSources.push(source);
 		}
 		return dataSources;
-    };
+	};
 	//===================================================================================
 
 
@@ -451,8 +451,8 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// Open Connection Form Viz To Data To Viz
 	// This method opens the form that let one connect data with visualizing plugins
 	//===================================================================================
-    function openConnectionformViz2Data2Viz(data2viz) {
-    	// debugLog("openConnectionformViz2Data2Viz");
+	function openConnectionformViz2Data2Viz(data2viz) {
+		// debugLog("openConnectionformViz2Data2Viz");
 		var dataSources = buildDataSourceListForForms();
 		var plugins = buildPluginListForForms();
 
@@ -461,7 +461,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		} else {
 			$scope.openForm('connectionViz2DataForm', [{templateUrl: 'connectionViz2DataForm.html', controller: 'connectionViz2Data2VizForm_Ctrl', size: 'lg'}, {wblScope: $scope, plugins:plugins, dataSources:dataSources}], closeConnectionform);
 		}
-    };
+	};
 	//===================================================================================
 
 
@@ -472,92 +472,92 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	//===================================================================================
 	function closeConnectionform(returnContent){
 		// debugLog("closeConnectionform");
-        if(returnContent !== null && returnContent !== undefined){
-        	var newList = returnContent.plugins;
+		if(returnContent !== null && returnContent !== undefined){
+			var newList = returnContent.plugins;
 
-	    	var groupingDirty = [];
-	    	var redoMapping = false;
-	    	for(var p = 0; p < newList.length; p++) {
-	    		if(newList[p].grouping != listOfPlugins[p].grouping) {
-	    			if(listOfPlugins[p].active) {
-	    				groupingDirty.push(p);
-	    			}
-	    			listOfPlugins[p].grouping = newList[p].grouping;
-	    			redoMapping = true;
-	    		}
+			var groupingDirty = [];
+			var redoMapping = false;
+			for(var p = 0; p < newList.length; p++) {
+				if(newList[p].grouping != listOfPlugins[p].grouping) {
+					if(listOfPlugins[p].active) {
+						groupingDirty.push(p);
+					}
+					listOfPlugins[p].grouping = newList[p].grouping;
+					redoMapping = true;
+				}
 
-	    		// check if fields were added or removed
+				// check if fields were added or removed
 				for(var set = 0; set < listOfPlugins[p].format.length; set++) {
 					var oldFields = listOfPlugins[p].format[set].fields;
 					var newFields = newList[p].sets[set].fields;
 					var setDirty = false;
 
-		    		// first check if we should remove
-		    		var toRemove = [];
-		    		for(var f1 = 0; f1 < oldFields.length; f1++) {
-		    			if(oldFields[f1].added) { // only added fields may have been removed
-			    			var stillHere = false;
-			    			for(var f2 = 0; f2 < newFields.length; f2++) {
-			    				if(newFields[f2].added && newFields[f2].assigned === oldFields[f1].assigned) { // this works?
-			    					stillHere = true;
-			    					break;
-			    				}
-			    			}
-			    			if(!stillHere) {
-			    				toRemove.push(f1);
-			    			}
-		    			}
-		    		}
+					// first check if we should remove
+					var toRemove = [];
+					for(var f1 = 0; f1 < oldFields.length; f1++) {
+						if(oldFields[f1].added) { // only added fields may have been removed
+							var stillHere = false;
+							for(var f2 = 0; f2 < newFields.length; f2++) {
+								if(newFields[f2].added && newFields[f2].assigned === oldFields[f1].assigned) { // this works?
+									stillHere = true;
+									break;
+								}
+							}
+							if(!stillHere) {
+								toRemove.push(f1);
+							}
+						}
+					}
 
-		    		var alreadyRemoved = 0;
-		    		for(var r = 0; r < toRemove.length; r++) {
-		    			oldFields.splice(toRemove[r] - alreadyRemoved, 1);
-		    			alreadyRemoved++;
-		    			setDirty = true;
-		    		}
+					var alreadyRemoved = 0;
+					for(var r = 0; r < toRemove.length; r++) {
+						oldFields.splice(toRemove[r] - alreadyRemoved, 1);
+						alreadyRemoved++;
+						setDirty = true;
+					}
 
-		    		// check if we should add fields
-		    		for(var f1 = 0; f1 < newFields.length; f1++) {
-		    			if(newFields[f1].added) { // only added fields may have been added
-			    			var isNew = true;
-			    			for(var f2 = 0; f2 < oldFields.length; f2++) {
-			    				if(oldFields[f2].added && oldFields[f2].assigned === newFields[f1].assigned) { // this works?
-				    				isNew = false;
-				    				break;
-			    				}
-			    			}
+					// check if we should add fields
+					for(var f1 = 0; f1 < newFields.length; f1++) {
+						if(newFields[f1].added) { // only added fields may have been added
+							var isNew = true;
+							for(var f2 = 0; f2 < oldFields.length; f2++) {
+								if(oldFields[f2].added && oldFields[f2].assigned === newFields[f1].assigned) { // this works?
+									isNew = false;
+									break;
+								}
+							}
 
-			    			if(isNew) {
-			    				var newField = {};
-			    				newField.name = newFields[f1].name;
-			    				newField.assigned = newFields[f1].assigned;
-			    				newField.template = false;
-			    				newField.added = true;
+							if(isNew) {
+								var newField = {};
+								newField.name = newFields[f1].name;
+								newField.assigned = newFields[f1].assigned;
+								newField.template = false;
+								newField.added = true;
 
-			    				for(var f2 = 0; f2 < oldFields.length; f2++) {
-			    					if(oldFields[f2].template && oldFields[f2].name == newField.name) {
-			    						newField.type = oldFields[f2].type;
-			    						newField.idSlot = oldFields[f2].idSlot;
-			    						newField.slot = oldFields[f2].slot;
-			    						break;
-			    					}
-			    				}
+								for(var f2 = 0; f2 < oldFields.length; f2++) {
+									if(oldFields[f2].template && oldFields[f2].name == newField.name) {
+										newField.type = oldFields[f2].type;
+										newField.idSlot = oldFields[f2].idSlot;
+										newField.slot = oldFields[f2].slot;
+										break;
+									}
+								}
 
-			    				oldFields.splice(f1, 0, newField);
-			    				setDirty = true;
-			    			}
-		    			}
-		    		}
+								oldFields.splice(f1, 0, newField);
+								setDirty = true;
+							}
+						}
+					}
 
-		    		if(setDirty) {
-		    			listOfPlugins[p].format[set].sources = ["fields added"];
-		    		}
+					if(setDirty) {
+						listOfPlugins[p].format[set].sources = ["fields added"];
+					}
 				}
-	    	}
+			}
 
-	    	if(returnContent.somethingChanged) {
-	    		checkAssignedDataFields();
-	    		redoMapping = false; // checkAssignedDataFields will do it for us
+			if(returnContent.somethingChanged) {
+				checkAssignedDataFields();
+				redoMapping = false; // checkAssignedDataFields will do it for us
 				for(var pp in returnContent.changedPlugins) {
 					if(returnContent.changedPlugins.hasOwnProperty(pp)) {
 						var p = returnContent.changedPlugins[pp];
@@ -567,18 +567,18 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						}
 					}
 				}
-	    	}
+			}
 
-	    	if(groupingDirty.length == 1) {
-	    		updateSelections(groupingDirty[0]);
-	    	} else if(groupingDirty.length > 0) {
-	    		updateSelections();
-	    	}
+			if(groupingDirty.length == 1) {
+				updateSelections(groupingDirty[0]);
+			} else if(groupingDirty.length > 0) {
+				updateSelections();
+			}
 
-	    	if(redoMapping) {
-	    		buildNewMapping();
-	    	}
-        }
+			if(redoMapping) {
+				buildNewMapping();
+			}
+		}
 	};
 	//===================================================================================
 
@@ -588,13 +588,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method checks weather a webble is a dashboard v.2 plugin webble for
 	// visualization purpose
 	//===================================================================================
-    function webbleIsPlugin(webble) {
-    	try {
-    		return webble.scope().gimme('PluginType') == "VisualizationPlugin" || webble.scope().gimme('PluginType') == "Hybrid";
-    	} catch(e) {
-    		return false;
-    	}
-    };
+	function webbleIsPlugin(webble) {
+		try {
+			return webble.scope().gimme('PluginType') == "VisualizationPlugin" || webble.scope().gimme('PluginType') == "Hybrid";
+		} catch(e) {
+			return false;
+		}
+	};
 	//===================================================================================
 
 
@@ -639,9 +639,9 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		}
 
 		if(webbleIsDataSource(webble)) { // for hybrid plugins, we want to add the plugin part first and the data source second (this is used when data is generated that is concatenated onto the input data)
-	    	addDataSource(id, webble);
+			addDataSource(id, webble);
 		}
-    };
+	};
 	//===================================================================================
 
 
@@ -702,27 +702,27 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var listeners = [];
 		listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			dataSourceChangeFormat(ds.id);
-			}, ds.id, 'ProvidedFormatChanged'));
+		}, ds.id, 'ProvidedFormatChanged'));
 
 		listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			dataSourceChangeData(ds.id);
-			}, ds.id, 'DataChanged'));
+		}, ds.id, 'DataChanged'));
 
 		listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			dataSourceChangeName(ds.id);
-			}, ds.id, 'PluginName'));
-	
+		}, ds.id, 'PluginName'));
+
 		ds.listeners = listeners;
 
 		var scp = webble.scope();
 		if(scp !== undefined) { // if the data source also has a color field, set that
-	    	try {
-	    		scp.set("GroupColors", $scope.gimme('Colors'));
-	    	} catch(e) {
-	    		debugLog("Something went wrong when setting colors of new data source.");
-	    	}
+			try {
+				scp.set("GroupColors", $scope.gimme('Colors'));
+			} catch(e) {
+				debugLog("Something went wrong when setting colors of new data source.");
+			}
 		}
-    };
+	};
 	//===================================================================================
 
 
@@ -760,46 +760,46 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					ss.fields = [];
 					ss.idSlot = set.idSlot;
 
-		    		if(set.hasOwnProperty("useInputIDs") && set["useInputIDs"]) {
-		    			ss.noID = true;
-		    		} else {
-		    			ss.noID = false;
-		    		}
-		    
-		    		if(!mapOfDataIDsToUniqueIDs.hasOwnProperty(id.toString())) {
-		    			mapOfDataIDsToUniqueIDs[id.toString()] = {};
-		    		}
+					if(set.hasOwnProperty("useInputIDs") && set["useInputIDs"]) {
+						ss.noID = true;
+					} else {
+						ss.noID = false;
+					}
 
-		    		if(ss.noGeneratedID) {
-		    			// do nothing now
+					if(!mapOfDataIDsToUniqueIDs.hasOwnProperty(id.toString())) {
+						mapOfDataIDsToUniqueIDs[id.toString()] = {};
+					}
+
+					if(ss.noGeneratedID) {
+						// do nothing now
 						// when input data is assigned we copy the IDs from there
-		    		} else {
-		    			if(webble !== undefined && webble.scope() !== undefined && Object.prototype.toString.call(webble.scope().gimme(ss.idSlot)) === '[object Array]') {
-		    				var needToMap = true;
-		    				var idsToMap = webble.scope().gimme(ss.idSlot);
-		    				if(mapOfDataIDsToUniqueIDs[id.toString()].hasOwnProperty(ss.idSlot)) {
-		    					// already mapped (same idSlot for some other data set)
+					} else {
+						if(webble !== undefined && webble.scope() !== undefined && Object.prototype.toString.call(webble.scope().gimme(ss.idSlot)) === '[object Array]') {
+							var needToMap = true;
+							var idsToMap = webble.scope().gimme(ss.idSlot);
+							if(mapOfDataIDsToUniqueIDs[id.toString()].hasOwnProperty(ss.idSlot)) {
+								// already mapped (same idSlot for some other data set)
 								var oldCache = mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot].id;
 								if(oldCache.length != idsToMap.length) {
 									needToMap = true;
 								} else {
 									needToMap = false;
 								}
-		    				}
+							}
 
-		    				if(needToMap) {
-		    					var mappedIds = [];
-		    					var selectionList = [];
-		    					for(var idToMap = 0; idToMap < idsToMap.length; idToMap++) {
-		    						mappedIds.push(nextDataID++);
-		    						selectionList.push(1);
-		    						selectionStatusOfIDs.push(null);
-		    					}
-		    					mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot] = {};
-		    					mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot].id = mappedIds;
-		    					mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot].sel = selectionList;
-		    				}
-		    			}
+							if(needToMap) {
+								var mappedIds = [];
+								var selectionList = [];
+								for(var idToMap = 0; idToMap < idsToMap.length; idToMap++) {
+									mappedIds.push(nextDataID++);
+									selectionList.push(1);
+									selectionStatusOfIDs.push(null);
+								}
+								mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot] = {};
+								mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot].id = mappedIds;
+								mapOfDataIDsToUniqueIDs[id.toString()][ss.idSlot].sel = selectionList;
+							}
+						}
 
 						for(var f = 0; f < set["fieldList"].length; f++) {
 							var ff = {};
@@ -807,21 +807,21 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 							ff.type = set["fieldList"][f].type;
 							ff.slot = set["fieldList"][f].slot;
 
-			    			if(set["fieldList"][f].hasOwnProperty("metadata")) {
-			    				ff.metadata = set["fieldList"][f].metadata;
-			    			}
+							if(set["fieldList"][f].hasOwnProperty("metadata")) {
+								ff.metadata = set["fieldList"][f].metadata;
+							}
 
-			    			ss.fields.push(ff);
+							ss.fields.push(ff);
 						}
 
 						res.push(ss);
-		    		}
+					}
 				}
 			}
 		}
 
 		return res;
-    };
+	};
 	//===================================================================================
 
 
@@ -872,16 +872,16 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var listeners = [];
 		listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			vizPluginChangeSelections(p.id);
-			}, p.id, 'LocalSelectionsChanged'));
+		}, p.id, 'LocalSelectionsChanged'));
 
 		listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			vizPluginChangeName(p.id);
-			}, p.id, 'PluginName'));
+		}, p.id, 'PluginName'));
 
 		listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			vizPluginDataDrop(p.id);
-			}, p.id, 'DataDropped'));
-	
+		}, p.id, 'DataDropped'));
+
 		var scp = webble.scope();
 		if(scp !== undefined) {
 			try {
@@ -908,20 +908,20 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		if(typeof format === 'string') {
 			format = JSON.parse(format);
 		}
-	
+
 		var res = [];
-	
+
 		for(var s = 0; s < format.length; s++) {
 			var set = format[s];
 			var resSet = {};
 			resSet.filled = false;
 			resSet.fields = [];
 
-	    	var uniqueTemplateNames = {};
+			var uniqueTemplateNames = {};
 
-	    	for(var f = 0; f < set.length; f++) {
-	    		var field = set[f];
-	    		// field.idSlot;
+			for(var f = 0; f < set.length; f++) {
+				var field = set[f];
+				// field.idSlot;
 				// field.name;
 				// field.type;
 				// field.slot;
@@ -940,13 +940,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				if(field.hasOwnProperty("zeroOrMore") && field.zeroOrMore) {
 					resField.template = true;
 					resField.added = false;
-		    
-		    		var uniqueCounter = 2;
-		    		var orgName = resField.name;
-		    		while(uniqueTemplateNames.hasOwnProperty(resField.name)) {
-		    			resField.name = orgName + uniqueCounter++;
-		    		}
-		    		uniqueTemplateNames[resField.name] = true;
+
+					var uniqueCounter = 2;
+					var orgName = resField.name;
+					while(uniqueTemplateNames.hasOwnProperty(resField.name)) {
+						resField.name = orgName + uniqueCounter++;
+					}
+					uniqueTemplateNames[resField.name] = true;
 				} else {
 					resField.template = false;
 					resField.added = false;
@@ -955,8 +955,8 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				resField.assigned = {};
 
 				resSet.fields.push(resField);
-	    	}
-	    	res.push(resSet);
+			}
+			res.push(resSet);
 		}
 
 		return res;
@@ -971,7 +971,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	function removeChild(id) {
 		// debugLog("removeChild");
 		var ids = id.toString();
-	
+
 		if(mapPluginIdToIdx.hasOwnProperty(ids)) {
 			removePlugin(id);
 		}
@@ -1004,7 +1004,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		}
 
 		listOfDataSources.splice(idx, 1);
-	
+
 		for(var i = idx; i < listOfDataSources.length; i++) {
 			mapDataSourceIdToIdx[listOfDataSources[i].id.toString()] = i;
 		}
@@ -1054,7 +1054,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		delete mapPluginIdToIdx[id.toString()];
 		listOfPlugins.splice(idx, 1);
-	
+
 		for(var i = idx; i < listOfPlugins.length; i++) {
 			mapPluginIdToIdx[listOfPlugins[i].id.toString()] = i;
 		}
@@ -1071,7 +1071,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var webble = $scope.getWebbleByInstanceId(pluginID);
 		if(webble === undefined) {
 			// debugLog("vizPluginChangeSelections, slot change from an unfinished Webble, ignore");
-	    	return;
+			return;
 		}
 
 		// debugLog("vizPluginChangeSelections " + pluginID);
@@ -1095,9 +1095,9 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var webble = $scope.getWebbleByInstanceId(pluginID);
 		if(webble === undefined) {
 			// debugLog("vizPluginChangeName, slot change from an unfinished Webble, ignore");
-	    	return;
+			return;
 		}
-	
+
 		// debugLog("vizPluginChangeName " + pluginID);
 		var id = pluginID.toString();
 		if(mapPluginIdToIdx.hasOwnProperty(id)) {
@@ -1105,24 +1105,24 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			var webble = $scope.getWebbleByInstanceId(pluginID);
 			var name = webble.scope().gimme("PluginName").toString();
 
-	    	if(mapPluginNameToId.hasOwnProperty(name) && mapPluginNameToId[name] != pluginID) {
-	    		var i = 2;
-	    		var tryNewName = true;
-	    		while(tryNewName) {
-	    			var newName = name + i;
-	    			if(mapPluginNameToId.hasOwnProperty(newName)) {
-	    				i++;
-	    			} else {
-	    				tryNewName = false;
-	    				name = newName;
-	    			}
-	    		}
-	    		try {
-	    			webble.scope().set("PluginName", newName); // this will trigger a new message back here
+			if(mapPluginNameToId.hasOwnProperty(name) && mapPluginNameToId[name] != pluginID) {
+				var i = 2;
+				var tryNewName = true;
+				while(tryNewName) {
+					var newName = name + i;
+					if(mapPluginNameToId.hasOwnProperty(newName)) {
+						i++;
+					} else {
+						tryNewName = false;
+						name = newName;
+					}
+				}
+				try {
+					webble.scope().set("PluginName", newName); // this will trigger a new message back here
 				} catch(e) {
-	    			debugLog("Something went wrong when updating name on plugin.");
-	    		}
-	    	} else { // name is OK
+					debugLog("Something went wrong when updating name on plugin.");
+				}
+			} else { // name is OK
 				var toRemove = [];
 				for(var s in mapPluginNameToId) {
 					if(mapPluginNameToId[s] == pluginID) {
@@ -1135,7 +1135,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				mapPluginNameToId[name] = pluginID;
 				listOfPlugins[idx].name = name;
 				buildNewMapping();
-	    	}
+			}
 		}
 	};
 	//===================================================================================
@@ -1150,35 +1150,35 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var webble = $scope.getWebbleByInstanceId(sourceID);
 		if(webble === undefined) {
 			// debugLog("dataSourceChangeName, slot change from an unfinished Webble, ignore");
-	    	return;
+			return;
 		}
-	
+
 		var id = sourceID.toString();
 		if(mapDataSourceIdToIdx.hasOwnProperty(id)) {
 			var idx = mapDataSourceIdToIdx[id];
 			var ds = listOfDataSources[idx];
 			var webble = $scope.getWebbleByInstanceId(sourceID);
 			var name = webble.scope().gimme("PluginName").toString();
-	    
-	    	if(mapDataSourceNameToId.hasOwnProperty(name) && mapDataSourceNameToId[name] != sourceID) {
-	    		var i = 2;
-	    		var tryNewName = true;
-	    		while(tryNewName) {
-	    			var newName = name + i;
-	    			if(mapDataSourceNameToId.hasOwnProperty(newName)) {
-	    				i++;
-	    			} else {
-	    				tryNewName = false;
-	    				name = newName;
-	    			}
-	    		}
+
+			if(mapDataSourceNameToId.hasOwnProperty(name) && mapDataSourceNameToId[name] != sourceID) {
+				var i = 2;
+				var tryNewName = true;
+				while(tryNewName) {
+					var newName = name + i;
+					if(mapDataSourceNameToId.hasOwnProperty(newName)) {
+						i++;
+					} else {
+						tryNewName = false;
+						name = newName;
+					}
+				}
 
 				try{
-	    			webble.scope().set("PluginName", newName); // this will trigger a new message back here
+					webble.scope().set("PluginName", newName); // this will trigger a new message back here
 				} catch(e) {
-	    			debugLog("Something went wrong when updating name on data source.");
-	    		}
-	    	} else { // name is OK
+					debugLog("Something went wrong when updating name on data source.");
+				}
+			} else { // name is OK
 				var toRemove = [];
 				for(var s in mapDataSourceNameToId) {
 					if(mapDataSourceNameToId[s] == sourceID) {
@@ -1191,7 +1191,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				mapDataSourceNameToId[name] = sourceID;
 				ds.name = name;
 				buildNewMapping();
-	    	}
+			}
 		}
 	};
 	//===================================================================================
@@ -1206,7 +1206,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var webble = $scope.getWebbleByInstanceId(sourceID);
 		if(webble === undefined) {
 			// debugLog("dataSourceChangeFormat, slot change from an unfinished Webble, ignore");
-	    	return;
+			return;
 		}
 
 		var id = sourceID.toString();
@@ -1215,11 +1215,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			var ds = listOfDataSources[idx];
 			var webble = $scope.getWebbleByInstanceId(sourceID);
 			var name = webble.scope().gimme("PluginName").toString();
-	    
-	    	ds.dataSets = parseDataSourceProvidedData(sourceID, webble, name);
-	    	// autoAssignDataFields();
-	    	checkAssignedDataFields();
-	    	dataSourceUpdated(idx);
+
+			ds.dataSets = parseDataSourceProvidedData(sourceID, webble, name);
+			// autoAssignDataFields();
+			checkAssignedDataFields();
+			dataSourceUpdated(idx);
 		}
 	};
 	//===================================================================================
@@ -1234,7 +1234,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		var webble = $scope.getWebbleByInstanceId(sourceID);
 		if(webble === undefined) {
 			// debugLog("dataSourceChangeData, slot change from an unfinished Webble, ignore");
-	    	return;
+			return;
 		}
 
 		var id = sourceID.toString();
@@ -1276,47 +1276,47 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						try {
 							datasrc = JSON.parse(slotContent.dataSourceField);
 						} catch(e) {
-			    			// not JSON, something else was dropped
-			    			datasrc = null;
+							// not JSON, something else was dropped
+							datasrc = null;
 						}
 
 						var listToAssign = [];
 						var viz2viz = false;
 						if(datasrc && datasrc.hasOwnProperty("vizName")) {
 							// this is a vizualization plugin to another vizualization plugin drag&drop
-			    			viz2viz = true;
-			    			var idx2 = 0;
-			    			for(idx2 = 0; idx2 < listOfPlugins.length; idx2++) {
-			    				if(listOfPlugins[idx2].name == datasrc.vizName) {
-			    					for(var set = 0; set < listOfPlugins[idx2].format.length; set++) {
-			    						if(listOfPlugins[idx2].format[set].filled) { // first filled set, this is the active one
-					    					for(var ff2 = 0; ff2 < listOfPlugins[idx2].format[set].fields.length; ff2++) {
-					    						if(listOfPlugins[idx2].format[set].fields[ff2].name == datasrc.name && ((!listOfPlugins[idx2].format[set].fields[ff2].added && !listOfPlugins[idx2].format[set].fields[ff2].template) || (listOfPlugins[idx2].format[set].fields[ff2].added && datasrc.idx == ff2))) {
-					    							// we found the correct field
+							viz2viz = true;
+							var idx2 = 0;
+							for(idx2 = 0; idx2 < listOfPlugins.length; idx2++) {
+								if(listOfPlugins[idx2].name == datasrc.vizName) {
+									for(var set = 0; set < listOfPlugins[idx2].format.length; set++) {
+										if(listOfPlugins[idx2].format[set].filled) { // first filled set, this is the active one
+											for(var ff2 = 0; ff2 < listOfPlugins[idx2].format[set].fields.length; ff2++) {
+												if(listOfPlugins[idx2].format[set].fields[ff2].name == datasrc.name && ((!listOfPlugins[idx2].format[set].fields[ff2].added && !listOfPlugins[idx2].format[set].fields[ff2].template) || (listOfPlugins[idx2].format[set].fields[ff2].added && datasrc.idx == ff2))) {
+													// we found the correct field
 													// need to check type compatibility
 													// need to copy the assigned status
 
-						    						for(var assignedID in listOfPlugins[idx2].format[set].fields[ff2].assigned) {
-						    							if(listOfPlugins[idx2].format[set].fields[ff2].assigned.hasOwnProperty(assignedID)) {
-						    								var ass = listOfPlugins[idx2].format[set].fields[ff2].assigned[assignedID];
-						    								try {
-						    									var dsId = parseInt(ass[0]);
-						    									var dsIdx = mapDataSourceIdToIdx[dsId];
-						    									listToAssign.push([dsIdx, ass[0], ass[1], ass[2]]);
-						    								} catch(e) {
-						    									debugLog("could not assign data correctly");
-						    								}
+													for(var assignedID in listOfPlugins[idx2].format[set].fields[ff2].assigned) {
+														if(listOfPlugins[idx2].format[set].fields[ff2].assigned.hasOwnProperty(assignedID)) {
+															var ass = listOfPlugins[idx2].format[set].fields[ff2].assigned[assignedID];
+															try {
+																var dsId = parseInt(ass[0]);
+																var dsIdx = mapDataSourceIdToIdx[dsId];
+																listToAssign.push([dsIdx, ass[0], ass[1], ass[2]]);
+															} catch(e) {
+																debugLog("could not assign data correctly");
+															}
 
-							    							// assignedIDlist.push(assignedID);
+															// assignedIDlist.push(assignedID);
 															// assignedNewValList.push(listOfPlugins[idx2].format[set].fields[ff2].assigned[assignedID]);
 														}
-						    						}
-					    						}
-					    					}
-			    						}
-			    					}
-			    				}
-			    			}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
 						}
 
 						var somethingChanged = false;
@@ -1325,30 +1325,30 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 							debugLog("Drag&Drop Error: Data source unknown. Is the data source connected to the Digital Dashboard parent Webble?");
 						} else if(!viz2viz) {
 							// this is a drag&drop from a data source to a vizualization plugin
-			    			var dsId = mapDataSourceNameToId[datasrc.sourceName];
-			    			if(!mapDataSourceIdToIdx.hasOwnProperty(dsId)) {
-			    				debugLog("Drag&Drop Error: Data source unknown (internal consistency error, this should not happen).");
-			    			} else {
-			    				var dsIdx = mapDataSourceIdToIdx[dsId];
+							var dsId = mapDataSourceNameToId[datasrc.sourceName];
+							if(!mapDataSourceIdToIdx.hasOwnProperty(dsId)) {
+								debugLog("Drag&Drop Error: Data source unknown (internal consistency error, this should not happen).");
+							} else {
+								var dsIdx = mapDataSourceIdToIdx[dsId];
 
-			    				if(! (dsIdx < listOfDataSources.length && datasrc.hasOwnProperty("dataSetIdx") && datasrc.dataSetIdx < listOfDataSources[dsIdx].dataSets.length && datasrc.hasOwnProperty("fieldName"))) {
-			    					debugLog("Drag&Drop Error: Data source information incorrect.");
-			    				} else {
-			    					var found = false;
-			    					var fieldName = datasrc.fieldName;
-			    					for(var ff = 0; ff < listOfDataSources[dsIdx].dataSets[datasrc.dataSetIdx].fields.length; ff++) {
-			    						if(listOfDataSources[dsIdx].dataSets[datasrc.dataSetIdx].fields[ff].name == fieldName) {
-			    							found = true;
-			    							// we have found the correct data source field
+								if(! (dsIdx < listOfDataSources.length && datasrc.hasOwnProperty("dataSetIdx") && datasrc.dataSetIdx < listOfDataSources[dsIdx].dataSets.length && datasrc.hasOwnProperty("fieldName"))) {
+									debugLog("Drag&Drop Error: Data source information incorrect.");
+								} else {
+									var found = false;
+									var fieldName = datasrc.fieldName;
+									for(var ff = 0; ff < listOfDataSources[dsIdx].dataSets[datasrc.dataSetIdx].fields.length; ff++) {
+										if(listOfDataSources[dsIdx].dataSets[datasrc.dataSetIdx].fields[ff].name == fieldName) {
+											found = true;
+											// we have found the correct data source field
 											listToAssign.push([dsIdx, dsId, datasrc.dataSetIdx, ff]);
-			    						}
-			    					}
+										}
+									}
 
-			    					if(!found) {
-			    						debugLog("Drag&Drop Error: could not find the fields to connect.");
-			    					}
-			    				}
-			    			}
+									if(!found) {
+										debugLog("Drag&Drop Error: could not find the fields to connect.");
+									}
+								}
+							}
 						}
 
 						for(var a = 0; a < listToAssign.length; a++) {
@@ -1357,60 +1357,60 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 							dsId = ass[1];
 							dataSetIdx = ass[2];
 							ff = ass[3];
-			    
-			    			var assignedID = dsId.toString() + " " + dataSetIdx;
-			    			var newVal = [dsId.toString(), dataSetIdx, ff];
 
-			    			// find all plugin input fields that match (could be one per set)
-			    			for(var set = 0; set < plugin.format.length; set++) {
-			    				var fields = plugin.format[set].fields;
-			    				var removePreviousStuff = false;
-			    				var allSeenIDslots = {};
-			    				var countSeenIDslots = 0;
+							var assignedID = dsId.toString() + " " + dataSetIdx;
+							var newVal = [dsId.toString(), dataSetIdx, ff];
 
-			    				for(var f = 0; f < fields.length; f++) {
-			    					if(!allSeenIDslots.hasOwnProperty(fields[f].idSlot)) {
-			    						countSeenIDslots++;
-			    						allSeenIDslots[fields[f].idSlot] = true;
-			    					}
-			    				}
+							// find all plugin input fields that match (could be one per set)
+							for(var set = 0; set < plugin.format.length; set++) {
+								var fields = plugin.format[set].fields;
+								var removePreviousStuff = false;
+								var allSeenIDslots = {};
+								var countSeenIDslots = 0;
 
-			    				if(countSeenIDslots > 1) {
-			    					// this is a plugin that takes input from many different data sources
+								for(var f = 0; f < fields.length; f++) {
+									if(!allSeenIDslots.hasOwnProperty(fields[f].idSlot)) {
+										countSeenIDslots++;
+										allSeenIDslots[fields[f].idSlot] = true;
+									}
+								}
+
+								if(countSeenIDslots > 1) {
+									// this is a plugin that takes input from many different data sources
 									// (for example the heat map that takes vectors from one and column labels from another source)
 									// this leads to problems when we add many sets of data (not the same number of sets from each
 									// source), so reset all such plugins when adding new data like this (remove previous assignments).
-				    				removePreviousStuff = true;
-			    				}
-				
+									removePreviousStuff = true;
+								}
+
 								for(var f = 0; f < fields.length; f++) {
 									if(fields[f].name == slotContent.pluginField.name) {
 										// check if this is a template field (add one more field)
 										// or a field that has been added before (then find the correct clone)
 										// or a normal field
-					
+
 										var match = false;
 										if(fields[f].template && slotContent.pluginField.template) {
 											// add a new field
-					    					match = true;
+											match = true;
 										}
 										if(fields[f].added && slotContent.pluginField.added && f == slotContent.pluginField.idx) {
 											// this is the cloned field we want to update
-					    					match = true;
+											match = true;
 										}
 										if(!fields[f].added && !fields[f].template && !slotContent.pluginField.added && !slotContent.pluginField.template) {
 											// normal field
-					    					match = true;
+											match = true;
 										}
 
 										if(match) {
 											var typeOK = false;
 											for(var tt = 0; tt < fields[f].type.length; tt++) {
 												if(fields[f].type[tt] == listOfDataSources[dsIdx].dataSets[dataSetIdx].fields[ff].type) {								    // acceptable data type
-						    						typeOK = true;
+													typeOK = true;
 
-						    						if(fields[f].template) {
-						    							// we need to add a new clone field
+													if(fields[f].template) {
+														// we need to add a new clone field
 														var field = {};
 														field.name = fields[f].name;
 														field.type = fields[f].type;
@@ -1422,16 +1422,16 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 														field.assigned[assignedID] = newVal;
 														fields.push(field); // is this OK?
 														somethingChanged = true;
-						    						} else {
-						    							if(fields[f].hasOwnProperty("assigned") && removePreviousStuff) {
-						    								fields[f].assigned = {};
-						    							}
-						    							if(!fields[f].hasOwnProperty("assigned") || !fields[f].assigned.hasOwnProperty(assignedID) || fields[f].assigned[assignedID].toString() != newVal.toString()) {
-						    								fields[f].assigned[assignedID] = newVal;
-						    								somethingChanged = true;
-						    							}
-						    						}
-						    						break; // no need to check more types
+													} else {
+														if(fields[f].hasOwnProperty("assigned") && removePreviousStuff) {
+															fields[f].assigned = {};
+														}
+														if(!fields[f].hasOwnProperty("assigned") || !fields[f].assigned.hasOwnProperty(assignedID) || fields[f].assigned[assignedID].toString() != newVal.toString()) {
+															fields[f].assigned[assignedID] = newVal;
+															somethingChanged = true;
+														}
+													}
+													break; // no need to check more types
 												}
 											}
 
@@ -1442,15 +1442,15 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 										}
 									} // if name matches
 								} // for each field in this format set
-			    			} // for each set in the plugin expected format
+							} // for each set in the plugin expected format
 						} // for each item to assign in listToAssign
 
 						if(somethingChanged) {
 							debugLog("Drag&Drop: successfully assigned data to vizualization.");
 							checkAssignedDataFields(); // Check data types, send data, etc. Will also build a new mapping (adding any unaffected plugins)
-			    			if(listOfPlugins[idx].active) {
-			    				sendDataToPlugin(idx); // this may send the data twice, since checkAssignedDataFields sends data if this plugin gets activated or changes data source (but not if it changes fields from the same source)
-			    			}
+							if(listOfPlugins[idx].active) {
+								sendDataToPlugin(idx); // this may send the data twice, since checkAssignedDataFields sends data if this plugin gets activated or changes data source (but not if it changes fields from the same source)
+							}
 						}
 					}
 				}
@@ -1470,18 +1470,18 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		var ds = listOfDataSources[idx];
 		var webble = $scope.getWebbleByInstanceId(ds.id);
-	
+
 		if(!mapOfDataIDsToUniqueIDs.hasOwnProperty(ds.id.toString())) {
 			mapOfDataIDsToUniqueIDs[ds.id.toString()] = {};
 		}
-	
+
 		for(var dss = 0; dss < ds.dataSets.length; dss++) {
 			var needToMap = true;
 			if(ds.dataSets[dss].noID) { // hybrid that just adds data, never need to remap
 				needToMap = false;
 			} else {
 				var idSlot = ds.dataSets[dss].idSlot;
-		
+
 				// we should check for hybrids here!!
 				var scp = webble.scope();
 				if(scp !== undefined) {
@@ -1493,27 +1493,27 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					} else {
 						if(mapOfDataIDsToUniqueIDs[ds.id.toString()].hasOwnProperty(idSlot)) {
 							// already mapped (same idSlot for some other data set)
-			    			var oldCache = mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot];
-			    			if(oldCache.length != idsToMap.length) {
-			    				needToMap = true;
-			    			} else {
-			    				needToMap = false;
-			    			}
+							var oldCache = mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot];
+							if(oldCache.length != idsToMap.length) {
+								needToMap = true;
+							} else {
+								needToMap = false;
+							}
 						}
 					}
-	    
-		    		if(needToMap) {
-		    			var mappedIds = [];
-		    			var selectionList = [];
-		    			for(var idToMap = 0; idToMap < idsToMap.length; idToMap++) {
-		    				mappedIds.push(nextDataID++);
-		    				selectionList.push(1);
-		    				selectionStatusOfIDs.push(null);
-		    			}
-		    			mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot] = {};
-		    			mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot].id = mappedIds;
-		    			mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot].sel = selectionList;
-		    		}
+
+					if(needToMap) {
+						var mappedIds = [];
+						var selectionList = [];
+						for(var idToMap = 0; idToMap < idsToMap.length; idToMap++) {
+							mappedIds.push(nextDataID++);
+							selectionList.push(1);
+							selectionStatusOfIDs.push(null);
+						}
+						mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot] = {};
+						mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot].id = mappedIds;
+						mapOfDataIDsToUniqueIDs[ds.id.toString()][idSlot].sel = selectionList;
+					}
 				}
 			}
 		}
@@ -1530,7 +1530,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		var needsData = [];
 		var ds = listOfDataSources[idx];
-	
+
 		var mySources = {};
 		for(var dss = 0; dss < ds.dataSets.length; dss++) {
 			var assignedID = ds.id.toString() + " " + dss;
@@ -1547,19 +1547,19 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						for(var idSlot in sourcesPerId) {
 							var sources = sourcesPerId[idSlot];
 
-			    			for(var s = 0; s < sources.length; s++) {
-			    				if(mySources.hasOwnProperty(sources[s])) {
-			    					needsData.push(p);
-			    					added = true;
-			    					break;
-			    				}
-			    			}
+							for(var s = 0; s < sources.length; s++) {
+								if(mySources.hasOwnProperty(sources[s])) {
+									needsData.push(p);
+									added = true;
+									break;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-	
+
 		for(p = 0; p < needsData.length; p++) {
 			sendDataToPlugin(needsData[p]);
 		}
@@ -1587,24 +1587,24 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						break;
 					}
 				}
-		
+
 				if(hybridSourcesPerIdSlot.hasOwnProperty(inputDataIDSlot)) {
 					var hybridSources = hybridSourcesPerIdSlot[inputDataIDSlot];
-		    
-		    		for(var hf = 0; hf < hybridInputSet.length; hf++) {
-		    			if(hybridInputSet[hf].idSlot == inputDataIDSlot) {
-		    				var hybridInputField = hybridInputSet[hf];
-			    
-			    			for(var haa = 0; haa < hybridSources.length; haa++) {
-			    				var ha = hybridSources[haa];
-			    				var idSourceId = hybridInputField.assigned[ha][0].toString();
-			    				var idSource = mapDataSourceIdToIdx[idSourceId];
-			    				var idDataSet = hybridInputField.assigned[ha][1];
-				
+
+					for(var hf = 0; hf < hybridInputSet.length; hf++) {
+						if(hybridInputSet[hf].idSlot == inputDataIDSlot) {
+							var hybridInputField = hybridInputSet[hf];
+
+							for(var haa = 0; haa < hybridSources.length; haa++) {
+								var ha = hybridSources[haa];
+								var idSourceId = hybridInputField.assigned[ha][0].toString();
+								var idSource = mapDataSourceIdToIdx[idSourceId];
+								var idDataSet = hybridInputField.assigned[ha][1];
+
 								return {'dataSourceId':idSourceId.toString(), 'dataSet':idDataSet, 'dataSourceIdx':idSource};
-			    			}
-		    			}
-		    		}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1623,9 +1623,9 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		if(changedPluginIdx === undefined) {
 			// reset all
-	    	for(var i = 0; i < selectionStatusOfIDs.length; i++) {
-	    		selectionStatusOfIDs[i] = null;
-	    	}
+			for(var i = 0; i < selectionStatusOfIDs.length; i++) {
+				selectionStatusOfIDs[i] = null;
+			}
 		}
 
 		var lastField = listOfPlugins.length;
@@ -1657,48 +1657,48 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				if(webble !== undefined && webble.scope() !== undefined) {
 					localSelectionsPerIdSlot = webble.scope().gimme('LocalSelections');
 				}
-		
+
 				var inputSet = plugin.format[0].fields; // find first filled set
-	        	var sourcesPerIdSlot = {};
-	        	for(var i = 0; i < plugin.format.length; i++) {
-	        		if(plugin.format[i].filled) {
-	        			inputSet = plugin.format[i].fields;
-	        			sourcesPerIdSlot = plugin.format[i].sources;
-	        			break;
-	        		}
-	        	}
+				var sourcesPerIdSlot = {};
+				for(var i = 0; i < plugin.format.length; i++) {
+					if(plugin.format[i].filled) {
+						inputSet = plugin.format[i].fields;
+						sourcesPerIdSlot = plugin.format[i].sources;
+						break;
+					}
+				}
 
 				for(var inputIdSlot in sourcesPerIdSlot) {
 					var sources = sourcesPerIdSlot[inputIdSlot];
 					var localSelections = [];
 
-		    		if(localSelectionsPerIdSlot.hasOwnProperty(inputIdSlot)) {
-		    			var localSelections = localSelectionsPerIdSlot[inputIdSlot];
-		    		}
-		    		for(var aa = 0; aa < sources.length; aa++) {
-		    			var a = sources[aa];
-		    			var asplit = a.split(" ");
-		    			var dataSourceId = asplit[0];
-		    			var dataSource = mapDataSourceIdToIdx[dataSourceId];
-		    			var dataSet = Number(asplit[1]);
-		    			var idArray = [];
-		    			if(listOfDataSources[dataSource].dataSets[dataSet].noID) { // this is a hybrid data source that uses IDs from another data source
-			    			var org = getOriginalDataSourceForHybridDataSource(dataSource, dataSet);
-			    			if(org.hasOwnProperty('dataSet')) {
-			    				idArray = mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].id;
-			    			}
-		    			} else { // normal data source
-			    			idArray = mapOfDataIDsToUniqueIDs[dataSourceId.toString()][listOfDataSources[dataSource].dataSets[dataSet].idSlot].id;
-		    			}
+					if(localSelectionsPerIdSlot.hasOwnProperty(inputIdSlot)) {
+						var localSelections = localSelectionsPerIdSlot[inputIdSlot];
+					}
+					for(var aa = 0; aa < sources.length; aa++) {
+						var a = sources[aa];
+						var asplit = a.split(" ");
+						var dataSourceId = asplit[0];
+						var dataSource = mapDataSourceIdToIdx[dataSourceId];
+						var dataSet = Number(asplit[1]);
+						var idArray = [];
+						if(listOfDataSources[dataSource].dataSets[dataSet].noID) { // this is a hybrid data source that uses IDs from another data source
+							var org = getOriginalDataSourceForHybridDataSource(dataSource, dataSet);
+							if(org.hasOwnProperty('dataSet')) {
+								idArray = mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].id;
+							}
+						} else { // normal data source
+							idArray = mapOfDataIDsToUniqueIDs[dataSourceId.toString()][listOfDataSources[dataSource].dataSets[dataSet].idSlot].id;
+						}
 
 						var selectionArray = [];
-		    			if(aa < localSelections.length) {
-		    				selectionArray = localSelections[aa];
-		    			}
+						if(aa < localSelections.length) {
+							selectionArray = localSelections[aa];
+						}
 
-		    			if(idArray.length != selectionArray.length) {
-		    				if(selectionArray.length == 0) {
-		    					//not set yet?
+						if(idArray.length != selectionArray.length) {
+							if(selectionArray.length == 0) {
+								//not set yet?
 								for(var i = 0; i < idArray.length; i++) {
 									var id = idArray[i];
 									if(selectionStatusOfIDs[id] === null) {
@@ -1709,43 +1709,43 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 									}
 									selectionStatusOfIDs[id][p] = 1;
 								}
-		    				} else {
-		    					debugLog("ID list and selection list have different lengths, plugin " + plugin.name + " data set " + aa);
-		    					for(var i = 0; i < idArray.length; i++) {
-		    						var id = idArray[i];
-		    						if(selectionStatusOfIDs[id] === null) {
-		    							selectionStatusOfIDs[id] = [];
-		    							while(selectionStatusOfIDs[id].length < lastField + 1) {
-		    								selectionStatusOfIDs[id].push(-1);
-		    							}
-		    						}
-		    						selectionStatusOfIDs[id][p] = -1;
-		    					}
-		    				}
-		    			} else {
-		    				for(var i = 0; i < idArray.length; i++) {
-		    					var id = idArray[i];
-		    					if(selectionStatusOfIDs[id] === null) {
-		    						selectionStatusOfIDs[id] = [];
-		    						while(selectionStatusOfIDs[id].length < lastField + 1) {
-		    							selectionStatusOfIDs[id].push(-1);
-		    						}
-		    					}
-		    					if(plugin.grouping) {
-		    						selectionStatusOfIDs[id][p] = selectionArray[i];
-		    					} else {
-		    						if(selectionArray[i] == 0) {
-		    							selectionStatusOfIDs[id][p] = 0;
-		    						} else {
-		    							selectionStatusOfIDs[id][p] = 1;
-		    						}
-		    					}
-		    					if(selectionArray[i] == 0) {
-		    						selectionStatusOfIDs[id][lastField] = 0;
-		    					}
-		    				}
-		    			}
-		    		}
+							} else {
+								debugLog("ID list and selection list have different lengths, plugin " + plugin.name + " data set " + aa);
+								for(var i = 0; i < idArray.length; i++) {
+									var id = idArray[i];
+									if(selectionStatusOfIDs[id] === null) {
+										selectionStatusOfIDs[id] = [];
+										while(selectionStatusOfIDs[id].length < lastField + 1) {
+											selectionStatusOfIDs[id].push(-1);
+										}
+									}
+									selectionStatusOfIDs[id][p] = -1;
+								}
+							}
+						} else {
+							for(var i = 0; i < idArray.length; i++) {
+								var id = idArray[i];
+								if(selectionStatusOfIDs[id] === null) {
+									selectionStatusOfIDs[id] = [];
+									while(selectionStatusOfIDs[id].length < lastField + 1) {
+										selectionStatusOfIDs[id].push(-1);
+									}
+								}
+								if(plugin.grouping) {
+									selectionStatusOfIDs[id][p] = selectionArray[i];
+								} else {
+									if(selectionArray[i] == 0) {
+										selectionStatusOfIDs[id][p] = 0;
+									} else {
+										selectionStatusOfIDs[id][p] = 1;
+									}
+								}
+								if(selectionArray[i] == 0) {
+									selectionStatusOfIDs[id][lastField] = 0;
+								}
+							}
+						}
+					}
 				}
 			}
 
@@ -1767,10 +1767,10 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			if(selectionStatusOfIDs[i] !== null) {
 				if(selectionStatusOfIDs[i][lastField] != 0) {
 					var s = selectionStatusOfIDs[i].join(" "); // this includes the last field, which is unnecessary, but should not hurt
-		    		if(!groupIdMapping.hasOwnProperty(s)) {
-		    			groupIdMapping[s] = nextGroupId++;
-		    		}
-		    		selectionStatusOfIDs[i][lastField] = groupIdMapping[s];
+					if(!groupIdMapping.hasOwnProperty(s)) {
+						groupIdMapping[s] = nextGroupId++;
+					}
+					selectionStatusOfIDs[i][lastField] = groupIdMapping[s];
 				}
 			}
 		}
@@ -1784,7 +1784,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						// debugLog("selectionStatusOfIDs is null when it should not be? ids = " + JSON.stringify(ids) + ", i=" + i + ", selectionStatusOfIDs = " + JSON.stringify(selectionStatusOfIDs));
 						// debugLog("ERROR: selectionStatusOfIDs is null when it should not be?"); // this happens when this data is not assigned to any visualization plugin at all
 						sels[i] = 0; // this should not happen TODO!
-		    		} else {
+					} else {
 						sels[i] = selectionStatusOfIDs[ids[i]][lastField];
 					}
 				}
@@ -1795,7 +1795,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		for(var p = 0; p < listOfPlugins.length; p++) {
 			var plugin = listOfPlugins[p];
-	    
+
 			if(plugin.active) {
 				// [plugin p group, last field=global group]
 				// group=0 unselected
@@ -1817,24 +1817,24 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					var selectionArrays = [];
 					selectionArraysPerIdSlot[idSlot] = selectionArrays;
 
-		    		for(var aa = 0; aa < sources.length; aa++) {
-		    			var a = sources[aa];
-		    			var asplit = a.split(" ");
-		    			var dataSourceId = asplit[0];
-		    			var dataSource = mapDataSourceIdToIdx[dataSourceId];
-		    			var dataSet = Number(asplit[1]);
+					for(var aa = 0; aa < sources.length; aa++) {
+						var a = sources[aa];
+						var asplit = a.split(" ");
+						var dataSourceId = asplit[0];
+						var dataSource = mapDataSourceIdToIdx[dataSourceId];
+						var dataSet = Number(asplit[1]);
 
 						if(listOfDataSources[dataSource].dataSets[dataSet].noID) { // this is a hybrid data source that uses IDs from another data source
-			    			var org = getOriginalDataSourceForHybridDataSource(dataSource, dataSet);
-			    			if(org.hasOwnProperty('dataSet')) {
-			    				selectionArrays.push(mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].sel);
-			    			}
+							var org = getOriginalDataSourceForHybridDataSource(dataSource, dataSet);
+							if(org.hasOwnProperty('dataSet')) {
+								selectionArrays.push(mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].sel);
+							}
 						} else { // normal (not hybrid) data source
-			    			selectionArrays.push(mapOfDataIDsToUniqueIDs[dataSourceId.toString()][listOfDataSources[dataSource].dataSets[dataSet].idSlot].sel);
+							selectionArrays.push(mapOfDataIDsToUniqueIDs[dataSourceId.toString()][listOfDataSources[dataSource].dataSets[dataSet].idSlot].sel);
 						}
-		    		}
+					}
 				}
-		
+
 				if(webble !== undefined && webble.scope() !== undefined) {
 					try {
 						webble.scope().set('GlobalSelections', selectionArraysPerIdSlot);
@@ -1861,25 +1861,25 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			var oldActive = plugin.active;
 			var changed = false;
 
-	    	plugin.active = false;
+			plugin.active = false;
 
-	    	// debugLog("plugin " + p + " oldActive = " + oldActive);
-	    
-	    	// check if some old assignments should be removed
-	    	for(var is = 0; is < plugin.format.length; is++) {
-	    		var inputSet = plugin.format[is].fields;
+			// debugLog("plugin " + p + " oldActive = " + oldActive);
+
+			// check if some old assignments should be removed
+			for(var is = 0; is < plugin.format.length; is++) {
+				var inputSet = plugin.format[is].fields;
 
 				for(var f = 0; f < inputSet.length; f++) {
 					var inputField = inputSet[f];
 
-		    		if(inputField.template && !inputField.added) {
+					if(inputField.template && !inputField.added) {
 						// this field is just a template, does not have to have anything assigned
-		    		} else {
-		    			var toRemove = [];
-		    			for(var a in inputField.assigned) {
-		    				var OK = false;
-		    				if(inputField.assigned.hasOwnProperty(a)) {
-		    					var dsID = inputField.assigned[a][0].toString();
+					} else {
+						var toRemove = [];
+						for(var a in inputField.assigned) {
+							var OK = false;
+							if(inputField.assigned.hasOwnProperty(a)) {
+								var dsID = inputField.assigned[a][0].toString();
 
 								if(mapDataSourceIdToIdx.hasOwnProperty(dsID)) {
 									var ds = mapDataSourceIdToIdx[dsID];
@@ -1903,34 +1903,34 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 								} else {
 									OK = false;
 								}
-		    				}
+							}
 
-		    				if(!OK) {
-		    					toRemove.push(a);
-		    				}
-		    			}
+							if(!OK) {
+								toRemove.push(a);
+							}
+						}
 
-		    			for(a = 0; a < toRemove.length; a++) {
-		    				delete inputField.assigned[toRemove[a]];
-		    			}
-		    		}
+						for(a = 0; a < toRemove.length; a++) {
+							delete inputField.assigned[toRemove[a]];
+						}
+					}
 				}
-	    	}
+			}
 
-	    	// check if some sets are completely filled from the same data sources
-	    	for(var is = 0; is < plugin.format.length; is++) {
-	    		var inputSet = plugin.format[is].fields;
-	    		var setIsFilled = true;
-	    		var OKsourcesPerIdSlot = {};
-	    		var OK = true;
-		
+			// check if some sets are completely filled from the same data sources
+			for(var is = 0; is < plugin.format.length; is++) {
+				var inputSet = plugin.format[is].fields;
+				var setIsFilled = true;
+				var OKsourcesPerIdSlot = {};
+				var OK = true;
+
 				for(var f = 0; f < inputSet.length; f++) {
 					var inputField = inputSet[f];
 					var idSlot = inputField.idSlot;
 
-		    		if(!OKsourcesPerIdSlot.hasOwnProperty(idSlot)) {
-		    			OKsourcesPerIdSlot[idSlot] = [];
-		    		}
+					if(!OKsourcesPerIdSlot.hasOwnProperty(idSlot)) {
+						OKsourcesPerIdSlot[idSlot] = [];
+					}
 				}
 
 				for(var idSlot in OKsourcesPerIdSlot) {
@@ -1943,15 +1943,15 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 							break;
 						}
 					}
-		    
-		    		for(var a in firstField.assigned) {
-		    			var OK = true;
-			
+
+					for(var a in firstField.assigned) {
+						var OK = true;
+
 						for(var f = 0; f < inputSet.length; f++) {
 							var inputField = inputSet[f];
 							if(inputField.template && !inputField.added) {
 								// ignore template fields
-			    			} else {
+							} else {
 								if(inputField.idSlot == idSlot) {
 									if(!inputField.assigned.hasOwnProperty(a)) {
 										OK = false;
@@ -1964,12 +1964,12 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 							idSetIsFilled = true;
 							OKsources.push(a);
 						}
-		    		}
+					}
 
-		    		OKsourcesPerIdSlot[idSlot] = OKsources;
-		    		if(!idSetIsFilled) {
-		    			setIsFilled = false;
-		    		}
+					OKsourcesPerIdSlot[idSlot] = OKsources;
+					if(!idSetIsFilled) {
+						setIsFilled = false;
+					}
 				}
 
 				if(!plugin.active && (plugin.format[is].filled != setIsFilled || JSON.stringify(plugin.format[is].sources) != JSON.stringify(OKsourcesPerIdSlot))) { // if it is already activated, a set that did not change is already used so other changes are not important
@@ -1983,11 +1983,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				} else {
 					plugin.format[is].sources = {};
 				}
-	    	}
+			}
 
-	    	if(changed || plugin.active != oldActive) {
-	    		needsData.push(p);
-	    	}
+			if(changed || plugin.active != oldActive) {
+				needsData.push(p);
+			}
 		}
 
 		for(p = 0; p < needsData.length; p++) {
@@ -2018,21 +2018,21 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		var mapping = {};
 		mapping.plugins = [];
-	
+
 		for(var p = 0; p < listOfPlugins.length; p++) {
 			var plugin = listOfPlugins[p];
 			var pMapping = {};
-	    
-	    	mapping.plugins.push(pMapping);
-	    	pMapping.name = plugin.name;
-	    	pMapping.grouping = plugin.grouping;
-	    	pMapping.sets = [];
 
-	    	for(var is = 0; is < plugin.format.length; is++) {
-	    		var inputSet = plugin.format[is].fields;
-	    		var setMapping = {};
-	    		pMapping.sets.push(setMapping);
-	    		setMapping.fields = [];
+			mapping.plugins.push(pMapping);
+			pMapping.name = plugin.name;
+			pMapping.grouping = plugin.grouping;
+			pMapping.sets = [];
+
+			for(var is = 0; is < plugin.format.length; is++) {
+				var inputSet = plugin.format[is].fields;
+				var setMapping = {};
+				pMapping.sets.push(setMapping);
+				setMapping.fields = [];
 
 				for(var f = 0; f < inputSet.length; f++) {
 					var inputField = inputSet[f];
@@ -2042,26 +2042,26 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					fMapping.assigned = [];
 					fMapping.template = inputField.template;
 					fMapping.added = inputField.added;
-		    
-		    		for(var a in inputField.assigned) {
-		    			if(inputField.assigned.hasOwnProperty(a)) {
-		    				var aMap = {};
-		    				var dsID = inputField.assigned[a][0].toString();
 
-			    			if(mapDataSourceIdToIdx.hasOwnProperty(dsID)) {
-			    				var ds = mapDataSourceIdToIdx[dsID];
-			    				if(ds < listOfDataSources.length && inputField.assigned[a][1] < listOfDataSources[ds].dataSets.length && inputField.assigned[a][2] < listOfDataSources[ds].dataSets[inputField.assigned[a][1]].fields.length) {
-			    					aMap.sourceName = listOfDataSources[ds].name;
-			    					aMap.dataSetName = listOfDataSources[ds].dataSets[inputField.assigned[a][1]].name;
-			    					aMap.dataSetIdx = inputField.assigned[a][1];
-			    					aMap.fieldName = listOfDataSources[ds].dataSets[inputField.assigned[a][1]].fields[inputField.assigned[a][2]].name;
-			    					fMapping.assigned.push(aMap);
-			    				}
-			    			}
-		    			}
-		    		}
+					for(var a in inputField.assigned) {
+						if(inputField.assigned.hasOwnProperty(a)) {
+							var aMap = {};
+							var dsID = inputField.assigned[a][0].toString();
+
+							if(mapDataSourceIdToIdx.hasOwnProperty(dsID)) {
+								var ds = mapDataSourceIdToIdx[dsID];
+								if(ds < listOfDataSources.length && inputField.assigned[a][1] < listOfDataSources[ds].dataSets.length && inputField.assigned[a][2] < listOfDataSources[ds].dataSets[inputField.assigned[a][1]].fields.length) {
+									aMap.sourceName = listOfDataSources[ds].name;
+									aMap.dataSetName = listOfDataSources[ds].dataSets[inputField.assigned[a][1]].name;
+									aMap.dataSetIdx = inputField.assigned[a][1];
+									aMap.fieldName = listOfDataSources[ds].dataSets[inputField.assigned[a][1]].fields[inputField.assigned[a][2]].name;
+									fMapping.assigned.push(aMap);
+								}
+							}
+						}
+					}
 				}
-	    	}
+			}
 		}
 
 		var oldMapping = $scope.gimme("Mapping");
@@ -2085,7 +2085,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		if(!fullyLoaded) {
 			return;
 		}
-	
+
 		// plugins not mentioned in the new mapping are left unchanged
 		var somethingWrong = false;
 		try {
@@ -2116,7 +2116,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					somethingWrong = true;
 					break;
 				}
-		
+
 				if(mplugin.sets.length != plugin.format.length) {
 					debugLog("newMapping, format lengths are different: " + JSON.stringify(mplugin.sets) + " " + JSON.stringify(plugin.format));
 					somethingWrong = true;
@@ -2149,7 +2149,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 								var OK = false;
 								var newField = {};
 								newField.name = mfields[f1].name;
-				
+
 								for(var f2 = 0; f2 < fields.length; f2++) {
 									if(fields[f2].template && fields[f2].name == mfields[f1].name) {
 										OK = true;
@@ -2166,60 +2166,60 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 							}
 						}
 					}
-		    
-		    		if(mfields.length != fields.length) {
-		    			debugLog("newMapping, field lengths are different: " + JSON.stringify(mfields) + " " + JSON.stringify(fields));
-		    			somethingWrong = true;
-		    			break;
-		    		}
 
-		    		// check types of added fields again, since they somehow end up without types etc. sometimes
-		    		for(var f1 = 0; f1 < fields.length; f1++) {
-		    			if(fields[f1].added) {
-		    				for(var f2 = 0; f2 < fields.length; f2++) {
-		    					if(fields[f2].template && fields[f2].name == fields[f1].name) {
-		    						fields[f1].type = fields[f2].type;
-		    						fields[f1].slot = fields[f2].slot;
-		    						fields[f1].idSlot = fields[f2].idSlot;
-		    						break;
-		    					}
-		    				}
-		    			}
-		    		}
+					if(mfields.length != fields.length) {
+						debugLog("newMapping, field lengths are different: " + JSON.stringify(mfields) + " " + JSON.stringify(fields));
+						somethingWrong = true;
+						break;
+					}
 
-		    		for(var f = 0; !somethingWrong && f < mfields.length; f++) {
-		    			for(var a = 0; !somethingWrong && a < mfields[f].assigned.length; a++) {
-		    				var dsName = mfields[f].assigned[a].sourceName;
-		    				if(!mapDataSourceNameToId.hasOwnProperty(dsName)) {
-		    					debugLog("newMapping, unknown data source: " + JSON.stringify(dsName) + " " + JSON.stringify(mapDataSourceNameToId));
-		    					somethingWrong = true;
-		    					break;
-		    				}
-		    				var dsId = mapDataSourceNameToId[dsName];
-		    				if(!mapDataSourceIdToIdx.hasOwnProperty(dsId)) {
-		    					debugLog("newMapping, data source index unknown (should not happen): " + JSON.stringify(dsId) + " " + JSON.stringify(mapDataSourceIdToIdx));
-		    					somethingWrong = true;
-		    					break;
-		    				}
-		    				var dsIdx = mapDataSourceIdToIdx[dsId];
-		    				if(dsIdx >= listOfDataSources.length || mfields[f].assigned[a].dataSetIdx >= listOfDataSources[dsIdx].dataSets.length) {
-		    					debugLog("newMapping, data source index too high (should not happen) or assigned set index too high: " + JSON.stringify(dsIdx) + " " + JSON.stringify(mfields[f]) + " " + JSON.stringify(listOfDataSources[dsIdx]));
-		    					somethingWrong = true;
-		    					break;
-		    				}
-		    				var found = false;
-		    				for(var ff = 0; ff < listOfDataSources[dsIdx].dataSets[mfields[f].assigned[a].dataSetIdx].fields.length; ff++) {
-		    					if(listOfDataSources[dsIdx].dataSets[mfields[f].assigned[a].dataSetIdx].fields[ff].name == mfields[f].assigned[a].fieldName) {
-		    						found = true;
-		    						break;
-		    					}
-		    				}
-		    				if(!found) {
-		    					somethingWrong = true;
-		    					break;
-		    				}
-		    			}
-		    		}
+					// check types of added fields again, since they somehow end up without types etc. sometimes
+					for(var f1 = 0; f1 < fields.length; f1++) {
+						if(fields[f1].added) {
+							for(var f2 = 0; f2 < fields.length; f2++) {
+								if(fields[f2].template && fields[f2].name == fields[f1].name) {
+									fields[f1].type = fields[f2].type;
+									fields[f1].slot = fields[f2].slot;
+									fields[f1].idSlot = fields[f2].idSlot;
+									break;
+								}
+							}
+						}
+					}
+
+					for(var f = 0; !somethingWrong && f < mfields.length; f++) {
+						for(var a = 0; !somethingWrong && a < mfields[f].assigned.length; a++) {
+							var dsName = mfields[f].assigned[a].sourceName;
+							if(!mapDataSourceNameToId.hasOwnProperty(dsName)) {
+								debugLog("newMapping, unknown data source: " + JSON.stringify(dsName) + " " + JSON.stringify(mapDataSourceNameToId));
+								somethingWrong = true;
+								break;
+							}
+							var dsId = mapDataSourceNameToId[dsName];
+							if(!mapDataSourceIdToIdx.hasOwnProperty(dsId)) {
+								debugLog("newMapping, data source index unknown (should not happen): " + JSON.stringify(dsId) + " " + JSON.stringify(mapDataSourceIdToIdx));
+								somethingWrong = true;
+								break;
+							}
+							var dsIdx = mapDataSourceIdToIdx[dsId];
+							if(dsIdx >= listOfDataSources.length || mfields[f].assigned[a].dataSetIdx >= listOfDataSources[dsIdx].dataSets.length) {
+								debugLog("newMapping, data source index too high (should not happen) or assigned set index too high: " + JSON.stringify(dsIdx) + " " + JSON.stringify(mfields[f]) + " " + JSON.stringify(listOfDataSources[dsIdx]));
+								somethingWrong = true;
+								break;
+							}
+							var found = false;
+							for(var ff = 0; ff < listOfDataSources[dsIdx].dataSets[mfields[f].assigned[a].dataSetIdx].fields.length; ff++) {
+								if(listOfDataSources[dsIdx].dataSets[mfields[f].assigned[a].dataSetIdx].fields[ff].name == mfields[f].assigned[a].fieldName) {
+									found = true;
+									break;
+								}
+							}
+							if(!found) {
+								somethingWrong = true;
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -2228,11 +2228,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			buildNewMapping();
 		} else {
 			// since all mappings were OK, go through and update
-	    	var dirty = {};
+			var dirty = {};
 
-	    	for(var pm = 0; pm < newMapping.plugins.length; pm++) {
-	    		var mplugin = newMapping.plugins[pm];
-	    		var plugin = null;
+			for(var pm = 0; pm < newMapping.plugins.length; pm++) {
+				var mplugin = newMapping.plugins[pm];
+				var plugin = null;
 
 				for(var p = 0; p < listOfPlugins.length; p++) {
 					if(listOfPlugins[p].name == mplugin.name) {
@@ -2247,9 +2247,9 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					var mfields = mplugin.sets[set].fields;
 					var fields = plugin.format[set].fields;
 
-		    		for(var f = 0; f < mfields.length; f++) {
-		    			var oldAssigned = fields[f].assigned;
-		    			fields[f].assigned = {}; // clear out all old assigned data
+					for(var f = 0; f < mfields.length; f++) {
+						var oldAssigned = fields[f].assigned;
+						fields[f].assigned = {}; // clear out all old assigned data
 
 						for(var a = 0; a < mfields[f].assigned.length; a++) {
 							var dsName = mfields[f].assigned[a].sourceName;
@@ -2262,8 +2262,8 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 									break;
 								}
 							}
-			    
-			    			var assignedID = dsId.toString() + " " + mfields[f].assigned[a].dataSetIdx;
+
+							var assignedID = dsId.toString() + " " + mfields[f].assigned[a].dataSetIdx;
 							var newVal = [dsId.toString(), mfields[f].assigned[a].dataSetIdx, fieldIdx];
 							fields[f].assigned[assignedID] = newVal;
 
@@ -2271,16 +2271,16 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 								dirty[p] = true;
 							}
 						}
-		    		}
+					}
 				}
-	    	}
+			}
 
-	    	checkAssignedDataFields(); // Check data types, send data, etc. Will also build a new mapping (adding any unaffected plugins)
-	    
-	    	for(var p in dirty) {
-	    		var pIdx = Number(p);
-	    		sendDataToPlugin(pIdx);
-	    	}
+			checkAssignedDataFields(); // Check data types, send data, etc. Will also build a new mapping (adding any unaffected plugins)
+
+			for(var p in dirty) {
+				var pIdx = Number(p);
+				sendDataToPlugin(pIdx);
+			}
 		}
 	};
 	//===================================================================================
@@ -2317,18 +2317,18 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					var idSlotsMapped = {};
 					var multipliedSlots = {};
 
-		    		for(f = 0; f < inputSet.length; f++) {
-		    			var fieldFormat = {};
-		    			var inputField = inputSet[f];
-		    			if(inputField.template && !inputField.added) {
-		    				// skip this field
+					for(f = 0; f < inputSet.length; f++) {
+						var fieldFormat = {};
+						var inputField = inputSet[f];
+						if(inputField.template && !inputField.added) {
+							// skip this field
 						} else {
-		    				if(inputField.idSlot == idSlot) {
-		    					var dataArrays = [];
-		    					var idArrays = [];
-		    					selectionArrays = selectionArraysPerIdSlot[idSlot];
-		    					sources = sourcesPerIdSlot[idSlot];
-				
+							if(inputField.idSlot == idSlot) {
+								var dataArrays = [];
+								var idArrays = [];
+								selectionArrays = selectionArraysPerIdSlot[idSlot];
+								sources = sourcesPerIdSlot[idSlot];
+
 								for(var aa = 0; aa < sources.length; aa++) {
 									var a = sources[aa];
 									var dataSourceId = inputField.assigned[a][0].toString();
@@ -2337,29 +2337,29 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 									var dataField = inputField.assigned[a][2];
 									var sourceWebble = $scope.getWebbleByInstanceId(dataSourceId);
 
-				    				if(sourceWebble !== undefined && sourceWebble.scope() !== undefined) {
-				    					var idSlotCheckSource = dataSourceId + " " + dataSet;
-				    					var idSlotCheckPlugin = a + " " + inputField.idSlot;
-				    					var IDsAreAlreadyHandled = false;
+									if(sourceWebble !== undefined && sourceWebble.scope() !== undefined) {
+										var idSlotCheckSource = dataSourceId + " " + dataSet;
+										var idSlotCheckPlugin = a + " " + inputField.idSlot;
+										var IDsAreAlreadyHandled = false;
 
 										if(listOfDataSources[dataSource].dataSets[dataSet].noID) { // this is a hybrid data source that uses IDs from another data source
-					    					IDsAreAlreadyHandled = true;
-					    					var deactivate = true;
-					    					var org = getOriginalDataSourceForHybridDataSource(dataSource, dataSet);
-					    					if(org.hasOwnProperty('dataSet')) {
-					    						idArrays.push(mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].id);
-					    						selectionArrays.push(mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].sel);
-					    						deactivate = false;
-					    					}
-					    					if(deactivate) {
-					    						plugin.active = false;
-					    					}
+											IDsAreAlreadyHandled = true;
+											var deactivate = true;
+											var org = getOriginalDataSourceForHybridDataSource(dataSource, dataSet);
+											if(org.hasOwnProperty('dataSet')) {
+												idArrays.push(mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].id);
+												selectionArrays.push(mapOfDataIDsToUniqueIDs[org.dataSourceId][listOfDataSources[org.dataSourceIdx].dataSets[org.dataSet].idSlot].sel);
+												deactivate = false;
+											}
+											if(deactivate) {
+												plugin.active = false;
+											}
 										}
 
 										if(idSlotsMapped.hasOwnProperty(idSlotCheckPlugin) && idSlotsMapped[idSlotCheckPlugin] != idSlotCheckSource) {
 											// two fields that should come from the same data set do not
-					    					plugin.active = false;
-					    					break;
+											plugin.active = false;
+											break;
 										} else {
 											idSlotsMapped[idSlotCheckPlugin] = idSlotCheckSource;
 											if(!IDsAreAlreadyHandled) {
@@ -2370,61 +2370,61 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 												dataArrays.push(sourceWebble.scope().gimme(listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].slot));
 											} else {
 												plugin.active = false; // no data yet
-					    					}
+											}
 										}
-				    				}
+									}
 								}
 
 								if(inputField.added) { // this is a field added from a template field, and we may need to pack many copies of this into one slot
-				    				if(multipliedSlots.hasOwnProperty(inputField.name)) {
-				    					dataArraysList = multipliedSlots[inputField.name].dataArraysList;
-				    					dataArraysList.push(dataArrays);
-				    					fieldFormat = multipliedSlots[inputField.name].fieldFormat;
-				    					fieldFormat.packedTypes += listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type + ";";
-				    					fieldFormat.packedDescriptions += listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name + ";";
-				    				} else {
-				    					fieldFormat.packedTypes = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type + ";";
-				    					fieldFormat.packedDescriptions = listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name + ";";
-				    					fieldFormat.idSlot = inputField.idSlot;
-				    					fieldFormat.slot = inputField.slot;
-				    					fieldFormat.description = listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name;
-				    					fieldFormat.type = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type;
-				    					fieldFormat.name = inputField.name;
-					
+									if(multipliedSlots.hasOwnProperty(inputField.name)) {
+										dataArraysList = multipliedSlots[inputField.name].dataArraysList;
+										dataArraysList.push(dataArrays);
+										fieldFormat = multipliedSlots[inputField.name].fieldFormat;
+										fieldFormat.packedTypes += listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type + ";";
+										fieldFormat.packedDescriptions += listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name + ";";
+									} else {
+										fieldFormat.packedTypes = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type + ";";
+										fieldFormat.packedDescriptions = listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name + ";";
+										fieldFormat.idSlot = inputField.idSlot;
+										fieldFormat.slot = inputField.slot;
+										fieldFormat.description = listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name;
+										fieldFormat.type = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type;
+										fieldFormat.name = inputField.name;
+
 										if(listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].hasOwnProperty("metadata")) {
 											fieldFormat.metadata = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].metadata;
 										}
 										multipliedSlots[inputField.name] = {'fieldFormat':fieldFormat, 'dataArraysList':[dataArrays], 'idArrays':idArrays};
-				    				}
+									}
 								} else { // a regular field (not added)
-				    				webble.scope().set(inputField.slot, dataArrays);
-				    				webble.scope().set(inputField.idSlot, idArrays);
-				    				fieldFormat.idSlot = inputField.idSlot;
-				    				fieldFormat.slot = inputField.slot;
-				    				fieldFormat.description = listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name;
-				    				fieldFormat.type = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type;
-				    				fieldFormat.name = inputField.name;
+									webble.scope().set(inputField.slot, dataArrays);
+									webble.scope().set(inputField.idSlot, idArrays);
+									fieldFormat.idSlot = inputField.idSlot;
+									fieldFormat.slot = inputField.slot;
+									fieldFormat.description = listOfDataSources[dataSource].dataSets[dataSet].name + ": " + listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].name;
+									fieldFormat.type = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].type;
+									fieldFormat.name = inputField.name;
 
-				    				if(listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].hasOwnProperty("metadata")) {
-				    					fieldFormat.metadata = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].metadata;
-				    				}
+									if(listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].hasOwnProperty("metadata")) {
+										fieldFormat.metadata = listOfDataSources[dataSource].dataSets[dataSet].fields[dataField].metadata;
+									}
 
-				    				filledFormat.push(fieldFormat);
+									filledFormat.push(fieldFormat);
 								}
-		    				}
-		    			}
-		    		}
+							}
+						}
+					}
 
-		    		for(var mField in multipliedSlots) {
-		    			dataArraysList = multipliedSlots[inputField.name].dataArraysList;
-		    			idArrays = multipliedSlots[inputField.name].idArrays;
-			
+					for(var mField in multipliedSlots) {
+						dataArraysList = multipliedSlots[inputField.name].dataArraysList;
+						idArrays = multipliedSlots[inputField.name].idArrays;
+
 						webble.scope().set(inputField.slot, dataArraysList);
 						webble.scope().set(inputField.idSlot, idArrays)
 
 						fieldFormat = multipliedSlots[inputField.name].fieldFormat;
 						filledFormat.push(fieldFormat);
-		    		}
+					}
 				}
 				if(plugin.active) {
 					try {
@@ -2439,13 +2439,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				plugin.active = false;
 			}
 
-	    	if(!plugin.active) {
-	    		try {
-	    			webble.scope().set('DataValuesSetFilled', []);
-	    		} catch(e) {
-	    			debugLog("Something went wrong when clearing data of plugin " + plugin.name);
-	    		}
-	    	}
+			if(!plugin.active) {
+				try {
+					webble.scope().set('DataValuesSetFilled', []);
+				} catch(e) {
+					debugLog("Something went wrong when clearing data of plugin " + plugin.name);
+				}
+			}
 		}
 	};
 	//===================================================================================
@@ -2465,7 +2465,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		} catch(e) {
 			colorDictionary = currentColors;
 		}
-	
+
 		if(Object.keys(colorDictionary).length <= 1 && Object.keys(currentColors).length > 0) {
 			colorDictionary = currentColors; // the slot value was probably broken JSON, so we got an empty dictionary from the Webble platform
 		}
@@ -2475,51 +2475,51 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		} else {
 			currentColors = newColorDictionary;
 
-	    	for(var p = 0; p < listOfPlugins.length; p++) {
-	    		try {
-	    			var webble = $scope.getWebbleByInstanceId(listOfPlugins[p].id);
-	    			if(webble !== undefined && webble.scope() !== undefined) {
-	    				try {
-	    					webble.scope().set("GroupColors", colorDictionary);
-	    				} catch(e) {
-	    					debugLog("Something went wrong when setting colors on plugin.");
-	    				}
-	    			} else {
-	    				debugLog("my child with ID " + listOfPlugins[p].id + " is still undefined, could not set colors.");
-	    			}
-	    		} catch(e) {
-	    			debugLog("Trying to set colors of child with ID " + listOfPlugins[p].id + " crashed.");
-	    		}
-	    	}
+			for(var p = 0; p < listOfPlugins.length; p++) {
+				try {
+					var webble = $scope.getWebbleByInstanceId(listOfPlugins[p].id);
+					if(webble !== undefined && webble.scope() !== undefined) {
+						try {
+							webble.scope().set("GroupColors", colorDictionary);
+						} catch(e) {
+							debugLog("Something went wrong when setting colors on plugin.");
+						}
+					} else {
+						debugLog("my child with ID " + listOfPlugins[p].id + " is still undefined, could not set colors.");
+					}
+				} catch(e) {
+					debugLog("Trying to set colors of child with ID " + listOfPlugins[p].id + " crashed.");
+				}
+			}
 
-	    	for(var p = 0; p < listOfDataSources.length; p++) {
-	    		try {
-	    			var webble = $scope.getWebbleByInstanceId(listOfDataSources[p].id);
-	    			if(webble !== undefined && webble.scope() !== undefined) {
-	    				try {
-	    					webble.scope().set("GroupColors", colorDictionary);
-	    				} catch(e) {
-	    					debugLog("Something went wrong when setting colors on data source.");
-	    				}
-	    			} else {
-	    				debugLog("my data source with ID " + listOfDataSources[p].id + " is still undefined, could not set colors.");
-	    			}
-	    		} catch(e) {
-	    			debugLog("Trying to set colors of data source with ID " + listOfDataSources[p].id + " crashed.");
-	    		}
-	    	}
+			for(var p = 0; p < listOfDataSources.length; p++) {
+				try {
+					var webble = $scope.getWebbleByInstanceId(listOfDataSources[p].id);
+					if(webble !== undefined && webble.scope() !== undefined) {
+						try {
+							webble.scope().set("GroupColors", colorDictionary);
+						} catch(e) {
+							debugLog("Something went wrong when setting colors on data source.");
+						}
+					} else {
+						debugLog("my data source with ID " + listOfDataSources[p].id + " is still undefined, could not set colors.");
+					}
+				} catch(e) {
+					debugLog("Trying to set colors of data source with ID " + listOfDataSources[p].id + " crashed.");
+				}
+			}
 
-	    	if(colorDictionary.hasOwnProperty("skin")) {
-	    		if(colorDictionary.skin.hasOwnProperty("text")) {
-	    			$scope.set("dashboardBackgroundBox:color", colorDictionary.skin.text);
-	    		}
-	    		if(colorDictionary.skin.hasOwnProperty("color")) {
-	    			$scope.set("dashboardBackgroundBox:background-color", colorDictionary.skin.color);
-	    		}
-	    		if(colorDictionary.skin.hasOwnProperty("border")) {
-	    			$scope.set("dashboardBackgroundBox:border", colorDictionary.skin.border);
-	    		}
-	    	}
+			if(colorDictionary.hasOwnProperty("skin")) {
+				if(colorDictionary.skin.hasOwnProperty("text")) {
+					$scope.set("dashboardBackgroundBox:color", colorDictionary.skin.text);
+				}
+				if(colorDictionary.skin.hasOwnProperty("color")) {
+					$scope.set("dashboardBackgroundBox:background-color", colorDictionary.skin.color);
+				}
+				if(colorDictionary.skin.hasOwnProperty("border")) {
+					$scope.set("dashboardBackgroundBox:border", colorDictionary.skin.border);
+				}
+			}
 		}
 	};
 	//===================================================================================
@@ -2607,53 +2607,53 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 
 	//===================================================================================
-    // Webble template Interaction Object Activity Reaction
-    // If this template has its own custom Interaction balls that needs to be taken care
-    // of when activated, then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_Event_InteractionObjectActivityReaction = function(event){
-    	var targetName = $(event.target).scope().getName();
+	// Webble template Interaction Object Activity Reaction
+	// If this template has its own custom Interaction balls that needs to be taken care
+	// of when activated, then it is here where that should be executed.
+	// If this function is empty and unused it can safely be deleted.
+	//===================================================================================
+	$scope.coreCall_Event_InteractionObjectActivityReaction = function(event){
+		var targetName = $(event.target).scope().getName();
 
-    	if (targetName != ""){
-    		//=============================================
+		if (targetName != ""){
+			//=============================================
 		}
-    };
-    //===================================================================================
+	};
+	//===================================================================================
 
 
-    //===================================================================================
-    // Webble template Menu Item Activity Reaction
-    // If this template has its own custom menu items that needs to be taken care of,
-    // then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
-    	if(itemName == 'connectDataToPlugin'){
-    		$log.log('DigitalDashboard: connect menu item called.');
-    		openConnectionformViz2Data2Viz(true);
-    	} else if(itemName == 'connectPluginAndData') {
-    		$log.log('DigitalDashboard: connect menu item called.');
-    		openConnectionformViz2Data2Viz(false);
-    	}
-    };
-    //===================================================================================
+	//===================================================================================
+	// Webble template Menu Item Activity Reaction
+	// If this template has its own custom menu items that needs to be taken care of,
+	// then it is here where that should be executed.
+	// If this function is empty and unused it can safely be deleted.
+	//===================================================================================
+	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
+		if(itemName == 'connectDataToPlugin'){
+			$log.log('DigitalDashboard: connect menu item called.');
+			openConnectionformViz2Data2Viz(true);
+		} else if(itemName == 'connectPluginAndData') {
+			$log.log('DigitalDashboard: connect menu item called.');
+			openConnectionformViz2Data2Viz(false);
+		}
+	};
+	//===================================================================================
 
 
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-    	var customWblDefPart = {};
-    	return customWblDefPart;
-    };
-    //===================================================================================
+	//===================================================================================
+	// Webble template Create Custom Webble Definition
+	// If this template wants to store its own private data in the Webble definition it
+	// can create that custom object here and return to the core.
+	// If this function is empty and unused it can safely be deleted.
+	//===================================================================================
+	$scope.coreCall_CreateCustomWblDef = function(){
+		var customWblDefPart = {};
+		return customWblDefPart;
+	};
+	//===================================================================================
 
 
-    //=== CTRL MAIN CODE ======================================================================
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //======================================================================================================================

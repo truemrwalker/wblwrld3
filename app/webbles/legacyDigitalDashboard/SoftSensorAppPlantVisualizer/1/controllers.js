@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Controllers for SoftSensorAppPlantVisualizer for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //======================================================================================================================
 
 //=======================================================================================
@@ -10,212 +11,215 @@
 //=======================================================================================
 wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log, Slot, Enum) {
 
-    //=== PROPERTIES ====================================================================
+	//=== PROPERTIES ====================================================================
+	$scope.stylesToSlots = {
+		DrawingArea: ['width', 'height']
+	};
 
-    $scope.stylesToSlots = {
-        DrawingArea: ['width', 'height']
-    };
+	$scope.customMenu = [];
+	$scope.customInteractionBalls = [];
 
-    $scope.customMenu = [];
+	$scope.displayText = "Plant Visualizer";
+	$scope.plantName = "";
 
-    $scope.customInteractionBalls = [];
+	// graphics
+	var myCanvasElement = null;
+	var myCanvas = null;
+	var ctx = null;
+	var hoverText = null;
+	var dotSize = 1;
+	var selectionCanvas = null;
+	var selectionCtx = null;
+	var selectionColors = null;
+	var selectionTransparency = 0.33;
+	var selectionHolderElement = null;
+	var selectionRect = null;
+	var selections = []; // the graphical ones
 
-    $scope.displayText = "Plant Visualizer";
-    $scope.plantName = "";
+	// layout
+	var leftMarg = 10;
+	var topMarg = 10;
+	var rightMarg = 10;
+	var bottomMarg = 10;
+	var fontSize = 11;
+	var colorPalette = null;
+	var useGlobalGradients = false;
+	var clickStart = null;
 
-    var myInstanceId = -1;
-    
-    // graphics
+	// data from parent
+	var plant = [];
+	var sensors = [];
+	var drawH = 1;
+	var drawW = 1;
+	var W = 1;
+	var H = 1;
+	var internalSelectionsInternallySetTo = {};
 
-    var myCanvasElement = null;
-    var myCanvas = null;
-    var ctx = null;
-    
-    var hoverText = null;
-    var dotSize = 1;
+	// Additional
+	$scope.doDebugLogging = true;
+	var myInstanceId = -1;
 
-    var selectionCanvas = null;
-    var selectionCtx = null;
-    var selectionColors = null;
-    var selectionTransparency = 0.33;
-
-    var selectionHolderElement = null;
-    var selectionRect = null;
-
-    var selections = []; // the graphical ones
-
-    // layout
-    var leftMarg = 10;
-    var topMarg = 10;
-    var rightMarg = 10;
-    var bottomMarg = 10;
-    var fontSize = 11;
-
-    var colorPalette = null;
-    
-    var useGlobalGradients = false;
-
-    var clickStart = null;
-
-    // data from parent
-    
-    var plant = [];
-    var sensors = [];
-
-    var drawH = 1;
-    var drawW = 1;
-    var W = 1;
-    var H = 1;
-
-    var internalSelectionsInternallySetTo = {};
 
     //=== EVENT HANDLERS ================================================================
 
 
+
     //=== METHODS & FUNCTIONS ===========================================================
 
-    $scope.doDebugLogging = true;
-    function debugLog(message) {
-	if($scope.doDebugLogging) {
-	    $log.log("SoftSensor Plant Visualizer: " + message);
-	}
+	//===================================================================================
+	// Debug Log
+	// This method write debug log messages for this Webble if doDebugLogging is enabled.
+	//===================================================================================
+	function debugLog(message) {
+    	if($scope.doDebugLogging) {
+    		$log.log("SoftSensor Plant Visualizer: " + message);
+    	}
     };
+	//===================================================================================
 
-    function getTextWidth(text, font) {
-	if(ctx !== null && ctx !== undefined) {
-	    ctx.font = font;
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
 
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
-
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
-
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
-
-    function saveSelectionsInSlot() {
-	// debugLog("saveSelectionsInSlot");
-
-	var result = {};
-	for(var i = 0; i < sensors.length; i++) {
-	    result[sensors[i][0]] = sensors[i][sensors[i].length - 1];
-	}
-
-	internalSelectionsInternallySetTo = result;
-	$scope.set('SelectedSensors', result);
-	$scope.set('SelectionsChanged', true);
-    };
-
-    function setSelectionsFromSlotValue() {
-	// debugLog("setSelectionsFromSlotValue");
-
-	var slotSelections = $scope.gimme("SelectedSensors");
-	if(typeof slotSelections === 'string') {
-	    slotSelections = JSON.parse(slotSelections);
-	}
-
-	var dirty = false;
-	for(var sensorName in slotSelections) {
-	    for(var i = 0; i < sensors.length; i++) {
-		if(sensors[i][0] == sensorName) {
-		    var idx = sensors[i].length - 1;
-		    if(slotSelections[sensorName] != sensors[i][idx]) {
-			dirty = true;
-			sensors[i][idx] = !sensors[i][idx];
-		    }
+	//===================================================================================
+	// Get Text Width Current Font
+	// This method gets the width of a specified text using current font.
+	//===================================================================================
+	function getTextWidthCurrentFont(text) {
+		if(ctx !== null && ctx !== undefined) {
+			var metrics = ctx.measureText(text);
+			return metrics.width;
 		}
-	    }
-	}
+		return 0;
+	};
+	//===================================================================================
+
+
+	//===================================================================================
+	// Save Selections in Slot
+	// This method saves the user selection inside a slot.
+	//===================================================================================
+	function saveSelectionsInSlot() {
+		// debugLog("saveSelectionsInSlot");
+		var result = {};
+		for(var i = 0; i < sensors.length; i++) {
+			result[sensors[i][0]] = sensors[i][sensors[i].length - 1];
+		}
+
+		internalSelectionsInternallySetTo = result;
+		$scope.set('SelectedSensors', result);
+		$scope.set('SelectionsChanged', true);
+	};
+	//===================================================================================
+
+
+	//===================================================================================
+	// Set Selections From Slot Value
+	// This method sets the data selections based on the value of the slot value.
+	//===================================================================================
+	function setSelectionsFromSlotValue() {
+		// debugLog("setSelectionsFromSlotValue");
+		var slotSelections = $scope.gimme("SelectedSensors");
+		if(typeof slotSelections === 'string') {
+			slotSelections = JSON.parse(slotSelections);
+		}
+
+		var dirty = false;
+		for(var sensorName in slotSelections) {
+			for(var i = 0; i < sensors.length; i++) {
+				if(sensors[i][0] == sensorName) {
+					var idx = sensors[i].length - 1;
+					if(slotSelections[sensorName] != sensors[i][idx]) {
+						dirty = true;
+						sensors[i][idx] = !sensors[i][idx];
+					}
+				}
+			}
+		}
 	
-	if(dirty) {
-	    updateGraphics();
-	    saveSelectionsInSlot();
-	}
-    };
+		if(dirty) {
+			updateGraphics();
+			saveSelectionsInSlot();
+		}
+	};
+	//===================================================================================
 
-    function checkSelectionsAfterNewData() {
-	// debugLog("checkSelectionsAfterNewData");
 
-	setSelectionsFromSlotValue();
-    };
+	//===================================================================================
+	// Check Selections After New Data
+	// This method checks that the selections are in order after new data has been
+	// loaded.
+	//===================================================================================
+	function checkSelectionsAfterNewData() {
+		// debugLog("checkSelectionsAfterNewData");
+		setSelectionsFromSlotValue();
+	};
+	//===================================================================================
 
-    function resetVars() {
-	$scope.plantName = "";
 
-	plant = [];
-	sensors = [];
-    };
+	//===================================================================================
+	// Reset Vars
+	// This method resets certain variables used by the Webble.
+	//===================================================================================
+	function resetVars() {
+		$scope.plantName = "";
+		plant = [];
+		sensors = [];
+	};
+	//===================================================================================
 
-    function parseData() {
-	// debugLog("parseData");
 
-	resetVars();
-
-	var newPlant = $scope.gimme("PlantLayout");
+	//===================================================================================
+	// Parse Data
+	// This method parse the data given.
+	//===================================================================================
+	function parseData() {
+		// debugLog("parseData");
+		resetVars();
+		var newPlant = $scope.gimme("PlantLayout");
     	if(typeof newPlant === 'string') {
-    	    newPlant = JSON.parse(newPlant);
+    		newPlant = JSON.parse(newPlant);
     	}
-	// do some sanity checking of input here
-	plant = newPlant;
 
-	var newSensors = $scope.gimme("Sensors");
-    	if(typeof newSensors === 'string') {
-    	    newSensors = JSON.parse(newSensors);
-    	}
-	for(var i = 0; i < newSensors.length; i++) {
-	    newSensors[i].push(true);
-	}
-	// do some sanity checking of input here
-	sensors = newSensors;
-	
-	updateGraphics();
+    	// do some sanity checking of input here
+		plant = newPlant;
+		var newSensors = $scope.gimme("Sensors");
+		if(typeof newSensors === 'string') {
+			newSensors = JSON.parse(newSensors);
+		}
+		for(var i = 0; i < newSensors.length; i++) {
+			newSensors[i].push(true);
+		}
 
-	checkSelectionsAfterNewData();
-	saveSelectionsInSlot();
-    };
+		sensors = newSensors;
+		updateGraphics();
+		checkSelectionsAfterNewData();
+		saveSelectionsInSlot();
+	};
+	//===================================================================================
 
-    function updateGraphics() {
+
+	//===================================================================================
+	// Update Graphics
+	// This method redraws and update the graphics based on current data and settings.
+	//===================================================================================
+	function updateGraphics() {
     	// debugLog("updateGraphics()");
 
-	if(myCanvas === null) {
-    	    var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    	    if(myCanvasElement.length > 0) {
-    		myCanvas = myCanvasElement[0];
-    	    } else {
-    		debugLog("no canvas to draw on!");
-    		return;
-    	    }
-	}
+		if(myCanvas === null) {
+			var myCanvasElement = $scope.theView.parent().find('#theCanvas');
+			if(myCanvasElement.length > 0) {
+				myCanvas = myCanvasElement[0];
+			} else {
+				debugLog("no canvas to draw on!");
+				return;
+			}
+		}
 
-	if(ctx === null) {
-    	    ctx = myCanvas.getContext("2d");
-	}
+		if(ctx === null) {
+			ctx = myCanvas.getContext("2d");
+		}
 
     	W = myCanvas.width;
     	if(typeof W === 'string') {
-    	    W = parseFloat(W);
+    		W = parseFloat(W);
     	}
     	if(W < 1) {
     	    W = 1;
@@ -229,62 +233,67 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
     	    H = 1;
     	}
 
-	// debugLog("Clear the canvas");
-	ctx.clearRect(0,0, W,H);
-	drawW = W - leftMarg - rightMarg;
-	drawH = H - topMarg - bottomMarg * 2 - fontSize;
-
+		// debugLog("Clear the canvas");
+		ctx.clearRect(0,0, W,H);
+    	drawW = W - leftMarg - rightMarg;
+    	drawH = H - topMarg - bottomMarg * 2 - fontSize;
     	drawBackground(W, H);
     	drawPlant();
-	drawSensors();
-    }; 
-
-    function drawBackground(W,H) {
-    	var colors = $scope.gimme("GroupColors");
-    	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-    	}
-
-    	if(colors.hasOwnProperty("skin")) {
-    	    var drewBack = false
-    	    if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
-    		var OK = true;
-		
-    		var grd = ctx.createLinearGradient(0,0,W,H);
-    		for(var i = 0; i < colors.skin.gradient.length; i++) {
-    		    var cc = colors.skin.gradient[i];
-    		    if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-    			grd.addColorStop(cc.pos, cc.color);
-    		    } else {
-    			OK = false;
-    		    }
-    		}
-    		if(OK) {
-    		    ctx.fillStyle = grd;
-    		    ctx.fillRect(0,0,W,H);
-    		    drewBack = true;
-    		}
-    	    }
-    	    if(!drewBack && colors.skin.hasOwnProperty("color")) {
-    		ctx.fillStyle = colors.skin.color;
-    		ctx.fillRect(0,0,W,H);
-    		drewBack = true;
-    	    }
-
-	    if(colors.skin.hasOwnProperty("border")) {
-		ctx.fillStyle = colors.skin.border;
-
-		ctx.fillRect(0,0, W,1);
-		ctx.fillRect(0,H-1, W,H);
-		ctx.fillRect(0,0, 1,H);
-		ctx.fillRect(W-1,0, W,H);
-	    }
-    	}
-    };
+    	drawSensors();
+	};
+	//===================================================================================
 
 
+	//===================================================================================
+	// Draw Background
+	// This method draws the background.
+	//===================================================================================
+	function drawBackground(W,H) {
+		var colors = $scope.gimme("GroupColors");
+		if(typeof colors === 'string') {
+			colors = JSON.parse(colors);
+		}
 
-    function drawPlant() {
+		if(colors.hasOwnProperty("skin")) {
+			var drewBack = false
+			if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
+				var OK = true;
+
+				var grd = ctx.createLinearGradient(0,0,W,H);
+				for(var i = 0; i < colors.skin.gradient.length; i++) {
+					var cc = colors.skin.gradient[i];
+					if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
+						grd.addColorStop(cc.pos, cc.color);
+					} else {
+						OK = false;
+					}
+				}
+				if(OK) {
+					ctx.fillStyle = grd;
+					ctx.fillRect(0,0,W,H);
+					drewBack = true;
+				}
+			}
+			if(!drewBack && colors.skin.hasOwnProperty("color")) {
+				ctx.fillStyle = colors.skin.color;
+				ctx.fillRect(0,0,W,H);
+				drewBack = true;
+			}
+
+			if(colors.skin.hasOwnProperty("border")) {
+				ctx.fillStyle = colors.skin.border;
+
+				ctx.fillRect(0,0, W,1);
+				ctx.fillRect(0,H-1, W,H);
+				ctx.fillRect(0,0, 1,H);
+				ctx.fillRect(W-1,0, W,H);
+			}
+		}
+	};
+	//===================================================================================
+
+
+	function drawPlant() {
 	for(var i = 0; i < plant.length; i++) {
 	    var item = plant[i];
 	    

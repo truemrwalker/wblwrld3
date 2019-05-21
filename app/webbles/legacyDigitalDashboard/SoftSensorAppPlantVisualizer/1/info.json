@@ -2,7 +2,7 @@
  "noautogen":false,
  "image":"images/notFound.png",
  "name":"SoftSensorAppPlantVisualizer",
- "description":"A Webble that can show a schematic view of a chemical plant (or something else) with sensor locations. Clicking on the sensor location turns the sensors on/off.",
+ "description":"<h3>The Digital Dashboard Soft Sensor Plant Visualization Webble</h3><p>A Webble that can show a schematic view of a chemical plant (or something else) with sensor locations. Clicking on the sensor location turns the sensors on/off.</p><p><span style=\"color: #ff0000;\">This is the old (Legacy) version of the \"Digital Dashboard\" for data visualization.</span><br /><span style=\"color: #ff0000;\">Legacy Dashboard 2.0 Webbles are about to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles, so if you have a choice, please use the new version instead.</span></p><p>For more info on how to use this Webble and build a Legacy Digital Dashboard 2.0 App, please see the description of the Digital Dashboard Master Webble.</p>",
  "keywords":"DigitalDashboard,Hands-on Portal,hop,chemical plant,soft sensors",
  "author":"legacyDigitalDashboard"
 }

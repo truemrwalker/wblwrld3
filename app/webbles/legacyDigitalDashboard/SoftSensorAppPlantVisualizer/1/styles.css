@@ -1,9 +1,10 @@
 /*/=====================================================================================================================
 // Styles for SoftSensorAppPlantVisualizer for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================*/
 
-/*/ === BEGIN: Fundamental Classes === /*/
+/*/ === BEGIN: Classes === /*/
 
 .backgroundBox {
     margin: 0;
@@ -15,9 +16,9 @@
     color: red;
     border-style: solid;
     border-color: red;
-    width: 300;
-    height: 200;
+    width: 300px;
+    height: 200px;
 }
 
-/*/ === End: Fundamental Classes === /*/
+/*/ === End: Classes === /*/
 

@@ -180,8 +180,8 @@
         <div class="row" style="padding: 10px 0 10px 0;" ng-hide="wblMeta.slimEnabled">
             <div class="col-xs-12 enable-select">
                 <!--<span style="font-size: 14px; font-weight: normal;">{{wblMeta.webble.description | translate}}</span>-->
-				<span style="font-size: 14px; font-weight: normal; white-space: pre-wrap;" ng-bind-html='wblMeta.webble.description.substr(0,2500) | translate'></span>
-				<span ng-show="wblMeta.webble.description.length > 2500">...</span>
+				<span style="font-size: 14px; font-weight: normal; white-space: pre-wrap;" ng-bind-html='wblMeta.webble.description.substr(0,10000) | translate'></span>
+				<span ng-show="wblMeta.webble.description.length > 10000">...</span>
 				<span></span>
             </div>
         </div>

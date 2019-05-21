@@ -11,31 +11,31 @@
 //=======================================================================================
 wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum, $timeout) {
 
-    //=== PROPERTIES ====================================================================
-    $scope.customMenu = [];
-    $scope.customInteractionBalls = [];
+	//=== PROPERTIES ====================================================================
+	$scope.customMenu = [];
+	$scope.customInteractionBalls = [];
 
-    var dispText = "SMART Data Source";
-    $scope.displayText = "SMART Data Source";
+	var dispText = "SMART Data Source";
+	$scope.displayText = "SMART Data Source";
 
-    var idSlotName = "TheIdSlot";
-    var internalIdSlotSet = false;
-    var oldIdSlotData = [];
+	var idSlotName = "TheIdSlot";
+	var internalIdSlotSet = false;
+	var oldIdSlotData = [];
 
-    var fullyLoaded = false;
+	var fullyLoaded = false;
 
-    var fileName = "";
+	var fileName = "";
 
-    var noofRows = 0;
+	var noofRows = 0;
 
-    var fontSize = 11;
-    var textColor = "black";
+	var fontSize = 11;
+	var textColor = "black";
 
-    var rockstarFileContents = [];
-    var densityFileContents = [];
+	var rockstarFileContents = [];
+	var densityFileContents = [];
 
-    var fieldNames = [];
-    var fieldTypes = [];
+	var fieldNames = [];
+	var fieldTypes = [];
 
 	$scope.pluginName = "SMART Data Source";
 	$scope.dragNdropData = {'fields':[{"name":"No Data", "id":-1, "type":"none"}], "rows":0, "cols":0, "file":""};
@@ -44,8 +44,8 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	$scope.doDebugLogging = true;
 
 
-	
-    //=== EVENT HANDLERS ================================================================
+
+	//=== EVENT HANDLERS ================================================================
 
 	//===================================================================================
 	// File Reader On Load Callback
@@ -69,53 +69,53 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		rockstarFileContents = [];
 		densityFileContents = [];
 
-        if(files !== undefined && files.length > 0) {
-        	for(var i = 0; i < files.length; i++) {
-        		var f = files[i];
-        		var reader = new FileReader();
-		
+		if(files !== undefined && files.length > 0) {
+			for(var i = 0; i < files.length; i++) {
+				var f = files[i];
+				var reader = new FileReader();
+
 				// Closure to capture the file information.
 				reader.onload = function(e) { fileReaderOnLoadCallback(e, reader);};
 				fileName = f.name;
 				var fn = f.name.toLowerCase();
 
 				if(fn.indexOf(".gz") >= 0) {  // add all other supported file types too
-		    		// assume compressed data
-		    		reader.theFileWhenRetrying = f;
-		    		reader.dataFileType = "gz";
-		    		reader.readAsArrayBuffer(f);
-		    		reader.zippedfn = fn;
+					// assume compressed data
+					reader.theFileWhenRetrying = f;
+					reader.dataFileType = "gz";
+					reader.readAsArrayBuffer(f);
+					reader.zippedfn = fn;
 
 				} else if(fn.indexOf(".zip") >= 0) {
 					// assume compressed data
-		    		reader.theFileWhenRetrying = f;
-		    		reader.dataFileType = "zip";
-		    		reader.readAsArrayBuffer(f);
+					reader.theFileWhenRetrying = f;
+					reader.dataFileType = "zip";
+					reader.readAsArrayBuffer(f);
 				} else if(fn.indexOf(".csv") >= 0 || fn.indexOf(".txt") >= 0 || fn.indexOf(".json") >= 0) {
 					// assume ascii data
-		    		reader.dataFileType = "text";
-		    		if(fn.indexOf(".json") >= 0) {
-		    			reader.dataFileType = "json";
-		    		}
-		    		reader.readAsText(f);
+					reader.dataFileType = "text";
+					if(fn.indexOf(".json") >= 0) {
+						reader.dataFileType = "json";
+					}
+					reader.readAsText(f);
 				} else if(fn.indexOf(".bin") >= 0) {
 					// assume binary data
-		    		reader.theFileWhenRetrying = f;
-		    		reader.dataFileType = "binary";
-		    		reader.readAsArrayBuffer(f);
+					reader.theFileWhenRetrying = f;
+					reader.dataFileType = "binary";
+					reader.readAsArrayBuffer(f);
 				} else if(fn.indexOf(".dat") >= 0) {
 					// assume binary data ? be prepared to reevaluate to text data
-		    		reader.theFileWhenRetrying = f;
-		    		reader.dataFileType = "binary";
-		    		reader.readAsArrayBuffer(f);
+					reader.theFileWhenRetrying = f;
+					reader.dataFileType = "binary";
+					reader.readAsArrayBuffer(f);
 				} else {
 					debugLog("Cannot guess file type from file name, assuming text data.");
 					// assume ascii data
-		    		reader.dataFileType = "text";
-		    		reader.readAsText(f);
+					reader.dataFileType = "text";
+					reader.readAsText(f);
 				}
-        	}
-        }
+			}
+		}
 	};
 	//===================================================================================
 
@@ -298,7 +298,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				parseData();
 			}
 		});
-		
+
 		$scope.fixDraggable();
 	};
 	//===================================================================================
@@ -323,11 +323,11 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	// Do Debug Logging
 	// Method that write specific log messages for this Webble if enabled.
 	//===================================================================================
-    function debugLog(message) {
-    	if($scope.doDebugLogging) {
-    		$log.log("DigitalDashboard SMART source: " + message);
-    	}
-    };
+	function debugLog(message) {
+		if($scope.doDebugLogging) {
+			$log.log("DigitalDashboard SMART source: " + message);
+		}
+	};
 	//===================================================================================
 
 
@@ -361,8 +361,8 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		try {
 			var tmpUInt = new Uint32Array(fileContents);
 			var concat_magic = tmpUInt[1].toString(16) + tmpUInt[0].toString(16);
-	    
-	    	return ROCKSTAR_MAGICstr == concat_magic;
+
+			return ROCKSTAR_MAGICstr == concat_magic;
 		} catch(e) {
 			return false;
 		}
@@ -392,29 +392,29 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			// 	data.fieldTypes.push("number");
 			// }
 
-	    	if(["id", "p_start", "desc", "flags"].indexOf(data.fieldNames[i]) >= 0) {
-	    		data.fieldTypes.push("string"); // use strings for the 64 bit integers for now, javascript cannot handle them well
-	    	} else if(["num_p", "num_child_particles", "n_core"].indexOf(data.fieldNames[i]) >= 0) {
-	    		data.fieldTypes.push("number"); // assume these 64 bit integers can be rounded to javascript numbers and the loss of precision is acceptable
-	    	} else {
-	    		data.fieldTypes.push("number");
-	    	}
+			if(["id", "p_start", "desc", "flags"].indexOf(data.fieldNames[i]) >= 0) {
+				data.fieldTypes.push("string"); // use strings for the 64 bit integers for now, javascript cannot handle them well
+			} else if(["num_p", "num_child_particles", "n_core"].indexOf(data.fieldNames[i]) >= 0) {
+				data.fieldTypes.push("number"); // assume these 64 bit integers can be rounded to javascript numbers and the loss of precision is acceptable
+			} else {
+				data.fieldTypes.push("number");
+			}
 
-	    	data.columns.push([]);
+			data.columns.push([]);
 		}
-	
+
 		for(var file = 0; file < rockstarFileContents.length; file++) {
 			for(var halo = 0; halo < rockstarFileContents[file].halos.length; halo++) {
 				for(var i = 0; i < data.fieldNames.length; i++) {
 					if(["num_p", "num_child_particles", "n_core"].indexOf(data.fieldNames[i]) >= 0) {
 						data.columns[i].push(parseInt(rockstarFileContents[file].halos[halo][data.fieldNames[i]].hi.toString(16) + rockstarFileContents[file].halos[halo][data.fieldNames[i]].lo.toString(16), 16)); // convert to javascript number, assume precision loss is acceptable
-		    		} else if(data.fieldTypes[i] == "number") {
+					} else if(data.fieldTypes[i] == "number") {
 						var idx = data.fieldNames[i].indexOf(" ");
 						if(idx > 0) {
 							var fn = data.fieldNames[i].substring(0, idx);
 							var j = parseInt(data.fieldNames[i].substring(idx + 1));
 
-			    			data.columns[i].push(rockstarFileContents[file].halos[halo][fn][j]);
+							data.columns[i].push(rockstarFileContents[file].halos[halo][fn][j]);
 						} else {
 							data.columns[i].push(rockstarFileContents[file].halos[halo][data.fieldNames[i]]);
 						}
@@ -426,7 +426,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				}
 			}
 		}
-	
+
 		return data;
 	};
 	//===================================================================================
@@ -467,7 +467,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			debugLog("hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
 		}
 
-	    header.snap = {"lo":tmpUInt[2], "hi":tmpInt[3]};
+		header.snap = {"lo":tmpUInt[2], "hi":tmpInt[3]};
 		header.chunk = {"lo":tmpUInt[4], "hi":tmpInt[5]};
 		header.scale = tmpFloat[6];
 		header.Om = tmpFloat[7];
@@ -479,7 +479,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			header.bounds.push(tmpFloat[10 + i]);
 		}
 
-        header.num_halos = {"lo":tmpUInt[16], "hi":tmpInt[17]};
+		header.num_halos = {"lo":tmpUInt[16], "hi":tmpInt[17]};
 		if(header.num_halos.hi > 0) {
 			debugLog("WARNING: Too many halos, will only read the first " + header.nu_halos.lo + " halos.");
 			debugLog("num_halos: " + header.num_halos.hi.toString(16) + " " + header.num_halos.lo.toString(16));
@@ -494,7 +494,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		for(var i = 0; i < VERSION_MAX_SIZE; i++) {
 			header.rockstar_version.push(hArray[200 + i]);
 		}
-	
+
 		// ignore the unused part
 		// now read all halos in this file as specified in the header
 		var halos = [];
@@ -509,11 +509,11 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			h.id = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
 			cur32idx += 2;
 
-	    	h.pos = [];
-	    	for(var i = 0; i < 6; i++) {
-	    		h.pos.push(tmpFloat[cur32idx + i]);
-	    	}
-	    	cur32idx += 6;
+			h.pos = [];
+			for(var i = 0; i < 6; i++) {
+				h.pos.push(tmpFloat[cur32idx + i]);
+			}
+			cur32idx += 6;
 
 			h.corevel = [];
 			for(var i = 0; i < 3; i++) {
@@ -574,29 +574,29 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			h.m_pe_b = tmpFloat[cur32idx++];
 			h.m_pe_d = tmpFloat[cur32idx++];
 
-	    	// +35 32bits, long longs not aligned?
-	    	cur32idx += 1; // for alignment ??
+			// +35 32bits, long longs not aligned?
+			cur32idx += 1; // for alignment ??
 
-            h.num_p = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
-            cur32idx += 2;
-            h.num_child_particles = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
-            cur32idx += 2;
-            h.p_start = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
-            cur32idx += 2;
-            h.desc = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
-            cur32idx += 2;
-            h.flags = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
-            cur32idx += 2;
-            h.n_core = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
-            cur32idx += 2;
+			h.num_p = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
+			cur32idx += 2;
+			h.num_child_particles = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
+			cur32idx += 2;
+			h.p_start = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
+			cur32idx += 2;
+			h.desc = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
+			cur32idx += 2;
+			h.flags = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
+			cur32idx += 2;
+			h.n_core = {"lo":tmpUInt[cur32idx], "hi":tmpInt[cur32idx + 1]};
+			cur32idx += 2;
 
-            h.min_pos_err = tmpFloat[cur32idx++];
-            h.min_vel_err = tmpFloat[cur32idx++];
-            h.min_bulkvel_err = tmpFloat[cur32idx++];
+			h.min_pos_err = tmpFloat[cur32idx++];
+			h.min_vel_err = tmpFloat[cur32idx++];
+			h.min_bulkvel_err = tmpFloat[cur32idx++];
 
-	    	halos.push(h);
+			halos.push(h);
 
-	    	cur32idx += 1; // for alignment ??
+			cur32idx += 1; // for alignment ??
 		}
 
 		// -------------------
@@ -620,10 +620,10 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	//===================================================================================
 	function parseDensityFormat(binaryArray) {
 		// read a 3D array of 256x256x256 floats
-        var dim = 256;
-        var cur32idx = 0;
-        var tmpFloat = new Float32Array(binaryArray);
-        var densities = [];
+		var dim = 256;
+		var cur32idx = 0;
+		var tmpFloat = new Float32Array(binaryArray);
+		var densities = [];
 
 		for(var a = 0; a < dim; a++) {
 			densities.push([]);
@@ -657,7 +657,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			data.columns[0].push(dim);
 			data.columns[1].push(densityFileContents[file]);
 		}
-	
+
 		return data;
 	};
 	//===================================================================================
@@ -669,62 +669,62 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	// sense of it.
 	//===================================================================================
 	var parseData = function() {
-    	if(!fullyLoaded) {
-    	    return;
-    	}
-	
-    	debugLog("parseData()");
+		if(!fullyLoaded) {
+			return;
+		}
 
-        var slotList = $scope.getSlots();
-        var typeMap = {};
-        var slotsToAdd = [];
-        var vectorsForSlots = [];
-        var theIdList = [];
+		debugLog("parseData()");
 
-        typeMap[idSlotName] = "ID";
+		var slotList = $scope.getSlots();
+		var typeMap = {};
+		var slotsToAdd = [];
+		var vectorsForSlots = [];
+		var theIdList = [];
 
-        if (!(idSlotName in slotList)) {
-    	    slotsToAdd.push(idSlotName);
-        } else {
-    	    $scope.getSlot(idSlotName).setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
-    	}
+		typeMap[idSlotName] = "ID";
 
-    	var resJSON = {};
-    	var setsJSON = {};
-        var fieldsJSON = [];
-    	setsJSON.sets = [];
-    	setsJSON.sets.push({"name":"SMART", "fieldList":fieldsJSON, "idSlot":idSlotName});
-    	resJSON["format"] = setsJSON;
-	
-        var XMLlist = [];
-        var metadataAddedFlags = [];
+		if (!(idSlotName in slotList)) {
+			slotsToAdd.push(idSlotName);
+		} else {
+			$scope.getSlot(idSlotName).setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
+		}
 
-        if($scope.displayText != "")
-        {
-    	    setsJSON.sets[0]["name"] = $scope.displayText;
-        }
+		var resJSON = {};
+		var setsJSON = {};
+		var fieldsJSON = [];
+		setsJSON.sets = [];
+		setsJSON.sets.push({"name":"SMART", "fieldList":fieldsJSON, "idSlot":idSlotName});
+		resJSON["format"] = setsJSON;
 
-        var dataIsCorrupt = false;
-        var data = $scope.gimme("Data");
+		var XMLlist = [];
+		var metadataAddedFlags = [];
 
-        if(data) {
-        	if(data.hasOwnProperty("fieldNames")) {
-        		fieldNames = data.fieldNames;
-        	} else {
-        		dataIsCorrupt = true;
-        	}
-        	if(data.hasOwnProperty("fieldTypes")) {
-        		fieldTypes = data.fieldTypes;
-        	} else {
-        		dataIsCorrupt = true;
-        	}
-        } else {
-        	dataIsCorrupt = true;
-        }
+		if($scope.displayText != "")
+		{
+			setsJSON.sets[0]["name"] = $scope.displayText;
+		}
 
-    	/////////////////////////////////////////////////////////
-    	///////  Setup slot stuff ///////////////////////////////
-    	/////////////////////////////////////////////////////////
+		var dataIsCorrupt = false;
+		var data = $scope.gimme("Data");
+
+		if(data) {
+			if(data.hasOwnProperty("fieldNames")) {
+				fieldNames = data.fieldNames;
+			} else {
+				dataIsCorrupt = true;
+			}
+			if(data.hasOwnProperty("fieldTypes")) {
+				fieldTypes = data.fieldTypes;
+			} else {
+				dataIsCorrupt = true;
+			}
+		} else {
+			dataIsCorrupt = true;
+		}
+
+		/////////////////////////////////////////////////////////
+		///////  Setup slot stuff ///////////////////////////////
+		/////////////////////////////////////////////////////////
 
 		if (!dataIsCorrupt) {
 			for (var i = 0; i < fieldNames.length; i++) {
@@ -761,65 +761,65 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			dataIsCorrupt = true;  //WHY?? TODO: Explain or remove
 		}
 
-    	/////////////////////////////////////////////////////////
-    	///////  Create Slots ///////////////////////////////////
-    	/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
+		///////  Create Slots ///////////////////////////////////
+		/////////////////////////////////////////////////////////
 
-    	if (!dataIsCorrupt) {
-    		var sIdx = 0;
+		if (!dataIsCorrupt) {
+			var sIdx = 0;
 
-    	    for (sIdx = 0; sIdx < slotsToAdd.length; sIdx++) {
-    	    	var s = slotsToAdd[sIdx];
-		
-    			$scope.addSlot(new Slot(s,                  		// Name
-    				[],                              				// Value
-    				s,                                  			// Display Name
-    				'Slot containing the data from field ' + s,     // Description
-    				$scope.theWblMetadata['templateid'],        	// Category (common to set to the template id)
-    				undefined,
-    				undefined
+			for (sIdx = 0; sIdx < slotsToAdd.length; sIdx++) {
+				var s = slotsToAdd[sIdx];
+
+				$scope.addSlot(new Slot(s,                  		// Name
+					[],                              				// Value
+					s,                                  			// Display Name
+					'Slot containing the data from field ' + s,     // Description
+					$scope.theWblMetadata['templateid'],        	// Category (common to set to the template id)
+					undefined,
+					undefined
 				));
-    			$scope.getSlot(s).setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
-    	    }
+				$scope.getSlot(s).setDisabledSetting(Enum.SlotDisablingState.AllVisibility);
+			}
 
-    	    vectorsForSlots = data.columns;
-    	    if(vectorsForSlots.length > 0) {
-    	    	noofRows = vectorsForSlots[0].length;
+			vectorsForSlots = data.columns;
+			if(vectorsForSlots.length > 0) {
+				noofRows = vectorsForSlots[0].length;
 
-    	    	for(var i = 0; i < vectorsForSlots[0].length; i++) {
-    	    		theIdList.push(i);
-    	    	}
-    	    } else {
-    	    	dataIsCorrupt = true;
-    	    }
+				for(var i = 0; i < vectorsForSlots[0].length; i++) {
+					theIdList.push(i);
+				}
+			} else {
+				dataIsCorrupt = true;
+			}
 
-    	    if (!dataIsCorrupt) {
-    	    	for (var i = 0; i < fieldTypes.length; i++) {
-    	    		var fname = fieldNames[i];
-    	    		var slotName = fname + "Slot";
-    	    		slotName = "DataSlot" + i;
+			if (!dataIsCorrupt) {
+				for (var i = 0; i < fieldTypes.length; i++) {
+					var fname = fieldNames[i];
+					var slotName = fname + "Slot";
+					slotName = "DataSlot" + i;
 
-    		    	// debugLog("set " + slotName + " to " + JSON.stringify(vectorsForSlots[i]));
-    	    	    $scope.set(slotName, vectorsForSlots[i]);
-    	    	}
-		
-    			internalIdSlotSet = true;
-    	    	oldIdSlotData = theIdList;
-    	    	$scope.set(idSlotName, theIdList);
-    	    	internalIdSlotSet = false;
-    	    }
-    	}
+					// debugLog("set " + slotName + " to " + JSON.stringify(vectorsForSlots[i]));
+					$scope.set(slotName, vectorsForSlots[i]);
+				}
 
-    	if (dataIsCorrupt) {
-    		debugLog("Could not parse data correctly.");
-    	    setsJSON.sets = [];
-    	    $scope.set("ProvidedFormat", resJSON);
-    	    $scope.set("ProvidedFormatChanged", !$scope.gimme("ProvidedFormatChanged"));
+				internalIdSlotSet = true;
+				oldIdSlotData = theIdList;
+				$scope.set(idSlotName, theIdList);
+				internalIdSlotSet = false;
+			}
+		}
 
-    	    $scope.displayText = dispText + ": " + fileName + " corrupt";
-	    	$scope.dragNdropData.fields = [{"name":"No Data", "id":-1}];
-    	} else {
-    		var ls = [];
+		if (dataIsCorrupt) {
+			debugLog("Could not parse data correctly.");
+			setsJSON.sets = [];
+			$scope.set("ProvidedFormat", resJSON);
+			$scope.set("ProvidedFormatChanged", !$scope.gimme("ProvidedFormatChanged"));
+
+			$scope.displayText = dispText + ": " + fileName + " corrupt";
+			$scope.dragNdropData.fields = [{"name":"No Data", "id":-1}];
+		} else {
+			var ls = [];
 			var sourceName = $scope.gimme("PluginName");
 			var dataSetName = sourceName;
 			var dataSetIdx = 0;
@@ -833,37 +833,37 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			}
 
 			$scope.dragNdropData.fields = ls;
-	    
-    	    // debugLog("Finished parsing data.");
-    	    var oldJSON = {};
-    	    // var newJSON = JSON.stringify(resJSON);
-    	    var newJSON = resJSON;
 
-    	    try {
-    	    	oldJSON = $scope.gimme("ProvidedFormat");
-    	    	if(typeof oldJSON === 'string') {
-    	    		oldJSON = JSON.parse(oldJSON);
-    	    	}
-    	    } catch (Exception) {
-    	    	oldJSON = {};
-    	    }
+			// debugLog("Finished parsing data.");
+			var oldJSON = {};
+			// var newJSON = JSON.stringify(resJSON);
+			var newJSON = resJSON;
 
-    	    if (JSON.stringify(oldJSON) != JSON.stringify(newJSON)) {
-    	    	$scope.set("ProvidedFormat", newJSON);
+			try {
+				oldJSON = $scope.gimme("ProvidedFormat");
+				if(typeof oldJSON === 'string') {
+					oldJSON = JSON.parse(oldJSON);
+				}
+			} catch (Exception) {
+				oldJSON = {};
+			}
 
-    			$scope.set("ProvidedFormatChanged", !$scope.gimme("ProvidedFormatChanged"));
-    	    } else {
-    	    	$scope.set("DataChanged", !$scope.gimme("DataChanged"));
-    	    }
-	    
-            $scope.displayText = dispText + ": " + fileName;
-    	}
+			if (JSON.stringify(oldJSON) != JSON.stringify(newJSON)) {
+				$scope.set("ProvidedFormat", newJSON);
+
+				$scope.set("ProvidedFormatChanged", !$scope.gimme("ProvidedFormatChanged"));
+			} else {
+				$scope.set("DataChanged", !$scope.gimme("DataChanged"));
+			}
+
+			$scope.displayText = dispText + ": " + fileName;
+		}
 
 		updateView();
 
-        $timeout(function() {
-        	$scope.fixDraggable();
-        	},1);
+		$timeout(function() {
+			$scope.fixDraggable();
+		},1);
 	};
 	//===================================================================================
 
@@ -917,16 +917,16 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		data.columns = [];
 		data.metaData = {};
 		var dataIsCorrupt = false;
-        var p1 = 0;
-        var p2 = p1;
+		var p1 = 0;
+		var p2 = p1;
 
-    	/////////////////////////////////////////////////////////
-    	///////  Check field names and field types //////////////
-    	/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
+		///////  Check field names and field types //////////////
+		/////////////////////////////////////////////////////////
 
-    	/////////////////////////////////////////////////////////
-    	///////  Guess row separator  ///////////////////////////
-    	/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
+		///////  Guess row separator  ///////////////////////////
+		/////////////////////////////////////////////////////////
 
 		var haveHeader = false;
 		var semiColonIsSeparator = false;
@@ -962,14 +962,14 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			// dataIsCorrupt = true;
 		}
 
-    	/////////////////////////////////////////////////////////
-    	///////  Guess field separator (column separator) ///////
-    	/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
+		///////  Guess field separator (column separator) ///////
+		/////////////////////////////////////////////////////////
 
 		if (!dataIsCorrupt) {
 			// try to figure out column separator
-	    	p1 = 0;
-	    	p2 = p1;
+			p1 = 0;
+			p2 = p1;
 			var semiColonsBeforeNewLine1 = 0;
 			var colonsBeforeNewLine1 = 0;
 			var tabsBeforeNewLine1 = 0;
@@ -978,42 +978,42 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			var rightparBeforeNewLine1 = 0;
 			var hashesBeforeNewLine1 = 0;
 
-	    	while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
-	    		if(fileContents[p2] == '#') {
-	    			hashesBeforeNewLine1++;
-	    		}
+			while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
+				if(fileContents[p2] == '#') {
+					hashesBeforeNewLine1++;
+				}
 
-	    		if(fileContents[p2] == ';') {
-	    			semiColonsBeforeNewLine1++;
-	    		}
+				if(fileContents[p2] == ';') {
+					semiColonsBeforeNewLine1++;
+				}
 
-	    		if(fileContents[p2] == ':') {
-	    			colonsBeforeNewLine1++;
-	    		}
+				if(fileContents[p2] == ':') {
+					colonsBeforeNewLine1++;
+				}
 
-	    		if(fileContents[p2] == '\t') {
-	    			tabsBeforeNewLine1++;
-	    		}
+				if(fileContents[p2] == '\t') {
+					tabsBeforeNewLine1++;
+				}
 
-	    		if(fileContents[p2] == ',') {
-	    			commasBeforeNewLine1++;
-	    		}
+				if(fileContents[p2] == ',') {
+					commasBeforeNewLine1++;
+				}
 
-	    		if(fileContents[p2] == ' ') {
-	    			spacesBeforeNewLine1++;
-	    		}
+				if(fileContents[p2] == ' ') {
+					spacesBeforeNewLine1++;
+				}
 
-	    		if(fileContents[p2] == ')') {
-	    			rightparBeforeNewLine1++;
-	    		}
+				if(fileContents[p2] == ')') {
+					rightparBeforeNewLine1++;
+				}
 				p2++;
-	    	}
+			}
 
-	    	while (p2 < fileContents.length && ((newLineIsSeparator && fileContents[p2] == '\n') || (semiColonIsSeparator && fileContents[p2] == ';'))) {
-	    		p2++;
-	    	}
+			while (p2 < fileContents.length && ((newLineIsSeparator && fileContents[p2] == '\n') || (semiColonIsSeparator && fileContents[p2] == ';'))) {
+				p2++;
+			}
 
-	    	var onlyOneRow = 1;
+			var onlyOneRow = 1;
 			var onlyOneColumn = 0;
 			var semiColonsBeforeNewLine2 = 0;
 			var colonsBeforeNewLine2 = 0;
@@ -1021,11 +1021,11 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			var spacesBeforeNewLine2 = 0;
 			var commasBeforeNewLine2 = 0;
 
-	    	while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
-	    		onlyOneRow = 0;
-	    		if(fileContents[p2] == ';') {
-	    			semiColonsBeforeNewLine2++;
-	    		}
+			while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
+				onlyOneRow = 0;
+				if(fileContents[p2] == ';') {
+					semiColonsBeforeNewLine2++;
+				}
 
 				if(fileContents[p2] == ':') {
 					colonsBeforeNewLine2++;
@@ -1043,7 +1043,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					spacesBeforeNewLine2++;
 				}
 				p2++;
-	    	}
+			}
 
 			var separatorIsSemiColon = false;
 			var separatorIsColon = false;
@@ -1052,7 +1052,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			var separatorIsSpace = false;
 			var separatorIsSpaceAndHeaderPars = false;
 
-	    	if(onlyOneRow) {
+			if(onlyOneRow) {
 				if(tabsBeforeNewLine1 > 0) {
 					separatorIsTab = true;
 				} else if(commasBeforeNewLine1 > 0) {
@@ -1064,89 +1064,89 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				} else if(colonsBeforeNewLine1 > 0) {
 					separatorIsColon = true;
 				}
-	    	} else {
-	    		if(semiColonsBeforeNewLine2 == semiColonsBeforeNewLine1 && semiColonsBeforeNewLine2 > 0) {
-	    			separatorIsSemiColon = true;
-	    		}
+			} else {
+				if(semiColonsBeforeNewLine2 == semiColonsBeforeNewLine1 && semiColonsBeforeNewLine2 > 0) {
+					separatorIsSemiColon = true;
+				}
 
-	    		if(commasBeforeNewLine2 == commasBeforeNewLine1 && commasBeforeNewLine2 > 0) {
-	    			separatorIsComma = true;
-	    		}
+				if(commasBeforeNewLine2 == commasBeforeNewLine1 && commasBeforeNewLine2 > 0) {
+					separatorIsComma = true;
+				}
 
-	    		if(tabsBeforeNewLine2 == tabsBeforeNewLine1 && tabsBeforeNewLine2 > 0) {
-	    			separatorIsTab = true;
-	    		}
+				if(tabsBeforeNewLine2 == tabsBeforeNewLine1 && tabsBeforeNewLine2 > 0) {
+					separatorIsTab = true;
+				}
 
-	    		if(colonsBeforeNewLine2 == colonsBeforeNewLine1 && colonsBeforeNewLine2 > 0) {
-	    			separatorIsColon = true;
-	    		}
+				if(colonsBeforeNewLine2 == colonsBeforeNewLine1 && colonsBeforeNewLine2 > 0) {
+					separatorIsColon = true;
+				}
 
-	    		if(spacesBeforeNewLine2 == spacesBeforeNewLine1 && spacesBeforeNewLine2 > 0) {
-	    			separatorIsSpace = true;
-	    		}
+				if(spacesBeforeNewLine2 == spacesBeforeNewLine1 && spacesBeforeNewLine2 > 0) {
+					separatorIsSpace = true;
+				}
 
 				if(spacesBeforeNewLine2 + 1 == rightparBeforeNewLine1 && spacesBeforeNewLine2 > 0 && spacesBeforeNewLine2 != spacesBeforeNewLine1) {
 					separatorIsSpaceAndHeaderPars = true;
 				}
-	    	}
+			}
 
-	    	if(separatorIsComma) {
-	    		separatorIsSemiColon = false;
-	    		separatorIsColon = false;
+			if(separatorIsComma) {
+				separatorIsSemiColon = false;
+				separatorIsColon = false;
 				separatorIsTab = false;
 				separatorIsSpace = false;
 				separatorIsSpaceAndHeaderPars = false;
 				separator = ',';
-	    	} else if(separatorIsSemiColon) {
-	    		separatorIsColon = false;
+			} else if(separatorIsSemiColon) {
+				separatorIsColon = false;
 				separatorIsTab = false;
 				separatorIsComma = false;
 				separatorIsSpace = false;
 				separatorIsSpaceAndHeaderPars = false;
 				separator = ';';
-	    	} else if(separatorIsColon) {
-	    		separatorIsSemiColon = false;
+			} else if(separatorIsColon) {
+				separatorIsSemiColon = false;
 				separatorIsTab = false;
 				separatorIsComma = false;
 				separatorIsSpace = false;
 				separatorIsSpaceAndHeaderPars = false;
 				separator = ':';
-	    	} else if(separatorIsTab) {
+			} else if(separatorIsTab) {
 				separatorIsSemiColon = false;
 				separatorIsColon = false;
 				separatorIsComma = false;
 				separatorIsSpace = false;
 				separatorIsSpaceAndHeaderPars = false;
 				separator = '\t';
-	    	} else if(separatorIsSpace) {
+			} else if(separatorIsSpace) {
 				separatorIsSemiColon = false;
 				separatorIsColon = false;
 				separatorIsTab = false;
 				separatorIsComma = false;
 				separatorIsSpaceAndHeaderPars = false;
 				separator = ' ';
-	    	} else if(separatorIsSpaceAndHeaderPars) {
-	    		separatorIsSemiColon = false;
+			} else if(separatorIsSpaceAndHeaderPars) {
+				separatorIsSemiColon = false;
 				separatorIsColon = false;
 				separatorIsTab = false;
 				separatorIsComma = false;
 				separatorIsSpace = false;
 				separator = ' ';
-	    	} else {
-	    		res = checkForVariousTypesOfComments(fileContents, semiColonIsSeparator, newLineIsSeparator);
-	    		separator = res.sep;
-	    		fileContents = res.fileContents;
+			} else {
+				res = checkForVariousTypesOfComments(fileContents, semiColonIsSeparator, newLineIsSeparator);
+				separator = res.sep;
+				fileContents = res.fileContents;
 
 				if(separator == "") {
 					debugLog("Could not determine column separator. " + commasBeforeNewLine1 + " and " + commasBeforeNewLine2 + " commas, " + tabsBeforeNewLine1 + " and " + tabsBeforeNewLine2 + " TABs. Assume only one column.");
 					onlyOneColumn = 1;
 				}
-	    	}
+			}
 		}
-	
-    	/////////////////////////////////////////////////////////
-    	///////  Guess field names //////////////////////////////
-    	/////////////////////////////////////////////////////////
+
+		/////////////////////////////////////////////////////////
+		///////  Guess field names //////////////////////////////
+		/////////////////////////////////////////////////////////
 
 		if (!dataIsCorrupt) {
 			if(onlyOneColumn) {
@@ -1158,25 +1158,25 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 						p2++;
 					}
 					var firstRow = fileContents.substr(p1, p2 - p1);
-		    
-		    		while (p2 < fileContents.length && ((newLineIsSeparator && fileContents[p2] == '\n') || (semiColonIsSeparator && fileContents[p2] == ';'))) {
-		    			p2++;
-		    		}
-		    		p1 = p2;
-		    		while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
-		    			p2++;
-		    		}
-		    		var secondRow = fileContents.substr(p1, p2 - p1);
-		    		if(firstRow.match("[a-zA-Z]+") && !secondRow.match("[a-zA-Z]+")) {
-		    			data.fieldNames.push(firstRow);
-		    			data.fieldTypes.push("number");
-		    			data.columns.push([]);
-		    			haveHeader = true;
-		    		} else {
-		    			data.fieldNames.push("UnNamedField");
-		    			data.fieldTypes.push("number");
-		    			data.columns.push([]);
-		    		}
+
+					while (p2 < fileContents.length && ((newLineIsSeparator && fileContents[p2] == '\n') || (semiColonIsSeparator && fileContents[p2] == ';'))) {
+						p2++;
+					}
+					p1 = p2;
+					while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
+						p2++;
+					}
+					var secondRow = fileContents.substr(p1, p2 - p1);
+					if(firstRow.match("[a-zA-Z]+") && !secondRow.match("[a-zA-Z]+")) {
+						data.fieldNames.push(firstRow);
+						data.fieldTypes.push("number");
+						data.columns.push([]);
+						haveHeader = true;
+					} else {
+						data.fieldNames.push("UnNamedField");
+						data.fieldTypes.push("number");
+						data.columns.push([]);
+					}
 				} else {
 					data.fieldNames.push("UnNamedField");
 					data.fieldTypes.push("number");
@@ -1184,7 +1184,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				}
 			} else {
 				debugLog("Using '" + separator + "' as column separator");
-		
+
 				// try to guess column names
 				p1 = 0;
 				p2 = p1;
@@ -1197,8 +1197,8 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					var firstRow = fileContents.substr(p1, p2 - p1);
 					var items = firstRow.split(separator);
 
-		    		if(separatorIsSpaceAndHeaderPars) {
-		    			items = [];
+					if(separatorIsSpaceAndHeaderPars) {
+						items = [];
 						p1 = 0;
 						p2 = p1;
 						var lastPossibleStart = 0;
@@ -1214,20 +1214,20 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 									firstPar = false;
 								} else {
 									// definately separate around here
-				    				if(lastPossibleEnd > lastPossibleStart) {
-				    					// we saw some space, so we may have things like "(1) first col name (2) second col name"
+									if(lastPossibleEnd > lastPossibleStart) {
+										// we saw some space, so we may have things like "(1) first col name (2) second col name"
 										var newItem = firstRow.substr(lastPossibleStart, lastPossibleEnd - lastPossibleStart);
 										items.push(newItem);
 										lastPossibleStart = lastPossibleEnd + 1;
-				    				} else {
-				    					lastPossibleEnd = p2 - 1;
-				    					if(lastPossibleEnd <= lastPossibleStart) {
-				    						lastPossibleEnd = lastPossibleStart;
-				    					}
-				    					var newItem = firstRow.substr(lastPossibleStart, lastPossibleEnd - lastPossibleStart);
-				    					items.push(newItem);
-				    					lastPossibleStart = lastPossibleEnd + 1;
-				    				}
+									} else {
+										lastPossibleEnd = p2 - 1;
+										if(lastPossibleEnd <= lastPossibleStart) {
+											lastPossibleEnd = lastPossibleStart;
+										}
+										var newItem = firstRow.substr(lastPossibleStart, lastPossibleEnd - lastPossibleStart);
+										items.push(newItem);
+										lastPossibleStart = lastPossibleEnd + 1;
+									}
 								}
 							}
 							p2++;
@@ -1240,17 +1240,17 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 						}
 						newItem = firstRow.substr(lastPossibleStart, lastPossibleEnd - lastPossibleStart);
 						items.push(newItem);
-		    		}
+					}
 
-		    		var allStrings = true;
-		    		for (var i = 0; i < items.length; i++) {
-		    			if(!items[i].match("[a-zA-Z]+")) {
-		    				allStrings = false;
-		    				break;
-		    			}
-		    		}
-		    
-		    		if(allStrings && !onlyOneRow) { // probably header
+					var allStrings = true;
+					for (var i = 0; i < items.length; i++) {
+						if(!items[i].match("[a-zA-Z]+")) {
+							allStrings = false;
+							break;
+						}
+					}
+
+					if(allStrings && !onlyOneRow) { // probably header
 						for (var i = 0; i < items.length; i++) {
 							data.fieldNames.push(items[i]);
 							data.fieldTypes.push("number");
@@ -1264,24 +1264,24 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 							}
 						}
 						haveHeader = true;
-		    		} else {
-		    			for (var i = 0; i < items.length; i++) {
-		    				data.fieldNames.push("UnNamedField" + i);
-		    				data.fieldTypes.push("number");
-		    				data.columns.push([]);
-		    			}
-		    		}
+					} else {
+						for (var i = 0; i < items.length; i++) {
+							data.fieldNames.push("UnNamedField" + i);
+							data.fieldTypes.push("number");
+							data.columns.push([]);
+						}
+					}
 				} else { // p2 <= fileContents.length
-		    		data.fieldNames.push("UnNamedField");
-		    		data.fieldTypes.push("number");
-		    		data.columns.push([]);
+					data.fieldNames.push("UnNamedField");
+					data.fieldTypes.push("number");
+					data.columns.push([]);
 				}
 			} // more than one column
 		} // data not corrupt
 
-    	/////////////////////////////////////////////////////////
-    	///////  Guess data types ///////////////////////////////
-    	/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
+		///////  Guess data types ///////////////////////////////
+		/////////////////////////////////////////////////////////
 
 		var vectorLengths = [];
 		var minMax = [];
@@ -1307,7 +1307,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 						firstLine = false;
 					} else {
 						var row = fileContents.substr(p1, p2 - p1);
-			
+
 						if(onlyOneColumn) {
 							var nval = parseFloat(row);
 							var num = !isNaN(nval) && isFinite(nval);
@@ -1335,35 +1335,35 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 								break;
 							}
 
-			    			for (var i = 0; i < items.length; i++) {
-			    				var nval = parseFloat(items[i]);
-			    				var num = !isNaN(nval) && isFinite(items[i]);
-			    				if(!num) {
-			    					data.fieldTypes[i] = "string";
-			    					var nColons = charCount(":", items[i]);
-			    					var nAts = charCount("@", items[i]);
-				    
-				    				if(nAts > 0 && (nColons == nAts || nColons == nAts - 1)) { // last item does not have a : as separator, so the counts normally differ by 1
+							for (var i = 0; i < items.length; i++) {
+								var nval = parseFloat(items[i]);
+								var num = !isNaN(nval) && isFinite(items[i]);
+								if(!num) {
+									data.fieldTypes[i] = "string";
+									var nColons = charCount(":", items[i]);
+									var nAts = charCount("@", items[i]);
+
+									if(nAts > 0 && (nColons == nAts || nColons == nAts - 1)) { // last item does not have a : as separator, so the counts normally differ by 1
 										if(vectorLengths[i] == 0 || vectorLengths[i] == nAts) {
 											data.fieldTypes[i] = "vector";
 										} else {
 											data.fieldTypes[i] = "string";
 										}
 										vectorLengths[i] == nAts;
-				    				}
-			    				} else {
-			    					if(minMax[i].min === null) {
-			    						minMax[i].min = nval;
-			    					} else {
-			    						minMax[i].min = Math.min(minMax[i].min, nval);
-			    					}
-			    					if(minMax[i].max === null) {
-			    						minMax[i].max = nval;
-			    					} else {
-			    						minMax[i].max = Math.max(minMax[i].max, nval);
-			    					}
-			    				}
-			    			}
+									}
+								} else {
+									if(minMax[i].min === null) {
+										minMax[i].min = nval;
+									} else {
+										minMax[i].min = Math.min(minMax[i].min, nval);
+									}
+									if(minMax[i].max === null) {
+										minMax[i].max = nval;
+									} else {
+										minMax[i].max = Math.max(minMax[i].max, nval);
+									}
+								}
+							}
 						}
 					}
 					p1 = p2;
@@ -1371,10 +1371,10 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					while (p1 < fileContents.length && ((newLineIsSeparator && fileContents[p1] == '\n') || (semiColonIsSeparator && fileContents[p1] == ';'))) {
 						p1++;
 					}
-		    
-		    		if (p1 >= fileContents.length) {
-		    			moreLines = false;
-		    		}
+
+					if (p1 >= fileContents.length) {
+						moreLines = false;
+					}
 				} else {
 					moreLines = false;
 				}
@@ -1409,206 +1409,206 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			}
 		}
 
-    	if (!dataIsCorrupt) {
-    	    /////////////////////////////////////////////////////////
-    	    ///////  Parse data and create vectors //////////////////
-    	    /////////////////////////////////////////////////////////
+		if (!dataIsCorrupt) {
+			/////////////////////////////////////////////////////////
+			///////  Parse data and create vectors //////////////////
+			/////////////////////////////////////////////////////////
 
-	    	noofRows = 0;
-    	    var id = 0;
-    	    p1 = 0;
-    	    var moreLines = true;
-    	    var firstLine = true;
+			noofRows = 0;
+			var id = 0;
+			p1 = 0;
+			var moreLines = true;
+			var firstLine = true;
 
-    	    while (moreLines) {
-    	    	p2 = p1 + 1;
-    	    	while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
-    	    		p2++;
-    	    	}
+			while (moreLines) {
+				p2 = p1 + 1;
+				while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
+					p2++;
+				}
 
-    	    	if (p2 <= fileContents.length) {
-    	    		if(firstLine && haveHeader) {
-    	    			firstLine = false;
-    	    		} else {
-    	    			noofRows++;
-    					var row = fileContents.substr(p1, p2 - p1);
+				if (p2 <= fileContents.length) {
+					if(firstLine && haveHeader) {
+						firstLine = false;
+					} else {
+						noofRows++;
+						var row = fileContents.substr(p1, p2 - p1);
 
-    					if(onlyOneColumn) {
-    						var items = [row];
-    					} else {
-    						var items = row.split(separator);
+						if(onlyOneColumn) {
+							var items = [row];
+						} else {
+							var items = row.split(separator);
 
-    						if (items.length != data.fieldNames.length) {
-    							dataIsCorrupt = true;
-    							debugLog("Rows have different number of columns.");
-    							break;
-    						}
-    					}
+							if (items.length != data.fieldNames.length) {
+								dataIsCorrupt = true;
+								debugLog("Rows have different number of columns.");
+								break;
+							}
+						}
 
-    					for (i = 0; i < items.length; i++) {
-    						var ftype = data.fieldTypes[i];
-    						var value = items[i];
+						for (i = 0; i < items.length; i++) {
+							var ftype = data.fieldTypes[i];
+							var value = items[i];
 
-    			    		if (ftype == "integer") {
-    			    			try {
-    			    				if (value === "") {
-    			    					data.columns[i].push(null);
-    			    				}
-    			    				else {
-    			    					data.columns[i].push(parseInt(value));
-    			    				}
-    			    			} catch (Exception) {
-    			    				dataIsCorrupt = true;
-    			    				break;
-    			    			}
-    			    		}
-    			    		else if (ftype == "num" || ftype == "number" || ftype == "numeral" || ftype == "float" || ftype == "double" || ftype == "latitude" || ftype == "longitude") {
-    			    			try {
-    			    				if (value === "") {
-    			    					data.columns[i].push(null);
-    			    				} else {
-    			    					data.columns[i].push(Number(value));
-    			    				}
-    			    			} catch (Exception) {
-    			    				dataIsCorrupt = true;
-    			    				break;
-    			    			}
-    			    		}
-    			    		else if (ftype == "time" || ftype == "date" || ftype == "datetime") {
-    			    			try {
-    			    				if (value === "") {
-    			    					data.columns[i].push(null);
-    			    				}
-    			    				else{
-    			    					var dateTemp = Date.parse(value);
-    			    					if(isNaN(dateTemp)) {
-    			    						var numVal = parseFloat(value);
-    			    						if(!isNaN(numVal) && isFinite(value)) {
-    			    							dateTemp = numVal;
-    			    						}
-    			    						else {
-    			    							try {
-    			    								if(value.length == 8) {
-    			    									var today = new Date();
-    			    									dateTemp = (new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(value.substr(0,2)), parseInt(value.substr(3,2)), parseInt(value.substr(6,2)))).getTime();
-    			    								} else {
-    			    									dateTemp = null;
-    			    								}
-    			    							} catch(e) {
-    			    								dateTemp = null;
-    			    							}
-    			    						}
-    			    					}
-    			    					data.columns[i].push(dateTemp);
-    			    				}
-    			    			} catch (Exception) {
-    			    				dataIsCorrupt = true;
-    			    				break;
-    			    			}
-    			    		}
-    			    		else if (ftype == "vector") {
-    			    			if (value === "") {
-    			    				data.columns[i].push(null);
-    			    			} else {
-    			    				var vec = [];
-    				    			var metadata = [];
-    				    			var temp = value.split(':');
-				    
-    				    			for (sIdx = 0; sIdx < temp.length; sIdx++) {
-    				    				var s = temp[sIdx];
-    				    				var d = 0;
+							if (ftype == "integer") {
+								try {
+									if (value === "") {
+										data.columns[i].push(null);
+									}
+									else {
+										data.columns[i].push(parseInt(value));
+									}
+								} catch (Exception) {
+									dataIsCorrupt = true;
+									break;
+								}
+							}
+							else if (ftype == "num" || ftype == "number" || ftype == "numeral" || ftype == "float" || ftype == "double" || ftype == "latitude" || ftype == "longitude") {
+								try {
+									if (value === "") {
+										data.columns[i].push(null);
+									} else {
+										data.columns[i].push(Number(value));
+									}
+								} catch (Exception) {
+									dataIsCorrupt = true;
+									break;
+								}
+							}
+							else if (ftype == "time" || ftype == "date" || ftype == "datetime") {
+								try {
+									if (value === "") {
+										data.columns[i].push(null);
+									}
+									else{
+										var dateTemp = Date.parse(value);
+										if(isNaN(dateTemp)) {
+											var numVal = parseFloat(value);
+											if(!isNaN(numVal) && isFinite(value)) {
+												dateTemp = numVal;
+											}
+											else {
+												try {
+													if(value.length == 8) {
+														var today = new Date();
+														dateTemp = (new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(value.substr(0,2)), parseInt(value.substr(3,2)), parseInt(value.substr(6,2)))).getTime();
+													} else {
+														dateTemp = null;
+													}
+												} catch(e) {
+													dateTemp = null;
+												}
+											}
+										}
+										data.columns[i].push(dateTemp);
+									}
+								} catch (Exception) {
+									dataIsCorrupt = true;
+									break;
+								}
+							}
+							else if (ftype == "vector") {
+								if (value === "") {
+									data.columns[i].push(null);
+								} else {
+									var vec = [];
+									var metadata = [];
+									var temp = value.split(':');
 
-    									if(s.indexOf('@') < 0) {
-    										try {
-    											var ss = s;
-    											if (s.length > 0 && s[s.length - 1] == ';') {
-    												ss = s.substr(0, s.length - 1);
-    											}
-						
-    											d = Number(ss);
-    											vec.push(d);
-    										} catch (Exception) {
-    											dataIsCorrupt = true;
-    										}
-    									}
-    									else {
-    										try {
-    											var ss = s;
-    											if (s.length > 0 && s[s.length - 1] == ';') {
-    												ss = s.substr(0, s.length - 1);
-    											}
-    											var pairTemp = ss.split('@');
-    											var tag = pairTemp[0];
-    											var val = Number(pairTemp[1]);
-    											metadata.push(tag);
-    											vec.push(val);
-    										} catch (Exception) {
-    											dataIsCorrupt = true;
-    											break;
-    										}
-    									}
-    				    			}
+									for (sIdx = 0; sIdx < temp.length; sIdx++) {
+										var s = temp[sIdx];
+										var d = 0;
 
-    				    			if (metadata.length == 0) {
-    				    				data.columns[i].push(vec);
-    				    			} else {
-    				    				if (metadata.length != vec.length) {
-    				    					dataIsCorrupt = true;
-    				    					break;
-    				    				}
-    				    				else {
-    				    					if(!data.metaData.hasOwnProperty(i)) {
-    				    						var metaDataString = metadata.join(",");
-    				    						data.metaData[i] = metaDataString;
-    				    					}
-    				    					data.columns[i].push(vec);
-    				    				}
-    				    			}
-    			    			}
-    			    		}
-    			    		else if (ftype == "string" || ftype == "text") {
-    			    			try {
-    			    				data.columns[i].push(value);
-    			    			} catch (Exception) {
-    			    				dataIsCorrupt = true;
-    			    				break;
-    			    			}
-    			    		}
-    			    		else {
-    			    			try {
-    			    				data.columns[i].push(value);
-    			    			} catch (Exception) {
-    			    				dataIsCorrupt = true;
-    			    				break;
-    			    			}
-    			    		}
-    					}
+										if(s.indexOf('@') < 0) {
+											try {
+												var ss = s;
+												if (s.length > 0 && s[s.length - 1] == ';') {
+													ss = s.substr(0, s.length - 1);
+												}
 
-    					if (dataIsCorrupt) {
-    						break;
-    					}
-    	    		}
+												d = Number(ss);
+												vec.push(d);
+											} catch (Exception) {
+												dataIsCorrupt = true;
+											}
+										}
+										else {
+											try {
+												var ss = s;
+												if (s.length > 0 && s[s.length - 1] == ';') {
+													ss = s.substr(0, s.length - 1);
+												}
+												var pairTemp = ss.split('@');
+												var tag = pairTemp[0];
+												var val = Number(pairTemp[1]);
+												metadata.push(tag);
+												vec.push(val);
+											} catch (Exception) {
+												dataIsCorrupt = true;
+												break;
+											}
+										}
+									}
 
-    		    	p1 = p2;
-    		    	while (p1 < fileContents.length && ((newLineIsSeparator && fileContents[p1] == '\n') || (semiColonIsSeparator && fileContents[p1] == ';'))) {
-    		    		p1++;
-    		    	}
+									if (metadata.length == 0) {
+										data.columns[i].push(vec);
+									} else {
+										if (metadata.length != vec.length) {
+											dataIsCorrupt = true;
+											break;
+										}
+										else {
+											if(!data.metaData.hasOwnProperty(i)) {
+												var metaDataString = metadata.join(",");
+												data.metaData[i] = metaDataString;
+											}
+											data.columns[i].push(vec);
+										}
+									}
+								}
+							}
+							else if (ftype == "string" || ftype == "text") {
+								try {
+									data.columns[i].push(value);
+								} catch (Exception) {
+									dataIsCorrupt = true;
+									break;
+								}
+							}
+							else {
+								try {
+									data.columns[i].push(value);
+								} catch (Exception) {
+									dataIsCorrupt = true;
+									break;
+								}
+							}
+						}
 
-    		    	if (p1 >= fileContents.length) {
-    		    		moreLines = false;
-    		    	}
-    	    	}
-    	    	else {
-    	    		moreLines = false;
-    	    	}
-    	    } // while more lines
-    	}
-	
+						if (dataIsCorrupt) {
+							break;
+						}
+					}
+
+					p1 = p2;
+					while (p1 < fileContents.length && ((newLineIsSeparator && fileContents[p1] == '\n') || (semiColonIsSeparator && fileContents[p1] == ';'))) {
+						p1++;
+					}
+
+					if (p1 >= fileContents.length) {
+						moreLines = false;
+					}
+				}
+				else {
+					moreLines = false;
+				}
+			} // while more lines
+		}
+
 		if(dataIsCorrupt) {
 			data.fieldNames = [];
-	    	data.fieldTypes = [];
-	    	data.columns = [];
-	    	data.metaData = {};
+			data.fieldTypes = [];
+			data.columns = [];
+			data.metaData = {};
 		}
 		return data;
 	};
@@ -1650,17 +1650,17 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				p2++;
 			}
 
-	    	firstRow = secondRow;
+			firstRow = secondRow;
 			p0 = p1;
 			newFileContents = fileContents.slice(p0, fileContents.length);
 
 			p1 = p2;
-	    
-	    	while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
-	    		p2++;
-	    	}
-	    
-	    	secondRow = fileContents.slice(p1, p2);
+
+			while (p2 < fileContents.length && (!newLineIsSeparator || fileContents[p2] != '\n') && (!semiColonIsSeparator || fileContents[p2] != ';')) {
+				p2++;
+			}
+
+			secondRow = fileContents.slice(p1, p2);
 		}
 
 		var tabs1 = charCount("\t", firstRow);
@@ -1717,33 +1717,33 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			semiColons1 = charCount(";", firstRow2);
 			commas1 = charCount(",", firstRow2);
 			ws1 = firstRow2.match(/\s+/g);
-	    	if(ws1) {
-	    		ws1 = ws1.length;
-	    	} else {
-	    		ws1 = 0;
-	    	}
+			if(ws1) {
+				ws1 = ws1.length;
+			} else {
+				ws1 = 0;
+			}
 
-	    	if(commas2 == commas1 && commas2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		return {"fileContents":newFileContents, "sep":","};
-	    	}
-	    	if(semiColons2 == semiColons1 && semiColons2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		return {"fileContents":newFileContents, "sep":";"};
-	    	}
-	    	if(colons2 == colons1 && colons2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		return {"fileContents":newFileContents, "sep":":"};
-	    	}
-	    	if(tabs2 == tabs1 && tabs2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		return {"fileContents":newFileContents, "sep":"\t"};
-	    	}
-	    	if(ws2 == ws1 && ws2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		newFileContents = newFileContents.replace(/[ \t]+/g, " ").replace(/ \n/g, "\n");
-	    		return {"fileContents":newFileContents, "sep":" "};
-	    	}
+			if(commas2 == commas1 && commas2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				return {"fileContents":newFileContents, "sep":","};
+			}
+			if(semiColons2 == semiColons1 && semiColons2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				return {"fileContents":newFileContents, "sep":";"};
+			}
+			if(colons2 == colons1 && colons2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				return {"fileContents":newFileContents, "sep":":"};
+			}
+			if(tabs2 == tabs1 && tabs2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				return {"fileContents":newFileContents, "sep":"\t"};
+			}
+			if(ws2 == ws1 && ws2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				newFileContents = newFileContents.replace(/[ \t]+/g, " ").replace(/ \n/g, "\n");
+				return {"fileContents":newFileContents, "sep":" "};
+			}
 		}
 
 		if(firstRow.indexOf("//") > 0) {
@@ -1759,14 +1759,14 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				ws1 = 0;
 			}
 
-	    	if(commas2 == commas1 && commas2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		return {"fileContents":newFileContents, "sep":","};
-	    	}
-	    	if(semiColons2 == semiColons1 && semiColons2 > 0) {
-	    		newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
-	    		return {"fileContents":newFileContents, "sep":";"};
-	    	}
+			if(commas2 == commas1 && commas2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				return {"fileContents":newFileContents, "sep":","};
+			}
+			if(semiColons2 == semiColons1 && semiColons2 > 0) {
+				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
+				return {"fileContents":newFileContents, "sep":";"};
+			}
 			if(colons2 == colons1 && colons2 > 0) {
 				newFileContents = firstRow2 + lineSep + fileContents.slice(p1, fileContents.length);
 				return {"fileContents":newFileContents, "sep":":"};
@@ -1818,15 +1818,15 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				return {"fileContents":newFileContents, "sep":" "};
 			}
 
-	    	if(ws1 > 0 && ws2 > ws1) {
-	    		var items1 = firstRow2.split(" ");
+			if(ws1 > 0 && ws2 > ws1) {
+				var items1 = firstRow2.split(" ");
 
-	    		if(items1.length > 0) {
-	    			var exp = /\[([0-9]+)\]/;
-	    			var match = exp.exec(items1[items1.length - 1]);
-		    
-		    		if(match) {
-		    			var arrayLength = parseInt(match[1]);
+				if(items1.length > 0) {
+					var exp = /\[([0-9]+)\]/;
+					var match = exp.exec(items1[items1.length - 1]);
+
+					if(match) {
+						var arrayLength = parseInt(match[1]);
 
 						if(ws2 == ws1 + arrayLength) {
 							var firstRow3 = "";
@@ -1841,13 +1841,13 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 								firstRow3 += " data[" + i + "]";
 							}
 
-			    			newFileContents = firstRow3 + lineSep + fileContents.slice(p1, fileContents.length);
+							newFileContents = firstRow3 + lineSep + fileContents.slice(p1, fileContents.length);
 							newFileContents = newFileContents.replace(/[ \t]+/g, " ").replace(/ \n/g, "\n");
 							return {"fileContents":newFileContents, "sep":" "};
 						}
-		    		}
-	    		}
-	    	}
+					}
+				}
+			}
 		}
 		return {"fileContents":fileContents, "sep":""}; // fail
 	};
@@ -1863,36 +1863,36 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		$scope.dragNdropData.rows = noofRows;
 		$scope.dragNdropData.cols = fieldTypes.length;
 		var colors = $scope.gimme("GroupColors");
-    	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-    	}
+		if(typeof colors === 'string') {
+			colors = JSON.parse(colors);
+		}
 
-    	if(colors.hasOwnProperty("skin")) {
-    	    var drewBack = false
-    	    if(colors.skin.hasOwnProperty("gradient")) {
-    	    	// $scope.dataListStyle['background-color'] = grd;
-    			// drewBack = true;
-    	    }
-    	    if(!drewBack && colors.skin.hasOwnProperty("color")) {
-    	    	$scope.dataListStyle['background-color'] = colors.skin.color;
-    	    	drewBack = true;
-    	    }
+		if(colors.hasOwnProperty("skin")) {
+			var drewBack = false
+			if(colors.skin.hasOwnProperty("gradient")) {
+				// $scope.dataListStyle['background-color'] = grd;
+				// drewBack = true;
+			}
+			if(!drewBack && colors.skin.hasOwnProperty("color")) {
+				$scope.dataListStyle['background-color'] = colors.skin.color;
+				drewBack = true;
+			}
 
-    	    if(colors.skin.hasOwnProperty("border")) {
-    	    	$scope.dataListStyle['border'] = '2px solid ' + colors.skin.border;
-    	    }
+			if(colors.skin.hasOwnProperty("border")) {
+				$scope.dataListStyle['border'] = '2px solid ' + colors.skin.border;
+			}
 
-	    	if(colors.skin.hasOwnProperty("text")) {
-	    		$scope.dataListStyle['color'] = colors.skin.text;
-	    	} else {
-	    		$scope.dataListStyle['color'] = "black";
-	    	}
-    	}
+			if(colors.skin.hasOwnProperty("text")) {
+				$scope.dataListStyle['color'] = colors.skin.text;
+			} else {
+				$scope.dataListStyle['color'] = "black";
+			}
+		}
 
 		var newStyle = {};
-    	for(var s in $scope.dataListStyle) {
-    		newStyle[s] = $scope.dataListStyle[s];
-    	}
+		for(var s in $scope.dataListStyle) {
+			newStyle[s] = $scope.dataListStyle[s];
+		}
 
 		newStyle.fontSize = fontSize;
 
@@ -2077,47 +2077,47 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	//===================================================================================
 
 
-    //===================================================================================
-    // Webble template Interaction Object Activity Reaction
-    // If this template has its own custom Interaction balls that needs to be taken care
-    // of when activated, then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_Event_InteractionObjectActivityReaction = function(event){
-    	var targetName = $(event.target).scope().getName();
+	//===================================================================================
+	// Webble template Interaction Object Activity Reaction
+	// If this template has its own custom Interaction balls that needs to be taken care
+	// of when activated, then it is here where that should be executed.
+	// If this function is empty and unused it can safely be deleted.
+	//===================================================================================
+	$scope.coreCall_Event_InteractionObjectActivityReaction = function(event){
+		var targetName = $(event.target).scope().getName();
 
-    	if (targetName != ""){	}
-    };
-    //===================================================================================
-
-
-    //===================================================================================
-    // Webble template Menu Item Activity Reaction
-    // If this template has its own custom menu items that needs to be taken care of,
-    // then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
-    };
-    //===================================================================================
+		if (targetName != ""){	}
+	};
+	//===================================================================================
 
 
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-    	var customWblDefPart = {};
-
-    	return customWblDefPart;
-    };
-    //===================================================================================
+	//===================================================================================
+	// Webble template Menu Item Activity Reaction
+	// If this template has its own custom menu items that needs to be taken care of,
+	// then it is here where that should be executed.
+	// If this function is empty and unused it can safely be deleted.
+	//===================================================================================
+	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
+	};
+	//===================================================================================
 
 
+	//===================================================================================
+	// Webble template Create Custom Webble Definition
+	// If this template wants to store its own private data in the Webble definition it
+	// can create that custom object here and return to the core.
+	// If this function is empty and unused it can safely be deleted.
+	//===================================================================================
+	$scope.coreCall_CreateCustomWblDef = function(){
+		var customWblDefPart = {};
 
-    //=== CTRL MAIN CODE ======================================================================
+		return customWblDefPart;
+	};
+	//===================================================================================
+
+
+
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================
