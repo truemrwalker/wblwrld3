@@ -179,10 +179,8 @@
 
         <div class="row" style="padding: 10px 0 10px 0;" ng-hide="wblMeta.slimEnabled">
             <div class="col-xs-12 enable-select">
-                <!--<span style="font-size: 14px; font-weight: normal;">{{wblMeta.webble.description | translate}}</span>-->
-				<span style="font-size: 14px; font-weight: normal; white-space: pre-wrap;" ng-bind-html='wblMeta.webble.description.substr(0,10000) | translate'></span>
-				<span ng-show="wblMeta.webble.description.length > 10000">...</span>
-				<span></span>
+				<span style="font-size: 14px; font-weight: normal; white-space: pre-wrap;" ng-bind-html='wblMeta.webble.description.substr(0,formItems.DescMaxLen) | translate'></span>
+				<span ng-show="formItems.DescMaxLen != undefined && wblMeta.webble.description.length > formItems.DescMaxLen" style="cursor: pointer; color: #FF00FF; font-weight: bolder;" ng-mousedown="ellipsisClicked($event, wblMeta.webble.description)" tooltip-placement="right" uib-tooltip="{{'To see the full text, click here to open a popup window.'}}">... more--></span>
             </div>
         </div>
     </div>

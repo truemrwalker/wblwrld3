@@ -1,0 +1,25 @@
+<!--====================================================================================================================
+// View for DigDash_SensorPlacementSchematic for Webble World v3.0 (2013)
+// Created By: Micke Kuwahara (truemrwalker)
+// Based on previous work by: Jonas Sjobergh
+//===================================================================================================================-->
+
+<div id="DigDashVizPlugin_SensorSchematic" ng-controller="DigDashVizPlugin_SensorSchematicCtrl">
+	<div id="selectionHolder" width="300" height="200" style="pointer-events:visible;">
+		<div id="DrawingArea" style="pointer-events:none; width: 300px; height: 200px;">
+			<canvas id="theCanvas" style="pointer-events:none;" width="300" height="200"></canvas>
+			<canvas id="theSelectionCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200">
+			</canvas>
+			<canvas id="selectionRectangle" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200">
+			</canvas>
+			<div id="mouseOverText" style="pointer-events:none; display:none; position:fixed; border: 1px solid black; background: white; " height="10" width="10">
+				ToolTip
+			</div>
+		</div>
+	</div>
+
+<!--	<span id="displayText">{{SchematicName}} ({{displayText}})</span>-->
+	<span id="displayText">THIS WEBBLE IS UNDER CONSTRUCTION! DO NOT USE!</span>
+</div>
+
+<!--=================================================================================================================-->

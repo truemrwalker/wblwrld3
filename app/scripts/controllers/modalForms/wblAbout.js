@@ -43,6 +43,8 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $uibModalIns
 	var wblDefMetaData = $scope.formData.wblPlatformScope.getWebbleDefsMetaDataMemory();
 	var updateData = null;
 
+	$scope.formData["DescMaxLen"] = (wblwrldSystemOverrideSettings.wblDescTxtMaxLength == -1 ? undefined : parseInt(wblwrldSystemOverrideSettings.wblDescTxtMaxLength));
+
     $scope.tooltip = {
         displayname: gettext("This is the currently chosen display name for this Webble Instance, may be changed in properties"),
         instanceid: gettext("This is the session instance id for this particular Webble"),
@@ -73,6 +75,18 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $uibModalIns
 
     //=== EVENT HANDLERS =====================================================================
 
+	//========================================================================================
+	// Ellipsis clicked
+	// this event handler opens a pop-up window with the full webble description text if the
+	// user left clicked the ellipsis in the form.
+	//========================================================================================
+	$scope.ellipsisClicked = function(event){
+		if(event.which == 1){
+			var win = window.open("", "_blank", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=700,height=800,top="+200+",left="+((screen.width/2)-350));
+			win.document.body.innerHTML = "<h2>Webble Description (Full Text)</h2><p>" + $scope.formData.description + "</p>";
+		}
+	};
+	//========================================================================================
 
 
     //*****************************************************************************************************************

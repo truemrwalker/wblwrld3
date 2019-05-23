@@ -61,7 +61,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
         totalItems: 0,
         currentPage: 1,
         itemsPerPage: 25,
-		slimEnabled: $scope.thePlatform.getSlimWblBrowserEnabled()
+		slimEnabled: $scope.thePlatform.getSlimWblBrowserEnabled(),
+		DescMaxLen: (wblwrldSystemOverrideSettings.wblDescTxtMaxLength == -1 ? undefined : parseInt(wblwrldSystemOverrideSettings.wblDescTxtMaxLength))
     };
 
     $scope.textParts = {
@@ -102,6 +103,20 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
     //=== EVENT HANDLERS =====================================================================
 
 	//========================================================================================
+	// Ellipsis clicked
+	// this event handler opens a pop-up window with the full webble description text if the
+	// user left clicked the ellipsis in the form.
+	//========================================================================================
+	$scope.ellipsisClicked = function(event, txt){
+		if(event.which == 1){
+			var win = window.open("", "_blank", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=700,height=800,top="+200+",left="+((screen.width/2)-350));
+			win.document.body.innerHTML = "<h2>Webble Description (Full Text)</h2><p>" + txt + "</p>";
+		}
+	};
+	//========================================================================================
+
+
+	//========================================================================================
 	// On Event Modal Closing
 	// Checking if the user is currently dragging and dropping a Webble, and if so, do not
 	// close the browser because of backdrop click.
@@ -113,6 +128,7 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 		}
 	});
 	//========================================================================================
+
 
     //========================================================================================
     // Load Selected

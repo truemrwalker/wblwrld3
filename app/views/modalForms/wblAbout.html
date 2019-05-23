@@ -46,7 +46,6 @@
 		<div class="row keepTheDistanceBelow">
 			<div class="col-xs-8">
 				<div style="float: left;"><div fb-like="formData.socialMediaUrl"></div></div>
-				<div style="float: left; margin-left: 3px;"><div google-plus="formData.socialMediaUrl"></div></div>
 				<div style="float: left; margin-left: -20px;"><div tweet="formData.socialMediaModelName" tweet-url="formData.socialMediaUrl"></div></div>
 			</div>
 		</div>
@@ -94,9 +93,11 @@
 
         <div class="row keepTheDistanceBelow dividerLineBetween">
             <div class="col-xs-3"><span class="formTitle" translate>Definition Description:</span></div>
-			<div class="col-xs-8"><span style="font-weight: normal; white-space: pre-wrap;" ng-bind-html='formData.description.substr(0,10000) | translate'></span></div>
-			<span ng-show="wblMeta.webble.description.length > 10000">...</span>
-            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{tooltip.description | translate}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
+			<div class="col-xs-8">
+				<span style="font-weight: normal; white-space: pre-wrap;" ng-bind-html='formData.description.substr(0,formData.DescMaxLen) | translate'></span>
+				<span ng-show="formData.DescMaxLen != undefined && formData.description.length > formData.DescMaxLen" style="cursor: pointer;" ng-mousedown="ellipsisClicked($event)">...</span>
+			</div>
+            <div class="col-xs-1" tooltip-placement="{{adjustTooltipPlacementByDeviceWidth()}}" uib-tooltip="{{(tooltip.description | translate) + ((formData.DescMaxLen != undefined && formData.DescMaxLen < formData.description.length) ? ('\n(Max Character length: ' + formData.DescMaxLen + ')\nTo see the full text, click the ellipsis (...) at the end of the description to open a popup window.'): '')}}"><span style="padding-left: 3px; padding-right: 3px; background-color: white; border: 1px solid #0000ff; font-size: 0.9em;">?</span></div>
         </div>
 
         <div class="row keepTheDistanceBelow dividerLineBetween">

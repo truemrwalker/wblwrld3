@@ -1,7 +1,7 @@
 //======================================================================================================================
-// Controllers for SoftSensorAppPlantVisualizer for Webble World v3.0 (2013)
-// Created By: Jonas Sjobergh
-// Edited By: Micke Kuwahara (truemrwalker)
+// Controllers for DigDash_SensorPlacementSchematic for Webble World v3.0 (2013)
+// Created By: Micke Kuwahara (truemrwalker)
+// Based on previous work by: Jonas Sjobergh
 //======================================================================================================================
 
 //=======================================================================================
@@ -9,7 +9,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log, Slot, Enum) {
+wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, $log, Slot, Enum) {
 
 	//=== PROPERTIES ====================================================================
 	$scope.stylesToSlots = {
@@ -19,8 +19,8 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	$scope.customMenu = [];
 	$scope.customInteractionBalls = [];
 
-	$scope.displayText = "Plant Visualizer";
-	$scope.plantName = "";
+	$scope.displayText = "Schematic Visualizer";
+	$scope.SchematicName = "";
 
 	// graphics
 	var myCanvasElement = null;
@@ -47,7 +47,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	var clickStart = null;
 
 	// data from parent
-	var plant = [];
+	var schematic = [];
 	var sensors = [];
 	var drawH = 1;
 	var drawW = 1;
@@ -122,7 +122,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 				updateGraphics();
 				break;
 
-			case "PlantLayout":
+			case "SchematicLayout":
 				parseData();
 				break;
 			case "Sensors":
@@ -363,16 +363,16 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		$scope.addPopupMenuItemDisabled('EditCustomInteractionObjects');
 		$scope.addPopupMenuItemDisabled('AddCustomSlots');
 
-		var ios = $scope.theInteractionObjects;
-		for(var i = 0, io; i < ios.length; i++){
-			io = ios[i];
-			if(io.scope().getName() == 'Resize'){
-				io.scope().setIsEnabled(false);
-			}
-			if(io.scope().getName() == 'Rotate'){
-				io.scope().setIsEnabled(false);
-			}
-		}
+		// var ios = $scope.theInteractionObjects;
+		// for(var i = 0, io; i < ios.length; i++){
+		// 	io = ios[i];
+		// 	if(io.scope().getName() == 'Resize'){
+		// 		io.scope().setIsEnabled(false);
+		// 	}
+		// 	if(io.scope().getName() == 'Rotate'){
+		// 		io.scope().setIsEnabled(false);
+		// 	}
+		// }
 
 		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
 		if(myCanvasElement.length > 0) {
@@ -447,10 +447,10 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			undefined
 		));
 
-		$scope.addSlot(new Slot('PlantLayout',
+		$scope.addSlot(new Slot('SchematicLayout',
 			[["line", 0, 0, 1,1]],
-			'Plant Layout',
-			'Vector graphics showing the plant layout.',
+			'Schematic Layout',
+			'Vector graphics showing the Schematic layout.',
 			$scope.theWblMetadata['templateid'],
 			undefined,
 			undefined
@@ -469,7 +469,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		// Dashboard Plugin slots -----------------------------------------------------------
 
 		$scope.addSlot(new Slot('PluginName',
-			"Plant Visualizer",
+			"Schematic Visualizer",
 			'Plugin Name',
 			'The name to display in menus etc.',
 			$scope.theWblMetadata['templateid'],
@@ -504,6 +504,8 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			undefined
 		));
 
+		// $scope.setResizeSlots('DrawingArea:width', 'DrawingArea:height');
+
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 			mySlotChange(eventData);
 		});
@@ -529,7 +531,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	//===================================================================================
 	function debugLog(message) {
     	if($scope.doDebugLogging) {
-    		$log.log("SoftSensor Plant Visualizer: " + message);
+    		$log.log("SoftSensor Schematic Visualizer: " + message);
     	}
     };
 	//===================================================================================
@@ -634,8 +636,8 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// This method resets certain variables used by the Webble.
 	//===================================================================================
 	function resetVars() {
-		$scope.plantName = "";
-		plant = [];
+		$scope.SchematicName = "";
+		schematic = [];
 		sensors = [];
 	};
 	//===================================================================================
@@ -648,13 +650,13 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	function parseData() {
 		// debugLog("parseData");
 		resetVars();
-		var newPlant = $scope.gimme("PlantLayout");
-    	if(typeof newPlant === 'string') {
-    		newPlant = JSON.parse(newPlant);
+		var newSchematic = $scope.gimme("SchematicLayout");
+    	if(typeof newSchematic === 'string') {
+    		newSchematic = JSON.parse(newSchematic);
     	}
 
     	// do some sanity checking of input here
-		plant = newPlant;
+		schematic = newSchematic;
 		var newSensors = $scope.gimme("Sensors");
 		if(typeof newSensors === 'string') {
 			newSensors = JSON.parse(newSensors);
@@ -820,7 +822,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
     	drawW = W - leftMarg - rightMarg;
     	drawH = H - topMarg - bottomMarg * 2 - fontSize;
     	drawBackground(W, H);
-    	drawPlant();
+    	drawSchematic();
     	drawSensors();
 	};
 	//===================================================================================
@@ -876,12 +878,12 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 
 	//===================================================================================
-	// Draw Plant
-	// This method draws the plant image
+	// Draw Schematic
+	// This method draws the Schematic image
 	//===================================================================================
-	function drawPlant() {
-		for(var i = 0; i < plant.length; i++) {
-			var item = plant[i];
+	function drawSchematic() {
+		for(var i = 0; i < schematic.length; i++) {
+			var item = schematic[i];
 	    
 	    	switch (item[0]) {
 	    		case "line":
@@ -991,7 +993,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 	//===================================================================================
 	// Draw Sensors
-	// This method draws the various sensor images on the plant
+	// This method draws the various sensor images on the Schematic
 	//===================================================================================
 	function drawSensors() {
 		dotSize = parseInt($scope.gimme('DotSize'));
