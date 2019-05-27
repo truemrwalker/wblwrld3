@@ -237,7 +237,7 @@ The relevant environment variables that can be used in "production" deployments 
 Instructions on how to create an ID and secret for applications using Google's login service can be found here:
 https://developers.google.com/identity/sign-in/web/devconsole-project
 
-Additionally, the "Google+ (login) API" has to be *enabled* in Google's application console and the correct callback
+Additionally, the "Google (login) API" has to be *enabled* in Google's application console and the correct callback
 URLs have to be configured. For example:
 
 * ``` https://localhost:7443/auth/google/callback ```

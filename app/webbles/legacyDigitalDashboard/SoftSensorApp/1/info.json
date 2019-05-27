@@ -1,7 +1,7 @@
 {
  "noautogen":false,
  "image":"images/notFound.png",
- "name":"SoftSensorApp",
+ "name":"Soft Sensor App",
  "description":"A Webble that loads a few DigitalDashboard components, connects them, and loads some data. Sets up a visualization environment to show two different modelling methods dealing with sensor failures in a chemical plant with many different sensors. Old version of a demo application for the Hands-on Portal.",
  "keywords":"DigitalDashboard,Hands-on Portal,hop,soft sensors,modelling,linear regression,chemical plant,visualization,coordinated views",
  "author":"legacyDigitalDashboard"

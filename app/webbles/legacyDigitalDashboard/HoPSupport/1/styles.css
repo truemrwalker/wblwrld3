@@ -1,17 +1,17 @@
 /*/=====================================================================================================================
-// Styles for SoftSensorApp for Webble World v3.0 (2013)
-// Created By: Jonas Sjobergh
-// Edited By: Micke Kuwahara (truemrwalker)
+// Styles for Hands-on-Portal Support for Webble World v3.0 (2013)
+// Created By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================*/
 
 /*/ === BEGIN: Classes === /*/
 
 .softSensorAppWrapper{
-    font-size: 48px;
-    width: 450px;
-    height: 250px;
-    background-color: grey;
-    border: 2px solid black;
+    font-size: 9px;
+    width: 20px;
+    height: 20px;
+	color: white;
+    background-color: #961c1c;
+    border: 1px solid black;
     border-radius:5px;
 }
 

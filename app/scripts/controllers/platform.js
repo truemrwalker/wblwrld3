@@ -76,11 +76,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.getPlatformBkgColor = function(){return platformBkgColor_;};
     $scope.setPlatformBkgColor = function(newPlatformBkgColor){platformBkgColor_ = newPlatformBkgColor;};
     var mwpVisibility_ = 'none';
-    $scope.getMWPVisibility = function(){return mwpVisibility_;};
-    $scope.setMWPVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){mwpVisibility_ = newVal;}else{mwpVisibility_ = 'none';}};
+    $scope.getMWPVisibility = function(){ if (mwpVisibility_ === false) { return 'none'; } else{ return mwpVisibility_; } };
+    $scope.setMWPVisibility = function(newVal){ if(newVal == 'inline-block' || newVal == 'none'){ mwpVisibility_ = newVal; }else if(newVal===false){ mwpVisibility_ = false; }else{ mwpVisibility_ = 'none'; } };
     var vcvVisibility_ = 'none';
-    $scope.getVCVVisibility = function(){return vcvVisibility_;};
-    $scope.setVCVVisibility = function(newVal){if(newVal == 'inline-block' || newVal == 'none'){vcvVisibility_ = newVal;}else{vcvVisibility_ = 'none';}};
+    $scope.getVCVVisibility = function(){ if (vcvVisibility_ === false) { return 'none'; } else{ return vcvVisibility_; } };
+    $scope.setVCVVisibility = function(newVal){ if(newVal == 'inline-block' || newVal == 'none'){ vcvVisibility_ = newVal; }else if(newVal===false){ vcvVisibility_ = false; }else{ vcvVisibility_ = 'none'; } };
 	var appViewOpen = true;
 	var templateRevisionBehavior_ = Enum.availableOnePicks_templateRevisionBehaviors.askEverytime;
 	var untrustedWblsBehavior_ = Enum.availableOnePicks_untrustedWebblesBehavior.allowAll;
@@ -1119,8 +1119,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var watchConfiguration = function(){
         // Listen to menu visibility, in order to adjust workspace top alignment
         $scope.$watch(function(){ //noinspection JSBitwiseOperatorUsage
-            return ($scope.getMenuModeEnabled() && (parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10))); }, function(newValue, oldValue) {
-            if(!newValue){
+        	return ($scope.getMenuModeEnabled() && (parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10))); }, function(newValue, oldValue) {
+        	if(!newValue){
                 $scope.wsTopPos = '0px';
             }
             else{
@@ -4683,6 +4683,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             else{
                 platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
+			if($scope.getMenuModeEnabled() == false && currentExecutionMode_ == Enum.availableOnePicks_ExecutionModes.Developer){
+				$scope.setMenuModeEnabled(true);
+				platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
+			}
         }
         else if (sublink == 'altf3' || (whatKeys.theKey == 'F3' || (whatKeys.theAltKey && whatKeys.theKey == 'F3'))){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited && currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
@@ -5128,8 +5132,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         }
         else if(sublink == 'wblprops' || (whatKeys.theAltKey && !whatKeys.theShiftKey && whatKeys.theKey == 'K')){
-            if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
+            if ((currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && mwpVisibility_ !== false) || currentExecutionMode_ == Enum.availableOnePicks_ExecutionModes.Developer) {
 				if(mwpVisibility_ == 'none'){
+					mwpVisibility_ = 'inline-block';
+				}
+				else if(mwpVisibility_ === false){
 					mwpVisibility_ = 'inline-block';
 				}
 				else{
@@ -5145,10 +5152,13 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
         //==== VIEW ============================
         else if(sublink == 'toggleconn' || (whatKeys.theAltKey && whatKeys.theKey == 'NUM 9')){
-            if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim) {
+            if ((currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && vcvVisibility_!==false) || currentExecutionMode_ == Enum.availableOnePicks_ExecutionModes.Developer) {
                 if(vcvVisibility_ == 'none'){
                     vcvVisibility_ = 'inline-block';
                 }
+				else if(mwpVisibility_ === false){
+					vcvVisibility_ = 'inline-block';
+				}
                 else{
                     vcvVisibility_ = 'none';
                 }

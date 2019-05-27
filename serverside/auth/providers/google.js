@@ -20,7 +20,7 @@
 //
 
 /**
- * @overview Implements the logic for authenticating users via Google+ login.
+ * @overview Implements the logic for authenticating users via Google login.
  *
  * See also: https://github.com/jaredhanson/passport-google-oauth
  * 
@@ -87,7 +87,7 @@ module.exports = function(app, config, gettext, passport, User, doneAuth) {
 	// Skip completely the setup of the library and routes if not configured
 	//
 	if (!config.GOOGLE_CLIENT_ID || !config.GOOGLE_CLIENT_SECRET)
-		return console.log("Auth: Google+ login is not configured and so it will be disabled");
+		return console.log("Auth: Google login is not configured and so it will be disabled");
 
 	////////////////////////////////////////////////////////////////////
 	// Setup strategy

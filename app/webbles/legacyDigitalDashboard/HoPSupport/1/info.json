@@ -1,0 +1,8 @@
+{
+ "noautogen":false,
+ "image":"images/wbls/HoPSupport.png",
+ "name":"Hands-on-Portal Support",
+ "description":"This Webble handles and manages all Hand-on-Portal specific tasks, that is not technically required or needed by the Digital Dashboard, but is needed and required by the Hands-on-Portal environment. It is not useful for much else though, so if not within HoP environnment this Webble is basically only useful if you need to develop a similar Webble for your environment and need a head start.",
+ "keywords":"Hands-on-Portal,hop",
+ "author":"legacyDigitalDashboard"
+}

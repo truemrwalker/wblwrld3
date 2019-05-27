@@ -1,5 +1,5 @@
 ﻿/**
- * AngularJS directives for social sharing buttons - Facebook Like, Google+, Twitter and Pinterest
+ * AngularJS directives for social sharing buttons - Facebook Like, Twitter and Pinterest
  * @author Jason Watmore <jason@pointblankdevelopment.com.au> (http://jasonwatmore.com)
  * @version 1.2.0
  */
@@ -47,50 +47,6 @@
                           } else {
                               element.html('<div class="fb-like"' + (!!scope.fbLike ? ' data-href="' + scope.fbLike + '"' : '') + ' data-layout="button" data-action="like" data-show-faces="false" data-share="true" data-kid_directed_site="true"></div>');
                               $window.FB.XFBML.parse(element.parent()[0]);
-                          }
-                      }
-                  }
-              };
-          }
-      ])
-
-      .directive('googlePlus', [
-          '$window', '$timeout', function ($window, $timeout) {
-              return {
-                  restrict: 'A',
-                  scope: {
-                      googlePlus: '=?'
-                  },
-                  link: function (scope, element, attrs) {
-					  $timeout(function(){
-						  if (!$window.gapi) {
-							  // Load Google SDK if not already loaded
-							  $.getScript('//apis.google.com/js/platform.js', function () {
-								  renderPlusButton();
-							  });
-						  } else {
-							  renderPlusButton();
-						  }
-					  });
-
-                      var watchAdded = false;
-                      function renderPlusButton() {
-                          if (!!attrs.googlePlus && !scope.googlePlus && !watchAdded) {
-                              // wait for data if it hasn't loaded yet
-                              watchAdded = true;
-                              var unbindWatch = scope.$watch('googlePlus', function (newValue, oldValue) {
-                                  if (newValue) {
-                                      renderPlusButton();
-
-                                      // only need to run once
-                                      unbindWatch();
-                                  }
-
-                              });
-                              return;
-                          } else {
-                              element.html('<div class="g-plusone"' + (!!scope.googlePlus ? ' data-href="' + scope.googlePlus + '"' : '') + ' data-size="medium"></div>');
-                              $window.gapi.plusone.go(element.parent()[0]);
                           }
                       }
                   }

@@ -22,8 +22,6 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
     $scope.displayText = "LinearRegression";
     $scope.dataSetName = "";
 
-    var myPath = "";
-
     // graphics
     var bgCanvas = null;
     var bgCtx = null;
@@ -95,6 +93,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
     // Additional
 	$scope.doDebugLogging = true;
+	var myPath = "";
 	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 
@@ -1027,6 +1026,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 		return zoomMinY + (drawH - (p - topMarg)) / drawH * (zoomMaxY - zoomMinY); // flip Y-axis
 	};
+	//===================================================================================
 
 
 	//===================================================================================
@@ -1041,8 +1041,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			result.selections.push({'minX':selections[sel][0], 'maxX':selections[sel][1], 'minY':selections[sel][2], 'maxY':selections[sel][3]});
 		}
 
-		if(JSON.stringify($scope.gimme('InternalSelections'))
-			!= JSON.stringify(result)) {
+		if(JSON.stringify($scope.gimme('InternalSelections')) != JSON.stringify(result)) {
 			internalSelectionsInternallySetTo = result;
 			$scope.set('InternalSelections', result);
 		}
@@ -1682,6 +1681,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method starts to do linear regression in the main thread.
 	//===================================================================================
 	function linearRegressionMainThread () {
+		// simple "Ordinary least squares" solve for beta, beta = invert( transp(X) * X ) * transp(X)*y. use beta to fill in missing values y = X * beta.
 		// debugLog("linearRegression");
 		var missingVal = $scope.gimme('ValueForMissingDataPoints');
 		if(missingVal == "null") {
@@ -2446,7 +2446,6 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				}
     	    }
     	}
-	
 
 		// next, draw the filled in (linearRegression result) values
 		if(linearRegressionRes.length > 0) {
@@ -2617,9 +2616,6 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
         	}
         }
 	};
-	//===================================================================================
-	// Draw Dot
-	// This method draws a dot based on multiple specified variables.
 	//===================================================================================
 
 
