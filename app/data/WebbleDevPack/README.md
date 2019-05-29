@@ -1525,6 +1525,22 @@ var cuteKittenImg = $('<img id="cuteKitten">');
 cuteKittenImg.attr('src', cuteKittenImgUrl);
 $scope.getWSE().append(cuteKittenImg);
 ```
+###isSystemDoneLoadingWebbles ![Method][meth]
+Returns true or false whether the system is done loading Webbles or not. False if it is still busy loading Webbles and True if it is done and finished and went back to idling.
+	
+####isSystemDoneLoadingWebbles()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * (Boolean) True or False whether the system is done loading Webbles or not
+
+```JavaScript
+// Checks if the system is done loading webbles and if so tells the console about it.
+if($scope.isSystemDoneLoadingWebbles()){
+	$log.log( "The system is done loading Webbles for now" );
+});
+```
 ###_loadWblFromURL_ ![Method][meth]
 Tries to load a Webble JSON file from a URL provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
 	
