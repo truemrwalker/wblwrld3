@@ -11,70 +11,52 @@
 //=======================================================================================
 wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, Enum, $location, $timeout, wwConsts) {
 
-    //=== PROPERTIES ====================================================================
-    $scope.stylesToSlots = {
-        softSensorAppWrapper: ['width', 'height', 'background-color', 'border', 'border-radius', 'opacity'],
-    };
+	//=== PROPERTIES ====================================================================
+	$scope.stylesToSlots = {
+		softSensorAppWrapper: ['width', 'height', 'background-color', 'border', 'border-radius', 'opacity'],
+	};
 
-    $scope.displayText = "Loading the Soft Sensor environment. Please wait...";
-	$scope.doDebugLogging = true;
+	$scope.displayText = "Loading the Soft Sensor environment. Please wait...";
+	var preDebugMsg = "SoftSensorApp: ";
 
-    var neededChildren = {};
-    var loadedChildren = {};
-    var webbleDefNames = {};
-    var setupDone = false;
-    var dataSourcesToListenTo = [];
-    var listeners = [];
-    var times = [];
-    var dependents = [];
-    var inputs = [];
-    var mappingSet = 0;
-    var mappingSourceName = "";
-    var mappingSetName = "";
-    var mappingSetIdx = 0;
-    var plantSelections = {};
-    var droppedSensors = [];
-
-
-
-    //=== EVENT HANDLERS ================================================================
+	var neededChildren = {};
+	var loadedChildren = {};
+	var webbleDefNames = {};
+	var setupDone = false;
+	var dataSourcesToListenTo = [];
+	var listeners = [];
+	var times = [];
+	var dependents = [];
+	var inputs = [];
+	var mappingSet = 0;
+	var mappingSourceName = "";
+	var mappingSetName = "";
+	var mappingSetIdx = 0;
+	var plantSelections = {};
+	var droppedSensors = [];
 
 
-    //=== METHODS & FUNCTIONS ===========================================================
+
+	//=== EVENT HANDLERS ================================================================
 
 
-    //===================================================================================
-    // Webble template Initialization
-    //===================================================================================
-    $scope.coreCall_Init = function(theInitWblDef){
-		// debugLog("starting");
-		var url = (window.location != window.parent.location) ? document.referrer : document.location;
-		debugLog("I believe my parent is on URL: " + url);
-		var urlLower = url.toString().toLowerCase();
-		var inPortal = false;
+	//=== METHODS & FUNCTIONS ===========================================================
 
-		if(urlLower.indexOf("/wiki/") >= 0 || urlLower.indexOf(":7447") >= 0) {
-			inPortal = true;
-		}
-		debugLog("In Portal: " + inPortal);
 
-		if(inPortal) {
-			$scope.setExecutionMode(1);
-			$scope.setMWPVisibility(false);
-			$scope.setVCVVisibility(false);
-			$scope.setMenuModeEnabled(false);
-		}
-
-		$scope.set("root:opacity", 0.1);
+	//===================================================================================
+	// Webble template Initialization
+	//===================================================================================
+	$scope.coreCall_Init = function(theInitWblDef){
+		//$log.log(preDebugMsg + "starting");
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
 			var newLoadedWblId = eventData.targetId;
-			// debugLog("loadingWebble: " + newLoadedWblId);
+			//$log.log(preDebugMsg + "loadingWebble: " + newLoadedWblId);
 			if(setupDone) { // check if data source Webble
 				var thisChild = $scope.getWebbleByInstanceId(newLoadedWblId);
-				var defid = thisChild.scope().theWblMetadata['templateid'];
+				var templateId = thisChild.scope().theWblMetadata['templateid'];
 
-				if(defid == "DigitalDashboardSmartDataSource") {
+				if(templateId == "DigitalDashboardSmartDataSource") {
 					dataSourcesToListenTo.push(newLoadedWblId);
 					listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventDataInner){
 						childSlotchange(eventDataInner.targetId, eventDataInner.slotName);
@@ -89,12 +71,12 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 					}
 				}
 
-				if(neededChildren.hasOwnProperty(defid)) {
-					loadedChildren[defid].push(newLoadedWblId);
-					if(loadedChildren[defid].length == 1 && neededChildren[defid] > 1) {
+				if(neededChildren.hasOwnProperty(templateId)) {
+					loadedChildren[templateId].push(newLoadedWblId);
+					if(loadedChildren[templateId].length == 1 && neededChildren[templateId] > 1) {
 						var original = thisChild;
-						for(var copies = loadedChildren[defid].length; copies < neededChildren[defid]; copies++) {
-							// debugLog("making more " + defid + " Webbles.");
+						for(var copies = loadedChildren[templateId].length; copies < neededChildren[templateId]; copies++) {
+							//$log.log(preDebugMsg + "making more " + templateId + " Webbles.");
 							original.scope().duplicate({x: 15, y: 15}, undefined);
 						}
 					} else {
@@ -103,27 +85,17 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 				}
 			} else {
 				var thisChild = $scope.getWebbleByInstanceId(newLoadedWblId);
-				var defid = thisChild.scope().theWblMetadata['templateid'];
+				var templateId = thisChild.scope().theWblMetadata['templateid'];
 
-				if(defid && defid !== "") {
-					addNewlyLoadedChild(newLoadedWblId, defid);
+				if(templateId && templateId !== "") {
+					addNewlyLoadedChild(newLoadedWblId, templateId);
 				}
 			}
 		});
 
+		$scope.set("softSensorAppWrapper:opacity", 0.1);
+		
 		loadWebbleDefs();
-    };
-    //===================================================================================
-
-
-	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("SoftSensorApp: " + message);
-		}
 	};
 	//===================================================================================
 
@@ -133,7 +105,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// This method reacts on changes in certain slot changes in children.
 	//===================================================================================
 	function childSlotchange(childId, slotName) {
-		// debugLog("childSlotChange");
+		//$log.log(preDebugMsg + "childSlotChange");
 		if(slotName == 'DataChanged' || slotName == 'ProvidedFormatChanged') {
 			checkDataSource(childId);
 		}
@@ -145,42 +117,44 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// Add Newly Loaded Child
 	// This method add newly loaded child to the list of webbles to be managed.
 	//===================================================================================
-	var addNewlyLoadedChild = function(webbleID, name) {
-		// debugLog("addNewlyLoadedChild, " + webbleID + " " + name);
+	var addNewlyLoadedChild = function(webbleID, templateId) {
+		//$log.log(preDebugMsg + "addNewlyLoadedChild, " + webbleID + " " + templateId);
 		if(!setupDone) {
-			if(loadedChildren.hasOwnProperty(name)) {
-				loadedChildren[name].push(webbleID);
+			if(loadedChildren.hasOwnProperty(templateId)) {
+				loadedChildren[templateId].push(webbleID);
 			} else {
 				return;
 			}
 
-			$scope.getWebbleByInstanceId(webbleID).scope().set("root:opacity", 0);
+			var newWbl = $scope.getWebbleByInstanceId(webbleID);
+			newWbl.scope().wblStateFlags.rootOpacityMemory = 0.0;
+			newWbl.scope().set("root:opacity", 0);
 
-			// debugLog("check if we should duplicate " + name);
+			//$log.log(preDebugMsg + "check if we should duplicate " + templateId);
 			// check if this is a newly loaded template and if we should duplicate this
-			if(loadedChildren[name].length >= 1) {
-				if(neededChildren[name] > loadedChildren[name].length) {
+			if(loadedChildren[templateId].length >= 1) {
+				if(neededChildren[templateId] > loadedChildren[templateId].length) {
 					var original = $scope.getWebbleByInstanceId(webbleID);
-					for(var copies = loadedChildren[name].length; copies < neededChildren[name]; copies++) {
-						// debugLog("making more " + name + " Webbles.");
+					for(var copies = loadedChildren[templateId].length; copies < neededChildren[templateId]; copies++) {
+						//$log.log(preDebugMsg + "making more " + templateId + " Webbles.");
 						original.scope().duplicate({x: 15, y: 15}, undefined);
 					}
 					return; // wait for the duplicates to arrive
 				}
 			}
 
-			// debugLog(" check if we have everything");
+			//$log.log(preDebugMsg + " check if we have everything");
 			// check if all the Webbles we need are here yet
 			var allHere = true;
 			for (var type in neededChildren) {
 				if (neededChildren.hasOwnProperty(type)) {
-					// debugLog("check if we have " + type + ", want " + neededChildren[type] + ", have " + loadedChildren[type].length);
+					//$log.log(preDebugMsg + "check if we have " + type + ", want " + neededChildren[type] + ", have " + loadedChildren[type].length);
 					if(neededChildren[type] > loadedChildren[type].length) {
-						// debugLog("not enough " + type);
+						//$log.log(preDebugMsg + "not enough " + type);
 						allHere = false;
 
 						if(loadedChildren[type].length == 0) {
-							// debugLog("Need to download Webble definition for " + type + "(" + webbleDefNames[type] + ")");
+							//$log.log(preDebugMsg + "Need to download Webble definition for " + type + "(" + webbleDefNames[type] + ")");
 							$scope.downloadWebbleDef(webbleDefNames[type]);
 						}
 						break;
@@ -189,7 +163,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 			}
 
 			if(allHere) {
-				// debugLog("all Webbles loaded.");
+				//$log.log(preDebugMsg + "all Webbles loaded.");
 				setAllWebbleSlotsEtc();
 			}
 		}
@@ -202,7 +176,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// This method checks the data source.
 	//===================================================================================
 	function checkDataSource(webbleID) {
-		// debugLog("checkDataSource");
+		//$log.log(preDebugMsg + "checkDataSource");
 		var webble = $scope.getWebbleByInstanceId(webbleID);
 		var format = webble.scope().gimme('ProvidedFormat');
 		if(typeof format === 'string') {
@@ -241,6 +215,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 			webble.scope().paste(dashboard);
 			webble.scope().set("root:top", 395);
 			webble.scope().set("root:left", 10);
+			webble.scope().wblStateFlags.rootOpacityMemory = 0.95;
 			webble.scope().set("root:opacity", 0.95);
 			var sourceName = webble.scope().gimme("PluginName");
 
@@ -325,12 +300,12 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// This method checks if Webbles are still loaded.
 	//===================================================================================
 	function checkIfWebblesAreStillLoaded() {
-		for(var name in neededChildren) {
-			if(neededChildren[name] > 0) {
+		for(var templateId in neededChildren) {
+			if(neededChildren[templateId] > 0) {
 				var toRemove = [];
 
-				for(var i = 0; i < loadedChildren[name].length; i++) {
-					var webble = $scope.getWebbleByInstanceId(loadedChildren[name][i]);
+				for(var i = 0; i < loadedChildren[templateId].length; i++) {
+					var webble = $scope.getWebbleByInstanceId(loadedChildren[templateId][i]);
 
 					if(!webble) {
 						toRemove.push(i);
@@ -339,7 +314,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 
 				var removed = 0;
 				for(i = 0; i < toRemove.length; i++) {
-					loadedChildren[name].splice(toRemove[i] - removed, 1);
+					loadedChildren[templateId].splice(toRemove[i] - removed, 1);
 					removed++;
 				}
 			}
@@ -353,15 +328,15 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// This method duplicates needed Webbles once again.
 	//===================================================================================
 	function duplicateNeededWebblesAgain() {
-		for(var name in neededChildren) {
-			if(neededChildren[name] > 0) {
-				if(loadedChildren[name].length == 0) {
+		for(var templateId in neededChildren) {
+			if(neededChildren[templateId] > 0) {
+				if(loadedChildren[templateId].length == 0) {
 					$scope.downloadWebbleDef(webbleDefNames[type]);
 					return;
 
-				} else if(neededChildren[name] > loadedChildren[name].length) {
-					var original = $scope.getWebbleByInstanceId(loadedChildren[name][0]);
-					for(var copies = loadedChildren[name].length; copies < neededChildren[name]; copies++) {
+				} else if(neededChildren[templateId] > loadedChildren[templateId].length) {
+					var original = $scope.getWebbleByInstanceId(loadedChildren[templateId][0]);
+					for(var copies = loadedChildren[templateId].length; copies < neededChildren[templateId]; copies++) {
 						original.scope().duplicate({x: 15, y: 15}, undefined);
 					}
 					return;
@@ -377,9 +352,9 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// This method checks if all Webbles are once again available.
 	//===================================================================================
 	function checkIfAllWebblesAreAvailableAgain() {
-		for(var name in neededChildren) {
-			if(neededChildren[name] > 0) {
-				if(neededChildren[name] > loadedChildren[name].length) {
+		for(var templateId in neededChildren) {
+			if(neededChildren[templateId] > 0) {
+				if(neededChildren[templateId] > loadedChildren[templateId].length) {
 					return;
 				}
 			}
@@ -451,7 +426,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	// This method builds the data mapping.
 	//===================================================================================
 	function buildMapping(times, dependents, inputs, set, sourceName, setName, setIdx, plantSelections, droppedSensors) {
-		// debugLog("buildMapping");
+		//$log.log(preDebugMsg + "buildMapping");
 		if(times.length <= 0 || dependents.length <= 0 || inputs.length <= 0 || loadedChildren["DigitalDashboard"][0] <= 0 || loadedChildren["DigitalDashboardPluginScatterPlots"][0] <= 0 || loadedChildren["DigitalDashboardPluginLinearRegression"][0] <= 0 || loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"][0] <= 0) {
 			return;
 		}
@@ -560,7 +535,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 		}
 		mapping.plugins.push(plugin);
 
-		// debugLog("build this mapping: " + JSON.stringify(mapping));
+		//$log.log(preDebugMsg + "build this mapping: " + JSON.stringify(mapping));
 		$timeout(function(){$scope.getWebbleByInstanceId(loadedChildren["DigitalDashboard"][0]).scope().set("Mapping", mapping); resetAllSelections();}, 1);
 	};
 	//===================================================================================
@@ -620,9 +595,11 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 		for (var t in loadedChildren) {
 			if (loadedChildren.hasOwnProperty(t)) {
 				for(var w = 0; w < loadedChildren[t].length; w++) {
-					$scope.getWebbleByInstanceId(loadedChildren[t][w]).scope().set("root:opacity", 1);
-                }
-            }
+					var wbl = $scope.getWebbleByInstanceId(loadedChildren[t][w]);
+					wbl.scope().wblStateFlags.rootOpacityMemory = 1;
+					wbl.scope().set("root:opacity", 1);
+				}
+			}
 		}
 
 		// Digital Dashboard
@@ -631,23 +608,23 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 		dashboard.scope().set("root:left", 0);
 		dashboard.scope().set("dashboardBackgroundBox:opacity", 0.05);
 		dashboard.scope().set("Colors", {"skin":{"color":"#ffe6cc","border":"#ffa94d","gradient":[{"pos":0,"color":"#fff3e6"},{"pos":0.75,"color":"#ffe6cc"},{"pos":1,"color":"#ffdab3"}]},"selection":{"color":"#FFEBCD","border":"#FFA500","gradient":[{"pos":0,"color":"#FFFBF5"},{"pos":1,"color":"#FFEBCD"}]},"groups":{"0":{"color":"#A9A9A9","gradient":[{"pos":0,"color":"#EEEEEE"},{"pos":0.75,"color":"#A9A9A9"}]},"1":{"color":"#0000FF","gradient":[{"pos":0,"color":"#CCCCFF"},{"pos":0.75,"color":"#0000FF"}]},"6":{"color":"#7FFF00","gradient":[{"pos":0,"color":"#E5FFCC"},{"pos":0.75,"color":"#7FFF00"}]},"3":{"color":"#8A2BE2","gradient":[{"pos":0,"color":"#E8D5F9"},{"pos":0.75,"color":"#8A2BE2"}]},"4":{"color":"#FF7F50","gradient":[{"pos":0,"color":"#FFE5DC"},{"pos":0.75,"color":"#FF7F50"}]},"5":{"color":"#DC143C","gradient":[{"pos":0,"color":"#F8D0D8"},{"pos":0.75,"color":"#DC143C"}]},"2":{"color":"#006400","gradient":[{"pos":0,"color":"#CCE0CC"},{"pos":0.75,"color":"#006400"}]},"7":{"color":"#483D8B","gradient":[{"pos":0,"color":"#DAD8E8"},{"pos":0.75,"color":"#483D8B"}]},"8":{"color":"#FF1493","gradient":[{"pos":0,"color":"#FFD0E9"},{"pos":0.75,"color":"#FF1493"}]},"9":{"color":"#1E90FF","gradient":[{"pos":0,"color":"#D2E9FF"},{"pos":0.75,"color":"#1E90FF"}]},"10":{"color":"#FFD700","gradient":[{"pos":0,"color":"#FFF7CC"},{"pos":0.75,"color":"#FFD700"}]},"11":{"color":"#8B4513","gradient":[{"pos":0,"color":"#E8DAD0"},{"pos":0.75,"color":"#8B4513"}]},"12":{"color":"#FFF5EE","gradient":[{"pos":0,"color":"#FFFDFC"},{"pos":0.75,"color":"#FFF5EE"}]},"13":{"color":"#00FFFF","gradient":[{"pos":0,"color":"#CCFFFF"},{"pos":0.75,"color":"#00FFFF"}]},"14":{"color":"#000000","gradient":[{"pos":0,"color":"#CCCCCC"},{"pos":0.75,"color":"#000000"}]}}});
-	
+
 		for(var i = 0; i < loadedChildren["DigitalDashboardPluginScatterPlots"].length; i++) {
 			var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginScatterPlots"][i]);
 			plugin.scope().set("DrawingArea:width", 180);
 			plugin.scope().set("DrawingArea:height", 160);
 			plugin.scope().paste(dashboard);
 
-	    	if(i < 7) {
-	    		plugin.scope().set("root:top", 180*i + 20);
-	    		plugin.scope().set("root:left", 300);
-	    	} else if(i < 14) {
-	    		plugin.scope().set("root:top", 180*(i-7) + 20);
-	    		plugin.scope().set("root:left", 500);
-	    	} else {
-	    		plugin.scope().set("root:top", 180*(i-14) + 20);
-	    		plugin.scope().set("root:left", 700);
-	    	}
+			if(i < 7) {
+				plugin.scope().set("root:top", 180*i + 20);
+				plugin.scope().set("root:left", 300);
+			} else if(i < 14) {
+				plugin.scope().set("root:top", 180*(i-7) + 20);
+				plugin.scope().set("root:left", 500);
+			} else {
+				plugin.scope().set("root:top", 180*(i-14) + 20);
+				plugin.scope().set("root:left", 700);
+			}
 		}
 
 		for(var i = 0; i < loadedChildren["DigitalDashboardPluginLinearRegression"].length; i++) {
@@ -674,6 +651,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 
 		for(var i = 0; i < loadedChildren["DigitalDashboardSmartDataSource"].length; i++) {
 			var plugin = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardSmartDataSource"][i]);
+			plugin.scope().wblStateFlags.rootOpacityMemory = 1;
 			plugin.scope().set("root:opacity", 1);
 			plugin.scope().set("backgroundBox:height", "75px");
 			plugin.scope().set("PluginName", "Data");
@@ -685,33 +663,35 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 			dataSourcesToListenTo.push(loadedChildren["DigitalDashboardSmartDataSource"][i]);
 			listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventDataInner){
 				childSlotchange(eventDataInner.targetId, eventDataInner.slotName);
-				}, id, 'ProvidedFormatChanged'));
+			}, id, 'ProvidedFormatChanged'));
 
-	    	listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventDataInner){
-	    		childSlotchange(eventDataInner.targetId, eventDataInner.slotName);
-	    		}, id, 'DataChanged'));
-	    
-	    	checkDataSource(loadedChildren["DigitalDashboardSmartDataSource"][i]);
+			listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventDataInner){
+				childSlotchange(eventDataInner.targetId, eventDataInner.slotName);
+			}, id, 'DataChanged'));
+
+			checkDataSource(loadedChildren["DigitalDashboardSmartDataSource"][i]);
 		}
 
 		for(var i = 0; i < loadedChildren["SoftSensorAppPlantVisualizer"].length; i++) {
-			// debugLog("found a plant visualizer");
-	    	var plugin = $scope.getWebbleByInstanceId(loadedChildren["SoftSensorAppPlantVisualizer"][i]);
-	    	plugin.scope().set("DrawingArea:width", 250);
-	    	plugin.scope().set("DrawingArea:height", 350);
-	    	plugin.scope().set("root:top", 20);
-	    	plugin.scope().set("root:left", 10);
-	    	plugin.scope().set("PlantLayout", [["line", 0.1, 0.25, 0.3, 0.25],["line", 0.1, 0.25, 0.3, 0.25],["rectangle", 0.3,0.15, 0.2,0.65],["line", 0.05,0.55, 0.2,0.55],["line", 0.25,0.5, 0.25,0.4, 0.3,0.4],["line", 0.25,0.6, 0.25,0.65, 0.3,0.65], ["ellipse", 0.2,0.5, 0.1,0.1],["line", 0.4,0.15, 0.4,0.1, 0.7,0.1, 0.7,0.2], ["ellipse", 0.6,0.2, 0.2,0.2], ["line", 0.7,0.4, 0.7,0.45], ["ellipse", 0.55,0.45, 0.3,0.2], ["line", 0.7,0.65, 0.7,0.75, 0.55,0.75, 0.55,0.2, 0.5,0.2], ["line", 0.7,0.7, 0.95,0.7], ["line", 0.4,0.8, 0.4,0.9, 0.6, 0.9], ["ellipse", 0.6, 0.85, 0.1,0.1], ["line", 0.7,0.9, 0.95,0.9]]);
-	    	plugin.scope().set("Sensors", [["F1", 0.2,0.25], ["T3", 0.1,0.55], ["F4", 0.17,0.55], ["T4", 0.27,0.4], ["T5", 0.3,0.35], ["P2", 0.5,0.3], ["T6", 0.5,0.4], ["T1", 0.5,0.1], ["P1", 0.56,0.1], ["F5", 0.65,0.75], ["L1", 0.85,0.55], ["F3", 0.85,0.7], ["L2", 0.7,0.85], ["T2", 0.45,0.9], ["F2", 0.75,0.9], ["F6", 0.9,0.9] ]);
-	    	plugin.scope().set("DotSize", 7);
-	    	plugin.scope().set("GroupColors", dashboard.scope().gimme("Colors"));
-	    	plugin.scope().set("SelectionsChanged", false);
+			//$log.log(preDebugMsg + "found a plant visualizer");
+			var plugin = $scope.getWebbleByInstanceId(loadedChildren["SoftSensorAppPlantVisualizer"][i]);
+			plugin.scope().set("DrawingArea:width", 250);
+			plugin.scope().set("DrawingArea:height", 350);
+			plugin.scope().set("root:top", 20);
+			plugin.scope().set("root:left", 10);
+			plugin.scope().set("PlantLayout", [["line", 0.1, 0.25, 0.3, 0.25],["line", 0.1, 0.25, 0.3, 0.25],["rectangle", 0.3,0.15, 0.2,0.65],["line", 0.05,0.55, 0.2,0.55],["line", 0.25,0.5, 0.25,0.4, 0.3,0.4],["line", 0.25,0.6, 0.25,0.65, 0.3,0.65], ["ellipse", 0.2,0.5, 0.1,0.1],["line", 0.4,0.15, 0.4,0.1, 0.7,0.1, 0.7,0.2], ["ellipse", 0.6,0.2, 0.2,0.2], ["line", 0.7,0.4, 0.7,0.45], ["ellipse", 0.55,0.45, 0.3,0.2], ["line", 0.7,0.65, 0.7,0.75, 0.55,0.75, 0.55,0.2, 0.5,0.2], ["line", 0.7,0.7, 0.95,0.7], ["line", 0.4,0.8, 0.4,0.9, 0.6, 0.9], ["ellipse", 0.6, 0.85, 0.1,0.1], ["line", 0.7,0.9, 0.95,0.9]]);
+			plugin.scope().set("Sensors", [["F1", 0.2,0.25], ["T3", 0.1,0.55], ["F4", 0.17,0.55], ["T4", 0.27,0.4], ["T5", 0.3,0.35], ["P2", 0.5,0.3], ["T6", 0.5,0.4], ["T1", 0.5,0.1], ["P1", 0.56,0.1], ["F5", 0.65,0.75], ["L1", 0.85,0.55], ["F3", 0.85,0.7], ["L2", 0.7,0.85], ["T2", 0.45,0.9], ["F2", 0.75,0.9], ["F6", 0.9,0.9] ]);
+			plugin.scope().set("DotSize", 7);
+			plugin.scope().set("GroupColors", dashboard.scope().gimme("Colors"));
+			plugin.scope().set("SelectionsChanged", false);
 
-	    	var id = loadedChildren["SoftSensorAppPlantVisualizer"][i];
-	    	listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-	    		plantSelectionsChanged(eventData.targetId, eventData.slotName);
-	    		}, id));
+			var id = loadedChildren["SoftSensorAppPlantVisualizer"][i];
+			listeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+				plantSelectionsChanged(eventData.targetId, eventData.slotName);
+			}, id));
 		}
+
+		$scope.getWebbleByInstanceId(loadedChildren["HoPSupport"][0]).scope().set("root:opacity", 0.2);
 
 		setupDone = true;
 		$scope.set("softSensorAppWrapper:opacity", 0.2);
@@ -733,23 +713,23 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 		var plugin = $scope.getWebbleByInstanceId(id);
 		if(plugin.scope().gimme("SelectionsChanged")) {
 			plugin.scope().set("SelectionsChanged", false);
-			// debugLog("plant selections changed");
-            plantSelections = plugin.scope().gimme("SelectedSensors");
-            droppedSensors = plugin.scope().gimme("DroppedSensors");
+			//$log.log(preDebugMsg + "plant selections changed");
+			plantSelections = plugin.scope().gimme("SelectedSensors");
+			droppedSensors = plugin.scope().gimme("DroppedSensors");
 
-		    if(times.length > 0 && inputs.length > 0 && dependents.length > 0) {
-		    	buildMapping(times, dependents, inputs, mappingSet, mappingSourceName, mappingSetName, mappingSetIdx, plantSelections, droppedSensors);
-		    }
+			if(times.length > 0 && inputs.length > 0 && dependents.length > 0) {
+				buildMapping(times, dependents, inputs, mappingSet, mappingSourceName, mappingSetName, mappingSetIdx, plantSelections, droppedSensors);
+			}
 		}
 
 		if(plugin.scope().gimme("DroppedSensorsChanged")) {
 			plugin.scope().set("DroppedSensorsChanged", false);
 			plantSelections = plugin.scope().gimme("SelectedSensors");
 			droppedSensors = plugin.scope().gimme("DroppedSensors");
-	    
-	    	if(times.length > 0 && inputs.length > 0 && dependents.length > 0) {
-	    		buildMapping(times, dependents, inputs, mappingSet, mappingSourceName, mappingSetName, mappingSetIdx, plantSelections, droppedSensors);
-	    	}
+
+			if(times.length > 0 && inputs.length > 0 && dependents.length > 0) {
+				buildMapping(times, dependents, inputs, mappingSet, mappingSourceName, mappingSetName, mappingSetIdx, plantSelections, droppedSensors);
+			}
 		}
 	};
 	//===================================================================================
@@ -762,47 +742,38 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	var loadWebbleDefs = function() {
 		neededChildren = {};
 		loadedChildren = {};
-	
+
+		loadedChildren["HoPSupport"] = [];
 		loadedChildren["DigitalDashboard"] = [];
-		//loadedChildren["DigitalDashboardPluginBarChart"] = [];
-		//loadedChildren["DigitalDashboardPluginHeatMap"] = [];
 		loadedChildren["DigitalDashboardPluginScatterPlots"] = [];
-		//loadedChildren["DigitalDashboardPluginLifeTable"] = [];
-		//loadedChildren["DigitalDashboardPluginItemSetMining"] = [];
-		//loadedChildren["DigitalDashboardPluginParallelCoordinateHolder"] = [];
 		loadedChildren["DigitalDashboardPluginLinearRegression"] = [];
 		loadedChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = [];
-		//loadedChildren["DigitalDashboardCSVDataSource"] = [];
 		loadedChildren["DigitalDashboardSmartDataSource"] = [];
 		loadedChildren["SoftSensorAppPlantVisualizer"] = [];
 
+		webbleDefNames["HoPSupport"] = "HoPSupport";
 		webbleDefNames["DigitalDashboard"] = "DigitalDashboard";
-		//webbleDefNames["DigitalDashboardPluginBarChart"] = "DigitalDashboardPluginBarChart";
-		//webbleDefNames["DigitalDashboardPluginHeatMap"] = "DigitalDashboardPluginHeatMap";
 		webbleDefNames["DigitalDashboardPluginScatterPlots"] = "DigitalDashboardPluginScatterPlots";
-		//webbleDefNames["DigitalDashboardPluginLifeTable"] = "DigitalDashboardPluginLifeTable";
-		//webbleDefNames["DigitalDashboardPluginItemSetMining"] = "DigitalDashboardPluginItemSetMining";
-		//webbleDefNames["DigitalDashboardPluginParallelCoordinateHolder"] = "DigitalDashboardPluginParallelCoordinateHolder";
 		webbleDefNames["DigitalDashboardPluginLinearRegression"] = "DigitalDashboardPluginLinearRegression";
 		webbleDefNames["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = "DigitalDashboardPluginLinearRegressionTikhonovRegularization";
 		webbleDefNames["SoftSensorAppPlantVisualizer"] = "SoftSensorAppPlantVisualizer";
-		//webbleDefNames["DigitalDashboardCSVDataSource"] = "DigitalDashboardCSVDataSource";
 		webbleDefNames["DigitalDashboardSmartDataSource"] = "DigitalDashboardSmartDataSource";
 
+		neededChildren["HoPSupport"] = 1;
 		neededChildren["DigitalDashboard"] = 1;
 		neededChildren["DigitalDashboardSmartDataSource"] = 1;
 		neededChildren["DigitalDashboardPluginScatterPlots"] = 1;
 		neededChildren["DigitalDashboardPluginLinearRegression"] = 1;
 		neededChildren["DigitalDashboardPluginLinearRegressionTikhonovRegularization"] = 1;
 		neededChildren["SoftSensorAppPlantVisualizer"] = 1;
-	
+
 		$scope.downloadWebbleDef(webbleDefNames["DigitalDashboard"]);
-    };
+	};
 	//===================================================================================
 
 
 
-    //=== CTRL MAIN CODE ======================================================================
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================

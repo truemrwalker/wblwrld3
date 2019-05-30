@@ -32,6 +32,7 @@ wblwrld3App.controller('bundleContainerCtrl', function($scope, $log, Slot, gette
     var bundleSlotWatches = [];
 
 
+
     //=== EVENT HANDLERS ================================================================
 
 
@@ -50,6 +51,15 @@ wblwrld3App.controller('bundleContainerCtrl', function($scope, $log, Slot, gette
         }
 
         $scope.theInteractionObjects[Enum.availableOnePicks_DefaultInteractionObjects.Rescale].scope().setIsEnabled(true);
+
+		$scope.addSlot(new Slot('forceLatest',
+			false,
+			'Force Latest Version Enabled',
+			'If enabled the bundle will only load the latest version of each child Webble and not the version stored in the Webble definition.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
         // watch for getting all relatives connected
         childWaitingWatch = $scope.$watch(function(){return ($scope.getAllDescendants($scope.theView).length - 1);}, function(newVal, oldVal) {

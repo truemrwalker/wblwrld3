@@ -9,7 +9,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log, Slot, Enum) {
+wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
 	//=== PROPERTIES ====================================================================
 	$scope.stylesToSlots = {
@@ -21,6 +21,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 	$scope.displayText = "Plant Visualizer";
 	$scope.plantName = "";
+	var preDebugMsg = "SoftSensor Plant Visualizer: ";
 
 	// graphics
 	var myCanvasElement = null;
@@ -59,7 +60,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	var clickedSensor = -1;
 
 	// Additional
-	$scope.doDebugLogging = true;
+	possibleDependables = {};
 
 
     //=== EVENT HANDLERS ================================================================
@@ -116,12 +117,10 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			case "PluginName":
 				$scope.displayText = eventData.slotValue;
 				break;
-
 			case "GroupColors":
 				colorPalette = null;
 				updateGraphics();
 				break;
-
 			case "PlantLayout":
 				parseData();
 				break;
@@ -147,7 +146,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 				if(elmnt.length > 0) {
 					hoverText = elmnt[0];
 				} else {
-					debugLog("No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 
@@ -314,38 +313,11 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			if(elmnt.length > 0) {
 				hoverText = elmnt[0];
 			} else {
-				debugLog("No hover text!");
+				//$log.log(preDebugMsg + "No hover text!");
 			}
 		}
 		if(hoverText !== null) {
 			hoverText.style.display = "none";
-		}
-
-		if(clickStart !== null) {
-			// hideSelectionRect();
-
-			// currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
-
-			// var x1 = currentMouse.x;
-			// var x2 = clickStart.x;
-			// if(x2 < x1) {
-			// 	x1 = clickStart.x;
-			// 	x2 = currentMouse.x;
-			// }
-
-			// var y1 = currentMouse.y;
-			// var y2 = clickStart.y;
-			// if(y2 < y1) {
-			// 	y1 = clickStart.y;
-			// 	y2 = currentMouse.y;
-			// }
-
-			// if(x1 == x2 && y1 == y2) {
-			// 	// selection is too small, disregard
-			// 	// debugLog("ignoring a selection because it is too small");
-			// } else {
-			// 	newSelection(x1,x2, y1,y2, clickStart.ctrl);
-			// }
 		}
 		clickStart = null;
 	};
@@ -379,7 +351,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			myCanvas = myCanvasElement[0];
 			ctx = myCanvas.getContext("2d");
 		} else {
-			debugLog("no canvas to draw on!");
+			//$log.log(preDebugMsg + "no canvas to draw on!");
 		}
 
 		// internal slots specific to this Webble -----------------------------------------------------------
@@ -517,21 +489,9 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			selectionHolderElement.bind('mousemove', onMouseMove);
 			selectionHolderElement.bind('mouseout', onMouseOut);
 		} else {
-			debugLog("No selectionHolderElement, could not bind mouse listeners");
+			//$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 		}
 	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-	function debugLog(message) {
-    	if($scope.doDebugLogging) {
-    		$log.log("SoftSensor Plant Visualizer: " + message);
-    	}
-    };
 	//===================================================================================
 
 
@@ -572,7 +532,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// This method saves the user selection inside a slot.
 	//===================================================================================
 	function saveSelectionsInSlot() {
-		// debugLog("saveSelectionsInSlot");
+		// //$log.log(preDebugMsg + "saveSelectionsInSlot");
 		var result = {};
 		for(var i = 0; i < sensors.length; i++) {
 			result[sensors[i][0]] = sensors[i][sensors[i].length - 1];
@@ -590,7 +550,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// This method sets the data selections based on the value of the slot value.
 	//===================================================================================
 	function setSelectionsFromSlotValue() {
-		// debugLog("setSelectionsFromSlotValue");
+		// //$log.log(preDebugMsg + "setSelectionsFromSlotValue");
 		var slotSelections = $scope.gimme("SelectedSensors");
 		if(typeof slotSelections === 'string') {
 			slotSelections = JSON.parse(slotSelections);
@@ -623,7 +583,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// loaded.
 	//===================================================================================
 	function checkSelectionsAfterNewData() {
-		// debugLog("checkSelectionsAfterNewData");
+		// //$log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		setSelectionsFromSlotValue();
 	};
 	//===================================================================================
@@ -646,7 +606,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// This method parse the data given.
 	//===================================================================================
 	function parseData() {
-		// debugLog("parseData");
+		// //$log.log(preDebugMsg + "parseData");
 		resetVars();
 		var newPlant = $scope.gimme("PlantLayout");
     	if(typeof newPlant === 'string') {
@@ -687,7 +647,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// This method updates the size in regard to text and image
 	//===================================================================================
 	function updateSize() {
-		// debugLog("updateSize");
+		// //$log.log(preDebugMsg + "updateSize");
 		fontSize = parseInt($scope.gimme("FontSize"));
 		if(fontSize < 5) {
 			fontSize = 5;
@@ -714,7 +674,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -726,7 +686,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			if(selectionCanvasElement.length > 0) {
 				selectionCanvas = selectionCanvasElement[0];
 			} else {
-				debugLog("no selectionCanvas to resize!");
+				//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 				return;
 			}
 		}
@@ -761,7 +721,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
-		// debugLog("updateSize found selections: " + JSON.stringify(selections));
+		// //$log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
 		for(var sel = 0; sel < selections.length; sel++) {
 			var s = selections[sel];
 			s[4] = val2pixelX(s[0]);
@@ -769,7 +729,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			s[6] = val2pixelY(s[2]);
 			s[7] = val2pixelY(s[3]);
 		}
-		// debugLog("updateSize updated selections to: " + JSON.stringify(selections));
+		// //$log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
 	};
 	//===================================================================================
 
@@ -783,14 +743,14 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// This method redraws and update the graphics based on current data and settings.
 	//===================================================================================
 	function updateGraphics() {
-    	// debugLog("updateGraphics()");
+    	// //$log.log(preDebugMsg + "updateGraphics()");
 
 		if(myCanvas === null) {
 			var myCanvasElement = $scope.theView.parent().find('#theCanvas');
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -815,7 +775,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
     	    H = 1;
     	}
 
-		// debugLog("Clear the canvas");
+		// //$log.log(preDebugMsg + "Clear the canvas");
 		ctx.clearRect(0,0, W,H);
     	drawW = W - leftMarg - rightMarg;
     	drawH = H - topMarg - bottomMarg * 2 - fontSize;
@@ -1153,7 +1113,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			if(selectionRectElement.length > 0) {
 				selectionRect = selectionRectElement[0];
 			} else {
-				debugLog("No selection rectangle!");
+				//$log.log(preDebugMsg + "No selection rectangle!");
 			}
 		}
 		if(selectionRect !== null) {

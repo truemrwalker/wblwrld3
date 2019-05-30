@@ -21,6 +21,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	$scope.customInteractionBalls = [];
 
 	var myInstanceId = -1;
+	var preDebugMsg = "DigitalDashboard: ";
 
 	var listOfDataSources = []; // data sources have: {id (Webble ID), name (for menus etc.), dataSets}.
 	// The 'dataSets' is an array of sets.
@@ -54,7 +55,6 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	var selfListeners = [];
 	var globalPasteInterestList = [];
 
-	$scope.doDebugLogging = true;
 
 
 	//=== EVENT HANDLERS ================================================================
@@ -90,14 +90,14 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
 			if(eventData.targetId == myInstanceId) {
-				debugLog("I was loaded, " + eventData.targetId);
+				//$log.log(preDebugMsg + "I was loaded, " + eventData.targetId);
 
 				if(childrenToWaitFor <= 0) {
-					debugLog("I was fully loaded");
+					//$log.log(preDebugMsg + "I was fully loaded");
 					fullyLoaded = true;
 					newMapping($scope.gimme("Mapping"));
 				} else {
-					debugLog("We still need to wait for children to load");
+					//$log.log(preDebugMsg + "We still need to wait for children to load");
 				}
 			}
 		})); // check when we get loaded (fully loaded)
@@ -161,11 +161,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		// selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
 		//     var childId = eventData.targetId;
-		//     debugLog("something loaded, let's check if it is our child: " + childId);
+		//     //$log.log(preDebugMsg + "something loaded, let's check if it is our child: " + childId);
 
 		//     for(var i = 0; i < loadListenIDs.length; i++) {
 		// 	if(loadListenIDs[i] == childId) {
-		// 	    debugLog("child loaded, let's add this child: " + childId);
+		// 	    //$log.log(preDebugMsg + "child loaded, let's add this child: " + childId);
 		// 	    var thisChild = $scope.getWebbleByInstanceId(childId);
 
 		// 	    loadListenIDs.splice(i, 1);
@@ -175,11 +175,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		// 	    if(!fullyLoaded) {
 		// 		childrenToWaitFor--;
 		// 		if(childrenToWaitFor <= 0) {
-		// 		    debugLog("I was fully loaded, last child arrived.");
+		// 		    //$log.log(preDebugMsg + "I was fully loaded, last child arrived.");
 		// 		    fullyLoaded = true;
 		// 		    newMapping($scope.gimme("Mapping"));
 		// 		} else {
-		// 		    debugLog("We still need to wait for more children to arrive.");
+		// 		    //$log.log(preDebugMsg + "We still need to wait for more children to arrive.");
 		// 		}
 		// 	    }
 		// 	    break;
@@ -215,7 +215,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 			for(var i = 0; i < globalPasteInterestList.length; i++) {
 				if(globalPasteInterestList[i] == childId) {
-					// debugLog("Child " + childId + " was pasted, add");
+					// //$log.log(preDebugMsg + "Child " + childId + " was pasted, add");
 
 					globalPasteInterestList.splice(i, 1);
 					var thisChild = $scope.getWebbleByInstanceId(childId);
@@ -224,11 +224,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					if(!fullyLoaded) {
 						childrenToWaitFor--;
 						if(childrenToWaitFor <= 0) {
-							debugLog("I was fully loaded, last child arrived.");
+							//$log.log(preDebugMsg + "I was fully loaded, last child arrived.");
 							fullyLoaded = true;
 							newMapping($scope.gimme("Mapping"));
 						} else {
-							debugLog("We still need to wait for more children to arrive.");
+							//$log.log(preDebugMsg + "We still need to wait for more children to arrive.");
 						}
 					}
 
@@ -243,15 +243,15 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			var thisChild = $scope.getWebbleByInstanceId(childId);
 
 			if(thisChild === undefined || thisChild.scope() === undefined) {
-				// debugLog("child is not finished loading, wait for pasted event");
+				// //$log.log(preDebugMsg + "child is not finished loading, wait for pasted event");
 
 				globalPasteInterestList.push(childId);
-				// debugLog("Wait for child " + childId + " to be pasted, then add");
+				// //$log.log(preDebugMsg + "Wait for child " + childId + " to be pasted, then add");
 
 				// // loadListenIDs.push(eventData.childId);
 
 				// pasteListeners.push([eventData.childId, $scope.registerWWEventListener(Enum.availableWWEvents.pasted, function(eventDataInner){
-				//     debugLog("child pasted, let's add this child: " + eventDataInner.targetId);
+				//     //$log.log(preDebugMsg + "child pasted, let's add this child: " + eventDataInner.targetId);
 				//     var thisChild = $scope.getWebbleByInstanceId(eventDataInner.targetId);
 
 				//     for(var pl = 0; pl < pasteListeners.length; pl++) {
@@ -267,18 +267,18 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				//     if(!fullyLoaded) {
 				// 	childrenToWaitFor--;
 				// 	if(childrenToWaitFor <= 0) {
-				// 	    debugLog("I was fully loaded, last child arrived.");
+				// 	    //$log.log(preDebugMsg + "I was fully loaded, last child arrived.");
 				// 	    fullyLoaded = true;
 				// 	    newMapping($scope.gimme("Mapping"));
 				// 	} else {
-				// 	    debugLog("We still need to wait for more children to arrive.");
+				// 	    //$log.log(preDebugMsg + "We still need to wait for more children to arrive.");
 				// 	}
 				//     }
 
 				// }, eventData.childId)]);
 			} else {
-				// debugLog("child is already loaded, add immediately (since the pasted event sometimes does not fire)");
-				// debugLog("Add child " + childId + " now");
+				// //$log.log(preDebugMsg + "child is already loaded, add immediately (since the pasted event sometimes does not fire)");
+				// //$log.log(preDebugMsg + "Add child " + childId + " now");
 				var thisChild = $scope.getWebbleByInstanceId(eventData.childId);
 				addChild(eventData.childId, thisChild);
 
@@ -286,11 +286,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				if(!fullyLoaded) {
 					childrenToWaitFor--;
 					if(childrenToWaitFor <= 0) {
-						debugLog("I was fully loaded, last child arrived.");
+						//$log.log(preDebugMsg + "I was fully loaded, last child arrived.");
 						fullyLoaded = true;
 						newMapping($scope.gimme("Mapping"));
 					} else {
-						debugLog("We still need to wait for more children to arrive.");
+						//$log.log(preDebugMsg + "We still need to wait for more children to arrive.");
 					}
 				}
 
@@ -298,7 +298,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 		}));
 
 		selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-			// debugLog("mapping slot set: " + JSON.stringify(eventData.slotValue));
+			// //$log.log(preDebugMsg + "mapping slot set: " + JSON.stringify(eventData.slotValue));
 			if(eventData.slotValue != internalMappingSetTo) {
 				if(JSON.stringify(eventData.slotValue) != JSON.stringify(internalMappingSetTo)) {
 					var possiblyNewerValue = $scope.gimme('Mapping');
@@ -306,27 +306,15 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					if(possiblyNewerValue != internalMappingSetTo
 						&& JSON.stringify(possiblyNewerValue) != JSON.stringify(internalMappingSetTo)) {
 
-						// debugLog("SlotSet new mapping:" + JSON.stringify(eventData.slotValue));
-						// debugLog("SlotSet possibly newer mapping:" + JSON.stringify(possiblyNewerValue));
-						// debugLog("SlotSet old mapping:" + JSON.stringify(internalMappingSetTo));
+						// //$log.log(preDebugMsg + "SlotSet new mapping:" + JSON.stringify(eventData.slotValue));
+						// //$log.log(preDebugMsg + "SlotSet possibly newer mapping:" + JSON.stringify(possiblyNewerValue));
+						// //$log.log(preDebugMsg + "SlotSet old mapping:" + JSON.stringify(internalMappingSetTo));
 
 						newMapping(eventData.slotValue);
 					}
 				}
 			}
 		}, myInstanceId, 'Mapping'));
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("DigitalDashboard: " + message);
-		}
 	};
 	//===================================================================================
 
@@ -367,7 +355,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method builds the list of plugins for the forms
 	//===================================================================================
 	function buildPluginListForForms() {
-		// debugLog("buildPluginListForForms");
+		// //$log.log(preDebugMsg + "buildPluginListForForms");
 		var plugins = [];
 
 		for(var p = 0; p < listOfPlugins.length; p++) {
@@ -415,7 +403,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method builds the list of data sources for the forms
 	//===================================================================================
 	function buildDataSourceListForForms() {
-		// debugLog("buildDataSourceListForForms");
+		// //$log.log(preDebugMsg + "buildDataSourceListForForms");
 		var dataSources = [];
 
 		for(var ds = 0; ds < listOfDataSources.length; ds++) {
@@ -452,7 +440,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method opens the form that let one connect data with visualizing plugins
 	//===================================================================================
 	function openConnectionformViz2Data2Viz(data2viz) {
-		// debugLog("openConnectionformViz2Data2Viz");
+		// //$log.log(preDebugMsg + "openConnectionformViz2Data2Viz");
 		var dataSources = buildDataSourceListForForms();
 		var plugins = buildPluginListForForms();
 
@@ -471,7 +459,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// and collect the choices made and react to it accordingly.
 	//===================================================================================
 	function closeConnectionform(returnContent){
-		// debugLog("closeConnectionform");
+		// //$log.log(preDebugMsg + "closeConnectionform");
 		if(returnContent !== null && returnContent !== undefined){
 			var newList = returnContent.plugins;
 
@@ -633,7 +621,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method adds a webble if it is of proper type (dashboard plugin) as a child.
 	//===================================================================================
 	function addChild(id, webble) {
-		// debugLog("addChild");
+		// //$log.log(preDebugMsg + "addChild");
 		if(webbleIsPlugin(webble)) {
 			addPlugin(id, webble);
 		}
@@ -651,7 +639,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// make needed registrations and changes.
 	//===================================================================================
 	function addDataSource(id, webble) {
-		// debugLog("addDataSource (add child)");
+		// //$log.log(preDebugMsg + "addDataSource (add child)");
 		try {
 			var name = webble.scope().gimme("PluginName").toString();
 		} catch(e) {
@@ -674,7 +662,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			try {
 				webble.scope().set("PluginName", newName);
 			} catch(e) {
-				debugLog("Something went wrong when assigning new name to data source");
+				//$log.log(preDebugMsg + "Something went wrong when assigning new name to data source");
 			}
 		}
 
@@ -719,7 +707,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			try {
 				scp.set("GroupColors", $scope.gimme('Colors'));
 			} catch(e) {
-				debugLog("Something went wrong when setting colors of new data source.");
+				//$log.log(preDebugMsg + "Something went wrong when setting colors of new data source.");
 			}
 		}
 	};
@@ -732,12 +720,12 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// sense of it.
 	//===================================================================================
 	function parseDataSourceProvidedData(id, webble, sourceName) {
-		// debugLog("parseDataSourceProvidedData");
+		// //$log.log(preDebugMsg + "parseDataSourceProvidedData");
 		try {
 			var format = webble.scope().gimme('ProvidedFormat');
 		} catch(e) {
 			format = {};
-			debugLog("Something went wrong when reading format of data source.");
+			//$log.log(preDebugMsg + "Something went wrong when reading format of data source.");
 		}
 
 		if(typeof format === 'string') {
@@ -831,7 +819,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// make needed registrations and changes.
 	//===================================================================================
 	function addPlugin(id, webble) {
-		// debugLog("addPlugin (add child)");
+		// //$log.log(preDebugMsg + "addPlugin (add child)");
 		var name = webble.scope().gimme("PluginName").toString();
 
 		if(mapPluginNameToId.hasOwnProperty(name)) {
@@ -849,7 +837,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			try {
 				webble.scope().set("PluginName", newName);
 			} catch(e) {
-				debugLog("Something went wrong when setting new name on plugin.");
+				//$log.log(preDebugMsg + "Something went wrong when setting new name on plugin.");
 			}
 		}
 
@@ -887,7 +875,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			try {
 				scp.set("GroupColors", $scope.gimme('Colors'));
 			} catch(e) {
-				debugLog("Something went wrong when setting colors on new plugin.");
+				//$log.log(preDebugMsg + "Something went wrong when setting colors on new plugin.");
 			}
 		}
 
@@ -902,7 +890,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// display things as requested.
 	//===================================================================================
 	function parsePluginFormat(webble) {
-		// debugLog("parsePluginFormat");
+		// //$log.log(preDebugMsg + "parsePluginFormat");
 		var format = webble.scope().gimme('ExpectedFormat');
 
 		if(typeof format === 'string') {
@@ -969,7 +957,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method removes a child of any plugin-type identified by internal id.
 	//===================================================================================
 	function removeChild(id) {
-		// debugLog("removeChild");
+		// //$log.log(preDebugMsg + "removeChild");
 		var ids = id.toString();
 
 		if(mapPluginIdToIdx.hasOwnProperty(ids)) {
@@ -988,7 +976,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method removes a data source plugin identified by internal id.
 	//===================================================================================
 	function removeDataSource(id) {
-		// debugLog("removeDataSource");
+		// //$log.log(preDebugMsg + "removeDataSource");
 
 		for(var n in mapDataSourceNameToId) {
 			if(mapDataSourceNameToId[n] == id) {
@@ -1028,7 +1016,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method removes a visualization plugin identified by internal id.
 	//===================================================================================
 	function removePlugin(id) {
-		// debugLog("removePlugin");
+		// //$log.log(preDebugMsg + "removePlugin");
 		var idx = mapPluginIdToIdx[id.toString()];
 
 		// stop listeneing to slot updates
@@ -1070,11 +1058,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	function vizPluginChangeSelections(pluginID) {
 		var webble = $scope.getWebbleByInstanceId(pluginID);
 		if(webble === undefined) {
-			// debugLog("vizPluginChangeSelections, slot change from an unfinished Webble, ignore");
+			// //$log.log(preDebugMsg + "vizPluginChangeSelections, slot change from an unfinished Webble, ignore");
 			return;
 		}
 
-		// debugLog("vizPluginChangeSelections " + pluginID);
+		// //$log.log(preDebugMsg + "vizPluginChangeSelections " + pluginID);
 		var id = pluginID.toString();
 		if(mapPluginIdToIdx.hasOwnProperty(id)) {
 			var idx = mapPluginIdToIdx[id];
@@ -1094,11 +1082,11 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	function vizPluginChangeName(pluginID) {
 		var webble = $scope.getWebbleByInstanceId(pluginID);
 		if(webble === undefined) {
-			// debugLog("vizPluginChangeName, slot change from an unfinished Webble, ignore");
+			// //$log.log(preDebugMsg + "vizPluginChangeName, slot change from an unfinished Webble, ignore");
 			return;
 		}
 
-		// debugLog("vizPluginChangeName " + pluginID);
+		// //$log.log(preDebugMsg + "vizPluginChangeName " + pluginID);
 		var id = pluginID.toString();
 		if(mapPluginIdToIdx.hasOwnProperty(id)) {
 			var idx = mapPluginIdToIdx[id];
@@ -1120,7 +1108,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				try {
 					webble.scope().set("PluginName", newName); // this will trigger a new message back here
 				} catch(e) {
-					debugLog("Something went wrong when updating name on plugin.");
+					//$log.log(preDebugMsg + "Something went wrong when updating name on plugin.");
 				}
 			} else { // name is OK
 				var toRemove = [];
@@ -1149,7 +1137,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	function dataSourceChangeName(sourceID) {
 		var webble = $scope.getWebbleByInstanceId(sourceID);
 		if(webble === undefined) {
-			// debugLog("dataSourceChangeName, slot change from an unfinished Webble, ignore");
+			// //$log.log(preDebugMsg + "dataSourceChangeName, slot change from an unfinished Webble, ignore");
 			return;
 		}
 
@@ -1176,7 +1164,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				try{
 					webble.scope().set("PluginName", newName); // this will trigger a new message back here
 				} catch(e) {
-					debugLog("Something went wrong when updating name on data source.");
+					//$log.log(preDebugMsg + "Something went wrong when updating name on data source.");
 				}
 			} else { // name is OK
 				var toRemove = [];
@@ -1205,7 +1193,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	function dataSourceChangeFormat(sourceID) {
 		var webble = $scope.getWebbleByInstanceId(sourceID);
 		if(webble === undefined) {
-			// debugLog("dataSourceChangeFormat, slot change from an unfinished Webble, ignore");
+			// //$log.log(preDebugMsg + "dataSourceChangeFormat, slot change from an unfinished Webble, ignore");
 			return;
 		}
 
@@ -1233,7 +1221,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	function dataSourceChangeData(sourceID) {
 		var webble = $scope.getWebbleByInstanceId(sourceID);
 		if(webble === undefined) {
-			// debugLog("dataSourceChangeData, slot change from an unfinished Webble, ignore");
+			// //$log.log(preDebugMsg + "dataSourceChangeData, slot change from an unfinished Webble, ignore");
 			return;
 		}
 
@@ -1253,24 +1241,24 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// makes sure to react to it properly.
 	//===================================================================================
 	function vizPluginDataDrop(pluginID) {
-		// debugLog("drag&drop data connection requested");
+		// //$log.log(preDebugMsg + "drag&drop data connection requested");
 
 		var webble = $scope.getWebbleByInstanceId(pluginID);
 		if(!webble) {
-			debugLog("Drag&Drop Error: could not find the vizualization Webble, id=" + pluginID);
+			//$log.log(preDebugMsg + "Drag&Drop Error: could not find the vizualization Webble, id=" + pluginID);
 		} else {
 			var id = pluginID.toString();
 			if(!mapPluginIdToIdx.hasOwnProperty(id)) {
-				debugLog("Drag&Drop Error: could not find the vizualization Webble, id=" + pluginID + " (internal inconsistency, this should not happen).");
+				//$log.log(preDebugMsg + "Drag&Drop Error: could not find the vizualization Webble, id=" + pluginID + " (internal inconsistency, this should not happen).");
 			} else {
 				var idx = mapPluginIdToIdx[id];
 				if(! (idx < listOfPlugins.length)) {
-					debugLog("Drag&Drop Error: could not find the vizualization Webble, id=" + pluginID + " (internal inconsistency, this should not happen).");
+					//$log.log(preDebugMsg + "Drag&Drop Error: could not find the vizualization Webble, id=" + pluginID + " (internal inconsistency, this should not happen).");
 				} else {
 					var plugin = listOfPlugins[idx];
 					var slotContent = webble.scope().gimme("DataDropped");
 					if(!(slotContent && slotContent.hasOwnProperty("dataSourceField") && slotContent.hasOwnProperty("pluginField"))) {
-						debugLog("Drag&Drop Error: drag&drop information malformed: '" + slotContent + "'");
+						//$log.log(preDebugMsg + "Drag&Drop Error: drag&drop information malformed: '" + slotContent + "'");
 					} else {
 						var datasrc = null;
 						try {
@@ -1304,7 +1292,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 																var dsIdx = mapDataSourceIdToIdx[dsId];
 																listToAssign.push([dsIdx, ass[0], ass[1], ass[2]]);
 															} catch(e) {
-																debugLog("could not assign data correctly");
+																//$log.log(preDebugMsg + "could not assign data correctly");
 															}
 
 															// assignedIDlist.push(assignedID);
@@ -1322,17 +1310,17 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						var somethingChanged = false;
 
 						if(!viz2viz && ! (datasrc && datasrc.hasOwnProperty("sourceName") && mapDataSourceNameToId.hasOwnProperty(datasrc.sourceName))) {
-							debugLog("Drag&Drop Error: Data source unknown. Is the data source connected to the Digital Dashboard parent Webble?");
+							//$log.log(preDebugMsg + "Drag&Drop Error: Data source unknown. Is the data source connected to the Digital Dashboard parent Webble?");
 						} else if(!viz2viz) {
 							// this is a drag&drop from a data source to a vizualization plugin
 							var dsId = mapDataSourceNameToId[datasrc.sourceName];
 							if(!mapDataSourceIdToIdx.hasOwnProperty(dsId)) {
-								debugLog("Drag&Drop Error: Data source unknown (internal consistency error, this should not happen).");
+								//$log.log(preDebugMsg + "Drag&Drop Error: Data source unknown (internal consistency error, this should not happen).");
 							} else {
 								var dsIdx = mapDataSourceIdToIdx[dsId];
 
 								if(! (dsIdx < listOfDataSources.length && datasrc.hasOwnProperty("dataSetIdx") && datasrc.dataSetIdx < listOfDataSources[dsIdx].dataSets.length && datasrc.hasOwnProperty("fieldName"))) {
-									debugLog("Drag&Drop Error: Data source information incorrect.");
+									//$log.log(preDebugMsg + "Drag&Drop Error: Data source information incorrect.");
 								} else {
 									var found = false;
 									var fieldName = datasrc.fieldName;
@@ -1345,7 +1333,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 									}
 
 									if(!found) {
-										debugLog("Drag&Drop Error: could not find the fields to connect.");
+										//$log.log(preDebugMsg + "Drag&Drop Error: could not find the fields to connect.");
 									}
 								}
 							}
@@ -1436,7 +1424,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 											}
 
 											if(!typeOK) {
-												debugLog("Drag&Drop Error: assigned data field has a data type that is not supported by the visualization.");
+												//$log.log(preDebugMsg + "Drag&Drop Error: assigned data field has a data type that is not supported by the visualization.");
 											}
 											break; // stop looking for a matching field
 										}
@@ -1446,7 +1434,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						} // for each item to assign in listToAssign
 
 						if(somethingChanged) {
-							debugLog("Drag&Drop: successfully assigned data to vizualization.");
+							//$log.log(preDebugMsg + "Drag&Drop: successfully assigned data to vizualization.");
 							checkAssignedDataFields(); // Check data types, send data, etc. Will also build a new mapping (adding any unaffected plugins)
 							if(listOfPlugins[idx].active) {
 								sendDataToPlugin(idx); // this may send the data twice, since checkAssignedDataFields sends data if this plugin gets activated or changes data source (but not if it changes fields from the same source)
@@ -1466,7 +1454,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// due to changes somewhere else.
 	//===================================================================================
 	function checkIfIDsNeedToBeRemapped(idx) {
-		// debugLog("checkIfIDsNeedToBeRemapped");
+		// //$log.log(preDebugMsg + "checkIfIDsNeedToBeRemapped");
 
 		var ds = listOfDataSources[idx];
 		var webble = $scope.getWebbleByInstanceId(ds.id);
@@ -1526,7 +1514,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method handles what needs to be done when a data source has been updated.
 	//===================================================================================
 	function dataSourceUpdated(idx) {
-		// debugLog("dataSourceUpdated " + idx);
+		// //$log.log(preDebugMsg + "dataSourceUpdated " + idx);
 
 		var needsData = [];
 		var ds = listOfDataSources[idx];
@@ -1619,7 +1607,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// changes somewhere.
 	//===================================================================================
 	function updateSelections(changedPluginIdx) {
-		// debugLog("updateSelections");
+		// //$log.log(preDebugMsg + "updateSelections");
 
 		if(changedPluginIdx === undefined) {
 			// reset all
@@ -1710,7 +1698,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 									selectionStatusOfIDs[id][p] = 1;
 								}
 							} else {
-								debugLog("ID list and selection list have different lengths, plugin " + plugin.name + " data set " + aa);
+								//$log.log(preDebugMsg + "ID list and selection list have different lengths, plugin " + plugin.name + " data set " + aa);
 								for(var i = 0; i < idArray.length; i++) {
 									var id = idArray[i];
 									if(selectionStatusOfIDs[id] === null) {
@@ -1781,8 +1769,8 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				var sels = mapOfDataIDsToUniqueIDs[sourceID][idSlot].sel;
 				for(var i = 0; i < ids.length; i++) {
 					if(selectionStatusOfIDs[ids[i]] === null) {
-						// debugLog("selectionStatusOfIDs is null when it should not be? ids = " + JSON.stringify(ids) + ", i=" + i + ", selectionStatusOfIDs = " + JSON.stringify(selectionStatusOfIDs));
-						// debugLog("ERROR: selectionStatusOfIDs is null when it should not be?"); // this happens when this data is not assigned to any visualization plugin at all
+						// //$log.log(preDebugMsg + "selectionStatusOfIDs is null when it should not be? ids = " + JSON.stringify(ids) + ", i=" + i + ", selectionStatusOfIDs = " + JSON.stringify(selectionStatusOfIDs));
+						// //$log.log(preDebugMsg + "ERROR: selectionStatusOfIDs is null when it should not be?"); // this happens when this data is not assigned to any visualization plugin at all
 						sels[i] = 0; // this should not happen TODO!
 					} else {
 						sels[i] = selectionStatusOfIDs[ids[i]][lastField];
@@ -1791,7 +1779,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			}
 		}
 
-		// debugLog("updateSelections result: " + JSON.stringify(selectionStatusOfIDs));
+		// //$log.log(preDebugMsg + "updateSelections result: " + JSON.stringify(selectionStatusOfIDs));
 
 		for(var p = 0; p < listOfPlugins.length; p++) {
 			var plugin = listOfPlugins[p];
@@ -1839,7 +1827,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					try {
 						webble.scope().set('GlobalSelections', selectionArraysPerIdSlot);
 					} catch(e) {
-						debugLog("Something went wrong when updating global selections on plugin " + plugin.name);
+						//$log.log(preDebugMsg + "Something went wrong when updating global selections on plugin " + plugin.name);
 					}
 				}
 			}
@@ -1853,7 +1841,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method checks the assigned data fields so that they are up to date.
 	//===================================================================================
 	function checkAssignedDataFields() {
-		// debugLog("checkAssignedDataFields");
+		// //$log.log(preDebugMsg + "checkAssignedDataFields");
 		var needsData = [];
 
 		for(var p = 0; p < listOfPlugins.length; p++) {
@@ -1863,7 +1851,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 			plugin.active = false;
 
-			// debugLog("plugin " + p + " oldActive = " + oldActive);
+			// //$log.log(preDebugMsg + "plugin " + p + " oldActive = " + oldActive);
 
 			// check if some old assignments should be removed
 			for(var is = 0; is < plugin.format.length; is++) {
@@ -1895,7 +1883,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 												}
 											}
 										} else {
-											debugLog("no type for field " + dataField.name);
+											//$log.log(preDebugMsg + "no type for field " + dataField.name);
 										}
 									} else {
 										OK = false;
@@ -2014,7 +2002,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			return;
 		}
 
-		// debugLog("buildNewMapping()");
+		// //$log.log(preDebugMsg + "buildNewMapping()");
 
 		var mapping = {};
 		mapping.plugins = [];
@@ -2066,8 +2054,8 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 
 		var oldMapping = $scope.gimme("Mapping");
 		if(JSON.stringify(oldMapping) != JSON.stringify(mapping)) {
-			// debugLog("BuildMapping new mapping:" + JSON.stringify(mapping));
-			// debugLog("BuildMapping old mapping:" + JSON.stringify(oldMapping));
+			// //$log.log(preDebugMsg + "BuildMapping new mapping:" + JSON.stringify(mapping));
+			// //$log.log(preDebugMsg + "BuildMapping old mapping:" + JSON.stringify(oldMapping));
 			internalMappingSetTo = mapping;
 			$scope.set("Mapping", mapping);
 		}
@@ -2080,7 +2068,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method initiates the new mapping of the data source and plugins.
 	//===================================================================================
 	function newMapping(newMapping) {
-		// debugLog("newMapping");
+		// //$log.log(preDebugMsg + "newMapping");
 		internalMappingSetTo = newMapping;
 		if(!fullyLoaded) {
 			return;
@@ -2112,13 +2100,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				}
 
 				if(plugin === null) {
-					debugLog("newMapping, unknown plugin: " + JSON.stringify(mplugin));
+					//$log.log(preDebugMsg + "newMapping, unknown plugin: " + JSON.stringify(mplugin));
 					somethingWrong = true;
 					break;
 				}
 
 				if(mplugin.sets.length != plugin.format.length) {
-					debugLog("newMapping, format lengths are different: " + JSON.stringify(mplugin.sets) + " " + JSON.stringify(plugin.format));
+					//$log.log(preDebugMsg + "newMapping, format lengths are different: " + JSON.stringify(mplugin.sets) + " " + JSON.stringify(plugin.format));
 					somethingWrong = true;
 					break;
 				}
@@ -2168,7 +2156,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					}
 
 					if(mfields.length != fields.length) {
-						debugLog("newMapping, field lengths are different: " + JSON.stringify(mfields) + " " + JSON.stringify(fields));
+						//$log.log(preDebugMsg + "newMapping, field lengths are different: " + JSON.stringify(mfields) + " " + JSON.stringify(fields));
 						somethingWrong = true;
 						break;
 					}
@@ -2191,19 +2179,19 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						for(var a = 0; !somethingWrong && a < mfields[f].assigned.length; a++) {
 							var dsName = mfields[f].assigned[a].sourceName;
 							if(!mapDataSourceNameToId.hasOwnProperty(dsName)) {
-								debugLog("newMapping, unknown data source: " + JSON.stringify(dsName) + " " + JSON.stringify(mapDataSourceNameToId));
+								//$log.log(preDebugMsg + "newMapping, unknown data source: " + JSON.stringify(dsName) + " " + JSON.stringify(mapDataSourceNameToId));
 								somethingWrong = true;
 								break;
 							}
 							var dsId = mapDataSourceNameToId[dsName];
 							if(!mapDataSourceIdToIdx.hasOwnProperty(dsId)) {
-								debugLog("newMapping, data source index unknown (should not happen): " + JSON.stringify(dsId) + " " + JSON.stringify(mapDataSourceIdToIdx));
+								//$log.log(preDebugMsg + "newMapping, data source index unknown (should not happen): " + JSON.stringify(dsId) + " " + JSON.stringify(mapDataSourceIdToIdx));
 								somethingWrong = true;
 								break;
 							}
 							var dsIdx = mapDataSourceIdToIdx[dsId];
 							if(dsIdx >= listOfDataSources.length || mfields[f].assigned[a].dataSetIdx >= listOfDataSources[dsIdx].dataSets.length) {
-								debugLog("newMapping, data source index too high (should not happen) or assigned set index too high: " + JSON.stringify(dsIdx) + " " + JSON.stringify(mfields[f]) + " " + JSON.stringify(listOfDataSources[dsIdx]));
+								//$log.log(preDebugMsg + "newMapping, data source index too high (should not happen) or assigned set index too high: " + JSON.stringify(dsIdx) + " " + JSON.stringify(mfields[f]) + " " + JSON.stringify(listOfDataSources[dsIdx]));
 								somethingWrong = true;
 								break;
 							}
@@ -2291,7 +2279,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method sends the data to the plugin.
 	//===================================================================================
 	function sendDataToPlugin(pluginIdx) {
-		// debugLog("sendDataToPlugin " + pluginIdx);
+		// //$log.log(preDebugMsg + "sendDataToPlugin " + pluginIdx);
 		var plugin = listOfPlugins[pluginIdx];
 		var webble = $scope.getWebbleByInstanceId(plugin.id);
 
@@ -2432,7 +2420,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						// tell plugin that the data may be new even if the format is not! (should not be necessary, since it is a new object)
 						webble.scope().set('GlobalSelections', selectionArraysPerIdSlot);
 					} catch(e) {
-						debugLog("Something went wrong when sending data to plugin " + plugin.name);
+						//$log.log(preDebugMsg + "Something went wrong when sending data to plugin " + plugin.name);
 					}
 				}
 			} else {
@@ -2443,7 +2431,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 				try {
 					webble.scope().set('DataValuesSetFilled', []);
 				} catch(e) {
-					debugLog("Something went wrong when clearing data of plugin " + plugin.name);
+					//$log.log(preDebugMsg + "Something went wrong when clearing data of plugin " + plugin.name);
 				}
 			}
 		}
@@ -2456,7 +2444,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// This method sets new colors for the plugins.
 	//===================================================================================
 	function newColors(newColorDictionary) {
-		// debugLog("newColors");
+		// //$log.log(preDebugMsg + "newColors");
 		var colorDictionary = newColorDictionary;
 		try {
 			if(typeof colorDictionary === 'string') {
@@ -2482,13 +2470,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						try {
 							webble.scope().set("GroupColors", colorDictionary);
 						} catch(e) {
-							debugLog("Something went wrong when setting colors on plugin.");
+							//$log.log(preDebugMsg + "Something went wrong when setting colors on plugin.");
 						}
 					} else {
-						debugLog("my child with ID " + listOfPlugins[p].id + " is still undefined, could not set colors.");
+						//$log.log(preDebugMsg + "my child with ID " + listOfPlugins[p].id + " is still undefined, could not set colors.");
 					}
 				} catch(e) {
-					debugLog("Trying to set colors of child with ID " + listOfPlugins[p].id + " crashed.");
+					//$log.log(preDebugMsg + "Trying to set colors of child with ID " + listOfPlugins[p].id + " crashed.");
 				}
 			}
 
@@ -2499,13 +2487,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 						try {
 							webble.scope().set("GroupColors", colorDictionary);
 						} catch(e) {
-							debugLog("Something went wrong when setting colors on data source.");
+							//$log.log(preDebugMsg + "Something went wrong when setting colors on data source.");
 						}
 					} else {
-						debugLog("my data source with ID " + listOfDataSources[p].id + " is still undefined, could not set colors.");
+						//$log.log(preDebugMsg + "my data source with ID " + listOfDataSources[p].id + " is still undefined, could not set colors.");
 					}
 				} catch(e) {
-					debugLog("Trying to set colors of data source with ID " + listOfDataSources[p].id + " crashed.");
+					//$log.log(preDebugMsg + "Trying to set colors of data source with ID " + listOfDataSources[p].id + " crashed.");
 				}
 			}
 
@@ -2531,7 +2519,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	// DECREMENTED
 	//===================================================================================
 	/*function autoAssignDataFields() {
-		// debugLog("autoAssignDataFields");
+		// //$log.log(preDebugMsg + "autoAssignDataFields");
 		for(var p = 0; p < listOfPlugins.length; p++) {
 			var plugin = listOfPlugins[p];
 
@@ -2593,13 +2581,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					try {
 						webble.scope().set("SelectAll", true);
 					} catch(e) {
-						debugLog("Something went wrong when doing select all on plugin.");
+						//$log.log(preDebugMsg + "Something went wrong when doing select all on plugin.");
 					}
 				} else {
-					debugLog("my child with ID " + listOfPlugins[p].id + " is still undefined, could not set selections.");
+					//$log.log(preDebugMsg + "my child with ID " + listOfPlugins[p].id + " is still undefined, could not set selections.");
 				}
 			} catch(e) {
-				debugLog("Trying to set selections for child with ID " + listOfPlugins[p].id + " crashed.");
+				//$log.log(preDebugMsg + "Trying to set selections for child with ID " + listOfPlugins[p].id + " crashed.");
 			}
 		}
 	};
@@ -2630,10 +2618,10 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 	//===================================================================================
 	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
 		if(itemName == 'connectDataToPlugin'){
-			$log.log('DigitalDashboard: connect menu item called.');
+			//$log.log('DigitalDashboard: connect menu item called.');
 			openConnectionformViz2Data2Viz(true);
 		} else if(itemName == 'connectPluginAndData') {
-			$log.log('DigitalDashboard: connect menu item called.');
+			//$log.log('DigitalDashboard: connect menu item called.');
 			openConnectionformViz2Data2Viz(false);
 		}
 	};
@@ -2665,12 +2653,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 // This is the Viz2Data2Viz Form controller for this Webble Template
 //=======================================================================================
 wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
-	$scope.doDebugLogging = true;
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("DigitalDashboard connectionViz2DataForm: " + message);
-		}
-	};
+	var preDebugMsg = "DigitalDashboard connectionViz2DataForm: ";
 
 	$scope.formProps = {
 		eaType: props.eaType,
@@ -2684,7 +2667,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 	};
 
 	$scope.close = function (result) {
-		// debugLog("close");
+		// //$log.log(preDebugMsg + "close");
 
 		$modalInstance.close({plugins: $scope.formProps.plugins, somethingChanged: $scope.formProps.somethingChanged, changedPlugins: $scope.formProps.changedPlugins});
 	};
@@ -2698,7 +2681,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 	};
 
 	$scope.clearFields = function(dataSource, plugin) {
-		// debugLog("clearFields");
+		// //$log.log(preDebugMsg + "clearFields");
 
 		for(var ps = 0; ps < plugin.sets.length; ps++) {
 
@@ -2721,7 +2704,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 	};
 
 	$scope.connectFields = function(dataSource, plugin) {
-		// debugLog("connectFields");
+		// //$log.log(preDebugMsg + "connectFields");
 
 		var pluginGrouping = plugin.grouping;
 		var pluginName = plugin.name;
@@ -2780,7 +2763,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 			pluginSets.push(pluginSet);
 		}
 
-		// debugLog("open form with pluginSets = " + JSON.stringify(pluginSets));
+		//$log.log(preDebugMsg + "open form with pluginSets = " + JSON.stringify(pluginSets));
 
 		props.wblScope.openForm('connectionFieldsForm', [{templateUrl: 'connectionFieldsForm.html', controller: 'connectionFieldsForm_Ctrl', size: 'lg'},
 				{wblScope: props.wblScope,
@@ -2794,7 +2777,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 
 
 	$scope.connectFieldsMultiple = function(plugin, dataSources) {
-		// debugLog("connectFieldsMultiple");
+		// //$log.log(preDebugMsg + "connectFieldsMultiple");
 
 		var pluginGrouping = plugin.grouping;
 		var pluginName = plugin.name;
@@ -2862,7 +2845,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 			pluginSet.dataSets.push(multipleDataSet);
 			pluginSets.push(pluginSet);
 		}
-		// debugLog("open form with pluginSets = " + JSON.stringify(pluginSets));
+		// //$log.log(preDebugMsg + "open form with pluginSets = " + JSON.stringify(pluginSets));
 
 		props.wblScope.openForm('connectionFieldsForm', [{templateUrl: 'connectionFieldsForm.html', controller: 'connectionFieldsForm_Ctrl', size: 'lg'},
 				{wblScope: props.wblScope,
@@ -2876,13 +2859,13 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 
 
 	function closeFieldConnectionform(returnContent) {
-		// debugLog("closeFieldConnectionform");
+		// //$log.log(preDebugMsg + "closeFieldConnectionform");
 
 		if(returnContent !== null && returnContent !== undefined) {
 			var plugin = null;
 			var changed = false;
 
-			// debugLog("returnContent = " + JSON.stringify(returnContent));
+			// //$log.log(preDebugMsg + "returnContent = " + JSON.stringify(returnContent));
 			var p;
 
 			for(p = 0; p < $scope.formProps.plugins.length; p++) {
@@ -2980,7 +2963,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 						for(var f = 0; f < dataSet.fields.length; f++) {
 							var field = dataSet.fields[f];
 
-							// debugLog("field.input = " + field.input);
+							// //$log.log(preDebugMsg + "field.input = " + field.input);
 
 							if(field.input !== null) {
 								// something was selected
@@ -3026,13 +3009,13 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 
 
 	function closeFieldConnectionMultipleform(returnContent) {
-		// debugLog("closeFieldConnectionMultipleform");
+		// //$log.log(preDebugMsg + "closeFieldConnectionMultipleform");
 
 		if(returnContent !== null && returnContent !== undefined) {
 			var plugin = null;
 			var changed = false;
 
-			// debugLog("returnContent = " + JSON.stringify(returnContent));
+			// //$log.log(preDebugMsg + "returnContent = " + JSON.stringify(returnContent));
 
 			for(var p = 0; p < $scope.formProps.plugins.length; p++) {
 				if($scope.formProps.plugins[p].idx == returnContent.pluginIdx) {
@@ -3129,13 +3112,8 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 // CONNECTION FIELDS FORM CONTROLLER
 // This is the Connection Fields Form controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
-	$scope.doDebugLogging = true;
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("DigitalDashboard connectionFieldsForm: " + message);
-		}
-	};
+wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {	
+	var preDebugMsg = "DigitalDashboard connectionFieldsForm: ";
 
 	$scope.formProps = {
 		eaType: props.eaType,
@@ -3151,7 +3129,7 @@ wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $moda
 	};
 
 	$scope.close = function (result) {
-		// debugLog("close");
+		// //$log.log(preDebugMsg + "close");
 
 		if(result == 'cancel'){
 			$modalInstance.close(null);
@@ -3168,8 +3146,8 @@ wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $moda
 	};
 
 	$scope.removeField = function (inpPluginSet, inpDataSet, inpField) {
-		// debugLog("removeField");
-		// debugLog("removeField: " + JSON.stringify(inpField));
+		// //$log.log(preDebugMsg + "removeField");
+		// //$log.log(preDebugMsg + "removeField: " + JSON.stringify(inpField));
 
 		$scope.formProps.fieldsAddedOrRemoved = true;
 
@@ -3192,8 +3170,8 @@ wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $moda
 	};
 
 	$scope.addField = function (inpPluginSet, inpDataSet, inpField) {
-		// debugLog("addField");
-		// debugLog("addField: " + JSON.stringify(inpField));
+		// //$log.log(preDebugMsg + "addField");
+		// //$log.log(preDebugMsg + "addField: " + JSON.stringify(inpField));
 
 		$scope.formProps.fieldsAddedOrRemoved = true;
 

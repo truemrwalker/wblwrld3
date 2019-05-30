@@ -411,8 +411,9 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                         element
                     ));
 
+                    //Every Webble start as invisible so they can appear first after they are all loaded completely in a more smooth manner
                     scope.addSlot(new Slot('root:opacity',
-                        1.0,
+                        0.0,
                         gettext("Opacity"),
                         gettext("A decimal value between 0 and 1 which describes the opacity of the element, 1 is opaque."),
                         'css',

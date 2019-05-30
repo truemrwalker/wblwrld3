@@ -194,7 +194,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     $scope.wblStateFlags = {
         pasteByUser: false,
 		customIOTarget: null,
-		readyToStoreUndos: false
+		readyToStoreUndos: false,
+		rootOpacityMemory: 1.0
     };
 
     // A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
@@ -1033,8 +1034,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
                 //var theVal = parseValue(defSlots[i].value);
                 var theVal = defSlots[i].value;
 
-                // assigning the def stored value to the slot in question
-                $scope.set(defSlots[i].name, theVal);
+                // assigning the def stored value to the slot in question (unless it is root:opacity, since we wait with that after all Webbles in a set is loaded)
+				if(defSlots[i].name != "root:opacity"){
+					$scope.set(defSlots[i].name, theVal);
+				}
+				else{
+					$scope.wblStateFlags.rootOpacityMemory = parseFloat(theVal);
+				}
 
                 if (defSlots[i].metadata != null && defSlots[i].metadata != 'null' && defSlots[i].metadata != ''){
                     var slotMetadata = defSlots[i].metadata;

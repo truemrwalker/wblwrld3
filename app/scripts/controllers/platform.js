@@ -347,6 +347,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var webblesWaitingToBeLoaded = [];
 	var downloadingManifestLibs = false;
 	var pleaseQuickLoadInternalSavedWS = false;
+	$scope.isSystemDoneLoadingWebbles = function () { return (!webbleCreationInProcess && webblesWaitingToBeLoaded.length == 0); }
 
 	// Flags and short memory trackers that keeps track of platform states
 	var waitingForNumberKey_ = 0;
@@ -1454,6 +1455,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 		else{
 			downloadWblTemplate(whatTemplateId, whatTemplateRevision, whatWblDef, angular.copy(sortFileListInOrderOfLoading(["controllers.js", "styles.css", "view.html"])));
+
+			//Force bundle children to load with latest revision if the bundle is set to do so.
+			for(var i = 0, slot; slot = whatWblDef.webble.slotdata.slots[i]; i++){
+				if(slot.name == "forceLatest" && slot.value){
+					dontAskJustDoIt = true;
+					break;
+				}
+			}
 		}
 	};
 	//========================================================================================
@@ -2448,7 +2457,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var publishWebbleReturned = function(returnData){
         $scope.getWSE().find('#autoGenImageFrame').remove();
         if(returnData){
-        	$log.log(returnData);
 			$scope.waiting(true);
             var theWbl = $scope.getWebbleByInstanceId(returnData.instanceid);
             theWbl.scope().theWblMetadata['defid'] = returnData.defid;
@@ -2781,7 +2789,22 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		var eventKey = getKeyByValue(Enum.availableWWEvents, eventType);
 		for(var i = 0; i < wwEventListeners_[eventKey].length; i++){
 			if(wwEventListeners_[eventKey][i].target === null || eventData.targetId == wwEventListeners_[eventKey][i].target){
-				if(wwEventListeners_[eventKey][i].targetData === undefined || eventData.slotName === undefined || (eventData.slotName !== undefined && wwEventListeners_[eventKey][i].targetData == eventData.slotName)){
+				var isTargetData = false;
+				if(eventData.slotName !== undefined && wwEventListeners_[eventKey][i].targetData !== undefined){
+					if(wwEventListeners_[eventKey][i].targetData == eventData.slotName){
+						isTargetData = true;
+					}
+					else if($.isArray(wwEventListeners_[eventKey][i].targetData)){
+						for(var t = 0, td; td = wwEventListeners_[eventKey][i].targetData[t]; t++){
+							if(eventData.slotName == td){
+								isTargetData = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if(wwEventListeners_[eventKey][i].targetData === undefined || eventData.slotName === undefined || isTargetData){
 					queueOfHandlersToBeTriggered.push({cb: wwEventListeners_[eventKey][i].callback, ed: eventData});
 				}
 			}
@@ -3358,7 +3381,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 
 
-
+	var listOfWebblesBeingLoaded = [];
     //========================================================================================
     // Webble Initiation Done
     // This method informs the system that a specific Webble has finished initiating and may
@@ -3366,6 +3389,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // child.
     //========================================================================================
     $scope.wblInitiationDone = function(whatWebble){
+
+		listOfWebblesBeingLoaded.push(whatWebble.scope().getInstanceId());
+
 		$scope.fireWWEventListener(Enum.availableWWEvents.loadingWbl, {targetId: whatWebble.scope().getInstanceId(), timestamp: (new Date()).getTime()});
 
         var thisIsFirst = false;
@@ -3555,6 +3581,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					}
 				}
             }
+            
+			// Since we are done loading a whole set of webbles, we can now make them all visible at once for smoother user experience
+			for(var i = 0, freshWblId; freshWblId = listOfWebblesBeingLoaded[i]; i++){
+				for(var n = 0, aw; aw = $scope.getActiveWebbles()[n]; n++){
+					if (aw.scope() && aw.scope().getInstanceId() == freshWblId){
+						aw.scope().set("root:opacity", aw.scope().wblStateFlags.rootOpacityMemory);
+					}
+				}
+			}
+			listOfWebblesBeingLoaded = [];
         }
     };
     //========================================================================================

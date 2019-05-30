@@ -39,7 +39,7 @@ wblwrld3App.controller('HoPSupportCarrierCtrl', function($scope, $log, Slot, Enu
 			$scope.setMenuModeEnabled(false);
 		}
 
-		$scope.set("root:opacity", 0.9);
+		$scope.set("root:opacity", 0.2);
     };
     //===================================================================================
 

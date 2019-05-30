@@ -611,7 +611,7 @@ $scope.registerOnlineDataListener("MyRoom", function(data, username) {
 ```
 <a name="registerWWEventListener"></a>    											
 ###_registerWWEventListener_ ![Method][meth]
-Registers an event listener for a specific event (see [availableWWEvents](#availableWWEvents)) for a specific target (self, other or all) (targetData can be set for slotChange as a slotName to narrow down event further but not used for other events) and the callback function the webble wish to be called if the event fires. The callback function will then be handed a datapack object containing needed information to react to the event accordingly. All callback functions are sent a datapack object as a parameter when they fire which includes different things depending on the event. The targetId post in these datapacks are only useful when the webble are listening to multiple webbles with the same callback. If targetId is undefined the webble will be listening to itself, or if the targetId match an existing Webble then that will be listened to, and if the targetId is set to NULL it will listen to all webbles.
+Registers an event listener for a specific event (see [availableWWEvents](#availableWWEvents)) for a specific target (self, other or all) (targetData can be set for slotChange as a slotName or an array of slotnames to narrow down event further but not used for other events) and the callback function the webble wish to be called if the event fires. The callback function will then be handed a datapack object containing needed information to react to the event accordingly. All callback functions are sent a datapack object as a parameter when they fire which includes different things depending on the event. The targetId post in these datapacks are only useful when the webble are listening to multiple webbles with the same callback. If targetId is undefined the webble will be listening to itself, or if the targetId match an existing Webble then that will be listened to, and if the targetId is set to NULL it will listen to all webbles.
 
 **Returning Data for each event type**
 
@@ -637,7 +637,7 @@ Registers an event listener for a specific event (see [availableWWEvents](#avail
 	* targetId (Integer) Instance Id of the Webble whose event are being listened to.
 	    * `undefined` is self
 		* `null` is all
-	* targetData (String) Only used with slotChanged event and then is the name of the slot being listened to (if only one is enough)
+	* targetData (String or Array of Strings) Only used with slotChanged event and then is the name (or names) of the slot(s) being listened to.
 * **Returns:**
     * (Function) A function that can be called (without any parameters) to stop and kill the event listener.
 
@@ -1525,7 +1525,7 @@ var cuteKittenImg = $('<img id="cuteKitten">');
 cuteKittenImg.attr('src', cuteKittenImgUrl);
 $scope.getWSE().append(cuteKittenImg);
 ```
-###isSystemDoneLoadingWebbles ![Method][meth]
+###_isSystemDoneLoadingWebbles_ ![Method][meth]
 Returns true or false whether the system is done loading Webbles or not. False if it is still busy loading Webbles and True if it is done and finished and went back to idling.
 	
 ####isSystemDoneLoadingWebbles()
