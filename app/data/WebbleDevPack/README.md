@@ -2728,9 +2728,10 @@ Used for keeping track if a slot is disabled in some way or another. Each higher
 
 * None: 0 _(Fully Enabled Slot)_
 * PropertyEditing: 1 _(Slot cannot be edited in the slot/property form (but viewed))_
-* PropertyVisibility: 2 _(Slot cannot be seen in the slot/property form (but seen and used in the slot connection form))_
-* ConnectionVisibility: 4 _(Slot cannot be used to create connections and does not show up in the slot connection form)_
-* AllVisibility: 8 _(Can only be used internally by the Webble Developer and is never visible for external use in any way)_
+* PropertyEditingAndValue: 2 _(Slot cannot be edited and its value cannot be seen))_
+* PropertyVisibility: 4 _(Slot cannot be seen in the slot/property form (but seen and used in the slot connection form))_
+* ConnectionVisibility: 8 _(Slot cannot be used to create connections and does not show up in the slot connection form)_
+* AllVisibility: 16 _(Can only be used internally by the Webble Developer and is never visible for external use in any way)_
 
 ```JavaScript
 // Make the slot "MySlot" invisible in the property form

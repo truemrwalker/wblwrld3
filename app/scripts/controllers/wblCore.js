@@ -456,6 +456,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
                 if(theValue === undefined){ theValue = ''; }
 				if(theValue === null){ theValue = 'NULL'; }
+				if(value.getDisabledSetting() == Enum.SlotDisablingState.PropertyEditingAndValue){ theValue = "Not Viewable Format"; }
 
                 // Set prop form key
                 tmp['key'] = key;
@@ -615,6 +616,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
                     }
                 }
 
+				if(value.getDisabledSetting() == Enum.SlotDisablingState.PropertyEditingAndValue){
+					tmp['inputType'] = Enum.aopInputTypes.Undefined;
+				}
+
                 // Wrap it up
                 this.push(angular.copy(tmp));
             }
@@ -641,7 +646,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
             if(!formProps.deleteOnly){
                 var theSlotsToSet = {};
-
                 //Shared Model slot update (if such exist)
                 if(modelSharees_.length > 0){
 					var slotsAreShared = {};

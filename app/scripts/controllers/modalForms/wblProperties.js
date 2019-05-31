@@ -56,6 +56,7 @@ ww3Controllers.controller('propertySheetCtrl', function ($scope, $uibModalInstan
     $scope.browser = BrowserDetect.browser;
     $scope.deleteTooltipInfo = gettext("If you want to delete this custom slot, click here.");
     $scope.isSharedTooltipInfo = gettext("This Webble has shared model duplicates which it shares selected slots with");
+	$scope.notVisibleLevel = Enum.SlotDisablingState.PropertyVisibility;
 
     $scope.infoMsg = 'Hover the Question mark to get a description of the slot or click it to open a more readable form of the same.';
 

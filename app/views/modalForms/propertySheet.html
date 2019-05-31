@@ -54,10 +54,15 @@
         </div>
     </div>
 
-    <div class="row keepTheDistanceBelow" ng-hide="item.deleteRequest == true || item.disabledSettings == 2" ng-repeat="item in props" ng-if="item.cat == cat" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
+    <div class="row keepTheDistanceBelow" ng-hide="item.deleteRequest == true || item.disabledSettings == notVisibleLevel" ng-repeat="item in props" ng-if="item.cat == cat" style="border-bottom: 1px dashed #d3d3d3; padding-bottom: 4px;">
         <div class="col-xs-3" tooltip-placement="right" uib-tooltip="{{item.key;}}" ng-click="copyToClipboard(item.key)"><span class="formTitle">{{item.name | translate}}:</span></div>
 
         <div class="col-xs-6" ng-switch on="item.inputType">
+			<!--Undefined-->
+			<div ng-switch-when="0">
+				<span style="font-weight: normal; font-style: italic; display: inline-block;" translate>Slot Value is not in a viewable format</span>
+			</div>
+
             <!--CheckBox-->
             <div ng-switch-when="1">
                 <input class="formitem" type="checkbox" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 16px; height: 16px;" />
@@ -171,6 +176,7 @@
                 <audio controls ng-src="{{item.value}}"></audio>
 				<input id="inputAudio_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localAudioFileChanged(this)"><br>
 				<input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px" />
+				<span style="width: 95%; min-width: 180px; color: red">{{item.notification | translate}}</span>
             </div>
 
             <!--VideoPick-->
@@ -178,6 +184,7 @@
                 <input class="formitem" type="text" ng-model="item.value" ng-disabled="item.disabledSettings == 1" style="width: 95%; min-width: 180px;" />
                 <video width="200" height="auto" controls ng-src="{{item.value}}" style="vertical-align: top; width: 210px;"></video>
 				<input id="inputVideo_{{item.key}}" ng-disabled="item.disabledSettings == 1" style="width: auto; min-width: 180px" type="file" onchange="angular.element(this).scope().localVideoFileChanged(this)"><br>
+				<span style="width: 95%; min-width: 180px; color: red">{{item.notification | translate}}</span>
             </div>
 
             <!--WebPick-->

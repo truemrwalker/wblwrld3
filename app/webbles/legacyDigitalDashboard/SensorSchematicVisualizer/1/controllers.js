@@ -1,5 +1,5 @@
 //======================================================================================================================
-// Controllers for SoftSensorAppPlantVisualizer for Webble World v3.0 (2013)
+// Controllers for SensorSchematicVisualizer for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
 // Edited By: Micke Kuwahara (truemrwalker)
 //======================================================================================================================

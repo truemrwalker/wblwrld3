@@ -295,9 +295,10 @@ ww3Services.factory('Enum', function (gettext) {
         SlotDisablingState: {
             None: 0,
             PropertyEditing: 1,
-            PropertyVisibility: 2,
-            ConnectionVisibility: 4,
-			AllVisibility: 8
+			PropertyEditingAndValue: 2,
+            PropertyVisibility: 4,
+            ConnectionVisibility: 8,
+			AllVisibility: 16
         },
 
         //Slot manipulation result
