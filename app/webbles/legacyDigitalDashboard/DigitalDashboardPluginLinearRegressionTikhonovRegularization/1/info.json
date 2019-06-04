@@ -1,8 +1,8 @@
 {
- "noautogen":false,
- "image":"images/wbls/digitalDashboardPluginLinearRegressionTikhonov.png",
- "name":"Digital Dashboard Plugin Linear Regression Tikhonov Regularization",
- "description":"<h3>The Digital Dashboard Linear Regression Tikhonov Regularization Webble</h3><p>Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Does linear regression of data using Tikhonov regularization and plots the training data and the extrapolation from the regression for data not in the training data in a time series plot.</p><p><span style=\"color: #ff0000;\">This is the old (Legacy) version of the \"Digital Dashboard\" for data visualization.</span><br /><span style=\"color: #ff0000;\">Legacy Dashboard 2.0 Webbles are about to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles, so if you have a choice, please use the new version instead.</span></p><p>For more info on how to use this Webble and build a Legacy Digital Dashboard 2.0 App, please see the description of the Digital Dashboard Master Webble.</p>",
- "keywords":"Digital Dashboard,Visualization,linear regression,data mining",
- "author":"legacyDigitalDashboard"
+	"noautogen":false,
+	"image":"images/wbls/digitalDashboardPluginLinearRegressionTikhonov.png",
+	"name":"Digital Dashboard Plugin Linear Regression Tikhonov Regularization",
+	"description":"<h3>The Digital Dashboard Linear Regression Tikhonov Regularization Webble</h3><p>Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble.</p><p>Does linear regression of data using Tikhonov regularization and plots the training data and the extrapolation from the regression for data not in the training data in a time series plot.</p><p><span style=\"color: #ff0000;\">This is the old (Legacy) version of the \"Digital Dashboard\" for data visualization.</span><br /><span style=\"color: #ff0000;\">Legacy Dashboard 2.0 Webbles are about to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles, so if you have a choice, please use the new version instead.</span></p><p>For more info on how to use this Webble and build a Legacy Digital Dashboard 2.0 App, please see the description of the Digital Dashboard Master Webble.</p>",
+	"keywords":"Digital Dashboard,Visualization,linear regression,data mining",
+	"author":"legacyDigitalDashboard"
 }

@@ -65,9 +65,9 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 				reader.onload = function(e) {
 					if(checkIfRockstar(e.target.result)) {
 						if(fileType != "none" && fileType != "rockstar") {
-							$log.log(preDebugMsg + "WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
+							//$log.log(preDebugMsg + "WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
 						}
-						$log.log(preDebugMsg + "Found Rockstar type file.");
+						//$log.log(preDebugMsg + "Found Rockstar type file.");
 						fileType = "rockstar";
 
 						var contents = parseRockstarFormat(e.target.result);
@@ -76,9 +76,9 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 					}
 					else {
 						if(fileType != "none" && fileType != "density") {
-							$log.log(preDebugMsg + "WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
+							//$log.log(preDebugMsg + "WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
 						}
-						$log.log(preDebugMsg + "Found file with no type marking, assuming density data file.");
+						//$log.log(preDebugMsg + "Found file with no type marking, assuming density data file.");
 						fileType = "density";
 
 						var contents = parseDensityFormat(e.target.result);
@@ -103,8 +103,8 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 	// This event handler reacts to slot changes within this Webble.
 	//===================================================================================
 	function mySlotChange(eventData) {
-		//$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
-		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
+		////$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
+		// //$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
 
 		if(eventData.slotName == idSlotName) {
 			// this is not allowed unless it is a set from the parseData() function
@@ -274,7 +274,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 		// check when we get loaded (fully loaded)
 		$scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
 			if(eventData.targetId == $scope.getInstanceId()) {
-				// $log.log(preDebugMsg + "I was loaded");
+				// //$log.log(preDebugMsg + "I was loaded");
 				fullyLoaded = true;
 				parseData();
 			}
@@ -390,17 +390,17 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 		var concat_magic = header.magic.hi.toString(16) + header.magic.lo.toString(16);
 
 		if(concat_magic != ROCKSTAR_MAGICstr) {
-			$log.log(preDebugMsg + "This does not look like a Rockstar file.");
-			$log.log(preDebugMsg + "ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
-			$log.log(preDebugMsg + "ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
-			$log.log(preDebugMsg + "concat_magic     =" + concat_magic);
-			$log.log(preDebugMsg + "hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
+			//$log.log(preDebugMsg + "This does not look like a Rockstar file.");
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
+			//$log.log(preDebugMsg + "concat_magic     =" + concat_magic);
+			//$log.log(preDebugMsg + "hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
 		} else {
-			$log.log(preDebugMsg + "This file seems to be a Rockstar file.");
-			$log.log(preDebugMsg + "ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
-			$log.log(preDebugMsg + "ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
-			$log.log(preDebugMsg + "concat_magic     =" + concat_magic);
-			$log.log(preDebugMsg + "hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
+			//$log.log(preDebugMsg + "This file seems to be a Rockstar file.");
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
+			//$log.log(preDebugMsg + "concat_magic     =" + concat_magic);
+			//$log.log(preDebugMsg + "hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
 		}
 
 		header.snap = {"lo":tmpUInt[2], "hi":tmpInt[3]};
@@ -415,9 +415,9 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 		}
 
 		header.num_halos = {"lo":tmpUInt[16], "hi":tmpInt[17]};
-		$log.log(preDebugMsg + "num_halos: " + header.num_halos.hi.toString(16) + " " + header.num_halos.lo.toString(16));
+		//$log.log(preDebugMsg + "num_halos: " + header.num_halos.hi.toString(16) + " " + header.num_halos.lo.toString(16));
 		if(header.num_halos.hi > 0) {
-			$log.log(preDebugMsg + "WARNING: Too many halos, will only read the first " + header.nu_halos.lo + " halos.");
+			//$log.log(preDebugMsg + "WARNING: Too many halos, will only read the first " + header.nu_halos.lo + " halos.");
 		}
 		header.num_particles = {"lo":tmpUInt[18], "hi":tmpInt[19]};
 		header.box_size = tmpFloat[20];
@@ -563,7 +563,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 			return;
 		}
 
-		$log.log(preDebugMsg + "parseData()");
+		//$log.log(preDebugMsg + "parseData()");
 		var fieldNameString = "";
 		var slotList = $scope.getSlots();
 		var typeMap = {};
@@ -687,7 +687,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 					var slotName = fname + "Slot";
 					slotName = "DataSlot" + i;
 
-					// $log.log(preDebugMsg + "set " + slotName + " to " + JSON.stringify(vectorsForSlots[i]));
+					// //$log.log(preDebugMsg + "set " + slotName + " to " + JSON.stringify(vectorsForSlots[i]));
 					$scope.set(slotName, vectorsForSlots[i]);
 				}
 
@@ -699,7 +699,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 		}
 
 		if (dataIsCorrupt) {
-			$log.log(preDebugMsg + "Could not parse data correctly.");
+			//$log.log(preDebugMsg + "Could not parse data correctly.");
 			setsJSON.sets = [];
 			$scope.set("ProvidedFormat", resJSON);
 			$scope.set("ProvidedFormatChanged", !$scope.gimme("ProvidedFormatChanged"));
@@ -721,7 +721,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 			}
 			$scope.dragNdropData = ls;
 
-			$log.log(preDebugMsg + "Finished parsing data.");
+			//$log.log(preDebugMsg + "Finished parsing data.");
 			var oldJSON = {};
 			var newJSON = resJSON;
 
@@ -777,7 +777,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				$log.log(preDebugMsg + "no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -879,7 +879,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 				myCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -916,7 +916,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -941,7 +941,7 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 			H = 1;
 		}
 
-		// $log.log(preDebugMsg + "Clear the canvas");
+		// //$log.log(preDebugMsg + "Clear the canvas");
 		ctx.clearRect(0,0, W,H);
 
 		var colors = $scope.gimme("GroupColors");

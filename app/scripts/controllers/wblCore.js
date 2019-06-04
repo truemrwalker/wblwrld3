@@ -197,6 +197,20 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		readyToStoreUndos: false,
 		rootOpacityMemory: 1.0
     };
+    var _internalWblStateFlags = {
+    	displayNamePropDisabledSetting: Enum.SlotDisablingState.None
+	};
+
+	$scope.additionalWblRequests = {
+		displayNameProp: {
+			setDisabledSetting: function (newDisabledSetting) {
+				_internalWblStateFlags.displayNamePropDisabledSetting = newDisabledSetting;
+			},
+			getDisabledSetting: function () {
+				return _internalWblStateFlags.displayNamePropDisabledSetting;
+			}
+		}
+	};
 
     // A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
     var onGoingTimeOuts = {};
@@ -434,19 +448,21 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
         var content = [$scope.theWblMetadata['templateid']];
         var propsContent = [];
 
-        propsContent.push({
-            key: 'displayname',
-            name: gettext("Display Name"),
-            value: $scope.theWblMetadata['displayname'],
-            cat: 'metadata',
-            desc: gettext("The name the Webble is user friendly shown as."),
-            disabledSettings: 0,
-            isShared: undefined,
-            isCustom: undefined,
-            notification: '',
-            inputType: Enum.aopInputTypes.TextBox,
-			originalValType: ''
-        });
+		if($scope.additionalWblRequests.displayNameProp.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
+			propsContent.push({
+				key: 'displayname',
+				name: gettext("Display Name"),
+				value: $scope.theWblMetadata['displayname'],
+				cat: 'metadata',
+				desc: gettext("The name the Webble is user friendly shown as."),
+				disabledSettings: $scope.additionalWblRequests.displayNameProp.getDisabledSetting(),
+				isShared: undefined,
+				isCustom: undefined,
+				notification: '',
+				inputType: Enum.aopInputTypes.TextBox,
+				originalValType: ''
+			});
+		}
 
         angular.forEach(theSlots_, function (value, key) {
             if(value.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){

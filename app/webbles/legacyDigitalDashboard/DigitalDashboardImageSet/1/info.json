@@ -1,8 +1,8 @@
 {
  "noautogen":false,
- "image":"images/notFound.png",
- "name":"DigitalDashboardImageSet",
- "description":"A Webble that takes sets of images and allows you to create the difference between two images in different ways. Used in a prototype application for the Hands-on Portal.",
+ "image":"images/wbls/digitalDashboardPluginImageSet.png",
+ "name":"Digital Dashboard Image Set",
+ "description":"<h3>The Digital Dashboard Image Set Webble</h3><p>Visualization component for the old version of the DigitalDashboard.</p><p>A Webble that takes sets of images and allows you to create the difference between two images in different ways.</p><p>Used in a prototype application for the <strong>Hands-on Portal</strong>.</p><p><span style=\"color: #ff0000;\">This is the old (Legacy) version of the \"Digital Dashboard\" for data visualization.<br />Legacy Dashboard 2.0 Webbles are about to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles, so if you have a choice, please use the new version instead.</span></p><p>For more info on how to use this Webble and build a Legacy Digital Dashboard 2.0 App, please see the description of the Digital Dashboard Master Webble.</p>",
  "keywords":"DigitalDashboard,Hands-on Portal,hop,images",
  "author":"legacyDigitalDashboard"
 }

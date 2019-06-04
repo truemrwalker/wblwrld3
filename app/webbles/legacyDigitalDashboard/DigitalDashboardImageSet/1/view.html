@@ -1,29 +1,29 @@
 <!--====================================================================================================================
-// View for DigitalDashboard for Webble World v3.0 (2013)
+// Controllers for Digital Dashboard Image Set Plugin Webble for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //===================================================================================================================-->
 
 <div id="imageSet" ng-controller="imageSetWebbleCtrl">
-  <div id="selectionHolder" width="300" height="200" style="pointer-events:visible;">
-    <div id="DrawingArea" style="pointer-events:none;">
-      <canvas id="theCanvas" style="pointer-events:none;" width="300" height="200"></canvas>
-      <canvas id="theSelectionCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-      <canvas id="selectionRectangle" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-      <div id="mouseOverText" style="pointer-events:none; display:none; position:fixed; border: 1px solid black; background: white; " height="10" width="10">
-	ToolTip
-      </div>
-    </div>
-  </div>
+	<div id="selectionHolder" width="300" height="200" style="pointer-events:visible;">
+		<div id="DrawingArea" style="pointer-events:none;">
+			<canvas id="theCanvas" style="pointer-events:none;" width="300" height="200"></canvas>
+			<canvas id="theSelectionCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+			<canvas id="selectionRectangle" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+			<div id="mouseOverText" style="pointer-events:none; display:none; position:fixed; border: 1px solid black; background: white; " height="10" width="10">
+				ToolTip
+			</div>
+		</div>
+	</div>
 
-  <input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
+	<input type="file" id="selectMultipleFilesInputEntry" ng-file-select="onFilesAdded($files)" multiple/>
 
-  <div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt">
-    Drop Image Files Here
-  </div>
+	<div class="well well-large upload-drop-zone" ng-file-drop="onFilesAdded($files)" ng-file-drag-over-class="upload-file-over-alt">
+		Drop Image Files Here
+	</div>
 
-  <button ng-click="saveAllGenerated()">Save generated files</button>
-  <!-- <span id="displayText">{{displayText}}</span> -->
-
+	<button ng-click="saveAllGenerated()">Save generated files</button>
+	<!-- <span id="displayText">{{displayText}}</span> -->
 </div>
 
 <!--=================================================================================================================-->

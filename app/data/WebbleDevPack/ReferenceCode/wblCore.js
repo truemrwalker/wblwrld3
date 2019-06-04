@@ -74,7 +74,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	// jquery element object pointing at the place in this webble where children should be DOM pasted
 	var childContainer_ = undefined;
 	$scope.getChildContainer = function(){return childContainer_;};
-	// SET a bit more complex and found further below
+	$scope.setChildContainer = function(newContainer){ childContainer_ = newContainer; };
 
 	// The default slot to auto connect
 	var theDefaultSlot_ = '';
@@ -144,7 +144,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	// Changeable Slot names for the slots to be used with interaction ball: resize
 	var resizeSlots_ = {width: undefined, height: undefined};
 	$scope.getResizeSlots = function(){return resizeSlots_;};
-	$scope.setResizeSlots = function(widthSlotName, heightSlotName){resizeSlots_ = {width: widthSlotName, height: heightSlotName};};
+	$scope.setResizeSlots = function(widthSlotName, heightSlotName){ resizeSlots_ = {width: widthSlotName, height: heightSlotName}; };
 
 	// A Parser and Stringifiers for managing values that are functions or contain functions
 	$scope.dynJSFuncParse = function(key, value) { if(value && (typeof value === 'string') && value.indexOf("function") === 0){ return new Function('return ' + value)(); } return value; };
@@ -194,7 +194,19 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	$scope.wblStateFlags = {
 		pasteByUser: false,
 		customIOTarget: null,
-		readyToStoreUndos: false
+		readyToStoreUndos: false,
+		rootOpacityMemory: 1.0,
+		displayNameProp: {
+			setDisabledSetting: function (newDisabledSetting) {
+				_internalWblStateFlags.displayNamePropDisabledSetting = newDisabledSetting;
+			},
+			getDisabledSetting: function () {
+				return _internalWblStateFlags.displayNamePropDisabledSetting;
+			}
+		}
+	};
+	var _internalWblStateFlags = {
+		displayNamePropDisabledSetting: Enum.SlotDisablingState.None
 	};
 
 	// A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
@@ -206,7 +218,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	// Some memory variables used to remember things for later
 	var keepInMind = {
 		currentSharedModelSlotsSettings: {}
-	}
+	};
 
 	//=== EVENT HANDLERS =====================================================================
 
@@ -268,6 +280,22 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	//========================================================================================
 	///////////////////////////////////////////////////////////////////////////////////////
 
+
+	//========================================================================================
+	// Mouse Enter Selection
+	// Allows to select a Webble by just hover above it if CTRL ALT keys are pressed.
+	//========================================================================================
+	var mouseEnterSelection = function(event){
+		if(event.altKey && event.ctrlKey){
+			if($scope.getSelectionState() == Enum.availableOnePicks_SelectTypes.AsMainClicked){
+				$scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsNotSelected);
+			}
+			else{
+				$scope.setSelectionState(Enum.availableOnePicks_SelectTypes.AsMainClicked);
+			}
+		}
+	};
+	//========================================================================================
 
 
 	//*****************************************************************************************************************
@@ -417,29 +445,31 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		var content = [$scope.theWblMetadata['templateid']];
 		var propsContent = [];
 
-		propsContent.push({
-			key: 'displayname',
-			name: gettext("Display Name"),
-			value: $scope.theWblMetadata['displayname'],
-			cat: 'metadata',
-			desc: gettext("The name the Webble is user friendly shown as."),
-			disabledSettings: 0,
-			isShared: undefined,
-			isCustom: undefined,
-			notification: '',
-			inputType: Enum.aopInputTypes.TextBox,
-			originalValType: ''
-		});
+		if($scope.wblStateFlags.displayNameProp.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
+			propsContent.push({
+				key: 'displayname',
+				name: gettext("Display Name"),
+				value: $scope.theWblMetadata['displayname'],
+				cat: 'metadata',
+				desc: gettext("The name the Webble is user friendly shown as."),
+				disabledSettings: $scope.wblStateFlags.displayNameProp.getDisabledSetting(),
+				isShared: undefined,
+				isCustom: undefined,
+				notification: '',
+				inputType: Enum.aopInputTypes.TextBox,
+				originalValType: ''
+			});
+		}
 
 		angular.forEach(theSlots_, function (value, key) {
 			if(value.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
-				var isDate = false;
 				var tmp = {};
 				var metadata = value.getMetaData() != undefined ? value.getMetaData() : {};
 				var theValue = value.getValue();
 
 				if(theValue === undefined){ theValue = ''; }
 				if(theValue === null){ theValue = 'NULL'; }
+				if(value.getDisabledSetting() == Enum.SlotDisablingState.PropertyEditingAndValue){ theValue = "Not Viewable Format"; }
 
 				// Set prop form key
 				tmp['key'] = key;
@@ -476,7 +506,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 					tmp['value'] = theValue;
 				}
 				else if(metadata.inputType == Enum.aopInputTypes.DatePick){
-					tmp['value'] = dateFilter(new Date(theValue), 'yyyy-MM-dd');
+					tmp['value'] = new Date(theValue);
 				}
 				else if(value.getOriginalType() == 'object' || value.getOriginalType() == 'array'){
 					tmp['isArrObj'] = true;
@@ -501,7 +531,17 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 						}
 					}
 					else{
-						tmp['value'] = theValue;
+						if(metadata.inputType == Enum.aopInputTypes.Point && theValue.x && !isNaN(theValue.x) && theValue.y && !isNaN(theValue.y) ){
+							tmp['value'] = [theValue.x, theValue.y];
+							tmp['vectorObject'] = true;
+						}
+						else if(metadata.inputType == Enum.aopInputTypes.Size && theValue.w && !isNaN(theValue.w) && theValue.h && !isNaN(theValue.h) ){
+							tmp['value'] = [theValue.w, theValue.h];
+							tmp['vectorObject'] = true;
+						}
+						else{
+							tmp['value'] = theValue;
+						}
 						if(key.search('font-family') != -1){
 							tmp['value'] = tmp['value'].toString().replace(/"/g, '').replace(/'/g, '').toLowerCase();
 						}
@@ -589,6 +629,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 					}
 				}
 
+				if(value.getDisabledSetting() == Enum.SlotDisablingState.PropertyEditingAndValue){
+					tmp['inputType'] = Enum.aopInputTypes.Undefined;
+				}
+
 				// Wrap it up
 				this.push(angular.copy(tmp));
 			}
@@ -607,9 +651,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	//=========================================================================================
 	var PropFormValsReturned = function(formProps){
 		if(formProps != null){
+			for(var i = 0, p; p = formProps[i]; i++){
+				if(p['deleteRequest']){
+					$scope.removeSlot(p.key);
+				}
+			}
+
 			if(!formProps.deleteOnly){
 				var theSlotsToSet = {};
-
 				//Shared Model slot update (if such exist)
 				if(modelSharees_.length > 0){
 					var slotsAreShared = {};
@@ -647,6 +696,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 							if(slot == p.key){
 								if (theSlots_[slot].getValue() != p.value && p.disabledSettings < Enum.SlotDisablingState.PropertyEditing){
 									var itsOk = true;
+
 									if(theParent_ && (slot == 'root:left' || slot == 'root:top') && p.value.toString().search('%') != -1){
 										$log.warn($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]));
 										$scope.showQIM($scope.strFormatFltr('percent(%) values does not work in child webbles, only for super parent webbles in relation to the whole document, therefore this change for {0} slot will not be applied',[slot]), 4000, {w: 250, h: 90});
@@ -668,6 +718,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 										var metadata = theSlots_[slot].getMetaData();
 										if(metadata != null && (metadata.inputType == Enum.aopInputTypes.Point || metadata.inputType == Enum.aopInputTypes.Size)){
 											if(JSON.stringify(theSlots_[slot].getValue()) == JSON.stringify(p.value)){
+												if(p.vectorObject == true) {
+													if(metadata.inputType == Enum.aopInputTypes.Point){
+														p.value = {x: p.value[0], y: p.value[1]};
+													}
+													else{
+														p.value = {w: p.value[0], h: p.value[1]};
+													}
+												}
 												itsOk = false;
 											}
 										}
@@ -681,7 +739,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 									}
 
 									if(itsOk){
-										if(p.originalValType == 'object' || p.originalValType == 'array') {
+										var isMultiListType = (metadata != null && (metadata.inputType == Enum.aopInputTypes.MultiListBox || metadata.inputType == Enum.aopInputTypes.MultiCheckBox));
+										var isDateType = (metadata != null && metadata.inputType == Enum.aopInputTypes.DatePick);
+										if((p.originalValType == 'object' && !isDateType) || (p.originalValType == 'array' && !isMultiListType)) {
 											if(JSON.stringify(theSlots_[slot].getValue(), $scope.dynJSFuncStringify, 1) != p.value){
 												var jsonParsedVal;
 												try{
@@ -693,10 +753,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 														jsonParsedVal = {};
 													}
 													else{
-														var newArray = new Array();
+														var newArray = [];
 														var workStr = p.value.replace(/\s/g,'');
 														var isNestedArray = (workStr.replace(/[^\[]/g, "").length >= 2);
-														var isUnevenClosure = ((workStr.replace(/[^\[]/g, "").length != workStr.replace(/[^\]]/g, "").length) || (workStr.replace(/[^\{]/g, "").length != workStr.replace(/[^\}]/g, "").length))
+														var isUnevenClosure = ((workStr.replace(/[^\[]/g, "").length != workStr.replace(/[^\]]/g, "").length) || (workStr.replace(/[^\{]/g, "").length != workStr.replace(/[^\}]/g, "").length));
 
 														if(!isUnevenClosure){
 															if(isNestedArray){
@@ -745,12 +805,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 					$scope.set(sts, theSlotsToSet[sts]);
 				}
 			}
-
-			for(var i = 0, p; p = formProps[i]; i++){
-				if(p['deleteRequest']){
-					$scope.removeSlot(p.key);
-				}
-			}
 		}
 	};
 	//=========================================================================================
@@ -794,7 +848,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	var initInteractionObjects = function(){
 		for(var dio in Enum.availableOnePicks_DefaultInteractionObjects){
 			var index = Enum.availableOnePicks_DefaultInteractionObjects[dio];
-			var text = Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt[dio];
+			var text = gettextCatalog.getString(Enum.availableOnePicks_DefaultInteractionObjectsTooltipTxt[dio]);
 
 			for(var i = 0; i < $scope.theInteractionObjects.length; i++){
 				if($scope.theInteractionObjects[i].scope().getIndex() == index){
@@ -961,7 +1015,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
 		var newPos = {x: childAbsPosInPx.x - parentAbsPosInPx.x + childContainerOffset.left, y: childAbsPosInPx.y - parentAbsPosInPx.y + childContainerOffset.top};
 		if(isPeeling){
-			var newPos = {x: childAbsPosInPx.x + parentAbsPosInPx.x - childContainerOffset.left, y: childAbsPosInPx.y + parentAbsPosInPx.y - childContainerOffset.top};
+			newPos = {x: childAbsPosInPx.x + parentAbsPosInPx.x - childContainerOffset.left, y: childAbsPosInPx.y + parentAbsPosInPx.y - childContainerOffset.top};
 		}
 
 		$scope.theView.parent().css('left', newPos.x);
@@ -997,8 +1051,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 				//var theVal = parseValue(defSlots[i].value);
 				var theVal = defSlots[i].value;
 
-				// assigning the def stored value to the slot in question
-				$scope.set(defSlots[i].name, theVal);
+				// assigning the def stored value to the slot in question (unless it is root:opacity, since we wait with that after all Webbles in a set is loaded)
+				if(defSlots[i].name != "root:opacity"){
+					$scope.set(defSlots[i].name, theVal);
+				}
+				else{
+					$scope.wblStateFlags.rootOpacityMemory = parseFloat(theVal);
+				}
 
 				if (defSlots[i].metadata != null && defSlots[i].metadata != 'null' && defSlots[i].metadata != ''){
 					var slotMetadata = defSlots[i].metadata;
@@ -1212,7 +1271,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		try{ toBeCalculated = eval(toBeCalculated); } catch(err){ }
 
 		return toBeCalculated;
-	}
+	};
 	//========================================================================================
 
 
@@ -1315,7 +1374,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	//= ---------				    -----------
 	//= interactionObjectNameId     the id string name of the interaction object to manipulate
 	//= eventType                   the type of the event that caused this call (click or move etc)
-	//= e                           mouse event arguments
+	//= e                           mouse event arguments      ]
 	//=
 	//= Returns: nothing
 	//=
@@ -1637,12 +1696,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 								else{
 									$scope.setStyle(theElmnt, retVal.getName(), retVal.getValue());
 								}
-								if(sltElmnt.length == 0){sltElmnt = null};
+								if (sltElmnt.length == 0) {
+									sltElmnt = null
+								}
 							}
 							else if(retVal.getCategory() == 'custom-merged' && retVal.getValue().length > 0){
 								for(var i = 0, slotname; slotname = retVal.getValue()[i]; i++){
 									if(selWbl.scope().gimme(slotname) == null){
-										sltElmnt = null
+										sltElmnt = null;
 										break;
 									}
 								}
@@ -1865,6 +1926,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 				}
 			}
 
+			// Enables quick toggle select of a webble by just hover above it (while holding the CTRL-ALT keys)
+			$scope.theView.mouseenter(mouseEnterSelection);
+
 			// indicate that initiation has finished
 			theInitiationState_ = bitflags.on(theInitiationState_, Enum.bitFlags_InitStates.InitFinished);
 
@@ -1887,9 +1951,9 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	//========================================================================================
 	$scope.registerWWEventListener = function(eventType, callbackFunc, targetId, targetData){
 		targetId = (targetId === undefined) ? instanceId_ : targetId;
-		if(eventType == Enum.availableWWEvents.keyDown || eventType == Enum.availableWWEvents.loadingWbl || eventType == Enum.availableWWEvents.mainMenuExecuted){targetId = null}
+		if(eventType == Enum.availableWWEvents.keyDown || eventType == Enum.availableWWEvents.loadingWbl || eventType == Enum.availableWWEvents.mainMenuExecuted){ targetId = null; }
 		return $scope.regWblWrldListener(instanceId_, eventType, callbackFunc, targetId, targetData);
-	}
+	};
 	//========================================================================================
 
 
@@ -1935,7 +1999,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		else{
 			$log.log("This Webble has not registered participation for the online room " + whatRoom + " and can therefore not send any messages to it");
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -1948,20 +2012,20 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		if(localStorageService.get('TutInfoAssignParent') == undefined &&  (parseInt($scope.getPlatformSettingsFlags(), 10) & parseInt(Enum.bitFlags_PlatformConfigs.PopupInfoEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.PopupInfoEnabled, 10)){
 			localStorageService.add('TutInfoAssignParent', true);
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Assign Parent"), size: 'lg', content:
-			'<p>' +
-			gettextCatalog.getString("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
-			gettextCatalog.getString("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
-			gettextCatalog.getString("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
-			'</p>' +
-			'<p>' +
-			gettextCatalog.getString("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettextCatalog.getString("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
-			gettextCatalog.getString("This way you get a much better overview which is parent to which.") + "&nbsp;" +
-			gettextCatalog.getString("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
-			'</p>' +
-			'<div style="display: block; margin-left: auto; margin-right: auto; width: 640px;">' +
-			'<img src="../../images/tutorInfo/parentChildConn.png" style="display: block; margin-right: 20px; width: 300px; float: left" />' +
-			'<img src="../../images/tutorInfo/memelego.png" style="display: block; width: 300px; " />' +
-			'</div>'
+					'<p>' +
+					gettextCatalog.getString("The target Webble gets a golden glowing border to indicate it is the future child and all other Webbles that might be able to become a possible parent gets a light blue glowing border.") + "&nbsp;" +
+					gettextCatalog.getString("After the user have selected a parent by clicking on it the border of the child glows light pink while the selected parent’s border glows in deep red.") + "&nbsp;" +
+					gettextCatalog.getString("This menu target is not visible if the Webble already has a parent. Same as using the green bottom left Interaction Ball.") +
+					'</p>' +
+					'<p>' +
+					gettextCatalog.getString("Even though Webbles can be related to another Webble anywhere on the work surface as illustrated in the first image, we") + "&nbsp;<strong>" + gettextCatalog.getString("highly recommend") + "</strong>&nbsp;" + gettext("that beginners of Webble World instead stack children on top of parents as shown in the second image.") + "&nbsp;" +
+					gettextCatalog.getString("This way you get a much better overview which is parent to which.") + "&nbsp;" +
+					gettextCatalog.getString("Using this approach means that sometimes you just create a parent board for visually reasons and no practical use or slot communication, but that is totally okay, and as we said, even recommended.") +
+					'</p>' +
+					'<div style="display: block; margin-left: auto; margin-right: auto; width: 640px;">' +
+					'<img src="../../images/tutorInfo/parentChildConn.png" style="display: block; margin-right: 20px; width: 300px; float: left" />' +
+					'<img src="../../images/tutorInfo/memelego.png" style="display: block; width: 300px; " />' +
+					'</div>'
 			});
 		}
 
@@ -1971,23 +2035,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	};
 	//========================================================================================
 
-	/**/
+
 	//========================================================================================
 	// Get Instance Name
 	// This method gets this webbles display name.
 	//========================================================================================
 	$scope.getInstanceName = function(){
 		return $scope.theWblMetadata['displayname'];
-	};
-	//========================================================================================
-
-
-	//========================================================================================
-	// Set Child Container
-	// This method sets this webbles child container.
-	//========================================================================================
-	$scope.setChildContainer = function(newContainer){
-		childContainer_ = newContainer;
 	};
 	//========================================================================================
 
@@ -2462,6 +2516,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		modifiedWblDef = getModifiedWblDefPosOffset(modifiedWblDef, whatOffset);
 		modifiedWblDef = getModifiedWblZIndex(modifiedWblDef);
 		$scope.loadWebbleFromDef(modifiedWblDef, whatCallbackMethod);
+
 		return true;
 	};
 	//========================================================================================
@@ -2634,8 +2689,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
 		// If no parent is assigned yet...
 		if (!theParent_){
-			var noGoodPleasePeel = false;
-
 			if(!doNotBotherAdjustingStuff){
 				if((parseInt($scope.getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.PARENT_CONNECT, 10)) !== 0){
 					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Assign Parent Failed"), content: gettext("This Webble is protected from getting a parent and therefore this operation is canceled.")}, null);
@@ -2829,7 +2882,10 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
 			//if the value in is json or array and the slot being set is of string type... make sure a conversion is made to keep the integrity of the data
 			if(typeof slotValue === 'object' && theSlot.getOriginalType() === 'string'){
-				if(Object.prototype.toString.call( slotValue ) === '[object Array]') {
+				if(typeof slotValue.getMonth === 'function'){
+					slotValue = slotValue.toString();
+				}
+				else if(Object.prototype.toString.call( slotValue ) === '[object Array]') {
 					slotValue = {"slotValue": slotValue};
 					slotValue = JSON.stringify(slotValue, $scope.dynJSFuncStringify);
 					slotValue = slotValue.substr(slotValue.indexOf(':') + 1, slotValue.length - slotValue.indexOf(':') - 2);
@@ -2851,6 +2907,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 				}
 				else if(theSlot.getOriginalType() === 'array'){
 					slotValue = valMod.fixBrokenArrStrToProperArray(slotValue);
+				}
+				else if(theSlot.getOriginalType() === 'date'){
+					try{
+						slotValue = new Date(slotValue);
+					}
+					catch(e){
+						slotValue = new Date();
+					}
 				}
 			}
 
@@ -2906,7 +2970,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		if(slotName == theConnectedSlot_ && slotConnDir_.receive && $scope.gimme(theSelectedSlot_) != theParent_.scope().gimme(theConnectedSlot_)){
 			$scope.set(theSelectedSlot_, theParent_.scope().gimme(theConnectedSlot_));
 		}
-	}
+	};
 	//========================================================================================
 
 

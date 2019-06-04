@@ -1,8 +1,8 @@
 {
- "noautogen":false,
- "image":"images/notFound.png",
- "name":"DigitalDashboardCSVDataSource",
- "description":"A data component for the DigitalDashboard. Expects to be connected to the DigitalDashboard as a child. Reads CSV format data.",
- "keywords":"DigitalDashboard,data,CSV",
- "author":"legacyDigitalDashboard"
+	"noautogen":false,
+	"image":"images/wbls/digitalDashboardCSVDataSource.png",
+	"name":"Digital Dashboard CSV Data Source",
+	"description":"<h3>The Digital Dashboard CSV Data Source Webble</h3><hr /><p><strong><span style=\"color: #ff0000;\">THIS WEBBLE IS VERY OLD AND DEPRECATED SO WE ADVICE YOU NOT TO USE IT FOR ANY REASON WHAT SO EVER.</span></strong></p><hr /><p>Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Reads text data in CVS format (though not from file).</p><p><span style=\"color: #ff0000;\">This is the old (Legacy) version of the \"Digital Dashboard\" for data visualization.</span><br /><span style=\"color: #ff0000;\">Legacy Dashboard 2.0 Webbles are about to be deprecated in favour of Dashboard 3.0 TNG (The New Generation) Webbles, so if you have a choice, please use the new version instead.</span></p><p>For more info on how to use this Webble and build a Legacy Digital Dashboard 2.0 App, please see the description of the Digital Dashboard Master Webble.</p>",
+	"keywords":"DigitalDashboard,data,CSV",
+	"author":"legacyDigitalDashboard"
 }

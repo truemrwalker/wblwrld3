@@ -941,7 +941,35 @@ Lets the webble leave a uniquely identified online data broadcasting virtual roo
 ```JavaScript
 // Unregister listening to the broadcasting of online messages from the virtual room called "MyRoom"
 $scope.unregisterOnlineDataListener("MyRoom");
-```    
+```
+###_additionalWblRequests.displayNameProp.setDisabledSetting_ ![Method][meth]
+Since a Webbles display name is not an actual slot, but is displayed in the slot property form, there might be situations where one wishes to control this 'fake' slots Disabled settings. This method allows the user to set the disableSetting for the displayname property.
+
+####additionalWblRequests.displayNameProp.setDisabledSetting(newDisabledSetting)
+
+* **Parameters:**
+    * newDisabledSetting (Integer (Enum)) the new disabled setting
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Reassign the disabled setting of the displayname property to not allowed for property form editing
+$scope.additionalWblRequests.displayNameProp.setDisabledSetting(Enum.SlotDisablingState.PropertyEditing);
+```
+###_additionalWblRequests.displayNameProp.getDisabledSetting_ ![Method][meth]
+Since a Webbles display name is not an actual slot, but is displayed in the slot property form, there might be situations where one wishes to control this 'fake' slots Disabled settings. This method allows the user to get the current disableSetting for the displayname property.
+
+####additionalWblRequests.displayNameProp.setDisabledSetting()
+
+* **Parameters:**
+    * None
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Retrieves the disabled setting of the displayname property
+var whatCurrSetting = $scope.additionalWblRequests.displayNameProp.getDisabledSetting();
+```
 <!------------------------------------------------------------------------------------------------------------------->
 ##Platform
 The **Platform** is the actual Webble World environment and it includes many helpful methods to access sections of the
@@ -2633,7 +2661,7 @@ The different available form input types used to interact with webble properties
 
 ####Enum.aopInputTypes
 
-* Undefined: 0 _(The initial default value, later adjusted either by the system or the user, no need to ever set manually)_
+* Undefined: 0 _(The initial default value, later adjusted either by the system or the user, usually no need to ever set manually, but if you do, you get a slot without any content value)_
 * CheckBox: 1 _(A classic check box (Boolean), Usually auto detected)_
 * ColorPick: 2 _(Color Picker, Manual assignment required)_
 * ComboBoxUseIndex: 3 _(Drop down box, slot store integer index value, Manual assignment required (incl. list))_
