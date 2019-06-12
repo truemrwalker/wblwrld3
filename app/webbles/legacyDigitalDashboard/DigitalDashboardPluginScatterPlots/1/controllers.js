@@ -9,110 +9,109 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slot, Enum) {
+wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $timeout, Slot, Enum) {
 
-    //=== PROPERTIES ====================================================================
-    $scope.stylesToSlots = {
-        DrawingArea: ['width', 'height']
-    };
+	//=== PROPERTIES ====================================================================
+	$scope.stylesToSlots = {
+		DrawingArea: ['width', 'height']
+	};
 
-    $scope.customMenu = [];
-    $scope.customInteractionBalls = [];
+	$scope.customMenu = [];
+	$scope.customInteractionBalls = [];
 
-    $scope.displayText = "Scatter Plot";
-    
-    // graphics
-    var bgCanvas = null;
-    var bgCtx = null;
-    var axesCanvas = null;
-    var axesCtx = null;
-    var dotCanvas = null;
-    var dotCtx = null;
-    var dropCanvas = null;
-    var dropCtx = null;
-    var quickRenderThreshold = 500;
-    var currentColors = null;
-    var textColor = "#000000";
-    var transparency = 1;
-    var hoverText = null;
-    var mouseIsOverMe = false;
-    var selectionCanvas = null;
-    var selectionCtx = null;
-    var selectionColors = null;
-    var selectionTransparency = 0.33;
-    var selectionHolderElement = null;
-    var selectionRect = null;
-    var selections = []; // the graphical ones
-    var lastSeenGlobalSelections = [];
+	$scope.displayText = "Scatter Plot";
+	var preDebugMsg = "Digital Dashboard Scatter Plot: ";
 
-    // layout
-    var leftMarg = 35;
-    var topMarg = 20;
-    var rightMarg = 20;
-    var bottomMarg = 5;
-    var fontSize = 11;
-    var dotSize = 5;
-    var draw0 = true;
-    var drawMean = true;
-    var colorPalette = null;
-    var useGlobalGradients = false;
-    var clickStart = null;
+	// graphics
+	var bgCanvas = null;
+	var bgCtx = null;
+	var axesCanvas = null;
+	var axesCtx = null;
+	var dotCanvas = null;
+	var dotCtx = null;
+	var dropCanvas = null;
+	var dropCtx = null;
+	var quickRenderThreshold = 500;
+	var currentColors = null;
+	var textColor = "#000000";
+	var transparency = 1;
+	var hoverText = null;
+	var mouseIsOverMe = false;
+	var selectionCanvas = null;
+	var selectionCtx = null;
+	var selectionColors = null;
+	var selectionTransparency = 0.33;
+	var selectionHolderElement = null;
+	var selectionRect = null;
+	var selections = []; // the graphical ones
+	var lastSeenGlobalSelections = [];
 
-    // data from parent
+	// layout
+	var leftMarg = 35;
+	var topMarg = 20;
+	var rightMarg = 20;
+	var bottomMarg = 5;
+	var fontSize = 11;
+	var dotSize = 5;
+	var draw0 = true;
+	var drawMean = true;
+	var colorPalette = null;
+	var useGlobalGradients = false;
+	var clickStart = null;
+
+	// data from parent
 	var idArrays = [];
-    var xArrays = [];
-    var yArrays = [];
-    var xType = "number";
-    var yType = "number";
-    var xName = "";
-    var yName = "";
-    var sources = 0;
-    var Ns = [];
-    var N = 0;
-    var limits = {'minX':0, 'maxX':0, 'minY':0, 'maxY':0};
-    var zoomMinX = 0;
-    var zoomMaxX = 0;
-    var zoomMinY = 0;
-    var zoomMaxY = 0;
-    var unique = 0; // number of data points with non-null values
-    var NULLs = 0;
-    var localSelections = []; // the data to send to the parent
-    var noofGroups = 1;
-    var drawH = 1;
-    var drawW = 1;
-    var internalSelectionsInternallySetTo = {};
-    var lastDrawW = null;
-    var lastDrawH = null;
-    var lastFontSize = null;
-    var lastTextColor = null;
-    var lastColors = null;
-    var lastZoomMinX = null;
-    var lastZoomMaxX = null;
-    var lastZoomMinY = null;
-    var lastZoomMaxY = null;
-    var lastDotSize = null;
-    var dropX = {'left':leftMarg, 'top':topMarg, 'right':leftMarg*2, 'bottom':topMarg * 2, "label":"X-axis Data", "rotate":false, "forParent":{'idSlot':'DataIdSlot', 'name':'dataX', 'type':'number|date', 'slot':'DataX'}};
-    var dropY = {'left':2, 'top':topMarg, 'right':leftMarg, 'bottom':topMarg * 2, "label":"Y-axis Data", "rotate":true, "forParent":{'idSlot':'DataIdSlot', 'name':'dataY', 'type':'number|date', 'slot':'DataY'}};
-    var allDropZones = [dropX, dropY];
-    var dragZoneX = {'left':-1, 'top':-1, 'right':-1, 'bottom':-1, 'name':"", 'ID':""};
-    var dragZoneY = {'left':-1, 'top':-1, 'right':-1, 'bottom':-1, 'name':"", 'ID':""};
-    var allDragNames = [dragZoneX, dragZoneY];
-    $scope.dragNdropRepr = "Nothing to drag.";
-    $scope.dragNdropID = "No drag data.";
-
-	$scope.doDebugLogging = true;
-	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	var xArrays = [];
+	var yArrays = [];
+	var xType = "number";
+	var yType = "number";
+	var xName = "";
+	var yName = "";
+	var sources = 0;
+	var Ns = [];
+	var N = 0;
+	var limits = {'minX':0, 'maxX':0, 'minY':0, 'maxY':0};
+	var zoomMinX = 0;
+	var zoomMaxX = 0;
+	var zoomMinY = 0;
+	var zoomMaxY = 0;
+	var unique = 0; // number of data points with non-null values
+	var NULLs = 0;
+	var localSelections = []; // the data to send to the parent
+	var noofGroups = 1;
+	var drawH = 1;
+	var drawW = 1;
+	var internalSelectionsInternallySetTo = {};
+	var lastDrawW = null;
+	var lastDrawH = null;
+	var lastFontSize = null;
+	var lastTextColor = null;
+	var lastColors = null;
+	var lastZoomMinX = null;
+	var lastZoomMaxX = null;
+	var lastZoomMinY = null;
+	var lastZoomMaxY = null;
+	var lastDotSize = null;
+	var dropX = {'left':leftMarg, 'top':topMarg, 'right':leftMarg*2, 'bottom':topMarg * 2, "label":"X-axis Data", "rotate":false, "forParent":{'idSlot':'DataIdSlot', 'name':'dataX', 'type':'number|date', 'slot':'DataX'}};
+	var dropY = {'left':2, 'top':topMarg, 'right':leftMarg, 'bottom':topMarg * 2, "label":"Y-axis Data", "rotate":true, "forParent":{'idSlot':'DataIdSlot', 'name':'dataY', 'type':'number|date', 'slot':'DataY'}};
+	var allDropZones = [dropX, dropY];
+	var dragZoneX = {'left':-1, 'top':-1, 'right':-1, 'bottom':-1, 'name':"", 'ID':""};
+	var dragZoneY = {'left':-1, 'top':-1, 'right':-1, 'bottom':-1, 'name':"", 'ID':""};
+	var allDragNames = [dragZoneX, dragZoneY];
+	$scope.dragNdropRepr = "Nothing to drag.";
+	$scope.dragNdropID = "No drag data.";
 
 
-    //=== EVENT HANDLERS ================================================================
+
+	//=== EVENT HANDLERS ================================================================
 
 	//===================================================================================
 	// My Slot Change
 	// This event handler handles internal slot changes
 	//===================================================================================
 	function mySlotChange(eventData) {
-		// debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
-		// debugLog("mySlotChange() " + eventData.slotName);
+		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
+		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
 
 		switch(eventData.slotName) {
 			case "Transparency":
@@ -294,15 +293,15 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				if(typeof colors === 'string') {
 					colors = JSON.parse(colors);
 				}
-				currentColors = copyColors(colors);
+				currentColors = legacyDDSupLib.copyColors(colors);
 				updateGraphicsHelper(false, false, false);
 				drawSelections();
 				break;
 			case "DataValuesSetFilled":
 				parseData();
 				break;
-		};
-	};
+		}
+	}
 	//===================================================================================
 
 
@@ -321,32 +320,31 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				if(elmnt.length > 0) {
 					hoverText = elmnt[0];
 				} else {
-					debugLog("No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 
 			if(hoverText !== null) {
 				if(mousePosIsInSelectableArea(currentMouse)) {
-					var x = pixel2valX(currentMouse.x);
-					var y = pixel2valY(currentMouse.y);
+					var x = legacyDDSupLib.pixel2valX(currentMouse.x, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+					var y = legacyDDSupLib.pixel2valY(currentMouse.y, unique, drawH, topMarg, zoomMinY, zoomMaxY);
 					var s = "[";
 
 					if(xType == 'date') {
-						s += (date2text(Math.floor(x), limits.dateFormatX));
+						s += (legacyDDSupLib.date2text(Math.floor(x), limits.dateFormatX));
 					} else {
-						s += number2text(x, limits.spanX);
+						s += legacyDDSupLib.number2text(x, limits.spanX);
 					}
 					s += ",";
 
 					if(yType == 'date') {
-						s += (date2text(Math.floor(y), limits.dateFormatY));
+						s += (legacyDDSupLib.date2text(Math.floor(y), limits.dateFormatY));
 					} else {
-						s += number2text(y, limits.spanY);
+						s += legacyDDSupLib.number2text(y, limits.spanY);
 					}
 					s += "]";
 
-					// var s = "(" + number2text(x, limits.spanX) + "," + number2text(y, limits.spanY) + ")";
-					var textW = getTextWidthCurrentFont(s);
+					var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 					hoverText.style.font = fontSize + "px Arial";
 					hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 					hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -364,7 +362,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 					if(selectionRectElement.length > 0) {
 						selectionRect = selectionRectElement[0];
 					} else {
-						debugLog("No selection rectangle!");
+						//$log.log(preDebugMsg + "No selection rectangle!");
 					}
 				}
 				if(selectionRect !== null) {
@@ -484,7 +482,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 				if(x1 == x2 && y1 == y2) {
 					// selection is too small, disregard
-					// debugLog("ignoring a selection because it is too small");
+					// $log.log(preDebugMsg + "ignoring a selection because it is too small");
 				} else {
 					newSelection(x1,x2, y1,y2, clickStart.ctrl);
 				}
@@ -508,7 +506,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				if(elmnt.length > 0) {
 					hoverText = elmnt[0];
 				} else {
-					debugLog("No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 			if(hoverText !== null) {
@@ -535,7 +533,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 				if(x1 == x2 && y1 == y2) {
 					// selection is too small, disregard
-					// debugLog("ignoring a selection because it is too small");
+					// $log.log(preDebugMsg + "ignoring a selection because it is too small");
 				} else {
 					newSelection(x1,x2, y1,y2, clickStart.ctrl);
 				}
@@ -554,7 +552,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(mouseIsOverMe) {
 			var x = event.which || event.keyCode;
 
-			// debugLog("keyPressed over me: " + x);
+			// $log.log(preDebugMsg + "keyPressed over me: " + x);
 
 			switch(x) {
 				case 43: // +
@@ -633,7 +631,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 					break;
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -960,25 +958,13 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			selectionHolderElement.bind('mousemove', onMouseMove);
 			selectionHolderElement.bind('mouseout', onMouseOut);
 		} else {
-			debugLog("No selectionHolderElement, could not bind mouse listeners");
+			//$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 		}
 
 		window.addEventListener( 'keydown', fixedKeypress );
 
 		$scope.fixDroppable();
 		$scope.fixDraggable();
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("DigitalDashboard Scatter Plot: " + message);
-		}
 	};
 	//===================================================================================
 
@@ -1045,186 +1031,11 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 
 	//===================================================================================
-	// Get Text Width
-	// This method gets the width of a specified text with a  specified font.
-	//===================================================================================
-	function getTextWidth(text, font) {
-		if(axesCtx !== null && axesCtx !== undefined) {
-			axesCtx.font = font;
-			var metrics = axesCtx.measureText(text);
-			return metrics.width;
-		}
-		return 0;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Text Width for Current Font
-	// This method gets the width of a specified text with for the current font.
-	//===================================================================================
-	function getTextWidthCurrentFont(text) {
-		if(axesCtx !== null && axesCtx !== undefined) {
-			var metrics = axesCtx.measureText(text);
-			return metrics.width;
-		}
-		return 0;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Number to Text
-	// This method converts a number to text.
-	//===================================================================================
-	function number2text(v, span) {
-		if(parseInt(Number(v)) == v) {
-			return v.toString();
-		}
-		if(Math.abs(v) < 1) {
-			return v.toPrecision(3);
-		}
-		if(span > 10) {
-			return Math.round(v);
-		}
-		if(span > 5 && Math.abs(v) < 100) {
-			return v.toPrecision(2);
-		}
-		return v.toPrecision(3);
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Date to Text
-	// This method converts a date to text.
-	//===================================================================================
-	function date2text(v, dateFormat) {
-		var d = new Date(parseInt(v));
-
-		switch(dateFormat) {
-			case 'full':
-				return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-				break;
-			case 'onlyYear':
-				return d.getFullYear();
-				break;
-			case 'yearMonth':
-	    		return d.getFullYear() + " " + months[d.getMonth()];
-	    		break;
-			case 'monthDay':
-				return months[d.getMonth()] + " " + d.getDate();
-				break;
-			case 'day':
-				return d.getDate();
-				break;
-			case 'dayTime':
-				return d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-				break;
-			case 'time':
-				return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-				break;
-			default:
-				return d.toISOString();
-		}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Pixel to Value X
-	// This method converts a pixel position on the plot to a proper X value.
-	//===================================================================================
-	function pixel2valX(p) {
-		if(unique <= 0) {
-			return 0;
-		}
-		if(p < leftMarg) {
-			return zoomMinX;
-		}
-		if(p > leftMarg + drawW) {
-			return zoomMaxX;
-		}
-		return zoomMinX + (p - leftMarg) / drawW * (zoomMaxX - zoomMinX);
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Pixel to Value Y
-	// This method converts a pixel position on the plot to a proper Y value.
-	//===================================================================================
-	function pixel2valY(p) {
-		if(unique <= 0) {
-			return 0;
-		}
-		if(p < topMarg) {
-			return zoomMaxY; // flip Y-axis
-		}
-		if(p > topMarg + drawH) {
-			return zoomMinY; // flip Y-axis
-		}
-		return zoomMinY + (drawH - (p - topMarg)) / drawH * (zoomMaxY - zoomMinY); // flip Y-axis
-    };
-	//===================================================================================
-
-
-	//===================================================================================
-	// Value to Pixel X
-	// This method converts a value on the plot to a proper pixel X position.
-	//===================================================================================
-	function val2pixelX(v) {
-		if(unique <= 0) {
-			return 0;
-		}
-		if(v < zoomMinX) {
-			return leftMarg;
-		}
-		if(v > zoomMaxX) {
-			return leftMarg + drawW;
-		}
-		return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Value to Pixel Y
-	// This method converts a value on the plot to a proper pixel Y position.
-	//===================================================================================
-	function val2pixelY(v) {
-		if(unique <= 0) {
-			return 0;
-		}
-		if(v < zoomMinY) {
-			return topMarg + drawH; // flip Y-axis
-		}
-		if(v > zoomMaxY) {
-			return topMarg; // flip Y-axis
-		}
-		return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
-    };
-	//===================================================================================
-
-
-	//===================================================================================
-	// Shorten Name
-	// This method takes the longer name string and shorten it by cutting away everything
-	// before the colon.
-	//===================================================================================
-	function shortenName(n) {
-		var ss = n.split(":");
-		return ss[ss.length - 1];
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Save Selection in Slot
 	// This method saves the user selection inside a slot.
 	//===================================================================================
 	function saveSelectionsInSlot() {
-		// debugLog("saveSelectionsInSlot");
+		//$log.log(preDebugMsg + "saveSelectionsInSlot");
 		var result = {};
 		result.selections = [];
 		for(var sel = 0; sel < selections.length; sel++) {
@@ -1233,7 +1044,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 		internalSelectionsInternallySetTo = result;
 		$scope.set('InternalSelections', result);
-	};
+	}
 	//===================================================================================
 
 
@@ -1242,48 +1053,21 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method sets the data selections based on the value of the slot value.
 	//===================================================================================
 	function setSelectionsFromSlotValue() {
-		// debugLog("setSelectionsFromSlotValue");
+		//$log.log(preDebugMsg + "setSelectionsFromSlotValue");
 		var slotSelections = $scope.gimme("InternalSelections");
 		if(typeof slotSelections === 'string') {
 			slotSelections = JSON.parse(slotSelections);
 		}
 
 		if(JSON.stringify(slotSelections) == JSON.stringify(internalSelectionsInternallySetTo)) {
-			// debugLog("setSelectionsFromSlotValue got identical value");
-	    	return;
+			//$log.log(preDebugMsg + "setSelectionsFromSlotValue got identical value");
+			return;
 		}
 
 		if(slotSelections.hasOwnProperty("selections")) {
 			var newSelections = [];
 
-	    	if(unique > 0) {
-	    		for(var sel = 0; sel < slotSelections.selections.length; sel++) {
-	    			var newSel = slotSelections.selections[sel];
-	    			var X1 = newSel.minX;
-	    			var X2 = newSel.maxX;
-	    			var Y1 = newSel.minY;
-	    			var Y2 = newSel.maxY;
-
-		    		if(X2 < limits.minX || X1 > limits.maxX || Y2 < limits.minY || Y1 > limits.maxY) {
-		    			// completely outside
-						continue;
-		    		}
-		    
-		    		X1 = Math.max(limits.minX, X1);
-		    		X2 = Math.min(limits.maxX, X2);
-		    		Y1 = Math.max(limits.minY, Y1);
-		    		Y2 = Math.min(limits.maxY, Y2);
-		    
-		    		newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
-				}
-
-				// debugLog("new selections: " + JSON.stringify(newSelections));
-				if(newSelections.length > 0) {
-					selections = newSelections;
-					updateLocalSelections(false);
-					drawSelections();
-				}
-	    	} else { // no data
+			if(unique > 0) {
 				for(var sel = 0; sel < slotSelections.selections.length; sel++) {
 					var newSel = slotSelections.selections[sel];
 					var X1 = newSel.minX;
@@ -1291,13 +1075,40 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 					var Y1 = newSel.minY;
 					var Y2 = newSel.maxY;
 
-		    		newSelections.push([X1,X2,Y1,Y2, 0,0,0,0]);
+					if(X2 < limits.minX || X1 > limits.maxX || Y2 < limits.minY || Y1 > limits.maxY) {
+						// completely outside
+						continue;
+					}
+
+					X1 = Math.max(limits.minX, X1);
+					X2 = Math.min(limits.maxX, X2);
+					Y1 = Math.max(limits.minY, Y1);
+					Y2 = Math.min(limits.maxY, Y2);
+
+					newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
+				}
+
+				//$log.log(preDebugMsg + "new selections: " + JSON.stringify(newSelections));
+				if(newSelections.length > 0) {
+					selections = newSelections;
+					updateLocalSelections(false);
+					drawSelections();
+				}
+			} else { // no data
+				for(var sel = 0; sel < slotSelections.selections.length; sel++) {
+					var newSel = slotSelections.selections[sel];
+					var X1 = newSel.minX;
+					var X2 = newSel.maxX;
+					var Y1 = newSel.minY;
+					var Y2 = newSel.maxY;
+
+					newSelections.push([X1,X2,Y1,Y2, 0,0,0,0]);
 				}
 				selections = newSelections;
-	    	}
+			}
 		}
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -1307,7 +1118,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// loaded.
 	//===================================================================================
 	function checkSelectionsAfterNewData() {
-		// debugLog("checkSelectionsAfterNewData");
+		//$log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		var newSelections = [];
 
 		for(var sel = 0; sel < selections.length; sel++) {
@@ -1317,17 +1128,17 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			var Y1 = newSel[2];
 			var Y2 = newSel[3];
 
-	    	if(X2 < limits.minX || X1 > limits.maxX || Y2 < limits.minY || Y1 > limits.maxY) {
-	    		// completely outside
+			if(X2 < limits.minX || X1 > limits.maxX || Y2 < limits.minY || Y1 > limits.maxY) {
+				// completely outside
 				continue;
-	    	}
-	    
-	    	X1 = Math.max(limits.minX, X1);
-	    	X2 = Math.min(limits.maxX, X2);
-	    	Y1 = Math.max(limits.minY, Y1);
-	    	Y2 = Math.min(limits.maxY, Y2);
-	    
-	    	newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
+			}
+
+			X1 = Math.max(limits.minX, X1);
+			X2 = Math.min(limits.maxX, X2);
+			Y1 = Math.max(limits.minY, Y1);
+			Y2 = Math.min(limits.maxY, Y2);
+
+			newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
 		}
 
 		if(newSelections.length > 0) {
@@ -1336,7 +1147,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			return false;
 		}
 		return true;
-	};
+	}
 	//===================================================================================
 
 
@@ -1345,7 +1156,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method updates the local selection based on global activity.
 	//===================================================================================
 	function updateLocalSelections(selectAll) {
-		// debugLog("updateLocalSelections");
+		//$log.log(preDebugMsg + "updateLocalSelections");
 		var nullAsUnselected = $scope.gimme('TreatNullAsUnselected');
 		var nullGroup = 0;
 		if(!nullAsUnselected) {
@@ -1353,18 +1164,18 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		}
 
 		var dirty = false;
-		// debugLog("selections before sorting: " + JSON.stringify(selections));
+		//$log.log(preDebugMsg + "selections before sorting: " + JSON.stringify(selections));
 		selections.sort(function(a,b){return ((a[1]-a[0]) * (a[3]-a[2])) - ((b[1]-b[0]) * (b[3]-b[2]));}); // sort selections so smaller (area) ones are checked first.
-		// debugLog("selections after sorting: " + JSON.stringify(selections));
+		//$log.log(preDebugMsg + "selections after sorting: " + JSON.stringify(selections));
 
 		for(var set = 0; set < idArrays.length; set++) {
 			var xArray = xArrays[set];
 			var yArray = yArrays[set];
 			var selArray = localSelections[set];
 
-	    	for(var i = 0; i < Ns[set]; i++) {
-	    		var newVal = 1;
-		
+			for(var i = 0; i < Ns[set]; i++) {
+				var newVal = 1;
+
 				if(xArray[i] === null || yArray[i] === null) {
 					newVal = nullGroup;
 				} else {
@@ -1387,16 +1198,16 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 					dirty = true;
 					selArray[i] = newVal;
 				}
-	    	}
+			}
 		}
 
 		if(dirty) {
 			$scope.set('LocalSelections', {'DataIdSlot':localSelections});
 			$scope.set('LocalSelectionsChanged', !$scope.gimme('LocalSelectionsChanged')); // flip flag to tell parent we updated something
 		} else {
-			// debugLog("local selections had not changed");
+			//$log.log(preDebugMsg + "local selections had not changed");
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1413,44 +1224,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA Vector
-	// This method converts a hex color value to a RGBA vector value.
-	// TODO: Could this not be replaced with core service instead
-	//===================================================================================
-	function hexColorToRGBAvec(color, alpha) {
-		var res = [];
-
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-			return [r, g, b, a];
-		}
-		return [0, 0, 0, 255];
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA
-	// This method converts a hex color value to a RGBA value.
-	// TODO: Could this not be replaced with core service instead
-	//===================================================================================
-	function hexColorToRGBA(color, alpha) {
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		}
-		return color;
-	};
+	}
 	//===================================================================================
 
 
@@ -1476,7 +1250,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		unique = 0;
 		NULLs = 0;
 		localSelections = [];
-	};
+	}
 	//===================================================================================
 
 
@@ -1485,7 +1259,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method parse the data given.
 	//===================================================================================
 	function parseData() {
-		// debugLog("parseData");
+		//$log.log(preDebugMsg + "parseData");
 
 		// parse parents instructions on where to find data, check that at least one data set is filled
 		var atLeastOneFilled = false;
@@ -1503,46 +1277,46 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				if(parentInput[i].hasOwnProperty("name") && parentInput[i].name == "dataX") {
 					haveX = true;
 
-		    		if(parentInput[i].hasOwnProperty("type") && parentInput[i].type == "date") {
-		    			xType = 'date';
-		    		} else {
-		    			xType = 'number';
-		    		}
+					if(parentInput[i].hasOwnProperty("type") && parentInput[i].type == "date") {
+						xType = 'date';
+					} else {
+						xType = 'number';
+					}
 
-		    		dragZoneX.name = "x-axis data";
-		    		dropX.forParent.vizName = $scope.gimme("PluginName");
-		    		dragZoneX.ID = JSON.stringify(dropX.forParent);
-		    		if(parentInput[i].hasOwnProperty("description")) {
-		    			xName = shortenName(parentInput[i]["description"]);
-		    			dragZoneX.name = xName;
-		    		}
+					dragZoneX.name = "x-axis data";
+					dropX.forParent.vizName = $scope.gimme("PluginName");
+					dragZoneX.ID = JSON.stringify(dropX.forParent);
+					if(parentInput[i].hasOwnProperty("description")) {
+						xName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
+						dragZoneX.name = xName;
+					}
 				}
 
 				if(parentInput[i].hasOwnProperty("name") && parentInput[i].name == "dataY") {
 					haveY = true;
-		    
-		    		if(parentInput[i].hasOwnProperty("type") && parentInput[i].type == "date") {
-		    			yType = 'date';
-		    		} else {
-		    			yType = 'number';
-		    		}
 
-		    		dragZoneY.name = "y-axis data";
-		    		dropY.forParent.vizName = $scope.gimme("PluginName");
-		    		dragZoneY.ID = JSON.stringify(dropY.forParent);
-		    		if(parentInput[i].hasOwnProperty("description")) {
-		    			yName = shortenName(parentInput[i]["description"]);
-		    			dragZoneY.name = yName;
-		    		}
+					if(parentInput[i].hasOwnProperty("type") && parentInput[i].type == "date") {
+						yType = 'date';
+					} else {
+						yType = 'number';
+					}
+
+					dragZoneY.name = "y-axis data";
+					dropY.forParent.vizName = $scope.gimme("PluginName");
+					dragZoneY.ID = JSON.stringify(dropY.forParent);
+					if(parentInput[i].hasOwnProperty("description")) {
+						yName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
+						dragZoneY.name = yName;
+					}
 				}
 			}
 
-	    	if(haveX && haveY) {
-	    		atLeastOneFilled = true;
-	    	}
+			if(haveX && haveY) {
+				atLeastOneFilled = true;
+			}
 		}
-	
-		// debugLog("read parent input ", atLeastOneFilled);
+
+		// $log.log(preDebugMsg + "read parent input ", atLeastOneFilled);
 		var dataIsCorrupt = false;
 
 		if(atLeastOneFilled) {
@@ -1550,34 +1324,34 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			xArrays = $scope.gimme('DataX');
 			yArrays = $scope.gimme('DataY');
 
-	    	if(idArrays.length != xArrays.length || idArrays.length != yArrays.length) {
-	    		dataIsCorrupt = true;
-	    	}
-	    	if(idArrays.length <= 0) {
-	    		dataIsCorrupt = true;
-	    	}
+			if(idArrays.length != xArrays.length || idArrays.length != yArrays.length) {
+				dataIsCorrupt = true;
+			}
+			if(idArrays.length <= 0) {
+				dataIsCorrupt = true;
+			}
 
-	    	if(!dataIsCorrupt) {
-	    		sources = idArrays.length;
+			if(!dataIsCorrupt) {
+				sources = idArrays.length;
 
 				for(var source = 0; source < sources; source++) {
 					var idArray = idArrays[source];
 					var xArray = xArrays[source];
 					var yArray = yArrays[source];
-		    
-		    		if(idArray.length != xArray.length || idArray.length != yArray.length) {
-		    			dataIsCorrupt = true;
-		    		}
-		    		if(idArray.length <= 0) {
-		    			dataIsCorrupt = true;
-		    		}
-				}
-	    	}
 
-	    	if(!dataIsCorrupt) {
-	    		Ns = [];
-	    		var firstNonNullData = true;
-	    		var minXVal = 0;
+					if(idArray.length != xArray.length || idArray.length != yArray.length) {
+						dataIsCorrupt = true;
+					}
+					if(idArray.length <= 0) {
+						dataIsCorrupt = true;
+					}
+				}
+			}
+
+			if(!dataIsCorrupt) {
+				Ns = [];
+				var firstNonNullData = true;
+				var minXVal = 0;
 				var maxXVal = 0;
 				var minYVal = 0;
 				var maxYVal = 0;
@@ -1587,39 +1361,39 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 					var xArray = xArrays[source];
 					var yArray = yArrays[source];
 
-		    		N += idArray.length;
-		    		Ns.push(idArray.length);
-		    
-		    		localSelections.push([]);
+					N += idArray.length;
+					Ns.push(idArray.length);
 
-		    		for(i = 0; i < Ns[source]; i++) {
-		    			localSelections[source].push(0);
+					localSelections.push([]);
+
+					for(i = 0; i < Ns[source]; i++) {
+						localSelections[source].push(0);
 
 						if(xArray[i] !== null && yArray[i] !== null) {
 							unique++;
 							var x = xArray[i];
 							var y = yArray[i];
 
-			    			if(isNaN(x) || isNaN(y)) {
-			    				dataIsCorrupt = true; // only null values
-			    			}
+							if(isNaN(x) || isNaN(y)) {
+								dataIsCorrupt = true; // only null values
+							}
 
-			    			if(firstNonNullData) {
-			    				firstNonNullData = false;
+							if(firstNonNullData) {
+								firstNonNullData = false;
 								minXVal = x;
 								maxXVal = x;
 								minYVal = y;
 								maxYVal = y;
-			    			} else {
-			    				minXVal = Math.min(x, minXVal);
-			    				maxXVal = Math.max(x, maxXVal);
-			    				minYVal = Math.min(y, minYVal);
-			    				maxYVal = Math.max(y, maxYVal);
-			    			}
+							} else {
+								minXVal = Math.min(x, minXVal);
+								maxXVal = Math.max(x, maxXVal);
+								minYVal = Math.min(y, minYVal);
+								maxYVal = Math.max(y, maxYVal);
+							}
 						} else {
 							NULLs++;
 						}
-		    		}
+					}
 				}
 				if(firstNonNullData) {
 					dataIsCorrupt = true; // only null values
@@ -1631,97 +1405,97 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 						maxXVal++;
 					}
 
-		    		if(minYVal == maxYVal) {
-		    			minYVal--;
-		    			maxYVal++;
-		    		}
+					if(minYVal == maxYVal) {
+						minYVal--;
+						maxYVal++;
+					}
 
-		    		limits.minX = minXVal;
-		    		limits.maxX = maxXVal;
-		    		limits.minY = minYVal;
-		    		limits.maxY = maxYVal;
-		    		limits.spanX = maxXVal - minXVal;
-		    		limits.spanY = maxYVal - minYVal;
+					limits.minX = minXVal;
+					limits.maxX = maxXVal;
+					limits.minY = minYVal;
+					limits.maxY = maxYVal;
+					limits.spanX = maxXVal - minXVal;
+					limits.spanY = maxYVal - minYVal;
 
-		    		if(limits.spanX <= 0) {
-		    			limits.spanX = 1;
-		    		}
-		    		if(limits.spanY <= 0) {
-		    			limits.spanY = 1;
-		    		}
+					if(limits.spanX <= 0) {
+						limits.spanX = 1;
+					}
+					if(limits.spanY <= 0) {
+						limits.spanY = 1;
+					}
 
-		    		zoomMinX = limits.minX;
-		    		zoomMaxX = limits.maxX;
-		    		zoomMinY = limits.minY;
-		    		zoomMaxY = limits.maxY;
-		    		$scope.set("MinX", limits.minX);
-		    		$scope.set("MaxX", limits.maxX);
-		    		$scope.set("MinY", limits.minY);
-		    		$scope.set("MaxY", limits.maxY);
+					zoomMinX = limits.minX;
+					zoomMaxX = limits.maxX;
+					zoomMinY = limits.minY;
+					zoomMaxY = limits.maxY;
+					$scope.set("MinX", limits.minX);
+					$scope.set("MaxX", limits.maxX);
+					$scope.set("MinY", limits.minY);
+					$scope.set("MaxY", limits.maxY);
 
-		    		if(xType == 'date') {
-		    			if(limits.minX == limits.maxX) {
-		    				limits.dateFormatX = 'full';
-		    			} else {
-		    				var d1 = new Date(limits.minX);
-		    				var d2 = new Date(limits.maxX);
-		    				if(d2.getFullYear() - d1.getFullYear() > 10) {
-		    					limits.dateFormatX = 'onlyYear';
-		    				} else if(d2.getFullYear() - d1.getFullYear() > 1) {
-		    					limits.dateFormatX = 'yearMonth';
-		    				} else {
-		    					var days = (d2.getTime() - d1.getTime()) / (24*3600*1000);
-		    					if(d2.getMonth() != d1.getMonth()) {
-		    						limits.dateFormatX = 'monthDay';
-		    					} else if(days > 5) {
-		    						limits.dateFormatX = 'day';
-		    					} else if(days > 1) {
-		    						limits.dateFormatX = 'dayTime';
-		    					} else {
-		    						limits.dateFormatX = 'time';
-		    					}
-		    				}
-		    			}
-		    		}
-		    		if(yType == 'date') {
-		    			if(limits.minY == limits.maxY) {
-		    				limits.dateFormatY = 'full';
-		    			} else {
-		    				var d1 = new Date(limits.minY);
-		    				var d2 = new Date(limits.maxY);
-		    				if(d2.getFullYear() - d1.getFullYear() > 10) {
-		    					limits.dateFormatY = 'onlyYear';
-		    				} else if(d2.getFullYear() - d1.getFullYear() > 1) {
-		    					limits.dateFormatY = 'yearMonth';
-		    				} else {
-		    					var days = (d2.getTime() - d1.getTime()) / (24*3600*1000);
-		    					if(d2.getMonth() != d1.getMonth()) {
-		    						limits.dateFormatY = 'monthDay';
-		    					} else if(days > 5) {
-		    						limits.dateFormatY = 'day';
-		    					} else if(days > 1) {
-		    						limits.dateFormatY = 'dayTime';
-		    					} else {
-		    						limits.dateFormatY = 'time';
-		    					}
-		    				}
-		    			}
-		    		}
-		    		// debugLog("parseData limits: " + JSON.stringify(limits));
+					if(xType == 'date') {
+						if(limits.minX == limits.maxX) {
+							limits.dateFormatX = 'full';
+						} else {
+							var d1 = new Date(limits.minX);
+							var d2 = new Date(limits.maxX);
+							if(d2.getFullYear() - d1.getFullYear() > 10) {
+								limits.dateFormatX = 'onlyYear';
+							} else if(d2.getFullYear() - d1.getFullYear() > 1) {
+								limits.dateFormatX = 'yearMonth';
+							} else {
+								var days = (d2.getTime() - d1.getTime()) / (24*3600*1000);
+								if(d2.getMonth() != d1.getMonth()) {
+									limits.dateFormatX = 'monthDay';
+								} else if(days > 5) {
+									limits.dateFormatX = 'day';
+								} else if(days > 1) {
+									limits.dateFormatX = 'dayTime';
+								} else {
+									limits.dateFormatX = 'time';
+								}
+							}
+						}
+					}
+					if(yType == 'date') {
+						if(limits.minY == limits.maxY) {
+							limits.dateFormatY = 'full';
+						} else {
+							var d1 = new Date(limits.minY);
+							var d2 = new Date(limits.maxY);
+							if(d2.getFullYear() - d1.getFullYear() > 10) {
+								limits.dateFormatY = 'onlyYear';
+							} else if(d2.getFullYear() - d1.getFullYear() > 1) {
+								limits.dateFormatY = 'yearMonth';
+							} else {
+								var days = (d2.getTime() - d1.getTime()) / (24*3600*1000);
+								if(d2.getMonth() != d1.getMonth()) {
+									limits.dateFormatY = 'monthDay';
+								} else if(days > 5) {
+									limits.dateFormatY = 'day';
+								} else if(days > 1) {
+									limits.dateFormatY = 'dayTime';
+								} else {
+									limits.dateFormatY = 'time';
+								}
+							}
+						}
+					}
+					// $log.log(preDebugMsg + "parseData limits: " + JSON.stringify(limits));
 				}
-	    	}
+			}
 
-	    	if(dataIsCorrupt) {
-	    		debugLog("data is corrupt");
-	    		resetVars();
-	    	} else {
+			if(dataIsCorrupt) {
+				//$log.log(preDebugMsg + "data is corrupt");
+				resetVars();
+			} else {
 				// TODO: check if we should keep the old selections
 				// selections = [[limits.min, limits.max]];
-	    	}
+			}
 		} else {
-			// debugLog("no data");
+			// $log.log(preDebugMsg + "no data");
 		}
-	
+
 		updateGraphicsHelper(false, true, true);
 
 		if(unique > 0) {
@@ -1733,146 +1507,16 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				saveSelectionsInSlot();
 			}
 		} else { // no data
-	    	$scope.set('LocalSelections', {'DataIdSlot':[]});
+			$scope.set('LocalSelections', {'DataIdSlot':[]});
 
-	    	if(selectionCtx === null) {
-	    		selectionCtx = selectionCanvas.getContext("2d");
-	    		var W = selectionCanvas.width;
-	    		var H = selectionCanvas.height;
-	    		selectionCtx.clearRect(0,0, W,H);
-	    	}
-		}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Background Color Check
-	// This method checks if the background color is as it should or not.
-	//===================================================================================
-	function backgroundColorCheck(currentColors, lastColors) {
-		if(currentColors.hasOwnProperty("skin")) {
-			if(!lastColors) {
-				return true;
-			} else if(!lastColors.hasOwnProperty("skin")) {
-				return true;
-			} else {
-				if(currentColors.skin.hasOwnProperty("gradient")) {
-					if(!lastColors.skin.hasOwnProperty("gradient")) {
-						return true;
-					} else {
-						if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-							return true;
-						}
-						for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-							if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-								return true;
-							}
-						}
-					}
-				} else {
-					if(lastColors.skin.hasOwnProperty("gradient")) {
-						return true;
-					} else {
-						if(currentColors.skin.hasOwnProperty("color")) {
-							if(!lastColors.skin.hasOwnProperty("color") || lastColors.skin.color != currentColors.skin.color) {
-								return true;
-							}
-						}
-					}
-				}
-
-				if(currentColors.skin.hasOwnProperty("border")) {
-					if(!lastColors.skin.hasOwnProperty("border") || lastColors.skin.border != currentColors.skin.border) {
-						return true;
-					}
-				}
+			if(selectionCtx === null) {
+				selectionCtx = selectionCanvas.getContext("2d");
+				var W = selectionCanvas.width;
+				var H = selectionCanvas.height;
+				selectionCtx.clearRect(0,0, W,H);
 			}
 		}
-		return false;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Check Colors
-	// This method checks if the drawing colors is like they should or not.
-	//===================================================================================
-	function checkColors(currentColors, lastColors) {
-		if(currentColors == lastColors) {
-			return false;
-		}
-
-		if(!lastColors) {
-			return true;
-		}
-
-		if(!lastColors.hasOwnProperty("groups") && !currentColors.hasOwnProperty("groups")) {
-			return false;
-		} else if(lastColors.hasOwnProperty("groups") && currentColors.hasOwnProperty("groups")) {
-			// check more
-			var groupCols = currentColors.groups;
-			var lastGroupCols = lastColors.groups;
-
-			for(var g in groupCols) {
-				if(!lastGroupCols.hasOwnProperty(g)) {
-					return true;
-				}
-			}
-			for(var g in lastGroupCols) {
-				if(!groupCols.hasOwnProperty(g)) {
-					return true;
-				}
-
-				if(groupCols[g].hasOwnProperty('color')
-					&& (!lastGroupCols[g].hasOwnProperty('color') || lastGroupCols[g].color != groupCols[g].color)) {
-					return true;
-				}
-
-				if(groupCols[g].hasOwnProperty('gradient')) {
-					if(!lastGroupCols[g].hasOwnProperty('gradient') || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-						return true;
-					}
-
-					for(var i = 0; i < groupCols[g].gradient.length; i++) {
-						var cc = groupCols[g].gradient[i];
-						var cc2 = lastGroupCols[g].gradient[i];
-
-						if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos') || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color') || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos) || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-							return true;
-						}
-					}
-				}
-			}
-		} else {
-			return true;
-		}
-		return false;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Copy Colors
-	// This method copy the specified colors and return the copy.
-	//===================================================================================
-	function copyColors(colors) {
-		var res = {};
-
-		if(colors.hasOwnProperty('skin')) {
-			res.skin = {};
-			for(var prop in colors.skin) {
-				res.skin[prop] = colors.skin[prop];
-			}
-		}
-		if(colors.hasOwnProperty('groups')) {
-			res.groups = {};
-			for(var prop in colors.groups) {
-				res.groups[prop] = colors.groups[prop];
-			}
-		}
-		return res;
-	};
+	}
 	//===================================================================================
 
 
@@ -1882,7 +1526,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	//===================================================================================
 	function updateGraphics() {
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1892,32 +1536,32 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// and specified forced background, dots and axes.
 	//===================================================================================
 	function updateGraphicsHelper(forceBackground, forceDots, forceAxes) {
-		// debugLog("updateGraphics()");
+		// $log.log(preDebugMsg + "updateGraphics()");
 		if(bgCanvas === null) {
 			var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
 			if(myCanvasElement.length > 0) {
 				bgCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
 
-    	var W = bgCanvas.width;
+		var W = bgCanvas.width;
 		if(typeof W === 'string') {
 			W = parseFloat(W);
 		}
-    	if(W < 1) {
-    	    W = 1;
-    	}
+		if(W < 1) {
+			W = 1;
+		}
 
-    	var H = bgCanvas.height;
-    	if(typeof H === 'string') {
-    	    H = parseFloat(H);
-    	}
-    	if(H < 1) {
-    	    H = 1;
-    	}
+		var H = bgCanvas.height;
+		if(typeof H === 'string') {
+			H = parseFloat(H);
+		}
+		if(H < 1) {
+			H = 1;
+		}
 
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
@@ -1927,11 +1571,11 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(typeof colors === 'string') {
 				colors = JSON.parse(colors);
 			}
-			currentColors = copyColors(colors);
+			currentColors = legacyDDSupLib.copyColors(colors);
 
-	    	if(!currentColors) {
-	    		currentColors = {};
-	    	}
+			if(!currentColors) {
+				currentColors = {};
+			}
 		}
 
 		if(currentColors.hasOwnProperty("skin") && currentColors.skin.hasOwnProperty("text")) {
@@ -1960,9 +1604,9 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		}
 
 		if(!redrawBackground && currentColors != lastColors) {
-			redrawBackground = backgroundColorCheck(currentColors, lastColors);
+			redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 		}
-	
+
 		if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
 			redrawAxes = true;
 		}
@@ -1977,9 +1621,9 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				redrawDots = true;
 			}
 		}
-	
+
 		if(!redrawDots) {
-			if(checkColors(currentColors, lastColors)) {
+			if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
 				redrawDots = true;
 			}
 		}
@@ -1987,16 +1631,16 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		// ===========
 		// Draw
 		// ===========
-		// debugLog("Need to redraw: " + redrawBackground + " " + redrawDots + " " + " " + redrawAxes);
-    	if(redrawBackground) {
-    		drawBackground(W, H);
-    	}
-    	if(redrawAxes) {
-    		drawAxes(W, H);
-    	}
-    	if(redrawDots) {
-    		drawScatterPlot(W, H);
-    	}
+		// $log.log(preDebugMsg + "Need to redraw: " + redrawBackground + " " + redrawDots + " " + " " + redrawAxes);
+		if(redrawBackground) {
+			drawBackground(W, H);
+		}
+		if(redrawAxes) {
+			drawAxes(W, H);
+		}
+		if(redrawDots) {
+			drawScatterPlot(W, H);
+		}
 
 		lastDrawW = drawW;
 		lastDrawH = drawH;
@@ -2008,7 +1652,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		lastZoomMinY = zoomMinY;
 		lastZoomMaxY = zoomMaxY;
 		lastDotSize = dotSize;
-	};
+	}
 	//===================================================================================
 
 
@@ -2024,7 +1668,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(myCanvasElement.length > 0) {
 				bgCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2032,48 +1676,48 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(bgCtx === null) {
 			bgCtx = bgCanvas.getContext("2d");
 		}
-	
+
 		if(!bgCtx) {
-			debugLog("no canvas to draw bg on");
+			//$log.log(preDebugMsg + "no canvas to draw bg on");
 			return;
 		}
-	
+
 		bgCtx.clearRect(0,0, W,H);
 
-    	if(colors.hasOwnProperty("skin")) {
-    		var drewBack = false
-    	    if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
-    	    	var OK = true;
-    	    	var grd = bgCtx.createLinearGradient(0,0,W,H);
-    	    	for(var i = 0; i < colors.skin.gradient.length; i++) {
-    	    		var cc = colors.skin.gradient[i];
-    	    		if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-    	    			grd.addColorStop(cc.pos, cc.color);
-    	    		} else {
-    	    			OK = false;
-    	    		}
-    	    	}
-    	    	if(OK) {
-    	    		bgCtx.fillStyle = grd;
-    	    		bgCtx.fillRect(0,0,W,H);
-    	    		drewBack = true;
-    	    	}
-    	    }
-    	    if(!drewBack && colors.skin.hasOwnProperty("color")) {
-    	    	bgCtx.fillStyle = colors.skin.color;
-    	    	bgCtx.fillRect(0,0,W,H);
-    	    	drewBack = true;
-    	    }
+		if(colors.hasOwnProperty("skin")) {
+			var drewBack = false;
+			if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
+				var OK = true;
+				var grd = bgCtx.createLinearGradient(0,0,W,H);
+				for(var i = 0; i < colors.skin.gradient.length; i++) {
+					var cc = colors.skin.gradient[i];
+					if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
+						grd.addColorStop(cc.pos, cc.color);
+					} else {
+						OK = false;
+					}
+				}
+				if(OK) {
+					bgCtx.fillStyle = grd;
+					bgCtx.fillRect(0,0,W,H);
+					drewBack = true;
+				}
+			}
+			if(!drewBack && colors.skin.hasOwnProperty("color")) {
+				bgCtx.fillStyle = colors.skin.color;
+				bgCtx.fillRect(0,0,W,H);
+				drewBack = true;
+			}
 
-	    	if(colors.skin.hasOwnProperty("border")) {
-	    		bgCtx.fillStyle = colors.skin.border;
-	    		bgCtx.fillRect(0,0, W,1);
-	    		bgCtx.fillRect(0,H-1, W,H);
+			if(colors.skin.hasOwnProperty("border")) {
+				bgCtx.fillStyle = colors.skin.border;
+				bgCtx.fillRect(0,0, W,1);
+				bgCtx.fillRect(0,H-1, W,H);
 				bgCtx.fillRect(0,0, 1,H);
 				bgCtx.fillRect(W-1,0, W,H);
-	    	}
-    	}
-	};
+			}
+		}
+	}
 	//===================================================================================
 
 
@@ -2087,7 +1731,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(myCanvasElement.length > 0) {
 				axesCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2095,15 +1739,15 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(axesCtx === null) {
 			axesCtx = axesCanvas.getContext("2d");
 		}
-	
+
 		if(!axesCtx) {
-			debugLog("no canvas to draw axes on");
+			//$log.log(preDebugMsg + "no canvas to draw axes on");
 			return;
 		}
-	
+
 		axesCtx.clearRect(0,0, W,H);
-    	axesCtx.fillStyle = textColor;
-    	axesCtx.font = fontSize + "px Arial";
+		axesCtx.fillStyle = textColor;
+		axesCtx.font = fontSize + "px Arial";
 
 		// top label
 		var str = "";
@@ -2111,18 +1755,18 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		var yw = -1;
 		if(xName != "" && yName != "") {
 			str = xName + " --> " + yName;
-			xw = getTextWidthCurrentFont(xName);
-			yw = getTextWidthCurrentFont(yName);
+			xw = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, xName);
+			yw = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, yName);
 		} else if(xName != "") {
 			str = xName;
-			xw = getTextWidthCurrentFont(xName);
+			xw = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, xName);
 		} else if(yName != "") {
 			str = yName;
-			yw = getTextWidthCurrentFont(yName);
+			yw = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, yName);
 		}
 
 		if(str != "") {
-			var w = getTextWidthCurrentFont(str);
+			var w = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, str);
 			var top = 0;
 			if(fontSize < topMarg) {
 				top = Math.floor((topMarg - fontSize) / 2);
@@ -2133,13 +1777,13 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			}
 			axesCtx.fillText(str, left, top + fontSize);
 
-	    	if(xw >= 0) {
-	    		dragZoneX = {'left':left, 'top':top, 'right':(left + xw), 'bottom':(top + fontSize), 'name':xName, 'ID':dragZoneX.ID};
-	    	}
-	    	if(yw >= 0) {
-	    		dragZoneY = {'left':(left + w - yw), 'top':top, 'right':(left + w), 'bottom':(top + fontSize), 'name':yName, 'ID':dragZoneY.ID};
-	    	}
-	    	allDragNames = [dragZoneX, dragZoneY];
+			if(xw >= 0) {
+				dragZoneX = {'left':left, 'top':top, 'right':(left + xw), 'bottom':(top + fontSize), 'name':xName, 'ID':dragZoneX.ID};
+			}
+			if(yw >= 0) {
+				dragZoneY = {'left':(left + w - yw), 'top':top, 'right':(left + w), 'bottom':(top + fontSize), 'name':yName, 'ID':dragZoneY.ID};
+			}
+			allDragNames = [dragZoneX, dragZoneY];
 		}
 
 		// X axis
@@ -2151,18 +1795,18 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				var pos = leftMarg + i/LABELS*drawW;
 				var s = "";
 				if(xType == 'date') {
-					s = (date2text(Math.floor(pixel2valX(pos)), limits.dateFormatX));
+					s = (legacyDDSupLib.date2text(Math.floor(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX)), limits.dateFormatX));
 				} else {
-					s = number2text(pixel2valX(pos), limits.spanX);
+					s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX), limits.spanX);
 				}
 
-				var textW = getTextWidthCurrentFont(s);
+				var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 				axesCtx.fillText(s, pos - textW/2, H - bottomMarg);
 				axesCtx.fillRect(pos, topMarg + drawH - 2, 1, 6);
 			}
 		}
 
-    	// Y Axis
+		// Y Axis
 		axesCtx.fillRect(leftMarg - 3, topMarg, 2, drawH + 2);
 
 		if(unique > 0) {
@@ -2171,12 +1815,12 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				var pos = topMarg + i/LABELS*drawH;
 				var s = "";
 				if(yType == 'date') {
-					s = (date2text(Math.floor(pixel2valY(pos)), limits.dateFormatY));
+					s = (legacyDDSupLib.date2text(Math.floor(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, zoomMinY, zoomMaxY)), limits.dateFormatY));
 				} else {
-					s = number2text(pixel2valY(pos), limits.spanY);
+					s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, zoomMinY, zoomMaxY), limits.spanY);
 				}
 
-				var textW = getTextWidthCurrentFont(s);
+				var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 				if(leftMarg > textW + 5) {
 					axesCtx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
 				} else {
@@ -2191,19 +1835,19 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(unique > 0) {
 				if(xType != 'date') {
 					if(zoomMinX < 0 && zoomMaxX > 0) {
-						var pos = val2pixelX(0);
-						var col = hexColorToRGBA(textColor, 0.5);
-    			
+						var pos = legacyDDSupLib.val2pixelX(0, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+						var col = legacyDDSupLib.hexColorToRGBA(textColor, 0.5);
+
 						axesCtx.save();
 
 						axesCtx.setLineDash([2, 4]);
 						axesCtx.strokeStyle = col;
 						axesCtx.lineWidth = 1;
 
-    					axesCtx.beginPath();
-    					axesCtx.moveTo(pos, topMarg + drawH + 2);
-    					axesCtx.lineTo(pos, topMarg - 1);
-    					axesCtx.stroke();
+						axesCtx.beginPath();
+						axesCtx.moveTo(pos, topMarg + drawH + 2);
+						axesCtx.lineTo(pos, topMarg - 1);
+						axesCtx.stroke();
 
 						axesCtx.restore();
 					}
@@ -2211,26 +1855,26 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 				if(yType != 'date') {
 					if(zoomMinY < 0 && zoomMaxY > 0) {
-						var pos = val2pixelY(0);
-						var col = hexColorToRGBA(textColor, 0.5);
-    			
+						var pos = legacyDDSupLib.val2pixelY(0, unique, drawH, topMarg, zoomMinY, zoomMaxY);
+						var col = legacyDDSupLib.hexColorToRGBA(textColor, 0.5);
+
 						axesCtx.save();
 
 						axesCtx.setLineDash([2, 4]);
 						axesCtx.strokeStyle = col;
 						axesCtx.lineWidth = 1;
 
-    					axesCtx.beginPath();
-    					axesCtx.moveTo(leftMarg - 1, pos);
-    					axesCtx.lineTo(leftMarg + drawW + 1, pos);
-    					axesCtx.stroke();
+						axesCtx.beginPath();
+						axesCtx.moveTo(leftMarg - 1, pos);
+						axesCtx.lineTo(leftMarg + drawW + 1, pos);
+						axesCtx.stroke();
 
 						axesCtx.restore();
 					}
 				}
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2239,13 +1883,13 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method updates the dropzone location.
 	//===================================================================================
 	function updateDropZones(col, alpha, hover) {
-		// debugLog("update the data drop zone locations");
+		// $log.log(preDebugMsg + "update the data drop zone locations");
 		if(dropCanvas === null) {
 			var myCanvasElement = $scope.theView.parent().find('#theDropCanvas');
 			if(myCanvasElement.length > 0) {
 				dropCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no drop canvas to draw on!");
+				//$log.log(preDebugMsg + "no drop canvas to draw on!");
 				return;
 			}
 		}
@@ -2253,9 +1897,9 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(dropCtx === null) {
 			dropCtx = dropCanvas.getContext("2d");
 		}
-	
+
 		if(!dropCtx) {
-			debugLog("no canvas to draw drop zones on");
+			//$log.log(preDebugMsg + "no canvas to draw drop zones on");
 			return;
 		}
 
@@ -2264,35 +1908,35 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			var H = dropCanvas.height;
 			dropCtx.clearRect(0,0, W,H);
 			var marg1 = 8;
-	    	if(drawW < 40) {
-	    		marg1 = 0;
-	    	}
-	    	var marg2 = 8;
-	    	if(drawH < 40) {
-	    		marg2 = 0;
-	    	}
-	    	var dzYleft = 2; // 6 + dropZonePadding + dropZoneBorderW * 2;
-	    	var dzYtop = topMarg;
-	    	var dzYheight = Math.max(5, drawH + 2);
-	    	var dzYwidth = Math.max(5, leftMarg - 8);
-	    	dropY.left = dzYleft;
-	    	dropY.top = dzYtop + marg2;
-	    	dropY.right = dzYleft + dzYwidth;
-	    	dropY.bottom = dzYtop + dzYheight - marg2;
-	    	var dzXleft = leftMarg - 3; // + dropZonePadding + dropZoneBorderW * 2;
-	    	var dzXtop = topMarg + drawH + 3;
-	    	var dzXheight = Math.max(5, bottomMarg * 2 + fontSize - 6);
-	    	var dzXwidth = Math.max(5, drawW + 2);
-	    	dropX.left = dzXleft + marg1;
-	    	dropX.top = dzXtop;
-	    	dropX.right = dzXleft + dzXwidth - marg1;
-	    	dropX.bottom = dzXtop + dzXheight;
+			if(drawW < 40) {
+				marg1 = 0;
+			}
+			var marg2 = 8;
+			if(drawH < 40) {
+				marg2 = 0;
+			}
+			var dzYleft = 2; // 6 + dropZonePadding + dropZoneBorderW * 2;
+			var dzYtop = topMarg;
+			var dzYheight = Math.max(5, drawH + 2);
+			var dzYwidth = Math.max(5, leftMarg - 8);
+			dropY.left = dzYleft;
+			dropY.top = dzYtop + marg2;
+			dropY.right = dzYleft + dzYwidth;
+			dropY.bottom = dzYtop + dzYheight - marg2;
+			var dzXleft = leftMarg - 3; // + dropZonePadding + dropZoneBorderW * 2;
+			var dzXtop = topMarg + drawH + 3;
+			var dzXheight = Math.max(5, bottomMarg * 2 + fontSize - 6);
+			var dzXwidth = Math.max(5, drawW + 2);
+			dropX.left = dzXleft + marg1;
+			dropX.top = dzXtop;
+			dropX.right = dzXleft + dzXwidth - marg1;
+			dropX.bottom = dzXtop + dzXheight;
 
-	    	if(hover) {
-	    		dropCtx.save();
-	    		dropCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
-	    		dropCtx.fillRect(0,0, W, H);
-	    		dropCtx.restore();
+			if(hover) {
+				dropCtx.save();
+				dropCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
+				dropCtx.fillRect(0,0, W, H);
+				dropCtx.restore();
 				var fnt = "bold " + (fontSize + 5) + "px Arial";
 				dropCtx.font = fnt;
 				dropCtx.fillStyle = textColor;
@@ -2301,59 +1945,59 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				for(var d = 0; d < allDropZones.length; d++) {
 					var dropZone = allDropZones[d];
 
-		    		dropCtx.save();
-		    		var l = Math.max(0, dropZone.left - fontSize/2);
-		    		var t = Math.max(0, dropZone.top - fontSize/2);
-		    		var w = Math.min(W - l, dropZone.right - dropZone.left + fontSize / 2 + dropZone.left - l)
-		    		var h = Math.min(H - t, dropZone.bottom - dropZone.top + fontSize / 2 + dropZone.top - t )
-		    		dropCtx.clearRect(l, t, w, h);
+					dropCtx.save();
+					var l = Math.max(0, dropZone.left - fontSize/2);
+					var t = Math.max(0, dropZone.top - fontSize/2);
+					var w = Math.min(W - l, dropZone.right - dropZone.left + fontSize / 2 + dropZone.left - l);
+					var h = Math.min(H - t, dropZone.bottom - dropZone.top + fontSize / 2 + dropZone.top - t );
+					dropCtx.clearRect(l, t, w, h);
 
-		    		dropCtx.fillStyle = "rgba(255, 255, 255, 0.75)";
-		    		dropCtx.fillRect(l, t, w, h);
-		    		dropCtx.restore();
+					dropCtx.fillStyle = "rgba(255, 255, 255, 0.75)";
+					dropCtx.fillRect(l, t, w, h);
+					dropCtx.restore();
 				}
 				for(var d = 0; d < allDropZones.length; d++) {
 					var dropZone = allDropZones[d];
 
-		    		dropCtx.save();
-		    		dropCtx.globalAlpha = alpha;
-		    		// dropCtx.strokeStyle = col;
-		    		dropCtx.strokeStyle = "black";
-		    		dropCtx.strokeWidth = 1;
-		    		dropCtx.lineWidth = 2;
-		    		dropCtx.setLineDash([2, 3]);
-		    		dropCtx.beginPath();
-		    		dropCtx.moveTo(dropZone.left, dropZone.top);
-		    		dropCtx.lineTo(dropZone.left, dropZone.bottom);
-		    		dropCtx.lineTo(dropZone.right, dropZone.bottom);
-		    		dropCtx.lineTo(dropZone.right, dropZone.top);
-		    		dropCtx.lineTo(dropZone.left, dropZone.top);
-		    		dropCtx.stroke();
-		    		if(hover) {
-		    			var str = dropZone.label;
-		    			var tw = getTextWidth(str, fnt);
-		    			var labelShift = Math.floor(fontSize / 2);
-		    			if(dropZone.rotate) {
-		    				if(dropZone.left > W / 2) {
-		    					dropCtx.translate(dropZone.left - labelShift, dropZone.top + Math.floor((dropZone.bottom - dropZone.top - tw) / 2));
-		    				} else {
-		    					dropCtx.translate(dropZone.right - labelShift, dropZone.top + Math.floor((dropZone.bottom - dropZone.top - tw) / 2));
-		    				}
-		    				dropCtx.rotate(Math.PI/2);
-		    			} else {
-		    				if(dropZone.top < H / 2) {
-		    					dropCtx.translate(dropZone.left + Math.floor((dropZone.right - dropZone.left - tw) / 2), dropZone.bottom + labelShift);
-		    				} else {
-		    					dropCtx.translate(dropZone.left + Math.floor((dropZone.right - dropZone.left - tw) / 2), dropZone.top + labelShift);
-		    				}
-		    			}
-		    			dropCtx.fillText(str, 0, 0);
-		    		}
-		    		dropCtx.restore();
+					dropCtx.save();
+					dropCtx.globalAlpha = alpha;
+					// dropCtx.strokeStyle = col;
+					dropCtx.strokeStyle = "black";
+					dropCtx.strokeWidth = 1;
+					dropCtx.lineWidth = 2;
+					dropCtx.setLineDash([2, 3]);
+					dropCtx.beginPath();
+					dropCtx.moveTo(dropZone.left, dropZone.top);
+					dropCtx.lineTo(dropZone.left, dropZone.bottom);
+					dropCtx.lineTo(dropZone.right, dropZone.bottom);
+					dropCtx.lineTo(dropZone.right, dropZone.top);
+					dropCtx.lineTo(dropZone.left, dropZone.top);
+					dropCtx.stroke();
+					if(hover) {
+						var str = dropZone.label;
+						var tw = legacyDDSupLib.getTextWidth(axesCtx, str, fnt);
+						var labelShift = Math.floor(fontSize / 2);
+						if(dropZone.rotate) {
+							if(dropZone.left > W / 2) {
+								dropCtx.translate(dropZone.left - labelShift, dropZone.top + Math.floor((dropZone.bottom - dropZone.top - tw) / 2));
+							} else {
+								dropCtx.translate(dropZone.right - labelShift, dropZone.top + Math.floor((dropZone.bottom - dropZone.top - tw) / 2));
+							}
+							dropCtx.rotate(Math.PI/2);
+						} else {
+							if(dropZone.top < H / 2) {
+								dropCtx.translate(dropZone.left + Math.floor((dropZone.right - dropZone.left - tw) / 2), dropZone.bottom + labelShift);
+							} else {
+								dropCtx.translate(dropZone.left + Math.floor((dropZone.right - dropZone.left - tw) / 2), dropZone.top + labelShift);
+							}
+						}
+						dropCtx.fillText(str, 0, 0);
+					}
+					dropCtx.restore();
 				}
-	    	}
+			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2367,7 +2011,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(myCanvasElement.length > 0) {
 				dotCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2375,9 +2019,9 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(dotCtx === null) {
 			dotCtx = dotCanvas.getContext("2d");
 		}
-	
+
 		if(!dotCtx) {
-			debugLog("no canvas to draw on");
+			//$log.log(preDebugMsg + "no canvas to draw on");
 			return;
 		}
 
@@ -2387,53 +2031,52 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			return;
 		}
 
-    	noofGroups = 0;
-    	var globalSelections = [];
-    	var globalSelectionsPerId = $scope.gimme('GlobalSelections');
-    	if(globalSelectionsPerId.hasOwnProperty('DataIdSlot')) {
-    		globalSelections = globalSelectionsPerId['DataIdSlot'];
-    	}
+		noofGroups = 0;
+		var globalSelections = [];
+		var globalSelectionsPerId = $scope.gimme('GlobalSelections');
+		if(globalSelectionsPerId.hasOwnProperty('DataIdSlot')) {
+			globalSelections = globalSelectionsPerId['DataIdSlot'];
+		}
 
 		lastSeenGlobalSelections = [];
-    	for(var set = 0; set < globalSelections.length; set++) {
-    		lastSeenGlobalSelections.push([]);
-    		for(var i = 0; i < globalSelections[set].length; i++) {
-    			lastSeenGlobalSelections[set].push(globalSelections[set][i]);
-    		}
-    	}
+		for(var set = 0; set < globalSelections.length; set++) {
+			lastSeenGlobalSelections.push([]);
+			for(var i = 0; i < globalSelections[set].length; i++) {
+				lastSeenGlobalSelections[set].push(globalSelections[set][i]);
+			}
+		}
 
 		var centerOfMass = {"tot":[0,0,0]};
-    	var zeroTransp = 0.33 * transparency;
+		var zeroTransp = 0.33 * transparency;
+		var pixels;
 
 		// first draw all the unselected data
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-			var rgbaText = hexColorToRGBAvec(textColor, transparency);
-			// var rgba = hexColorToRGBAvec(getColorForGroup(0), 0.33);
-	    	var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
-	    	var pixels = imData.data;
+			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, transparency);
+
+			var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
+			pixels = imData.data;
 		} else {
-			var col0 = hexColorToRGBA(getColorForGroup(0), zeroTransp);
-			var colT = hexColorToRGBA(textColor, transparency);
-	    	// var col = hexColorToRGBA(getColorForGroup(0), 0.33);
-	    	// var fill = getGradientColorForGroup(0, 0,0,W,H, 0.33, dotCanvas, dotCtx);
-	    	var fill0 = getGradientColorForGroup(0, 0,0,W,H, zeroTransp, dotCanvas, dotCtx);
+			var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var colT = legacyDDSupLib.hexColorToRGBA(textColor, transparency);
+			var fill0 = legacyDDSupLib.getGradientColorForGroup(0,0,0,W,H, zeroTransp, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 		}
 
-    	for(var set = 0; set < Ns.length; set++) {
-    		var xArray = xArrays[set];
-    	    var yArray = yArrays[set];
-    	    var selArray = [];
-    	    if(set < globalSelections.length) {
-    	    	selArray = globalSelections[set];
-    	    }
+		for(var set = 0; set < Ns.length; set++) {
+			var xArray = xArrays[set];
+			var yArray = yArrays[set];
+			var selArray = [];
+			if(set < globalSelections.length) {
+				selArray = globalSelections[set];
+			}
 
-    	    for(var i = 0; i < Ns[set]; i++) {
-    	    	if(xArray[i] === null || yArray[i] === null) {
-    	    		continue;
-    	    	}
+			for(var i = 0; i < Ns[set]; i++) {
+				if(xArray[i] === null || yArray[i] === null) {
+					continue;
+				}
 
 				if(drawMean) {
 					centerOfMass["tot"][0] += xArray[i];
@@ -2441,7 +2084,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 					centerOfMass["tot"][2] += 1;
 				}
 
-                var groupId = 0;
+				var groupId = 0;
 				if(i < selArray.length) {
 					groupId = selArray[i];
 				}
@@ -2456,50 +2099,50 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 						centerOfMass[0][2] += 1;
 					}
 
-		    		if(xArray[i] < zoomMinX || xArray[i] > zoomMaxX || yArray[i] < zoomMinY || yArray[i] > zoomMaxY) {
-		    			continue; // outside zoomed range
-		    		}
+					if(xArray[i] < zoomMinX || xArray[i] > zoomMaxX || yArray[i] < zoomMinY || yArray[i] > zoomMaxY) {
+						continue; // outside zoomed range
+					}
 
-		    		var x = val2pixelX(xArray[i]);
-		    		var y = val2pixelY(yArray[i]);
+					var x = legacyDDSupLib.val2pixelX(xArray[i], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+					var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
-		    		if(drawPretty) {
-		    			if(!useGlobalGradients) {
-		    				fill = getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, zeroTransp, dotCanvas, dotCtx);
-		    			} else {
-		    				fill = fill0;
-		    			}
-			
+					if(drawPretty) {
+						if(!useGlobalGradients) {
+							fill = legacyDDSupLib.getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, zeroTransp, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
+						} else {
+							fill = fill0;
+						}
+
 						dotCtx.beginPath();
-		    			dotCtx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
-		    			dotCtx.fillStyle = fill;
-		    			dotCtx.fill();
-		    			dotCtx.lineWidth = 1;
-		    			dotCtx.strokeStyle = col0;
-		    			dotCtx.stroke();
-		    		} else {
-		    			var rgba = rgba0;
-		    			drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
-		    		}
+						dotCtx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
+						dotCtx.fillStyle = fill;
+						dotCtx.fill();
+						dotCtx.lineWidth = 1;
+						dotCtx.strokeStyle = col0;
+						dotCtx.stroke();
+					} else {
+						var rgba = rgba0;
+						drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
+					}
 				}
-    	    }
-    	}
+			}
+		}
 
 		// next, draw all the selected data on top
-    	for(var set = 0; set < Ns.length; set++) {
-    	    var xArray = xArrays[set];
-    	    var yArray = yArrays[set];
-    	    var selArray = [];
-    	    if(set < globalSelections.length) {
-    	    	selArray = globalSelections[set];
-    	    }
+		for(var set = 0; set < Ns.length; set++) {
+			var xArray = xArrays[set];
+			var yArray = yArrays[set];
+			var selArray = [];
+			if(set < globalSelections.length) {
+				selArray = globalSelections[set];
+			}
 
-    	    for(var i = 0; i < Ns[set]; i++) {
-    	    	if(xArray[i] === null || yArray[i] === null) {
-    	    		continue;
-    	    	}
+			for(var i = 0; i < Ns[set]; i++) {
+				if(xArray[i] === null || yArray[i] === null) {
+					continue;
+				}
 
-                var groupId = 0;
+				var groupId = 0;
 				if(i < selArray.length) {
 					groupId = selArray[i];
 				}
@@ -2516,16 +2159,14 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 					if(xArray[i] < zoomMinX || xArray[i] > zoomMaxX || yArray[i] < zoomMinY || yArray[i] > zoomMaxY) {
 						continue; // outside zoomed range
-		    		}
+					}
 
-		    		var x = val2pixelX(xArray[i]);
-					var y = val2pixelY(yArray[i]);
+					var x = legacyDDSupLib.val2pixelX(xArray[i], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+					var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 					if(drawPretty) {
-						var col = hexColorToRGBA(getColorForGroup(groupId), transparency);
-						var fill = getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, transparency, dotCanvas, dotCtx);
-						// var col = getColorForGroup(groupId);
-						// var fill = getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 1, dotCanvas, dotCtx);
+						var col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+						var fill = legacyDDSupLib.getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, transparency, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 
 						dotCtx.beginPath();
 						dotCtx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
@@ -2535,18 +2176,16 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 					} else {
-						rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+						rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 						if(rgba[3] >= 255) {
 							drawDotFullAlpha(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						} else {
 							drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						}
-						// rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
-						// drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 					}
 				}
-    	    }
-    	}
+			}
+		}
 
 		// Draw the center of mass of each group of data
 		if(drawMean) {
@@ -2569,32 +2208,32 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 							continue; // outside zoomed range
 						}
 
-						x = Math.round(val2pixelX(x));
-						y = Math.round(val2pixelY(y));
+						x = Math.round(legacyDDSupLib.val2pixelX(x, unique, drawW, leftMarg, zoomMinX, zoomMaxX));
+						y = Math.round(legacyDDSupLib.val2pixelY(y, unique, drawH, topMarg, zoomMinY, zoomMaxY));
 
 						if(drawPretty) {
 							var col = textColor;
 							if(groupId != "tot") {
-								col = getColorForGroup(groupId); // do not use col0 for group 0, it is too transparent
-			    			}
-			    
-			    			dotCtx.save();
+								col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors); // do not use col0 for group 0, it is too transparent
+							}
+
+							dotCtx.save();
 							dotCtx.strokeStyle = textColor;
 							dotCtx.lineWidth = 1;
-			    
-    			    		dotCtx.beginPath();
-    			    		dotCtx.moveTo(x-1, Math.max(0, y - dotSize*2 - 2));
-    			    		dotCtx.lineTo(x-1, Math.min(topMarg + drawH, y + dotSize*2 + 2));
-    			    		dotCtx.stroke();
-    			    		dotCtx.beginPath();
-    			    		dotCtx.moveTo(x+1, Math.max(0, y - dotSize*2 - 2));
-    			    		dotCtx.lineTo(x+1, Math.min(topMarg + drawH, y + dotSize*2 + 2));
-    			    		dotCtx.stroke();
-			    
-    			    		dotCtx.beginPath();
-    			    		dotCtx.moveTo(Math.max(0, x - dotSize*2 - 2), y-1);
-    			    		dotCtx.lineTo(Math.min(leftMarg + drawW, x + dotSize*2 + 2), y-1);
-    			    		dotCtx.stroke();
+
+							dotCtx.beginPath();
+							dotCtx.moveTo(x-1, Math.max(0, y - dotSize*2 - 2));
+							dotCtx.lineTo(x-1, Math.min(topMarg + drawH, y + dotSize*2 + 2));
+							dotCtx.stroke();
+							dotCtx.beginPath();
+							dotCtx.moveTo(x+1, Math.max(0, y - dotSize*2 - 2));
+							dotCtx.lineTo(x+1, Math.min(topMarg + drawH, y + dotSize*2 + 2));
+							dotCtx.stroke();
+
+							dotCtx.beginPath();
+							dotCtx.moveTo(Math.max(0, x - dotSize*2 - 2), y-1);
+							dotCtx.lineTo(Math.min(leftMarg + drawW, x + dotSize*2 + 2), y-1);
+							dotCtx.stroke();
 							dotCtx.beginPath();
 							dotCtx.moveTo(Math.max(0, x - dotSize*2 - 2), y+1);
 							dotCtx.lineTo(Math.min(leftMarg + drawW, x + dotSize*2 + 2), y+1);
@@ -2614,69 +2253,66 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 							dotCtx.stroke();
 
 							dotCtx.restore();
-							// dotCtx.fillStyle = col;
-							// dotCtx.fillRect(x - 2 - dotSize, y, dotSize*2 + 2, 1);
-							// dotCtx.fillRect(x, y - 2 - dotSize, 1, dotSize*2 + 2);
 						} else {
-							var rgbaText = hexColorToRGBAvec(textColor, 1);
+							var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1);
 							var rgba = rgbaText;
 							if(groupId != "tot") {
-								rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+								rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 							}
 
-			    			var startPixelIdx = (y * W + x) * 4;
+							var startPixelIdx = (y * W + x) * 4;
 							var size = dotSize + 2;
-			    
-			    			for(var xx = -size; xx <= size; xx++) {
-			    				if(x + xx >= 0 && x + xx < W) {
-			    					var offset = startPixelIdx + xx * 4;
-			    					pixels[offset] = rgba[0];
-				    				pixels[offset+1] = rgba[1];
-				    				pixels[offset+2] = rgba[2];
-				    				pixels[offset+3] = rgba[3];
-			    				}
-			    				if(xx != 0) {
-			    					if(y > 0) {
-			    						var oo = offset - W*4;
-			    						pixels[oo] = rgbaText[0];
+
+							for(var xx = -size; xx <= size; xx++) {
+								if(x + xx >= 0 && x + xx < W) {
+									var offset = startPixelIdx + xx * 4;
+									pixels[offset] = rgba[0];
+									pixels[offset+1] = rgba[1];
+									pixels[offset+2] = rgba[2];
+									pixels[offset+3] = rgba[3];
+								}
+								if(xx != 0) {
+									if(y > 0) {
+										var oo = offset - W*4;
+										pixels[oo] = rgbaText[0];
 										pixels[oo+1] = rgbaText[1];
 										pixels[oo+2] = rgbaText[2];
 										pixels[oo+3] = rgbaText[3];
-			    					}
-			    					if(y < H - 1) {
-			    						var oo = offset + W*4;
-			    						pixels[oo] = rgbaText[0];
+									}
+									if(y < H - 1) {
+										var oo = offset + W*4;
+										pixels[oo] = rgbaText[0];
 										pixels[oo+1] = rgbaText[1];
 										pixels[oo+2] = rgbaText[2];
 										pixels[oo+3] = rgbaText[3];
-			    					}
-			    				}
-			    			}
-			    			for(var yy = -size; yy <= size; yy++) {
-			    				if(y + yy >= 0 && y + yy < H) {
-			    					var offset = startPixelIdx + yy*W*4;
-			    					pixels[offset] = rgba[0];
-			    					pixels[offset+1] = rgba[1];
-				    				pixels[offset+2] = rgba[2];
-				    				pixels[offset+3] = rgba[3];
-			    				}
-			    				if(yy != 0) {
-			    					if(x > 0) {
-			    						var oo = offset - 4;
-			    						pixels[oo] = rgbaText[0];
+									}
+								}
+							}
+							for(var yy = -size; yy <= size; yy++) {
+								if(y + yy >= 0 && y + yy < H) {
+									var offset = startPixelIdx + yy*W*4;
+									pixels[offset] = rgba[0];
+									pixels[offset+1] = rgba[1];
+									pixels[offset+2] = rgba[2];
+									pixels[offset+3] = rgba[3];
+								}
+								if(yy != 0) {
+									if(x > 0) {
+										var oo = offset - 4;
+										pixels[oo] = rgbaText[0];
 										pixels[oo+1] = rgbaText[1];
 										pixels[oo+2] = rgbaText[2];
 										pixels[oo+3] = rgbaText[3];
-			    					}
-			    					if(x < W - 1) {
-			    						var oo = offset + 4;
-			    						pixels[oo] = rgbaText[0];
-			    						pixels[oo+1] = rgbaText[1];
-			    						pixels[oo+2] = rgbaText[2];
-			    						pixels[oo+3] = rgbaText[3];
-			    					}
-			    				}
-			    			}
+									}
+									if(x < W - 1) {
+										var oo = offset + 4;
+										pixels[oo] = rgbaText[0];
+										pixels[oo+1] = rgbaText[1];
+										pixels[oo+2] = rgbaText[2];
+										pixels[oo+3] = rgbaText[3];
+									}
+								}
+							}
 						}
 					}
 				}
@@ -2686,44 +2322,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(!drawPretty) {
 			dotCtx.putImageData(imData, 0, 0);
 		}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Blend RGBA values
-	// This method blend RGBA values.
-	//===================================================================================
-	function blendRGBAs(r,g,b,alpha, offset, pixels) {
-		if(pixels[offset+3] > 0 && alpha < 255) {
-			// something drawn here already, blend alpha
-			var oldA = pixels[offset+3] / 255.0;
-			var newA = alpha / 255.0;
-			var remainA = (1 - newA) * oldA;
-			var outA = newA + remainA;
-			if(outA > 0) {
-				var oldR = pixels[offset];
-				var oldG = pixels[offset+1];
-				var oldB = pixels[offset+2];
-				var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-				var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-				var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-			} else {
-				var outR = 0;
-				var outG = 0;
-				var outB = 0;
-			}
-	    	pixels[offset] = outR;
-	    	pixels[offset+1] = outG;
-	    	pixels[offset+2] = outB;
-	    	pixels[offset+3] = Math.min(255, outA * 255);
-		} else {
-			pixels[offset] = r;
-			pixels[offset+1] = g;
-			pixels[offset+2] = b;
-			pixels[offset+3] = alpha;
-		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2732,32 +2331,32 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method draws a dot based on multiple specified variables.
 	//===================================================================================
 	function drawDot(X, Y, DOTSIZE, alpha, r, g, b, Width, Height, pixels) {
-        var xpos = Math.round(X);
-        var ypos = Math.round(Y);
-        var W = Math.floor(Width);
+		var xpos = Math.round(X);
+		var ypos = Math.round(Y);
+		var W = Math.floor(Width);
 		var H = Math.floor(Height);
 		var dotSize = Math.round(DOTSIZE);
 		var halfDot = Math.round(DOTSIZE/2);
-        var startPixelIdx = (ypos * W + xpos) * 4;
-        var r2 = Math.ceil(dotSize * dotSize / 4.0);
+		var startPixelIdx = (ypos * W + xpos) * 4;
+		var r2 = Math.ceil(dotSize * dotSize / 4.0);
 
-        for (var x = -halfDot; x < halfDot + 1; x++) {
-        	if (x + xpos >= 0 && x + xpos < W) {
-        		var x2 = x * x;
+		for (var x = -halfDot; x < halfDot + 1; x++) {
+			if (x + xpos >= 0 && x + xpos < W) {
+				var x2 = x * x;
 
-        		for (var y = -halfDot; y < halfDot + 1; y++) {
-        			if(y + ypos >= 0 && y + ypos < H) {
-        				var y2 = y * y;
+				for (var y = -halfDot; y < halfDot + 1; y++) {
+					if(y + ypos >= 0 && y + ypos < H) {
+						var y2 = y * y;
 
 						if (y2 + x2 <= r2) {
 							var offset = (y * W + x) * 4;
-							blendRGBAs(r,g,b,alpha, startPixelIdx + offset, pixels);
+							legacyDDSupLib.blendRGBAs(r,g,b,alpha, startPixelIdx + offset, pixels);
 						}
-        			}
-        		}
-        	}
-        }
-	};
+					}
+				}
+			}
+		}
+	}
 	//===================================================================================
 
 
@@ -2766,168 +2365,35 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method draws a dot with full alpha.
 	//===================================================================================
 	function drawDotFullAlpha(X, Y, DOTSIZE, alpha, r, g, b, Width, Height, pixels) {
-        var xpos = Math.round(X);
-        var ypos = Math.round(Y);
+		var xpos = Math.round(X);
+		var ypos = Math.round(Y);
 		var W = Math.floor(Width);
 		var H = Math.floor(Height);
 		var dotSize = Math.round(DOTSIZE);
 		var halfDot = Math.round(DOTSIZE/2);
-        var startPixelIdx = (ypos * W + xpos) * 4;
-        var r2 = Math.ceil(dotSize * dotSize / 4.0);
+		var startPixelIdx = (ypos * W + xpos) * 4;
+		var r2 = Math.ceil(dotSize * dotSize / 4.0);
 
-        for (var x = -halfDot; x < halfDot + 1; x++) {
-        	if (x + xpos >= 0 && x + xpos < W) {
-        		var x2 = x * x;
+		for (var x = -halfDot; x < halfDot + 1; x++) {
+			if (x + xpos >= 0 && x + xpos < W) {
+				var x2 = x * x;
 
-			for (var y = -halfDot; y < halfDot + 1; y++) {
-				if(y + ypos >= 0 && y + ypos < H) {
-					var y2 = y * y;
-			
-					if (y2 + x2 <= r2) {
-						var offset = (y * W + x) * 4;
-						pixels[startPixelIdx + offset] = r;
-						pixels[startPixelIdx + offset + 1] = g;
-						pixels[startPixelIdx + offset + 2] = b;
-						pixels[startPixelIdx + offset + 3] = alpha;
+				for (var y = -halfDot; y < halfDot + 1; y++) {
+					if(y + ypos >= 0 && y + ypos < H) {
+						var y2 = y * y;
+
+						if (y2 + x2 <= r2) {
+							var offset = (y * W + x) * 4;
+							pixels[startPixelIdx + offset] = r;
+							pixels[startPixelIdx + offset + 1] = g;
+							pixels[startPixelIdx + offset + 2] = b;
+							pixels[startPixelIdx + offset + 3] = alpha;
+						}
 					}
 				}
 			}
-        	}
-        }
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Gradient Color for Group
-	// This method returns the gradiant color for a specific group.
-	//===================================================================================
-	function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    	    	var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
-    	    	if(myCanvasElement.length > 0) {
-    	    		myCanvas = myCanvasElement[0];
-    	    	}
-    	    }
-
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    	    	W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    	    	W = 1;
-    	    }
-
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    	    	H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    	    	H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
- 	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    		if(currentColors.hasOwnProperty('groups')) {
-    			var groupCols = currentColors.groups;
-		
-    			for(var g in groupCols) {
-    				if(groupCols.hasOwnProperty(g)) {
-    					colorPalette[g] = 'black';
-
-    		    		if(groupCols[g].hasOwnProperty('color')) {
-    		    			colorPalette[g] = groupCols[g].color;
-    		    		}
-    				}
-    			}
-    		}
-    	}
-	
-    	if(currentColors.hasOwnProperty("groups")) {
-    	    var groupCols = currentColors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-    	    	var OK = true;
-		
-				try {
-					var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-					for(var i = 0; i < groupCols[group].gradient.length; i++) {
-						var cc = groupCols[group].gradient[i];
-						if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-							if(alpha !== undefined) {
-								grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-							}
-							else {
-								grd.addColorStop(cc.pos, cc.color);
-							}
-						} else {
-							OK = false;
-						}
-					}
-				} catch(e) {
-					OK = false;
-				}
-
-    			if(OK) {
-    				return grd;
-    			}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    		return 'black';
-    	} else {
-    		return colorPalette[group];
-    	}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Color for Group
-	// This method returns the color for a specified group.
-	//===================================================================================
-	function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    	    	var groupCols = currentColors.groups;
-
-    			for(var g in groupCols) {
-    				if(groupCols.hasOwnProperty(g)) {
-    					colorPalette[g] = '#000000';
-
-    					if(groupCols[g].hasOwnProperty('color')) {
-    						colorPalette[g] = groupCols[g].color;
-    					}
-    				}
-    			}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-	};
+		}
+	}
 	//===================================================================================
 
 
@@ -2936,7 +2402,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method updates the size in regard to text and image
 	//===================================================================================
 	function updateSize() {
-		// debugLog("updateSize");
+		// $log.log(preDebugMsg + "updateSize");
 		fontSize = parseInt($scope.gimme("FontSize"));
 		if(fontSize < 5) {
 			fontSize = 5;
@@ -2944,31 +2410,31 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 
 		var rw = $scope.gimme("DrawingArea:width");
 		if(typeof rw === 'string') {
-    	    rw = parseFloat(rw);
-    	}
-    	if(rw < 1) {
-    	    rw = 1;
-    	}
+			rw = parseFloat(rw);
+		}
+		if(rw < 1) {
+			rw = 1;
+		}
 
 		var rh = $scope.gimme("DrawingArea:height");
-    	if(typeof rh === 'string') {
-    	    rh = parseFloat(rh);
-    	}
-    	if(rh < 1) {
-    	    rh = 1;
-    	}
+		if(typeof rh === 'string') {
+			rh = parseFloat(rh);
+		}
+		if(rh < 1) {
+			rh = 1;
+		}
 
 		var bgDirty = false;
-    	if(bgCanvas === null) {
-    		bgDirty = true;
-    		var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
-    		if(myCanvasElement.length > 0) {
-    			bgCanvas = myCanvasElement[0];
-    		} else {
-    			debugLog("no canvas to resize!");
-    			return;
-    		}
-    	}
+		if(bgCanvas === null) {
+			bgDirty = true;
+			var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
+			if(myCanvasElement.length > 0) {
+				bgCanvas = myCanvasElement[0];
+			} else {
+				//$log.log(preDebugMsg + "no canvas to resize!");
+				return;
+			}
+		}
 		if(bgCanvas.width != rw) {
 			bgDirty = true;
 			bgCanvas.width = rw;
@@ -2985,7 +2451,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(myCanvasElement.length > 0) {
 				dotCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -3005,7 +2471,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(myCanvasElement.length > 0) {
 				axesCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -3029,7 +2495,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(selectionCanvasElement.length > 0) {
 				selectionCanvas = selectionCanvasElement[0];
 			} else {
-				debugLog("no selectionCanvas to resize!");
+				//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 				return;
 			}
 		}
@@ -3046,9 +2512,9 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		selectionHolderElement.top = 0;
 		selectionHolderElement.left = 0;
 
-    	var selectionRectElement = $scope.theView.parent().find('#selectionRectangle');
-    	selectionRectElement.width = rw;
-    	selectionRectElement.height = rh;
+		var selectionRectElement = $scope.theView.parent().find('#selectionRectangle');
+		selectionRectElement.width = rw;
+		selectionRectElement.height = rh;
 		selectionRectElement.top = 0;
 		selectionRectElement.left = 0;
 		if(selectionRectElement.length > 0) {
@@ -3058,17 +2524,17 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			selectionRect.top = 0;
 			selectionRect.left = 0;
 		}
-	
+
 		var W = selectionCanvas.width;
 		var H = selectionCanvas.height;
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
-		// debugLog("updateSize found selections: " + JSON.stringify(selections));
+		// $log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
 		updateSelectionsWhenZoomingOrResizing();
 		updateDropZones(textColor, 0.3, false);
-		// debugLog("updateSize updated selections to: " + JSON.stringify(selections));
-    };
+		// $log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
+	}
 	//===================================================================================
 
 
@@ -3080,14 +2546,14 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(unique > 0) {
 			for(var sel = 0; sel < selections.length; sel++) {
 				var s = selections[sel];
-				s[4] = val2pixelX(s[0]);
-				s[5] = val2pixelX(s[1]);
-				s[7] = val2pixelY(s[2]);
-				s[6] = val2pixelY(s[3]);
+				s[4] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+				s[5] = legacyDDSupLib.val2pixelX(s[1], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+				s[7] = legacyDDSupLib.val2pixelY(s[2], unique, drawH, topMarg, zoomMinY, zoomMaxY);
+				s[6] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 			}
 		}
 		drawSelections();
-	};
+	}
 	//===================================================================================
 
 
@@ -3109,93 +2575,93 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 				selArray = globalSelections[set];
 			}
 
-	    	var oldSelArray = [];
+			var oldSelArray = [];
 			if(set < lastSeenGlobalSelections.length) {
 				oldSelArray = lastSeenGlobalSelections[set];
 			}
-	    
-	    	if(selArray.length != oldSelArray.length) {
-	    		dirty = true;
-	    		break;
-	    	}
 
-	    	var xArray = xArrays[set];
-	    	var yArray = yArrays[set];
-    	    for(var i = 0; i < Ns[set]; i++) {
-    	    	if(xArray[i] === null || yArray[i] === null) {
-    	    		continue;
-    	    	}
+			if(selArray.length != oldSelArray.length) {
+				dirty = true;
+				break;
+			}
 
-                var groupId = 0;
-    	    	if(i < selArray.length) {
-    	    		groupId = selArray[i];
-    	    	}
+			var xArray = xArrays[set];
+			var yArray = yArrays[set];
+			for(var i = 0; i < Ns[set]; i++) {
+				if(xArray[i] === null || yArray[i] === null) {
+					continue;
+				}
 
-                var oldGroupId = 0;
-    	    	if(i < oldSelArray.length) {
-    	    		oldGroupId = oldSelArray[i];
-    	    	}
-		
+				var groupId = 0;
+				if(i < selArray.length) {
+					groupId = selArray[i];
+				}
+
+				var oldGroupId = 0;
+				if(i < oldSelArray.length) {
+					oldGroupId = oldSelArray[i];
+				}
+
 				if(groupId != oldGroupId) {
 					dirty = true;
 					break;
 				}
-    	    }
-	    
-	    	if(dirty) {
-	    		break;
-	    	}
+			}
+
+			if(dirty) {
+				break;
+			}
 		}
 
 		if(dirty) {
-			// debugLog("global selections dirty, redraw");
-    	    updateGraphicsHelper(false, true, false);
+			// $log.log(preDebugMsg + "global selections dirty, redraw");
+			updateGraphicsHelper(false, true, false);
 		}
-	};
+	}
 	//===================================================================================
 
 
 	// ==============================
-    // ------- Mouse Stuff ----------
-    // ==============================
+	// ------- Mouse Stuff ----------
+	// ==============================
 
 	//===================================================================================
 	// New Selection
 	// This method reacts to making a new selection based on stored mouse coordinates.
 	//===================================================================================
 	function newSelection(x1,x2, y1,y2, keepOld) {
-		// debugLog("newSelection");
-		// debugLog("newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
+		// $log.log(preDebugMsg + "newSelection");
+		// $log.log(preDebugMsg + "newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
 		if(unique > 0) {
 			x1 = Math.max(x1, leftMarg);
 			x2 = Math.min(x2, leftMarg + drawW);
 			y1 = Math.max(y1, topMarg);
 			y2 = Math.min(y2, topMarg + drawH);
-	    
-	    	var newSel = [pixel2valX(x1), pixel2valX(x2), pixel2valY(y2), pixel2valY(y1), x1,x2,y1,y2];// y1 and y2 need to be switched here, because we flip the y axis
 
-			// debugLog("newSel: " + JSON.stringify(newSel));
-	    	var overlap = false;
-	    	for(var s = 0; s < selections.length; s++) {
-	    		var sel = selections[s];
-	    		if(sel[4] == newSel[4] && sel[5] == newSel[5] && sel[6] == newSel[6] && sel[7] == newSel[7]) {
-	    			// debugLog("Ignoring selection because it overlaps 100% with already existing selection");
-		    		overlap = true;
-		    		break;
-	    		}
-	    	}
+			var newSel = [legacyDDSupLib.pixel2valX(x1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valX(x2, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valY(y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.pixel2valY(y1, unique, drawH, topMarg, zoomMinY, zoomMaxY), x1,x2,y1,y2];// y1 and y2 need to be switched here, because we flip the y axis
 
-	    	if(!overlap) {
-	    		if(!keepOld) {
-	    			selections = [];
-	    		}
-	    		selections.push(newSel);
-	    		drawSelections();
-	    		updateLocalSelections(false);
-	    		saveSelectionsInSlot();
-	    	}
+			// $log.log(preDebugMsg + "newSel: " + JSON.stringify(newSel));
+			var overlap = false;
+			for(var s = 0; s < selections.length; s++) {
+				var sel = selections[s];
+				if(sel[4] == newSel[4] && sel[5] == newSel[5] && sel[6] == newSel[6] && sel[7] == newSel[7]) {
+					// $log.log(preDebugMsg + "Ignoring selection because it overlaps 100% with already existing selection");
+					overlap = true;
+					break;
+				}
+			}
+
+			if(!overlap) {
+				if(!keepOld) {
+					selections = [];
+				}
+				selections.push(newSel);
+				drawSelections();
+				updateLocalSelections(false);
+				saveSelectionsInSlot();
+			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -3204,7 +2670,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 	// This method parse the selection colors.
 	//===================================================================================
 	function parseSelectionColors() {
-		// debugLog("parseSelectionColors");
+		// $log.log(preDebugMsg + "parseSelectionColors");
 		var colors = $scope.gimme("GroupColors");
 		if(typeof colors === 'string') {
 			colors = JSON.parse(colors);
@@ -3218,41 +2684,41 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			} else {
 				selectionColors.border = '#FFA500'; // orange
 			}
-	    
-	    	if(colors['selection'].hasOwnProperty('color')) {
-	    		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
-	    	} else {
-	    		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
-	    	}
 
-	    	if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
-	    		if(selectionCanvas === null || selectionCtx === null) {
-	    			var selectionCanvasElement = $scope.theView.parent().find('#theSelectionCanvas');
-	    			if(selectionCanvasElement.length > 0) {
-	    				selectionCanvas = selectionCanvasElement[0];
-	    				selectionCtx = selectionCanvas.getContext("2d");
-	    			} else {
-	    				debugLog("no selectionCanvas to resize!");
-	    				return;
-	    			}
-	    		}
+			if(colors['selection'].hasOwnProperty('color')) {
+				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+			} else {
+				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+			}
+
+			if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
+				if(selectionCanvas === null || selectionCtx === null) {
+					var selectionCanvasElement = $scope.theView.parent().find('#theSelectionCanvas');
+					if(selectionCanvasElement.length > 0) {
+						selectionCanvas = selectionCanvasElement[0];
+						selectionCtx = selectionCanvas.getContext("2d");
+					} else {
+						//$log.log(preDebugMsg + "no selectionCanvas to resize!");
+						return;
+					}
+				}
 
 				selectionColors.grad = selectionCtx.createLinearGradient(0, 0, selectionCanvas.width, selectionCanvas.height);
-	    		var atLeastOneAdded = false;
-	    		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
-	    			if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-	    				selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
-	    				atLeastOneAdded = true;
-	    			}
-	    		}
-	    		if(!atLeastOneAdded) {
-	    			selectionColors.grad = selectionColors.color;
-	    		}
-	    	} else {
-	    		selectionColors.grad = selectionColors.color;
-	    	}
+				var atLeastOneAdded = false;
+				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
+					if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						atLeastOneAdded = true;
+					}
+				}
+				if(!atLeastOneAdded) {
+					selectionColors.grad = selectionColors.color;
+				}
+			} else {
+				selectionColors.grad = selectionColors.color;
+			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -3266,7 +2732,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(selectionCanvasElement.length > 0) {
 				selectionCanvas = selectionCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw selections on!");
+				//$log.log(preDebugMsg + "no canvas to draw selections on!");
 				return;
 			}
 		}
@@ -3274,7 +2740,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		if(selectionCtx === null) {
 			selectionCtx = selectionCanvas.getContext("2d");
 		}
-	
+
 		var W = selectionCanvas.width;
 		var H = selectionCanvas.height;
 		selectionCtx.clearRect(0,0, W,H);
@@ -3294,15 +2760,15 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			var y1 = selections[sel][6];
 			var y2 = selections[sel][7];
 
-	    	selectionCtx.fillRect(x1, y1, x2 - x1, y2 - y1);
-	    	selectionCtx.fillStyle = selectionColors.border;
-	    	selectionCtx.fillRect(x1,   y1, 1, y2-y1);
-	    	selectionCtx.fillRect(x1,   y1, x2 - x1, 1);
-	    	selectionCtx.fillRect(x1,   y2-1, x2 - x1, 1);
-	    	selectionCtx.fillRect(x2-1, y1, 1, y2-y1);
+			selectionCtx.fillRect(x1, y1, x2 - x1, y2 - y1);
+			selectionCtx.fillStyle = selectionColors.border;
+			selectionCtx.fillRect(x1,   y1, 1, y2-y1);
+			selectionCtx.fillRect(x1,   y1, x2 - x1, 1);
+			selectionCtx.fillRect(x1,   y2-1, x2 - x1, 1);
+			selectionCtx.fillRect(x2-1, y1, 1, y2-y1);
 		}
 		hideSelectionRect();
-	};
+	}
 	//===================================================================================
 
 
@@ -3316,13 +2782,13 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			if(selectionRectElement.length > 0) {
 				selectionRect = selectionRectElement[0];
 			} else {
-				debugLog("No selection rectangle!");
+				//$log.log(preDebugMsg + "No selection rectangle!");
 			}
 		}
 		if(selectionRect !== null) {
 			selectionRect.getContext("2d").clearRect(0,0, selectionRect.width, selectionRect.height);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -3335,7 +2801,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			return true;
 		}
 		return false;
-	};
+	}
 	//===================================================================================
 
 
@@ -3359,7 +2825,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		$scope.set("MaxY", zoomMaxY);
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -3383,7 +2849,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 		$scope.set("MaxY", zoomMaxY);
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -3402,12 +2868,12 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			}
 			zoomMaxX = zoomMinX + halfSpan*2;
 
-	    	$scope.set("MinX", zoomMinX);
-	    	$scope.set("MaxX", zoomMaxX);
-	    	updateSelectionsWhenZoomingOrResizing();
-	    	updateGraphicsHelper(false, true, true);
+			$scope.set("MinX", zoomMinX);
+			$scope.set("MaxX", zoomMaxX);
+			updateSelectionsWhenZoomingOrResizing();
+			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -3426,12 +2892,12 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			}
 			zoomMinX = zoomMaxX - halfSpan*2;
 
-	    	$scope.set("MinX", zoomMinX);
-	    	$scope.set("MaxX", zoomMaxX);
-	    	updateSelectionsWhenZoomingOrResizing();
-	    	updateGraphicsHelper(false, true, true);
+			$scope.set("MinX", zoomMinX);
+			$scope.set("MaxX", zoomMaxX);
+			updateSelectionsWhenZoomingOrResizing();
+			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -3455,7 +2921,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -3474,15 +2940,15 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, Slo
 			}
 			zoomMinY = zoomMaxY - halfSpan*2;
 
-	    	$scope.set("MinY", zoomMinY);
-	    	$scope.set("MaxY", zoomMaxY);
-	    	updateSelectionsWhenZoomingOrResizing();
-	    	updateGraphicsHelper(false, true, true);
+			$scope.set("MinY", zoomMinY);
+			$scope.set("MaxY", zoomMaxY);
+			updateSelectionsWhenZoomingOrResizing();
+			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
-    //=== CTRL MAIN CODE ======================================================================
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================

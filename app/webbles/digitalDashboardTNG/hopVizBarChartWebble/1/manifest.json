@@ -1,3 +1,3 @@
 {
-    "libs": [ ]
+	"libs": ["../../DigitalDashboard/1/legacyDDSupLib.js"]
 }

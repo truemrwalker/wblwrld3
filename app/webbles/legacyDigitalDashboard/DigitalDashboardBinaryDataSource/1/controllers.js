@@ -794,28 +794,13 @@ wblwrld3App.controller('binaryDataWebbleCtrl', function($scope, $log, Slot, Enum
 
 
 	//===================================================================================
-	// Get Text Width
-	// This method returns the width of a specified text and font.
-	//===================================================================================
-	function getTextWidth(text, font) {
-		if(ctx !== null && ctx !== undefined) {
-			ctx.font = font;
-			var metrics = ctx.measureText(text);
-			return metrics.width;
-		}
-		return 0;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Check Needed Size
 	// This method checks what size is needed for the drawing surface.
 	//===================================================================================
 	function checkNeededSize(text) {
 		var w = 0;
 		for(var i = 0; i < text.length; i++) {
-			w = Math.max(w, getTextWidth(text[i], fontSize + "px Arial"));
+			w = Math.max(w, legacyDDSupLib.getTextWidth(ctx, text[i], fontSize + "px Arial"));
 		}
 		var h = fontSize * (fieldNames.length + 3);
 

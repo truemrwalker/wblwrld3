@@ -49,7 +49,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 	//===================================================================================
 	var onMouseDown = function(e){
 		if(e.which === 1){
-			$log.log(preDebugMsg + "mouse Clicked");
+			//$log.log(preDebugMsg + "mouse Clicked");
 			currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 			var ctrl = false;
 			if(e.ctrlKey || e.metaKey) {
@@ -202,11 +202,11 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 					updateView();
 					break;
 				case "DrawingArea:height":
-					$log.log(preDebugMsg + "DrawingArea:height slotSet");
+					//$log.log(preDebugMsg + "DrawingArea:height slotSet");
 					updateView();
 					break;
 				case "DrawingArea:width":
-					$log.log(preDebugMsg + "DrawingArea:width slotSet");
+					//$log.log(preDebugMsg + "DrawingArea:width slotSet");
 					updateView();
 					break;
 			}
@@ -340,7 +340,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 		if(selectionHolderElement !== null){
 			selectionHolderElement.bind('mousedown', onMouseDown);
 		} else {
-			$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
+			//$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 		}
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
@@ -362,7 +362,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 	// This Method draws the new image created by the current selections
 	//===================================================================================
 	function drawSelections() {
-		$log.log(preDebugMsg + "drawSelections");
+		//$log.log(preDebugMsg + "drawSelections");
 
 		if(selectionCanvas === null) {
 			var selectionCanvasElement = $scope.theView.parent().find('#theSelectionCanvas');
@@ -370,7 +370,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 				selectionCanvas = selectionCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw selections on!");
+				//$log.log(preDebugMsg + "no canvas to draw selections on!");
 				return;
 			}
 		}
@@ -441,7 +441,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 		var h2 = im2.image.height;
 
 		if(w1 != w2 || h1 != h2) {
-			$log.log(preDebugMsg + "Warning: image dimensions are not the same (" + w1 + "," + h1 + ") and (" + w2 + "," + h2 + ")");
+			//$log.log(preDebugMsg + "Warning: image dimensions are not the same (" + w1 + "," + h1 + ") and (" + w2 + "," + h2 + ")");
 		}
 
 		var w = Math.min(im1.image.width, im2.image.width);
@@ -518,7 +518,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 				}
 				else if(mode == "hotcold") {
 					if(isColor) {
-						$log.log(preDebugMsg + "WARNING: 'hotcold' mode cannot be used with color images. Using 'minmax' instead.");
+						//$log.log(preDebugMsg + "WARNING: 'hotcold' mode cannot be used with color images. Using 'minmax' instead.");
 						r = Math.max(0, Math.min(255, (r - minR) / (maxR - minR) * 255));
 						g = Math.max(0, Math.min(255, (g - minG) / (maxG - minG) * 255));
 						b = Math.max(0, Math.min(255, (b - minB) / (maxB - minB) * 255));
@@ -626,7 +626,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 	// This method updates view to mirror the current loaded data and webble settings
 	//===================================================================================
 	function updateView() {
-		$log.log(preDebugMsg + "updateView");
+		//$log.log(preDebugMsg + "updateView");
 		var rw = $scope.gimme("DrawingArea:width");
 		if(typeof rw === 'string') {
 			rw = parseFloat(rw);
@@ -649,7 +649,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 				myCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -662,7 +662,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 				selectionCanvas = selectionCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no selectionCanvas to resize!");
+				//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 				return;
 			}
 		}
@@ -695,7 +695,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 		var resize = checkNeededSize();
 
 		if(!resize) {
-			$log.log(preDebugMsg + "actually draw");
+			//$log.log(preDebugMsg + "actually draw");
 
 			if(ctx) {
 				ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
@@ -706,24 +706,9 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 			drawSelections();
 		}
 		else {
-			$log.log(preDebugMsg + "resize, wait");
+			//$log.log(preDebugMsg + "resize, wait");
 		}
 	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Text Width
-	// This method gets the width of a specified text with a  specified font.
-	//===================================================================================
-	function getTextWidth(text) {
-    	if(ctx !== null && ctx !== undefined) {
-    	    ctx.font = fontSize + "px Arial";
-    	    var metrics = ctx.measureText(text);
-    	    return metrics.width;
-    	}
-    	return 0;
-    };
 	//===================================================================================
 
 
@@ -737,11 +722,11 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 
 		for(var name in imageSets) {
 			var hh = 0;
-			var ww = -5 + getTextWidth(name);
+			var ww = -5 + legacyDDSupLib.getTextWidth(ctx, name, fontSize + "px Arial");
 
 			for(var i = 0; i < imageSets[name].v.length; i++) {
 				var im  = imageSets[name].v[i].image;
-				ww += 5 + Math.max(im.width, getTextWidth(imageSets[name].v[i].props.join(".")));
+				ww += 5 + Math.max(im.width, legacyDDSupLib.getTextWidth(ctx, imageSets[name].v[i].props.join(".")), fontSize + "px Arial");
 				hh = Math.max(hh, im.height + fontSize);
 			}
 
@@ -787,7 +772,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -805,7 +790,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 			var hh = 0;
 
 			ctx.fillText(name, w, h + fontSize);
-			w += Math.ceil(getTextWidth(name) + 5);
+			w += Math.ceil(legacyDDSupLib.getTextWidth(ctx, name, fontSize + "px Arial") + 5);
 
 			imageSets[name].x1 = w;
 			imageSets[name].x2 = w;
@@ -826,7 +811,8 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 				imageSets[name].x2 = Math.max(w + im.width, imageSets[name].x2);
 				imageSets[name].y2 = Math.max(h + im.height, imageSets[name].y2);
 
-				w += 5 + Math.ceil(Math.max(im.width, getTextWidth(imageSets[name].v[i].props.join("."))));
+
+				w += 5 + Math.ceil(Math.max(im.width, legacyDDSupLib.getTextWidth(ctx, imageSets[name].v[i].props.join("."), fontSize + "px Arial")));
 				hh = Math.ceil(Math.max(hh, im.height + fontSize));
 			}
 
@@ -846,7 +832,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -883,7 +869,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -969,7 +955,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 	// This method saves away all the generated images.
 	//===================================================================================
 	$scope.saveAllGenerated = function() {
-		$log.log(preDebugMsg + "Save All Files clicked");
+		//$log.log(preDebugMsg + "Save All Files clicked");
 		filesToSave = [];
 
 		for(var name in imageSets) {

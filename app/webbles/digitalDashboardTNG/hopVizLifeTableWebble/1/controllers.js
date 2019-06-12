@@ -474,7 +474,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     		for(var f = 0; f < dataMappings[src].map.length; f++) {
     		    if(dataType == 'number' && dataMappings[src].map[f].name == 'Time to Death') {
     			var fieldInfo = ls[dataMappings[src].map[f].srcIdx];
-    			dataName = shortenName(fieldInfo.name);
+    			dataName = legacyDDSupLib.shortenName(fieldInfo.name);
     			dragZone.name = dataName;
     			dragZone.ID = dropTTDeathInfo;
 
@@ -483,7 +483,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 
     		    if(dataType == 'date' && dataMappings[src].map[f].name == 'Date of Death') {
     			var fieldInfo = ls[dataMappings[src].map[f].srcIdx];
-    			dataName = shortenName(fieldInfo.name);
+    			dataName = legacyDDSupLib.shortenName(fieldInfo.name);
     			dragZone.name = dataName;
     			dragZone.ID = dropTofDeathInfo;
 
@@ -547,113 +547,21 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 	}
     }
 
-    function getTextWidth(text, font) {
-	if(ctx !== null && ctx !== undefined) {
-	    ctx.font = font;
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
+
+	function date2Str(v) {
+		var days = v / (24*3600*1000);
+		if(days < 100) {
+			return parseInt(days) + " days";
+		}
+		if(days < 1000) {
+			return parseInt(days/30) + " months";
+		}
+		return (days/365).toPrecision(2) + " years";
 	}
 
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    }
 
-    function date2text(v) {
-	var days = v / (24*3600*1000);
-	if(days < 100) {
-	    return parseInt(days) + " days";
-	}
-	if(days < 1000) {
-	    return parseInt(days/30) + " months";
-	}
-	return (days/365).toPrecision(2) + " years";
-    }
-
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
-
-    function pixel2valX(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < leftMarg) {
-	    return limits.minX;
-	}
-	if(p > leftMarg + drawW) {
-	    return limits.maxX;
-	}
-	return limits.minX + (p - leftMarg) / drawW * (limits.maxX - limits.minX);
-    };
-
-    function pixel2valY(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < topMarg) {
-	    return limits.maxY; // flip Y-axis
-	}
-	if(p > topMarg + drawH) {
-	    return limits.minY; // flip Y-axis
-	}
-	return limits.minY + (drawH - (p - topMarg)) / drawH * (limits.maxY - limits.minY); // flip Y-axis
-    };
-
-    function val2pixelX(v) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(v < limits.minX) {
-	    return leftMarg;
-	}
-	if(v > limits.maxX) {
-	    return leftMarg + drawW;
-	}
-	
-	return leftMarg + (v - limits.minX) / (limits.maxX - limits.minX) * drawW;
-    };
-
-    function val2pixelY(v) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(v < limits.minY) {
-	    return topMarg + drawH; // flip Y-axis
-	}
-	if(v > limits.maxY) {
-	    return topMarg; // flip Y-axis
-	}
-	
-	return topMarg + drawH - ((v - limits.minY) / (limits.maxY - limits.minY) * drawH); // flip Y-axis
-    };
 
     function saveSelectionsInSlot() {
     	// debugLog("saveSelectionsInSlot");
@@ -700,8 +608,8 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     		    X1 = Math.max(limits.minX, X1);
     		    X2 = Math.min(limits.maxX, X2);
 
-		    var x1 = val2pixelX(X1);
-		    var x2 = val2pixelX(X2);
+		    var x1 = legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, limits.minX, limits.maxX);
+		    var x2 = legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, limits.minX, limits.maxX);
 		    if(x2 - x1 > 1) {
     			newSelections.push([X1,X2, x1,x2]);
 		    } else {
@@ -750,8 +658,8 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    X1 = Math.max(limits.minX, X1);
     	    X2 = Math.min(limits.maxX, X2);
 	    
-	    var x1 = val2pixelX(X1);
-	    var x2 = val2pixelX(X2);
+	    var x1 = legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, limits.minX, limits.maxX);
+	    var x2 = legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, limits.minX, limits.maxX);
 	    if(x2 - x1 > 1) {
     		newSelections.push([X1,X2, x1,x2]);
 	    } else {
@@ -1212,7 +1120,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 			var fnt = "bold " + (fontSize + 5) + "px Arial";
 
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(ctx, str, fnt);
 
 			var textArea = dropZone.right - dropZone.left;
 			if(dropZone.rotate) {
@@ -1222,7 +1130,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 			var fontAdjust = 1;
 			while(tw > 2 * textArea) {
 			    fnt = "bold " + (fontSize + 5 - fontAdjust) + "px Arial";
-			    tw = getTextWidth(str, fnt);
+			    tw = legacyDDSupLib.getTextWidth(ctx, str, fnt);
 			    fontAdjust++;
 			    
 			    if(fontAdjust > fontSize) {
@@ -1327,14 +1235,14 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 
     		var s = "";
     		if(dataType == 'date') {
-    		    s = date2text(Math.floor(pixel2valX(pos)));
+    		    s = date2Str(Math.floor(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, limits.minX, limits.maxX)));
     		} else {
-    		    s = number2text(pixel2valX(pos), limits.maxX);
+    		    s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, limits.minX, limits.maxX), limits.maxX);
     		}
 		
     		ctx.fillStyle = "black";
     		ctx.font = fontSize + "px Arial";
-    		var textW = getTextWidthCurrentFont(s);
+    		var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
     		ctx.fillText(s, pos - textW/2, H - bottomMarg);
     		ctx.fillRect(pos, topMarg + drawH - 2, 1, 6);
     	    }
@@ -1355,7 +1263,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 	    }
 	    
 	    if(str != "") {
-		var w = getTextWidthCurrentFont(str);
+		var w = legacyDDSupLib.getTextWidthCurrentFont(ctx, str);
 		var top = 0;
 		if(fontSize < topMarg) {
 		    top = Math.floor((topMarg - fontSize) / 2);
@@ -1377,14 +1285,14 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 
     		var s = "";
     		if(usePercent) {
-    		    s = Math.round(pixel2valY(pos) * 100) + "%";
+    		    s = Math.round(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, limits.minY, limits.maxY) * 100) + "%";
     		} else {
-    		    s = Math.round(pixel2valY(pos));
+    		    s = Math.round(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, limits.minY, limits.maxY));
     		}
 		
     		ctx.fillStyle = "black";
     		ctx.font = fontSize + "px Arial";
-    		var textW = getTextWidthCurrentFont(s);
+    		var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
     		if(leftMarg > textW + 5) {
     		    ctx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
     		} else {
@@ -1516,17 +1424,17 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    // draw upper curve
     	    var ls = groupStats[groupId].upper;
 
-    	    var lastX = val2pixelX(ls[0][0]);
+    	    var lastX = legacyDDSupLib.val2pixelX(ls[0][0], unique, drawW, leftMarg, limits.minX, limits.maxX);
 
 	    var yval = ls[0][1];
 	    if(usePercent) {
 		yval = yval / groupStats[groupId].headCount;
 	    }
-    	    var lastY = val2pixelY(yval);
+    	    var lastY = legacyDDSupLib.val2pixelY(yval, unique, drawH, topMarg, limits.minY, limits.maxY);
 	    
-    	    var col = getColorForGroup(groupId);
+    	    var col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
     	    if(groupId == "0") {
-    		col = hexColorToRGBA(col, 0.33);
+    		col = legacyDDSupLib.hexColorToRGBA(col, 0.33);
     	    }
 
 	    ctx.save();
@@ -1536,7 +1444,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 		var s = "";
     		s = Math.round(ls[0][1]);
 
-    		var textW = getTextWidthCurrentFont(s);
+    		var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 
 		ctx.fillText(s, leftMarg + 5, lastY - 5);
 
@@ -1553,13 +1461,13 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    ctx.moveTo(lastX, lastY);
 
     	    for(var i = 1; i < ls.length; i++) {
-    		var x = val2pixelX(ls[i][0]);
+    		var x = legacyDDSupLib.val2pixelX(ls[i][0], unique, drawW, leftMarg, limits.minX, limits.maxX);
 
 		yval = ls[i][1];
 		if(usePercent) {
 		    yval = yval / groupStats[groupId].headCount;
 		}
-    		var y = val2pixelY(yval);
+    		var y = legacyDDSupLib.val2pixelY(yval, unique, drawH, topMarg, limits.minY, limits.maxY);
 
     		// horizontal line
     		ctx.lineTo(x, lastY);
@@ -1570,7 +1478,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     		lastX = x;
     		lastY = y;
     	    }
-    	    ctx.lineTo(val2pixelX(limits.maxX), lastY);
+    	    ctx.lineTo(legacyDDSupLib.val2pixelX(limits.maxX, unique, drawW, leftMarg, limits.minX, limits.maxX), lastY);
 
     	    ctx.stroke();
 
@@ -1581,7 +1489,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    } else {
     		s = Math.round(ls[ls.length - 1][1]);
 	    }
-    	    var textW = getTextWidthCurrentFont(s);
+    	    var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 	    if(textW + 6 < rightMarg) {
 		ctx.fillText(s, leftMarg + drawW + 5, lastY + fontSize / 2);
 	    } else {
@@ -1593,18 +1501,18 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    if(haveFollowUp) {
     		ls = groupStats[groupId].lower;
 
-    		lastX = val2pixelX(ls[0][0]);
+    		lastX = legacyDDSupLib.val2pixelX(ls[0][0], unique, drawW, leftMarg, limits.minX, limits.maxX);
 
 		yval = ls[0][1];
 		if(usePercent) {
 		    yval = yval / groupStats[groupId].headCount;
 		}
-    		lastY = val2pixelY(yval);
+    		lastY = legacyDDSupLib.val2pixelY(yval, unique, drawH, topMarg, limits.minY, limits.maxY);
 		
 		ctx.save();
     		ctx.setLineDash([3, 5]);
     		if(groupId != "0") {
-    		    col = hexColorToRGBA(col, 0.5);
+    		    col = legacyDDSupLib.hexColorToRGBA(col, 0.5);
     		}
 
     		ctx.strokeStyle = col;
@@ -1613,12 +1521,12 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     		ctx.moveTo(lastX, lastY);
 		
     		for(var i = 1; i < ls.length; i++) {
-    		    var x = val2pixelX(ls[i][0]);
+    		    var x = legacyDDSupLib.val2pixelX(ls[i][0], unique, drawW, leftMarg, limits.minX, limits.maxX);
 		    yval = ls[i][1];
 		    if(usePercent) {
 			yval = yval / groupStats[groupId].headCount;
 		    }
-    		    var y = val2pixelY(yval);
+    		    var y = legacyDDSupLib.val2pixelY(yval, unique, drawH, topMarg, limits.minY, limits.maxY);
 		    
     		    // horizontal line
     		    ctx.lineTo(x, lastY);
@@ -1629,139 +1537,15 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     		    lastX = x;
     		    lastY = y;
     		}
-    		ctx.lineTo(val2pixelX(limits.maxX), lastY);
+    		ctx.lineTo(legacyDDSupLib.val2pixelX(limits.maxX, unique, drawW, leftMarg, limits.minX, limits.maxX), lastY);
     		ctx.stroke();
 		ctx.restore();
             }
     	}
     }
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-    		}
-    	    }
 
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
 
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
-
-    	var colors = $scope.gimme("ColorScheme");
-    	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-    	}
-	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(colors.hasOwnProperty('groups')) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colors.hasOwnProperty("groups")) {
-    	    var groupCols = colors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && ctx !== null && groupCols[group].hasOwnProperty('gradient')) {
-    		var OK = true;
-		
-    		var grd = ctx.createLinearGradient(x1,y1,x2,y2);
-    		for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    		    var cc = groupCols[group].gradient[i];
-    		    if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-    			if(alpha !== undefined) {
-    			    grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-    			}
-    			else {
-    			    grd.addColorStop(cc.pos, cc.color);
-    			}
-    		    } else {
-    			OK = false;
-    		    }
-    		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    var colors = $scope.gimme("ColorScheme");
-    	    if(typeof colors === 'string') {
-    		colors = JSON.parse(colors);
-    	    }
-	    
-    	    if(colors.hasOwnProperty("groups")) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
     	// debugLog("updateSize");
@@ -1854,8 +1638,8 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 
     	for(var sel = 0; sel < selections.length; sel++) {
     	    var s = selections[sel];
-    	    s[2] = val2pixelX(s[0]);
-    	    s[3] = val2pixelX(s[1]);
+    	    s[2] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, limits.minX, limits.maxX);
+    	    s[3] = legacyDDSupLib.val2pixelX(s[1], unique, drawW, leftMarg, limits.minX, limits.maxX);
     	}
     	drawSelections();
 
@@ -1962,7 +1746,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    x1 = Math.max(x1, leftMarg);
     	    x2 = Math.min(x2, leftMarg + drawW);
 
-    	    var newSel = [pixel2valX(x1), pixel2valX(x2), x1,x2];
+    	    var newSel = [legacyDDSupLib.pixel2valX(x1, unique, drawW, leftMarg, limits.minX, limits.maxX), legacyDDSupLib.pixel2valX(x2, unique, drawW, leftMarg, limits.minX, limits.maxX), x1,x2];
 	    
     	    var overlap = false;
     	    for(var s = 0; s < selections.length; s++) {
@@ -1998,18 +1782,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	saveSelectionsInSlot();
     };
 
-    function hexColorToRGBA(color, alpha) {
-    	if(typeof color === 'string'
-    	   && color.length == 7) {
-	    
-    	    var r = parseInt(color.substr(1,2), 16);
-    	    var g = parseInt(color.substr(3,2), 16);
-    	    var b = parseInt(color.substr(5,2), 16);
 
-    	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    	}
-    	return color;
-    };
 
     function parseSelectionColors() {
     	// debugLog("parseSelectionColors");
@@ -2035,9 +1808,9 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     	    }
 	    
     	    if(colors['selection'].hasOwnProperty('color')) {
-    		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+    		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
     	    } else {
-    		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+    		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
     	    }
 
     	    if(colors['selection'].hasOwnProperty('gradient')) {
@@ -2057,7 +1830,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
     		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
     		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
     		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-    			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+    			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
     			atLeastOneAdded = true;
     		    }
     		}
@@ -2149,15 +1922,15 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 
     	    if(hoverText !== null) {
     		if(mousePosIsInSelectableArea(currentMouse)) {
-    		    var x = pixel2valX(currentMouse.x);
-    		    var y = pixel2valY(currentMouse.y);
+    		    var x = legacyDDSupLib.pixel2valX(currentMouse.x, unique, drawW, leftMarg, limits.minX, limits.maxX);
+    		    var y = legacyDDSupLib.pixel2valY(currentMouse.y, unique, drawH, topMarg, limits.minY, limits.maxY);
 		    
     		    var s = "[";
 		    
     		    if(dataType == 'date') {
-    			s += date2text(Math.floor(x));
+    			s += date2Str(Math.floor(x));
     		    } else {
-    			s += number2text(x, limits.maxX);
+    			s += legacyDDSupLib.number2text(x, limits.maxX);
     		    }
 
     		    s += ", ";
@@ -2170,7 +1943,7 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 		    
     		    s += "]";
 
-    		    var textW = getTextWidthCurrentFont(s);
+    		    var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
     		    hoverText.style.font = fontSize + "px Arial";
     		    hoverText.style.left = Math.floor(currentMouse.x + 5) + "px";
     		    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

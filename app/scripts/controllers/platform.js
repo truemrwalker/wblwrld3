@@ -1540,7 +1540,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 											urlPath = corePath + "/" + data["libs"][i];
 										}
 										wblManifestLibs.push(urlPath);
-										prevLoadedManifestLibs.push(urlPath);
+										prevLoadedManifestLibs.push(data["libs"][i]);
 									}
 								}
 							}
@@ -1582,9 +1582,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
 	//========================================================================================
-	// Download Webble Template Manifest File
-	// This method loads all files (one by one) found in the webble templates manifest file.
-	// When done it continues loading the rest of the template.
+	// Finalize 3rd Party File List and Load Them
+	// This method finalizes the 3rd party file list extracted from the manifest file and
+	// loads each of them.
 	//========================================================================================
 	var finalize3rdPartyFileListAndLoadThem = function(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList){
 		for(var i = 0; i < wblTemplateFileList.ext.length;i++){
@@ -1604,7 +1604,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	};
 	//========================================================================================
 
-
+	var objectsPreviouslyLoaded = {};
 	//========================================================================================
     // Download Webble Template Manifest File
     // This method loads all files (one by one) found in the webble templates manifest file.
@@ -1629,11 +1629,19 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				});
 			}
 			else{
-				$.getScript( libItem )
-					.always(function( jqxhr, settings, exception ) {
-						downloadingManifestLibs = false;
-						downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
-					});
+				var libItemTargetObjName = libItem.substring(libItem.lastIndexOf('/')+1, libItem.lastIndexOf('.'));
+				if(!window[libItemTargetObjName]){
+					$.getScript( libItem )
+						.always(function( jqxhr, settings, exception ) {
+							downloadingManifestLibs = false;
+							downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
+						});
+				}
+				else{
+					//$log.log("Will not load " + libItem + " again");
+					downloadingManifestLibs = false;
+					downloadWblTemplateManifestFile(whatTemplateId, whatTemplateRevision, whatWblDef, corePath, wblTemplateFileList);
+				}
 			}
         }
         else{

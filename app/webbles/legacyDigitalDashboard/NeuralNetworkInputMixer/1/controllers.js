@@ -156,7 +156,7 @@ wblwrld3App.controller('neuralNetworkInputMixerWebbleCtrl', function($scope, $lo
 
 	ctx.font = fontSize + "px Arial";
 
-	var tw = getTextWidthCurrentFont(t);
+	var tw = legacyDDSupLib.getTextWidthCurrentFont(ctx, t);
 	var x = 0;
 	if(tw < drawW) {
 	    Math.floor(x = (drawW - tw) / 2);
@@ -172,13 +172,7 @@ wblwrld3App.controller('neuralNetworkInputMixerWebbleCtrl', function($scope, $lo
 	ctx.fillText(t, x, y + fontSize);
     }
 
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
+
 
     function mySlotChange(eventData) {
     	// debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));

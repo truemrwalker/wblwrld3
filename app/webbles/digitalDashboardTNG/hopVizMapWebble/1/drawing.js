@@ -96,15 +96,15 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     var drawPretty = true;
     if(unique > quickRenderThreshold) {
 	drawPretty = false;
-	var rgba0 = hexColorToRGBAvec(getColorForGroup(0, currentColors, colorPalette), zeroTransp);
-	var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+	var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(0, currentColors, colorPalette), zeroTransp);
+	var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 	var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 	var imData0 = uCtx.getImageData(0, 0, uCanvas.width, uCanvas.height);
 	var pixels = imData.data;
 	var pixels0 = imData0.data;
     } else {
-    	var col0 = hexColorToRGBA(getColorForGroup(0, currentColors, colorPalette), zeroTransp, uCanvas, uCtx);
-    	var fill0 = getGradientColorForGroup(0, zeroTransp, uCanvas, uCtx, currentColors, colorPalette);
+    	var col0 = legacyDDSupLib.hexColorToRGBA(getColForGroup(0, currentColors, colorPalette), zeroTransp, uCanvas, uCtx);
+    	var fill0 = getGradColForGroup(0, zeroTransp, uCanvas, uCtx, currentColors, colorPalette);
     }
 
     if(dataMappings[src].active) {
@@ -146,9 +146,9 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     				    uCtx.restore();
 				} else {
 				    if(transparency >= 1) {
-    					fill = getGradientColorForGroup(groupId, 1, myCanvas, myCtx, currentColors, colorPalette);
+    					fill = getGradColForGroup(groupId, 1, myCanvas, myCtx, currentColors, colorPalette);
 				    } else {
-					fill = getGradientColorForGroup(groupId, transparency, myCanvas, myCtx, currentColors, colorPalette);
+					fill = getGradColForGroup(groupId, transparency, myCanvas, myCtx, currentColors, colorPalette);
 				    }
 
     				    myCtx.save();
@@ -166,10 +166,10 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
 				    drawDotfullalpha(x1 + offset, y1, dotSize, rgba0[3], rgba0[0], rgba0[1], rgba0[2], pixels0, uCanvas.width);
 				} else {
 				    if(transparency >= 1) {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId, currentColors, colorPalette), 1);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(groupId, currentColors, colorPalette), 1);
 					drawDotfullalpha(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 				    } else {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId, currentColors, colorPalette), transparency);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(groupId, currentColors, colorPalette), transparency);
 					drawDot(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 				    }
 				}
@@ -194,9 +194,9 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     				    uCtx.restore();
 				} else {
 				    if(transparency >= 1) {
-    					fill = getGradientColorForGroup(groupId, 1, myCanvas, myCtx, currentColors, colorPalette);
+    					fill = getGradColForGroup(groupId, 1, myCanvas, myCtx, currentColors, colorPalette);
 				    } else {
-					fill = getGradientColorForGroup(groupId, transparency, myCanvas, myCtx, currentColors, colorPalette);
+					fill = getGradColForGroup(groupId, transparency, myCanvas, myCtx, currentColors, colorPalette);
 				    }
 
     				    myCtx.save();
@@ -214,10 +214,10 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
 				    drawDotfullalpha(x1 + offset, y1, dotSize, rgba0[3], rgba0[0], rgba0[1], rgba0[2], pixels0, uCanvas.width);
 				} else {
 				    if(transparency >= 1) {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId, currentColors, colorPalette), 1);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(groupId, currentColors, colorPalette), 1);
 					drawDotfullalpha(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 				    } else {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId, currentColors, colorPalette), transparency);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(groupId, currentColors, colorPalette), transparency);
 					drawDot(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 				    }
 				}
@@ -290,7 +290,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     				    uCtx.restore();
 				    
 				} else {
-				    col = hexColorToRGBA(getColorForGroup(groupId, currentColors, colorPalette), transparency, myCanvas, myCtx);
+				    col = legacyDDSupLib.hexColorToRGBA(getColForGroup(groupId, currentColors, colorPalette), transparency, myCanvas, myCtx);
 
     				    myCtx.save();
     				    myCtx.beginPath();
@@ -310,7 +310,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
 
 				} else {
 
-				    col = hexColorToRGBAvec(getColorForGroup(groupId, currentColors, colorPalette), transparency);
+				    col = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(groupId, currentColors, colorPalette), transparency);
 				    if(transparency >= 1) {
 					drawLineDDAfullalpha(pixels, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], col[3], myCanvas.width);
 				    } else {
@@ -338,7 +338,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     				    uCtx.restore();
 				    
 				} else {
-				    col = hexColorToRGBA(getColorForGroup(groupId, currentColors, colorPalette), transparency, myCanvas, myCtx);
+				    col = legacyDDSupLib.hexColorToRGBA(getColForGroup(groupId, currentColors, colorPalette), transparency, myCanvas, myCtx);
 
     				    myCtx.save();
     				    myCtx.beginPath();
@@ -358,7 +358,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
 
 				} else {
 
-				    col = hexColorToRGBAvec(getColorForGroup(groupId, currentColors, colorPalette), transparency);
+				    col = legacyDDSupLib.hexColorToRGBAvec(getColForGroup(groupId, currentColors, colorPalette), transparency);
 				    if(transparency >= 1) {
 					drawLineDDAfullalpha(pixels, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], col[3], myCanvas.width);
 				    } else {
@@ -380,7 +380,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
 }
 
 
-function getGradientColorForGroup(group, alpha, myCanvas, myCtx, currentColors, colorPalette) {
+function getGradColForGroup(group, alpha, myCanvas, myCtx, currentColors, colorPalette) {
     var W = myCanvas.width;
     if(typeof W === 'string') {
     	W = parseFloat(W);
@@ -431,7 +431,7 @@ function getGradientColorForGroup(group, alpha, myCanvas, myCtx, currentColors, 
     		    var cc = groupCols[group].gradient[i];
     		    if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
 			if(alpha !== undefined) {
-    			    grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
+    			    grd.addColorStop(cc.pos, legacyDDSupLib.hexColorToRGBA(cc.color, alpha));
 			}
 			else {
     			    grd.addColorStop(cc.pos, cc.color);
@@ -457,7 +457,7 @@ function getGradientColorForGroup(group, alpha, myCanvas, myCtx, currentColors, 
     }
 }
 
-function getColorForGroup(group, currentColors, colorPalette) {
+function getColForGroup(group, currentColors, colorPalette) {
     group = group.toString();
 
     if(!colorPalette.hasOwnProperty(group)) {
@@ -483,33 +483,7 @@ function getColorForGroup(group, currentColors, colorPalette) {
     }
 }
 
-function hexColorToRGBAvec(color, alpha) {
-    var res = [];
 
-    if(typeof color === 'string'
-       && color.length == 7) {
-	
-	var r = parseInt(color.substr(1,2), 16);
-	var g = parseInt(color.substr(3,2), 16);
-	var b = parseInt(color.substr(5,2), 16);
-	var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	return [r, g, b, a];
-    }
-    return [0, 0, 0, 255];
-}
-
-function hexColorToRGBA(color, alpha) {
-    if(typeof color === 'string'
-       && color.length == 7) {
-	
-	var r = parseInt(color.substr(1,2), 16);
-	var g = parseInt(color.substr(3,2), 16);
-	var b = parseInt(color.substr(5,2), 16);
-
-	return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    }
-    return color;
-}
 
 function drawDot(X, Y, DOTSIZE, alpha, r, g, b, pixels, ArrayLineWidth) {
     var W = Math.floor(leftMarg + drawW);

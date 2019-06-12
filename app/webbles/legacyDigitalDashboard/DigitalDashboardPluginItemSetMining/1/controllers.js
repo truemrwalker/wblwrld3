@@ -204,27 +204,6 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 	}
     }
 
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
-
-    function getTextWidth(text, font) {
-	if(ctx !== null && ctx !== undefined) {
-	    ctx.font = font;
-	    var metrics = ctx.measureText(text);
-	    return Math.ceil(metrics.width);
-	}
-	return 0;
-    };
-
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return Math.ceil(metrics.width);
-	}
-	return 0;
-    };
 
     function pixel2row(p) {
 	if(unique <= 0) {
@@ -590,7 +569,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		    dragZoneData.ID = JSON.stringify(dropData.forParent);
 
 		    if(parentInput[i].hasOwnProperty("description")) {
-			dataName = shortenName(parentInput[i]["description"]);
+			dataName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 			dragZoneData.name = dataName;
 		    }
 		}
@@ -603,7 +582,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		    dragZoneLabel.ID = JSON.stringify(dropLabel.forParent);
 
 		    if(parentInput[i].hasOwnProperty("description")) {
-			labelName = shortenName(parentInput[i]["description"]);
+			labelName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 			dragZoneLabel.name = labelName;
 		    }
 		}
@@ -1296,13 +1275,13 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 	    var ss = rule2string(ls[0][1]);
 
 	    var leftHandSide = ss[0];
-	    longestLeftHandSide = Math.max(longestLeftHandSide, getTextWidthCurrentFont(leftHandSide));
+	    longestLeftHandSide = Math.max(longestLeftHandSide, legacyDDSupLib.getTextWidthCurrentFont(ctx, leftHandSide));
 	    
 	    if(onlyItemSetMining) {
 		ruleList.push([noofGroups, groups.join(), totalSupport, ls, leftHandSide]);
 	    } else {
 		var rightHandSide = ss[1];
-		longestRightHandSide = Math.max(longestRightHandSide, getTextWidthCurrentFont(rightHandSide));
+		longestRightHandSide = Math.max(longestRightHandSide, legacyDDSupLib.getTextWidthCurrentFont(ctx, rightHandSide));
 
 		ruleList.push([noofGroups, groups.join(), totalSupport, ls, leftHandSide, rightHandSide]);	
 	    }
@@ -1385,11 +1364,11 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		neededW +=  Math.ceil(longestRightHandSide + colMarg);
 	    }
 	    
-	    neededW += Math.ceil(maxNoofGroups * getTextWidthCurrentFont(" 0.00"));
+	    neededW += Math.ceil(maxNoofGroups * legacyDDSupLib.getTextWidthCurrentFont(ctx, " 0.00"));
 	}
 	
 	for(var s = 0; s < interfaceStrings.length; s++) {
-	    textW = getTextWidthCurrentFont(interfaceStrings[s]);
+	    textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, interfaceStrings[s]);
 	    neededW = Math.max(textW, neededW);
 	}
 	
@@ -1399,7 +1378,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 	}
 	if(onlyItemSetMining) {
 	    s = interfaceStrings[0] + minSupS;
-	    textW = getTextWidthCurrentFont(s);
+	    textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 	    neededW = Math.max(textW, neededW);
 	} else {
 	    var minConfS = minConfidence.toString();
@@ -1408,7 +1387,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		}
 	    s = interfaceStrings[0] + minSupS + interfaceStrings[1] + minConfS;
 	}
-	textW = getTextWidthCurrentFont(s);
+	textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 	neededW = Math.max(textW, neededW);
 	    
 	
@@ -1529,18 +1508,18 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 	var yw = -1;
 	if(dataName != "" && labelName != "") {
 	    str = dataName + ", by " + labelName;
-	    xw = getTextWidthCurrentFont(dataName);
-	    yw = getTextWidthCurrentFont(labelName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(ctx, dataName);
+	    yw = legacyDDSupLib.getTextWidthCurrentFont(ctx, labelName);
 	} else if(dataName != "") {
 	    str = dataName;
-	    xw = getTextWidthCurrentFont(dataName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(ctx, dataName);
 	} else if(labelName != "") {
 	    str = labelName;
-	    yw = getTextWidthCurrentFont(labelName);
+	    yw = legacyDDSupLib.getTextWidthCurrentFont(ctx, labelName);
 	}
 
 	if(str != "") {
-	    var w = getTextWidthCurrentFont(str);
+	    var w = legacyDDSupLib.getTextWidthCurrentFont(ctx, str);
 	    var top = headerTopMarg;
 
 	    var left = 0;
@@ -1574,7 +1553,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 	    var col = "black";
 	    if(separateMiningForEachGroup) {
 		if(noofGroups == 1) {
-		    col = getColorForGroup(ls[0][0]);
+		    col = legacyDDSupLib.getColorForGroup(ls[0][0], colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
 		    if(ls[0][0] == 0) {
 			col = hexColorToRGBA(col, 0.5);
 		    }
@@ -1599,7 +1578,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		col = "black";
 		
 		if(separateMiningForEachGroup) {
-		    col = getColorForGroup(ls[g][0]);
+		    col = legacyDDSupLib.getColorForGroup(ls[g][0], colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
 		    if(ls[g][0] == 0) {
 			col = hexColorToRGBA(col, 0.5);
 		    }
@@ -1616,7 +1595,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		ctx.fillStyle = col;
 		ctx.fillText(s, x, y);
 		
-		textW = getTextWidthCurrentFont(s);
+		textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 		x += textW + 2;
 	    }
 
@@ -1843,7 +1822,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(ctx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -1865,132 +1844,9 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
     }
 
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
-	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
 
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
 
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-	}		
-	
-	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-	}
 
-	var colors = $scope.gimme("GroupColors");
-	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-	}
-	
-	group = group.toString();
-
-	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(colors.hasOwnProperty('groups')) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-	}
-	
-	if(colors.hasOwnProperty("groups")) {
-    	    var groupCols = colors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && ctx !== null && groupCols[group].hasOwnProperty('gradient')) {
-    		var OK = true;
-		
-    		var grd = ctx.createLinearGradient(x1,y1,x2,y2);
-    		for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    		    var cc = groupCols[group].gradient[i];
-    		    if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			if(alpha !== undefined) {
-    			    grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			}
-			else {
-    			    grd.addColorStop(cc.pos, cc.color);
-			}
-    		    } else {
-    			OK = false;
-    		    }
-    		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-	}
-	
-	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-	} else {
-    	    return colorPalette[group];
-	}
-    };
-
-    function getColorForGroup(group) {
-	if(colorPalette === null) {
-    	    colorPalette = {};
-	}
-
-	group = group.toString();
-
-	if(!colorPalette.hasOwnProperty(group)) {
-    	    var colors = $scope.gimme("GroupColors");
-    	    if(typeof colors === 'string') {
-    		colors = JSON.parse(colors);
-    	    }
-	    
-    	    if(colors.hasOwnProperty("groups")) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-	}
-	
-	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-	} else {
-    	    return colorPalette[group];
-	}
-    };
 
     function updateSize() {
 	// debugLog("updateSize");
@@ -2423,54 +2279,7 @@ wblwrld3App.controller('itemSetMiningPluginWebbleCtrl', function($scope, $log, S
 	if(unique > 0) {
 	    var currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 
-	    // // hover text
 
-	    // if(hoverText === null) {
-    	    // 	var elmnt = $scope.theView.parent().find('#mouseOverText');
-    	    // 	if(elmnt.length > 0) {
-    	    // 	    hoverText = elmnt[0];
-    	    // 	} else {
-    	    // 	    debugLog("No hover text!");
-    	    // 	}
-	    // }
-
-	    // if(hoverText !== null) {
-	    // 	if(mousePosIsInSelectableArea(currentMouse)) {
-	    // 	    var x = pixel2valX(currentMouse.x);
-	    // 	    var y = pixel2valY(currentMouse.y);
-
-	    
-	    // 	    var s = "[";
-
-	    // 	    if(xType == 'date') {
-	    // 		s += (date2text(Math.floor(x), limits.dateFormatX));
-	    // 	    } else {
-	    // 		s += number2text(x, limits.spanX);
-	    // 	    }
-
-	    // 	    s += ",";
-
-	    // 	    if(yType == 'date') {
-	    // 		s += (date2text(Math.floor(y), limits.dateFormatY));
-	    // 	    } else {
-	    // 		s += number2text(y, limits.spanY);
-	    // 	    }
-	    
-	    // 	    s += "]";
-
-	    // 	    // var s = "(" + number2text(x, limits.spanX) + "," + number2text(y, limits.spanY) + ")";
-	    // 	    var textW = getTextWidthCurrentFont(s);
-	    // 	    hoverText.style.font = fontSize + "px Arial";
-	    // 	    hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
-	    // 	    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
-	    // 	    hoverText.innerHTML = s;
-	    // 	    hoverText.style.display = "block";
-	    // 	} else {
-	    // 	    hoverText.style.display = "none";
-	    // 	}
-	    // }
-
-	    // selection rectangle, if clicked
 	    
 	    if(clickStart !== null) {
 		if(selectionRect === null) {

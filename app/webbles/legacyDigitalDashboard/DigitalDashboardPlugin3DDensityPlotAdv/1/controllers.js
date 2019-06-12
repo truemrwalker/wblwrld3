@@ -208,122 +208,14 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	}
     }
 
-    function getTextWidth(text, font) {
-	if(axesCtx !== null && axesCtx !== undefined) {
-	    axesCtx.font = font;
-	    var metrics = axesCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function getTextWidthCurrentFont(text) {
-	if(axesCtx !== null && axesCtx !== undefined) {
-	    var metrics = axesCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
 
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
 
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
 
-    function binLookup(ls, val, start, end) {
 
-	if(start >= end) {
-	    if(ls[start] == val) {
-		return start;
-	    } else {
-		return -1;
-	    }
-	} else {
-	    var mid = Math.floor((start + end) / 2);
-	    if(ls[mid] == val) {
-		return mid;
-	    }
-	    if(ls[mid] < val) {
-		return binLookup(ls, val, mid+1, end);
-	    } else {
-		return binLookup(ls, val, start, mid-1);
-	    }
-	}
-    }
 
-    function pixels2dimVals(pos) {
-	var res = {"dim":null, "x":0, "y":0, "val":0};
-	
-	if(unique <= 0) {
-	    return res;
-	} else {
-	    var marg = Math.min(2, innerMarg);
-	    if(pos.x > - marg + leftMarg
-	       && pos.x < leftMarg + dim[xAxisAxis] * cellW + marg
-	       && pos.y > topMarg + drawH - dim[yAxisAxis] * cellW - marg
-	       && pos.y < topMarg + drawH + marg) {
 
-		res.dim = xAxisAxis;
-
-		res.x = Math.max(0, Math.min(dim[xAxisAxis] - 1, Math.floor( (pos.x - leftMarg) / cellW)));
-
-		res.y = Math.max(0, Math.min(dim[yAxisAxis] - 1, Math.floor( (topMarg + drawH - pos.y) / cellW)));
-
-		res.val = res.x;
-
-		return res;
-	    } 
-
-	    if(pos.x > leftMarg + dim[xAxisAxis] * cellW + innerMarg - marg
-	       && pos.x < leftMarg + dim[xAxisAxis] * cellW  + dim[zAxisAxis] * cellW + innerMarg + marg) {
-		var a = Math.max(0, Math.min(dim[zAxisAxis] - 1, Math.floor((pos.x - leftMarg - innerMarg - dim[xAxisAxis] * cellW) / cellW)));
-		if(pos.y < topMarg + drawH - a * cellW + marg
-		   && pos.y > topMarg + drawH - (dim[yAxisAxis] + a) * cellW - marg) {
-		    res.dim = yAxisAxis;
-		    res.x = a;
-		    res.y = Math.max(0, Math.min(dim[yAxisAxis] - 1, Math.floor( (topMarg + drawH - pos.y - a * cellW) / cellW))); 
-		    res.val = res.y;
-
-		    return res;
-		}
-	    } 
-	    
-	    if(pos.y > topMarg + drawH - dim[yAxisAxis] * cellW - dim[zAxisAxis] * cellW - innerMarg - marg
-	       && pos.y < topMarg + drawH - dim[yAxisAxis] * cellW - innerMarg + marg) {
-
-		var b = Math.max(0, Math.min(dim[zAxisAxis] - 1, Math.floor( (topMarg + drawH - innerMarg - dim[yAxisAxis] * cellW - pos.y) / cellW)));
-
-		if(pos.x > leftMarg + b * cellW - marg
-		   && pos.x < leftMarg + dim[xAxisAxis] * cellW + b * cellW + marg) {
-		    res.dim = zAxisAxis;
-		    res.x = Math.max(0, Math.min(dim[xAxisAxis] - 1, Math.floor( (pos.x - leftMarg - b * cellW) / cellW)));
-		    res.y = b;
-		    res.val = res.y;
-
-		    return res;
-		}
-	    }
-	}
-
-	return res;
-    }
 
     function dimVals2pixels(dict) {
 	dimVals2pixels(dict.dim, dict.x, dict.y);
@@ -530,36 +422,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	var newSelections = [];
 
-	// for(var sel = 0; sel < selections.length; sel++) {
-	//     var newSel = selections[sel];
-	//     var X1 = newSel[0];
-	//     var X2 = newSel[1];
 
-	//     var Y1 = newSel[2];
-	//     var Y2 = newSel[3];
-
-	//     if(X2 < limits.minX 
-	//        || X1 > limits.maxX
-	//        || Y2 < limits.minY 
-	//        || Y1 > limits.maxY) {
-	// 	// completely outside
-	// 	continue;
-	//     }
-	
-	//     X1 = Math.max(limits.minX, X1);
-	//     X2 = Math.min(limits.maxX, X2);
-	
-	//     Y1 = Math.max(limits.minY, Y1);
-	//     Y2 = Math.min(limits.maxY, Y2);
-	
-	//     newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
-	// }
-
-	// if(newSelections.length > 0) {
-	//     selections = newSelections;
-	//     drawSelections();
-	//     return false;
-	// }
 	return true;
     };
 
@@ -669,7 +532,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 		    if(parentInput[i].hasOwnProperty("description")) {
 			// $scope.dataSetName = parentInput[i]["description"];
-			dataName = shortenName(parentInput[i]["description"]);
+			dataName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 			dragZone.name = dataName;
 		    }
 		}
@@ -854,130 +717,9 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
     }
 
-    function backgroundColorCheck(currentColors, lastColors) {
-	if(currentColors.hasOwnProperty("skin")) {
-	    if(!lastColors) {
-		return true;
-	    } else if(!lastColors.hasOwnProperty("skin")) {
-		return true;
-	    } else {
-		if(currentColors.skin.hasOwnProperty("gradient")) {
-		    if(!lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-			    return true;
-			}
-			for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-			    if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-			       || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-				return true;
-			    }
-			}
-		    }
-		} else {
-		    if(lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.hasOwnProperty("color")) {
-			    if(!lastColors.skin.hasOwnProperty("color")
-			       || lastColors.skin.color != currentColors.skin.color) {
-				return true;
-			    }
-			}
-		    }
-		}
 
-		if(currentColors.skin.hasOwnProperty("border")) {
-		    if(!lastColors.skin.hasOwnProperty("border")
-		       || lastColors.skin.border != currentColors.skin.border) {
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
-    }
 
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
 
-	if(!lastColors) {
-	    return true;
-	}
-
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		       || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
-
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	return res;
-    }
 
     function updateGraphics() {
 	updateGraphicsHelper(false, false, false);
@@ -1020,7 +762,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -1173,7 +915,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 
 	if(!redrawBackground && currentColors != lastColors) {
-	    redrawBackground = backgroundColorCheck(currentColors, lastColors);
+	    redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 	}
 	
 	if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
@@ -1196,7 +938,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	    }
 	}
 	
-	if(checkColors(currentColors, lastColors)) {
+	if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
 	    redrawCells = true;
 	    redrawSelections = true;
 	}
@@ -1335,7 +1077,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(axesCtx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -1446,45 +1188,6 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
     	axesCtx.font = fontSize + "px Arial";
 
 
-	// // X axis
-
-	// axesCtx.fillRect(leftMarg - 3, topMarg + drawH, drawW+2, 2);
-
-	// if(unique > 0) {
-	//     // var LABELS = 5;
-	//     // for(var i = 0; i < LABELS+1; i++) {
-	//     // 	var pos = leftMarg + i/LABELS*drawW;
-
-	//     // 	var s = "";
-	//     // 	s = number2text(pixel2valX(pos), limits.spanX);
-	
-	//     // 	var textW = getTextWidthCurrentFont(s);
-    	//     // 	axesCtx.fillText(s, pos - textW/2, H - bottomMarg);
-	//     // 	axesCtx.fillRect(pos, topMarg + drawH - 2, 1, 6);
-	//     // }
-	// }
-
-    	// // Y Axis
-
-	// axesCtx.fillRect(leftMarg - 3, topMarg, 2, drawH + 2);
-
-	// if(unique > 0) {
-	//     // var LABELS = 5;
-	//     // for(var i = 0; i < LABELS+1; i++) {
-	//     // 	var pos = topMarg + i/LABELS*drawH;
-
-	//     // 	var s = "";
-	//     // 	s = number2text(pixel2valY(pos), limits.spanY);
-	
-	//     // 	var textW = getTextWidthCurrentFont(s);
-	//     // 	if(leftMarg > textW + 5) {
-    	//     // 	    axesCtx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
-	//     // 	} else {
-    	//     // 	    axesCtx.fillText(s, 0, pos + fontSize/2);
-	//     // 	}
-	//     // 	axesCtx.fillRect(leftMarg - 5, pos, 6, 1);
-	//     // }
-	// }
 
 	// top label
 
@@ -1494,11 +1197,11 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	if(dataName !== null) {
 	    str = dataName;
-	    xw = getTextWidthCurrentFont(dataName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, dataName);
 	}
 
 	if(str != "") {
-	    var w = getTextWidthCurrentFont(str);
+	    var w = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, str);
 	    var top = 0;
 	    if(fontSize < topMarg) {
 		top = Math.floor((topMarg - fontSize) / 2);
@@ -1659,7 +1362,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 				var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums, dataSetsToDraw);
 				col[3] *= alphaFactor;
 				
-				fillRectFast(Math.round(xpos), Math.round(ypos), Math.ceil(zCellW), Math.ceil(zCellW), col[0], col[1], col[2], col[3], pixels, WW, HH);
+				legacyDDSupLib.fillRectFast(Math.round(xpos), Math.round(ypos), Math.ceil(zCellW), Math.ceil(zCellW), col[0], col[1], col[2], col[3], pixels, WW, HH);
 			    }
 			}
 		    }
@@ -1847,14 +1550,14 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 			// alpha = Math.max(0, Math.min(255, Math.floor(256 * (_2D[b][a] - minVal) / (maxVal - minVal))));
 			// var col = rgbaText;
 
-			// fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
+			// legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
 
 			var val = _2D[b][a];
 
 			if(val !== null) {
 			    var pos = dimVals2pixels(xAxisAxis, a, b);
 			    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums, dataSetsToDraw);
-			    fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
+			    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 			}
 		    }
 		}
@@ -1885,7 +1588,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	    var alpha = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / mx)));
 	    col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
 	} else if(colorMode == "histogram" && sums.length > 0) {
-	    var sortedPos = binLookup(sums, val, 0, sums.length);
+	    var sortedPos = legacyDDSupLib.binLookup(sums, val, 0, sums.length);
 	    var perc = sortedPos / (sums.length - 1);
 	    var alpha = Math.floor(255 / dataSetsToDraw * perc);
 	    col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
@@ -2040,13 +1743,13 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 			// 	var col = rgbaText;
 
-			// 	fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
+			// 	legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
 			
 			var val = _2D[b][a];
 			if(val !== null) {
 			    var pos = dimVals2pixels(yAxisAxis, a, b);
 			    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums, dataSetsToDraw);
-			    fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
+			    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 			}
 		    }
 		}
@@ -2198,14 +1901,14 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 			// var col = rgbaText;
 
-			// fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
+			// legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
 			
 			var val = _2D[b][a];
 			
 			if(val !== null ){
 			    var pos = dimVals2pixels(zAxisAxis, a, b);
 			    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums, dataSetsToDraw);
-			    fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
+			    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 			}
 		    }
 		}
@@ -2213,195 +1916,8 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
     	}
     }
 
-    function fillRectFast(X1, Y1, DX, DY, r, g, b, alpha, pixels, Width, Height)
-    {
-	var W = Math.floor(Width);
-	var H = Math.floor(Height);
-
-	var x1 = Math.round(X1);
-	var y1 = Math.round(Y1);
-	var dx = Math.round(DX);
-	var dy = Math.round(DY);
-
-	for(var j = 0; j < dy; j++) 
-	{
-            for (var i = 0; i < dx; i++)
-	    {
-		var rx = x1 + i;
-		var ry = y1 + j;
-		if(ry >= 0 && ry < H
-		   && rx >= 0 && rx < W) {
-		    var offset = (ry * W + rx) * 4;
-		    
-		    if(alpha < 255) {
-			blendRGBAs(r,g,b,alpha, offset, pixels);
-		    } else {
-			pixels[offset] = r;
-			pixels[offset+1] = g;
-			pixels[offset+2] = b;
-			pixels[offset+3] = alpha;
-		    }
-		}
-	    }
-	}
-    }
 
 
-    function blendRGBAs(r,g,b,alpha, offset, pixels) {
-	if(pixels[offset+3] > 0 && alpha < 255) {
-	    // something drawn here already, blend alpha
-
-	    var oldA = pixels[offset+3] / 255.0;
-	    var newA = alpha / 255.0;
-
-	    var remainA = (1 - newA) * oldA;
-	    
-	    var outA = newA + remainA;
-	    if(outA > 0) {
-		var oldR = pixels[offset];
-		var oldG = pixels[offset+1];
-		var oldB = pixels[offset+2];
-
-		var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-		var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-		var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-	    } else {
-		var outR = 0;
-		var outG = 0;
-		var outB = 0;
-	    }
-	    pixels[offset] = outR;
-	    pixels[offset+1] = outG;
-	    pixels[offset+2] = outB;
-	    pixels[offset+3] = Math.min(255, outA * 255);
-	} else {
-	    pixels[offset] = r;
-	    pixels[offset+1] = g;
-	    pixels[offset+2] = b;
-	    pixels[offset+3] = alpha;
-	}
-    }
-
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
-
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
-
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
- 	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty('groups')) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(currentColors.hasOwnProperty("groups")) {
-    	    var groupCols = currentColors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-    		var OK = true;
-		
-		try {
-    		    var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-		    }
-    		} catch(e) {
-		    OK = false;
-		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
 	// debugLog("updateSize");
@@ -2541,23 +2057,12 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
 	// debugLog("updateSize found selections: " + JSON.stringify(selections));
-	updateSelectionsWhenZoomingOrResizing();
+
 
 	// debugLog("updateSize updated selections to: " + JSON.stringify(selections));
     };
 
-    function updateSelectionsWhenZoomingOrResizing() {
-	// if(unique > 0) {
-	//     for(var sel = 0; sel < selections.length; sel++) {
-	// 	var s = selections[sel];
-	// 	s[4] = val2pixelX(s[0]);
-	// 	s[5] = val2pixelX(s[1]);
-	// 	s[7] = val2pixelY(s[2]);
-	// 	s[6] = val2pixelY(s[3]);
-	//     }
-	// }
-	// drawSelections();
-    }
+
 
     function mySlotChange(eventData) {
     	// debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
@@ -2642,7 +2147,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    if(newZoomMaxX != zoomMaxX) {
 		zoomMaxX = newZoomMaxX;
-		updateSelectionsWhenZoomingOrResizing();
+
     		updateGraphicsHelper(false, true, true);
 	    }
     	    break;
@@ -2656,7 +2161,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    if(newZoomMaxY != zoomMaxY) {
 		zoomMaxY = newZoomMaxY;
-		updateSelectionsWhenZoomingOrResizing();
+
     		updateGraphicsHelper(false, true, true);
 	    }
     	    break;
@@ -2670,7 +2175,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    if(newZoomMinX != zoomMinX) {
 		zoomMinX = newZoomMinX;
-		updateSelectionsWhenZoomingOrResizing();
+
     		updateGraphicsHelper(false, true, true);
 	    }
     	    break;
@@ -2684,7 +2189,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    if(newZoomMinY != zoomMinY) {
 		zoomMinY = newZoomMinY;
-		updateSelectionsWhenZoomingOrResizing();
+
     		updateGraphicsHelper(false, true, true);
 	    }
     	    break;
@@ -2783,7 +2288,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
     	    updateGraphicsHelper(false, false, false);
 	    drawSelections();
@@ -2943,20 +2448,6 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	return [0, 0, 0, 255];
     }
 
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + a + ")";
-	}
-	return color;
-    };
 
     function parseSelectionColors() {
 	// debugLog("parseSelectionColors");
@@ -2976,7 +2467,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	    }
 	    
 	    if(colors['selection'].hasOwnProperty('color')) {
-		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 	    } else {
 		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 	    }
@@ -3165,7 +2656,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
     		}
 	    }
 
-	    var dimAndVal = pixels2dimVals(currentMouse);
+	    var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 	    // var dimAndVal = mousePosToDimXYZ(currentMouse);
 
 	    if(hoverText !== null) {
@@ -3173,7 +2664,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 		    
 		    if(dimAndVal.dim !== null) {
 			s = "[dim " + dimAndVal.dim + " = " + dimAndVal.val + "]";
-			var textW = getTextWidthCurrentFont(s);
+			var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 			hoverText.style.font = fontSize + "px Arial";
 			hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 			hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -3272,7 +2763,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 		if(mousePosIsInSelectableArea(currentMouse)) {
 		    // var dimAndVal = mousePosToDimXYZ(currentMouse);
-		    var dimAndVal = pixels2dimVals(currentMouse);
+		    var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 		    
 		    clickStart = dimAndVal;
 		    if(e.ctrlKey || e.metaKey) {
@@ -3330,7 +2821,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 		currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 
 		// var dimAndVal = mousePosToDimXYZ(currentMouse);
-		var dimAndVal = pixels2dimVals(currentMouse);
+		var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 
 		if(clickStart.dim == dimAndVal.dim) {
 		    newSelection(clickStart.dim, clickStart.val, dimAndVal.val, clickStart.ctrl);
@@ -3364,7 +2855,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 		currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 
 		// var dimAndVal = mousePosToDimXYZ(currentMouse);
-		var dimAndVal = pixels2dimVals(currentMouse);
+		var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 		
 		if(clickStart.dim == dimAndVal.dim) {
 		    newSelection(clickStart.dim, clickStart.val, dimAndVal.val, clickStart.ctrl);
@@ -3447,7 +2938,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	$scope.set("MaxX", zoomMaxX);
 	$scope.set("MinY", zoomMinY);
 	$scope.set("MaxY", zoomMaxY);
-	updateSelectionsWhenZoomingOrResizing();
+
 	updateGraphicsHelper(false, false, false);
     }
 
@@ -3469,7 +2960,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 	$scope.set("MaxX", zoomMaxX);
 	$scope.set("MinY", zoomMinY);
 	$scope.set("MaxY", zoomMaxY);
-	updateSelectionsWhenZoomingOrResizing();
+
 	updateGraphicsHelper(false, false, false);
     }
 
@@ -3486,7 +2977,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    $scope.set("MinX", zoomMinX);
 	    $scope.set("MaxX", zoomMaxX);
-	    updateSelectionsWhenZoomingOrResizing();
+
 	    updateGraphicsHelper(false, true, true);
 	}
     }	
@@ -3503,7 +2994,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    $scope.set("MinX", zoomMinX);
 	    $scope.set("MaxX", zoomMaxX);
-	    updateSelectionsWhenZoomingOrResizing();
+
 	    updateGraphicsHelper(false, true, true);
 	}
     }	
@@ -3521,7 +3012,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    $scope.set("MinY", zoomMinY);
 	    $scope.set("MaxY", zoomMaxY);
-	    updateSelectionsWhenZoomingOrResizing();
+
 	    updateGraphicsHelper(false, true, true);
 	}
     }	
@@ -3539,7 +3030,7 @@ wblwrld3App.controller('densityPlotAdvPluginWebbleCtrl', function($scope, $log, 
 
 	    $scope.set("MinY", zoomMinY);
 	    $scope.set("MaxY", zoomMaxY);
-	    updateSelectionsWhenZoomingOrResizing();
+
 	    updateGraphicsHelper(false, true, true);
 	}
     }	

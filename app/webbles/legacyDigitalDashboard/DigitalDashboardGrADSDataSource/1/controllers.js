@@ -1188,9 +1188,6 @@ wblwrld3App.controller('gradsDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
     //===================================================================================
     // Webble template Menu Item Activity Reaction
-    // If this template has its own custom menu items that needs to be taken care of,
-    // then it is here where that should be executed.
-    // If this function is empty and unused it can safely be deleted.
     //===================================================================================
     $scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
 		if(itemName == $scope.customMenu[0].itemId){  //clearData

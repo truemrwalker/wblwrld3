@@ -1100,40 +1100,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
     // ==========================================================
 
 
-    function blendRGBAs(r,g,b,alpha, offset, pixels) {
-	if(pixels[offset+3] > 0 && alpha < 255) {
-	    // something drawn here already, blend alpha
 
-	    var oldA = pixels[offset+3] / 255.0;
-	    var newA = alpha / 255.0;
-
-	    var remainA = (1 - newA) * oldA;
-	    
-	    var outA = newA + remainA;
-	    if(outA > 0) {
-		var oldR = pixels[offset];
-		var oldG = pixels[offset+1];
-		var oldB = pixels[offset+2];
-
-		var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-		var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-		var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-	    } else {
-		var outR = 0;
-		var outG = 0;
-		var outB = 0;
-	    }
-	    pixels[offset] = outR;
-	    pixels[offset+1] = outG;
-	    pixels[offset+2] = outB;
-	    pixels[offset+3] = Math.min(255, outA * 255);
-	} else {
-	    pixels[offset] = r;
-	    pixels[offset+1] = g;
-	    pixels[offset+2] = b;
-	    pixels[offset+3] = alpha;
-	}
-    }
 
     // This line drawing function was copied from http://kodierer.blogspot.jp/2009/10/drawing-lines-silverlight.html
     // The code is not original to me. I was very slightly modified by me.
@@ -1187,7 +1154,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 
 			var offset = (ry * ALW + rx) * 4;
 
-			blendRGBAs(r,g,b,alpha, offset, pixels);
+			legacyDDSupLib.blendRGBAs(r,g,b,alpha, offset, pixels);
 		    }
 		    if(fatX) {
 			rx++;
@@ -1295,7 +1262,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 			{
 			    var offset = (y * ALW + x) * 4;
 
-			    blendRGBAs(r,g,b, alpha, startPixelIdx + offset, pixels);
+			    legacyDDSupLib.blendRGBAs(r,g,b, alpha, startPixelIdx + offset, pixels);
 			}
                     }
 		}
@@ -1343,154 +1310,10 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
         }
     }
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
 
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
 
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
- 	
-    	group = group.toString();
 
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty('groups')) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(currentColors.hasOwnProperty("groups")) {
-    	    var groupCols = currentColors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-    		var OK = true;
-		
-		try {
-    		    var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-		    }
-    		} catch(e) {
-		    OK = false;
-		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    }
-
-    function hexColorToRGBAvec(color, alpha) {
-	var res = [];
-
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	    return [r, g, b, a];
-	}
-	return [0, 0, 0, 255];
-    }
-
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    }
 
 
     function drawFlow() {
@@ -1572,14 +1395,15 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-	    var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 	    var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 	    var pixels = imData.data;
 	} else {
-    	    var col0 = hexColorToRGBA(getColorForGroup(0), zeroTransp, myCanvas, myCtx);
-    	    var fill0 = getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx);
+    	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp, myCanvas, myCtx);
+    	    var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 	}
+
 
 
 	var selStatus = [];
@@ -1683,7 +1507,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 				if(!selected) {
 				    col = col0;
 				} else {
-				    col = "#000000"; // getColorForGroup(groupId);
+				    col = "#000000";
 				}
 				
     				myCtx.save();
@@ -1713,7 +1537,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 				if(!selected) {
 				    col = rgba0;
 				} else {
-				    // col = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+
 				    col = [0, 0, 0, Math.min(255, 255*transparency)];
 				}
 
@@ -1774,18 +1598,21 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
     				if(groupId <= 0) {
 				    col = col0;
     				    if(!useGlobalGradients) {
-    		     			fill = getGradientColorForGroup(0, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, zeroTransp, myCanvas, myCtx);
+    		     			fill = legacyDDSupLib.getGradientColorForGroup(0, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
     				    } else {
 					fill = fill0;
 				    }
 				} else {
-    				    col = getColorForGroup(groupId);
+    				    col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors)
 				    if(transparency >= 1) {
-    					fill = getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, 1, myCanvas, myCtx);
+    					fill = legacyDDSupLib.getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, 1, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 				    } else {
-					fill = getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, transparency, myCanvas, myCtx);
+					fill = legacyDDSupLib.getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, transparency, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 				    }
 				}
+
+
+
 
     				myCtx.save();
     				myCtx.beginPath();
@@ -1801,9 +1628,9 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 				    rgba = rgba0;
 				} else {
 				    if(transparency >= 1) {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 				    } else {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 				}
 
@@ -1829,85 +1656,8 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
     }
 
 
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
 
-	if(!lastColors) {
-	    return true;
-	}
 
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		      || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
-    
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	return res;
-    }
 
     function updateGraphics() {
     	debugLog("updateGraphics()");
@@ -1917,7 +1667,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -1933,13 +1683,6 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 	drawFlow();
     }
 
-    function getTextWidthCurrentFont(text) {
-	if(dropCtx !== null && dropCtx !== undefined) {
-	    var metrics = dropCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
     function updateDropZones(col, alpha, hover) {
 	// update the data drop locations
@@ -2044,7 +1787,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidthCurrentFont(str);
+			var tw = legacyDDSupLib.getTextWidthCurrentFont(dropCtx, str);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -2314,7 +2057,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
     	    updateGraphics();
 
@@ -2515,18 +2258,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 	saveSelectionsInSlot();
     };
 
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
 
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    };
 
 
     //===================================================================================

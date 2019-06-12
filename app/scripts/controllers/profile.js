@@ -122,7 +122,7 @@ function ($scope, gettext, authService, userPrefs, confirm, wwConsts) {
 
     $scope.providers = [
         { name: 'facebook', icon: 'facebook', isConnected: false },
-        { name: 'twitter', icon: 'twitter', isConnected: false },
+        { name: 'twitter', icon: 'twitter', isConnected: false }
     ];
 
 	$scope.allLanguages = getTheAvailableLanguagesFromMickesServiceAndNormalizeTheFieldNames();

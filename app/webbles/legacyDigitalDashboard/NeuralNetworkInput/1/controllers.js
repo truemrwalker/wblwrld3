@@ -319,7 +319,7 @@ wblwrld3App.controller('neuralNetworkInputWebbleCtrl', function($scope, $log, Sl
 	ctx.font = fontSize + "px Arial";
 	ctx.fillStyle = "black";
 
-	var tw = getTextWidthCurrentFont(t);
+	var tw = legacyDDSupLib.getTextWidthCurrentFont(ctx, t);
 	if(tw > maxTW) {
 	    maxTW = tw;
 	}
@@ -343,7 +343,7 @@ wblwrld3App.controller('neuralNetworkInputWebbleCtrl', function($scope, $log, Sl
 		ctx.fillStyle = "red";
 	    }
 
-	    var tw = getTextWidthCurrentFont(t);
+	    var tw = legacyDDSupLib.getTextWidthCurrentFont(ctx, t);
 	    if(tw > maxTW) {
 		maxTW = tw;
 	    }
@@ -364,13 +364,7 @@ wblwrld3App.controller('neuralNetworkInputWebbleCtrl', function($scope, $log, Sl
 	}
     }
     
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
+
 
     function mySlotChange(eventData) {
     	// debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));

@@ -35,7 +35,7 @@
 // SEARCH WEBBLE FORM CONTROLLER
 // This controls the form for browsing and searching for Webbles online
 //====================================================================================================================
-ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibModalInstance, $uibModal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope) {
+ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibModalInstance, $uibModal, $log, $http, $location, $timeout, dbService, gettext, Enum, valMod, platformScope, appPaths) {
 
     //=== PROPERTIES ================================================================
     $scope.thePlatform = platformScope;
@@ -109,7 +109,8 @@ ww3Controllers.controller('searchWblSheetCtrl', function ($scope, $window, $uibM
 	//========================================================================================
 	$scope.ellipsisClicked = function(event, txt){
 		if(event.which == 1){
-			var win = window.open("", "_blank", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=700,height=800,top="+200+",left="+((screen.width/2)-350));
+			var win = window.open("", "_blank", "toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=700,height=800,top="+200+",left="+((screen.width/2)-350));
+			win.document.head.innerHTML = "<base href='" + appPaths.currentAppUriCoreNoQuery + "'>";
 			win.document.body.innerHTML = "<h2>Webble Description (Full Text)</h2><p>" + txt + "</p>";
 		}
 	};

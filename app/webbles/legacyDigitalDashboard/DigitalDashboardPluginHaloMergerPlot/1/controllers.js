@@ -217,103 +217,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	}
     }
 
-    function getTextWidth(text, font) {
-	if(axCtx !== null && axCtx !== undefined) {
-	    axCtx.font = font;
-	    var metrics = axCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function getTextWidthCurrentFont(text) {
-	if(axCtx !== null && axCtx !== undefined) {
-	    var metrics = axCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
-
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
-
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    }
-
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    function date2text(v, dateFormat) {
-	var d = new Date(parseInt(v));
-
-	switch(dateFormat) {
-	case 'full':
-	    return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'onlyYear':
-	    return d.getFullYear();
-	    break;
-	case 'yearMonth':
-	    return d.getFullYear() + " " + months[d.getMonth()];
-	    break;
-	case 'monthDay':
-	    return months[d.getMonth()] + " " + d.getDate();
-	    break;
-	case 'day':
-	    return d.getDate();
-	    break;
-	case 'dayTime':
-	    return d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'time':
-	    return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	default:
-	    return d.toISOString();
-	}
-    }
-
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
-
-    function pixel2valX(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < leftMarg) {
-	    return zoomMinX;
-	}
-	if(p > leftMarg + drawW) {
-	    return zoomMaxX;
-	}
-	return zoomMinX + (p - leftMarg) / drawW * (zoomMaxX - zoomMinX);
-    }
-
-    function pixel2valY(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < topMarg) {
-	    return zoomMaxY; // flip Y-axis
-	}
-	if(p > topMarg + drawH) {
-	    return zoomMinY; // flip Y-axis
-	}
-	return zoomMinY + (drawH - (p - topMarg)) / drawH * (zoomMaxY - zoomMinY); // flip Y-axis
-    }
 
     function pixel2time(p) {
 	if(unique <= 0) {
@@ -390,20 +294,13 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
     }
 
-    function val2pixelX(v) {
-	if(unique <= 0) {
-	    return 0;
+	function value2pixelX(v) {
+		if(unique <= 0) {
+			return 0;
+		}
+
+		return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
 	}
-	
-	// if(v < zoomMinX) {
-	//     return leftMarg;
-	// }
-	// if(v > zoomMaxX) {
-	//     return leftMarg + drawW;
-	// }
-	
-	return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
-    }
 
     function val2pixelYcrimp(v) {
 	if(unique <= 0) {
@@ -420,20 +317,13 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
     }
 
-    function val2pixelY(v) {
-	if(unique <= 0) {
-	    return 0;
+	function value2pixelY(v) {
+		if(unique <= 0) {
+			return 0;
+		}
+
+		return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
 	}
-	
-	// if(v < zoomMinY) {
-	//     return topMarg + drawH; // flip Y-axis
-	// }
-	// if(v > zoomMaxY) {
-	//     return topMarg; // flip Y-axis
-	// }
-	
-	return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
-    }
 
     function val2pixelXtime(v) {
 	if(unique <= 0) {
@@ -724,7 +614,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 
 		    if(parentInput[i].hasOwnProperty("description")) {
 			xdesc = parentInput[i]["description"];
-			xName = shortenName(parentInput[i]["description"]);
+			xName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 
 			dragZoneX.name = xName;
 		    }
@@ -739,7 +629,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 
 		    if(parentInput[i].hasOwnProperty("description")) {
 			ydesc = parentInput[i]["description"];
-			yName = shortenName(parentInput[i]["description"]);
+			yName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 
 			dragZoneY.name = yName;
 		    }
@@ -1007,130 +897,11 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 
     }
 
-    function backgroundColorCheck(currentColors, lastColors) {
-	if(currentColors.hasOwnProperty("skin")) {
-	    if(!lastColors) {
-		return true;
-	    } else if(!lastColors.hasOwnProperty("skin")) {
-		return true;
-	    } else {
-		if(currentColors.skin.hasOwnProperty("gradient")) {
-		    if(!lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-			    return true;
-			}
-			for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-			    if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-			       || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-				return true;
-			    }
-			}
-		    }
-		} else {
-		    if(lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.hasOwnProperty("color")) {
-			    if(!lastColors.skin.hasOwnProperty("color")
-			       || lastColors.skin.color != currentColors.skin.color) {
-				return true;
-			    }
-			}
-		    }
-		}
 
-		if(currentColors.skin.hasOwnProperty("border")) {
-		    if(!lastColors.skin.hasOwnProperty("border")
-		       || lastColors.skin.border != currentColors.skin.border) {
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
-    }
 
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
 
-	if(!lastColors) {
-	    return true;
-	}
-
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		       || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
     
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	return res;
-    }
+
 
     function updateGraphics() {
 	updateGraphicsHelper(false, false, false, false);
@@ -1179,7 +950,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -1218,7 +989,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	}
 
 	if(!redrawBackground && currentColors != lastColors) {
-	    redrawBackground = backgroundColorCheck(currentColors, lastColors);
+	    redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 	}
 	
 	if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
@@ -1247,7 +1018,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	}
 
 	if(!redrawDots || (haveIDs && !redrawLines)) {
-	    if(checkColors(currentColors, lastColors)) {
+	    if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
 		redrawDots = true;
 		redrawLines = true;
 	    }
@@ -1412,7 +1183,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(axCtx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -1521,24 +1292,24 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 
 	if(xName != "" && yName != "") {
 	    str = xName + " --> " + yName;
-	    xw = getTextWidthCurrentFont(xName);
-	    yw = getTextWidthCurrentFont(yName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(axCtx, xName);
+	    yw = legacyDDSupLib.getTextWidthCurrentFont(axCtx, yName);
 	} else if(xName != "") {
 	    str = xName;
-	    xw = getTextWidthCurrentFont(xName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(axCtx, xName);
 	} else if(yName != "") {
 	    str = yName;
-	    yw = getTextWidthCurrentFont(yName);
+	    yw = legacyDDSupLib.getTextWidthCurrentFont(axCtx, yName);
 	}
 	if(sName != "") {
 	    var temp = "(size: " + sName + ")";
 	    str += temp;
-	    sw = getTextWidthCurrentFont(sName);
-	    endw = getTextWidthCurrentFont(temp);
+	    sw = legacyDDSupLib.getTextWidthCurrentFont(axCtx, sName);
+	    endw = legacyDDSupLib.getTextWidthCurrentFont(axCtx, temp);
 	}
 
 	if(str != "") {
-	    var w = getTextWidthCurrentFont(str);
+	    var w = legacyDDSupLib.getTextWidthCurrentFont(axCtx, str);
 	    var top = 0;
 	    if(fontSize < topMarg) {
 		top = Math.floor((topMarg - fontSize) / 2);
@@ -1574,9 +1345,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    var pos = leftMarg + i/LABELS*drawW;
 		    
 		    var s = "";
-		    s = number2text(pixel2time(pos), timeDelta);
+		    s = legacyDDSupLib.number2text(pixel2time(pos), timeDelta);
 		    
-		    var textW = getTextWidthCurrentFont(s);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(axCtx, s);
     		    axCtx.fillText(s, pos - textW/2, H - bottomMarg);
 		    axCtx.fillRect(pos, topMarg + drawH - 2, 1, 6);
 		}
@@ -1592,9 +1363,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    var pos = topMarg + i/LABELS*drawH;
 
 		    var s = "";
-		    s = number2text(pixel2leftY(pos), limits.spanX);
+		    s = legacyDDSupLib.number2text(pixel2leftY(pos), limits.spanX);
 		    
-		    var textW = getTextWidthCurrentFont(s);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(axCtx, s);
 		    if(leftMarg > textW + 5) {
     			axCtx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
 		    } else {
@@ -1614,9 +1385,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    var pos = topMarg + i/LABELS*drawH;
 
 		    var s = "";
-		    s = number2text(pixel2rightY(pos), limits.spanY);
+		    s = legacyDDSupLib.number2text(pixel2rightY(pos), limits.spanY);
 		    
-		    var textW = getTextWidthCurrentFont(s);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(axCtx, s);
 		    if(textW + 5 + leftMarg + drawW >= W) {
     			axCtx.fillText(s, W - 1 - textW, pos + fontSize/2);
 		    } else {
@@ -1637,9 +1408,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    var pos = leftMarg + i/LABELS*drawW;
 		    
 		    var s = "";
-		    s = number2text(pixel2valX(pos), limits.spanX);
+		    s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX), limits.spanX);
 		    
-		    var textW = getTextWidthCurrentFont(s);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(axCtx, s);
     		    axCtx.fillText(s, pos - textW/2, H - bottomMarg);
 		    axCtx.fillRect(pos, topMarg + drawH - 2, 1, 6);
 		}
@@ -1655,9 +1426,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    var pos = topMarg + i/LABELS*drawH;
 
 		    var s = "";
-		    s = number2text(pixel2valY(pos), limits.spanY);
+		    s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, zoomMinY, zoomMaxY), limits.spanY);
 		    
-		    var textW = getTextWidthCurrentFont(s);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(axCtx, s);
 		    if(leftMarg > textW + 5) {
     			axCtx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
 		    } else {
@@ -1714,8 +1485,8 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	var drawPretty = true;	
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-	    var rgbaText = hexColorToRGBAvec(textColor, transparency);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, transparency);
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	}
@@ -1778,10 +1549,10 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 					var x2 = val2pixelXtime(tArray[j]);
 					var y2 = val2pixelYstory(xArray[j], yArray[j], tArray[j]);
 				    } else {
-					var x1 = val2pixelX(xArray[i]);
-					var y1 = val2pixelY(yArray[i]);
-					var x2 = val2pixelX(xArray[j]);
-					var y2 = val2pixelY(yArray[j]);
+					var x1 = value2pixelX(xArray[i]);
+					var y1 = value2pixelY(yArray[i]);
+					var x2 = value2pixelX(xArray[j]);
+					var y2 = value2pixelY(yArray[j]);
 				    }
 
 				    
@@ -1789,18 +1560,18 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 					var col = textColor;
 					lineCtx.save();
 					if(groupId1 <= 0 && groupId2 <= 0) {
-					    col = getColorForGroup(0);
+					    col = legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors);
     					    lineCtx.setLineDash([3, 5]);
 					}
 					else if(groupId1 > 0 && groupId2 > 0) {
 					    if(groupId1 == groupId2) {
-						col = hexColorToRGBA(getColorForGroup(groupId1), transparency);
-						// col = getColorForGroup(groupId1);
+						col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
+						// col = legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors);
 					    } else {
 						col = textColor;
 					    }
 					}else {
-					    col = getColorForGroup(0);
+					    col = legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors);
 					}
 
     					lineCtx.strokeStyle = col;
@@ -1822,7 +1593,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
     					    dashed = true;
 					} else if(groupId1 > 0 && groupId2 > 0) {
 					    if(groupId1 == groupId2) {
-						col = hexColorToRGBAvec(getColorForGroup(groupId1), transparency);
+						col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 					    } else {
 						col = rgbaText;
 					    }
@@ -1896,13 +1667,17 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
 	    var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
 	    var pixels = imData.data;
 	} else {
-	    var col0 = hexColorToRGBA(getColorForGroup(0), zeroTransp);
-	    var fill0 = getGradientColorForGroup(0, 0,0,W,H, zeroTransp, dotCanvas, dotCtx);
+	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,W,H, zeroTransp, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 	}
+
+
+
+
 
     	for(var set = 0; set < Ns.length; set++) {
     	    var xArray = xArrays[set];
@@ -1945,14 +1720,14 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 			var x = val2pixelXtime(tArray[i]);
 			var y = val2pixelYstory(xArray[i], yArray[i], tArray[i]);
 		    } else {
-			var x = val2pixelX(xArray[i]);
-			var y = val2pixelY(yArray[i]);
+			var x = value2pixelX(xArray[i]);
+			var y = value2pixelY(yArray[i]);
 		    }
 		    var dotSize = val2Size(sArray[i], maxDotSize, minDotSize);
 
 		    if(drawPretty) {
 			if(!useGlobalGradients) {
-    		     	    fill = getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, zeroTransp, dotCanvas, dotCtx);
+				fill = legacyDDSupLib.getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, zeroTransp, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 			} else {
 			    fill = fill0;
 			}
@@ -2009,16 +1784,15 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 			var x = val2pixelXtime(tArray[i]);
 			var y = val2pixelYstory(xArray[i], yArray[i], tArray[i]);
 		    } else {
-			var x = val2pixelX(xArray[i]);
-			var y = val2pixelY(yArray[i]);
+			var x = value2pixelX(xArray[i]);
+			var y = value2pixelY(yArray[i]);
 		    }
 		    var dotSize = val2Size(sArray[i], maxDotSize, minDotSize);
 
 		    if(drawPretty) {
-    			// var col = getColorForGroup(groupId);
-			var col = hexColorToRGBA(getColorForGroup(groupId), transparency);
-    			var fill = getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, transparency, dotCanvas, dotCtx);
-			
+
+			var col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+    		var fill = legacyDDSupLib.getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, transparency, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 			dotCtx.beginPath();
 			dotCtx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
 			dotCtx.fillStyle = fill;
@@ -2027,7 +1801,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 			dotCtx.strokeStyle = col;
 			dotCtx.stroke();
 		    } else {
-			rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+			rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 			if(rgba[3] >= 255) {
 			    drawDotfullalpha(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 			} else {
@@ -2044,40 +1818,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
     }
 
 
-    function blendRGBAs(r,g,b,alpha, offset, pixels) {
-	if(pixels[offset+3] > 0 && alpha < 255) {
-	    // something drawn here already, blend alpha
 
-	    var oldA = pixels[offset+3] / 255.0;
-	    var newA = alpha / 255.0;
-
-	    var remainA = (1 - newA) * oldA;
-	    
-	    var outA = newA + remainA;
-	    if(outA > 0) {
-		var oldR = pixels[offset];
-		var oldG = pixels[offset+1];
-		var oldB = pixels[offset+2];
-
-		var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-		var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-		var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-	    } else {
-		var outR = 0;
-		var outG = 0;
-		var outB = 0;
-	    }
-	    pixels[offset] = outR;
-	    pixels[offset+1] = outG;
-	    pixels[offset+2] = outB;
-	    pixels[offset+3] = Math.min(255, outA * 255);
-	} else {
-	    pixels[offset] = r;
-	    pixels[offset+1] = g;
-	    pixels[offset+2] = b;
-	    pixels[offset+3] = alpha;
-	}
-    }
 
     // This line drawing function was copied from http://kodierer.blogspot.jp/2009/10/drawing-lines-silverlight.html
     // The code is not original to me. I was very slightly modified by me.
@@ -2133,7 +1874,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 
 			var offset = (ry * W + rx) * 4;
 
-			blendRGBAs(r,g,b,alpha, offset, pixels);
+			legacyDDSupLib.blendRGBAs(r,g,b,alpha, offset, pixels);
 		    }
 		}
                 x += incx;
@@ -2229,7 +1970,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 			if (y2 + x2 <= r2)
 			{
 			    var offset = (y * W + x) * 4;
-			    blendRGBAs(r,g,b,alpha, startPixelIdx + offset, pixels);
+			    legacyDDSupLib.blendRGBAs(r,g,b,alpha, startPixelIdx + offset, pixels);
 			}
 		    }
 		}
@@ -2275,126 +2016,8 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
     }
 
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
 
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
 
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
- 	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty('groups')) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(currentColors.hasOwnProperty("groups")) {
-    	    var groupCols = currentColors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-    		var OK = true;
-		
-		try {
-    		    var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-		    }
-    		} catch(e) {
-		    OK = false;
-		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
 	// debugLog("updateSize");
@@ -2785,7 +2408,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
     	    updateGraphics();
 	    drawSelections();
@@ -2872,9 +2495,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 
 	    y1 = Math.max(y1, topMarg);
 	    y2 = Math.min(y2, topMarg + drawH);
-	    
-	    var newSel = [pixel2valX(x1), pixel2valX(x2), pixel2valY(y2), pixel2valY(y1), // y1 and y2 need to be switched here, because we flip the y axis
-			  x1,x2,y1,y2];
+
+		// y1 and y2 need to be switched here, because we flip the y axis
+	    var newSel = [legacyDDSupLib.pixel2valX(x1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valX(x2, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valY(y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.pixel2valY(y1, unique, drawH, topMarg, zoomMinY, zoomMaxY), x1,x2,y1,y2];
 	    // debugLog("newSel: " + JSON.stringify(newSel));
 	    
 	    var overlap = false;
@@ -2934,8 +2557,8 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 			var dx = val2pixelXtime(tArray[i]) - currentMouse.x;
 			var dy = val2pixelYstory(xArray[i], yArray[i], tArray[i]) - currentMouse.y;
 		    } else {
-			var dx = val2pixelX(xArray[i]) - currentMouse.x;
-			var dy = val2pixelY(yArray[i]) - currentMouse.y;
+			var dx = value2pixelX(xArray[i]) - currentMouse.x;
+			var dy = value2pixelY(yArray[i]) - currentMouse.y;
 		    }
 		    var dist = dx*dx + dy*dy;
 
@@ -3005,33 +2628,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	}
     }
 
-    function hexColorToRGBAvec(color, alpha) {
-	var res = [];
 
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	    return [r, g, b, a];
-	}
-	return [0, 0, 0, 255];
-    }
-
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    };
 
     function parseSelectionColors() {
 	// debugLog("parseSelectionColors");
@@ -3051,9 +2648,9 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 	    }
 	    
 	    if(colors['selection'].hasOwnProperty('color')) {
-		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 	    } else {
-		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
 	    }
 
 	    if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
@@ -3073,7 +2670,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
 		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 			atLeastOneAdded = true;
 		    }
 		}
@@ -3185,22 +2782,22 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 		    if(storyGraphMode) {
 			var x = pixel2time(currentMouse.x);
 
-			s += number2text(x, timeDelta);
+			s += legacyDDSupLib.number2text(x, timeDelta);
 		    } else {
-			var x = pixel2valX(currentMouse.x);
-			var y = pixel2valY(currentMouse.y);
+			var x = legacyDDSupLib.pixel2valX(currentMouse.x, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+			var y = legacyDDSupLib.pixel2valX(currentMouse.y, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 
-			s += number2text(x, limits.spanX);
+			s += legacyDDSupLib.number2text(x, limits.spanX);
 
 			s += ",";
 
-			s += number2text(y, limits.spanY);
+			s += legacyDDSupLib.number2text(y, limits.spanY);
 		    }
 
 		    s += "]";
 
-		    // var s = "(" + number2text(x, limits.spanX) + "," + number2text(y, limits.spanY) + ")";
-		    var textW = getTextWidthCurrentFont(s);
+		    // var s = "(" + legacyDDSupLib.number2text(x, limits.spanX) + "," + legacyDDSupLib.number2text(y, limits.spanY) + ")";
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(axCtx, s);
 		    hoverText.style.font = fontSize + "px Arial";
 		    hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 		    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

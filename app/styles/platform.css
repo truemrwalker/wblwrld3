@@ -455,75 +455,75 @@ ul.rating {
 }
 
 .interactionBall.yellow {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #fdff7a 50%, #ffd109 100%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #fdff7a, #ffd109);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #fdff7a 50%, #ffd109 100%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #fdff7a 35%, #ffd109 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #fdff7a 35%, #ffd109 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #fdff7a 35%, #ffd109 85%);
 }
 
 .interactionBall.lightblue {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #92f7ff 100%, #1994ff 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #92f7ff, #1994ff);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #92f7ff 100%, #1994ff 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #92f7ff 35%, #1994ff 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #92f7ff 35%, #1994ff 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #92f7ff 35%, #1994ff 85%);
 }
 
 .interactionBall.pink {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff95f5 100%, #ff1ae5 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #ff95f5, #ff1ae5);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff95f5 100%, #ff1ae5 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #ff95f5 35%, #ff1ae5 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #ff95f5 35%, #ff1ae5 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #ff95f5 35%, #ff1ae5 85%);
 }
 
 .interactionBall.green {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #82ff7b 100%, #29e10e 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #82ff7b, #29e10e);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #82ff7b 100%, #29e10e 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #82ff7b 35%, #29e10e 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #82ff7b 35%, #29e10e 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #82ff7b 35%, #29e10e 85%);
 }
 
 .interactionBall.brown {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #c68e65 100%, #a25142 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #c68e65, #a25142);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #c68e65 100%, #a25142 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #c68e65 35%, #a25142 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #c68e65 35%, #a25142 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #c68e65 35%, #a25142 85%);
 }
 
 .interactionBall.purple {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #cd97ff 100%, #ae0ce1 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #cd97ff, #ae0ce1);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #cd97ff 100%, #ae0ce1 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #cd97ff 35%, #ae0ce1 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #cd97ff 35%, #ae0ce1 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #cd97ff 35%, #ae0ce1 85%);
 }
 
 .interactionBall.khaki {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, khaki 100%, #e1b28e 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, khaki, #e1b28e);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, khaki 100%, #e1b28e 95%);
+    background-image: -moz-radial-gradient(circle , #ffffff 0%, khaki 35%, #e1b28e 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, khaki 35%, #e1b28e 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, khaki 35%, #e1b28e 85%);
 }
 
 .interactionBall.orange {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ffd339 100%, #ff8a07 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #ffd339, #ff8a07);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ffd339 100%, #ff8a07 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #ffd339 35%, #ff8a07 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #ffd339 35%, #ff8a07 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #ffd339 35%, #ff8a07 85%);
 }
 
 .interactionBall.red {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff7567 100%, #ff082d 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #ff7567, #ff082d);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #ff7567 100%, #ff082d 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #ff7567 35%, #ff082d 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #ff7567 35%, #ff082d 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #ff7567 35%, #ff082d 85%);
 }
 
 .interactionBall.cyanpink {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, cyan 100%, #ffaaf9 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, cyan, #ffaaf9);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, cyan 100%, #ffaaf9 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, cyan 35%, #ffaaf9 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, cyan 35%, #ffaaf9 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, cyan 35%, #ffaaf9 85%);
 }
 
 .interactionBall.marineblue {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #5887ff 100%, #1a23b1 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #5887ff, #1a23b1);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #5887ff 100%, #1a23b1 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #5887ff 35%, #1a23b1 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #5887ff 35%, #1a23b1 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #5887ff 35%, #1a23b1 85%);
 }
 
 .interactionBall.seagreen {
-    background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #b4ce4e 100%, #48be87 95%);
-    background-image: -webkit-radial-gradient(45px 45px, circle cover, #b4ce4e, #48be87);
-    background-image: radial-gradient(45px 45px 45deg, circle cover, #ffffff 0%, #b4ce4e 100%, #48be87 95%);
+    background-image: -moz-radial-gradient(circle, #ffffff 0%, #b4ce4e 35%, #48be87 85%);
+    background-image: -webkit-radial-gradient(circle, #ffffff 0%, #b4ce4e 35%, #48be87 85%);
+    background-image: radial-gradient(farthest-corner at 15% 15%, #ffffff 0%, #b4ce4e 35%, #48be87 85%);
 }
 
 .interactionBall:hover{

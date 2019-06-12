@@ -256,75 +256,6 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 	}
     };
 
-    function getTextWidth(text, font) {
-	if(ctx !== null && ctx !== undefined) {
-	    ctx.font = font;
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
-
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
-
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
-
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
-
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    function date2text(v) {
-	var d = new Date(parseInt(v));
-
-	switch(dateFormat) {
-	case 'full':
-	    return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'onlyYear':
-	    return d.getFullYear();
-	    break;
-	case 'yearMonth':
-	    return d.getFullYear() + " " + months[d.getMonth()];
-	    break;
-	case 'monthDay':
-	    return months[d.getMonth()] + " " + d.getDate();
-	    break;
-	case 'day':
-	    return d.getDate();
-	    break;
-	case 'dayTime':
-	    return d.getDate() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
-	    break;
-	case 'time':
-	    return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
-	    break;
-	default:
-	    return d.toISOString();
-	}
-    }
-
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
 
     function saveSelectionsInSlot() {
 	// debugLog("saveSelectionsInSlot");
@@ -622,7 +553,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		    dragZone.ID = JSON.stringify(dropZ.forParent);
 
 		    if(parentInput[i].hasOwnProperty("description")) {
-			dataName = shortenName(parentInput[i]["description"]);
+			dataName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 			dragZone.name = dataName;
 		    }
 		}
@@ -943,7 +874,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(ctx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -994,7 +925,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		var text = "";
 		var val = ls[i][0];
 		if(dataType == 'date') {
-		    text = date2text(val);
+		    text = legacyDDSupLib.date2text(val, dateFormat);
 		} else {
 		    if(val < 10) {
 			text = val.toPrecision(3);
@@ -1007,7 +938,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		    }
 		}
 		
-		var textW = getTextWidthCurrentFont(text);
+		var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, text);
 		
 		var leftPos = Math.floor(pos + barW / 2 - textW / 2);
 		if(leftPos > lastRight)  {
@@ -1054,7 +985,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 			var text = i.toPrecision(3);
 		    }
 
-		    var textW = getTextWidthCurrentFont(text);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, text);
 
 		    var hp = topMarg + drawH - i * drawH / maxCount;
 		    if(useLogN) {
@@ -1078,11 +1009,11 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 
 	if(dataName !== null) {
 	    str = dataName;
-	    xw = getTextWidthCurrentFont(dataName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(ctx, dataName);
 	}
 
 	if(str != "") {
-	    var w = getTextWidthCurrentFont(str);
+	    var w = legacyDDSupLib.getTextWidthCurrentFont(ctx, str);
 	    var top = 0;
 	    if(fontSize < topMarg) {
 		top = Math.floor((topMarg - fontSize) / 2);
@@ -1270,15 +1201,6 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		var x2 = x1 + barW;
 		var y1 = topMarg + drawH;
 		var y2 = topMarg + drawH - he;
-
-		// var transp = 1;
-		// if(groupId <= 0) {
-		//     transp *= 0.33;
-		// }
-    		// var c = getGradientColorForGroup(groupId, x1,y1,x2,y2, transp);
-    		// var c = getGradientColorForGroup(groupId, x1,y2,x2,y1, transp);
-
-    		// ctx.fillStyle = c;
 		var lastTop = Math.floor(y2);
 		for(var j = 0; j < ls[i][2].length; j++) {
 		    var groupId = ls[i][2][j][0];
@@ -1296,14 +1218,15 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		    if(groupId <= 0) {
 		        transp *= 0.33;
 		    }
-    		    var c = getGradientColorForGroup(groupId, x1,y2,x2,y1, transp);
+    		    var c = legacyDDSupLib.getGradientColorForGroup(groupId, x1,y2,x2,y1, transp, myCanvas, ctx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
+
+
+
     		    ctx.fillStyle = c;
     		    ctx.fillRect(x1,yy1,x2 - x1, yy2 - yy1);
 		}
 		
     		ctx.fillStyle = textColor;
-    		// c = hexColorToRGBA(getColorForGroup(groupId), transp);
-    		// ctx.fillStyle = c;
     		ctx.fillRect(x1,y1,x2-x1,1); // top
     		ctx.fillRect(x1,y1,1,y2-y1); // left
     		ctx.fillRect(x1,y2-1,x2-x1,1); // bottom
@@ -1312,108 +1235,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 	}
     }
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
 
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
-
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
-
-    	var colors = $scope.gimme("GroupColors");
-    	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-    	}
-	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(colors.hasOwnProperty('groups')) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colors.hasOwnProperty("groups")) {
-    	    var groupCols = colors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && ctx !== null && groupCols[group].hasOwnProperty('gradient')) {
-    		var OK = true;
-		
-		try {
-		    if(parseInt(x1) == parseInt(x2)) {
-			x2 = x1 + 1;
-		    }
-		    if(parseInt(y1) == parseInt(y2)) {
-			y2 = y1 + 1;
-		    }
-		    
-    		    var grd = ctx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-    		    }
-		    
-    		    if(OK) {
-    			return grd;
-    		    }
-		} catch(e) {
-		    debugLog("getGradientColorForGroup crashed on group=" + group + ",x1=" + x1 + ",y1=" + y1 + ", x2=" + x2 + ", y2=" + y2 + ", alpha=" + alpha);
-		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function getColorForGroup(group) {
     	if(colorPalette === null) {
@@ -1789,19 +1611,6 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 	saveSelectionsInSlot();
     }
 
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    };
-
     function parseSelectionColors() {
 	// debugLog("parseSelectionColors");
 
@@ -1816,7 +1625,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 	    if(colors['selection'].hasOwnProperty('border')) {
 		selectionColors.border = colors['selection']['border'];
 		try {
-		    var temp = hexColorToRGBA(selectionColors.border, 0.8);
+		    var temp = legacyDDSupLib.hexColorToRGBA(selectionColors.border, 0.8);
 		    selectionColors.border = temp;
 		} catch(e) {
 		    // if it does not work, live with a non-transparent border
@@ -1824,13 +1633,13 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 
 	    } else {
 		// selectionColors.border = '#FFA500'; // orange
-		selectionColors.border = hexColorToRGBA('#FFA500', 0.8);
+		selectionColors.border = legacyDDSupLib.hexColorToRGBA('#FFA500', 0.8);
 	    }
 	    
 	    if(colors['selection'].hasOwnProperty('color')) {
-		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 	    } else {
-		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
 	    }
 
 	    if(colors['selection'].hasOwnProperty('gradient')) {
@@ -1849,7 +1658,7 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
 		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 			atLeastOneAdded = true;
 		    }
 		}
@@ -1977,13 +1786,13 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 			var s = "";
 			
 			if(dataType == 'date') {
-			    s = date2text(countLs[idx][0]) + " --> " + countLs[idx][1];
+			    s = legacyDDSupLib.date2text(countLs[idx][0], dateFormat) + " --> " + countLs[idx][1];
 			} else {
 			    s = countLs[idx][0].toPrecision(3) + " --> " + countLs[idx][1];
 			}
 			var sNoMarkUp = s;
 
-			var textW = getTextWidthCurrentFont(sNoMarkUp);
+			var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, sNoMarkUp);
 			hoverText.style.font = fontSize + "px Arial";
 			hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 			hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

@@ -170,75 +170,8 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	}
     };
 
-    function getTextWidth(text, font) {
-	if(ctx !== null && ctx !== undefined) {
-	    ctx.font = font;
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
 
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
 
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
-
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
-
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    function date2text(v) {
-	var d = new Date(parseInt(v));
-
-	switch(dateFormat) {
-	case 'full':
-	    return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'onlyYear':
-	    return d.getFullYear();
-	    break;
-	case 'yearMonth':
-	    return d.getFullYear() + " " + months[d.getMonth()];
-	    break;
-	case 'monthDay':
-	    return months[d.getMonth()] + " " + d.getDate();
-	    break;
-	case 'day':
-	    return d.getDate();
-	    break;
-	case 'dayTime':
-	    return d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'time':
-	    return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	default:
-	    return d.toISOString();
-	}
-    }
-
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
 
     function saveSelectionsInSlot() {
 	// debugLog("saveSelectionsInSlot");
@@ -527,7 +460,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		    dragZoneX.ID = JSON.stringify(dropX.forParent);
 
 		    if(parentInput[i].hasOwnProperty("description")) {
-			dataName = shortenName(parentInput[i]["description"]);
+			dataName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 			dragZoneX.name = dataName;
 		    }
 		}
@@ -545,7 +478,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 			dragZoneW.ID = JSON.stringify(dropW.forParent);
 			
 			if(parentInput[i].hasOwnProperty("description")) {
-			    weightName = shortenName(parentInput[i]["description"]);
+			    weightName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 			    dragZoneW.name = weightName;
 			}
 		    }
@@ -921,7 +854,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(ctx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -999,7 +932,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 			text = i.toPrecision(3);
 		    }
 
-		    var textW = getTextWidthCurrentFont(text);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, text);
 
 		    var x1 = 0;
 		    if(useLogX) {
@@ -1058,7 +991,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 			var text = i.toPrecision(3);
 		    }
 
-		    var textW = getTextWidthCurrentFont(text);
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, text);
 
 		    var hp = topMarg + drawH - i * drawH / maxCount;
 		    if(useLogN) {
@@ -1083,21 +1016,21 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	if(weightName !== null && haveWeights) {
 	    if(dataName !== null) {
 		str = dataName + ", weighted by " + weightName;
-		xw = getTextWidthCurrentFont(dataName);
-		ww = getTextWidthCurrentFont(weightName);
+		xw = legacyDDSupLib.getTextWidthCurrentFont(ctx, dataName);
+		ww = legacyDDSupLib.getTextWidthCurrentFont(ctx, weightName);
 	    } else {
 		str = "Weighted by " + weightName;
-		ww = getTextWidthCurrentFont(weightName);
+		ww = legacyDDSupLib.getTextWidthCurrentFont(ctx, weightName);
 	    }
 	} else {
 	    if(dataName !== null) {
 		str = dataName;
-		xw = getTextWidthCurrentFont(dataName);
+		xw = legacyDDSupLib.getTextWidthCurrentFont(ctx, dataName);
 	    }
 	}
 
 	if(str != "") {
-	    var w = getTextWidthCurrentFont(str);
+	    var w = legacyDDSupLib.getTextWidthCurrentFont(ctx, str);
 	    var top = 0;
 	    if(fontSize < topMarg) {
 		top = Math.floor((topMarg - fontSize) / 2);
@@ -1305,8 +1238,8 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		    if(groupId <= 0) {
 			transp *= 0.33;
 		    }
-    		    var c = getGradientColorForGroup(groupId, x1,y1,x2,y2, transp);
-    		    var c = getGradientColorForGroup(groupId, x1,y2,x2,y1, transp);
+    		    var c = legacyDDSupLib.getGradientColorForGroup(groupId, x1,y1,x2,y2, transp, myCanvas, ctx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")) );
+
 
     		    ctx.fillStyle = c;
     		    ctx.fillRect(x1,y1,x2 - x1, y2 - y1);
@@ -1575,108 +1508,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 
 
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
-
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
-
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
-
-    	var colors = $scope.gimme("GroupColors");
-    	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-    	}
-	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(colors.hasOwnProperty('groups')) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colors.hasOwnProperty("groups")) {
-    	    var groupCols = colors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && ctx !== null && groupCols[group].hasOwnProperty('gradient')) {
-    		var OK = true;
-		
-		try {
-		    if(parseInt(x1) == parseInt(x2)) {
-			x2 = x1 + 1;
-		    }
-		    if(parseInt(y1) == parseInt(y2)) {
-			y2 = y1 + 1;
-		    }
-		    
-    		    var grd = ctx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-    		    }
-		    
-    		    if(OK) {
-    			return grd;
-    		    }
-		} catch(e) {
-		    debugLog("getGradientColorForGroup crashed on group=" + group + ",x1=" + x1 + ",y1=" + y1 + ", x2=" + x2 + ", y2=" + y2 + ", alpha=" + alpha);
-		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
+    
 
     function getColorForGroup(group) {
     	if(colorPalette === null) {
@@ -2377,7 +2209,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 				sNoMarkUp += groupBuckets[groups[g]][idx];
 			    }
 
-			    var textW = getTextWidthCurrentFont(sNoMarkUp);
+			    var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, sNoMarkUp);
 			    hoverText.style.font = fontSize + "px Arial";
 			    hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 			    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -2420,7 +2252,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 			    }
 			}
 
-			var textW = getTextWidthCurrentFont(sNoMarkUp);
+			var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, sNoMarkUp);
 			hoverText.style.font = fontSize + "px Arial";
 			hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 			hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

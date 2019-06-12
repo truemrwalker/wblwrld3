@@ -12,36 +12,28 @@
 wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum, $timeout) {
 
 	//=== PROPERTIES ====================================================================
-	$scope.customMenu = [];
-	$scope.customInteractionBalls = [];
+	$scope.customMenu = [{itemId: 'clearData', itemTxt: 'Clear Data'}];
 
 	var dispText = "SMART Data Source";
 	$scope.displayText = "SMART Data Source";
+	var preDebugMsg = "Digital Dashboard SMART source: ";
 
 	var idSlotName = "TheIdSlot";
 	var internalIdSlotSet = false;
 	var oldIdSlotData = [];
-
 	var fullyLoaded = false;
-
 	var fileName = "";
-
 	var noofRows = 0;
-
 	var fontSize = 11;
 	var textColor = "black";
-
 	var rockstarFileContents = [];
 	var densityFileContents = [];
-
 	var fieldNames = [];
 	var fieldTypes = [];
 
 	$scope.pluginName = "SMART Data Source";
 	$scope.dragNdropData = {'fields':[{"name":"No Data", "id":-1, "type":"none"}], "rows":0, "cols":0, "file":""};
 	$scope.dataListStyle = {'padding':'10px', 'font-size':fontSize, 'font-family':'arial', 'background-color':'lightgrey', 'color':textColor, 'border':'2px solid #4400aa'};
-
-	$scope.doDebugLogging = true;
 
 
 
@@ -109,7 +101,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					reader.dataFileType = "binary";
 					reader.readAsArrayBuffer(f);
 				} else {
-					debugLog("Cannot guess file type from file name, assuming text data.");
+					//$log.log(preDebugMsg + "Cannot guess file type from file name, assuming text data.");
 					// assume ascii data
 					reader.dataFileType = "text";
 					reader.readAsText(f);
@@ -125,8 +117,8 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	// Event handler that reacts to changes in slots in this Webble.
 	//===================================================================================
 	function mySlotChange(eventData) {
-		//debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
-		//debugLog("mySlotChange() " + eventData.slotName);
+		//$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
+		//$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
 
 		if(eventData.slotName == idSlotName) {
 			// this is not allowed unless it is a set from the parseData() function
@@ -209,6 +201,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			{inputType: Enum.aopInputTypes.TextArea},
 			undefined
 		));
+		$scope.getSlot("Data").setDisabledSetting(Enum.SlotDisablingState.PropertyEditingAndValue);
 
 		$scope.addSlot(new Slot('FontSize',
 			fontSize,
@@ -293,7 +286,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		var meFullyLoadedEvList = $scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
 			if(eventData.targetId == $scope.getInstanceId()) {
 				meFullyLoadedEvList();
-				//debugLog("I was loaded");
+				//$log.log(preDebugMsg + "I was loaded");
 				fullyLoaded = true;
 				parseData();
 			}
@@ -315,18 +308,6 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				helper:"clone"
 			});
 		}, 1);
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Do Debug Logging
-	// Method that write specific log messages for this Webble if enabled.
-	//===================================================================================
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("DigitalDashboard SMART source: " + message);
-		}
 	};
 	//===================================================================================
 
@@ -454,17 +435,17 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		var concat_magic = header.magic.hi.toString(16) + header.magic.lo.toString(16);
 
 		if(concat_magic != ROCKSTAR_MAGICstr) {
-			debugLog("This does not look like a Rockstar file.");
-			debugLog("ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
-			debugLog("ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
-			debugLog("concat_magic     =" + concat_magic);
-			debugLog("hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
+			//$log.log(preDebugMsg + "This does not look like a Rockstar file.");
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
+			//$log.log(preDebugMsg + "concat_magic     =" + concat_magic);
+			//$log.log(preDebugMsg + "hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
 		} else {
-			debugLog("This file seems to be a Rockstar file.");
-			debugLog("ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
-			debugLog("ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
-			debugLog("concat_magic     =" + concat_magic);
-			debugLog("hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
+			//$log.log(preDebugMsg + "This file seems to be a Rockstar file.");
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGIC   =" + ROCKSTAR_MAGIC.toString(16));
+			//$log.log(preDebugMsg + "ROCKSTAR_MAGICstr=" + ROCKSTAR_MAGICstr);
+			//$log.log(preDebugMsg + "concat_magic     =" + concat_magic);
+			//$log.log(preDebugMsg + "hi=" + header.magic.hi.toString(16) + ", lo=" + header.magic.lo.toString(16));
 		}
 
 		header.snap = {"lo":tmpUInt[2], "hi":tmpInt[3]};
@@ -481,8 +462,8 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
 		header.num_halos = {"lo":tmpUInt[16], "hi":tmpInt[17]};
 		if(header.num_halos.hi > 0) {
-			debugLog("WARNING: Too many halos, will only read the first " + header.nu_halos.lo + " halos.");
-			debugLog("num_halos: " + header.num_halos.hi.toString(16) + " " + header.num_halos.lo.toString(16));
+			//$log.log(preDebugMsg + "WARNING: Too many halos, will only read the first " + header.nu_halos.lo + " halos.");
+			//$log.log(preDebugMsg + "num_halos: " + header.num_halos.hi.toString(16) + " " + header.num_halos.lo.toString(16));
 		}
 		header.num_particles = {"lo":tmpUInt[18], "hi":tmpInt[19]};
 		header.box_size = tmpFloat[20];
@@ -673,7 +654,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			return;
 		}
 
-		debugLog("parseData()");
+		//$log.log(preDebugMsg + "parseData()");
 
 		var slotList = $scope.getSlots();
 		var typeMap = {};
@@ -799,7 +780,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					var slotName = fname + "Slot";
 					slotName = "DataSlot" + i;
 
-					// debugLog("set " + slotName + " to " + JSON.stringify(vectorsForSlots[i]));
+					// $log.log(preDebugMsg + "set " + slotName + " to " + JSON.stringify(vectorsForSlots[i]));
 					$scope.set(slotName, vectorsForSlots[i]);
 				}
 
@@ -811,7 +792,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		}
 
 		if (dataIsCorrupt) {
-			debugLog("Could not parse data correctly.");
+			//$log.log(preDebugMsg + "Could not parse data correctly.");
 			setsJSON.sets = [];
 			$scope.set("ProvidedFormat", resJSON);
 			$scope.set("ProvidedFormatChanged", !$scope.gimme("ProvidedFormatChanged"));
@@ -834,7 +815,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
 			$scope.dragNdropData.fields = ls;
 
-			// debugLog("Finished parsing data.");
+			// $log.log(preDebugMsg + "Finished parsing data.");
 			var oldJSON = {};
 			// var newJSON = JSON.stringify(resJSON);
 			var newJSON = resJSON;
@@ -874,16 +855,16 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	// Webble friendly content format.
 	//===================================================================================
 	function convertFromJSON(fileContents) {
-		// debugLog("convertFromJSON");
+		// $log.log(preDebugMsg + "convertFromJSON");
 
 		if(typeof fileContents === 'string') {
 			try {
 				return JSON.parse(fileContents);
 			} catch(e) {
-				debugLog("Could not parse JSON data.");
+				//$log.log(preDebugMsg + "Could not parse JSON data.");
 			}
 		} else {
-			debugLog("Data does not look like JSON data.");
+			//$log.log(preDebugMsg + "Data does not look like JSON data.");
 		}
 		data.fieldNames = [];
 		data.fieldTypes = [];
@@ -910,7 +891,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	// Webble friendly content format.
 	//===================================================================================
 	function convertFromTextData(fileContents) {
-		// debugLog("convertFromTextData");
+		// $log.log(preDebugMsg + "convertFromTextData");
 		var data = {};
 		data.fieldNames = [];
 		data.fieldTypes = [];
@@ -952,13 +933,13 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		}
 
 		if(newLineIsSeparator && semiColonIsSeparator) {
-			debugLog("Row separator is ';\\n'");
+			//$log.log(preDebugMsg + "Row separator is ';\\n'");
 		} else if(newLineIsSeparator && !semiColonIsSeparator) {
-			debugLog("Row separator is '\\n'");
+			//$log.log(preDebugMsg + "Row separator is '\\n'");
 		} else if(!newLineIsSeparator && semiColonIsSeparator) {
-			debugLog("Row separator is ';'");
+			//$log.log(preDebugMsg + "Row separator is ';'");
 		} else {
-			debugLog("Row separator is unclear... there is only one row?");
+			//$log.log(preDebugMsg + "Row separator is unclear... there is only one row?");
 			// dataIsCorrupt = true;
 		}
 
@@ -1138,7 +1119,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				fileContents = res.fileContents;
 
 				if(separator == "") {
-					debugLog("Could not determine column separator. " + commasBeforeNewLine1 + " and " + commasBeforeNewLine2 + " commas, " + tabsBeforeNewLine1 + " and " + tabsBeforeNewLine2 + " TABs. Assume only one column.");
+					//$log.log(preDebugMsg + "Could not determine column separator. " + commasBeforeNewLine1 + " and " + commasBeforeNewLine2 + " commas, " + tabsBeforeNewLine1 + " and " + tabsBeforeNewLine2 + " TABs. Assume only one column.");
 					onlyOneColumn = 1;
 				}
 			}
@@ -1150,7 +1131,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
 		if (!dataIsCorrupt) {
 			if(onlyOneColumn) {
-				// debugLog("Using '" + separator + "' as column separator");
+				// $log.log(preDebugMsg + "Using '" + separator + "' as column separator");
 				if(!onlyOneRow) {
 					p1 = 0;
 					p2 = p1;
@@ -1183,7 +1164,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					data.columns.push([]);
 				}
 			} else {
-				debugLog("Using '" + separator + "' as column separator");
+				//$log.log(preDebugMsg + "Using '" + separator + "' as column separator");
 
 				// try to guess column names
 				p1 = 0;
@@ -1331,7 +1312,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
 							if (items.length != data.fieldNames.length) {
 								dataIsCorrupt = true;
-								debugLog("Rows have different number of columns");
+								//$log.log(preDebugMsg + "Rows have different number of columns");
 								break;
 							}
 
@@ -1440,7 +1421,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
 							if (items.length != data.fieldNames.length) {
 								dataIsCorrupt = true;
-								debugLog("Rows have different number of columns.");
+								//$log.log(preDebugMsg + "Rows have different number of columns.");
 								break;
 							}
 						}
@@ -1925,7 +1906,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 	//===================================================================================
 	function fileReaderOnLoadCallbackHelper(dataFileType, contents, reader) {
 		if(dataFileType == "zip") {
-			debugLog("we seem to have a zip file");
+			//$log.log(preDebugMsg + "we seem to have a zip file");
 
 			// use a BlobReader to read the zip from a Blob object
 			var blob = new Blob([contents]);
@@ -1953,7 +1934,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 							var fn = entries[ent].filename;
 
 							if(fn.indexOf(".csv") >= 0 || fn.indexOf(".txt") >= 0 || fn.indexOf(".json") >= 0) {
-								debugLog("this entry is probably text");
+								//$log.log(preDebugMsg + "this entry is probably text");
 
 								entries[ent].getData(new zip.TextWriter(), function(text) {
 										// text contains the entry data as a String
@@ -1970,7 +1951,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 							}
 
 							if(fn.indexOf(".bin") >= 0 || fn.indexOf(".dat") >= 0) {
-								debugLog("this entry is probably binary");
+								//$log.log(preDebugMsg + "this entry is probably binary");
 
 								entries[ent].getData(new zip.BlobWriter(), function(blob) {
 										// text contains the entry data as a String
@@ -2004,9 +1985,9 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 			var compressedContents = new Uint8Array(contents);
 
 			try {
-				debugLog("Try to decompress gzip file");
+				//$log.log(preDebugMsg + "Try to decompress gzip file");
 				var unzipResult = pako.inflate(compressedContents);
-				debugLog("We have contents of gzip file");
+				//$log.log(preDebugMsg + "We have contents of gzip file");
 				var fn = reader.zippedfn;
 
 				if(fn.indexOf(".csv") >= 0 || fn.indexOf(".txt") >= 0 || fn.indexOf(".json") >= 0) {
@@ -2019,7 +2000,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					contents = unzipResult.buffer;
 					dataFileType = "binary";
 				} else {
-					debugLog("gunzip worked, but the resulting contents are of an unknown type; treating as text.");
+					//$log.log(preDebugMsg + "gunzip worked, but the resulting contents are of an unknown type; treating as text.");
 					var bb = new Blob(unzipResult);
 
 					reader.dataFileType = "text";
@@ -2027,8 +2008,8 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 					return;
 				}
 			} catch (err) {
-				debugLog("error when decompressing gzip file");
-				debugLog(err);
+				//$log.log(preDebugMsg + "error when decompressing gzip file");
+				//$log.log(preDebugMsg + err);
 			}
 		}
 
@@ -2044,9 +2025,9 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 		if(dataFileType == "binary") {
 			if(checkIfRockstar(contents)) {
 				if(fileType != "none" && fileType != "rockstar") {
-					debugLog("WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
+					//$log.log(preDebugMsg + "WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
 				}
-				debugLog("Found Rockstar type file.");
+				//$log.log(preDebugMsg + "Found Rockstar type file.");
 				fileType = "rockstar";
 
 				var rockstarContents = parseRockstarFormat(contents);
@@ -2055,9 +2036,9 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				$scope.set("Data", convertFromRockstar(rockstarFileContents)); // later, fix this so we do not have to store the whole file in a slot, discard after parsing
 			} else if(checkIfDensity(contents)) {
 				if(fileType != "none" && fileType != "density") {
-					debugLog("WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
+					//$log.log(preDebugMsg + "WARNING: multiple files with inconsistent types, will not load all files (last file wins).");
 				}
-				debugLog("Found file that looks like density data file.");
+				//$log.log(preDebugMsg + "Found file that looks like density data file.");
 				fileType = "density";
 
 				var densityContents = parseDensityFormat(contents);
@@ -2067,7 +2048,7 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 				$scope.set("Data", convertFromDensity(densityFileContents)); // later, fix this so we do not have to store the whole file in a slot, discard after parsing
 				densityFileContents = [];
 			} else {
-				debugLog("Found file with no type marking, trying to parse as text.");
+				//$log.log(preDebugMsg + "Found file with no type marking, trying to parse as text.");
 
 				reader.dataFileType = "text";
 				reader.readAsText(reader.theFileWhenRetrying);
@@ -2078,40 +2059,19 @@ wblwrld3App.controller('smartDataWebbleCtrl', function($scope, $log, Slot, Enum,
 
 
 	//===================================================================================
-	// Webble template Interaction Object Activity Reaction
-	// If this template has its own custom Interaction balls that needs to be taken care
-	// of when activated, then it is here where that should be executed.
-	// If this function is empty and unused it can safely be deleted.
-	//===================================================================================
-	$scope.coreCall_Event_InteractionObjectActivityReaction = function(event){
-		var targetName = $(event.target).scope().getName();
-
-		if (targetName != ""){	}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Webble template Menu Item Activity Reaction
-	// If this template has its own custom menu items that needs to be taken care of,
-	// then it is here where that should be executed.
-	// If this function is empty and unused it can safely be deleted.
 	//===================================================================================
 	$scope.coreCall_Event_WblMenuActivityReaction = function(itemName){
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Webble template Create Custom Webble Definition
-	// If this template wants to store its own private data in the Webble definition it
-	// can create that custom object here and return to the core.
-	// If this function is empty and unused it can safely be deleted.
-	//===================================================================================
-	$scope.coreCall_CreateCustomWblDef = function(){
-		var customWblDefPart = {};
-
-		return customWblDefPart;
+		if(itemName == $scope.customMenu[0].itemId){  //clearData
+			fileName = "";
+			noofRows = 0;
+			rockstarFileContents = [];
+			densityFileContents = [];
+			fieldNames = [];
+			fieldTypes = [];
+			$scope.theView.find('#selectMultipleFilesInputEntry').val('');
+			$scope.dragNdropData = {'fields':[{"name":"No Data", "id":-1, "type":"none"}], "rows":0, "cols":0, "file":""};
+		}
 	};
 	//===================================================================================
 

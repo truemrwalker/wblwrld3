@@ -263,11 +263,6 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	}
     }
 
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
-
 
     //============================================================================
     //=== Transactions ===========================================================
@@ -787,43 +782,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     }
 
 
-    //============================================================================
-    //=== Text Utilities =========================================================
-    //============================================================================
 
-    function getTextWidth(text, font) {
-    	if(labelsCtx !== null && labelsCtx !== undefined) {
-    	    labelsCtx.font = font;
-    	    var metrics = labelsCtx.measureText(text);
-    	    return metrics.width;
-    	}
-    	return 0;
-    };
-
-    function getTextWidthCurrentFont(text) {
-    	if(labelsCtx !== null && labelsCtx !== undefined) {
-    	    var metrics = labelsCtx.measureText(text);
-    	    return metrics.width;
-    	}
-    	return 0;
-    };
-
-    function number2text(v, span) {
-    	if(parseInt(Number(v)) == v) {
-    	    return v.toString();
-    	}
-
-    	if(Math.abs(v) < 1) {
-    	    return v.toPrecision(3);
-    	}
-    	if(span > 10) {
-    	    return Math.round(v);
-    	}
-    	if(span > 5 && Math.abs(v) < 100) {
-    	    return v.toPrecision(2);
-    	}
-    	return v.toPrecision(3);
-    };
 
     //============================================================================
     //=== Internal and screen coordinate mapping==================================
@@ -1248,7 +1207,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 		    dragZoneVecs.ID = JSON.stringify(dropVecs.forParent);
 
     		    if(parentInput[i].hasOwnProperty("description")) {
-			rowDataName = shortenName(parentInput[i]["description"]);
+			rowDataName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 
 			dragZoneVecs.name = rowDataName;
     		    }
@@ -1275,7 +1234,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 		    dragZoneCols.ID = JSON.stringify(dropCols.forParent);
 
     		    if(parentInput[i].hasOwnProperty("description")) {
-			colDataName = shortenName(parentInput[i]["description"]);
+			colDataName = legacyDDSupLib.shortenName(parentInput[i]["description"]);
 
 			dragZoneCols.name = colDataName;
     		    }
@@ -1478,130 +1437,11 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     //=== Graphics ===============================================================
     //============================================================================
 
-    function backgroundColorCheck(currentColors, lastColors) {
-	if(currentColors && currentColors.hasOwnProperty("skin")) {
-	    if(!lastColors) {
-		return true;
-	    } else if(!lastColors.hasOwnProperty("skin")) {
-		return true;
-	    } else {
-		if(currentColors.skin.hasOwnProperty("gradient")) {
-		    if(!lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-			    return true;
-			}
-			for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-			    if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-			       || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-				return true;
-			    }
-			}
-		    }
-		} else {
-		    if(lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.hasOwnProperty("color")) {
-			    if(!lastColors.skin.hasOwnProperty("color")
-			       || lastColors.skin.color != currentColors.skin.color) {
-				return true;
-			    }
-			}
-		    }
-		}
 
-		if(currentColors.skin.hasOwnProperty("border")) {
-		    if(!lastColors.skin.hasOwnProperty("border")
-		       || lastColors.skin.border != currentColors.skin.border) {
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
-    }
 
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
 
-	if(!lastColors) {
-	    return true;
-	}
-
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		      || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
     
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	return res;
-    }
+
 
 
     function updateGraphics() {
@@ -1650,7 +1490,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -1709,7 +1549,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 	}
 
 	if(!redrawBackground && currentColors != lastColors) {
-	    redrawBackground = backgroundColorCheck(currentColors, lastColors);
+	    redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 	}
 
 	if(showColumnLabels != lastShowColumnLabels) {
@@ -1758,7 +1598,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 	    redrawHeatmap = true;
 	}
 			
-	if(!redrawSelectionBoxes && checkColors(currentColors, lastColors)) {
+	if(!redrawSelectionBoxes && legacyDDSupLib.checkColors(currentColors, lastColors)) {
 	    redrawSelectionBoxes = true;
 	}
 		
@@ -1968,7 +1808,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(labelsCtx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -2181,27 +2021,27 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 
 	    if(rowDataName != "" && colDataName != "") {
 		str = colDataName + " --> " + rowDataName;
-		cw = getTextWidthCurrentFont(dragZoneCols.name);
-		vw = getTextWidthCurrentFont(dragZoneVecs.name);
+		cw = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, dragZoneCols.name);
+		vw = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, dragZoneVecs.name);
 	    } else if(rowDataName != "") {
 		str = rowDataName;
-		vw = getTextWidthCurrentFont(dragZoneVecs.name);
+		vw = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, dragZoneVecs.name);
 	    } else if(colDataName != "") {
 		str = colDataName;
-		cw = getTextWidthCurrentFont(dragZoneCols.name);
+		cw = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, dragZoneCols.name);
 	    }
 
 	    if(str != "") {
 		str += ", ";
 	    }
 	    var trStr = "generating " + dragZoneTransactions.name;
-	    endw = getTextWidthCurrentFont(trStr);
-	    trw = getTextWidthCurrentFont(dragZoneTransactions.name);
+	    endw = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, trStr);
+	    trw = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, dragZoneTransactions.name);
 
 	    str += trStr;
 
 	    if(str != "") {
-		var w = getTextWidthCurrentFont(str);
+		var w = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, str);
 		var top = 0;
 		if(fontSize < topMarg) {
 		    top = Math.floor((topMarg - fontSize) / 2);
@@ -2267,12 +2107,12 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	barCtx.fillStyle = textColor;
     	barCtx.font = fontSize + "px Arial";
 
-    	var s = number2text(heatLimits.max, heatLimits.max - heatLimits.min);
-    	var textW = getTextWidthCurrentFont(s);
+    	var s = legacyDDSupLib.number2text(heatLimits.max, heatLimits.max - heatLimits.min);
+    	var textW = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, s);
     	barCtx.fillText(s, Math.round(X - textW/2), topMarg + selectionBarTopMargin - 5);
 
-    	var s = number2text(heatLimits.min, heatLimits.max - heatLimits.min);
-    	var textW = getTextWidthCurrentFont(s);
+    	var s = legacyDDSupLib.number2text(heatLimits.min, heatLimits.max - heatLimits.min);
+    	var textW = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, s);
     	barCtx.fillText(s, Math.round(X - textW/2), topMarg + drawH - selectionBarBottomMargin + fontSize + 5);
     }
 
@@ -2319,7 +2159,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
      		
 		var col = getColorForGroup(groupId);
     		if(groupId == "0") {
-    		    col = hexColorToRGBA(col, 0.33);
+    		    col = legacyDDSupLib.hexColorToRGBA(col, 0.33);
     		}
 
 		var y1 = row2pixel(rowIdxToOnScreenIdx[r]);		
@@ -2420,20 +2260,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 	}
     }
 
-    function hexColorToRGBAvec(color, alpha) {
-	var res = [];
 
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	    return [r, g, b, a];
-	}
-	return [0, 0, 0, 255];
-    }
 
     function drawHeatMap(W, H, globalSelections, globalSelectionsCols) {
 	// debugLog("drawHeatMap");
@@ -2463,7 +2290,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 	var drawPretty = true;
 	if(noofRows * noofCols > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgbaBorder = hexColorToRGBAvec(borderColor, 1.0);
+	    var rgbaBorder = legacyDDSupLib.hexColorToRGBAvec(borderColor, 1.0);
 	    var WW = heatmapCanvas.width;
 	    var HH = heatmapCanvas.height;
 	    var imData = heatmapCtx.getImageData(0, 0, WW, HH);
@@ -2534,7 +2361,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 				transp *= 0.5;
 			    }
 
-			    col = hexColorToRGBA(col, transp);
+			    col = legacyDDSupLib.hexColorToRGBA(col, transp);
 			}
 		    	
 			heatmapCtx.fillStyle = col;
@@ -2563,10 +2390,10 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 			}
 			
 			if(showBorder && isCellSelected && cellW > 3 && cellH > 3) {
-			    fillRectFast(x1+1, y1+1, cellW-1, cellH-1, col[0], col[1], col[2], alpha, pixels, WW, HH);
+			    legacyDDSupLib.fillRectFast(x1+1, y1+1, cellW-1, cellH-1, col[0], col[1], col[2], alpha, pixels, WW, HH);
 			    boundRectFast(x1, y1, cellW, cellH, rgbaBorder[0], rgbaBorder[1], rgbaBorder[2], 255, pixels, WW, HH);
 			} else {
-			    fillRectFast(x1, y1, cellW, cellH, col[0], col[1], col[2], alpha, pixels, WW, HH);
+			    legacyDDSupLib.fillRectFast(x1, y1, cellW, cellH, col[0], col[1], col[2], alpha, pixels, WW, HH);
 			}
 		    }
 		}
@@ -2580,34 +2407,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	// debugLog("drawHeatMap() end " + endTime + ", total: " + (endTime - startTime) + ", pretty = " + drawPretty);
     }
 
-    function fillRectFast(X1, Y1, DX, DY, r, g, b, alpha, pixels, Width, Height)
-    {
-	var W = Math.floor(Width);
-	var H = Math.floor(Height);
 
-	var x1 = Math.round(X1);
-	var y1 = Math.round(Y1);
-	var dx = Math.round(DX);
-	var dy = Math.round(DY);
-
-	for(var j = 0; j < dy; j++) 
-	{
-            for (var i = 0; i < dx; i++)
-	    {
-		var rx = x1 + i;
-		var ry = y1 + j;
-		if(ry >= 0 && ry < H
-		   && rx >= 0 && rx < W) {
-		    var offset = (ry * W + rx) * 4;
-		    
-		    pixels[offset] = r;
-		    pixels[offset+1] = g;
-		    pixels[offset+2] = b;
-		    pixels[offset+3] = alpha;
-		}
-	    }
-	}
-    }
 
     function boundRectFast(X1, Y1, DX, DY, r, g, b, alpha, pixels, Width, Height)
     {
@@ -2883,7 +2683,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 	    var maxW = 0;
 	    for(var c = 0; c < noofCols; c++) {
 		var s = columnNames[c];
-		var w = getTextWidthCurrentFont(s);
+		var w = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, s);
 		maxW = Math.max(maxW, w);
 	    }
 	    if(maxW > 0) {
@@ -3252,7 +3052,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
     	    updateGraphics();
     	    break;
@@ -3570,18 +3370,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	saveSelectionsInSlot();
     };
 
-    function hexColorToRGBA(color, alpha) {
-    	if(typeof color === 'string'
-    	   && color.length == 7) {
-	    
-    	    var r = parseInt(color.substr(1,2), 16);
-    	    var g = parseInt(color.substr(3,2), 16);
-    	    var b = parseInt(color.substr(5,2), 16);
 
-    	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    	}
-    	return color;
-    };
 
     function parseSelectionColors() {
     	// debugLog("parseSelectionColors");
@@ -3601,9 +3390,9 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     	    }
 	    
     	    if(colors['selection'].hasOwnProperty('color')) {
-    		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+    		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
     	    } else {
-    		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+    		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
     	    }
 
     	    if(colors['selection'].hasOwnProperty('gradient')) {
@@ -3623,7 +3412,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
     		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
     		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-    			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+    			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
     			atLeastOneAdded = true;
     		    }
     		}
@@ -3732,9 +3521,9 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     		if(mousePosIsInSelectableArea(currentMouse)) {
     		    var y = pixel2intensity(currentMouse.y);
 		    
-    		    var s = number2text(y, heatLimits.max - heatLimits.min);
+    		    var s = legacyDDSupLib.number2text(y, heatLimits.max - heatLimits.min);
 
-    		    var textW = getTextWidthCurrentFont(s);
+    		    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, s);
     		    hoverText.style.font = fontSize + "px Arial";
     		    hoverText.style.left = Math.floor(currentMouse.x + 5) + "px";
     		    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -3752,7 +3541,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 			s = columnNames[col];
 		    }
 		    
-    		    var textW = getTextWidthCurrentFont(s);
+    		    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelsCtx, s);
     		    hoverText.style.font = fontSize + "px Arial";
     		    hoverText.style.left = Math.floor(currentMouse.x + 5) + "px";
     		    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

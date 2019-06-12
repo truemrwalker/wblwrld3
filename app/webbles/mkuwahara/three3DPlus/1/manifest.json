@@ -1,5 +1,6 @@
 {
 	"libs": [
-	    "three.min.js"
+	    "three.min.js",
+		"../../DigitalDashboard/1/legacyDDSupLib.js"
 	]
 }

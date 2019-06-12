@@ -128,128 +128,8 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	}
     }
 
-    function getTextWidth(text, font) {
-	if(axesCtx !== null && axesCtx !== undefined) {
-	    axesCtx.font = font;
-	    var metrics = axesCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function getTextWidthCurrentFont(text) {
-	if(axesCtx !== null && axesCtx !== undefined) {
-	    var metrics = axesCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
-
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
-
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    function date2text(v, dateFormat) {
-	var d = new Date(parseInt(v));
-
-	switch(dateFormat) {
-	case 'full':
-	    return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'onlyYear':
-	    return d.getFullYear();
-	    break;
-	case 'yearMonth':
-	    return d.getFullYear() + " " + months[d.getMonth()];
-	    break;
-	case 'monthDay':
-	    return months[d.getMonth()] + " " + d.getDate();
-	    break;
-	case 'day':
-	    return d.getDate();
-	    break;
-	case 'dayTime':
-	    return d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	case 'time':
-	    return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-	    break;
-	default:
-	    return d.toISOString();
-	}
-    };
-
-    function pixel2valX(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < leftMarg) {
-	    return zoomMinX;
-	}
-	if(p > leftMarg + drawW) {
-	    return zoomMaxX;
-	}
-	return zoomMinX + (p - leftMarg) / drawW * (zoomMaxX - zoomMinX);
-    }
-
-    function pixel2valY(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < topMarg) {
-	    return zoomMaxY; // flip Y-axis
-	}
-	if(p > topMarg + drawH) {
-	    return zoomMinY; // flip Y-axis
-	}
-	return zoomMinY + (drawH - (p - topMarg)) / drawH * (zoomMaxY - zoomMinY); // flip Y-axis
-    };
-
-    function val2pixelX(v) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(v < zoomMinX) {
-	    return leftMarg;
-	}
-	if(v > zoomMaxX) {
-	    return leftMarg + drawW;
-	}
-	
-	return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
-    }
-
-    function val2pixelY(v) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(v < zoomMinY) {
-	    return topMarg + drawH; // flip Y-axis
-	}
-	if(v > zoomMaxY) {
-	    return topMarg; // flip Y-axis
-	}
-	
-	return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
-    }
 
     function val2pixelXnocrimp(v) {
 	if(unique <= 0) {
@@ -320,7 +200,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 		    Y1 = Math.max(limits.minY, Y1);
 		    Y2 = Math.min(limits.maxY, Y2);
 		    
-		    newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
+		    newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
 		}
 
 		// debugLog("new selections: " + JSON.stringify(newSelections));
@@ -375,7 +255,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	    Y1 = Math.max(limits.minY, Y1);
 	    Y2 = Math.min(limits.maxY, Y2);
 	    
-	    newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
+	    newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
 	}
 
 	if(newSelections.length > 0) {
@@ -791,130 +671,9 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 
     };
 
-    function backgroundColorCheck(currentColors, lastColors) {
-	if(currentColors.hasOwnProperty("skin")) {
-	    if(!lastColors) {
-		return true;
-	    } else if(!lastColors.hasOwnProperty("skin")) {
-		return true;
-	    } else {
-		if(currentColors.skin.hasOwnProperty("gradient")) {
-		    if(!lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-			    return true;
-			}
-			for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-			    if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-			       || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-				return true;
-			    }
-			}
-		    }
-		} else {
-		    if(lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.hasOwnProperty("color")) {
-			    if(!lastColors.skin.hasOwnProperty("color")
-			       || lastColors.skin.color != currentColors.skin.color) {
-				return true;
-			    }
-			}
-		    }
-		}
 
-		if(currentColors.skin.hasOwnProperty("border")) {
-		    if(!lastColors.skin.hasOwnProperty("border")
-		       || lastColors.skin.border != currentColors.skin.border) {
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
-    }
 
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
 
-	if(!lastColors) {
-	    return true;
-	}
-
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		       || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
-
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	return res;
-    }
 
     function updateGraphics() {
 	updateGraphicsHelper(false, false, false);
@@ -957,7 +716,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -991,7 +750,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	}
 
 	if(!redrawBackground && currentColors != lastColors) {
-	    redrawBackground = backgroundColorCheck(currentColors, lastColors);
+	    redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 	}
 	
 	if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
@@ -1013,7 +772,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	}
 	
 	if(!redrawLines) {
-	    if(checkColors(currentColors, lastColors)) {
+	    if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
 		redrawLines = true;
 	    }
 	}
@@ -1146,16 +905,16 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 
 		var s = "";
 		if(xType == 'date') {
-		    s = (date2text(Math.floor(pixel2valX(pos)), limits.dateFormatX));
+		    s = (legacyDDSupLib.date2text(Math.floor(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX)), limits.dateFormatX));
 
-		    var temp1 = Math.floor(pixel2valX(pos));
-		    var temp2 = pixel2valX(pos);
-		    var temp3 = val2pixelX(temp2);
+		    var temp1 = Math.floor(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX));
+		    var temp2 = legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+		    var temp3 = legacyDDSupLib.val2pixelX(temp2, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 		} else {
-		    s = number2text(pixel2valX(pos), limits.spanX);
+		    s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX), limits.spanX);
 		}
 		
-		var textW = getTextWidthCurrentFont(s);
+		var textW = legacyDDSupLib.getTextWidthCurrentFont(AxesCtx, s);
     		axesCtx.fillText(s, pos - textW/2, H - bottomMarg);
 		axesCtx.fillRect(pos, topMarg + drawH - 2, 1, 6);
 	    }
@@ -1172,12 +931,12 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 
 		var s = "";
 		if(yType == 'date') {
-		    s = (date2text(Math.floor(pixel2valY(pos)), limits.dateFormatY));
+		    s = (legacyDDSupLib.date2text(Math.floor(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, zoomMinY, zoomMaxY)), limits.dateFormatY));
 		} else {
-		    s = number2text(pixel2valY(pos), limits.spanY);
+		    s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, zoomMinY, zoomMaxY), limits.spanY);
 		}
 		
-		var textW = getTextWidthCurrentFont(s);
+		var textW = legacyDDSupLib.getTextWidthCurrentFont(AxesCtx, s);
 		if(leftMarg > textW + 5) {
     		    axesCtx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
 		} else {
@@ -1192,9 +951,9 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	if(unique > 0) {
 	    if(xType != 'date') {
 		if(zoomMinX < 0 && zoomMaxX > 0) {
-		    var pos = val2pixelX(0);
+		    var pos = legacyDDSupLib.val2pixelX(0, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 
-		    var temp1 = pixel2valX(pos);
+		    var temp1 = legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 
 		    var col = hexColorToRGBA(textColor, 0.5);
     		    
@@ -1215,7 +974,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	    
 	    if(yType != 'date') {
 		if(zoomMinY < 0 && zoomMaxY > 0) {
-		    var pos = val2pixelY(0);
+		    var pos = legacyDDSupLib.val2pixelY(0, unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 		    var col = hexColorToRGBA(textColor, 0.5);
     		    
@@ -1285,12 +1044,12 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-	    var rgbaText = hexColorToRGBAvec(textColor, transparency);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, transparency);
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	} else {
-	    var col0 = hexColorToRGBA(getColorForGroup(0), zeroTransp);
+	    var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
 	    var colT = hexColorToRGBA(textColor, transparency);
 	}
 
@@ -1352,7 +1111,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 		    }
 		    else if(groupId1 > 0 && groupId2 > 0) {
 			if(groupId1 == groupId2) {
-			    col = hexColorToRGBA(getColorForGroup(groupId1), transparency);
+			    col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 			} else {
 			    col = colT;
 			}
@@ -1379,7 +1138,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
     			dashed = true;
 		    } else if(groupId1 > 0 && groupId2 > 0) {
 			if(groupId1 == groupId2) {
-			    col = hexColorToRGBAvec(getColorForGroup(groupId1), transparency);
+			    col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 			} else {
 			    col = rgbaText;
 			}
@@ -1449,12 +1208,12 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-	    var rgbaText = hexColorToRGBAvec(textColor, transparency);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, transparency);
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	} else {
-	    var col0 = hexColorToRGBA(getColorForGroup(0), zeroTransp);
+	    var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
 	    var colT = hexColorToRGBA(textColor, transparency);
 	}
 
@@ -1562,7 +1321,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 			    }
 			    else if(groupId1 > 0 && groupId2 > 0) {
 				if(groupId1 == groupId2) {
-				    col = hexColorToRGBA(getColorForGroup(groupId1), transparency);
+				    col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 				} else {
 				    col = colT;
 				}
@@ -1586,7 +1345,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 				col = rgba0;
 			    } else if(groupId1 > 0 && groupId2 > 0) {
 				if(groupId1 == groupId2) {
-				    col = hexColorToRGBAvec(getColorForGroup(groupId1), transparency);
+				    col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 				} else {
 				    col = rgbaText;
 				}
@@ -1618,7 +1377,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 			    }
 			    else if(groupId1 > 0 && groupId2 > 0) {
 				if(groupId1 == groupId2) {
-				    col = hexColorToRGBA(getColorForGroup(groupId1), transparency);
+				    col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 				} else {
 				    col = colT;
 				}
@@ -1642,7 +1401,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 				col = rgba0;
 			    } else if(groupId1 > 0 && groupId2 > 0) {
 				if(groupId1 == groupId2) {
-				    col = hexColorToRGBAvec(getColorForGroup(groupId1), transparency);
+				    col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 				} else {
 				    col = rgbaText;
 				}
@@ -1699,40 +1458,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	}
     }
 
-    function blendRGBAs(r,g,b,alpha, offset, pixels) {
-	if(pixels[offset+3] > 0 && alpha < 255) {
-	    // something drawn here already, blend alpha
 
-	    var oldA = pixels[offset+3] / 255.0;
-	    var newA = alpha / 255.0;
-
-	    var remainA = (1 - newA) * oldA;
-	    
-	    var outA = newA + remainA;
-	    if(outA > 0) {
-		var oldR = pixels[offset];
-		var oldG = pixels[offset+1];
-		var oldB = pixels[offset+2];
-
-		var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-		var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-		var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-	    } else {
-		var outR = 0;
-		var outG = 0;
-		var outB = 0;
-	    }
-	    pixels[offset] = outR;
-	    pixels[offset+1] = outG;
-	    pixels[offset+2] = outB;
-	    pixels[offset+3] = Math.min(255, outA * 255);
-	} else {
-	    pixels[offset] = r;
-	    pixels[offset+1] = g;
-	    pixels[offset+2] = b;
-	    pixels[offset+3] = alpha;
-	}
-    }
 
     // This line drawing function was copied from http://kodierer.blogspot.jp/2009/10/drawing-lines-silverlight.html
     // The code is not original to me. I was very slightly modified by me.
@@ -1791,7 +1517,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 			    
 			    var offset = (ry * W + rx) * 4;
 			    
-			    blendRGBAs(r,g,b,alpha, offset, pixels);
+			    legacyDDSupLib.blendRGBAs(r,g,b,alpha, offset, pixels);
 			}
 			if(fatX) {
 			    rx++;
@@ -1877,126 +1603,8 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
     }
 
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
 
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
 
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
- 	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty('groups')) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(currentColors.hasOwnProperty("groups")) {
-    	    var groupCols = currentColors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-    		var OK = true;
-		
-		try {
-    		    var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-		    }
-    		} catch(e) {
-		    OK = false;
-		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
 	// debugLog("updateSize");
@@ -2132,10 +1740,10 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	if(unique > 0) {
 	    for(var sel = 0; sel < selections.length; sel++) {
 		var s = selections[sel];
-		s[4] = val2pixelX(s[0]);
-		s[5] = val2pixelX(s[1]);
-		s[7] = val2pixelY(s[2]);
-		s[6] = val2pixelY(s[3]);
+		s[4] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+		s[5] = legacyDDSupLib.val2pixelX(s[1], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+		s[7] = legacyDDSupLib.val2pixelY(s[2], unique, drawH, topMarg, zoomMinY, zoomMaxY);
+		s[6] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 	    }
 	}
 	drawSelections();
@@ -2327,7 +1935,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
     	    updateGraphicsHelper(false, false, false);
 	    drawSelections();
@@ -2415,7 +2023,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	    y1 = Math.max(y1, topMarg);
 	    y2 = Math.min(y2, topMarg + drawH);
 	    
-	    var newSel = [pixel2valX(x1), pixel2valX(x2), pixel2valY(y2), pixel2valY(y1), // y1 and y2 need to be switched here, because we flip the y axis
+	    var newSel = [legacyDDSupLib.pixel2valX(x1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valX(x2, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valY(y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.pixel2valY(y1, unique, drawH, topMarg, zoomMinY, zoomMaxY), // y1 and y2 need to be switched here, because we flip the y axis
 			  x1,x2,y1,y2];
 	    // debugLog("newSel: " + JSON.stringify(newSel));
 	    
@@ -2454,21 +2062,6 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	updateLocalSelections(true);
 	saveSelectionsInSlot();
     };
-
-    function hexColorToRGBAvec(color, alpha) {
-	var res = [];
-
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	    return [r, g, b, a];
-	}
-	return [0, 0, 0, 255];
-    }
 
     function hexColorToRGBA(color, alpha) {
 	if(typeof color === 'string'
@@ -2630,30 +2223,30 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 
 	    if(hoverText !== null) {
 		if(mousePosIsInSelectableArea(currentMouse)) {
-		    var x = pixel2valX(currentMouse.x);
-		    var y = pixel2valY(currentMouse.y);
+		    var x = legacyDDSupLib.pixel2valX(currentMouse.x, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+		    var y = legacyDDSupLib.pixel2valX(currentMouse.y, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 
 		    
 		    var s = "[";
 
 		    if(xType == 'date') {
-			s += (date2text(Math.floor(x), limits.dateFormatX));
+			s += (legacyDDSupLib.date2text(Math.floor(x), limits.dateFormatX));
 		    } else {
-			s += number2text(x, limits.spanX);
+			s += legacyDDSupLib.number2text(x, limits.spanX);
 		    }
 
 		    s += ",";
 
 		    if(yType == 'date') {
-			s += (date2text(Math.floor(y), limits.dateFormatY));
+			s += (legacyDDSupLib.date2text(Math.floor(y), limits.dateFormatY));
 		    } else {
-			s += number2text(y, limits.spanY);
+			s += legacyDDSupLib.number2text(y, limits.spanY);
 		    }
 		    
 		    s += "]";
 
-		    // var s = "(" + number2text(x, limits.spanX) + "," + number2text(y, limits.spanY) + ")";
-		    var textW = getTextWidthCurrentFont(s);
+		    // var s = "(" + legacyDDSupLib.number2text(x, limits.spanX) + "," + legacyDDSupLib.number2text(y, limits.spanY) + ")";
+		    var textW = legacyDDSupLib.getTextWidthCurrentFont(AxesCtx, s);
 		    hoverText.style.font = fontSize + "px Arial";
 		    hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 		    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

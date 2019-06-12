@@ -463,70 +463,6 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	}
     };
 
-    function getTextWidth(text, font) {
-    	if(dropCtx !== null && dropCtx !== undefined) {
-    	    dropCtx.font = font;
-    	    var metrics = dropCtx.measureText(text);
-    	    return metrics.width;
-    	}
-    	return 0;
-    };
-
-    function getTextWidthCurrentFont(text) {
-    	if(labelCtx !== null && labelCtx !== undefined) {
-    	    var metrics = labelCtx.measureText(text);
-    	    return metrics.width;
-    	}
-    	return 0;
-    };
-
-    function number2text(v, span) {
-    	if(parseInt(Number(v)) == v) {
-    	    return v.toString();
-    	}
-
-    	if(Math.abs(v) < 1) {
-    	    return v.toPrecision(3);
-    	}
-    	if(span > 10) {
-    	    return Math.round(v);
-    	}
-    	if(span > 5 && Math.abs(v) < 100) {
-    	    return v.toPrecision(2);
-    	}
-    	return v.toPrecision(3);
-    };
-
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    function date2text(v, dateFormat) {
-    	var d = new Date(parseInt(v));
-
-    	switch(dateFormat) {
-    	case 'full':
-    	    return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-    	    break;
-    	case 'onlyYear':
-    	    return d.getFullYear();
-    	    break;
-    	case 'yearMonth':
-    	    return d.getFullYear() + " " + months[d.getMonth()];
-    	    break;
-    	case 'monthDay':
-    	    return months[d.getMonth()] + " " + d.getDate();
-    	    break;
-    	case 'day':
-    	    return d.getDate();
-    	    break;
-    	case 'dayTime':
-    	    return d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-    	    break;
-    	case 'time':
-    	    return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-    	    break;
-    	default:
-    	    return d.toISOString();
-    	}
-    };
 
     function pixel2valDisplay(p, coord) {
     	if(unique <= 0) {
@@ -711,7 +647,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		    best = coord;
     		}
     	    } else {
-    		var textW = getTextWidthCurrentFont(coordNames[coord]) / 2;
+    		var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, coordNames[coord]) / 2;
     		if(x - textW <= p
     		   && p <= x + textW) {
     		    found = true;
@@ -753,10 +689,6 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	}
     }
 
-    function shortenName(n) {
-    	var ss = n.split(":");
-    	return ss[ss.length - 1];
-    }
 
     function saveSelectionsInSlot() {
     	// debugLog("saveSelectionsInSlot");
@@ -1362,7 +1294,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	    for(var coord = 0; coord < coordNames.length; coord++) {
     		onScreenCoordIdxToArrayIdx.push(coord);
 
-    		var textW = getTextWidthCurrentFont(coordNames[coord]);
+    		var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, coordNames[coord]);
     		// debugLog("layout coordinates, " + coord + " " + coordNames[coord] + " " + textW + " " + xpos);
     		coordXpos.push(xpos + textW / 2);
     		xpos += textW + 20;
@@ -1413,130 +1345,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     }
 
 
-    function backgroundColorCheck(currentColors, lastColors) {
-    	if(currentColors.hasOwnProperty("skin")) {
-    	    if(!lastColors) {
-    		return true;
-    	    } else if(!lastColors.hasOwnProperty("skin")) {
-    		return true;
-    	    } else {
-    		if(currentColors.skin.hasOwnProperty("gradient")) {
-    		    if(!lastColors.skin.hasOwnProperty("gradient")) {
-    			return true;
-    		    } else {
-    			if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-    			    return true;
-    			}
-    			for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-    			    if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-    			       || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-    				return true;
-    			    }
-    			}
-    		    }
-    		} else {
-    		    if(lastColors.skin.hasOwnProperty("gradient")) {
-    			return true;
-    		    } else {
-    			if(currentColors.skin.hasOwnProperty("color")) {
-    			    if(!lastColors.skin.hasOwnProperty("color")
-    			       || lastColors.skin.color != currentColors.skin.color) {
-    				return true;
-    			    }
-    			}
-    		    }
-    		}
 
-    		if(currentColors.skin.hasOwnProperty("border")) {
-    		    if(!lastColors.skin.hasOwnProperty("border")
-    		       || lastColors.skin.border != currentColors.skin.border) {
-    			return true;
-    		    }
-    		}
-    	    }
-    	}
-    	return false;
-    }
-
-    function checkColors(currentColors, lastColors) {
-    	if(currentColors == lastColors) {
-    	    return false;
-    	}
-
-    	if(!lastColors) {
-    	    return true;
-    	}
-
-    	if(!lastColors.hasOwnProperty("groups") && 
-    	   !currentColors.hasOwnProperty("groups"))
-    	{
-    	    return false;
-    	} else if(lastColors.hasOwnProperty("groups") 
-    		  && currentColors.hasOwnProperty("groups")) {
-    	    // check more
-
-    	    var groupCols = currentColors.groups;
-    	    var lastGroupCols = lastColors.groups;
-	    
-    	    for(var g in groupCols) {
-    		if(!lastGroupCols.hasOwnProperty(g)) {
-    		    return true;
-    		}
-    	    }
-    	    for(var g in lastGroupCols) {
-    		if(!groupCols.hasOwnProperty(g)) {
-    		    return true;
-    		}
-		
-    		if(groupCols[g].hasOwnProperty('color')
-    		   && (!lastGroupCols[g].hasOwnProperty('color')
-    		       || lastGroupCols[g].color != groupCols[g].color)) {
-    		    return true;
-    		}
-		
-    		if(groupCols[g].hasOwnProperty('gradient')) {
-    		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-    		       || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-    			return true;
-    		    }
-		    
-    		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-    			var cc = groupCols[g].gradient[i];
-    			var cc2 = lastGroupCols[g].gradient[i];
-			
-    			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-    			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-    			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-    			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-    			    return true;
-    			}
-    		    }
-    		}
-    	    }
-    	} else {
-    	    return true;
-    	}
-
-    	return false;
-    }
-
-    function copyColors(colors) {
-    	var res = {};
-	
-    	if(colors.hasOwnProperty('skin')) {
-    	    res.skin = {};
-    	    for(var prop in colors.skin) {
-    		res.skin[prop] = colors.skin[prop];
-    	    }
-    	}
-    	if(colors.hasOwnProperty('groups')) {
-    	    res.groups = {};
-    	    for(var prop in colors.groups) {
-    		res.groups[prop] = colors.groups[prop];
-    	    }
-    	}
-    	return res;
-    }
 
     function updateGraphics() {
     	updateGraphicsHelper(false, false, false);
@@ -1583,7 +1392,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-    	    currentColors = copyColors(colors);
+    	    currentColors = legacyDDSupLib.copyColors(colors);
 
     	    if(!currentColors) {
     		currentColors = {};
@@ -1613,7 +1422,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	}
 
     	if(!redrawBackground && currentColors != lastColors) {
-    	    redrawBackground = backgroundColorCheck(currentColors, lastColors);
+    	    redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
     	}
 	
     	if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
@@ -1629,7 +1438,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	}
 
     	if(!redrawLines) {
-    	    if(checkColors(currentColors, lastColors)) {
+    	    if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
     		redrawLines = true;
     	    }
     	}
@@ -1724,7 +1533,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		dropCtx.fillStyle = textColor;
     		dropCtx.fillStyle = "black";
 
-    		dropNew.right = dropNew.left + getTextWidth(dropNew.label, fnt) + 2 * marg1;
+    		dropNew.right = dropNew.left + legacyDDSupLib.getTextWidth(dropCtx, dropNew.label, fnt) + 2 * marg1;
 
     		for(var d = 0; d < allDropZones.length; d++) {
     		    var dropZone = allDropZones[d];
@@ -1759,7 +1568,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		    dropCtx.stroke();
     		    if(hover) {
     			var str = dropZone.label;
-    			var tw = getTextWidth(str, fnt);
+    			var tw = legacyDDSupLib.getTextWidth(dropCtx, str, fnt);
     			if(dropZone.rotate) {
     			    var labelShift = Math.floor(dropZone.right - dropZone.left - fontSize) / 2;
     			    dropCtx.translate(dropZone.left + labelShift, dropZone.top + Math.floor((dropZone.bottom - dropZone.top - tw) / 2));
@@ -1862,7 +1671,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		s = "log( " + s + " )";
     	    }
 
-    	    var textW = getTextWidthCurrentFont(s);
+    	    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     	    barCtx.fillText(s, x1 - textW/2, y1);
 	    
     	    y1 = topMarg;
@@ -1923,7 +1732,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		s = "log( " + s + " )";
     	    }
 
-    	    var textW = getTextWidthCurrentFont(s);
+    	    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     	    selectionRectCtx.fillText(s, x1 - textW/2, y1);
 	    
     	    y1 = topMarg;
@@ -1987,56 +1796,56 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 
     	    // upper limit
     	    if(coordTypes[coord] == 'date') {
-    		s = date2text(coordLimits[coord].min, coordLimits[coord].dateFormat);
+    		s = legacyDDSupLib.date2text(coordLimits[coord].min, coordLimits[coord].dateFormat);
     	    } else if(coordTypes[coord] == 'number') {
     		if(coord < logarithmic.length && logarithmic[coord]) {
-    		    s = number2text(Math.log(coordLimits[coord].max), Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
+    		    s = legacyDDSupLib.number2text(Math.log(coordLimits[coord].max), Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
     		} else {
-    		    s = number2text(coordLimits[coord].max, coordLimits[coord].span);
+    		    s = legacyDDSupLib.number2text(coordLimits[coord].max, coordLimits[coord].span);
     		}
     	    } else {
     		s = coordLimits[coord].labels[0];
     	    }
-    	    var textW = getTextWidthCurrentFont(s);
+    	    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     	    labelCtx.fillText(s, x1 + 3, y1 + fontSize - fontSize/2);
 
     	    // lower limit
     	    if(coordTypes[coord] == 'date') {
-    		s = date2text(coordLimits[coord].max, coordLimits[coord].dateFormat);
+    		s = legacyDDSupLib.date2text(coordLimits[coord].max, coordLimits[coord].dateFormat);
     	    } else if(coordTypes[coord] == 'number') {
     		if(coord < logarithmic.length && logarithmic[coord]) {
-    		    s = number2text(Math.log(coordLimits[coord].min), Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
+    		    s = legacyDDSupLib.number2text(Math.log(coordLimits[coord].min), Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
     		} else {
-    		    s = number2text(coordLimits[coord].min, coordLimits[coord].span);
+    		    s = legacyDDSupLib.number2text(coordLimits[coord].min, coordLimits[coord].span);
     		}
     	    } else {
     		s = coordLimits[coord].labels[coordLimits[coord].labels.length - 1];
     	    }
-    	    var textW = getTextWidthCurrentFont(s);
+    	    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     	    labelCtx.fillText(s, x1 + 3, y1 + drawH + fontSize - fontSize/2);
 
     	    // some places in between
     	    if(coordTypes[coord] == 'date') {
     		for(var nextY = y1 + fontSize * 3; nextY < y1 + drawH - fontSize*2; nextY += fontSize*3) {
-    		    s = date2text(coordLimits[coord].min + (drawH - (nextY - y1)) / drawH * coordLimits[coord].span, coordLimits[coord].dateFormat);
-    		    var textW = getTextWidthCurrentFont(s);
+    		    s = legacyDDSupLib.date2text(coordLimits[coord].min + (drawH - (nextY - y1)) / drawH * coordLimits[coord].span, coordLimits[coord].dateFormat);
+    		    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     		    labelCtx.fillText(s, x1 + 3, nextY + fontSize - fontSize/2);
     		}
     	    } else if(coordTypes[coord] == 'number') {
     		for(var nextY = y1 + fontSize * 3; nextY < y1 + drawH - fontSize*2; nextY += fontSize*3) {
     		    if(coord < logarithmic.length && logarithmic[coord]) {
-    			s = number2text(Math.log(coordLimits[coord].min) + (drawH - (nextY - y1)) / drawH * (Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min)), Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
+    			s = legacyDDSupLib.number2text(Math.log(coordLimits[coord].min) + (drawH - (nextY - y1)) / drawH * (Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min)), Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
     		    } else {
-    			s = number2text(coordLimits[coord].min + (drawH - (nextY - y1)) / drawH * coordLimits[coord].span, coordLimits[coord].span);
+    			s = legacyDDSupLib.number2text(coordLimits[coord].min + (drawH - (nextY - y1)) / drawH * coordLimits[coord].span, coordLimits[coord].span);
     		    }
-    		    var textW = getTextWidthCurrentFont(s);
+    		    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     		    labelCtx.fillText(s, x1 + 3, nextY + fontSize - fontSize/2);
     		}
     	    } else {
     		for(var l = 1; l < coordLimits[coord].noofLabels - 1; l++) {
     		    nextY = y1 + coordLimits[coord].props[l] * drawH;
     		    s = coordLimits[coord].labels[l];
-    		    var textW = getTextWidthCurrentFont(s);
+    		    var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     		    labelCtx.fillText(s, x1 + 3, nextY + fontSize - fontSize/2);
     		}
     	    }
@@ -2084,7 +1893,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	var drawPretty = true;
     	if(unique > quickRenderThreshold) {
     	    drawPretty = false;
-    	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), 0.33);
+    	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
     	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
     	    var pixels = imData.data;
 
@@ -2143,9 +1952,9 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     			    var groupId = 0;
 
     			    if(transparency >= 1) {
-    				var color = hexColorToRGBAvec(getColorForGroup(groupId), 0.33);
+    				var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 0.33);
     			    } else {
-    				var color = hexColorToRGBAvec(getColorForGroup(groupId), transparency * 0.33);
+    				var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * 0.33);
     			    }
 			    
     			    if(drawPretty) {
@@ -2180,16 +1989,16 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     			    for(var groupId = 1; groupId < ls.length; groupId++) { 
     				if(ls[groupId] > 0) {
     				    if(noofGroups > 1) {
-    					var thisColor = hexColorToRGBAvec(getColorForGroup(groupId), transparency * ls[groupId] / noofVotes);
+    					var thisColor = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * ls[groupId] / noofVotes);
 					
     					if(first) {
     					    first = false;
     					    color = thisColor;
     					} else {
-    					    color = blendRGBAs(color, thisColor);
+    					    color = legacyDDSupLib.blendCols(color, thisColor);
     					}
     				    } else {
-    					var color = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+    					var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
     				    }
     				}
     			    }
@@ -2233,35 +2042,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     }
 
 
-    function blendRGBAs(col1, col2) {
-    	var res = [0,0,0,0];
 
-    	var oldA = col1[3] / 255.0;
-    	var newA = col2[3] / 255.0;
-
-    	var remainA = (1 - newA) * oldA;
-	
-    	var outA = newA + remainA;
-    	if(outA > 0) {
-    	    var oldR = col1[0];
-    	    var oldG = col1[1];
-    	    var oldB = col1[2];
-
-    	    var outR = Math.min(255, (oldR * remainA + newA * col2[0]) / outA);
-    	    var outG = Math.min(255, (oldG * remainA + newA * col2[1]) / outA);
-    	    var outB = Math.min(255, (oldB * remainA + newA * col2[2]) / outA);
-    	} else {
-    	    var outR = 0;
-    	    var outG = 0;
-    	    var outB = 0;
-    	}
-    	res[0] = outR;
-    	res[1] = outG;
-    	res[2] = outB;
-    	res[3] = Math.min(255, outA * 255);
-	
-    	return res;
-    }
 
     // This line drawing function was copied from http://kodierer.blogspot.jp/2009/10/drawing-lines-silverlight.html
     // The code is not original to me. I was very slightly modified by me.
@@ -2400,141 +2181,9 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
         }
     }
 
-    function hexColorToRGBAvec(color, alpha) {
-    	var res = [];
 
-    	if(typeof color === 'string'
-    	   && color.length == 7) {
-	    
-    	    var r = parseInt(color.substr(1,2), 16);
-    	    var g = parseInt(color.substr(3,2), 16);
-    	    var b = parseInt(color.substr(5,2), 16);
-    	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-    	    return [r, g, b, a];
-    	}
-    	return [0, 0, 0, 255];
-    }
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
-    	if(useGlobalGradients) {
-    	    if(lineCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theLineCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    lineCanvas = myCanvasElement[0];
-    		}
-    	    }
 
-    	    var W = lineCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
-
-    	    var H = lineCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
-
-    	var colors = currentColors;
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(colors.hasOwnProperty('groups')) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colors.hasOwnProperty("groups")) {
-    	    var groupCols = colors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && ctx !== null && groupCols[group].hasOwnProperty('gradient')) {
-    		var OK = true;
-		
-    		var grd = ctx.createLinearGradient(x1,y1,x2,y2);
-    		for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    		    var cc = groupCols[group].gradient[i];
-    		    if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-    			if(alpha !== undefined) {
-    			    grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-    			}
-    			else {
-    			    grd.addColorStop(cc.pos, cc.color);
-    			}
-    		    } else {
-    			OK = false;
-    		    }
-    		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    var colors = currentColors;
-	    
-    	    if(colors.hasOwnProperty("groups")) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
     	// debugLog("updateSize");
@@ -2703,7 +2352,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 
     	var neededW = drawW;
     	for(var coord = 0; coord < coordXpos.length; coord++) {
-    	    var right = Math.ceil(coordXpos[coord] + getTextWidthCurrentFont(coordNames[coord]) / 2);
+    	    var right = Math.ceil(coordXpos[coord] + legacyDDSupLib.getTextWidthCurrentFont(labelCtx, coordNames[coord]) / 2);
     	    if(right > leftMarg + drawW) {
     		neededW = Math.max(neededW, Math.ceil(right - leftMarg));
     	    }
@@ -2894,7 +2543,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		if(typeof colors === 'string') {
     		    colors = JSON.parse(colors);
     		}
-    		currentColors = copyColors(colors);
+    		currentColors = legacyDDSupLib.copyColors(colors);
 
     		updateGraphics();
     		break;
@@ -3102,19 +2751,6 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	saveSelectionsInSlot();
     };
 
-    function hexColorToRGBA(color, alpha) {
-    	if(typeof color === 'string'
-    	   && color.length == 7) {
-	    
-    	    var r = parseInt(color.substr(1,2), 16);
-    	    var g = parseInt(color.substr(3,2), 16);
-    	    var b = parseInt(color.substr(5,2), 16);
-
-    	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    	}
-    	return color;
-    };
-
     function parseSelectionColors() {
     	// debugLog("parseSelectionColors");
 
@@ -3133,9 +2769,9 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     	    }
 	    
     	    if(colors['selection'].hasOwnProperty('color')) {
-    		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+    		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
     	    } else {
-    		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+    		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
     	    }
 
     	    if(colors['selection'].hasOwnProperty('gradient')) {
@@ -3155,7 +2791,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
     		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
     		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-    			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+    			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
     			atLeastOneAdded = true;
     		    }
     		}
@@ -3288,16 +2924,16 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
     			} else {
     			    if(coordTypes[coord] == 'number') {
     				if(coord < logarithmic.length && logarithmic[coord]) {
-    				    s = number2text(val, Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
+    				    s = legacyDDSupLib.number2text(val, Math.log(coordLimits[coord].max) - Math.log(coordLimits[coord].min));
     				} else {
-    				    s = number2text(val, coordLimits[coord].span);
+    				    s = legacyDDSupLib.number2text(val, coordLimits[coord].span);
     				}
     			    } else if(coordTypes[coord] == 'date') {
-    				s = date2text(val, coordLimits[coord].dateFormat);
+    				s = legacyDDSupLib.date2text(val, coordLimits[coord].dateFormat);
     			    }
     			}
 			
-    			var textW = getTextWidthCurrentFont(s);
+    			var textW = legacyDDSupLib.getTextWidthCurrentFont(labelCtx, s);
     			hoverText.style.font = fontSize + "px Arial";
     			hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
     			hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";

@@ -990,40 +990,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     // ==========================================================
 
 
-    function blendRGBAs(r,g,b,alpha, offset, pixels) {
-	if(pixels[offset+3] > 0 && alpha < 255) {
-	    // something drawn here already, blend alpha
 
-	    var oldA = pixels[offset+3] / 255.0;
-	    var newA = alpha / 255.0;
-
-	    var remainA = (1 - newA) * oldA;
-	    
-	    var outA = newA + remainA;
-	    if(outA > 0) {
-		var oldR = pixels[offset];
-		var oldG = pixels[offset+1];
-		var oldB = pixels[offset+2];
-
-		var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-		var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-		var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-	    } else {
-		var outR = 0;
-		var outG = 0;
-		var outB = 0;
-	    }
-	    pixels[offset] = outR;
-	    pixels[offset+1] = outG;
-	    pixels[offset+2] = outB;
-	    pixels[offset+3] = Math.min(255, outA * 255);
-	} else {
-	    pixels[offset] = r;
-	    pixels[offset+1] = g;
-	    pixels[offset+2] = b;
-	    pixels[offset+3] = alpha;
-	}
-    }
 
     // This line drawing function was copied from http://kodierer.blogspot.jp/2009/10/drawing-lines-silverlight.html
     // The code is not original to me. I was very slightly modified by me.
@@ -1077,7 +1044,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 
 			var offset = (ry * ALW + rx) * 4;
 
-			blendRGBAs(r,g,b,alpha, offset, pixels);
+			legacyDDSupLib.blendRGBAs(r,g,b,alpha, offset, pixels);
 		    }
 		    if(fatX) {
 			rx++;
@@ -1170,7 +1137,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	if (x >= leftMarg && x < W) {
             if(y >= topMarg && y < H)
             {
-		blendRGBAs(r,g,b, alpha, startPixelIdx, pixels);
+		legacyDDSupLib.blendRGBAs(r,g,b, alpha, startPixelIdx, pixels);
 	    }
         }
     }
@@ -1218,7 +1185,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
                     {
 			var offset = (y * ALW + x) * 4;
 
-			blendRGBAs(r,g,b, alpha, offset, pixels);
+			legacyDDSupLib.blendRGBAs(r,g,b, alpha, offset, pixels);
                     }
 		}
 	    }
@@ -1284,7 +1251,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 			{
 			    var offset = (y * ALW + x) * 4;
 
-			    blendRGBAs(r,g,b, alpha, startPixelIdx + offset, pixels);
+			    legacyDDSupLib.blendRGBAs(r,g,b, alpha, startPixelIdx + offset, pixels);
 			}
                     }
 		}
@@ -1333,154 +1300,6 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     }
 
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
-
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
-
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
- 	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty('groups')) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(currentColors.hasOwnProperty("groups")) {
-    	    var groupCols = currentColors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-    		var OK = true;
-		
-		try {
-    		    var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-		    }
-    		} catch(e) {
-		    OK = false;
-		}
-		
-    		if(OK) {
-    		    return grd;
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    }
-
-    function hexColorToRGBAvec(color, alpha) {
-	var res = [];
-
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	    return [r, g, b, a];
-	}
-	return [0, 0, 0, 255];
-    }
-
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    }
 
 
     function drawCartesianPlot() {
@@ -1583,14 +1402,19 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-	    var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 	    var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 	    var pixels = imData.data;
 	} else {
-    	    var col0 = hexColorToRGBA(getColorForGroup(0), zeroTransp, myCanvas, myCtx);
-    	    var fill0 = getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx);
+    	    var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp, myCanvas, myCtx);
+    	    var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 	}
+
+
+
+
+
 
 	for(var pass = 0; pass < 2; pass++) {
     	    for(var set = 0; set < Ns.length; set++) {
@@ -1673,7 +1497,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    if(pass == 0) {
 					col = col0;
 				    } else {
-					col = hexColorToRGBA(getColorForGroup(groupId), transparency, myCanvas, myCtx); // getColorForGroup(groupId);
+					col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency, myCanvas, myCtx);
 				    }
 				    
     				    myCtx.save();
@@ -1688,7 +1512,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    if(pass == 0) {
 					col = rgba0;
 				    } else {
-					col = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 
 				    if(transparency >= 1 && pass > 0) {
@@ -1708,7 +1532,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    if(pass == 0) {
 					col = col0;
 				    } else {
-					col = hexColorToRGBA(getColorForGroup(groupId), transparency, myCanvas, myCtx); // getColorForGroup(groupId);
+					col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency, myCanvas, myCtx);
 				    }
 				    
     				    myCtx.save();
@@ -1723,7 +1547,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    if(pass == 0) {
 					col = rgba0;
 				    } else {
-					col = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 
 				    if(transparency >= 1 && pass > 0) {
@@ -1759,18 +1583,22 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				if(drawPretty) {
 				    if(pass == 0) {
     					if(!useGlobalGradients) {
-    		     			    fill = getGradientColorForGroup(0, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, zeroTransp, myCanvas, myCtx);
+    		     			    fill = legacyDDSupLib.getGradientColorForGroup(0, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
     					} else {
 					    fill = fill0;
 					}
 				    } else {
 					if(transparency >= 1) {
-    					    fill = getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, 1, myCanvas, myCtx);
+    					    fill = legacyDDSupLib.getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, 1, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 					} else {
-					    fill = getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, transparency, myCanvas, myCtx);
+					    fill = legacyDDSupLib.getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, transparency, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 					}
 				    }
-				    
+
+
+
+
+
     				    myCtx.save();
     				    myCtx.beginPath();
     				    myCtx.arc(x1 + offset, y1, dotSize, 0, 2 * Math.PI, false);
@@ -1782,9 +1610,9 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     				    myCtx.restore();
 				} else {
 				    if(transparency >= 1) {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 				    } else {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 
 				    if(transparency >= 1 && pass > 0) {
@@ -1802,18 +1630,21 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				if(drawPretty) {
 				    if(pass == 0) {
     					if(!useGlobalGradients) {
-    		     			    fill = getGradientColorForGroup(0, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, zeroTransp, myCanvas, myCtx);
+    		     			    fill = legacyDDSupLib.getGradientColorForGroup(0, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
     					} else {
 					    fill = fill0;
 					}
 				    } else {
 					if(transparency >= 1) {
-    					    fill = getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, 1, myCanvas, myCtx);
+    					    fill = legacyDDSupLib.getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, 1, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 					} else {
-					    fill = getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, transparency, myCanvas, myCtx);
+					    fill = legacyDDSupLib.getGradientColorForGroup(groupId, x1-dotSize,y1-dotSize,x1+dotSize,y1+dotSize, transparency, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 					}
 				    }
-				    
+
+
+
+
     				    myCtx.save();
     				    myCtx.beginPath();
     				    myCtx.arc(x1 + offset, y1, dotSize, 0, 2 * Math.PI, false);
@@ -1825,9 +1656,9 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     				    myCtx.restore();
 				} else {
 				    if(transparency >= 1) {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 				    } else {
-					rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 
 				    if(transparency >= 1 && pass > 0) {
@@ -1871,10 +1702,10 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 
 
     function heatAndGroup2color(val, groupId) {
-	var rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+	var rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 
-    	var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
-    	var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
+    	var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
+    	var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
 
     	var rest = 1 - val;
 	
@@ -1907,8 +1738,8 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 
 
     function heat2color(val) {
-    	var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
-    	var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
+    	var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
+    	var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
 
     	var rest = 1 - val;
 
@@ -1947,26 +1778,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     	return res;
     }
 
-    function binLookup(ls, val, start, end) {
 
-	if(start == end) {
-	    if(ls[start] == val) {
-		return start;
-	    } else {
-		return -1;
-	    }
-	} else {
-	    var mid = Math.floor((start + end) / 2);
-	    if(ls[mid] == val) {
-		return mid;
-	    }
-	    if(ls[mid] < val) {
-		return binLookup(ls, val, mid, end);
-	    } else {
-		return binLookup(ls, val, start, mid);
-	    }
-	}
-    }
 
     function drawHeatmap() {
     	if(unique <= 0) {
@@ -2072,8 +1884,8 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     	myCtx.clearRect(0,0, myCanvas.width, myCanvas.height);
 
 
-    	var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-    	var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+    	var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+    	var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
     	var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
     	var pixels = imData.data;
 
@@ -2293,7 +2105,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     	    		    	var blendedCol = [];
 				
     	    		    	for(var grIdx = 0; grIdx < ls.length; grIdx++) {
-    	    		    	    // var groupCol = hexColorToRGBAvec(getColorForGroup(ls[grIdx][0]), 1);
+
 				    
 				    var groupCol = heatAndGroup2color(ls[grIdx][2] / ls[grIdx][1], ls[grIdx][0]);
 
@@ -2336,8 +2148,8 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    x = parseInt(x);
 				    y = parseInt(y);
 
-				    var xIdx = binLookup(sortedXs, x, 0, sortedXs.length);
-				    var yIdx = binLookup(sortedYs, y, 0, sortedYs.length);
+				    var xIdx = legacyDDSupLib.binLookup(sortedXs, x, 0, sortedXs.length);
+				    var yIdx = legacyDDSupLib.binLookup(sortedYs, y, 0, sortedYs.length);
 				    
 				    var x1 = x;
 				    var x2 = x;
@@ -2407,499 +2219,14 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	    
 	    
 
-    // 	    // } else { // pixels are smaller than cells
-    // 	    // 	var mapMinLatEx = mapMinLat - limits.minLatDiff2;
-    // 	    // 	var mapMaxLatEx = mapMaxLat + limits.minLatDiff2;
-    // 	    // 	var mapMinLonEx = mapMinLon - limits.minLonDiff2;
-    // 	    // 	var mapMaxLonEx = mapMaxLon + limits.minLonDiff2;
-
-    // 	    // 	for(var i = 0; i < Ns[set]; i++) {
-    // 	    // 	    // paint all pixels this cell covers
-
-    // 	    // 	    var lat = lat1[i];
-    // 	    // 	    var lon = lon1[i];
-    // 	    // 	    while(lon > 180) {
-    // 	    // 		lon -= 360;
-    // 	    // 	    }
-    // 	    // 	    while(lon < -180) {
-    // 	    // 		lon += 360;
-    // 	    // 	    }
-
-    // 	    // 	    var inside = false;
-
-    // 	    // 	    if(mapMinLatEx <= lat 
-    // 	    // 	       && mapMaxLatEx >= lat) {
-    // 	    // 		if(passDateLine) {
-    // 	    // 		    if(lon >= mapMinLonEx
-    // 	    // 		       || lon <= mapMaxLonEx) {
-    // 	    // 			inside = true;
-    // 	    // 		    }
-    // 	    // 		} else {
-    // 	    // 		    if(lon >= mapMinLonEx 
-    // 	    // 		       && lon <= mapMaxLonEx) {
-    // 	    // 			inside = true;
-    // 	    // 		    }
-    // 	    // 		}
-    // 	    // 	    }
-
-    // 	    // 	    if(inside) {
-    // 	    // 		var groupId = 0;
-    // 	    // 		if(i < selArray.length) {
-    // 	    // 		    groupId = selArray[i];
-    // 	    // 		}
-
-    // 	    // 		if(!alwaysVote || groupId > 0) {
-			    
-    // 	    // 		    var ln1 = lon - limits.minLonDiff2;
-    // 	    // 		    var ln2 = lon + limits.minLonDiff2;
-
-    // 	    // 		    var p1 = new google.maps.LatLng(lat + limits.minLatDiff2, ln1);
-    // 	    // 		    var p2 = new google.maps.LatLng(lat - limits.minLatDiff2, ln2);
-
-    // 	    // 		    var p1px = proj.fromLatLngToPoint(p1);
-    // 	    // 		    var p2px = proj.fromLatLngToPoint(p2);
-
-    // 	    // 		    var x1 = Math.max(leftMarg, Math.ceil(leftMarg + (p1px.x * scale - SWpx.x * scale)));
-    // 	    // 		    if(passDateLine && ln1 < mapMinLon) { // date line problem
-    // 	    // 			x1 = Math.ceil(leftMarg + drawW - (NEpx.x * scale - p1px.x * scale));
-    // 	    // 		    }
-    // 	    // 		    var y1 = Math.max(topMarg, Math.ceil(topMarg + (p1px.y * scale - NEpx.y * scale)));
-    // 	    // 	    	    var x2 = Math.min(leftMarg + drawW, Math.floor(leftMarg + (p2px.x * scale - SWpx.x * scale)));
-    // 	    // 		    if(passDateLine && ln2 < mapMinLon) { // date line problem
-    // 	    // 			x2 = Math.floor(leftMarg + drawW - (NEpx.x * scale - p2px.x * scale));
-    // 	    // 		    }
-    // 	    // 	    	    var y2 = Math.min(topMarg * drawH, Math.floor(topMarg + (p2px.y * scale - NEpx.y * scale)));
-
-
-    // 	    // 		    var v = val1[i];
-    // 	    // 		    var vAdj = adjustHeat(v);
-
-    // 	    // 		    // var rgba = heat2color(vAdj);
-    // 	    // 		    // if(groupId <= 0) {
-    // 	    // 		    // 	rgba = colorToGrayscale(rgba);
-    // 	    // 		    // 	rgba[3] = zeroTranspAlpha;
-    // 	    // 		    // }
-
-    // 	    // 		    var rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
-    // 	    // 		    rgba[3] = Math.floor(rgba[3] * vAdj);
-
-    // 	    // 		    fillRect(x1,y1, x2,y2, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
-    // 	    // 		}
-    // 	    // 	    }
-    // 	    // 	}
-    // 	    // }
     	}
 	
     	myCtx.putImageData(imData, 0, 0);
     }
 
-    // function drawHeatmapOld() {
-    // 	if(unique <= 0) {
-    // 	    return;
-    // 	}
 
-    // 	if(mapDiv === null) {
-    // 	    debugLog("no mapDiv to draw on");
-    // 	    return;
-    // 	}
-
-    // 	if(!map) {
-    // 	    debugLog("map not loaded yet");
-    // 	    return;
-    // 	}
-
-    // 	debugLog("drawHeatmap");
-	
-    // 	currentColors = $scope.gimme("GroupColors");
-    // 	if(typeof currentColors === 'string') {
-    // 	    currentColors = JSON.parse(currentColors);
-    // 	}
-
-
-    // 	var globalSelections = [];
-    // 	var globalSelectionsPerId = $scope.gimme('GlobalSelections');
-    // 	if(globalSelectionsPerId.hasOwnProperty('DataIdSlot')) {
-    // 	    globalSelections = globalSelectionsPerId['DataIdSlot'];
-    // 	}
-
-    // 	lastSeenGlobalSelections = [];
-    // 	for(var set = 0; set < globalSelections.length; set++) {
-    // 	    lastSeenGlobalSelections.push([]);
-    // 	    for(var i = 0; i < globalSelections[set].length; i++) {
-    // 		lastSeenGlobalSelections[set].push(globalSelections[set][i]);
-    // 	    }
-    // 	}
-
-    // 	var scale = Math.pow(2, mapZoom);
-
-    // 	try {
-    // 	    var mapBounds = map.getBounds();
-    // 	    var mapNE = mapBounds.getNorthEast();
-    // 	    var mapSW = mapBounds.getSouthWest();
-    // 	    var proj = map.getProjection();
-    // 	    var NEpx = proj.fromLatLngToPoint(mapNE);
-    // 	    var SWpx = proj.fromLatLngToPoint(mapSW);
-
-    // 	    var mapMinLat = mapSW.lat();
-    // 	    var mapMaxLat = mapNE.lat();
-    // 	    var mapMinLon = mapSW.lng();
-    // 	    var mapMaxLon = mapNE.lng();
-
-    // 	    var passDateLine = false;
-    // 	    if(mapMinLon > mapMaxLon) {
-    // 		passDateLine = true;
-    // 	    }
-
-    // 	    debugLog("lat " + mapMinLat + " to " + mapMaxLat);
-    // 	    debugLog("lon " + mapMinLon + " to " + mapMaxLon);
-
-    // 	    // if(NEpx.x > SWpx.x) {
-    // 	    // 	var tmp = NEpx.x;
-    // 	    // 	NEpx.x = SWpx.x;
-    // 	    // 	SWpx.x = tmp;
-    // 	    // }
-    // 	    // if(NEpx.y < SWpx.y) {
-    // 	    // 	var tmp = NEpx.y;
-    // 	    // 	NEpx.y = SWpx.y;
-    // 	    // 	SWpx.y = tmp;
-    // 	    // }
-
-    // 	    var NSpxs = SWpx.y * scale - NEpx.y * scale; // subtracting small numbers gives loss of precision?
-    // 	    var WEpxs = NEpx.x * scale - SWpx.x * scale;
-    // 	} catch(e) {
-    // 	    debugLog("No map to draw on yet");
-    // 	    $timeout(function(){updateSize(); 	debugLog("drawHeatmap timeout function calls updateGraphics"); updateGraphics();});
-    // 	    return;
-    // 	}
-
-
-    // 	var col;
-    // 	var fill;
-
-    // 	var zeroTransp = 0.3;
-    // 	if(transparency < 1) {
-    // 	    zeroTransp *= transparency;
-    // 	}
-    // 	var zeroTranspAlpha = Math.floor(255*zeroTransp);
-
-    // 	if(myCanvas === null) {
-    // 	    var canvasElement = $scope.theView.parent().find('#theCanvas');
-    // 	    if(canvasElement.length > 0) {
-    // 		myCanvas = canvasElement[0];
-    // 	    }
-    // 	}
-	
-    // 	if(myCtx === null) {
-    // 	    myCtx = myCanvas.getContext("2d");
-    // 	}
-
-    // 	myCtx.clearRect(0,0, myCanvas.width, myCanvas.height);
-
-
-    // 	var rgba0 = hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
-    // 	var rgbaText = hexColorToRGBAvec(textColor, 1.0);
-    // 	var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
-    // 	var pixels = imData.data;
-
-    // 	var valSpan = (limits.maxVal - limits.minVal);
-    // 	var latPerPixel = (mapNE.lat() - mapSW.lat()) / myCanvas.height;
-    // 	var lonPerPixel = (mapNE.lng() - mapSW.lng()) / myCanvas.width;
-
-    // 	for(var set = 0; set < Ns.length; set++) {
-
-    // 	    var selArray = [];
-    // 	    if(set < globalSelections.length) {
-    // 		selArray = globalSelections[set];
-    // 	    }
-    // 	    var lon1 = lons1[set];
-    // 	    var lat1 = lats1[set];
-    // 	    var val1 = vals1[set];
-
-
-    // 	    var pixelsAreBiggerThanCells = false;
-    // 	    if(limits.minLatDiff < latPerPixel ||
-    // 	       limits.minLonDiff < lonPerPixel) {
-    // 	    	pixelsAreBiggerThanCells = true;
-    // 	    }
-
-    // 	    if(pixelsAreBiggerThanCells) {
-    // 	    	var votes = {};
-		
-    // 	    	for(var i = 0; i < Ns[set]; i++) {
-    // 		    var inside = false;
-		    
-    // 		    if(mapMinLat <= lat1[i] 
-    // 		       && mapMaxLat >= lat1[i]) {
-    // 			if(passDateLine) {
-    // 			    if(lon1[i] >= mapMinLon
-    // 			       || lon1[i] <= mapMaxLon) {
-    // 				inside = true;
-    // 			    }
-    // 			} else {
-    // 			    if(lon1[i] >= mapMinLon 
-    // 			       && lon1[i] <= mapMaxLon) {
-    // 				inside = true;
-    // 			    }
-    // 			}
-    // 		    }
-
-    // 		    if(inside) {
-    // 			var p1 = new google.maps.LatLng(lat1[i], lon1[i]);
-    // 			var p1px = proj.fromLatLngToPoint(p1);
-
-    // 			var x1 = Math.floor(leftMarg + (p1px.x * scale - SWpx.x * scale));
-    // 			if(passDateLine && (lon1[i] > 180)) { // date line problem
-    // 			    x1 = Math.floor(leftMarg + drawW - (NEpx.x * scale - p1px.x * scale));
-    // 			}
-    // 			var y1 = Math.floor(topMarg + (p1px.y * scale - NEpx.y * scale));
-
-    // 	    		var groupId = 0;
-    // 	    		if(i < selArray.length) {
-    // 	    		    groupId = selArray[i];
-    // 	    		}
-    // 	    		if(groupId > 0) {
-    // 	    		    groupId = 1;
-    // 	    		}
-
-    // 	    		var v = val1[i];
-			
-    // 	    		var vAdj = adjustHeat(v);
-
-    // 	    		if(!votes.hasOwnProperty(x1)) {
-    // 	    		    votes[x1] = {};
-    // 	    		}
-    // 	    		if(!votes[x1].hasOwnProperty(y1)) {
-    // 	    		    votes[x1][y1] = [{}, {}];
-    // 	    		}
-    // 	    		if(!votes[x1][y1][groupId].hasOwnProperty(vAdj)) {
-    // 	    		    votes[x1][y1][groupId][vAdj] = 1;
-    // 	    		} else {
-    // 	    		    votes[x1][y1][groupId][vAdj] += 1;
-    // 	    		}
-    // 	    	    }
-    // 	    	}
-
-    // 	    	for(var x in votes) {
-    // 	    	    if(votes.hasOwnProperty(x)) {
-    // 	    		for(var y in votes[x]) {
-    // 	    		    if(votes[x].hasOwnProperty(y)) {
-    // 	    			var bestVal = 0;
-    // 	    			var mostVotes = 0;
-
-    // 	    			var groupId = 0;
-    // 	    			for(var val in votes[x][y][1]) { // start with selected data
-    // 	    			    if(votes[x][y][1].hasOwnProperty(val)) {
-    // 	    				if(votes[x][y][1][val] > mostVotes) {
-    // 	    				    mostVotes = votes[x][y][1][val];
-    // 	    				    bestVal = val;
-    // 	    				    groupId = 1;
-    // 	    				}
-    // 	    			    }
-    // 	    			}
-
-    // 	    			if(mostVotes <= 0) { // try with unselected data too
-    // 	    			    for(var val in votes[x][y][0]) {
-    // 	    				if(votes[x][y][0].hasOwnProperty(val)) {
-    // 	    				    if(votes[x][y][0][val] > mostVotes) {
-    // 	    					mostVotes = votes[x][y][0][val];
-    // 	    					bestVal = val;
-    // 	    					groupId = 0;
-    // 	    				    }
-    // 	    				}
-    // 	    			    }
-    // 	    			}
-				
-    // 	    			if(mostVotes > 0) { // should always be true
-    // 	    			    // var rgba = heat2color(bestVal);
-
-    // 	    			    // if(groupId <= 0) {
-    // 	    			    // 	rgba = colorToGrayscale(rgba);
-    // 	    			    // 	rgba[3] = zeroTranspAlpha;
-    // 	    			    // }
-
-
-    // 				    // var rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
-    // 				    // rgba[3] = Math.floor(rgba[3] * bestVal);
-
-    // 				    var rgba = heatAndGroup2color(bestVal, groupId);
-
-    // 	    			    putPixel(x,y, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
-    // 	    			}
-    // 	    		    }
-    // 	    		}
-    // 	    	    }
-    // 	    	}
-    // 	    } else { // pixels are smaller than cells
-    // 		var mapMinLatEx = mapMinLat - limits.minLatDiff2;
-    // 		var mapMaxLatEx = mapMaxLat + limits.minLatDiff2;
-    // 		var mapMinLonEx = mapMinLon - limits.minLonDiff2;
-    // 		var mapMaxLonEx = mapMaxLon + limits.minLonDiff2;
-
-    // 	    	for(var i = 0; i < Ns[set]; i++) {
-    // 	    	    // paint all pixels this cell covers
-
-    // 		    var lat = lat1[i];
-    // 		    var lon = lon1[i];
-    // 		    while(lon > 180) {
-    // 			lon -= 360;
-    // 		    }
-    // 		    while(lon < -180) {
-    // 			lon += 360;
-    // 		    }
-
-    // 		    var inside = false;
-
-    // 		    if(mapMinLatEx <= lat 
-    // 		       && mapMaxLatEx >= lat) {
-    // 			if(passDateLine) {
-    // 			    if(lon >= mapMinLonEx
-    // 			       || lon <= mapMaxLonEx) {
-    // 				inside = true;
-    // 			    }
-    // 			} else {
-    // 			    if(lon >= mapMinLonEx 
-    // 			       && lon <= mapMaxLonEx) {
-    // 				inside = true;
-    // 			    }
-    // 			}
-    // 		    }
-
-    // 		    if(inside) {
-    // 	    		var groupId = 0;
-    // 	    		if(i < selArray.length) {
-    // 	    		    groupId = selArray[i];
-    // 	    		}
-
-    // 			if(!alwaysVote || groupId > 0) {
-			    
-    // 			    var ln1 = lon - limits.minLonDiff2;
-    // 			    var ln2 = lon + limits.minLonDiff2;
-
-    // 			    var p1 = new google.maps.LatLng(lat + limits.minLatDiff2, ln1);
-    // 			    var p2 = new google.maps.LatLng(lat - limits.minLatDiff2, ln2);
-
-    // 			    var p1px = proj.fromLatLngToPoint(p1);
-    // 			    var p2px = proj.fromLatLngToPoint(p2);
-
-    // 			    var x1 = Math.max(leftMarg, Math.ceil(leftMarg + (p1px.x * scale - SWpx.x * scale)));
-    // 			    if(passDateLine && ln1 < mapMinLon) { // date line problem
-    // 				x1 = Math.ceil(leftMarg + drawW - (NEpx.x * scale - p1px.x * scale));
-    // 			    }
-    // 	    		    var y1 = Math.max(topMarg, Math.ceil(topMarg + (p1px.y * scale - NEpx.y * scale)));
-    // 	    	    	    var x2 = Math.min(leftMarg + drawW, Math.floor(leftMarg + (p2px.x * scale - SWpx.x * scale)));
-    // 			    if(passDateLine && ln2 < mapMinLon) { // date line problem
-    // 				x2 = Math.floor(leftMarg + drawW - (NEpx.x * scale - p2px.x * scale));
-    // 			    }
-    // 	    	    	    var y2 = Math.min(topMarg * drawH, Math.floor(topMarg + (p2px.y * scale - NEpx.y * scale)));
-
-
-    // 	    		    var v = val1[i];
-    // 			    var vAdj = adjustHeat(v);
-
-    // 	    		    // var rgba = heat2color(vAdj);
-    // 	    		    // if(groupId <= 0) {
-    // 	    		    // 	rgba = colorToGrayscale(rgba);
-    // 	    		    // 	rgba[3] = zeroTranspAlpha;
-    // 	    		    // }
-
-
-
-    // 			    // var rgba = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
-    // 			    // rgba[3] = Math.floor(rgba[3] * vAdj);
-
-    // 			    var rgba = heatAndGroup2color(vAdj, groupId);
-
-    // 	    		    fillRect(x1,y1, x2,y2, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
-    // 			}
-    // 	    	    }
-    // 	    	}
-    // 	    }
-    // 	}
-
-    // 	myCtx.putImageData(imData, 0, 0);
-    // }
 	
 
-
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
-
-	if(!lastColors) {
-	    return true;
-	}
-
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		       || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
-    
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	return res;
-    }
 
     function updateGraphics() {
     	// debugLog("updateGraphics()");
@@ -2909,7 +2236,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -2929,13 +2256,6 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	}
     }
 
-    function getTextWidthCurrentFont(text) {
-	if(dropCtx !== null && dropCtx !== undefined) {
-	    var metrics = dropCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
     function updateDropZones(col, alpha, hover) {
 	// update the data drop locations
@@ -3050,7 +2370,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidthCurrentFont(str);
+			var tw = legacyDDSupLib.getTextWidthCurrentFont(dropCtx, str);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -3349,7 +2669,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    // debugLog("GroupColors change calls updateGraphics");
     	    updateGraphics();

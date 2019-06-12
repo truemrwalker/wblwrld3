@@ -112,79 +112,9 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	}
     };
 
-    function getTextWidth(text, font) {
-	if(ctx !== null && ctx !== undefined) {
-	    ctx.font = font;
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
 
-    function getTextWidthCurrentFont(text) {
-	if(ctx !== null && ctx !== undefined) {
-	    var metrics = ctx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    };
 
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
 
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
-
-    function pixel2valX(p) {
-    	// if(unique <= 0) {
-    	//     return 0;
-    	// }
-	
-    	// if(p < leftMarg + leftShift) {
-    	//     return limits.minX;
-    	// }
-    	// if(p > leftMarg + leftShift + drawW) {
-    	//     return limits.maxX;
-    	// }
-    	// return limits.minX + (p - leftMarg - leftShift) / drawW * (limits.spanX);
-    };
-
-    function pixel2valY(p) {
-    	// if(unique <= 0) {
-    	//     return 0;
-    	// }
-	
-    	// if(p < topMarg + topShift) {
-    	//     return limits.maxY; // flip Y-axis
-    	// }
-    	// if(p > topMarg + topShift + drawH) {
-    	//     return limits.minY; // flip Y-axis
-    	// }
-    	// var mappedLat = limits.minYmapped + (drawH - (p - topMarg - topShift)) / drawH * limits.spanYmapped; // flip Y-axis
-
-    	// while (mappedLat < -20037508.3427892)
-        // {
-        //     mappedLat += 20037508.3427892;
-        // }
-        // while (mappedLat > 20037508.3427892)
-        // {
-        //     mappedLat -= 20037508.3427892;
-        // }
-
-        // var num7 = 1.5707963267948966 - (2.0 * Math.atan(Math.exp((-1.0 * mappedLat) / 6378137.0))); // ok??
-        // return num7 * 57.295779513082323;
-    };
 
 
     function latToY(lat) {
@@ -192,26 +122,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
         return 3189068.5 * Math.log((1.0 + Math.sin(a)) / (1.0 - Math.sin(a)));
     }
 
-    function val2pixelY(lat) {
-    	// if(lat < limits.minY) {
-    	//     return topMarg + topShift + drawH;
-    	// }
-    	// if(lat > limits.maxY) {
-    	//     return topMarg + topShift;
-    	// }
-        // var mappedLat = latToY(lat);
-        // return Math.round(topMarg + topShift + drawH - ((mappedLat - limits.minYmapped) / limits.spanYmapped * drawH));
-    }
 
-    function val2pixelX(lon) {
-    	// if(lon < limits.minX) {
-    	//     return leftMarg + leftShift;
-    	// }
-    	// if(lon > limits.maxX) {
-    	//     return leftMarg + leftShift + drawW;
-    	// }
-    	// return Math.round(leftMarg + leftShift + (lon - limits.minX) / limits.spanX * drawW);
-    }
 
     function saveSelectionsInSlot() {
 	// debugLog("saveSelectionsInSlot");
@@ -239,58 +150,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	    return;
 	}
 
-	if(slotSelections.hasOwnProperty("selections")) {
-	    // var newSelections = [];
-	    
-	    // if(unique > 0) {
-	    // 	for(var sel = 0; sel < slotSelections.selections.length; sel++) {
-	    // 	    var newSel = slotSelections.selections[sel];
-		    
-	    // 	    var X1 = newSel.minX;
-	    // 	    var X2 = newSel.maxX;
 
-	    // 	    var Y1 = newSel.minY;
-	    // 	    var Y2 = newSel.maxY;
-
-	    // 	    if(X2 < limits.minX 
-	    // 	       || X1 > limits.maxX
-	    // 	       || Y2 < limits.minY 
-	    // 	       || Y1 > limits.maxY) {
-	    // 		// completely outside
-	    // 		continue;
-	    // 	    }
-		    
-	    // 	    X1 = Math.max(limits.minX, X1);
-	    // 	    X2 = Math.min(limits.maxX, X2);
-
-	    // 	    Y1 = Math.max(limits.minY, Y1);
-	    // 	    Y2 = Math.min(limits.maxY, Y2);
-		    
-	    // 	    newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
-	    // 	}
-
-	    // 	// debugLog("new selections: " + JSON.stringify(newSelections));
-	    // 	if(newSelections.length > 0) {
-	    // 	    selections = newSelections;
-	    // 	    updateLocalSelections(false);
-	    // 	    drawSelections();
-	    // 	}
-	    // } else { // no data
-	    // 	for(var sel = 0; sel < slotSelections.selections.length; sel++) {
-	    // 	    var newSel = slotSelections.selections[sel];
-		    
-	    // 	    var X1 = newSel.minX;
-	    // 	    var X2 = newSel.maxX;
-
-	    // 	    var Y1 = newSel.minY;
-	    // 	    var Y2 = newSel.maxY;
-
-	    // 	    newSelections.push([X1,X2,Y1,Y2, 0,0,0,0]);
-	    // 	}
-	    // 	selections = newSelections;
-	    // }
-	}
-	
 	saveSelectionsInSlot();
     };
 
@@ -298,37 +158,6 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	// debugLog("checkSelectionsAfterNewData");
 
 	var newSelections = [];
-
-	// for(var sel = 0; sel < selections.length; sel++) {
-	//     var newSel = selections[sel];
-	//     var X1 = newSel[0];
-	//     var X2 = newSel[1];
-
-	//     var Y1 = newSel[2];
-	//     var Y2 = newSel[3];
-
-	//     if(X2 < limits.minX 
-	//        || X1 > limits.maxX
-	//        || Y2 < limits.minY 
-	//        || Y1 > limits.maxY) {
-	// 	// completely outside
-	// 	continue;
-	//     }
-	    
-	//     X1 = Math.max(limits.minX, X1);
-	//     X2 = Math.min(limits.maxX, X2);
-	    
-	//     Y1 = Math.max(limits.minY, Y1);
-	//     Y2 = Math.min(limits.maxY, Y2);
-	    
-	//     newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
-	// }
-
-	// if(newSelections.length > 0) {
-	//     selections = newSelections;
-	//     drawSelections();
-	//     return false;
-	// }
 	return true;
     };
 
@@ -437,7 +266,11 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	    zeroTransp *= transparency;
 	}
     	var col = hexColorToRGBA(getColorForGroup(0), zeroTransp);
-    	var fill = getGradientColorForGroup(0, 0,0,W,H, zeroTransp);
+    	var fill = legacyDDSupLib.getGradientColorForGroup(0, 0,0,W,H, zeroTransp, myCanvas, ctx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
+
+
+
+
 
 	var noofLayers = networkLayout.length;
 	
@@ -692,108 +525,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
     }
 
 
-    function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
-    	if(useGlobalGradients) {
-    	    if(myCanvas === null) {
-    		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
-    		if(myCanvasElement.length > 0) {
-    		    myCanvas = myCanvasElement[0];
-		}
-	    }
-
-    	    var W = myCanvas.width;
-    	    if(typeof W === 'string') {
-    		W = parseFloat(W);
-    	    }
-    	    if(W < 1) {
-    		W = 1;
-    	    }
-
-    	    var H = myCanvas.height;
-    	    if(typeof H === 'string') {
-    		H = parseFloat(H);
-    	    }
-    	    if(H < 1) {
-    		H = 1;
-    	    }
-	    
-    	    x1 = 0;
-    	    y1 = 0;
-    	    x2 = W;
-    	    y2 = H;
-    	}		
-	
-    	if(colorPalette === null || colorPalette === undefined) {
-    	    colorPalette = {};
-    	}
-
-    	var colors = $scope.gimme("GroupColors");
-    	if(typeof colors === 'string') {
-    	    colors = JSON.parse(colors);
-    	}
-	
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(colors.hasOwnProperty('groups')) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colors.hasOwnProperty("groups")) {
-    	    var groupCols = colors.groups;
-	    
-    	    if(groupCols.hasOwnProperty(group) && ctx !== null && groupCols[group].hasOwnProperty('gradient')) {
-    		var OK = true;
-		
-		try {
-		    if(parseInt(x1) == parseInt(x2)) {
-			x2 = x1 + 1;
-		    }
-		    if(parseInt(y1) == parseInt(y2)) {
-			y2 = y1 + 1;
-		    }
-		    
-    		    var grd = ctx.createLinearGradient(x1,y1,x2,y2);
-    		    for(var i = 0; i < groupCols[group].gradient.length; i++) {
-    			var cc = groupCols[group].gradient[i];
-    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-			    if(alpha !== undefined) {
-    				grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-			    }
-			    else {
-    				grd.addColorStop(cc.pos, cc.color);
-			    }
-    			} else {
-    			    OK = false;
-    			}
-    		    }
-		    
-    		    if(OK) {
-    			return grd;
-    		    }
-		} catch(e) {
-		    debugLog("getGradientColorForGroup crashed on group=" + group + ",x1=" + x1 + ",y1=" + y1 + ", x2=" + x2 + ", y2=" + y2 + ", alpha=" + alpha);
-		}
-    	    }
-    	}
-
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
+    
 
     function getColorForGroup(group) {
     	if(colorPalette === null) {
@@ -908,13 +640,6 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
 	// debugLog("updateSize found selections: " + JSON.stringify(selections));
-	for(var sel = 0; sel < selections.length; sel++) {
-	    var s = selections[sel];
-	    s[4] = val2pixelX(s[0]);
-	    s[5] = val2pixelX(s[1]);
-	    s[6] = val2pixelY(s[2]);
-	    s[7] = val2pixelY(s[3]);
-	}
 	// debugLog("updateSize updated selections to: " + JSON.stringify(selections));
 
 	updateGraphics();
@@ -1033,40 +758,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 
 	// debugLog("newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
 
-	// if(unique > 0) {
-	//     x1 = Math.max(x1, leftMarg + leftShift);
-	//     x2 = Math.min(x2, leftMarg + leftShift + drawW);
 
-	//     y1 = Math.max(y1, topMarg + topShift);
-	//     y2 = Math.min(y2, topMarg + topShift + drawH);
-	    
-	//     var newSel = [pixel2valX(x1), pixel2valX(x2), pixel2valY(y2), pixel2valY(y1), // y1 and y2 need to be switched here, because we flip the y axis
-	// 		  x1,x2,y1,y2];
-	//     // debugLog("newSel: " + JSON.stringify(newSel));
-	    
-	//     var overlap = false;
-	//     for(var s = 0; s < selections.length; s++) {
-	// 	var sel = selections[s];
-	// 	if(sel[4] == newSel[4]
-	// 	   && sel[5] == newSel[5]
-	// 	   && sel[6] == newSel[6]
-	// 	   && sel[7] == newSel[7]) {
-	// 	    // debugLog("Ignoring selection because it overlaps 100% with already existing selection");
-	// 	    overlap = true;
-	// 	    break;
-	// 	}
-	//     }
-
-	//     if(!overlap) {
-	// 	if(!keepOld) {
-	// 	    selections = [];
-	// 	}
-	// 	selections.push(newSel);
-	// 	drawSelections();
-	// 	updateLocalSelections(false);
-	// 	saveSelectionsInSlot();
-	//     }
-	// }
     };
 
     function selectAll() {
@@ -1222,85 +914,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
     };
 
     var onMouseMove = function(e){
-	// if(unique > 0) {
-        //     var currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 
-	//     // hover text
-
-	//     if(hoverText === null) {
-    	// 	var elmnt = $scope.theView.parent().find('#mouseOverText');
-    	// 	if(elmnt.length > 0) {
-    	// 	    hoverText = elmnt[0];
-    	// 	} else {
-    	// 	    debugLog("No hover text!");
-    	// 	}
-	//     }
-
-	//     if(hoverText !== null) {
-	// 	if(mousePosIsInSelectableArea(currentMouse)) {
-	// 	    var x = pixel2valX(currentMouse.x);
-	// 	    var y = pixel2valY(currentMouse.y);
-
-		    
-	// 	    var s = "[" + x + "," + y + "]";
-
-	// 	    var textW = getTextWidthCurrentFont(s);
-	// 	    hoverText.style.font = fontSize + "px Arial";
-	// 	    hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
-	// 	    hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
-	// 	    hoverText.innerHTML = s;
-	// 	    hoverText.style.display = "block";
-	// 	} else {
-	// 	    hoverText.style.display = "none";
-	// 	}
-	//     }
-
-	//     // selection rectangle, if clicked
-	    
-	//     if(clickStart !== null) {
-	// 	if(selectionRect === null) {
-    	// 	    var selectionRectElement = $scope.theView.parent().find('#selectionRectangle');
-    	// 	    if(selectionRectElement.length > 0) {
-    	// 		selectionRect = selectionRectElement[0];
-    	// 	    } else {
-    	// 		debugLog("No selection rectangle!");
-    	// 	    }
-	// 	}
-	// 	if(selectionRect !== null) {
-	// 	    var x1 = currentMouse.x;
-	// 	    var w = 1;
-	// 	    if(clickStart.x < x1) {
-	// 		x1 = clickStart.x;
-	// 		w = currentMouse.x - x1;
-	// 	    } else {
-	// 		w = clickStart.x - x1;
-	// 	    }
-
-	// 	    var y1 = currentMouse.y;
-	// 	    var h = 1;
-	// 	    if(clickStart.y < y1) {
-	// 		y1 = clickStart.y;
-	// 		h = currentMouse.y - y1;
-	// 	    } else {
-	// 		h = clickStart.y - y1;
-	// 	    }
-		    
-	// 	    var selectionRectCtx = selectionRect.getContext("2d");
-	// 	    selectionRectCtx.clearRect(0,0,selectionRect.width, selectionRect.height);
-		    
-	// 	    if(selectionColors === null) {
-	// 		parseSelectionColors();
-	// 	    }
-
-	// 	    selectionRectCtx.fillStyle = selectionColors.color;
-	// 	    selectionRectCtx.fillRect(x1, y1, w, h);
-	// 	    selectionRectCtx.save();
-    	// 	    selectionRectCtx.strokeStyle = selectionColors.border;
-    	// 	    selectionRectCtx.strokeRect(x1, y1, w, h);
-	// 	    selectionRectCtx.restore();
-	// 	}
-	//     }
-	// }
     };
 
     var onMouseDown = function(e){

@@ -163,7 +163,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 						if(clickStart !== null) {
 							if(bestDist < dotSize + 1 && clickedSensor != sen) {
 								var s = "[" + sensors[clickedSensor][0] + " --> " + sensors[sen][0] + "]";
-								var textW = getTextWidthCurrentFont(s);
+								var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 								hoverText.style.font = fontSize + "px Arial";
 								hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 								hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -172,7 +172,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 								alreadyDone = true;
 							} else {
 								var s = sensors[clickedSensor][0];
-								var textW = getTextWidthCurrentFont(s);
+								var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 								hoverText.style.font = fontSize + "px Arial";
 								hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 								hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -183,7 +183,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 						} else {
 							if(bestDist < dotSize + 3) {
 								var s = "[" + sensors[sen][0] + "]";
-								var textW = getTextWidthCurrentFont(s);
+								var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 								hoverText.style.font = fontSize + "px Arial";
 								hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 								hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -201,7 +201,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 				if(!alreadyDone) {
 					if(clickStart !== null) {
 						var s = sensors[clickedSensor][0];
-						var textW = getTextWidthCurrentFont(s);
+						var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 						hoverText.style.font = fontSize + "px Arial";
 						hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 						hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -514,20 +514,6 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 
 	//===================================================================================
-	// Get Text Width Current Font
-	// This method gets the width of a specified text using current font.
-	//===================================================================================
-	function getTextWidthCurrentFont(text) {
-		if(ctx !== null && ctx !== undefined) {
-			var metrics = ctx.measureText(text);
-			return metrics.width;
-		}
-		return 0;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Save Selections in Slot
 	// This method saves the user selection inside a slot.
 	//===================================================================================
@@ -635,7 +621,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// Get Color For Group
 	// This method gets the color for a specified group
 	//===================================================================================
-	function getColorForGroup(group) {
+	function getColForGroup(group) {
 		var cols = ["#A9A9A9", "#7FFF00"];
 		return cols[group];
 	};
@@ -724,10 +710,10 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		// //$log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
 		for(var sel = 0; sel < selections.length; sel++) {
 			var s = selections[sel];
-			s[4] = val2pixelX(s[0]);
-			s[5] = val2pixelX(s[1]);
-			s[6] = val2pixelY(s[2]);
-			s[7] = val2pixelY(s[3]);
+			s[4] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, limits.minX, limits.maxX);
+			s[5] = legacyDDSupLib.val2pixelX(s[1], unique, drawW, leftMarg, limits.minX, limits.maxX);
+			s[6] = legacyDDSupLib.val2pixelY(s[2], unique, drawH, topMarg, limits.minY, limits.maxY);
+			s[7] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, limits.minY, limits.maxY);
 		}
 		// //$log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
 	};
@@ -966,10 +952,10 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			dotSize = 1;
 		}
 
-		var fillOn = getGradientColorForGroup(0, 0,0,W,H, 0.33);
-		var colOn = hexColorToRGBA(getColorForGroup(0), 0.33);
-		var fillOff = getGradientColorForGroup(0, 0,0,W,H, 0.33);
-    	var colOff = hexColorToRGBA(getColorForGroup(0), 0.33);
+		var fillOn = getGradColForGroup(0, 0,0,W,H, 0.33);
+		var colOn = hexColorToRGBA(getColForGroup(0), 0.33);
+		var fillOff = getGradColForGroup(0, 0,0,W,H, 0.33);
+    	var colOff = hexColorToRGBA(getColForGroup(0), 0.33);
 		var col;
 		var fill;
 
@@ -981,18 +967,18 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 	    	if(sensor[sensor.length - 1]) { // selected
 				if(!useGlobalGradients) {
-					fillOn = getGradientColorForGroup(1, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33);
+					fillOn = getGradColForGroup(1, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33);
 				}
 				fill = fillOn;
 				col = colOn;
 	    	} else {
 	    		if(!useGlobalGradients) {
-	    			fillOff = getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33);
+	    			fillOff = getGradColForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33);
 	    		}
 	    		fill = fillOff;
 	    		col = colOff;
 	    	}
-	    
+
 	    	ctx.beginPath();
 	    	ctx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
 	    	ctx.fillStyle = fill;
@@ -1000,7 +986,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	    	ctx.lineWidth = 1;
 	    	ctx.strokeStyle = col;
 	    	ctx.stroke();
-	    	var textW = getTextWidthCurrentFont(s);
+	    	var textW = legacyDDSupLib.getTextWidthCurrentFont(ctx, s);
 	    	ctx.fillStyle = "black";
     	    ctx.font = fontSize + "px Arial";
     	    ctx.fillText(s, x - textW/2, y - dotSize);
@@ -1013,7 +999,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	// Get Gradient Colors For Group
 	// This method gets the gradient colors for a specified group.
 	//===================================================================================
-	function getGradientColorForGroup(group, x1,y1, x2,y2, alpha) {
+	function getGradColForGroup(group, x1,y1, x2,y2, alpha) {
 		if(useGlobalGradients) {
 			if(myCanvas === null) {
 				var myCanvasElement = $scope.theView.parent().find('#theCanvas');

@@ -21,6 +21,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
     $scope.displayText = "LinearRegression";
     $scope.dataSetName = "";
+	var preDebugMsg = "Digital Dashboard Linear Regression: ";
 
     // graphics
     var bgCanvas = null;
@@ -92,9 +93,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
     var lastDotSize = null;
 
     // Additional
-	$scope.doDebugLogging = true;
 	var myPath = "";
-	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 
 
@@ -105,8 +104,8 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This event handler handles internal slot changes
 	//===================================================================================
 	function mySlotChange(eventData) {
-		// debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
-		// debugLog("mySlotChange() " + eventData.slotName);
+		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
+		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
 
 		switch(eventData.slotName) {
 			case "SelectAll":
@@ -261,7 +260,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				if(typeof colors === 'string') {
 					colors = JSON.parse(colors);
 				}
-				currentColors = copyColors(colors);
+				currentColors = legacyDDSupLib.copyColors(colors);
 
 				updateGraphicsHelper(false, false, false);
 				drawSelections();
@@ -290,16 +289,16 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				if(elmnt.length > 0) {
 					hoverText = elmnt[0];
 				} else {
-					debugLog("No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 
 			if(hoverText !== null) {
 				if(mousePosIsInSelectableArea(currentMouse)) {
-					var x = pixel2valX(currentMouse.x);
-					var y = pixel2valY(currentMouse.y);
-					var s = "[" + x + "," + number2text(y, coordLimits[0].span) + "]";
-					var textW = getTextWidthCurrentFont(s);
+					var x = legacyDDSupLib.pixel2valX(currentMouse.x, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+					var y = legacyDDSupLib.pixel2valY(currentMouse.y, unique, drawH, topMarg, zoomMinY, zoomMaxY);
+					var s = "[" + x + "," + legacyDDSupLib.number2text(y, coordLimits[0].span) + "]";
+					var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 					hoverText.style.font = fontSize + "px Arial";
 					hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 					hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -317,7 +316,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 					if(selectionRectElement.length > 0) {
 						selectionRect = selectionRectElement[0];
 					} else {
-						debugLog("No selection rectangle!");
+						//$log.log(preDebugMsg + "No selection rectangle!");
 					}
 				}
 				if(selectionRect !== null) {
@@ -417,7 +416,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 				if(x1 == x2 && y1 == y2) {
 					// selection is too small, disregard
-					// debugLog("ignoring a selection because it is too small");
+					// $log.log(preDebugMsg + "ignoring a selection because it is too small");
 				} else {
 					newSelection(x1,x2, y1,y2, clickStart.ctrl);
 				}
@@ -441,7 +440,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				if(elmnt.length > 0) {
 					hoverText = elmnt[0];
 				} else {
-					debugLog("No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 			if(hoverText !== null) {
@@ -468,7 +467,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 				if(x1 == x2 && y1 == y2) {
 					// selection is too small, disregard
-					// debugLog("ignoring a selection because it is too small");
+					// $log.log(preDebugMsg + "ignoring a selection because it is too small");
 				} else {
 					newSelection(x1,x2, y1,y2, clickStart.ctrl);
 				}
@@ -876,7 +875,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			selectionHolderElement.bind('mousemove', onMouseMove);
 			selectionHolderElement.bind('mouseout', onMouseOut);
 		} else {
-			debugLog("No selectionHolderElement, could not bind mouse listeners");
+			//$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 		}
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.keyDown, function(eventData){
@@ -887,154 +886,11 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 
 	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-	function debugLog(message) {
-		if($scope.doDebugLogging) {
-			$log.log("DigitalDashboard LinearRegression: " + message);
-		}
-	};
-	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Text Width
-	// This method gets the width of a specified text with a  specified font.
-	//===================================================================================
-	function getTextWidth(text, font) {
-		if(axesCtx !== null && axesCtx !== undefined) {
-			axesCtx.font = font;
-			var metrics = axesCtx.measureText(text);
-			return metrics.width;
-		}
-		return 0;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Text Width for Current Font
-	// This method gets the width of a specified text with for the current font.
-	//===================================================================================
-	function getTextWidthCurrentFont(text) {
-		if(axesCtx !== null && axesCtx !== undefined) {
-			var metrics = axesCtx.measureText(text);
-			return metrics.width;
-		}
-		return 0;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Number to Text
-	// This method converts a number to text.
-	//===================================================================================
-	function number2text(v, span) {
-		if(parseInt(Number(v)) == v) {
-			return v.toString();
-		}
-
-		if(Math.abs(v) < 1) {
-			return v.toPrecision(3);
-		}
-		if(span > 10) {
-			return Math.round(v);
-		}
-		if(span > 5 && Math.abs(v) < 100) {
-			return v.toPrecision(2);
-		}
-		return v.toPrecision(3);
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Date to Text
-	// This method converts a date to text.
-	//===================================================================================
-	function date2text(v, dateFormat) {
-		var d = new Date(parseInt(v));
-
-		switch(dateFormat) {
-			case 'full':
-				return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-				break;
-			case 'onlyYear':
-				return d.getFullYear();
-				break;
-			case 'yearMonth':
-				return d.getFullYear() + " " + months[d.getMonth()];
-				break;
-			case 'monthDay':
-				return months[d.getMonth()] + " " + d.getDate();
-				break;
-			case 'day':
-				return d.getDate();
-				break;
-			case 'dayTime':
-				return d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-				break;
-			case 'time':
-				return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-				break;
-			default:
-				return d.toISOString();
-		}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Pixel to Value X
-	// This method converts a pixel position on the plot to a proper X value.
-	//===================================================================================
-	function pixel2valX(p) {
-		if(unique <= 0) {
-			return 0;
-		}
-
-		if(p < leftMarg) {
-			return zoomMinX;
-		}
-		if(p > leftMarg + drawW) {
-			return zoomMaxX;
-		}
-		return zoomMinX + (p - leftMarg) / drawW * (zoomMaxX - zoomMinX);
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Pixel to Value Y
-	// This method converts a pixel position on the plot to a proper Y value.
-	//===================================================================================
-	function pixel2valY(p) {
-		if(unique <= 0) {
-			return 0;
-		}
-
-		if(p < topMarg) {
-			return zoomMaxY; // flip Y-axis
-		}
-		if(p > topMarg + drawH) {
-			return zoomMinY; // flip Y-axis
-		}
-		return zoomMinY + (drawH - (p - topMarg)) / drawH * (zoomMaxY - zoomMinY); // flip Y-axis
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Save Selection in Slot
 	// This method saves the user selection inside a slot.
 	//===================================================================================
 	function saveSelectionsInSlot() {
-		// debugLog("saveSelectionsInSlot");
+		// $log.log(preDebugMsg + "saveSelectionsInSlot");
 		var result = {};
 		result.selections = [];
 		for(var sel = 0; sel < selections.length; sel++) {
@@ -1054,14 +910,14 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method sets the data selections based on the value of the slot value.
 	//===================================================================================
 	function setSelectionsFromSlotValue() {
-		// debugLog("setSelectionsFromSlotValue");
+		// $log.log(preDebugMsg + "setSelectionsFromSlotValue");
 		var slotSelections = $scope.gimme("InternalSelections");
 		if(typeof slotSelections === 'string') {
 			slotSelections = JSON.parse(slotSelections);
 		}
 
 		if(JSON.stringify(slotSelections) == JSON.stringify(internalSelectionsInternallySetTo)) {
-			// debugLog("setSelectionsFromSlotValue got identical value");
+			// $log.log(preDebugMsg + "setSelectionsFromSlotValue got identical value");
 			return;
 		}
 
@@ -1088,10 +944,10 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 					Y1 = Math.max(coordLimits[0].min, Y1);
 					Y2 = Math.min(coordLimits[0].max, Y2);
 
-					newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
+					newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
 				}
 
-				// debugLog("new selections: " + JSON.stringify(newSelections));
+				// $log.log(preDebugMsg + "new selections: " + JSON.stringify(newSelections));
 				if(newSelections.length > 0) {
 					selections = newSelections;
 					updateLocalSelections(false);
@@ -1121,7 +977,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// loaded.
 	//===================================================================================
 	function checkSelectionsAfterNewData() {
-		// debugLog("checkSelectionsAfterNewData");
+		// $log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		var newSelections = [];
 
 		if(unique > 0) {
@@ -1143,7 +999,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				Y1 = Math.max(minMinY, Y1);
 				Y2 = Math.min(maxMaxY, Y2);
 
-				newSelections.push([X1,X2,Y1,Y2, val2pixelX(X1),val2pixelX(X2),val2pixelY(Y2),val2pixelY(Y1)]); // flip Y-axis
+				newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
 			}
 
 			if(newSelections.length > 0) {
@@ -1180,7 +1036,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method updates the local selection based on global activity.
 	//===================================================================================
 	function updateLocalSelections(selectAll) {
-		// debugLog("updateLocalSelections");
+		// $log.log(preDebugMsg + "updateLocalSelections");
 		var dirty = false;
 
 		selections.sort(function(a,b){return (Math.abs(a[1]-a[0]) - Math.abs(b[1]-b[0]));}); // sort selections so smaller (area) ones are checked first.
@@ -1236,7 +1092,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			$scope.set('LocalSelections', {'DataIdSlot':localSelections});
 			$scope.set('LocalSelectionsChanged', !$scope.gimme('LocalSelectionsChanged')); // flip flag to tell parent we updated something
 		} else {
-			// debugLog("local selections had not changed");
+			// $log.log(preDebugMsg + "local selections had not changed");
 		}
 	};
 	//===================================================================================
@@ -1269,7 +1125,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method parse the data given.
 	//===================================================================================
 	function parseData() {
-		// debugLog("parseData");
+		// $log.log(preDebugMsg + "parseData");
 
 		// parse parents instructions on where to find data, check that at least one data set is filled
 		var atLeastOneFilled = false;
@@ -1346,7 +1202,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				atLeastOneFilled = true;
 			}
 		}
-		// debugLog("read parent input ", atLeastOneFilled);
+		// $log.log(preDebugMsg + "read parent input ", atLeastOneFilled);
 		var dataIsCorrupt = false;
 
 		if(atLeastOneFilled) {
@@ -1549,11 +1405,11 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 
 			if(dataIsCorrupt) {
-				debugLog("data is corrupt");
+				//$log.log(preDebugMsg + "data is corrupt");
 				resetVars();
 			}
 		} else {
-			// debugLog("no data");
+			// $log.log(preDebugMsg + "no data");
 		}
 
 		checkSelectionsAfterNewData();
@@ -1584,7 +1440,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method starts a separate thread to do background linear regression.
 	//===================================================================================
 	function doBackgroundLinearRegression() {
-		// debugLog("doBackgroundLinearRegression");
+		// $log.log(preDebugMsg + "doBackgroundLinearRegression");
 
 		if(backgroundThread !== null) {
 			// already running. kill thread
@@ -1616,14 +1472,14 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// regression.
 	//===================================================================================
 	function linearRegressionFinished(e) {
-		// debugLog("linearRegressionFinished");
+		// $log.log(preDebugMsg + "linearRegressionFinished");
 		var data = e.data;
 	
 		linearRegressionRes = data.linearRegressionRes;
 		minMinY = coordLimits[0].min;
 		maxMaxY = coordLimits[0].max;
 
-		debugLog("min max in data are: " + minMinY + " and " + maxMaxY);
+		//$log.log(preDebugMsg + "min max in data are: " + minMinY + " and " + maxMaxY);
 
 		for(var set = 0; set < linearRegressionRes.length; set++) {
 			for(var i = 0; i < linearRegressionRes[set].length; i++) {
@@ -1639,12 +1495,12 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 		selectAll();
 
-		debugLog("min max in regression+data are: " + minMinY + " and " + maxMaxY);
+		//$log.log(preDebugMsg + "min max in regression+data are: " + minMinY + " and " + maxMaxY);
 
 		$scope.set('LinearRegressionResult', linearRegressionRes[0]); // fix this later, more than one set should give what behavior?
 		$scope.set('DataChanged', true);
 
-		// debugLog("linearRegression,  finished");
+		// $log.log(preDebugMsg + "linearRegression,  finished");
 
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, true, false);
@@ -1665,10 +1521,10 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	function linearRegression () {
 		if(unique > 0) {
 			if(typeof(Worker) !== "undefined") {
-				debugLog("browser supports background threads");
+				//$log.log(preDebugMsg + "browser supports background threads");
 				doBackgroundLinearRegression();
 			} else {
-				debugLog("Browser does not support background threads. Do linearRegression in main thread.");
+				//$log.log(preDebugMsg + "Browser does not support background threads. Do linearRegression in main thread.");
 				linearRegressionMainThread();
 			}
 		}
@@ -1682,7 +1538,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	//===================================================================================
 	function linearRegressionMainThread () {
 		// simple "Ordinary least squares" solve for beta, beta = invert( transp(X) * X ) * transp(X)*y. use beta to fill in missing values y = X * beta.
-		// debugLog("linearRegression");
+		// $log.log(preDebugMsg + "linearRegression");
 		var missingVal = $scope.gimme('ValueForMissingDataPoints');
 		if(missingVal == "null") {
 			missingVal = null;
@@ -1691,7 +1547,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 
 		// build X from inputs where Y has a value
-		// debugLog("linearRegression, build X and y");
+		// $log.log(preDebugMsg + "linearRegression, build X and y");
 		X = [];
 		y = [];
 		var ys = 0;
@@ -1709,7 +1565,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 		}
 
-		// debugLog("linearRegression, XtX");
+		// $log.log(preDebugMsg + "linearRegression, XtX");
 		var XtX = [];
 		for(i = 0; i < X[0].length; i++) {
 			XtX.push([]);
@@ -1721,7 +1577,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 		}
 
-		// debugLog("linearRegression, invert XtX");
+		// $log.log(preDebugMsg + "linearRegression, invert XtX");
 		var inv = invert(XtX);
 
 		if(inv.length <= 0) {
@@ -1730,7 +1586,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	    	return;
 		}
 	
-		// debugLog("linearRegression,  Xty");
+		// $log.log(preDebugMsg + "linearRegression,  Xty");
 		var Xty = [];
 		for(i = 0; i < X[0].length; i++) {
 			Xty.push(0);
@@ -1739,7 +1595,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	    	}
 		}
 
-		// debugLog("linearRegression,  beta");
+		// $log.log(preDebugMsg + "linearRegression,  beta");
 		var beta = [];
 		for(i = 0; i < inv.length; i++) {
 			beta.push(0);
@@ -1749,7 +1605,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	    	}
 		}
 
-		// debugLog("linearRegression,  predict");
+		// $log.log(preDebugMsg + "linearRegression,  predict");
 		var predictions = [];
 
 		for(var set = 0; set < coordArrays[0].length; set++) {
@@ -1762,7 +1618,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 		}
 
-		// debugLog("linearRegression,  set slots");
+		// $log.log(preDebugMsg + "linearRegression,  set slots");
 		linearRegressionRes = predictions;
 		minMinY = coordLimits[0].min;
 		maxMaxY = coordLimits[0].max;
@@ -1776,7 +1632,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		$scope.set('LinearRegressionResult', linearRegressionRes[0]); // fix this later, more than one set should give what behavior?
 		$scope.set('DataChanged', true);
 
-		// debugLog("linearRegression,  finished");
+		// $log.log(preDebugMsg + "linearRegression,  finished");
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, true, false);
 	};
@@ -1788,8 +1644,8 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method inverts a specified matrix.
 	//===================================================================================
 	function invert(M) {
-		// debugLog("invert");
-		// debugLog("invert, augment matrix");
+		// $log.log(preDebugMsg + "invert");
+		// $log.log(preDebugMsg + "invert, augment matrix");
 		var augM = [];
 		for(var row = 0; row < M.length; row++) {
 			augM.push([]);
@@ -1805,7 +1661,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 		}
 
-		// debugLog("invert, Gauss-Jordan");
+		// $log.log(preDebugMsg + "invert, Gauss-Jordan");
 		for(var i = 0; i < M.length; i++) {
 			// find largest pivot
 	    	var max = Math.abs(augM[i][i]);
@@ -1824,7 +1680,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	    	var scale = augM[i][i];
 
 	    	if(scale == 0) {
-	    		debugLog('matrix is not invertible');
+	    		//$log.log(preDebugMsg + 'matrix is not invertible');
 	    		return [];
 	    	}
 
@@ -1842,7 +1698,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	    	}
 		}
 
-		// debugLog("invert, extract invert matrix");
+		// $log.log(preDebugMsg + "invert, extract invert matrix");
 		var res = [];
 		for(i = 0; i < M.length; i++) {
 			res.push([]);
@@ -1851,145 +1707,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 		}
 
-		// debugLog("invert, finished");
-		return res;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Background Color Check
-	// This method checks if the background color is as it should or not.
-	//===================================================================================
-	function backgroundColorCheck(currentColors, lastColors) {
-		if(currentColors.hasOwnProperty("skin")) {
-			if(!lastColors) {
-				return true;
-			} else if(!lastColors.hasOwnProperty("skin")) {
-				return true;
-			} else {
-				if(currentColors.skin.hasOwnProperty("gradient")) {
-					if(!lastColors.skin.hasOwnProperty("gradient")) {
-						return true;
-					} else {
-						if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-							return true;
-						}
-						for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-							if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-								|| lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-								return true;
-							}
-						}
-					}
-				} else {
-					if(lastColors.skin.hasOwnProperty("gradient")) {
-						return true;
-					} else {
-						if(currentColors.skin.hasOwnProperty("color")) {
-							if(!lastColors.skin.hasOwnProperty("color")
-								|| lastColors.skin.color != currentColors.skin.color) {
-								return true;
-							}
-						}
-					}
-				}
-
-				if(currentColors.skin.hasOwnProperty("border")) {
-					if(!lastColors.skin.hasOwnProperty("border")
-						|| lastColors.skin.border != currentColors.skin.border) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Check Colors
-	// This method checks if the drawing colors is like they should or not.
-	//===================================================================================
-	function checkColors(currentColors, lastColors) {
-		if(currentColors == lastColors) {
-			return false;
-		}
-
-		if(!lastColors) {
-			return true;
-		}
-
-		if(!lastColors.hasOwnProperty("groups") &&
-			!currentColors.hasOwnProperty("groups"))
-		{
-			return false;
-		} else if(lastColors.hasOwnProperty("groups")
-			&& currentColors.hasOwnProperty("groups")) {
-			// check more
-
-			var groupCols = currentColors.groups;
-			var lastGroupCols = lastColors.groups;
-
-			for(var g in groupCols) {
-				if(!lastGroupCols.hasOwnProperty(g)) {
-					return true;
-				}
-			}
-			for(var g in lastGroupCols) {
-				if(!groupCols.hasOwnProperty(g)) {
-					return true;
-				}
-
-				if(groupCols[g].hasOwnProperty('color')
-					&& (!lastGroupCols[g].hasOwnProperty('color') || lastGroupCols[g].color != groupCols[g].color)) {
-					return true;
-				}
-
-				if(groupCols[g].hasOwnProperty('gradient')) {
-					if(!lastGroupCols[g].hasOwnProperty('gradient') || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-						return true;
-					}
-
-					for(var i = 0; i < groupCols[g].gradient.length; i++) {
-						var cc = groupCols[g].gradient[i];
-						var cc2 = lastGroupCols[g].gradient[i];
-
-						if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos') || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color') || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos) || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-							return true;
-						}
-					}
-				}
-			}
-		} else {
-			return true;
-		}
-
-		return false;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Copy Colors
-	// This method copy the specified colors and return the copy.
-	//===================================================================================
-	function copyColors(colors) {
-		var res = {};
-
-		if(colors.hasOwnProperty('skin')) {
-			res.skin = {};
-			for(var prop in colors.skin) {
-				res.skin[prop] = colors.skin[prop];
-			}
-		}
-		if(colors.hasOwnProperty('groups')) {
-			res.groups = {};
-			for(var prop in colors.groups) {
-				res.groups[prop] = colors.groups[prop];
-			}
-		}
+		// $log.log(preDebugMsg + "invert, finished");
 		return res;
 	};
 	//===================================================================================
@@ -2016,7 +1734,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				bgCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2045,7 +1763,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(typeof colors === 'string') {
 				colors = JSON.parse(colors);
 			}
-			currentColors = copyColors(colors);
+			currentColors = legacyDDSupLib.copyColors(colors);
 
 			if(!currentColors) {
 				currentColors = {};
@@ -2077,7 +1795,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 
 		if(!redrawBackground && currentColors != lastColors) {
-			redrawBackground = backgroundColorCheck(currentColors, lastColors);
+			redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 		}
 
 		if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
@@ -2096,7 +1814,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 
 		if(!redrawDots) {
-			if(checkColors(currentColors, lastColors)) {
+			if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
 				redrawDots = true;
 				redrawLines = true;
 			}
@@ -2105,7 +1823,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		// ===========
 		// Draw
 		// ===========
-		// debugLog("Need to redraw: " + redrawBackground + " " + redrawDots + " " + " " + redrawAxes);
+		// $log.log(preDebugMsg + "Need to redraw: " + redrawBackground + " " + redrawDots + " " + " " + redrawAxes);
 
 		if(redrawBackground) {
 			drawBackground(W, H);
@@ -2145,7 +1863,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				bgCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2155,7 +1873,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 
 		if(!bgCtx) {
-			debugLog("no canvas to draw bg on");
+			//$log.log(preDebugMsg + "no canvas to draw bg on");
 			return;
 		}
 
@@ -2210,7 +1928,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				axesCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2220,7 +1938,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 
 		if(!axesCtx) {
-			debugLog("no canvas to draw axes on");
+			//$log.log(preDebugMsg + "no canvas to draw axes on");
 			return;
 		}
 
@@ -2237,9 +1955,9 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				var pos = leftMarg + i/LABELS*drawW;
 
 				var s = "";
-				s = pixel2valX(pos);
+				s = legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 
-				var textW = getTextWidthCurrentFont(s);
+				var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 				axesCtx.fillText(s, pos - textW/2, H - bottomMarg);
 				axesCtx.fillRect(pos, topMarg + drawH - 2, 1, 6);
 			}
@@ -2254,9 +1972,9 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				var pos = topMarg + i/LABELS*drawH;
 
 				var s = "";
-				s = number2text(pixel2valY(pos), coordLimits[0].span);
+				s = legacyDDSupLib.number2text(legacyDDSupLib.pixel2valY(pos, unique, drawH, topMarg, zoomMinY, zoomMaxY), coordLimits[0].span);
 
-				var textW = getTextWidthCurrentFont(s);
+				var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 				if(leftMarg > textW + 5) {
 					axesCtx.fillText(s, leftMarg - 6 - textW, pos + fontSize/2);
 				} else {
@@ -2269,7 +1987,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		// 0
 		if(unique > 0) {
 			if(zoomMinX < 0 && zoomMaxX > 0) {
-				var pos = val2pixelX(0);
+				var pos = legacyDDSupLib.val2pixelX(0, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 				var col = hexColorToRGBA(textColor, 0.5);
 
 				axesCtx.save();
@@ -2284,7 +2002,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 
 			if(zoomMinY < 0 && zoomMaxY > 0) {
-				var pos = val2pixelY(0);
+				var pos = legacyDDSupLib.val2pixelY(0, unique, drawH, topMarg, zoomMinY, zoomMaxY);
 				var col = col = hexColorToRGBA(textColor, 0.5);
 
 				axesCtx.save();
@@ -2312,7 +2030,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				dotCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2322,7 +2040,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 	
 		if(!dotCtx) {
-			debugLog("no canvas to draw on");
+			//$log.log(preDebugMsg + "no canvas to draw on");
 			return;
 		}
 
@@ -2332,7 +2050,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			return;
 		}
 
-		// debugLog("drawTimeSeries");
+		// $log.log(preDebugMsg + "drawTimeSeries");
     	noofGroups = 0;
     	var globalSelections = [];
     	var globalSelectionsPerId = $scope.gimme('GlobalSelections');
@@ -2359,12 +2077,12 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		var drawPretty = true;
     	if(unique > quickRenderThreshold) {
     		drawPretty = false;
-    		var rgba0 = hexColorToRGBAvec(getColorForGroup(0), 0.33);
+    		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), 0.33);
     		var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
     		var pixels = imData.data;
     	} else {
     		var col0 = hexColorToRGBA(getColorForGroup(0), 0.33);
-    		var fill0 = getGradientColorForGroup(0, 0,0,W,H, 0.33, dotCanvas, dotCtx);
+    		var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,W,H, 0.33, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
     	}
 
     	for(var set = 0; set < coordArrays[0].length; set++) {
@@ -2389,8 +2107,8 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				}
 
 				if(groupId == 0) {
-					var x = val2pixelX(i);
-					var y = val2pixelY(yArray[i]);
+					var x = legacyDDSupLib.val2pixelX(i, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+					var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 		    		if(drawPretty) {
 		    			dotCtx.beginPath();
@@ -2428,8 +2146,8 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				}
 
 				if(groupId != 0) {
-					var x = val2pixelX(i);
-                    var y = val2pixelY(yArray[i]);
+					var x = legacyDDSupLib.val2pixelX(i, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+                    var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 		    		if(drawPretty) {
 		    			var col = getColorForGroup(groupId);
@@ -2440,7 +2158,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 		    		} else {
-		    			rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+		    			rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
 		    			drawDotOutline(x, y, dotSize*1.5+8, 6, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 		    		}
 				}
@@ -2468,12 +2186,12 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		    		}
 
 		    		if(groupId == 0) {
-		    			var x = val2pixelX(i);
-		    			var y = val2pixelY(yArray[i]);
+		    			var x = legacyDDSupLib.val2pixelX(i, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+		    			var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 			
 						if(drawPretty) {
 							if(!useGlobalGradients) {
-								fill0 = getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33, dotCanvas, dotCtx);
+								fill0 = legacyDDSupLib.getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 							}
 
 			    			dotCtx.beginPath();
@@ -2508,14 +2226,14 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		    		}
 
 		    		if(groupId != 0) {
-		    			var x = val2pixelX(i);
-		    			var y = val2pixelY(yArray[i]);
+		    			var x = legacyDDSupLib.val2pixelX(i, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+		    			var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 						if(drawPretty) {
 							var col = getColorForGroup(groupId);
-							var fill = getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 1, dotCanvas, dotCtx);
+							var fill = legacyDDSupLib.getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 1, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 
-			    			dotCtx.beginPath();
+							dotCtx.beginPath();
 							dotCtx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
 							dotCtx.fillStyle = fill;
 							dotCtx.fill();
@@ -2523,7 +2241,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 							dotCtx.strokeStyle = col;
 							dotCtx.stroke();
 						} else {
-							rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+							rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
 							drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						}
 		    		}
@@ -2620,103 +2338,6 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 
 	//===================================================================================
-	// Get Gradient Color for Group
-	// This method returns the gradiant color for a specific group.
-	//===================================================================================
-	function getGradientColorForGroup(group, x1,y1, x2,y2, alpha, myCanvas, myCtx) {
-		if(useGlobalGradients) {
-			if(myCanvas === null) {
-				var myCanvasElement = $scope.theView.parent().find('#theBgCanvas');
-				if(myCanvasElement.length > 0) {
-					myCanvas = myCanvasElement[0];
-				}
-			}
-
-			var W = myCanvas.width;
-			if(typeof W === 'string') {
-				W = parseFloat(W);
-			}
-			if(W < 1) {
-				W = 1;
-			}
-
-			var H = myCanvas.height;
-			if(typeof H === 'string') {
-				H = parseFloat(H);
-			}
-			if(H < 1) {
-				H = 1;
-			}
-
-			x1 = 0;
-			y1 = 0;
-			x2 = W;
-			y2 = H;
-		}
-
-		if(colorPalette === null || colorPalette === undefined) {
-			colorPalette = {};
-		}
-
-		group = group.toString();
-
-		if(!colorPalette.hasOwnProperty(group)) {
-			if(currentColors.hasOwnProperty('groups')) {
-				var groupCols = currentColors.groups;
-
-				for(var g in groupCols) {
-					if(groupCols.hasOwnProperty(g)) {
-						colorPalette[g] = 'black';
-
-						if(groupCols[g].hasOwnProperty('color')) {
-							colorPalette[g] = groupCols[g].color;
-						}
-					}
-				}
-			}
-		}
-
-		if(currentColors.hasOwnProperty("groups")) {
-			var groupCols = currentColors.groups;
-
-			if(groupCols.hasOwnProperty(group) && myCtx !== null && groupCols[group].hasOwnProperty('gradient') && (x1 != x2 || y1 != y2)) {
-				var OK = true;
-
-				try {
-					var grd = myCtx.createLinearGradient(x1,y1,x2,y2);
-					for(var i = 0; i < groupCols[group].gradient.length; i++) {
-						var cc = groupCols[group].gradient[i];
-						if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
-							if(alpha !== undefined) {
-								grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
-							}
-							else {
-								grd.addColorStop(cc.pos, cc.color);
-							}
-						} else {
-							OK = false;
-						}
-					}
-				} catch(e) {
-					OK = false;
-				}
-
-				if(OK) {
-					return grd;
-				}
-			}
-		}
-
-		if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-			return 'black';
-		} else {
-			return colorPalette[group];
-		}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Get Color for Group
 	// This method returns the color for a specified group.
 	//===================================================================================
@@ -2753,53 +2374,11 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 
 	//===================================================================================
-	// Value to Pixel X
-	// This method converts a value on the plot to a proper pixel X position.
-	//===================================================================================
-	function val2pixelX(v) {
-		if(unique <= 0) {
-			return 0;
-		}
-
-		if(v < zoomMinX) {
-			return leftMarg;
-		}
-		if(v > zoomMaxX) {
-			return leftMarg + drawW;
-		}
-
-		return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Value to Pixel Y
-	// This method converts a value on the plot to a proper pixel Y position.
-	//===================================================================================
-	function val2pixelY(v) {
-		if(unique <= 0) {
-			return 0;
-		}
-
-		if(v < zoomMinY) {
-			return topMarg + drawH; // flip Y-axis
-		}
-		if(v > zoomMaxY) {
-			return topMarg; // flip Y-axis
-		}
-
-		return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Update Size
 	// This method updates the size in regard to text and image
 	//===================================================================================
 	function updateSize() {
-		// debugLog("updateSize");
+		// $log.log(preDebugMsg + "updateSize");
 		fontSize = parseInt($scope.gimme("FontSize"));
 		if(fontSize < 5) {
 			fontSize = 5;
@@ -2828,7 +2407,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				bgCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2848,7 +2427,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				dotCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2868,7 +2447,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(myCanvasElement.length > 0) {
 				axesCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2886,7 +2465,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(selectionCanvasElement.length > 0) {
 				selectionCanvas = selectionCanvasElement[0];
 			} else {
-				debugLog("no selectionCanvas to resize!");
+				//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 				return;
 			}
 		}
@@ -2939,10 +2518,10 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		if(unique > 0) {
 			for(var sel = 0; sel < selections.length; sel++) {
 				var s = selections[sel];
-				s[4] = val2pixelX(s[0]);
-				s[5] = val2pixelX(s[1]);
-				s[6] = val2pixelY(s[2]);
-				s[7] = val2pixelY(s[3]);
+				s[4] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+				s[5] = legacyDDSupLib.val2pixelX(s[1], unique, drawW, leftMarg, zoomMinX, zoomMaxX);
+				s[6] = legacyDDSupLib.val2pixelY(s[2], unique, drawH, topMarg, zoomMinY, zoomMaxY);
+				s[7] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 			}
 		}
 	};
@@ -3007,7 +2586,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		}
 
 		if(dirty) {
-			// debugLog("global selections dirty, redraw");
+			// $log.log(preDebugMsg + "global selections dirty, redraw");
 			updateGraphicsHelper(false, true, false);
 		}
 	};
@@ -3023,8 +2602,8 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method reacts to making a new selection based on stored mouse coordinates.
 	//===================================================================================
 	function newSelection(x1,x2, y1,y2, keepOld) {
-		// debugLog("newSelection");
-		// debugLog("newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
+		// $log.log(preDebugMsg + "newSelection");
+		// $log.log(preDebugMsg + "newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
 
 		if(unique > 0) {
 			x1 = Math.max(x1, leftMarg);
@@ -3032,13 +2611,13 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			y1 = Math.max(y1, topMarg);
 			y2 = Math.min(y2, topMarg + drawH);
 
-			var newSel = [pixel2valX(x1), pixel2valX(x2), pixel2valY(y2), pixel2valY(y1), x1,x2,y1,y2];// y1 and y2 need to be switched here, because we flip the y axis
-			// debugLog("newSel: " + JSON.stringify(newSel));
+			var newSel = [legacyDDSupLib.pixel2valX(x1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valX(x2, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valY(y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.pixel2valY(y1, unique, drawH, topMarg, zoomMinY, zoomMaxY), x1,x2,y1,y2];// y1 and y2 need to be switched here, because we flip the y axis
+			// $log.log(preDebugMsg + "newSel: " + JSON.stringify(newSel));
 			var overlap = false;
 			for(var s = 0; s < selections.length; s++) {
 				var sel = selections[s];
 				if(sel[4] == newSel[4] && sel[5] == newSel[5] && sel[6] == newSel[6] && sel[7] == newSel[7]) {
-					// debugLog("Ignoring selection because it overlaps 100% with already existing selection");
+					// $log.log(preDebugMsg + "Ignoring selection because it overlaps 100% with already existing selection");
 					overlap = true;
 					break;
 				}
@@ -3076,26 +2655,6 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 
 	//===================================================================================
-	// Hex Color to RGBA Vector
-	// This method converts a hex color value to a RGBA vector value.
-	// TODO: Could this not be replaced with core service instead
-	//===================================================================================
-	function hexColorToRGBAvec(color, alpha) {
-		var res = [];
-
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-			return [r, g, b, a];
-		}
-		return [0, 0, 0, 255];
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Hex Color to RGBA
 	// This method converts a hex color value to a RGBA value.
 	// TODO: Could this not be replaced with core service instead
@@ -3117,7 +2676,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	// This method parse the selection colors.
 	//===================================================================================
 	function parseSelectionColors() {
-		// debugLog("parseSelectionColors");
+		// $log.log(preDebugMsg + "parseSelectionColors");
 		var colors = $scope.gimme("GroupColors");
 		if(typeof colors === 'string') {
 			colors = JSON.parse(colors);
@@ -3145,7 +2704,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 						selectionCanvas = selectionCanvasElement[0];
 						selectionCtx = selectionCanvas.getContext("2d");
 					} else {
-						debugLog("no selectionCanvas to resize!");
+						//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 						return;
 					}
 				}
@@ -3180,7 +2739,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(selectionCanvasElement.length > 0) {
 				selectionCanvas = selectionCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw selections on!");
+				//$log.log(preDebugMsg + "no canvas to draw selections on!");
 				return;
 			}
 		}
@@ -3233,7 +2792,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			if(selectionRectElement.length > 0) {
 				selectionRect = selectionRectElement[0];
 			} else {
-				debugLog("No selection rectangle!");
+				//$log.log(preDebugMsg + "No selection rectangle!");
 			}
 		}
 		if(selectionRect !== null) {

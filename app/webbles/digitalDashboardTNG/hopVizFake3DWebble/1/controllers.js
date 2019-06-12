@@ -475,122 +475,11 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	}
     }
 
-    function getTextWidth(text, font) {
-	if(axesCtx !== null && axesCtx !== undefined) {
-	    axesCtx.font = font;
-	    var metrics = axesCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function getTextWidthCurrentFont(text) {
-	if(axesCtx !== null && axesCtx !== undefined) {
-	    var metrics = axesCtx.measureText(text);
-	    return metrics.width;
-	}
-	return 0;
-    }
 
-    function shortenName(n) {
-	var ss = n.split(":");
-	return ss[ss.length - 1];
-    }
 
-    function number2text(v, span) {
-	if(parseInt(Number(v)) == v) {
-	    return v.toString();
-	}
 
-	if(Math.abs(v) < 1) {
-	    return v.toPrecision(3);
-	}
-	if(span > 10) {
-	    return Math.round(v);
-	}
-	if(span > 5 && Math.abs(v) < 100) {
-	    return v.toPrecision(2);
-	}
-	return v.toPrecision(3);
-    };
 
-    function binLookup(ls, val, start, end) {
-
-	if(start >= end) {
-	    if(ls[start] == val) {
-		return start;
-	    } else {
-		return -1;
-	    }
-	} else {
-	    var mid = Math.floor((start + end) / 2);
-	    if(ls[mid] == val) {
-		return mid;
-	    }
-	    if(ls[mid] < val) {
-		return binLookup(ls, val, mid+1, end);
-	    } else {
-		return binLookup(ls, val, start, mid-1);
-	    }
-	}
-    }
-
-    function pixels2dimVals(pos) {
-	var res = {"dim":null, "x":0, "y":0, "val":0};
-	
-	if(unique <= 0) {
-	    return res;
-	} else {
-	    var marg = Math.min(2, innerMarg);
-	    if(pos.x > - marg + leftMarg
-	       && pos.x < leftMarg + dim[xAxisAxis] * cellW + marg
-	       && pos.y > topMarg + drawH - dim[yAxisAxis] * cellW - marg
-	       && pos.y < topMarg + drawH + marg) {
-
-		res.dim = xAxisAxis;
-
-		res.x = Math.max(0, Math.min(dim[xAxisAxis] - 1, Math.floor( (pos.x - leftMarg) / cellW)));
-
-		res.y = Math.max(0, Math.min(dim[yAxisAxis] - 1, Math.floor( (topMarg + drawH - pos.y) / cellW)));
-
-		res.val = res.x;
-
-		return res;
-	    } 
-
-	    if(pos.x > leftMarg + dim[xAxisAxis] * cellW + innerMarg - marg
-	       && pos.x < leftMarg + dim[xAxisAxis] * cellW  + dim[zAxisAxis] * cellW + innerMarg + marg) {
-		var a = Math.max(0, Math.min(dim[zAxisAxis] - 1, Math.floor((pos.x - leftMarg - innerMarg - dim[xAxisAxis] * cellW) / cellW)));
-		if(pos.y < topMarg + drawH - a * cellW + marg
-		   && pos.y > topMarg + drawH - (dim[yAxisAxis] + a) * cellW - marg) {
-		    res.dim = yAxisAxis;
-		    res.x = a;
-		    res.y = Math.max(0, Math.min(dim[yAxisAxis] - 1, Math.floor( (topMarg + drawH - pos.y - a * cellW) / cellW))); 
-		    res.val = res.y;
-
-		    return res;
-		}
-	    } 
-	    
-	    if(pos.y > topMarg + drawH - dim[yAxisAxis] * cellW - dim[zAxisAxis] * cellW - innerMarg - marg
-	       && pos.y < topMarg + drawH - dim[yAxisAxis] * cellW - innerMarg + marg) {
-
-		var b = Math.max(0, Math.min(dim[zAxisAxis] - 1, Math.floor( (topMarg + drawH - innerMarg - dim[yAxisAxis] * cellW - pos.y) / cellW)));
-
-		if(pos.x > leftMarg + b * cellW - marg
-		   && pos.x < leftMarg + dim[xAxisAxis] * cellW + b * cellW + marg) {
-		    res.dim = zAxisAxis;
-		    res.x = Math.max(0, Math.min(dim[xAxisAxis] - 1, Math.floor( (pos.x - leftMarg - b * cellW) / cellW)));
-		    res.y = b;
-		    res.val = res.y;
-
-		    return res;
-		}
-	    }
-	}
-
-	return res;
-    }
 
     function dimVals2pixels(dict) {
 	dimVals2pixels(dict.dim, dict.x, dict.y);
@@ -1046,138 +935,8 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	$scope.selectAll(); // will force update of local selections and a redraw
     }
 
-    function backgroundColorCheck(currentColors, lastColors) {
-	if(currentColors.hasOwnProperty("skin")) {
-	    if(!lastColors) {
-		return true;
-	    } else if(!lastColors.hasOwnProperty("skin")) {
-		return true;
-	    } else {
-		if(currentColors.skin.hasOwnProperty("gradient")) {
-		    if(!lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.gradient.length != lastColors.skin.gradient.length) {
-			    return true;
-			}
-			for(var i = 0; i < currentColors.skin.gradient.length; i++) {
-			    if(lastColors.skin.gradient[i].color != currentColors.skin.gradient[i].color
-			       || lastColors.skin.gradient[i].pos != currentColors.skin.gradient[i].pos) {
-				return true;
-			    }
-			}
-		    }
-		} else {
-		    if(lastColors.skin.hasOwnProperty("gradient")) {
-			return true;
-		    } else {
-			if(currentColors.skin.hasOwnProperty("color")) {
-			    if(!lastColors.skin.hasOwnProperty("color")
-			       || lastColors.skin.color != currentColors.skin.color) {
-				return true;
-			    }
-			}
-		    }
-		}
 
-		if(currentColors.skin.hasOwnProperty("border")) {
-		    if(!lastColors.skin.hasOwnProperty("border")
-		       || lastColors.skin.border != currentColors.skin.border) {
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
-    }
 
-    function checkColors(currentColors, lastColors) {
-	if(currentColors == lastColors) {
-	    return false;
-	}
-
-	if(!lastColors) {
-	    return true;
-	}
-
-	if(!lastColors.hasOwnProperty("groups") && 
-	   !currentColors.hasOwnProperty("groups"))
-	{
-	    return false;
-	} else if(lastColors.hasOwnProperty("groups") 
-		  && currentColors.hasOwnProperty("groups")) {
-	    // check more
-
-	    var groupCols = currentColors.groups;
-	    var lastGroupCols = lastColors.groups;
-	    
-	    for(var g in groupCols) {
-		if(!lastGroupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-	    }
-	    for(var g in lastGroupCols) {
-		if(!groupCols.hasOwnProperty(g)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('color')
-		   && (!lastGroupCols[g].hasOwnProperty('color')
-		       || lastGroupCols[g].color != groupCols[g].color)) {
-		    return true;
-		}
-		
-		if(groupCols[g].hasOwnProperty('gradient')) {
-		    if(!lastGroupCols[g].hasOwnProperty('gradient')
-		       || lastGroupCols[g].gradient.length != groupCols[g].gradient.length) {
-			return true;
-		    }
-		    
-		    for(var i = 0; i < groupCols[g].gradient.length; i++) {
-			var cc = groupCols[g].gradient[i];
-			var cc2 = lastGroupCols[g].gradient[i];
-			
-			if(cc.hasOwnProperty('pos') != cc2.hasOwnProperty('pos')
-			   || cc.hasOwnProperty('color') != cc2.hasOwnProperty('color')
-			   || (cc.hasOwnProperty('pos') && cc.pos != cc2.pos)
-			   || (cc.hasOwnProperty('color') && cc.color != cc2.color)) {
-			    return true;
-			}
-		    }
-		}
-	    }
-	} else {
-	    return true;
-	}
-
-	return false;
-    }
-
-    function copyColors(colors) {
-	var res = {};
-	
-	if(colors.hasOwnProperty('skin')) {
-	    res.skin = {};
-	    for(var prop in colors.skin) {
-		res.skin[prop] = colors.skin[prop];
-	    }
-	}
-	if(colors.hasOwnProperty('groups')) {
-	    res.groups = {};
-	    for(var prop in colors.groups) {
-		res.groups[prop] = colors.groups[prop];
-	    }
-	}
-	
-	if(colors.hasOwnProperty('selection')) {
-	    res.selection = {};
-	    for(var prop in colors.selection) {
-		res.selection[prop] = colors.selection[prop];
-	    }
-	}
-
-	return res;
-    }
 
     function updateGraphics() {
 	if(!parsingDataNow) { 
@@ -1225,7 +984,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
     	    if(typeof colors === 'string') {
     		colors = JSON.parse(colors);
     	    }
-	    currentColors = copyColors(colors);
+	    currentColors = legacyDDSupLib.copyColors(colors);
 
 	    if(!currentColors) {
 		currentColors = {};
@@ -1360,7 +1119,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	}
 
 	if(!redrawBackground && currentColors != lastColors) {
-	    redrawBackground = backgroundColorCheck(currentColors, lastColors);
+	    redrawBackground = legacyDDSupLib.backgroundColorCheck(currentColors, lastColors);
 	}
 	
 	if(!redrawAxes && (textColor != lastTextColor || fontSize != lastFontSize)) {
@@ -1372,7 +1131,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	    redrawSelections = true;
 	}
 	
-	if(checkColors(currentColors, lastColors)) {
+	if(legacyDDSupLib.checkColors(currentColors, lastColors)) {
 	    redrawCells = true;
 	    redrawSelections = true;
 	}
@@ -1515,7 +1274,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		    dropCtx.stroke();
 		    if(hover) {
 			var str = dropZone.label;
-			var tw = getTextWidth(str, fnt);
+			var tw = legacyDDSupLib.getTextWidth(axesCtx, str, fnt);
 			var labelShift = Math.floor(fontSize / 2);
 			if(dropZone.rotate) {
 			    if(dropZone.left > W / 2) {
@@ -1633,11 +1392,11 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 
 	if(dataName !== null) {
 	    str = dataName;
-	    xw = getTextWidthCurrentFont(dataName);
+	    xw = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, dataName);
 	}
 
 	if(str != "") {
-	    var w = getTextWidthCurrentFont(str);
+	    var w = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, str);
 	    var top = 0;
 	    if(fontSize < topMarg) {
 		top = Math.floor((topMarg - fontSize) / 2);
@@ -1689,7 +1448,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 
 	var WW = plotCanvas.width;
 	var HH = plotCanvas.height;
-	var rgbaText = hexColorToRGBAvec(textColor, 1);
+	var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1);
 	var imData = plotCtx.getImageData(0, 0, plotCanvas.width, plotCanvas.height);
 	var pixels = imData.data;
 
@@ -1762,7 +1521,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 				var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
 				col[3] *= alphaFactor;
 				
-				fillRectFast(Math.round(xpos), Math.round(ypos), Math.ceil(zCellW), Math.ceil(zCellW), col[0], col[1], col[2], col[3], pixels, WW, HH);
+				legacyDDSupLib.fillRectFast(Math.round(xpos), Math.round(ypos), Math.ceil(zCellW), Math.ceil(zCellW), col[0], col[1], col[2], col[3], pixels, WW, HH);
 			    }
 			}
 		    }
@@ -1945,14 +1704,14 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		// alpha = Math.max(0, Math.min(255, Math.floor(256 * (_2D[b][a] - minVal) / (maxVal - minVal))));
 		// var col = rgbaText;
 
-		// fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
+		// legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
 
 		var val = _2D[b][a];
 
 		if(val !== null) {
 		    var pos = dimVals2pixels(xAxisAxis, a, b);
 		    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
-		    fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
+		    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 		}
 	    }
 	}
@@ -1992,7 +1751,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	    var alpha = Math.max(0, Math.min(255, Math.floor(256 * Math.abs(val) / mx)));
 	    col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
 	} else if(colorMode == 3 && sums.length > 0) { // histogram
-	    var sortedPos = binLookup(sums, val, 0, sums.length);
+	    var sortedPos = legacyDDSupLib.binLookup(sums, val, 0, sums.length);
 	    var perc = sortedPos / (sums.length - 1);
 	    var alpha = Math.floor(255 * perc);
 	    col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
@@ -2140,13 +1899,13 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 
 		// 	var col = rgbaText;
 
-		// 	fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
+		// 	legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
 		
 		var val = _2D[b][a];
 		if(val !== null) {
 		    var pos = dimVals2pixels(yAxisAxis, a, b);
 		    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
-		    fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
+		    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 		}
 	    }
 	}
@@ -2289,87 +2048,20 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 
 		// var col = rgbaText;
 
-		// fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
+		// legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], alpha, pixels, WW, HH);
 		
 		var val = _2D[b][a];
 		
 		if(val !== null ){
 		    var pos = dimVals2pixels(zAxisAxis, a, b);
 		    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
-		    fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
-		}
-	    }
-	}
-    }
-
-    function fillRectFast(X1, Y1, DX, DY, r, g, b, alpha, pixels, Width, Height)
-    {
-	var W = Math.floor(Width);
-	var H = Math.floor(Height);
-
-	var x1 = Math.round(X1);
-	var y1 = Math.round(Y1);
-	var dx = Math.round(DX);
-	var dy = Math.round(DY);
-
-	for(var j = 0; j < dy; j++) 
-	{
-            for (var i = 0; i < dx; i++)
-	    {
-		var rx = x1 + i;
-		var ry = y1 + j;
-		if(ry >= 0 && ry < H
-		   && rx >= 0 && rx < W) {
-		    var offset = (ry * W + rx) * 4;
-		    
-		    if(alpha < 255) {
-			blendRGBAs(r,g,b,alpha, offset, pixels);
-		    } else {
-			pixels[offset] = r;
-			pixels[offset+1] = g;
-			pixels[offset+2] = b;
-			pixels[offset+3] = alpha;
-		    }
+		    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 		}
 	    }
 	}
     }
 
 
-    function blendRGBAs(r,g,b,alpha, offset, pixels) {
-	if(pixels[offset+3] > 0 && alpha < 255) {
-	    // something drawn here already, blend alpha
-
-	    var oldA = pixels[offset+3] / 255.0;
-	    var newA = alpha / 255.0;
-
-	    var remainA = (1 - newA) * oldA;
-	    
-	    var outA = newA + remainA;
-	    if(outA > 0) {
-		var oldR = pixels[offset];
-		var oldG = pixels[offset+1];
-		var oldB = pixels[offset+2];
-
-		var outR = Math.min(255, (oldR * remainA + newA * r) / outA);
-		var outG = Math.min(255, (oldG * remainA + newA * g) / outA);
-		var outB = Math.min(255, (oldB * remainA + newA * b) / outA);
-	    } else {
-		var outR = 0;
-		var outG = 0;
-		var outB = 0;
-	    }
-	    pixels[offset] = outR;
-	    pixels[offset+1] = outG;
-	    pixels[offset+2] = outB;
-	    pixels[offset+3] = Math.min(255, outA * 255);
-	} else {
-	    pixels[offset] = r;
-	    pixels[offset+1] = g;
-	    pixels[offset+2] = b;
-	    pixels[offset+3] = alpha;
-	}
-    }
 
     function updateSize() {
 	// debugLog("updateSize");
@@ -2640,7 +2332,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
     		if(typeof colors === 'string') {
     		    colors = JSON.parse(colors);
     		}
-		currentColors = copyColors(colors);
+		currentColors = legacyDDSupLib.copyColors(colors);
 
     		updateGraphicsHelper(false, false, false);
 		drawSelections();
@@ -2733,35 +2425,8 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	saveSelectionsInSlot();
     }
 
-    function hexColorToRGBAvec(color, alpha) {
-	var res = [];
 
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-	    return [r, g, b, a];
-	}
-	return [0, 0, 0, 255];
-    }
 
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
-
-	    var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + a + ")";
-	}
-	return color;
-    };
 
     function parseSelectionColors() {
 	// debugLog("parseSelectionColors");
@@ -2781,9 +2446,9 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 	    }
 	    
 	    if(colors['selection'].hasOwnProperty('color')) {
-		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 	    } else {
-		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
 	    }
 
 	    if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
@@ -2803,7 +2468,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
 		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 			atLeastOneAdded = true;
 		    }
 		}
@@ -2970,7 +2635,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
     		}
 	    }
 
-	    var dimAndVal = pixels2dimVals(currentMouse);
+	    var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 	    // var dimAndVal = mousePosToDimXYZ(currentMouse);
 
 	    if(hoverText !== null) {
@@ -2978,7 +2643,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		    
 		    if(dimAndVal.dim !== null) {
 			s = "[dim " + dimAndVal.dim + " = " + dimAndVal.val + "]";
-			var textW = getTextWidthCurrentFont(s);
+			var textW = legacyDDSupLib.getTextWidthCurrentFont(axesCtx, s);
 			hoverText.style.font = fontSize + "px Arial";
 			hoverText.style.left = Math.floor(currentMouse.x - textW/2) + "px";
 			hoverText.style.top = Math.floor(currentMouse.y - fontSize - 5) + "px";
@@ -3114,7 +2779,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 
 		if(mousePosIsInSelectableArea(currentMouse)) {
 		    // var dimAndVal = mousePosToDimXYZ(currentMouse);
-		    var dimAndVal = pixels2dimVals(currentMouse);
+		    var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 		    
 		    clickStart = dimAndVal;
 		    if(e.ctrlKey || e.metaKey) {
@@ -3172,7 +2837,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 
 		// var dimAndVal = mousePosToDimXYZ(currentMouse);
-		var dimAndVal = pixels2dimVals(currentMouse);
+		var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 
 		if(clickStart.dim == dimAndVal.dim) {
 		    newSelection(clickStart.dim, clickStart.val, dimAndVal.val, clickStart.ctrl);
@@ -3206,7 +2871,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		currentMouse = {x: (e.offsetX || e.clientX - $(e.target).offset().left), y: (e.offsetY || e.clientY - $(e.target).offset().top)};
 
 		// var dimAndVal = mousePosToDimXYZ(currentMouse);
-		var dimAndVal = pixels2dimVals(currentMouse);
+		var dimAndVal = legacyDDSupLib.pixels2dimVals(currentMouse, unique, dim, leftMarg, topMarg, drawH, xAxisAxis, yAxisAxis, cellW, zAxisAxis, innerMarg);
 		
 		if(clickStart.dim == dimAndVal.dim) {
 		    newSelection(clickStart.dim, clickStart.val, dimAndVal.val, clickStart.ctrl);

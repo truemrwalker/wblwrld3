@@ -1,3 +1,6 @@
 {
-    "libs": ["rowClustering.js"]
+    "libs": [
+		"../../DigitalDashboard/1/legacyDDSupLib.js",
+		"rowClustering.js"
+	]
 }
