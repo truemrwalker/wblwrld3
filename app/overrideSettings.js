@@ -65,6 +65,7 @@ var wblwrldSystemOverrideSettings = {
     requestedPlatformPotential: -1,     // Platform Potential Control (-1=Ignore, 0=None (no menu) , 1=Slim (basically only ABOUT), 2=Limited (No Webservice related menu items), 3=Full (All Menu Items), 4=Custom (not implemented))
     pageTitle: "",                      // Title bar text
     aboutInfoText: "",                  // About App Text
+	shortcutKeysDisabled: true,        // on the form true or false -- set to true if you want to disable all Webble world internal shortcut keys (menu related and more). Webble specific shortcut keys will still work though
     autoLoadedWebblePath: "",           // relative or absolute path for a webble (app or any) that should be loaded automatically
 	vettingIsEnabled: true,				// If set to true, only Webbles owned by oneself or made by users in the vettingUsers list (below) will appear in the Webble browser, all others will be hidden. (public servers should probably be set to true)
 	vettedUsers: [        				// list (array) of user names that the system will acknowledge as safe and who's Webbles will be visible to anybody (eg. ["best-User", "secondBest-User"])

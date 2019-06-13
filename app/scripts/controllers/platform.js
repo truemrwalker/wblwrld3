@@ -353,6 +353,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var waitingForNumberKey_ = 0;
 	var frozenRecentWblList_ = [];
 	var platformResize_JSTimeout;
+	var failedShortcutKeyAttempt = {key: undefined, consecutiveTimesSame: 0, consecutiveTimesAny: 0};
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -472,8 +473,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             $scope.ctrlKeyIsDown = true;
         }
 
-		if($event.keyCode != 18 && $event.keyCode != 16 && $event.keyCode != 13 && $event.keyCode != 17){
-            if($scope.executeMenuSelection('', {theAltKey: $event.altKey, theShiftKey: $event.shiftKey, theCtrlKey: $event.ctrlKey, theKey: (($event.keyCode >= 186 && $event.keyCode <= 192) || ($event.keyCode >= 219 && $event.keyCode <= 222) || ($event.keyCode == 226)) ? $event.key : fromKeyCode($event.keyCode)})){
+		if($event.keyCode != 18 && $event.keyCode != 16 && $event.keyCode != 13 && $event.keyCode != 17){   //If Main key is not only ENTER, SHIFT, CTRL or ALT
+            if(!wblwrldSystemOverrideSettings.shortcutKeysDisabled && $scope.executeMenuSelection('', {theAltKey: $event.altKey, theShiftKey: $event.shiftKey, theCtrlKey: $event.ctrlKey, theKey: (($event.keyCode >= 186 && $event.keyCode <= 192) || ($event.keyCode >= 219 && $event.keyCode <= 222) || ($event.keyCode == 226)) ? $event.key : fromKeyCode($event.keyCode)})){
                 $event.preventDefault();
             }
             else{
@@ -486,9 +487,31 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     }
                 }
 				$scope.fireWWEventListener(Enum.availableWWEvents.keyDown, {targetId: null, key: {code: $event.keyCode, name: (($event.keyCode >= 186 && $event.keyCode <= 192) || ($event.keyCode >= 219 && $event.keyCode <= 222) || ($event.keyCode == 226)) ? $event.key : fromKeyCode($event.keyCode), released: false}, timestamp: (new Date()).getTime()});
+
+				//If no Webble is listening for key events and the user still keep feeding them then we should perhaps inform about the disabled state
+                if(wblwrldSystemOverrideSettings.shortcutKeysDisabled && !isFormOpen_ && wwEventListeners_.keyDown.length == 0){
+					failedShortcutKeyAttempt.consecutiveTimesAny++;
+					if(failedShortcutKeyAttempt.consecutiveTimesAny >= 5){
+						failedShortcutKeyAttempt.consecutiveTimesAny = 0;
+						$log.info("Shortcut keys are disabled on this version of Webble World. Please contact server administration for more information.");
+					}
+                	if(failedShortcutKeyAttempt.key != $event.keyCode){
+						failedShortcutKeyAttempt.key = $event.keyCode;
+						failedShortcutKeyAttempt.consecutiveTimesSame = 1;
+					}
+                	else{
+						failedShortcutKeyAttempt.consecutiveTimesSame++;
+					}
+					if(failedShortcutKeyAttempt.consecutiveTimesSame >= 5){
+						failedShortcutKeyAttempt.key = undefined;
+						failedShortcutKeyAttempt.consecutiveTimesSame = 0;
+						$scope.showQIM(gettext("Shortcut keys are disabled on this version of Webble World. Please contact server administration for more information."), 4000, {w: 300, h: 100});
+					}
+                }
             }
         }
 
+		//If ENTER
 		if($event.keyCode == 13 && isFormOpen_ && platformAccessedMI){
 			platformAccessedMI.close();
 			platformAccessedMI = undefined;
@@ -2877,7 +2900,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 			if(queueOfHandlersToBeTriggered.length > 0){
 				var theCallbackObject = queueOfHandlersToBeTriggered.shift();
-				try{ theCallbackObject.cb(theCallbackObject.ed); }catch(e){ $log.log("The Callback for the Webble event failed (and was ignored). The callback object that failed was the following:"); $log.log(angular.copy(theCallbackObject));  }
+				try{
+					theCallbackObject.cb(theCallbackObject.ed);
+				}catch(e){
+					$log.log("The Callback for the Webble event failed (and was ignored). The callback object that failed was the following:"); $log.log(angular.copy(theCallbackObject));
+					$log.log("The error object returned was the following:"); $log.log(e);
+				}
 			}
 
 			if(queueOfHandlersToBeTriggered.length == 0){
@@ -3589,7 +3617,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					}
 				}
             }
-            
+
 			// Since we are done loading a whole set of webbles, we can now make them all visible at once for smoother user experience
 			for(var i = 0, freshWblId; freshWblId = listOfWebblesBeingLoaded[i]; i++){
 				for(var n = 0, aw; aw = $scope.getActiveWebbles()[n]; n++){
@@ -4701,22 +4729,22 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         //==== NON-MENU KEYBOARD ============================
         if (sublink == 'shortcutinfo' || (whatKeys.theKey == 'F1' || (whatKeys.theAltKey && whatKeys.theKey == 'F1'))){
 			$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("Non-Menu Shortcut Keys"), content:
-					'<strong>Alt+F1</strong>:' + gettextCatalog.getString("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
-					'<strong>Alt+F2</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
-					'<strong>Alt+F3</strong>:' + gettextCatalog.getString("Toggle Console Debug Logging.") + '<br>' +
-					'<strong>Alt+F5</strong>:' + gettextCatalog.getString("Quick Save Current Desktop.") + '<br>' +
-					'<strong>Alt+F6</strong>:' + gettextCatalog.getString("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
+					'<strong>F1 (Alt+F1)</strong>:' + gettextCatalog.getString("Display non-menu Shortcut keys and additional quick help info.") + '<br>' +
+					'<strong>F2 (Alt+F2)</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
+					'<strong>F3 (Alt+F3)</strong>:' + gettextCatalog.getString("Toggle Console Debug Logging.") + '<br>' +
+					'<strong>F5 (Alt+F5)</strong>:' + gettextCatalog.getString("Quick Save Current Desktop.") + '<br>' +
+					'<strong>F1 (Alt+F6)</strong>:' + gettextCatalog.getString("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
 					'<strong>F8 (Alt+F8)</strong>:' + gettextCatalog.getString("Quick Load A Fundamental Webble.") + '<br>' +
 					'<strong>F9 (Alt+F9)</strong>:' + gettextCatalog.getString("Quick Toggles between System Language and English.") + '<br>' +
-					'<strong>Alt+F10</strong>:' + gettextCatalog.getString("Open System Language Select Form") + '<br>' +
-					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode.") + '<br>' +
+					'<strong>F10 (Alt+F10)</strong>:' + gettextCatalog.getString("Open System Language Select Form") + '<br>' +
+					'<strong>Alt+Shift+PageDown (Ctrl+Shift+PageDown)</strong>:' + gettextCatalog.getString("Reset Webble World Intro to first time visitor mode. (must load page without '#/app' extension in the address))") + '<br>' +
 					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
 					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
 					'<strong>Enter</strong>:' + gettextCatalog.getString("In the Webble Browser the Enter Key execute a search or load the selected Webble, and in some other forms the enter key executes a submit, though not in all.") + '<br>' +
 					'<strong>Alt+' + gettextCatalog.getString("Arrow Keys") + '</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
-					'<strong>Alt (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>' +
+					'<strong>Alt+Shift (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>' +
 					'<strong>Alt+Ctrl+Num 0</strong>:' + gettextCatalog.getString("In case some Webbles have attempted to lock down the system this 'Panic Feature' returns a lost Webble World Main menu and sets the user to highest level of Developer in order to get back to work.") + '<br>' +
-					'<strong>Alt+Ctrl+Selection+Mouse</strong>:' + gettextCatalog.getString("If you want to move a webble with children, without moving the children, select the webble, hold CTRL + ALT and move the Webble in Question. The children may shake a little, but more or less stay in place.") + '<br>' }
+					'<strong>Shift+Selection+Mouse</strong>:' + gettextCatalog.getString("If you want to move a webble with children, without moving the children, select the webble, hold CHIFT and move the Webble in Question. The children may shake a little, but more or less stay in place.") + '<br>' }
 			);
         }
 		//Toggle Main Menu visibility

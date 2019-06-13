@@ -226,11 +226,12 @@ var BrowserDetect = {
         return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
     },
     dataBrowser: [
-        {
-            string: navigator.userAgent,
-            subString: "Chrome",
-            identity: "Chrome"
-        },
+		{
+			string: navigator.userAgent,
+			subString: "OPR",
+			versionSearch: "OPR/",
+			identity: "Opera"
+		},
         { 	string: navigator.userAgent,
             subString: "OmniWeb",
             versionSearch: "OmniWeb/",
@@ -243,11 +244,6 @@ var BrowserDetect = {
             versionSearch: "Version"
         },
         {
-            prop: window.opera,
-            identity: "Opera",
-            versionSearch: "Version"
-        },
-        {
             string: navigator.vendor,
             subString: "iCab",
             identity: "iCab"
@@ -257,6 +253,11 @@ var BrowserDetect = {
             subString: "KDE",
             identity: "Konqueror"
         },
+		{
+			string: navigator.userAgent,
+			subString: "Chrome",
+			identity: "Chrome"
+		},
         {
             string: navigator.userAgent,
             subString: "Firefox",

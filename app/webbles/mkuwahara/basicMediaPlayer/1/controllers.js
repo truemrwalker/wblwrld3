@@ -169,18 +169,18 @@ wblwrld3App.controller('mediaPlayerWebbleCtrl', function($scope, $log, $timeout,
 		$scope.addSlot(new Slot('playerType',
 			randomNum == 1 ? 0 : 1,
 			'Player Type',
-			'If the player should be displayed as an audio or video player',
+			'If the player should be displayed as an video or audio player',
 			$scope.theWblMetadata['templateid'],
 			{inputType: Enum.aopInputTypes.ComboBoxUseIndex, comboBoxContent: ['Video Player', 'Audio Player']},
 			undefined
 		));
 
 		$scope.addSlot(new Slot('mediaSrc',
-			randomNum == 1 ? 'https://192.168.12.186:7443/media/intro.mp4' : 'http://k003.kiwi6.com/hotlink/hwukwylzbf/ThankYouForTheMusic.mp3',
+			randomNum == 1 ? 'media/intro.mp4' : 'https://dl.getdropbox.com/s/lmgl93j82mt7sve/14%20Thank%20you%20for%20the%20music.mp3',
 			'Media Link',
 			'The source link for the media file to be played',
 			$scope.theWblMetadata['templateid'],
-			{inputType: Enum.aopInputTypes.AudioPick},
+			randomNum == 1 ? {inputType: Enum.aopInputTypes.VideoPick} : {inputType: Enum.aopInputTypes.AudioPick},
 			undefined
 		));
 

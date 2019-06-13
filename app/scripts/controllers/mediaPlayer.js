@@ -38,7 +38,7 @@
 // This is the controller for the platform's video playing capabilities (non Webble related)
 //
 //====================================================================================================================
-ww3Controllers.controller('MediaPlayerCtrl', function($scope, $log, $window, $routeParams, $location, localStorageService){
+ww3Controllers.controller('MediaPlayerCtrl', function($scope, $log, $window, $routeParams, $location, $timeout, localStorageService){
 
     //=== PROPERTIES ================================================================
     $scope.videoWidth = $window.document.width;
@@ -97,12 +97,24 @@ ww3Controllers.controller('MediaPlayerCtrl', function($scope, $log, $window, $ro
         var browser = BrowserDetect.browser;
         if($routeParams['vidId'] == 'intro'){
             $scope.skipVideoBtnVisibility = true;
-            if(browser == 'Chrome' || browser == 'Opera' || browser == 'Firefox'){
+            if(browser == 'Firefox'){
                 $scope.videoSrc = 'media/intro.ogg';
             }
             else{
                 $scope.videoSrc = 'media/intro.mp4';
             }
+
+			var vid = $("#webbleWorldMediaPlayer");
+			vid.click(function(e){
+				// handle click if not Firefox (Firefox supports this feature natively)
+				if (typeof InstallTrigger === 'undefined') {
+					// toggles play / pause
+					this.paused ? this.play() : this.pause();
+				}
+			});
+			vid[0].onended = function() {
+				$scope.onEventHandler_VideoEnd_RedirectVisitor();
+			};
         }
         else{
             $log.error($scope.strFormatFltr('The media player was called with non valid video request value: {0}', [$routeParams['vidId']]));
