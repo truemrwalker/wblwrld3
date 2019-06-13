@@ -170,11 +170,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
     $scope.setStyle = undefined;
 
     var wblVisibilty_ = true;
-    $scope.getWblVisibilty = function(){return wblVisibilty_;};
-    $scope.setWblVisibilty = function(newVal){if(newVal == true || newVal == false){wblVisibilty_ = newVal;}};
+    $scope.getWblVisibility = function(){return wblVisibilty_;};
+    $scope.setWblVisibility = function(newVal){if(newVal == true || newVal == false){wblVisibilty_ = newVal;}};
 
     var interactionObjContainerVisibilty_ = false;
-    $scope.getInteractionObjContainerVisibilty = function(){return interactionObjContainerVisibilty_;};
+    $scope.getInteractionObjContainerVisibility = function(){return interactionObjContainerVisibilty_;};
 
     // Keeps track if the webbles selection state
     var theSelectState_ = Enum.availableOnePicks_SelectTypes.AsNotSelected;

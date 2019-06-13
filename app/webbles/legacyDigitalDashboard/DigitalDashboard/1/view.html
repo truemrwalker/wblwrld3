@@ -46,7 +46,7 @@
 					<table>
 						<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="field in set.fields">
 							<td ng-style="{'padding':5}">{{field.name}}</td>
-							<td ng-if="!field.template" ng-style="{'padding':7}">Data: <select ng-model="field.input" ng-options="input.id as input.name for input in field.inputList"></td>
+							<td ng-if="!field.template" ng-style="{'padding':7}">Data: <select ng-model="field.input" ng-options="input.id as input.name for input in field.inputList"></select></td>
 							<td ng-if="field.template" ng-style="{'padding':7}"><button ng-click="addField(pluginSet, set, field)" class="btn btn-default">Add more fields like this</button></td>
 							<td ng-if="field.added" ng-style="{'padding':7}"><button ng-click="removeField(pluginSet, set, field)" class="btn btn-default">Remove this field</button></td>
 						</tr>

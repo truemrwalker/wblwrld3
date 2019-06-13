@@ -18,7 +18,7 @@ where you preferably put them.*/
 }
 
 .valueDisplay{
-    font-family: georgia;
+    font-family: Georgia, "Comic Sans MS", "Times New Roman", Arial, sans-serif;
     font-size: 12px;
     font-weight: normal;
     color: #003147;

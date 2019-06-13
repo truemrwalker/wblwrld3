@@ -124,16 +124,16 @@
 }
 .depth div.left-pane {
   -webkit-transform:rotateY(270deg) translateX(-100px);
-  -webkit-transform-origin: center left;
+  -webkit-transform-origin:  left center;
 
   -moz-transform:rotateY(270deg) translateX(-100px);
-  -moz-transform-origin: center left;
+  -moz-transform-origin: left center ;
 
   -ms-transform:rotateY(270deg) translateX(-100px);
-  -ms-transform-origin: center left;
+  -ms-transform-origin: left center ;
 
   transform:rotateY(270deg) translateX(-100px);
-  transform-origin: center left;
+  transform-origin: left center;
 }
 .depth div.top-pane {
   -webkit-transform:rotateX(-90deg) translateY(-100px);

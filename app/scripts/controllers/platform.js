@@ -347,13 +347,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	var webblesWaitingToBeLoaded = [];
 	var downloadingManifestLibs = false;
 	var pleaseQuickLoadInternalSavedWS = false;
-	$scope.isSystemDoneLoadingWebbles = function () { return (!webbleCreationInProcess && webblesWaitingToBeLoaded.length == 0); }
+	$scope.isSystemDoneLoadingWebbles = function () { return (!webbleCreationInProcess && webblesWaitingToBeLoaded.length == 0); };
 
 	// Flags and short memory trackers that keeps track of platform states
 	var waitingForNumberKey_ = 0;
 	var frozenRecentWblList_ = [];
 	var platformResize_JSTimeout;
 	var failedShortcutKeyAttempt = {key: undefined, consecutiveTimesSame: 0, consecutiveTimesAny: 0};
+	var originalOverrideSettings = {oosObj: undefined, isAllowedToChange: false};
 
     // flags that knows weather the current workspace is shared and therefore wishes to emit its changes to the outside world
     var liveOnlineInteractionEnabled_ = false;
@@ -390,7 +391,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	// This is an object that contains all callback functions registered by webbles within Webble World for all existing
 	// events.
 	// All callback functions are sent a datapack object as a parameter when they fire which includes different things
-	// depending on the event. The targeId post in these datapacks are only useful when the webble are listening to
+	// depending on the event. The targetId post in these datapacks are only useful when the webble are listening to
 	// multiple webbles with the same callback.
 	var wwEventListeners_ = {
 		slotChanged: [],	 		//Returning Data: {targetId: [Instance Id for webble getting slot changed], slotName: [Slot Name], slotValue: [Slot Value], timestamp: [a chronological timestamp value]}
@@ -848,7 +849,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						theWbl.scope().addSlot(new Slot('customInteractionObjects',
 							{},
 							'Custom Interaction Objects',
-							'Data for customizing the Webblw Interaction Objects',
+							'Data for customizing the Webble Interaction Objects',
 							'wblIntrnlCstm',
 							undefined,
 							undefined
@@ -1118,7 +1119,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'</br></br><strong>' + gettextCatalog.getString("BEFORE:") + '</strong> <span style="font-family: courier, monospace;">} </span>&nbsp;' +
 					'</br>' + gettextCatalog.getString("to the following...") + ' &nbsp;' +
 					'</br><strong>' + gettextCatalog.getString("AFTER:") + '</strong> <span style="font-family: courier, monospace;">}); </span>&nbsp;</br></br>' +
-					gettextCatalog.getString("Thats it. Now the Webble should work just fine.") + '&nbsp;</br>' +
+					gettextCatalog.getString("That's it. Now the Webble should work just fine.") + '&nbsp;</br>' +
 					gettextCatalog.getString("If you have problem understanding above explanation, you can always start a new Webble template project and look at the controller file how it is supposed to look now.") + '&nbsp;</br></br>' +
 					gettextCatalog.getString("Another change is the replacement of eventInfo and wblEventInfo with a new internal Event Listener system. If your Webbles use watches to listen to any of those data objects they are now deprecated and have to be changed to the new event handling object.") + '&nbsp;' +
 					'</br><i>' + gettextCatalog.getString("Example:") + '</i> <span style="font-family: courier, monospace;">$scope.registerWWEventListener(Enum.availableWWEvents.gotChild, function(eventData){Your callback code}); </span>&nbsp;</br></br>' +
@@ -1229,7 +1230,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
         });
 
-        // Listen to Current Workspace Name so that the web site title can adjust ackordingly
+        // Listen to Current Workspace Name so that the web site title can adjust accordingly
         $scope.$watch(function(){ return (currWS_ ? currWS_.name : ''); }, function(newValue, oldValue) {
             if(newValue != oldValue){
                 if(newValue != ''){
@@ -1240,13 +1241,29 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 }
             }
         });
+
+		// Listen to runtime attempts to change the values of wblwrldSystemOverrideSettings, and if so, make sure to immediately change it back to its original state
+		$scope.$watch(function(){ return wblwrldSystemOverrideSettings; }, function(newValue, oldValue) {
+			if(originalOverrideSettings.isAllowedToChange){
+				originalOverrideSettings.isAllowedToChange = false;
+				return;
+			}
+
+			if(!originalOverrideSettings.oosObj){
+				originalOverrideSettings.oosObj = angular.copy(wblwrldSystemOverrideSettings);
+			}
+			else{
+				originalOverrideSettings.isAllowedToChange = true;
+				wblwrldSystemOverrideSettings = angular.copy(originalOverrideSettings.oosObj);
+			}
+		}, true);
     };
     //========================================================================================
 
 
     //========================================================================================
     // Open Authentication Prompt
-    // Open modal for letting user login properly and be aunthenticated.
+    // Open modal for letting user login properly and be authenticated.
     //========================================================================================
     var openAuthPrompt = function(authOfferToRegisterByDefault) {
         if (authPrompt != null)
@@ -1734,7 +1751,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 	// Sort File List In Order Of Loading
 	// This method takes the file list provided by the webble def file from the server and
-	// group it in extrenal 3rd party files and internal files and also sort it in order of
+	// group it in external 3rd party files and internal files and also sort it in order of
 	// required loading.
 	//========================================================================================
 	var sortFileListInOrderOfLoading = function(unsortedFileList){
@@ -2765,16 +2782,16 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 
     //========================================================================================
-    // Update WorkSurfce
+    // Update WorkSurface
     // Make sure the Webble is loaded and Displayed as it should before it is happy by regular
     // check that Angular has applied everything as it should.
     //========================================================================================
-    var updateWorkSurfce = function() {
+    var updateWorkSurface = function() {
         if(!$scope.$$phase){
             $scope.$apply();
         }
         if($scope.waiting()){
-            $timeout(updateWorkSurfce, 100);
+            $timeout(updateWorkSurface, 100);
         }
     };
     //========================================================================================
@@ -3025,7 +3042,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 				wbl.parent().find(txtElemId).css("cursor", "pointer");
 			}
 		}
-	}
+	};
 	//========================================================================================
 
 
@@ -3111,7 +3128,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		else{ pendingWS = undefined; }
 
         $scope.waiting(true);
-        $timeout(updateWorkSurfce, 100);
+        $timeout(updateWorkSurface, 100);
 
         wblInstanceIdCounter_ = 0;
         if(currWS_ && currWS_.is_shared && liveOnlineInteractionEnabled_){
@@ -3300,7 +3317,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     $scope.downloadWebbleDef = function(whatWblDefId, whatCallbackMethod) {
         if (whatWblDefId != ""){
             $scope.waiting(true);
-            $timeout(updateWorkSurfce, 100);
+            $timeout(updateWorkSurface, 100);
             dbService.getWebbleDef(whatWblDefId, true).then(function(data){serviceRes_getWebbleDef_Completed(whatWblDefId, whatCallbackMethod, data);},function(eMsg){$scope.serviceError(eMsg);});
         }
     };
@@ -3370,7 +3387,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
 		if(!$scope.waiting()){
 			$scope.waiting(true);
-			$timeout(updateWorkSurfce, 100);
+			$timeout(updateWorkSurface, 100);
 		}
 		pendingCallbackMethod_ = whatCallbackMethod;
 		var insideRecentList = isExist.valueInArrayOfObj(recentWebble_, whatWblDef.webble.defid, ['webble', 'defid'], true);
@@ -3664,7 +3681,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 
     //========================================================================================
     // Show Quick Info Message
-    // Shows the Quick Info Message box with the specicified text for either 2 seconds or the
+    // Shows the Quick Info Message box with the specified text for either 2 seconds or the
     // specified time of either default size or the specified size at either the center of
     // the screen or the specified position.
     //========================================================================================
@@ -4009,7 +4026,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 for(var n = 0, wbl; wbl = currWS_.webbles[n]; n++){
                     if(wbl.wblElement.scope()){
                         if((parseInt(wbl.wblElement.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.NON_DEV_HIDDEN, 10)) !== 0){
-                            wbl.wblElement.scope().setWblVisibilty(true);
+                            wbl.wblElement.scope().setWblVisibility(true);
                         }
                     }
                 }
@@ -4018,7 +4035,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 for(var n = 0, wbl; wbl = currWS_.webbles[n]; n++){
                     if(wbl.wblElement.scope()){
                         if((parseInt(wbl.wblElement.scope().getProtection(), 10) & parseInt(Enum.bitFlags_WebbleProtection.NON_DEV_HIDDEN, 10)) !== 0){
-                            wbl.wblElement.scope().setWblVisibilty(false);
+                            wbl.wblElement.scope().setWblVisibility(false);
                         }
                     }
                 }
@@ -4733,7 +4750,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>F2 (Alt+F2)</strong>:' + gettextCatalog.getString("Toggle Main menu visibility.") + '<br>' +
 					'<strong>F3 (Alt+F3)</strong>:' + gettextCatalog.getString("Toggle Console Debug Logging.") + '<br>' +
 					'<strong>F5 (Alt+F5)</strong>:' + gettextCatalog.getString("Quick Save Current Desktop.") + '<br>' +
-					'<strong>F1 (Alt+F6)</strong>:' + gettextCatalog.getString("Quick Load Previusly Quick-Saved Desktop.") + '<br>' +
+					'<strong>F1 (Alt+F6)</strong>:' + gettextCatalog.getString("Quick Load Previously Quick-Saved Desktop.") + '<br>' +
 					'<strong>F8 (Alt+F8)</strong>:' + gettextCatalog.getString("Quick Load A Fundamental Webble.") + '<br>' +
 					'<strong>F9 (Alt+F9)</strong>:' + gettextCatalog.getString("Quick Toggles between System Language and English.") + '<br>' +
 					'<strong>F10 (Alt+F10)</strong>:' + gettextCatalog.getString("Open System Language Select Form") + '<br>' +
@@ -4741,10 +4758,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 					'<strong>Alt+Shift+End (Ctrl+Shift+End)</strong>:' + gettextCatalog.getString("Clear all Webble world cookies and local storage user data.") + '<br>' +
 					'<strong>Esc</strong>:' + gettextCatalog.getString("Cancel what is currently going on (e.g. Close form).") + '<br>' +
 					'<strong>Enter</strong>:' + gettextCatalog.getString("In the Webble Browser the Enter Key execute a search or load the selected Webble, and in some other forms the enter key executes a submit, though not in all.") + '<br>' +
-					'<strong>Alt+' + gettextCatalog.getString("Arrow Keys") + '</strong>:' + gettextCatalog.getString("Move current selected Webble in that directiont.") + '<br>' +
+					'<strong>Alt+' + gettextCatalog.getString("Arrow Keys") + '</strong>:' + gettextCatalog.getString("Move current selected Webble in that direction.") + '<br>' +
 					'<strong>Alt+Shift (' + gettextCatalog.getString("in Development mode") + ')</strong>:' + gettextCatalog.getString("Allows the user to override some protection, like for example,displaying Webble menu even though it is turned off.") + '<br>' +
 					'<strong>Alt+Ctrl+Num 0</strong>:' + gettextCatalog.getString("In case some Webbles have attempted to lock down the system this 'Panic Feature' returns a lost Webble World Main menu and sets the user to highest level of Developer in order to get back to work.") + '<br>' +
-					'<strong>Shift+Selection+Mouse</strong>:' + gettextCatalog.getString("If you want to move a webble with children, without moving the children, select the webble, hold CHIFT and move the Webble in Question. The children may shake a little, but more or less stay in place.") + '<br>' }
+					'<strong>Shift+Selection+Mouse</strong>:' + gettextCatalog.getString("If you want to move a webble with children, without moving the children, select the webble, hold SHIFT and move the Webble in Question. The children may shake a little, but more or less stay in place.") + '<br>' }
 			);
         }
 		//Toggle Main Menu visibility

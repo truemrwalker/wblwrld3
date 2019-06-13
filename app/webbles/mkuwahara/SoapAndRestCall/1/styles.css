@@ -20,13 +20,13 @@ where you preferably put them.*/
 
 .SoClDisplay{
     width: 400px;
-    font-family: Georgia;
+    font-family: Georgia, "Comic Sans MS", "Times New Roman", Arial, sans-serif;
     font-size: 12px;
     font-weight: normal;
 }
 
 .SoClDefault{
-    font-family: Georgia;
+    font-family: Georgia, "Comic Sans MS", "Times New Roman", Arial, sans-serif;
     font-size: 14px;
     font-weight: bold;
 }

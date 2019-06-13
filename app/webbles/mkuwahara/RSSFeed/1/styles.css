@@ -16,7 +16,7 @@ where you preferably put them.*/
 }
 
 .rssFeed{
-    font-family: Georgia;
+    font-family: Georgia, "Comic Sans MS", "Times New Roman", Arial, sans-serif;
     font-size: 12px;
     font-weight: 500;
     color: #b00eff;

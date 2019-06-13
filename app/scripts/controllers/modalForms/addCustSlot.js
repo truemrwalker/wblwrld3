@@ -491,8 +491,8 @@ ww3Controllers.controller('AddCustomSlotSheetCtrl', function ($scope, $uibModalI
             }
             else if($scope.formitem.merge.nsName != ''){
                 sltNm = $scope.formitem.merge.nsName;
-                var sltVl = $scope.formitem.merge.selectedSlots;
-                var sltCtgr = 'custom-merged';
+                sltVl = $scope.formitem.merge.selectedSlots;
+                sltCtgr = 'custom-merged';
             }
 
             if(sltNm != ''){

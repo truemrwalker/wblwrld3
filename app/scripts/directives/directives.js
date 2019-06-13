@@ -492,7 +492,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                     }
 
                     // Create a watch for the positioning of every Interaction ball depending on visibility
-                    scope.$watch(function(){return scope.getInteractionObjContainerVisibilty();}, function(newVal, oldVal) {
+                    scope.$watch(function(){return scope.getInteractionObjContainerVisibility();}, function(newVal, oldVal) {
                         if (newVal && newVal == true) {
                             var baseWidth = parseInt(element.css('width'));
                             var baseHeight = parseInt(element.css('height'));
@@ -528,7 +528,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                     }, true);
 
                     // Create a watch for this webbles visibility
-                    scope.$watch(function(){return scope.getWblVisibilty();}, function(newVal, oldVal) {
+                    scope.$watch(function(){return scope.getWblVisibility();}, function(newVal, oldVal) {
                         if(newVal == true){
                             element.css('display', 'inline');
                         }
@@ -538,7 +538,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                     }, true);
 
                     // Create a watch for this webbles interaction objects visibility
-                    scope.$watch(function(){return scope.getInteractionObjContainerVisibilty();}, function(newVal, oldVal) {
+                    scope.$watch(function(){return scope.getInteractionObjContainerVisibility();}, function(newVal, oldVal) {
                         if(newVal == true){
                             $(ioContainer).css('display', 'inline');
                         }

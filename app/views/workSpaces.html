@@ -126,15 +126,15 @@
         <g ng-repeat="marker in sharedModelMarkers">
             <circle ng-attr-cx="{{marker.wPos.x}}" ng-attr-cy="{{marker.wPos.y}}" r="15" stroke="black" stroke-width="1" ng-attr-fill="{{marker.color}}" />
 
-            <text ng-attr-x="{{marker.wPos.x - 4}}" ng-attr-y="{{marker.wPos.y + 4}}" style="font-weight: normal; font-size: 15px; font-family: 'arial, sans-serif'" fill="#000000">
+            <text ng-attr-x="{{marker.wPos.x - 4}}" ng-attr-y="{{marker.wPos.y + 4}}" style="font-weight: normal; font-size: 15px; font-family: 'Arial, Comic Sans MS, Times New Roman, Sans-serif'" fill="#000000">
                 {{marker.numVal}}
             </text>
-            <text ng-attr-x="{{marker.wPos.x - 3}}" ng-attr-y="{{marker.wPos.y + 5}}" style="font-weight: normal; font-size: 13px; font-family: 'arial, sans-serif'" fill="#ffffff">
+            <text ng-attr-x="{{marker.wPos.x - 3}}" ng-attr-y="{{marker.wPos.y + 5}}" style="font-weight: normal; font-size: 13px; font-family: 'Arial, Comic Sans MS, Times New Roman, Sans-serif'" fill="#ffffff">
                 {{marker.numVal}}
             </text>
         </g>
 
-        <text ng-show="connArrows.length == 0 && sharedModelMarkers.length == 0" x="10" y="30" style="stroke: #000000; stroke-width: 1px; font-weight: bolder; font-size: 15px; font-family: 'arial, sans-serif'" fill="#ff0000">
+        <text ng-show="connArrows.length == 0 && sharedModelMarkers.length == 0" x="10" y="30" style="stroke: #000000; stroke-width: 1px; font-weight: bolder; font-size: 15px; font-family: 'Arial, Comic Sans MS, Times New Roman, Sans-serif'" fill="#ff0000">
             {{noConnExistMsg | translate}}
         </text>
      </svg>

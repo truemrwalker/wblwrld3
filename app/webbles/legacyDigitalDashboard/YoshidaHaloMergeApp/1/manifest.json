@@ -1,10 +1,3 @@
-//REMOVE ALL COMMENTS FROM THIS FILE IF YOU WILL USE IT, OTHERWISE IT WILL NOT WORK
-// If you use your own (or 3rd party) files and libraries for your webble you will save their file names here under the
-// libs item as a list (array) of strings. If the file is uploaded to the webble template area, only provide the name
-// of the file. If the file is found online as CDN then include the whole path. Remember comma sign between each item if more than one
-// The third party file should NOT begin with 'use strict';, or it will not work, if it does, remove it
-// If this file is not used it can be discarded and thrown away and is not needed by the system.
-
 {
     "libs": [
     ]

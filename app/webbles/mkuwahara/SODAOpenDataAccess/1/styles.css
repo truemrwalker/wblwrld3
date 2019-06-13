@@ -20,13 +20,13 @@ where you preferably put them.*/
 
 .mnkOpenDataDisplay{
     width: 400px;
-    font-family: Georgia, "Times New Roman";
+    font-family: Georgia, "Times New Roman", "Comic Sans MS", Arial, sans-serif;
     font-size: 12px;
     font-weight: normal;
 }
 
 .mnkOpenDataDefault{
-    font-family: Georgia;
+    font-family: Georgia, "Comic Sans MS", "Times New Roman", Arial, sans-serif;
     font-size: 14px;
     font-weight: bold;
 }

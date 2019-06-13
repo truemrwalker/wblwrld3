@@ -16,9 +16,9 @@
 
 
 <div id="workboard" ng-controller="workboardWebbleCtrl">
-  <div id="placeholder" class="placeholder">
-    Workboard
-  </div>
+	<div id="placeholder" class="placeholder">
+		Workboard
+	</div>
 </div>
 
 <!--=================================================================================================================-->
@@ -29,32 +29,32 @@
 <!--==================================================-->
 
 <script type="text/ng-template" id="attachCRFform.html">
-  <div id="attachCRFform" class="container-fluid padcontent"  data-formclass="attachCRFform">
+	<div id="attachCRFform" class="container-fluid padcontent"  data-formclass="attachCRFform">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-        <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle" translate>Attach CRF to Event</h4></div>
-    </div>
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+			</div>
+			<div class="col-xs-9"><h4 class="formTitle" translate>Attach CRF to Event</h4></div>
+		</div>
 
-    <div class="dividerLineAbove">
-      <div class="row" style="padding-left: 14px; padding-right: 14px;">
-	<table>
-          <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="crf in formProps.crfList">
-	    <td ng-style="{'padding':7}"><input type="checkbox" ng-model="crf.selected"></td>
-            <td ng-style="{'padding':5}">{{crf.name}}</td>
-	    <td ng-style="{'padding':5}">(<u ng-click="CRFinfo(crf.id)">CRF content</u>)</td>
-          </tr>
-	</table>
-      </div>
-    </div>
-    
-    <div class="dividerLineAbove">
-    </div>
-    
-  </div>
+		<div class="dividerLineAbove">
+			<div class="row" style="padding-left: 14px; padding-right: 14px;">
+				<table>
+					<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="crf in formProps.crfList">
+						<td ng-style="{'padding':7}"><input type="checkbox" ng-model="crf.selected"></td>
+						<td ng-style="{'padding':5}">{{crf.name}}</td>
+						<td ng-style="{'padding':5}">(<u ng-click="CRFinfo(crf.id)">CRF content</u>)</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="dividerLineAbove">
+		</div>
+
+	</div>
 </script>
 <!--==============================================================-->
 
@@ -63,28 +63,28 @@
 <!--================================================-->
 
 <script type="text/ng-template" id="viewCRFform.html">
-  <div id="viewCRFform" class="container-fluid padcontent"  data-formclass="viewCRFform">
+	<div id="viewCRFform" class="container-fluid padcontent"  data-formclass="viewCRFform">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('close')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle" translate>{{formProps.title}}</h4></div>
-    </div>
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('close')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Close</button>
+			</div>
+			<div class="col-xs-9"><h4 class="formTitle" translate>{{formProps.title}}</h4></div>
+		</div>
 
-    <div class="dividerLineAbove">
-      <div class="row" style="padding-left: 14px; padding-right: 14px;">
-        <table id="tableroot" class="tableroot">
-          <tr ng-style="{'background-color': getRowBkgColor($index)}"  ng-repeat="question in formProps.clickedCRF">
-            <td ng-style="{'padding':5}">{{question.pos}}: <strong>{{question.question}}</strong></td><td> [{{question.type}}]</td> 
-          </tr>
-	</table>
-      </div>
-    </div>
+		<div class="dividerLineAbove">
+			<div class="row" style="padding-left: 14px; padding-right: 14px;">
+				<table id="tableroot" class="tableroot">
+					<tr ng-style="{'background-color': getRowBkgColor($index)}"  ng-repeat="question in formProps.clickedCRF">
+						<td ng-style="{'padding':5}">{{question.pos}}: <strong>{{question.question}}</strong></td><td> [{{question.type}}]</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 
-    <div class="dividerLineAbove">
-    </div>
-  </div>
+		<div class="dividerLineAbove">
+		</div>
+	</div>
 </script>
 <!--==============================================================-->
 
@@ -95,32 +95,32 @@
 <!--====================================================-->
 
 <script type="text/ng-template" id="assignStartAndEndDatesForm.html">
-  <div id="assignStartAndEndDatesForm" class="container-fluid padcontent"  data-formclass="attachCRFform">
+	<div id="assignStartAndEndDatesForm" class="container-fluid padcontent"  data-formclass="attachCRFform">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-        <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle" translate>Assign Start and End Dates</h4></div>
-    </div>
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+			</div>
+			<div class="col-xs-9"><h4 class="formTitle" translate>Assign Start and End Dates</h4></div>
+		</div>
 
-    <div class="dividerLineAbove">
-      <div class="row" style="padding-left: 14px; padding-right: 14px;">
-	<table>
-          <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="crfQ in formProps.qList">
-	    <td ng-style="{'padding':7}"><input type="checkbox" ng-model="crfQ.isStart"></td>
-	    <td ng-style="{'padding':7}"><input type="checkbox" ng-model="crfQ.isEnd"></td>
-            <td ng-style="{'padding':5}">{{crfQ.crfName}}: {{crfQ.question}}</td>
-          </tr>
-	</table>
-      </div>
-    </div>
-    
-    <div class="dividerLineAbove">
-    </div>
-    
-  </div>
+		<div class="dividerLineAbove">
+			<div class="row" style="padding-left: 14px; padding-right: 14px;">
+				<table>
+					<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="crfQ in formProps.qList">
+						<td ng-style="{'padding':7}"><input type="checkbox" ng-model="crfQ.isStart"></td>
+						<td ng-style="{'padding':7}"><input type="checkbox" ng-model="crfQ.isEnd"></td>
+						<td ng-style="{'padding':5}">{{crfQ.crfName}}: {{crfQ.question}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="dividerLineAbove">
+		</div>
+
+	</div>
 </script>
 <!--==============================================================-->
 
@@ -130,33 +130,33 @@
 <!--==================================================-->
 
 <script type="text/ng-template" id="microEventForm.html">
-  <div id="microEventForm" class="container-fluid padcontent"  data-formclass="microEventForm">
+	<div id="microEventForm" class="container-fluid padcontent"  data-formclass="microEventForm">
 
-    <div class="row">
-      <div class="col-xs-3">
-        <button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
-        <button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
-      </div>
-      <div class="col-xs-9"><h4 class="formTitle" translate>Micro Events</h4></div>
-    </div>
+		<div class="row">
+			<div class="col-xs-3">
+				<button ng-click="close('cancel')" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>Cancel</button>
+				<button ng-click="close('submit')" class="btn btn-primary" style="margin-bottom: 3px;" translate>Submit</button>
+			</div>
+			<div class="col-xs-9"><h4 class="formTitle" translate>Micro Events</h4></div>
+		</div>
 
-    <div class="dividerLineAbove">
-      <div class="row" style="padding-left: 14px; padding-right: 14px;">
-	<table>
-          <tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="microEvent in formProps.microEventList">
-	    <td ng-style="{'padding':7}">Day: <input type="number" min="1" ng-model="microEvent.day"></td>
-	    <td ng-style="{'padding':7}">CRF: <select ng-model="microEvent.crf" ng-options="crf.id as crf.name for crf in formProps.crfList"></td>
-	    <td ng-if="microEvent.crf != null">(<u ng-click="CRFinfo(microEvent.crf)">CRF content</u>)</td>
-	    <td ng-style="{'padding':7}"><span ng-click="removeMicroEvent(microEvent.id)">DELETE</span></td>
-          </tr>
-	</table>
-        <button ng-click="addMicroEvent()" class="btn btn-primary" style="margin: 5px 3px 3px 0;" translate>Add Micro Event</button>
-      </div>
-    </div>
-    
-    <div class="dividerLineAbove">
-    </div>
-    
-  </div>
+		<div class="dividerLineAbove">
+			<div class="row" style="padding-left: 14px; padding-right: 14px;">
+				<table>
+					<tr ng-style="{'background-color': getRowBkgColor($index)}" ng-repeat="microEvent in formProps.microEventList">
+						<td ng-style="{'padding':7}">Day: <input type="number" min="1" ng-model="microEvent.day"></td>
+						<td ng-style="{'padding':7}">CRF: <select ng-model="microEvent.crf" ng-options="crf.id as crf.name for crf in formProps.crfList"></select></td>
+						<td ng-if="microEvent.crf != null">(<u ng-click="CRFinfo(microEvent.crf)">CRF content</u>)</td>
+						<td ng-style="{'padding':7}"><span ng-click="removeMicroEvent(microEvent.id)">DELETE</span></td>
+					</tr>
+				</table>
+				<button ng-click="addMicroEvent()" class="btn btn-primary" style="margin: 5px 3px 3px 0;" translate>Add Micro Event</button>
+			</div>
+		</div>
+
+		<div class="dividerLineAbove">
+		</div>
+
+	</div>
 </script>
 <!--==============================================================-->

@@ -9,12 +9,12 @@ where you preferably put them.*/
 /*/ === BEGIN: Fundamental Classes === /*/
 
 .theCanvas {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     font-size: 20px;
     font-weight: bold;
-    foreground: black;
-    font-family: arial;
+    color: black;
+    font-family: Arial, "Comic Sans MS", "Times New Roman", sans-serif;
 }
 
 /*/ === End: Fundamental Classes === /*/

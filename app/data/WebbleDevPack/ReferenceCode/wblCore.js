@@ -170,11 +170,11 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	$scope.setStyle = undefined;
 
 	var wblVisibilty_ = true;
-	$scope.getWblVisibilty = function(){return wblVisibilty_;};
-	$scope.setWblVisibilty = function(newVal){if(newVal == true || newVal == false){wblVisibilty_ = newVal;}};
+	$scope.getWblVisibility = function(){return wblVisibilty_;};
+	$scope.setWblVisibility = function(newVal){if(newVal == true || newVal == false){wblVisibilty_ = newVal;}};
 
 	var interactionObjContainerVisibilty_ = false;
-	$scope.getInteractionObjContainerVisibilty = function(){return interactionObjContainerVisibilty_;};
+	$scope.getInteractionObjContainerVisibility = function(){return interactionObjContainerVisibilty_;};
 
 	// Keeps track if the webbles selection state
 	var theSelectState_ = Enum.availableOnePicks_SelectTypes.AsNotSelected;
@@ -195,7 +195,13 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		pasteByUser: false,
 		customIOTarget: null,
 		readyToStoreUndos: false,
-		rootOpacityMemory: 1.0,
+		rootOpacityMemory: 1.0
+	};
+	var _internalWblStateFlags = {
+		displayNamePropDisabledSetting: Enum.SlotDisablingState.None
+	};
+
+	$scope.additionalWblRequests = {
 		displayNameProp: {
 			setDisabledSetting: function (newDisabledSetting) {
 				_internalWblStateFlags.displayNamePropDisabledSetting = newDisabledSetting;
@@ -204,9 +210,6 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 				return _internalWblStateFlags.displayNamePropDisabledSetting;
 			}
 		}
-	};
-	var _internalWblStateFlags = {
-		displayNamePropDisabledSetting: Enum.SlotDisablingState.None
 	};
 
 	// A set of ongoing timeouts for css-transitions going on, which blocks slot update until finished
@@ -445,14 +448,14 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 		var content = [$scope.theWblMetadata['templateid']];
 		var propsContent = [];
 
-		if($scope.wblStateFlags.displayNameProp.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
+		if($scope.additionalWblRequests.displayNameProp.getDisabledSetting() < Enum.SlotDisablingState.PropertyVisibility){
 			propsContent.push({
 				key: 'displayname',
 				name: gettext("Display Name"),
 				value: $scope.theWblMetadata['displayname'],
 				cat: 'metadata',
 				desc: gettext("The name the Webble is user friendly shown as."),
-				disabledSettings: $scope.wblStateFlags.displayNameProp.getDisabledSetting(),
+				disabledSettings: $scope.additionalWblRequests.displayNameProp.getDisabledSetting(),
 				isShared: undefined,
 				isCustom: undefined,
 				notification: '',
