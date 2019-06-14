@@ -1,108 +1,82 @@
 //======================================================================================================================
-// Controllers for DigitalDashboardPluginStepCurve for Webble World v3.0 (2013)
+// Controllers for Digital Dashboard Plugin Acc Histograms Webble for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //======================================================================================================================
 wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot, Enum) {
 
     //=== PROPERTIES ====================================================================
-
     $scope.stylesToSlots = {
         // BackHolder: ['width', 'height']
         DrawingArea: ['width', 'height']
     };
 
-    $scope.customMenu = [];
-
-    $scope.customInteractionBalls = [];
-
     $scope.displayText = "Histograms";
-
-    var myInstanceId = -1;
+	var preDebugMsg = "DigitalDashboard  Histograms: ";
     
     var myCanvasElement = null;
     var myCanvas = null;
     var ctx = null;
     var dropCanvas = null;
     var dropCtx = null;
-    
     var hoverText = null;
-
     var dataName = null;
     var weightName = null;
-
     var selectionCanvas = null;
     var selectionCtx = null;
     var selectionColors = null;
     var selectionTransparency = 0.533;
-
     var selectionHolderElement = null;
     var selectionRect = null;
-
     var idArrays = [];
     var dataArrays = [];
     var wheightArrays = [];
     var haveWeights = false;
-
     var dataType = "number";
     var dateFormat = "";
-
     var histogramMode = false;
-
     var sources = 0;
     var Ns = [];
     var N = 0;
-
     var limits = {min:0, max:0};
     var unique = 0;
     var NULLs = 0;
-
     var selections = []; // the graphical ones
-
     var localSelections = []; // the data to send to the parent
-
     var leftMarg = 25;
     var topMarg = 10;
     var rightMarg = 5;
     var bottomMarg = 5;
     var fontSize = 11;
-
     var colorPalette = null;
     var textColor = "#000000";
-    
     var useGlobalGradients = false;
-
     var mouseClicked = false;
     var clickStart = null;
-
-
     var noofGroups = 1;
     var leftShift = 0;
     var drawH = 1;
     var drawW = 1;
-
     var useLogN = false;
     var useLogX = false;
-
     var groupBuckets = {};
     var bucketLimits = [];
     var maxCount = 0;
     var minBW = 0;
     var sep = 0;
     var groups = [];
-
     var stepCurveCounts = [];
-
     var internalSelectionsInternallySetTo = {};
-
     var dropW = {'left':leftMarg, 'top':topMarg, 'right':leftMarg*2, 'bottom':topMarg * 2, "forParent":{'idSlot':'DataIdSlot', 'name':'weights', 'type':'number', 'slot':'WeightsForStepCurveSlot'}, "label":"Weights", "rotate":true};
     var dropX = {'left':2, 'top':topMarg, 'right':leftMarg, 'bottom':topMarg * 2, "forParent":{'idSlot':'DataIdSlot', 'name':'data', 'type':'number|date|string', 'slot':'DataForStepCurveSlot'}, "label":"Data", "rotate":false};
     var allDropZones = [dropW, dropX];
-
     var dragZoneX = {'left':-1, 'top':-1, 'right':-1, 'bottom':-1, 'name':"", 'ID':""};
     var dragZoneW = {'left':-1, 'top':-1, 'right':-1, 'bottom':-1, 'name':"", 'ID':""};
     var allDragNames = [dragZoneX, dragZoneW];
     $scope.dragNdropRepr = "Nothing to drag.";
     $scope.dragNdropID = "No drag data.";
+
+
 
     //=== EVENT HANDLERS ================================================================
 
@@ -163,18 +137,11 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 
     //=== METHODS & FUNCTIONS ===========================================================
 
-    $scope.doDebugLogging = true;
-    function debugLog(message) {
-	if($scope.doDebugLogging) {
-	    $log.log("DigitalDashboard Histograms: " + message);
-	}
-    };
-
 
 
 
     function saveSelectionsInSlot() {
-	// debugLog("saveSelectionsInSlot");
+	// $log.log(preDebugMsg + "saveSelectionsInSlot");
 
 	var result = {};
 	result.selections = [];
@@ -187,7 +154,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     }
 
     function setSelectionsFromSlotValue() {
-	debugLog("setSelectionsFromSlotValue");
+	$log.log(preDebugMsg + "setSelectionsFromSlotValue");
 	
 	var slotSelections = $scope.gimme("InternalSelections");
 	if(typeof slotSelections === 'string') {
@@ -195,7 +162,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	}
 	
 	if(JSON.stringify(slotSelections) == JSON.stringify(internalSelectionsInternallySetTo)) {
-	    // debugLog("setSelectionsFromSlotValue got identical value");
+	    // $log.log(preDebugMsg + "setSelectionsFromSlotValue got identical value");
 	    return;
 	}
 
@@ -258,7 +225,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		    newSelections.push([v1,v2,v3,v4]);
 		}
 		
-		// debugLog("new selections: " + JSON.stringify(newSelections));
+		// $log.log(preDebugMsg + "new selections: " + JSON.stringify(newSelections));
 		if(newSelections.length > 0) {
 		    selections = newSelections;
 		    updateLocalSelections(false);
@@ -281,7 +248,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     }
 
     function checkSelectionsAfterNewData() {
-	// debugLog("checkSelectionsAfterNewData");
+	// $log.log(preDebugMsg + "checkSelectionsAfterNewData");
 
 	var newSelections = [];
 
@@ -349,7 +316,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     }
 
     function updateLocalSelections(selectAll) {
-	// debugLog("updateLocalSelections");
+	// $log.log(preDebugMsg + "updateLocalSelections");
 
 	var nullAsUnselected = $scope.gimme('TreatNullAsUnselected');
 	var nullGroup = 0;
@@ -359,9 +326,9 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 
 	var dirty = false;
 	
-	// debugLog("selections before sorting: " + JSON.stringify(selections));
+	// $log.log(preDebugMsg + "selections before sorting: " + JSON.stringify(selections));
 	selections.sort(function(a,b){return (a[1]-a[0]) - (b[1]-b[0]);}); // sort selections so smaller ones are checked first.
-	// debugLog("selections after sorting: " + JSON.stringify(selections));
+	// $log.log(preDebugMsg + "selections after sorting: " + JSON.stringify(selections));
 
 	for(var set = 0; set < Ns.length; set++) {
 	    var dataArray = dataArrays[set];
@@ -401,7 +368,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	    $scope.set('LocalSelections', {'DataIdSlot':localSelections});
 	    $scope.set('LocalSelectionsChanged', !$scope.gimme('LocalSelectionsChanged')); // flip flag to tell parent we updated something
 	} else {
-	    // debugLog("local selections had not changed");
+	    // $log.log(preDebugMsg + "local selections had not changed");
 	}
     };
 
@@ -430,7 +397,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     };
 
     function parseData() {
-	debugLog("parseData");
+	$log.log(preDebugMsg + "parseData");
 
 	// parse parents instructions on where to find data, check that at least one data set is filled
 	var atLeastOneFilled = false;
@@ -626,11 +593,11 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	    }
 	    
 	    if(dataIsCorrupt) {
-		debugLog("data is corrupt");
+		$log.log(preDebugMsg + "data is corrupt");
 		resetVars();
 	    } 
 	} else {
-	    // debugLog("no data");
+	    // $log.log(preDebugMsg + "no data");
 	}
 	
 	updateGraphics();
@@ -657,14 +624,14 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     };
 
     function updateGraphics() {
-    	debugLog("updateGraphics()");
+    	$log.log(preDebugMsg + "updateGraphics()");
 
 	if(myCanvas === null) {
     	    var myCanvasElement = $scope.theView.parent().find('#theCanvas');
     	    if(myCanvasElement.length > 0) {
     		myCanvas = myCanvasElement[0];
     	    } else {
-    		debugLog("no canvas to draw on!");
+    		$log.log(preDebugMsg + "no canvas to draw on!");
     		return;
     	    }
 	}
@@ -689,7 +656,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    H = 1;
     	}
 
-	// debugLog("Clear the canvas");
+	// $log.log(preDebugMsg + "Clear the canvas");
 	ctx.clearRect(0,0, W,H);
 
     	var colors = $scope.gimme("GroupColors");
@@ -764,14 +731,14 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     };
 
     function updateDropZones(col, alpha, hover) {
-	// debugLog("update the data drop zone locations");
+	// $log.log(preDebugMsg + "update the data drop zone locations");
 
 	if(dropCanvas === null) {
    	    var myCanvasElement = $scope.theView.parent().find('#theDropCanvas');
     	    if(myCanvasElement.length > 0) {
     		dropCanvas = myCanvasElement[0];
     	    } else {
-    		debugLog("no drop canvas to draw on!");
+    		$log.log(preDebugMsg + "no drop canvas to draw on!");
     		return;
     	    }
 	}
@@ -781,7 +748,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	}
 	
 	if(!dropCtx) {
-	    debugLog("no canvas to draw drop zones on");
+	    $log.log(preDebugMsg + "no canvas to draw drop zones on");
 	    return;
 	}
 
@@ -879,7 +846,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     }
 
     function drawAxes(W, H) {
-	// debugLog("drawAxes");
+	// $log.log(preDebugMsg + "drawAxes");
 
 	drawW = W - leftMarg - rightMarg;
 	drawH = H - topMarg - bottomMarg * 2 - fontSize;
@@ -1058,7 +1025,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	if(unique <= 0) {
 	    return;
 	}
-	// debugLog("drawBarsSilverlight");
+	// $log.log(preDebugMsg + "drawBarsSilverlight");
 
     	drawW = W - leftMarg - rightMarg;
     	drawH = H - topMarg - bottomMarg * 2 - fontSize;
@@ -1153,7 +1120,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	bucketLimits.push(limits.max);
 
 	// for(var b = 0; b < bucketsThatFit; b++) {
-	//     debugLog("bucket " + b + " [" + bucketLimits[b] + ", " + bucketLimits[b + 1] + ")    " + (bucketLimits[b + 1]-bucketLimits[b]) + "    " + (bucketLimits[b + 1] / bucketLimits[b]));
+	//     $log.log(preDebugMsg + "bucket " + b + " [" + bucketLimits[b] + ", " + bucketLimits[b + 1] + ")    " + (bucketLimits[b + 1]-bucketLimits[b]) + "    " + (bucketLimits[b + 1] / bucketLimits[b]));
 	// }
 
 
@@ -1238,8 +1205,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		    if(groupId <= 0) {
 			transp *= 0.33;
 		    }
-    		    var c = legacyDDSupLib.getGradientColorForGroup(groupId, x1,y1,x2,y2, transp, myCanvas, ctx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")) );
-
+    		    var c = legacyDDSupLib.getGradientColorForGroup(groupId, x1,y1,x2,y2, transp, myCanvas, ctx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, ((typeof $scope.gimme("GroupColors") === 'string') ? JSON.parse($scope.gimme("GroupColors")) : $scope.gimme("GroupColors")) );
 
     		    ctx.fillStyle = c;
     		    ctx.fillRect(x1,y1,x2 - x1, y2 - y1);
@@ -1572,7 +1538,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    if(myCanvasElement.length > 0) {
     		myCanvas = myCanvasElement[0];
     	    } else {
-    		debugLog("no canvas to resize!");
+    		$log.log(preDebugMsg + "no canvas to resize!");
     		return;
     	    }
 	}
@@ -1584,7 +1550,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    if(myCanvasElement.length > 0) {
     		dropCanvas = myCanvasElement[0];
     	    } else {
-    		debugLog("no canvas to draw on!");
+    		$log.log(preDebugMsg + "no canvas to draw on!");
     	    }
 	}
 	if(dropCanvas) {
@@ -1597,7 +1563,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    if(selectionCanvasElement.length > 0) {
     		selectionCanvas = selectionCanvasElement[0];
     	    } else {
-    		debugLog("no selectionCanvas to resize!");
+    		$log.log(preDebugMsg + "no selectionCanvas to resize!");
     		return;
     	    }
 	}
@@ -1629,8 +1595,8 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     };
 
     function mySlotChange(eventData) {
-    	// debugLog("mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
-    	// debugLog("mySlotChange() " + eventData.slotName);
+    	// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
+    	// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
 
     	switch(eventData.slotName) {
 	case "InternalSelections":
@@ -1777,7 +1743,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     // ==============================
 
     function newSelection(xPos1, xPos2, keepOld) {
-	// debugLog("newSelection");
+	// $log.log(preDebugMsg + "newSelection");
 
 	if(unique > 0) {
 
@@ -1830,7 +1796,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		   && sel[2] == newSel[2]
 		   && sel[3] == newSel[3]
 		  ) {
-		    // debugLog("Ignoring selection because it overlaps 100% with already existing selection");
+		    // $log.log(preDebugMsg + "Ignoring selection because it overlaps 100% with already existing selection");
 		    overlap = true;
 		    break;
 		}
@@ -1846,7 +1812,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     }
 
     function newSelectionHistogram(xPos1, xPos2, keepOld) {
-	// debugLog("newSelection");
+	// $log.log(preDebugMsg + "newSelection");
 
 	if(unique > 0) {
 
@@ -1885,7 +1851,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	    }
 
 	    if(firstOverlap) {
-		// debugLog("Ignoring selection because nothing was selected");
+		// $log.log(preDebugMsg + "Ignoring selection because nothing was selected");
 	    } else {
 		if(!keepOld) {
 		    selections = [];
@@ -1899,7 +1865,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		       && sel[2] == newSel[2]
 		       && sel[3] == newSel[3]
 		      ) {
-			// debugLog("Ignoring selection because it overlaps 100% with already existing selection");
+			// $log.log(preDebugMsg + "Ignoring selection because it overlaps 100% with already existing selection");
 			overlap = true;
 			break;
 		    }
@@ -2019,7 +1985,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     };
 
     function parseSelectionColors() {
-	// debugLog("parseSelectionColors");
+	// $log.log(preDebugMsg + "parseSelectionColors");
 
 	var colors = $scope.gimme("GroupColors");
     	if(typeof colors === 'string') {
@@ -2056,7 +2022,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     			selectionCanvas = selectionCanvasElement[0];
     			selectionCtx = selectionCanvas.getContext("2d");
     		    } else {
-    			debugLog("no selectionCanvas to resize!");
+    			$log.log(preDebugMsg + "no selectionCanvas to resize!");
     			return;
     		    }
 		}
@@ -2084,7 +2050,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    if(selectionCanvasElement.length > 0) {
     		selectionCanvas = selectionCanvasElement[0];
     	    } else {
-    		debugLog("no canvas to draw selections on!");
+    		$log.log(preDebugMsg + "no canvas to draw selections on!");
     		return;
     	    }
 	}
@@ -2122,7 +2088,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    if(selectionRectElement.length > 0) {
     		selectionRect = selectionRectElement[0];
     	    } else {
-    		debugLog("No selection rectangle!");
+    		$log.log(preDebugMsg + "No selection rectangle!");
     	    }
 	}
 	if(selectionRect !== null) {
@@ -2185,7 +2151,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     		if(elmnt.length > 0) {
     		    hoverText = elmnt[0];
     		} else {
-    		    debugLog("No hover text!");
+    		    $log.log(preDebugMsg + "No hover text!");
     		}
 	    }
 	    if(hoverText !== null) {
@@ -2196,7 +2162,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 			var idx = mousePosToBucketIdx(currentMouse);
 			if(idx < 0) {
 			    hoverText.style.display = "none";
-			    // debugLog("no hover: no bucket returned");
+			    // $log.log(preDebugMsg + "no hover: no bucket returned");
 			} else {
 			    var s = "[" + bucketLimits[idx].toPrecision(3) + "," + bucketLimits[idx+1].toPrecision(3) + ") --> ";
 			    var sNoMarkUp = s;
@@ -2273,7 +2239,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     		    if(selectionRectElement.length > 0) {
     			selectionRect = selectionRectElement[0];
     		    } else {
-    			debugLog("No selection rectangle!");
+    			$log.log(preDebugMsg + "No selection rectangle!");
     		    }
 		}
 		if(selectionRect !== null) {
@@ -2391,7 +2357,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		
 		if(x1 == x2 && y1 == y2) {
 		    // selection is too small, disregard
-		    // debugLog("ignoring a selection because it is too small");
+		    // $log.log(preDebugMsg + "ignoring a selection because it is too small");
 		} else {
 		    newSelection(x1,x2, clickStart.ctrl);
 		}
@@ -2407,7 +2373,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     		if(elmnt.length > 0) {
     		    hoverText = elmnt[0];
     		} else {
-    		    debugLog("No hover text!");
+    		    $log.log(preDebugMsg + "No hover text!");
     		}
 	    }
 	    if(hoverText !== null) {
@@ -2436,7 +2402,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 		
 		if(x1 == x2 && y1 == y2) {
 		    // selection is too small, disregard
-		    // debugLog("ignoring a selection because it is too small");
+		    // $log.log(preDebugMsg + "ignoring a selection because it is too small");
 		} else {
 		    newSelection(x1,x2, clickStart.ctrl);
 		}
@@ -2479,7 +2445,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
     	    myCanvas = myCanvasElement[0];
     	    ctx = myCanvas.getContext("2d");
     	} else {
-    	    debugLog("no canvas to draw on!");
+    	    $log.log(preDebugMsg + "no canvas to draw on!");
     	}
 
         $scope.addSlot(new Slot('InternalSelections',
@@ -2815,20 +2781,6 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 				undefined
 			       ));
 
-        // set to indicate that the data has been updated
-        // $scope.addSlot(new Slot('DataValuesChanged',
-	// 			false,
-	// 			'Data Values Changed',
-	// 			'Hack to work around problems in Webble World.',
-	// 			$scope.theWblMetadata['templateid'],
-	// 			undefined,
-	// 			undefined
-	// 			));
-
-
-        $scope.setDefaultSlot('');
-
-	myInstanceId = $scope.getInstanceId();
 
 	$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
 	    mySlotChange(eventData);
@@ -2842,7 +2794,7 @@ wblwrld3App.controller('stepCurvePluginWebbleCtrl', function($scope, $log, Slot,
 	    selectionHolderElement.bind('mousemove', onMouseMove);
 	    selectionHolderElement.bind('mouseout', onMouseOut);
 	} else {
-	    debugLog("No selectionHolderElement, could not bind mouse listeners");
+	    $log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 	}
 
 	$scope.fixDroppable();

@@ -444,9 +444,128 @@ var legacyDDSupLib = {
 				return d.toISOString();
 		}
 	},
+	//This function converts dimension values to pixels
+	dimVals2pixels: function(axis, xval, yval, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, wantsExtra){
+		var res = {};
+		if(unique <= 0) {
+			res = {"x":leftMarg, "y":topMarg};
+		} else {
+			if(axis == xAxisAxis) {
+				if(xval < 0) {
+					res.x = leftMarg;
+				} else if(xval >= dim[xAxisAxis]) {
+					res.x = leftMarg + dim[xAxisAxis] * cellW;
+				} else {
+					res.x = leftMarg + xval * cellW;
+				}
+
+				if(yval < 0) {
+					res.y = topMarg + drawH; // flip Y-axis
+				} else if(yval >= dim[yAxisAxis]) {
+					res.y = topMarg + drawH - dim[yAxisAxis] * cellW; // flip Y-axis
+				} else {
+					res.y = topMarg + drawH - yval * cellW; // flip Y-axis
+				}
+
+				if(wantsExtra === true){ res.y -= cellW - 1; }
+			} else if(axis == yAxisAxis) {
+				var a = xval;
+				if(xval < 0) {
+					res.x = leftMarg + dim[xAxisAxis] * cellW + innerMarg;
+					a = 0;
+				} else if(xval >= dim) {
+					res.x = leftMarg + dim[xAxisAxis] * cellW + dim[zAxisAxis] * cellW + innerMarg;
+					a = dim[zAxisAxis] - 1;
+				} else {
+					res.x = leftMarg + (xval + dim[xAxisAxis]) * cellW + innerMarg;
+				}
+
+				if(yval < 0) {
+					res.y = topMarg + drawH - a*cellW; // flip Y-axis
+				} else if(yval >= dim) {
+					res.y = topMarg + drawH - (dim[yAxisAxis] + a) * cellW; // flip Y-axis
+				} else {
+					res.y = topMarg + drawH - (yval + a) * cellW; // flip Y-axis
+				}
+				if(wantsExtra === true){ res.y -= cellW - 1; }
+			} else if(axis == zAxisAxis) {
+				var b = yval;
+				if(yval < 0) {
+					res.y = topMarg + drawH - dim[yAxisAxis] * cellW - innerMarg; // flip Y-axis
+					b = 0;
+				} else if(yval >= dim) {
+					res.y = topMarg + drawH - dim[yAxisAxis] * cellW + dim[zAxisAxis] * cellW - innerMarg; // flip Y-axis
+					b = dim[zAxisAxis] - 1;
+				} else {
+					res.y = topMarg + drawH - (yval + dim[yAxisAxis]) * cellW - innerMarg; // flip Y-axis
+				}
+
+				if(xval < 0) {
+					res.x = leftMarg + b * cellW;
+				} else if(xval >= dim) {
+					res.x = leftMarg + (dim[xAxisAxis] + b) * cellW;
+				} else {
+					res.x = leftMarg + (xval + b) * cellW;
+				}
+				if(wantsExtra === true){ res.y -= cellW - 1; }
+			}
+		}
+		return res;
+	},
+	// This function converts a value to a intensity or a color.
+	valueToIntensityOrColor: function(val, minVal, maxVal, rgbaText, sums, dataSetsToDraw, colorMode, colKey) {
+		var col = [0, 0, 0, 255];
+		if(colKey && colKey.length > 0) {
+			var sortedPos = legacyDDSupLib.binLookup(sums, val, 0, sums.length);
+			var perc = sortedPos / (sums.length - 1);
+			var l = colKey.length;
+			var c = Math.max(0, Math.min(l - 1, Math.floor(l * perc)));
+			if(l > 1) {
+				col = legacyDDSupLib.hexColorToRGBAvec(colKey[c], 1);
+			}
+			else {
+				col = legacyDDSupLib.hexColorToRGBAvec(colKey[c], perc);
+			}
+			return col;
+		}
+
+		if(colorMode == "minmax") {
+			var alpha = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * (val - minVal) / (maxVal - minVal))));
+			col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
+		}
+		else if(colorMode == "hotcold") {
+			if(val < 0) {
+				var intensity = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / Math.abs(minVal))));
+				col = [0, 0, intensity, 255];
+			}
+			else {
+				var intensity = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / Math.abs(maxVal))));
+				col = [intensity, 0, 0, 255];
+			}
+		}
+		else if(colorMode == "abs") {
+			var mx = Math.max(Math.abs(minVal), Math.abs(maxVal));
+			var alpha = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / mx)));
+			col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
+		}
+		else if(colorMode == "histogram" && sums.length > 0) {
+			var sortedPos = legacyDDSupLib.binLookup(sums, val, 0, sums.length);
+			var perc = sortedPos / (sums.length - 1);
+			var alpha = Math.floor(255 / dataSetsToDraw * perc);
+			col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
+		}
+		return col;
+	},
 
 
 
+
+
+
+
+
+
+	//TODO: Check the ones below, that they work as intended
 
 
 

@@ -969,7 +969,7 @@ wblwrld3App.controller('tobAppWebbleCtrl', function($scope, $log, Slot, Enum, $l
 				return;
 			}
 
-			$scope.getWebbleByInstanceId(webbleID).scope().set("root:opacity", 0);
+			//$scope.getWebbleByInstanceId(webbleID).scope().set("root:opacity", 0);
 
 
 			// debugLog("check if we should duplicate " + name);
@@ -1737,7 +1737,7 @@ wblwrld3App.controller('tobAppWebbleCtrl', function($scope, $log, Slot, Enum, $l
 			e0.scope().set("root:left", 50);
 			e0.scope().set("MedEventId", -1);
 			e0.scope().set("MedEventType", 'chem');
-			e0.scope().set("root:opacity", 0);
+			//e0.scope().set("root:opacity", 0);
 
 			setProtections(e0, true, false, false);
 			setProtections(wbw, false, true, false);
@@ -1788,7 +1788,7 @@ wblwrld3App.controller('tobAppWebbleCtrl', function($scope, $log, Slot, Enum, $l
 			e0.scope().set("root:left", 0);
 			e0.scope().set("MedEventId", -1);
 			e0.scope().set("MedEventType", 'chem');
-			e0.scope().set("root:opacity", 0);
+			//e0.scope().set("root:opacity", 0);
 
 			// patientboard window
 			var pbw = $scope.getWebbleByInstanceId(loadedChildren["Basic Window"][1]);
@@ -1877,7 +1877,7 @@ wblwrld3App.controller('tobAppWebbleCtrl', function($scope, $log, Slot, Enum, $l
 			e0.scope().set("root:left", 50);
 			e0.scope().set("MedEventId", -1);
 			e0.scope().set("MedEventType", 'chem');
-			e0.scope().set("root:opacity", 0);
+			//e0.scope().set("root:opacity", 0);
 
 			// analysis window
 

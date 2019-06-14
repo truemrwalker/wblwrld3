@@ -370,10 +370,10 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 						selectionRectCtx.strokeStyle = selectionColors.border;
 
 						if(clickStart.dim == xAxisAxis) {
-							var pos1 = dimVals2pixels(xAxisAxis, clickStart.val, 0);
-							var pos2 = dimVals2pixels(xAxisAxis, clickStart.val, dim[yAxisAxis] - 1);
-							var pos3 = dimVals2pixels(xAxisAxis, dimAndVal.val, dim[yAxisAxis] - 1);
-							var pos4 = dimVals2pixels(xAxisAxis, dimAndVal.val, 0);
+							var pos1 = legacyDDSupLib.dimVals2pixels(xAxisAxis, clickStart.val, 0, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos2 = legacyDDSupLib.dimVals2pixels(xAxisAxis, clickStart.val, dim[yAxisAxis] - 1, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos3 = legacyDDSupLib.dimVals2pixels(xAxisAxis, dimAndVal.val, dim[yAxisAxis] - 1, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos4 = legacyDDSupLib.dimVals2pixels(xAxisAxis, dimAndVal.val, 0, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
 
 							selectionRectCtx.save();
 							selectionRectCtx.beginPath();
@@ -386,10 +386,10 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 							selectionRectCtx.restore();
 						}
 						else if(clickStart.dim == yAxisAxis) {
-							var pos1 = dimVals2pixels(yAxisAxis, 0, clickStart.val);
-							var pos2 = dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, clickStart.val);
-							var pos3 = dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, dimAndVal.val);
-							var pos4 = dimVals2pixels(yAxisAxis, 0, dimAndVal.val);
+							var pos1 = legacyDDSupLib.dimVals2pixels(yAxisAxis, 0, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos2 = legacyDDSupLib.dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos3 = legacyDDSupLib.dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos4 = legacyDDSupLib.dimVals2pixels(yAxisAxis, 0, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
 
 							selectionRectCtx.save();
 							selectionRectCtx.beginPath();
@@ -402,10 +402,10 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 							selectionRectCtx.restore();
 						}
 						else if(clickStart.dim == zAxisAxis) {
-							var pos1 = dimVals2pixels(zAxisAxis, 0, clickStart.val);
-							var pos2 = dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, clickStart.val);
-							var pos3 = dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, dimAndVal.val);
-							var pos4 = dimVals2pixels(zAxisAxis, 0, dimAndVal.val);
+							var pos1 = legacyDDSupLib.dimVals2pixels(zAxisAxis, 0, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos2 = legacyDDSupLib.dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos3 = legacyDDSupLib.dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
+							var pos4 = legacyDDSupLib.dimVals2pixels(zAxisAxis, 0, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
 
 							selectionRectCtx.save();
 							selectionRectCtx.beginPath();
@@ -905,43 +905,6 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 				updateDropZones(textColor, 0.3, false);
 			}
 		});
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Dim Vals to Pixels
-	// This methods converts this Webble's dimension values to pixels.
-	//===================================================================================
-	function dimVals2pixels(axis, xval, yval) {
-		var res = {"x":leftMarg, "y":topMarg};
-
-		if(unique <= 0) {
-			res = {"x":leftMarg, "y":topMarg};
-		} else {
-			if(axis == xAxisAxis) {
-				if(xval < 0) {
-					res.x = leftMarg;
-				} else if(xval >= dim[xAxisAxis]) {
-					res.x = leftMarg + dim[xAxisAxis] * cellW;
-				} else {
-					res.x = leftMarg + xval * cellW;
-				}
-
-				if(yval < 0) {
-					res.y = topMarg + drawH; // flip Y-axis
-				} else if(yval >= dim[yAxisAxis]) {
-					res.y = topMarg + drawH - dim[yAxisAxis] * cellW; // flip Y-axis
-				} else {
-					res.y = topMarg + drawH - yval * cellW; // flip Y-axis
-				}
-			}
-			else {
-				//$log.log(preDebugMsg + "This should not happen; dimVals2pixels");
-			}
-		}
-
-		return res;
 	};
 	//===================================================================================
 
@@ -2032,7 +1995,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			}
 
 			for(var l = 0; l < levels; l++) {
-				var col = valueToIntensityOrColor(levs[l], gridMin, gridMax, rgbaText, levs, dataSetsToDraw);
+				var col = legacyDDSupLib.valueToIntensityOrColor(levs[l], gridMin, gridMax, rgbaText, levs, dataSetsToDraw, colorMode, $scope.gimme("ColorKey"));
 				levColors.push(col);
 			}
 
@@ -2099,7 +2062,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 
 		for(var b = 0; b < dim[yAxisAxis]; b++) {
 			for(var a = 0; a < dim[xAxisAxis]; a++) {
-				var pos = dimVals2pixels(xAxisAxis, a, b);
+				var pos = legacyDDSupLib.dimVals2pixels(xAxisAxis, a, b, unique, drawH, cellW, leftMarg, topMarg, undefined, xAxisAxis, yAxisAxis, undefined, dim);
 
 				if(grid[b][a] !== null) {
 					if(style == "curves") {
@@ -2110,7 +2073,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 							var col = levColors[grid[b][a]];
 						}
 						else {
-							var col = valueToIntensityOrColor(grid[b][a], gridMin, gridMax, rgbaText, allVals, dataSetsToDraw);
+							var col = legacyDDSupLib.valueToIntensityOrColor(grid[b][a], gridMin, gridMax, rgbaText, allVals, dataSetsToDraw, colorMode, $scope.gimme("ColorKey"));
 						}
 						legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 					}
@@ -2123,57 +2086,6 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		//$log.log(preDebugMsg + "time:" + (timerV2 - timerV));
 		timerV = timerV2;
 		//$log.log(preDebugMsg + "finished drawing");
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Value to Intensity or Color
-	// This method converts a value to a intensity or a color.
-	//===================================================================================
-	function valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums, dataSetsToDraw) {
-		var col = [0, 0, 0, 255];
-		var colKey = $scope.gimme("ColorKey");
-		if(colKey && colKey.length > 0) {
-			var sortedPos = legacyDDSupLib.binLookup(sums, val, 0, sums.length);
-			var perc = sortedPos / (sums.length - 1);
-			var l = colKey.length;
-			var c = Math.max(0, Math.min(l - 1, Math.floor(l * perc)));
-			if(l > 1) {
-				col = legacyDDSupLib.hexColorToRGBAvec(colKey[c], 1);
-			}
-			else {
-				col = legacyDDSupLib.hexColorToRGBAvec(colKey[c], perc);
-			}
-			return col;
-		}
-
-		if(colorMode == "minmax") {
-			var alpha = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * (val - minVal) / (maxVal - minVal))));
-			col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
-		}
-		else if(colorMode == "hotcold") {
-			if(val < 0) {
-				var intensity = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / Math.abs(minVal))));
-				col = [0, 0, intensity, 255];
-			}
-			else {
-				var intensity = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / Math.abs(maxVal))));
-				col = [intensity, 0, 0, 255];
-			}
-		}
-		else if(colorMode == "abs") {
-			var mx = Math.max(Math.abs(minVal), Math.abs(maxVal));
-			var alpha = Math.max(0, Math.min(255, Math.floor(256 / dataSetsToDraw * Math.abs(val) / mx)));
-			col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
-		}
-		else if(colorMode == "histogram" && sums.length > 0) {
-			var sortedPos = legacyDDSupLib.binLookup(sums, val, 0, sums.length);
-			var perc = sortedPos / (sums.length - 1);
-			var alpha = Math.floor(255 / dataSetsToDraw * perc);
-			col = [rgbaText[0], rgbaText[1], rgbaText[2], alpha];
-		}
-		return col;
 	};
 	//===================================================================================
 

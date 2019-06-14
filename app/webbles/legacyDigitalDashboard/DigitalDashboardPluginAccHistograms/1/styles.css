@@ -1,12 +1,12 @@
 /*/=====================================================================================================================
-// Styles for DigitalDashboard for Webble World v3.0 (2013)
+// Controllers for Digital Dashboard Plugin Acc Histograms Webble for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================*/
 
-/*/ === BEGIN: Fundamental Classes === /*/
+/*/ === BEGIN: Classes === /*/
 
-
-.canvasStuffForDigitalDashboardBarChart {
+.canvasStuffForDigitalDashboardAccumulatedHistograms {
     color: red;
 }
 
@@ -24,4 +24,4 @@
     height: 100px;
 }
 
-/*/ === End: Fundamental Classes === /*/
+/*/ === End: Classes === /*/

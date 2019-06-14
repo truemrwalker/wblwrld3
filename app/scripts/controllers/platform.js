@@ -255,6 +255,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // When loading a workspace this property keeps track of the amount of new independent Webble families being loaded
     var wblFamiliesInLineForInsertion_ = [];
 
+    // Just keeping track of all Webbles being loaded together. (for smooth opacity effect)
+	var listOfWebblesBeingLoaded = [];
+
     // a bit flag container that keeps track of various settings which configures the platform environment
     var platformSettingsFlags_ = Enum.bitFlags_PlatformConfigs.None;
     $scope.getPlatformSettingsFlags = function(){return platformSettingsFlags_};
@@ -1001,7 +1004,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     var initPlatform = function () {
         // Override any internal system settings that has been declared 'externally' from the override javascript file
         platformBkgColor_ = wblwrldSystemOverrideSettings.platform_Background != '' ? wblwrldSystemOverrideSettings.platform_Background : platformBkgColor_;
-        if(wblwrldSystemOverrideSettings.systemMenuVisibility != ''){
+        if(wblwrldSystemOverrideSettings.systemMenuVisibility !== ''){
             if(wblwrldSystemOverrideSettings.systemMenuVisibility == 'true'){
                 platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
@@ -1009,6 +1012,9 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
         }
+        else{
+			platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
+		}
         if(wblwrldSystemOverrideSettings.sysLang != ''){
             gettextCatalog.currentLanguage = wblwrldSystemOverrideSettings.sysLang;
         }
@@ -1169,7 +1175,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     subitem.visibility_enabled = true;
                 }
             }
-            platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
 
             if (newValue == Enum.availablePlatformPotentials.Limited || newValue == Enum.availablePlatformPotentials.Slim || newValue == Enum.availablePlatformPotentials.None) {
                 $scope.getMenuItem('webbles').visibility_enabled = false;
@@ -1187,6 +1192,11 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                 if (newValue == Enum.availablePlatformPotentials.None) {
                     platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
                 }
+                else{
+					if(!(wblwrldSystemOverrideSettings.systemMenuVisibility !== '' && currentExecutionMode_ > Enum.availableOnePicks_ExecutionModes.Developer)){
+						platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
+					}
+				}
             }
         });
 
@@ -1354,14 +1364,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled);
                   }
                 }
-                if(storedPlatformSettings.systemMenuVisibility != undefined){
-                    if(storedPlatformSettings.systemMenuVisibility == true || storedPlatformSettings.systemMenuVisibility == 'true'){
-                        platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
-                    }
-                    else if(storedPlatformSettings.systemMenuVisibility == false || storedPlatformSettings.systemMenuVisibility == 'false'){
-                        platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
-                    }
-                }
                 recentWebble_ = storedPlatformSettings.recentWebble != undefined ? (Object.prototype.toString.call(storedPlatformSettings.recentWebble) !== '[object Array]' ? storedPlatformSettings.recentWebble = [storedPlatformSettings.recentWebble] : storedPlatformSettings.recentWebble) : recentWebble_;
 				if($location.search().workspace == undefined){
 					recentWS_ = storedPlatformSettings.recentWS != undefined ? storedPlatformSettings.recentWS : recentWS_;
@@ -1418,14 +1420,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
             }
             else if(whatPlatformPropValue == false || whatPlatformPropValue == 'false'){
                 platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled);
-            }
-        }
-        else if(whatPlatformPropName == 'systemMenuVisibility'){
-            if(whatPlatformPropValue == true || whatPlatformPropValue == 'true'){
-                platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
-            }
-            else if(whatPlatformPropValue == false || whatPlatformPropValue == 'false'){
-                platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
             }
         }
         else if(whatPlatformPropName == 'recentWebble'){
@@ -3099,7 +3093,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
                     'currentExecutionMode': currentExecutionMode_,
                     'popupEnabled': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.PopupInfoEnabled) != 0,
                     'autoBehaviorEnabled': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.autoBehaviorEnabled) != 0,
-                    'systemMenuVisibility': (platformSettingsFlags_ & Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled) != 0,
                     'recentWebble': recentWebble_,
 					'recentWS': recentWS_,
 					'templateRevisionBehavior': templateRevisionBehavior_,
@@ -3434,7 +3427,6 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 	//========================================================================================
 
 
-	var listOfWebblesBeingLoaded = [];
     //========================================================================================
     // Webble Initiation Done
     // This method informs the system that a specific Webble has finished initiating and may
@@ -3442,9 +3434,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // child.
     //========================================================================================
     $scope.wblInitiationDone = function(whatWebble){
-
 		listOfWebblesBeingLoaded.push(whatWebble.scope().getInstanceId());
-
 		$scope.fireWWEventListener(Enum.availableWWEvents.loadingWbl, {targetId: whatWebble.scope().getInstanceId(), timestamp: (new Date()).getTime()});
 
         var thisIsFirst = false;
@@ -4766,12 +4756,14 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
 		//Toggle Main Menu visibility
         else if (sublink == 'altf2' || (whatKeys.theKey == 'F2' || (whatKeys.theAltKey && whatKeys.theKey == 'F2'))){
-            if((parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)){
-                platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
-            }
-            else{
-                platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
-            }
+        	if(!(wblwrldSystemOverrideSettings.systemMenuVisibility !== '' && currentExecutionMode_ > Enum.availableOnePicks_ExecutionModes.Developer)){
+				if((parseInt(platformSettingsFlags_, 10) & parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)) === parseInt(Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled, 10)){
+					platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
+				}
+				else{
+					platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);
+				}
+			}
 			if($scope.getMenuModeEnabled() == false && currentExecutionMode_ == Enum.availableOnePicks_ExecutionModes.Developer){
 				$scope.setMenuModeEnabled(true);
 				platformSettingsFlags_ = bitflags.on(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);

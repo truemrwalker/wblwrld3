@@ -477,91 +477,6 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 
 
 
-
-
-
-
-    function dimVals2pixels(dict) {
-	dimVals2pixels(dict.dim, dict.x, dict.y);
-    }
-
-    function dimVals2pixels(axis, xval, yval) {
-	var res = {};
-
-	if(unique <= 0) {
-	    res = {"x":leftMarg, "y":topMarg};
-	} else {
-	    if(axis == xAxisAxis) {
-
-		if(xval < 0) {
-		    res.x = leftMarg;
-		} else if(xval >= dim[xAxisAxis]) {
-		    res.x = leftMarg + dim[xAxisAxis] * cellW;
-		} else {
-		    res.x = leftMarg + xval * cellW;
-		}
-
-		if(yval < 0) {
-		    res.y = topMarg + drawH; // flip Y-axis
-		} else if(yval >= dim[yAxisAxis]) {
-		    res.y = topMarg + drawH - dim[yAxisAxis] * cellW; // flip Y-axis
-		} else {
-		    res.y = topMarg + drawH - yval * cellW; // flip Y-axis
-		}
-
-		res.y -= cellW - 1;
-
-	    } else if(axis == yAxisAxis) {
-
-		var a = xval;
-		if(xval < 0) {
-		    res.x = leftMarg + dim[xAxisAxis] * cellW + innerMarg;
-		    a = 0;
-		} else if(xval >= dim) {
-		    res.x = leftMarg + dim[xAxisAxis] * cellW + dim[zAxisAxis] * cellW + innerMarg;
-		    a = dim[zAxisAxis] - 1;
-		} else {
-		    res.x = leftMarg + (xval + dim[xAxisAxis]) * cellW + innerMarg;
-		}
-
-		if(yval < 0) {
-		    res.y = topMarg + drawH - a*cellW; // flip Y-axis
-		} else if(yval >= dim) {
-		    res.y = topMarg + drawH - (dim[yAxisAxis] + a) * cellW; // flip Y-axis
-		} else {
-		    res.y = topMarg + drawH - (yval + a) * cellW; // flip Y-axis
-		}
-
-		res.y -= cellW - 1;
-
-	    } else if(axis == zAxisAxis) {
-		var b = yval;
-		if(yval < 0) {
-		    res.y = topMarg + drawH - dim[yAxisAxis] * cellW - innerMarg; // flip Y-axis
-		    b = 0;
-		} else if(yval >= dim) {
-		    res.y = topMarg + drawH - dim[yAxisAxis] * cellW + dim[zAxisAxis] * cellW - innerMarg; // flip Y-axis
-		    b = dim[zAxisAxis] - 1;
-		} else {
-		    res.y = topMarg + drawH - (yval + dim[yAxisAxis]) * cellW - innerMarg; // flip Y-axis
-		}
-
-		if(xval < 0) {
-		    res.x = leftMarg + b * cellW;
-		} else if(xval >= dim) {
-		    res.x = leftMarg + (dim[xAxisAxis] + b) * cellW;
-		} else {
-		    res.x = leftMarg + (xval + b) * cellW;
-		}
-
-		res.y -= cellW - 1;
-		
-	    }
-	}
-
-	return res;
-    }
-
     function saveSelectionsInSlot() {
 	// debugLog("saveSelectionsInSlot");
 	
@@ -1709,7 +1624,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		var val = _2D[b][a];
 
 		if(val !== null) {
-		    var pos = dimVals2pixels(xAxisAxis, a, b);
+		    var pos = legacyDDSupLib.dimVals2pixels(xAxisAxis, a, b, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 		    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
 		    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 		}
@@ -1903,7 +1818,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		
 		var val = _2D[b][a];
 		if(val !== null) {
-		    var pos = dimVals2pixels(yAxisAxis, a, b);
+		    var pos = legacyDDSupLib.dimVals2pixels(yAxisAxis, a, b, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 		    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
 		    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 		}
@@ -2053,7 +1968,7 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		var val = _2D[b][a];
 		
 		if(val !== null ){
-		    var pos = dimVals2pixels(zAxisAxis, a, b);
+		    var pos = legacyDDSupLib.dimVals2pixels(zAxisAxis, a, b, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 		    var col = valueToIntensityOrColor(val, minVal, maxVal, rgbaText, sums);
 		    legacyDDSupLib.fillRectFast(pos.x, pos.y, cellW, cellW, col[0], col[1], col[2], col[3], pixels, WW, HH);
 		}
@@ -2527,10 +2442,10 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 		for(sel = 0; sel < selections[d].length; sel++) {
 		    var selection = selections[d][sel];
 		    if(d == xAxisAxis) {
-			var pos1 = dimVals2pixels(xAxisAxis, selection.minVal, 0);
-			var pos2 = dimVals2pixels(xAxisAxis, selection.minVal, dim[yAxisAxis] - 1);
-			var pos3 = dimVals2pixels(xAxisAxis, selection.maxVal, dim[yAxisAxis] - 1);
-			var pos4 = dimVals2pixels(xAxisAxis, selection.maxVal, 0);
+			var pos1 = legacyDDSupLib.dimVals2pixels(xAxisAxis, selection.minVal, 0, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos2 = legacyDDSupLib.dimVals2pixels(xAxisAxis, selection.minVal, dim[yAxisAxis] - 1, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos3 = legacyDDSupLib.dimVals2pixels(xAxisAxis, selection.maxVal, dim[yAxisAxis] - 1, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos4 = legacyDDSupLib.dimVals2pixels(xAxisAxis, selection.maxVal, 0, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 			
 			pos3.x += cellW - 1;
 			pos4.x += cellW - 1;
@@ -2547,10 +2462,10 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 			selectionCtx.stroke();
 			selectionCtx.restore();
 		    } else if(d == yAxisAxis) {
-			var pos1 = dimVals2pixels(yAxisAxis, 0, selection.minVal);
-			var pos2 = dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, selection.minVal);
-			var pos3 = dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, selection.maxVal);
-			var pos4 = dimVals2pixels(yAxisAxis, 0, selection.maxVal);
+			var pos1 = legacyDDSupLib.dimVals2pixels(yAxisAxis, 0, selection.minVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos2 = legacyDDSupLib.dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, selection.minVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos3 = legacyDDSupLib.dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, selection.maxVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos4 = legacyDDSupLib.dimVals2pixels(yAxisAxis, 0, selection.maxVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 
 			pos2.x += cellW - 1;
 			pos3.x += cellW - 1;
@@ -2567,10 +2482,10 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 			selectionCtx.stroke();
 			selectionCtx.restore();
 		    } else if(d == zAxisAxis) {
-			var pos1 = dimVals2pixels(zAxisAxis, 0, selection.minVal);
-			var pos2 = dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, selection.minVal);
-			var pos3 = dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, selection.maxVal);
-			var pos4 = dimVals2pixels(zAxisAxis, 0, selection.maxVal);
+			var pos1 = legacyDDSupLib.dimVals2pixels(zAxisAxis, 0, selection.minVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos2 = legacyDDSupLib.dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, selection.minVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos3 = legacyDDSupLib.dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, selection.maxVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			var pos4 = legacyDDSupLib.dimVals2pixels(zAxisAxis, 0, selection.maxVal, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 
 			pos2.x += cellW - 1;
 			pos3.x += cellW - 1;
@@ -2681,10 +2596,10 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
     			selectionRectCtx.strokeStyle = selectionColors.border;
 			
 			if(clickStart.dim == xAxisAxis) {
-			    var pos1 = dimVals2pixels(xAxisAxis, clickStart.val, 0);
-			    var pos2 = dimVals2pixels(xAxisAxis, clickStart.val, dim[yAxisAxis] - 1);
-			    var pos3 = dimVals2pixels(xAxisAxis, dimAndVal.val, dim[yAxisAxis] - 1);
-			    var pos4 = dimVals2pixels(xAxisAxis, dimAndVal.val, 0);
+			    var pos1 = legacyDDSupLib.dimVals2pixels(xAxisAxis, clickStart.val, 0, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos2 = legacyDDSupLib.dimVals2pixels(xAxisAxis, clickStart.val, dim[yAxisAxis] - 1, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos3 = legacyDDSupLib.dimVals2pixels(xAxisAxis, dimAndVal.val, dim[yAxisAxis] - 1, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos4 = legacyDDSupLib.dimVals2pixels(xAxisAxis, dimAndVal.val, 0, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 			    
 			    // debugLog("cs " + clickStart.val + ", dav " + dimAndVal.val + " --> " + pos1.x + " " + pos2.x + " " + pos3.x + " " + pos4.x);
 
@@ -2711,10 +2626,10 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 			    selectionRectCtx.stroke();
 			    selectionRectCtx.restore();
 			} else if(clickStart.dim == yAxisAxis) {
-			    var pos1 = dimVals2pixels(yAxisAxis, 0, clickStart.val);
-			    var pos2 = dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, clickStart.val);
-			    var pos3 = dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, dimAndVal.val);
-			    var pos4 = dimVals2pixels(yAxisAxis, 0, dimAndVal.val);
+			    var pos1 = legacyDDSupLib.dimVals2pixels(yAxisAxis, 0, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos2 = legacyDDSupLib.dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos3 = legacyDDSupLib.dimVals2pixels(yAxisAxis, dim[zAxisAxis] - 1, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos4 = legacyDDSupLib.dimVals2pixels(yAxisAxis, 0, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 
 			    pos2.x += cellW - 1;
 			    pos3.x += cellW - 1;
@@ -2737,10 +2652,10 @@ wblwrld3App.controller('hopVizFake3DWebbleCtrl', function($scope, $log, Slot, En
 			    selectionRectCtx.stroke();
 			    selectionRectCtx.restore();
 			} else if(clickStart.dim == zAxisAxis) {
-			    var pos1 = dimVals2pixels(zAxisAxis, 0, clickStart.val);
-			    var pos2 = dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, clickStart.val);
-			    var pos3 = dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, dimAndVal.val);
-			    var pos4 = dimVals2pixels(zAxisAxis, 0, dimAndVal.val);
+			    var pos1 = legacyDDSupLib.dimVals2pixels(zAxisAxis, 0, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos2 = legacyDDSupLib.dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, clickStart.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos3 = legacyDDSupLib.dimVals2pixels(zAxisAxis, dim[xAxisAxis] - 1, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
+			    var pos4 = legacyDDSupLib.dimVals2pixels(zAxisAxis, 0, dimAndVal.val, unique, drawH, cellW, leftMarg, topMarg, innerMarg, xAxisAxis, yAxisAxis, zAxisAxis, dim, true);
 
 			    pos2.x += cellW - 1;
 			    pos3.x += cellW - 1;

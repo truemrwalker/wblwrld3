@@ -51,7 +51,7 @@ var wblwrldSystemOverrideSettings = {
     platform_Background: "",            // on the form of color name or hexadecimal string
     platform_ScrollbarVertical: "",     // on the form "auto", "scroll", "hidden" or "visible"
     platform_ScrollbarHorizontal: "",   // on the form "auto", "scroll", "hidden" or "visible"
-    systemMenuVisibility: "",           // on the form "true" or "false"
+    systemMenuVisibility: "",      		// on the form "true" or "false"
     sysLang: "",                        // on the form of international language code
     popupEnabled: "",                   // on the form "true" or "false" whether the popup messages are enabled or not
     autoBehaviorEnabled: "",            // on the form "true" or "false" whether any auto behavior should be (e.g. default slot connection)

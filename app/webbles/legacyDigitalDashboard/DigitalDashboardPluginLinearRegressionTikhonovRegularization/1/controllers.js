@@ -2051,7 +2051,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = hexColorToRGBAvec(getColorForGroup(0), 0.33);
+			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), 0.33);
 			var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
 			var pixels = imData.data;
 		} else {
@@ -2132,7 +2132,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 					} else {
-						rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+						rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
 						drawDotOutline(x, y, dotSize*1.5+8, 6, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 					}
 				}
@@ -2215,7 +2215,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 							dotCtx.strokeStyle = col;
 							dotCtx.stroke();
 						} else {
-							rgba = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+							rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
 							drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						}
 					}
@@ -2621,26 +2621,6 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA Vector
-	// This method converts a hex color value to a RGBA vector value.
-	// TODO: Could this not be replaced with core service instead
-	//===================================================================================
-	function hexColorToRGBAvec(color, alpha) {
-		var res = [];
-
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-			return [r, g, b, a];
-		}
-		return [0, 0, 0, 255];
 	};
 	//===================================================================================
 
