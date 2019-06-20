@@ -2077,11 +2077,11 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		var drawPretty = true;
     	if(unique > quickRenderThreshold) {
     		drawPretty = false;
-    		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), 0.33);
+    		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
     		var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
     		var pixels = imData.data;
     	} else {
-    		var col0 = hexColorToRGBA(getColorForGroup(0), 0.33);
+    		var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
     		var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,W,H, 0.33, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
     	}
 
@@ -2150,7 +2150,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
                     var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 		    		if(drawPretty) {
-		    			var col = getColorForGroup(groupId);
+		    			var col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors);
 
 						dotCtx.beginPath();
 						dotCtx.arc(x, y, dotSize+4, 0, 2 * Math.PI, false);
@@ -2158,7 +2158,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 		    		} else {
-		    			rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
+		    			rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 		    			drawDotOutline(x, y, dotSize*1.5+8, 6, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 		    		}
 				}
@@ -2230,7 +2230,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		    			var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 						if(drawPretty) {
-							var col = getColorForGroup(groupId);
+							var col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors);
 							var fill = legacyDDSupLib.getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 1, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 
 							dotCtx.beginPath();
@@ -2241,7 +2241,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 							dotCtx.strokeStyle = col;
 							dotCtx.stroke();
 						} else {
-							rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
+							rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 							drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						}
 		    		}
@@ -2333,42 +2333,6 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				}
         	}
         }
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Get Color for Group
-	// This method returns the color for a specified group.
-	//===================================================================================
-	function getColorForGroup(group) {
-		if(colorPalette === null) {
-			colorPalette = {};
-		}
-
-		group = group.toString();
-
-		if(!colorPalette.hasOwnProperty(group)) {
-			if(currentColors.hasOwnProperty("groups")) {
-				var groupCols = currentColors.groups;
-
-				for(var g in groupCols) {
-					if(groupCols.hasOwnProperty(g)) {
-						colorPalette[g] = '#000000';
-
-						if(groupCols[g].hasOwnProperty('color')) {
-							colorPalette[g] = groupCols[g].color;
-						}
-					}
-				}
-			}
-		}
-
-		if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-			return '#000000';
-		} else {
-			return colorPalette[group];
-		}
 	};
 	//===================================================================================
 

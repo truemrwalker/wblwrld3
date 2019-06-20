@@ -265,7 +265,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	if(transparency < 1) {
 	    zeroTransp *= transparency;
 	}
-    	var col = hexColorToRGBA(getColorForGroup(0), zeroTransp);
+    	var col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, ((typeof $scope.gimme("GroupColors") === 'string') ? JSON.parse($scope.gimme("GroupColors")):$scope.gimme("GroupColors"))), zeroTransp);
     	var fill = legacyDDSupLib.getGradientColorForGroup(0, 0,0,W,H, zeroTransp, myCanvas, ctx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
 
 
@@ -525,42 +525,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
     }
 
 
-    
 
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    var colors = $scope.gimme("GroupColors");
-    	    if(typeof colors === 'string') {
-    		colors = JSON.parse(colors);
-    	    }
-	    
-    	    if(colors.hasOwnProperty("groups")) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
 	// debugLog("updateSize");

@@ -955,7 +955,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 
 		    var temp1 = legacyDDSupLib.pixel2valX(pos, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 
-		    var col = hexColorToRGBA(textColor, 0.5);
+		    var col = legacyDDSupLib.hexColorToRGBA(textColor, 0.5);
     		    
 		    axesCtx.save();
 
@@ -976,7 +976,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 		if(zoomMinY < 0 && zoomMaxY > 0) {
 		    var pos = legacyDDSupLib.val2pixelY(0, unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
-		    var col = hexColorToRGBA(textColor, 0.5);
+		    var col = legacyDDSupLib.hexColorToRGBA(textColor, 0.5);
     		    
 		    axesCtx.save();
 
@@ -1049,8 +1049,8 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	} else {
-	    var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-	    var colT = hexColorToRGBA(textColor, transparency);
+	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var colT = legacyDDSupLib.hexColorToRGBA(textColor, transparency);
 	}
 
 
@@ -1111,7 +1111,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 		    }
 		    else if(groupId1 > 0 && groupId2 > 0) {
 			if(groupId1 == groupId2) {
-			    col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
+			    col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 			} else {
 			    col = colT;
 			}
@@ -1213,8 +1213,8 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	} else {
-	    var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-	    var colT = hexColorToRGBA(textColor, transparency);
+	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+	    var colT = legacyDDSupLib.hexColorToRGBA(textColor, transparency);
 	}
 
 
@@ -1321,7 +1321,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 			    }
 			    else if(groupId1 > 0 && groupId2 > 0) {
 				if(groupId1 == groupId2) {
-				    col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
+				    col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 				} else {
 				    col = colT;
 				}
@@ -1377,7 +1377,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 			    }
 			    else if(groupId1 > 0 && groupId2 > 0) {
 				if(groupId1 == groupId2) {
-				    col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
+				    col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId1, colorPalette, currentColors), transparency);
 				} else {
 				    col = colT;
 				}
@@ -1426,7 +1426,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 
 			if(drawPretty) {
 			    var col = "#FF0000";
-			    col = hexColorToRGBA(col, transparency);
+			    col = legacyDDSupLib.hexColorToRGBA(col, transparency);
 
 			    lineCtx.save();
     			    lineCtx.setLineDash([3, 5]);
@@ -2063,18 +2063,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	saveSelectionsInSlot();
     };
 
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
 
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    };
 
     function parseSelectionColors() {
 	// debugLog("parseSelectionColors");
@@ -2094,9 +2083,9 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 	    }
 	    
 	    if(colors['selection'].hasOwnProperty('color')) {
-		selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 	    } else {
-		selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
+		selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
 	    }
 
 	    if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
@@ -2116,7 +2105,7 @@ wblwrld3App.controller('linePlotPluginWebbleCtrl', function($scope, $log, Slot, 
 		for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 		    if(colors['selection']['gradient'][p].hasOwnProperty('pos') 
 		       && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+			selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 			atLeastOneAdded = true;
 		    }
 		}

@@ -1,26 +1,27 @@
 <!--====================================================================================================================
-    // View for DigitalDashboardPluginHeatMap for Webble World v3.0 (2013)
-    // Created By: Jonas Sjobergh
-    //===================================================================================================================-->
+// View for Digital Dashboard Plugin Heat Map Webble for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
+//===================================================================================================================-->
 <div id="heatMapPluginWebble" ng-controller="heatMapPluginWebbleCtrl">
-  <div id="No Data" style="pointer-events:visible;" width="300" height="20" class="dragSrc">
-    <div id="selectionHolder" width="300" height="200" style="pointer-events:visible;" class="canvasStuffForDigitalDashboardHeatMap">
-      <div id="DrawingArea" style="pointer-events:none;">
-	<canvas id="theBgCanvas" style="pointer-events:none;" width="300" height="200"></canvas>
-	<canvas id="theHeatmapCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="theClusterCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="theBarCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="theBoxesCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="theLabelsCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="theSelectionCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="selectionRectangle" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<canvas id="theDropCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
-	<div id="mouseOverText" style="pointer-events:none; display:none; position:fixed; border: 1px solid black; background: rgba(255,255,255, 0.7); " height="10" width="10">
-	  ToolTip
+	<div id="No Data" style="pointer-events:visible;" width="300" height="20" class="dragSrc">
+		<div id="selectionHolder" width="300" height="200" style="pointer-events:visible;" class="canvasStuffForDigitalDashboardHeatMap">
+			<div id="DrawingArea" style="pointer-events:none;">
+				<canvas id="theBgCanvas" style="pointer-events:none;" width="300" height="200"></canvas>
+				<canvas id="theHeatmapCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="theClusterCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="theBarCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="theBoxesCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="theLabelsCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="theSelectionCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="selectionRectangle" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<canvas id="theDropCanvas" style="pointer-events:none; position:fixed; left:0; top:0;" width="300" height="200"></canvas>
+				<div id="mouseOverText" style="pointer-events:none; display:none; position:fixed; border: 1px solid black; background: rgba(255,255,255, 0.7); " height="10" width="10">
+					ToolTip
+				</div>
+			</div>
+		</div>
 	</div>
-      </div>
-    </div>
-  </div>
-  <span id="displayText">{{displayText}}</span>
+	<span id="displayText">{{displayText}}</span>
 </div>
 <!--=================================================================================================================-->

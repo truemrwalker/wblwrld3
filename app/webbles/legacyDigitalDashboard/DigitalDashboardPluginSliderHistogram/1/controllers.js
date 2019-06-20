@@ -1237,40 +1237,6 @@ wblwrld3App.controller('slidingHistogramPluginWebbleCtrl', function($scope, $log
 
 
 
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    var colors = $scope.gimme("GroupColors");
-    	    if(typeof colors === 'string') {
-    		colors = JSON.parse(colors);
-    	    }
-	    
-    	    if(colors.hasOwnProperty("groups")) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = 'black';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return 'black';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
 	fontSize = parseInt($scope.gimme("FontSize"));

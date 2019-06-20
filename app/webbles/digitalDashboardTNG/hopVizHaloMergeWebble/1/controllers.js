@@ -570,152 +570,239 @@ wblwrld3App.controller('hopVizHaloMergeWebbleCtrl', function($scope, $log, Slot,
 
 
 
-    function pixel2time(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < leftMarg) {
-	    return timeSpan[0];
-	}
-	if(p > leftMarg + drawW) {
-	    return timeSpan[1];
-	}
-	return timeSpan[0] + (p - leftMarg) / drawW * timeDelta;
-    }
+	//===================================================================================
+	// Pixel to Time
+	// This method converts a pixel to a time value.
+	//===================================================================================
+	function pixel2time(p) {
+		if(unique <= 0) {
+			return 0;
+		}
 
-    function pixel2leftY(p) {
-	if(unique <= 0) {
-	    return 0;
+		if(p < leftMarg) {
+			return timeSpan[0];
+		}
+		if(p > leftMarg + drawW) {
+			return timeSpan[1];
+		}
+		return timeSpan[0] + (p - leftMarg) / drawW * timeDelta;
 	}
-	
-	if(p < topMarg) {
-	    return limits.maxX; // flip Y-axis
-	}
-	if(p > topMarg + drawH) {
-	    return limits.minX; // flip Y-axis
-	}
-	return limits.minX + (drawH - (p - topMarg)) / drawH * (limits.maxX - limits.minX); // flip Y-axis
-    }
-
-    function pixel2rightY(p) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(p < topMarg) {
-	    return limits.maxY; // flip Y-axis
-	}
-	if(p > topMarg + drawH) {
-	    return limits.minY; // flip Y-axis
-	}
-	return limits.minY + (drawH - (p - topMarg)) / drawH * (limits.maxY - limits.minY); // flip Y-axis
-    }
+	//===================================================================================
 
 
-    function val2Size(v, maxDotSize, minDotSize) {
-	if(limits.sizeSpan == 1) { 
-	    return maxDotSize;
-	}
-	if(v >= limits.maxSize) {
-	    return maxDotSize;
-	}
-	if(v <= limits.minSize) {
-	    return minDotSize;
-	}
-	if(logScale) {
-	    return minDotSize + (maxDotSize - minDotSize) * (Math.log(v) - Math.log(limits.minSize)) / (Math.log(limits.maxSize) - Math.log(limits.minSize));
-	} else {
-	    return minDotSize + (maxDotSize - minDotSize) * (v - limits.minSize) / (limits.sizeSpan);
-	}
-    }
+	//===================================================================================
+	// Pixel to Left Y
+	// This method converts a pixel to a left Y value.
+	//===================================================================================
+	function pixel2leftY(p) {
+		if(unique <= 0) {
+			return 0;
+		}
 
-    function val2pixelXcrimp(v) {
-	if(unique <= 0) {
-	    return 0;
+		if(p < topMarg) {
+			return limits.maxX; // flip Y-axis
+		}
+		if(p > topMarg + drawH) {
+			return limits.minX; // flip Y-axis
+		}
+		return limits.minX + (drawH - (p - topMarg)) / drawH * (limits.maxX - limits.minX); // flip Y-axis
 	}
-	
-	if(v < zoomMinX) {
-	    return leftMarg;
-	}
-	if(v > zoomMaxX) {
-	    return leftMarg + drawW;
-	}
-	
-	return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
-    }
+	//===================================================================================
 
+
+	//===================================================================================
+	// Pixel to Right Y
+	// This method converts a pixel to a right Y value.
+	//===================================================================================
+	function pixel2rightY(p) {
+		if(unique <= 0) {
+			return 0;
+		}
+
+		if(p < topMarg) {
+			return limits.maxY; // flip Y-axis
+		}
+		if(p > topMarg + drawH) {
+			return limits.minY; // flip Y-axis
+		}
+		return limits.minY + (drawH - (p - topMarg)) / drawH * (limits.maxY - limits.minY); // flip Y-axis
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Value to Size
+	// This method converts a value to a size.
+	//===================================================================================
+	function val2Size(v, maxDotSize, minDotSize) {
+		if(limits.sizeSpan == 1) {
+			return maxDotSize;
+		}
+		if(v >= limits.maxSize) {
+			return maxDotSize;
+		}
+		if(v <= limits.minSize) {
+			return minDotSize;
+		}
+		if(logScale) {
+			return minDotSize + (maxDotSize - minDotSize) * (Math.log(v) - Math.log(limits.minSize)) / (Math.log(limits.maxSize) - Math.log(limits.minSize));
+		} else {
+			return minDotSize + (maxDotSize - minDotSize) * (v - limits.minSize) / (limits.sizeSpan);
+		}
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Value to Pixel X Crimp
+	// This method converts a value to an X pixel (taking regard for margins).
+	//===================================================================================
+	function val2pixelXcrimp(v) {
+		if(unique <= 0) {
+			return 0;
+		}
+
+		if(v < zoomMinX) {
+			return leftMarg;
+		}
+		if(v > zoomMaxX) {
+			return leftMarg + drawW;
+		}
+
+		return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Value to Pixel X
+	// This method converts a value to an X pixel.
+	//===================================================================================
 	function value2pixelX(v) {
 		if(unique <= 0) {
 			return 0;
 		}
 		return leftMarg + (v - zoomMinX) / (zoomMaxX - zoomMinX) * drawW;
 	}
+	//===================================================================================
 
-    function val2pixelYcrimp(v) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(v < zoomMinY) {
-	    return topMarg + drawH; // flip Y-axis
-	}
-	if(v > zoomMaxY) {
-	    return topMarg; // flip Y-axis
-	}
-	
-	return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
-    }
 
+	//===================================================================================
+	// Value to Pixel Y Crimp
+	// This method converts a value to an Y pixel (taking regard for margins).
+	//===================================================================================
+	function val2pixelYcrimp(v) {
+		if(unique <= 0) {
+			return 0;
+		}
+
+		if(v < zoomMinY) {
+			return topMarg + drawH; // flip Y-axis
+		}
+		if(v > zoomMaxY) {
+			return topMarg; // flip Y-axis
+		}
+
+		return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Value to Pixel Y
+	// This method converts a value to an Y pixel.
+	//===================================================================================
 	function value2pixelY(v) {
 		if(unique <= 0) {
 			return 0;
 		}
 		return topMarg + drawH - ((v - zoomMinY) / (zoomMaxY - zoomMinY) * drawH); // flip Y-axis
 	}
+	//===================================================================================
 
-    function val2pixelXtime(v) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	if(v < timeSpan[0]) {
-	    return leftMarg;
-	}
-	if(v > timeSpan[1]) {
-	    return leftMarg + drawW;
-	}
-	
-	return leftMarg + (v - timeSpan[0]) / timeDelta * drawW;
-    }
 
-    function val2pixelYstory(x, y, time) {
-	if(unique <= 0) {
-	    return 0;
-	}
-	
-	var left = y;
-	var right = x;
-	if(y < limits.minY) {
-	    left = limits.minY;
-	}
-	if(x < limits.minX) {
-	    right = limit.minX;
-	}
-	if(y > limits.maxY) {
-	    left = limits.maxY;
-	}
-	if(x > limits.maxX) {
-	    right = limits.maxX;
-	}
-	
-	left = topMarg + drawH - (left - limits.minY) / (limits.maxY - limits.minY) * drawH; 
-	right = topMarg + drawH - (right - limits.minX) / (limits.maxX - limits.minX) * drawH; 
-	
-	var dt = (time - timeSpan[0]) / timeDelta;
+	//===================================================================================
+	// Value to Pixel X Time
+	// This method converts a value to an X pixel (taking regard for Time).
+	//===================================================================================
+	function val2pixelXtime(v) {
+		if(unique <= 0) {
+			return 0;
+		}
 
-	return left * (1 - dt) + dt * right;
-    }
+		if(v < timeSpan[0]) {
+			return leftMarg;
+		}
+		if(v > timeSpan[1]) {
+			return leftMarg + drawW;
+		}
+
+		return leftMarg + (v - timeSpan[0]) / timeDelta * drawW;
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Value to Pixel Y Story
+	// This method converts a value to an Y pixel (taking regard for Time).
+	//===================================================================================
+	function val2pixelYstory(x, y, time) {
+		if(unique <= 0) {
+			return 0;
+		}
+
+		var left = y;
+		var right = x;
+		if(y < limits.minY) {
+			left = limits.minY;
+		}
+		if(x < limits.minX) {
+			right = limit.minX;
+		}
+		if(y > limits.maxY) {
+			left = limits.maxY;
+		}
+		if(x > limits.maxX) {
+			right = limits.maxX;
+		}
+
+		left = topMarg + drawH - (left - limits.minY) / (limits.maxY - limits.minY) * drawH;
+		right = topMarg + drawH - (right - limits.minX) / (limits.maxX - limits.minX) * drawH;
+
+		var dt = (time - timeSpan[0]) / timeDelta;
+
+		return left * (1 - dt) + dt * right;
+	}
+	//===================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     function saveSelectionsInSlot() {

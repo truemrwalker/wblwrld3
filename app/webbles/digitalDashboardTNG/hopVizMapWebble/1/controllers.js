@@ -2028,37 +2028,6 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 
 
 
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    if(currentColors.hasOwnProperty("groups")) {
-    		var groupCols = currentColors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    }
-
-
 
 
 
@@ -2133,14 +2102,14 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
 	    var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 	    var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 	    var imData0 = uCtx.getImageData(0, 0, uCanvas.width, uCanvas.height);
 	    var pixels = imData.data;
 	    var pixels0 = imData0.data;
 	} else {
-    	    var col0 = legacyDDSupLib.hexColorToRGBA(getColorForGroup(0), zeroTransp, uCanvas, uCtx);
+    	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
     	    var fill0 = legacyDDSupLib.getGradientColorForGroup(0,0,0,drawW,drawH, zeroTransp, uCanvas, uCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 	}
 
@@ -2219,10 +2188,10 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 					drawDotfullalpha(x1 + offset, y1, dotSize, rgba0[3], rgba0[0], rgba0[1], rgba0[2], pixels0, uCanvas.width);
 				    } else {
 					if(transparency >= 1) {
-					    rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
+					    rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 					    drawDotfullalpha(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 					} else {
-					    rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					    rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 					    drawDot(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 					}
 				    }
@@ -2274,10 +2243,10 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 					drawDotfullalpha(x1 + offset, y1, dotSize, rgba0[3], rgba0[0], rgba0[1], rgba0[2], pixels0, uCanvas.width);
 				    } else {
 					if(transparency >= 1) {
-					    rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 1);
+					    rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 					    drawDotfullalpha(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 					} else {
-					    rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+					    rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 					    drawDot(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 					}
 				    }
@@ -2386,7 +2355,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 					col0[3] = temp;
 					
 				    } else {
-					col = legacyDDSupLib.hexColorToRGBA(getColorForGroup(groupId), op * transparency, myCanvas, myCtx);
+					col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
 
     					myCtx.save();
     					myCtx.beginPath();
@@ -2419,7 +2388,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 
 				    } else {
 
-					col = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), op * transparency);
+					col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
 					if(col[3] >= 255) {
 					    drawLineDDAfullalpha(pixels, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], col[3], myCanvas.width, lw);
 					} else {
@@ -2451,7 +2420,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 					col0[3] = temp;
 
 				    } else {
-					col = legacyDDSupLib.hexColorToRGBA(getColorForGroup(groupId), op*transparency, myCanvas, myCtx);
+					col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op*transparency);
 
     					myCtx.save();
     					myCtx.beginPath();
@@ -2472,7 +2441,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 
 				    } else {
 
-					col = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), op * transparency);
+					col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
 					if(col[3] >= 255) {
 					    drawLineDDAfullalpha(pixels, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], col[3], myCanvas.width, lw);
 					} else {
@@ -2507,9 +2476,9 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
     	var rest = 1 - v;
 
 	if(groupId > 0) {
-	    var rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), transparency * (rest*2 + 1)/3);
+	    var rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * (rest*2 + 1)/3);
 	} else {
-	    var rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 0.33 * transparency * (rest*2 + 1)/3);
+	    var rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 0.33 * transparency * (rest*2 + 1)/3);
 	}
 
     	var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
@@ -2658,7 +2627,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
     	}
     	var zeroTranspAlpha = Math.floor(255*zeroTransp);
 
-    	var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
+    	var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
     	var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
     	var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
     	var pixels = imData.data;
@@ -3316,7 +3285,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
     	}
     	var zeroTranspAlpha = Math.floor(255*zeroTransp);
 
-    	var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), zeroTransp);
+    	var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
     	var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
     	var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
     	var pixels = imData.data;
@@ -4001,7 +3970,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
     	    var idx = Math.max(0, legacyDDSupLib.binLookup(allValues, val, 0, len));
 	    
     	    if(colorMethod == 1) { // group color + alpha
-    		rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), alpha);
+    		rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), alpha);
     		for(var c = 0; c < 3; c++) {
     		    rgba[c] = Math.floor(rgba[c] * 0.5 + 255 * 0.5 * idx / (len - 1));
     		}
@@ -4023,7 +3992,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
     	    }
 
     	    if(colorMethod == 0) { // group color + alpha
-    		rgba = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), alpha);
+    		rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), alpha);
     		for(var c = 0; c < 3; c++) {
     		    rgba[c] = Math.floor(rgba[c] * 0.5 + 255 * 0.5 * prop);
     		}

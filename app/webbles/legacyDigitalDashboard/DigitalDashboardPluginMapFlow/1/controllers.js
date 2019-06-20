@@ -1400,7 +1400,7 @@ wblwrld3App.controller('mapFlowPluginWebbleCtrl', function($scope, $log, $timeou
 	    var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 	    var pixels = imData.data;
 	} else {
-    	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp, myCanvas, myCtx);
+    	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
     	    var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 	}
 

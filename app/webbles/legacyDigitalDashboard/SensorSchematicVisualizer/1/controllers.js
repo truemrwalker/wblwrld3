@@ -496,24 +496,6 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 
 	//===================================================================================
-	// Hex Color to RGBA
-	// TODO: Should probably use the built in service version instead
-	// This method converts the hex color value to a RGBA color value.
-	//===================================================================================
-	function hexColorToRGBA(color, alpha) {
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-
-			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		}
-		return color;
-	};
-	//===================================================================================
-
-
-	//===================================================================================
 	// Save Selections in Slot
 	// This method saves the user selection inside a slot.
 	//===================================================================================
@@ -953,9 +935,9 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		}
 
 		var fillOn = getGradColForGroup(0, 0,0,W,H, 0.33);
-		var colOn = hexColorToRGBA(getColForGroup(0), 0.33);
+		var colOn = legacyDDSupLib.hexColorToRGBA(getColForGroup(0), 0.33);
 		var fillOff = getGradColForGroup(0, 0,0,W,H, 0.33);
-    	var colOff = hexColorToRGBA(getColForGroup(0), 0.33);
+    	var colOff = legacyDDSupLib.hexColorToRGBA(getColForGroup(0), 0.33);
 		var col;
 		var fill;
 
@@ -1039,7 +1021,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	    			var cc = grads[group][i];
 	    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
 	    				if(alpha !== undefined) {
-	    					grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
+	    					grd.addColorStop(cc.pos, legacyDDSupLib.hexColorToRGBA(cc.color, alpha));
 	    				}
 	    				else {
 	    					grd.addColorStop(cc.pos, cc.color);

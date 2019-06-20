@@ -1407,7 +1407,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	    var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 	    var pixels = imData.data;
 	} else {
-    	    var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp, myCanvas, myCtx);
+    	    var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
     	    var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 	}
 
@@ -1497,7 +1497,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    if(pass == 0) {
 					col = col0;
 				    } else {
-					col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency, myCanvas, myCtx);
+					col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 				    
     				    myCtx.save();
@@ -1532,7 +1532,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 				    if(pass == 0) {
 					col = col0;
 				    } else {
-					col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency, myCanvas, myCtx);
+					col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				    }
 				    
     				    myCtx.save();
@@ -2824,18 +2824,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	saveSelectionsInSlot();
     };
 
-    function hexColorToRGBA(color, alpha) {
-	if(typeof color === 'string'
-	   && color.length == 7) {
-	    
-	    var r = parseInt(color.substr(1,2), 16);
-	    var g = parseInt(color.substr(3,2), 16);
-	    var b = parseInt(color.substr(5,2), 16);
 
-	    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-	}
-	return color;
-    };
 
 
     //===================================================================================

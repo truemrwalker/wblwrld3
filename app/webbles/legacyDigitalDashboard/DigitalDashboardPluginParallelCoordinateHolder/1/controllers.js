@@ -1685,7 +1685,7 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(0), 0.33);
+	    var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	}
@@ -1754,9 +1754,9 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 				    var groupId = 0;
 
 				    if(transparency >= 1) {
-					var color = legacyDDSupLib.hexColorToRGBAvec(getColorForGroup(groupId), 0.33);
+					var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 0.33);
 				    } else {
-					var color = hexColorToRGBAvec(getColorForGroup(groupId), transparency * 0.33);
+					var color = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * 0.33);
 				    }
 
 				    draw = true;
@@ -1776,7 +1776,7 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 				    for(var groupId = 1; groupId < ls.length; groupId++) { 
 					if(ls[groupId] > 0) {
 					    if(noofGroups > 1) {
-						var thisColor = hexColorToRGBAvec(getColorForGroup(groupId), transparency * ls[groupId] / noofVotes);
+						var thisColor = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * ls[groupId] / noofVotes);
 						
 						if(first) {
 						    first = false;
@@ -1786,7 +1786,7 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 						}
 						draw = true;
 					    } else {
-						var color = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+						var color = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 						draw = true;
 					    }
 					}
@@ -1856,7 +1856,7 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 	var drawPretty = true;
 	if(unique > quickRenderThreshold) {
 	    drawPretty = false;
-	    var rgba0 = hexColorToRGBAvec(getColorForGroup(0), 0.33);
+	    var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
 	    var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 	    var pixels = imData.data;
 	}
@@ -1880,7 +1880,7 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 			if(drawPretty) {
 			    lineCtx.save();
 			    
-			    var color = getColorForGroup(groupId);
+			    var color = legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors);
 			    if(transparency >= 1) {
 				if(pass == 0) {
 				    color = hexColorToRGBA(color, 0.33);
@@ -1921,9 +1921,9 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
 
 			    if(pass > 0) {
 				if(transparency >= 1) {
-				    var col = hexColorToRGBAvec(getColorForGroup(groupId), 1);
+				    var col = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 				} else {
-				    var col = hexColorToRGBAvec(getColorForGroup(groupId), transparency);
+				    var col = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 				}
 			    } else {
 				var col = rgba0;
@@ -2115,38 +2115,6 @@ wblwrld3App.controller('parallelCoordinateHolderPluginWebbleCtrl', function($sco
     }
 
 
-
-    function getColorForGroup(group) {
-    	if(colorPalette === null) {
-    	    colorPalette = {};
-    	}
-
-    	group = group.toString();
-
-    	if(!colorPalette.hasOwnProperty(group)) {
-    	    var colors = currentColors;
-	    
-    	    if(colors.hasOwnProperty("groups")) {
-    		var groupCols = colors.groups;
-		
-    		for(var g in groupCols) {
-    		    if(groupCols.hasOwnProperty(g)) {
-    			colorPalette[g] = '#000000';
-			
-    			if(groupCols[g].hasOwnProperty('color')) {
-    			    colorPalette[g] = groupCols[g].color;
-    			}
-    		    }
-    		}
-    	    }
-    	}
-	
-    	if(colorPalette === null || !colorPalette.hasOwnProperty(group)) {
-    	    return '#000000';
-    	} else {
-    	    return colorPalette[group];
-    	}
-    };
 
     function updateSize() {
 	// debugLog("updateSize");

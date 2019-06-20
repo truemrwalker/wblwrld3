@@ -103,7 +103,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
 	var pixels = imData.data;
 	var pixels0 = imData0.data;
     } else {
-    	var col0 = legacyDDSupLib.hexColorToRGBA(getColForGroup(0, currentColors, colorPalette), zeroTransp, uCanvas, uCtx);
+    	var col0 = legacyDDSupLib.hexColorToRGBA(getColForGroup(0, currentColors, colorPalette), zeroTransp);
     	var fill0 = getGradColForGroup(0, zeroTransp, uCanvas, uCtx, currentColors, colorPalette);
     }
 
@@ -290,7 +290,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     				    uCtx.restore();
 				    
 				} else {
-				    col = legacyDDSupLib.hexColorToRGBA(getColForGroup(groupId, currentColors, colorPalette), transparency, myCanvas, myCtx);
+				    col = legacyDDSupLib.hexColorToRGBA(getColForGroup(groupId, currentColors, colorPalette), transparency);
 
     				    myCtx.save();
     				    myCtx.beginPath();
@@ -338,7 +338,7 @@ function drawCartesianPlot(args, myCanvas, myCtx, uCanvas, uCtx, src) {
     				    uCtx.restore();
 				    
 				} else {
-				    col = legacyDDSupLib.hexColorToRGBA(getColForGroup(groupId, currentColors, colorPalette), transparency, myCanvas, myCtx);
+				    col = legacyDDSupLib.hexColorToRGBA(getColForGroup(groupId, currentColors, colorPalette), transparency);
 
     				    myCtx.save();
     				    myCtx.beginPath();
