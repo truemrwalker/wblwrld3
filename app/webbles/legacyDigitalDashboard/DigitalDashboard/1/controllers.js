@@ -106,6 +106,13 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			newColors(eventData.slotValue);
 		}, myInstanceId, 'Colors'));
 
+		selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
+			if(eventData.slotValue){
+				$scope.set("enableSelectAll", false);
+				$scope.selectAll();
+			}
+		}, myInstanceId, 'enableSelectAll'));
+
 		// 0:{'color':'#', 'gradient':[{'pos':0, 'color':'#'}, {'pos':0.75, 'color':'#'}]},
 		$scope.addSlot(new Slot('Colors',
 			{"skin":{"color":"#FFFACD", "border":"#FFA500", "gradient":[{"pos":0, "color":"#FFFEF5"}, {"pos":0.75, "color":"#FFFACD"}, {"pos":1, "color":"#FFFACD"}]}, // lemon
@@ -128,6 +135,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 					13:{"color":"#00FFFF", "gradient":[{"pos":0, "color":"#CCFFFF"}, {"pos":0.75, "color":"#00FFFF"}]},
 					14:{"color":"#000000", "gradient":[{"pos":0, "color":"#CCCCCC"}, {"pos":0.75, "color":"#000000"}]}
 
+					// Alternative Colors
 					// "groups":{0:{"color":"#808080", "gradient":[{"pos":0, "color":"#E6E6E6"}, {"pos":0.75, "color":"#808080"}, {"pos":1, "color":"#808080"}]},
 					// 	   1:{"color":"red", "gradient":[{"pos":0, "color":"white"}, {"pos":0.95, "color":"red"}, {"pos":1, "color":"red"}]},
 					// 	   2:{"color":"green", "gradient":[{"pos":0, "color":"white"}, {"pos":0.95, "color":"green"}, {"pos":1, "color":"green"}]},
@@ -152,41 +160,18 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 			undefined
 		));
 
-		$scope.setDefaultSlot('');
+		$scope.addSlot(new Slot('enableSelectAll',
+			false,
+			'Enable Select All',
+			'Make all plugins select all data',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
 		selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.lostChild, function(eventData){
 			removeChild(eventData.childId);
 		}));
-
-
-		// selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
-		//     var childId = eventData.targetId;
-		//     //$log.log(preDebugMsg + "something loaded, let's check if it is our child: " + childId);
-
-		//     for(var i = 0; i < loadListenIDs.length; i++) {
-		// 	if(loadListenIDs[i] == childId) {
-		// 	    //$log.log(preDebugMsg + "child loaded, let's add this child: " + childId);
-		// 	    var thisChild = $scope.getWebbleByInstanceId(childId);
-
-		// 	    loadListenIDs.splice(i, 1);
-
-		// 	    addChild(childId, thisChild);
-
-		// 	    if(!fullyLoaded) {
-		// 		childrenToWaitFor--;
-		// 		if(childrenToWaitFor <= 0) {
-		// 		    //$log.log(preDebugMsg + "I was fully loaded, last child arrived.");
-		// 		    fullyLoaded = true;
-		// 		    newMapping($scope.gimme("Mapping"));
-		// 		} else {
-		// 		    //$log.log(preDebugMsg + "We still need to wait for more children to arrive.");
-		// 		}
-		// 	    }
-		// 	    break;
-		// 	}
-		//     }
-		// }));
-
 
 		selfListeners.push($scope.registerWWEventListener(Enum.availableWWEvents.deleted, function(eventData){
 			// clean up when we are deleted
@@ -2652,7 +2637,7 @@ wblwrld3App.controller('digitalDashboardWebbleCtrl', function($scope, $log, Slot
 // CONNECTION VISUALIZATION TO DATA TO VISUALITION FORM CONTROLLER
 // This is the Viz2Data2Viz Form controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
 	var preDebugMsg = "DigitalDashboard connectionViz2DataForm: ";
 
 	$scope.formProps = {
@@ -2669,7 +2654,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 	$scope.close = function (result) {
 		// //$log.log(preDebugMsg + "close");
 
-		$modalInstance.close({plugins: $scope.formProps.plugins, somethingChanged: $scope.formProps.somethingChanged, changedPlugins: $scope.formProps.changedPlugins});
+		$uibModalInstance.close({plugins: $scope.formProps.plugins, somethingChanged: $scope.formProps.somethingChanged, changedPlugins: $scope.formProps.changedPlugins});
 	};
 
 	$scope.differentIds = function(dataSource, plugin) {
@@ -3112,7 +3097,7 @@ wblwrld3App.controller("connectionViz2Data2VizForm_Ctrl", function($scope, $log,
 // CONNECTION FIELDS FORM CONTROLLER
 // This is the Connection Fields Form controller for this Webble Template
 //=======================================================================================
-wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {	
+wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {	
 	var preDebugMsg = "DigitalDashboard connectionFieldsForm: ";
 
 	$scope.formProps = {
@@ -3132,16 +3117,16 @@ wblwrld3App.controller("connectionFieldsForm_Ctrl", function($scope, $log, $moda
 		// //$log.log(preDebugMsg + "close");
 
 		if(result == 'cancel'){
-			$modalInstance.close(null);
+			$uibModalInstance.close(null);
 		}
 		else if(result == 'submit'){
-			$modalInstance.close({dataSourceId: $scope.formProps.dataSourceId,
+			$uibModalInstance.close({dataSourceId: $scope.formProps.dataSourceId,
 				pluginGrouping: $scope.formProps.pluginGrouping,
 				pluginIdx: $scope.formProps.pluginIdx,
 				pluginSets: $scope.formProps.pluginSets,
 				fieldsAddedOrRemoved: $scope.formProps.fieldsAddedOrRemoved});
 		} else {
-			$modalInstance.close(null);
+			$uibModalInstance.close(null);
 		}
 	};
 

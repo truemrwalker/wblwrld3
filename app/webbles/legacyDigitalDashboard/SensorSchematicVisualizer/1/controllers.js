@@ -60,7 +60,12 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	var clickedSensor = -1;
 
 	// Additional
-	possibleDependables = {};
+	var vizPlugins = [];
+	var dashboard;
+	var sourceName = "";
+	var dropSensorTarget;
+	var selectedSensorsTargets = [];
+	$scope.doInternalMappingEnabled = false;
 
 
     //=== EVENT HANDLERS ================================================================
@@ -76,12 +81,58 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 					setSelectionsFromSlotValue();
 				}
 				break;
-
+			case "SelectionsChanged":
+				if(eventData.slotValue && $scope.doInternalMappingEnabled) {
+					$scope.set("SelectionsChanged", false);
+					buildMapping($scope.gimme("SelectedSensors"), $scope.gimme("DroppedSensors"));
+				}
+				break;
+			case "DroppedSensorsChanged":
+				if(eventData.slotValue && $scope.doInternalMappingEnabled) {
+					$scope.set("DroppedSensorsChanged", false);
+					buildMapping($scope.gimme("SelectedSensors"), $scope.gimme("DroppedSensors"));
+				}
+				break;
+			case "droppedSensorsTarget":
+				if($scope.doInternalMappingEnabled){
+					if(eventData.slotValue == "") {
+						dropSensorTarget = undefined;
+					}
+					else {
+						for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+							if(aw.scope().gimme("PluginName") == $scope.gimme("droppedSensorsTarget")){
+								dropSensorTarget = aw;
+							}
+						}
+					}
+					buildMapping($scope.gimme("SelectedSensors"), $scope.gimme("DroppedSensors"));
+				}
+				break;
+			case "selectionSensorsTarget":
+				if(!$.isArray(eventData.slotValue)) {
+					$scope.set("selectionSensorsTarget", [""]);
+					selectedSensorsTargets = [];
+				}
+				else if(eventData.slotValue.length > 0 && eventData.slotValue[0] != ""){
+					selectedSensorsTargets = [];
+					var newSSTSlotValue = []
+					for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+						for(var j = 0; j < eventData.slotValue.length; j++){
+							if(aw.scope().gimme("PluginName") == eventData.slotValue[j] && (aw.scope().theWblMetadata['templateid'] == "DigitalDashboardPluginLinearRegression" || aw.scope().theWblMetadata['templateid'] == "DigitalDashboardPluginLinearRegressionTikhonovRegularization")){
+								selectedSensorsTargets.push(aw.scope().getInstanceId());
+								newSSTSlotValue.push(aw.scope().gimme("PluginName"));
+							}
+						}
+					}
+					if(newSSTSlotValue.length !== eventData.slotValue.length){
+						$scope.set("selectionSensorsTarget", newSSTSlotValue);
+					}
+				}
+				break;
 			case "FontSize":
 				updateSize();
 				updateGraphics();
 				break;
-
 			case "DrawingArea:height":
 				updateSize();
 				updateGraphics();
@@ -127,8 +178,8 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			case "Sensors":
 				parseData();
 				break;
-		};
-	};
+		}
+	}
 	//===================================================================================
 
 
@@ -437,9 +488,25 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			undefined
 		));
 
+		$scope.addSlot(new Slot('droppedSensorsTarget',
+			"",
+			'Dropped Sensors Target',
+			'The name of Visulization plugin that should display the dropped sensors graph.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
+
+		$scope.addSlot(new Slot('selectionSensorsTarget',
+			[""],
+			'Selection Sensors Target',
+			'The name of the Linear Regression plugin(s) that should be affected by sensor selection/unselection.',
+			$scope.theWblMetadata['templateid'],
+			undefined,
+			undefined
+		));
 
 		// Dashboard Plugin slots -----------------------------------------------------------
-
 		$scope.addSlot(new Slot('PluginName',
 			"Plant Visualizer",
 			'Plugin Name',
@@ -477,8 +544,17 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		));
 
 		$scope.registerWWEventListener(Enum.availableWWEvents.slotChanged, function(eventData){
-			mySlotChange(eventData);
+				mySlotChange(eventData);
 		});
+
+		$scope.$watch(function(){ return $scope.isSystemDoneLoadingWebbles(); }, function(newVal, oldVal) {
+			if(newVal){
+				updateDependablesList();
+				$scope.registerWWEventListener(Enum.availableWWEvents.loadingWbl, function(eventData){
+					updateDependablesList();
+				});
+			}
+		}, true);
 
 		parseData();
 		updateGraphics();
@@ -496,6 +572,191 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 
 	//===================================================================================
+	// Build Mapping
+	// This method builds the data mapping.
+	//===================================================================================
+	function buildMapping(plantSelections, droppedSensors, whocalled) {
+		if(dashboard == undefined || !$scope.doInternalMappingEnabled) {
+			return;
+		}
+
+		var plugin = {};
+		var mapping = {};
+		mapping.plugins = [];
+		var colors = dashboard.scope().gimme("Colors");
+		var clickedColors = {};
+		for(var cset in colors) {
+			clickedColors[cset] = colors[cset];
+		}
+		clickedColors["skin"] = {"color":"#F6A2B3","border":"#DC143C","gradient":[{"pos":0,"color":"#F48A9F"},{"pos":0.1,"color":"#FDE8EC"},{"pos":0.9,"color":"#FDE8EC"}, {"pos":1,"color":"#F48A9F"}]};
+
+		// Sensor Drop Dependant
+		if($scope.gimme("droppedSensorsTarget") !== "" && dropSensorTarget != undefined){
+			var setDesc = dropSensorTarget.scope().gimme("DataValuesSetFilled")[0]["description"];
+			var setName = setDesc.substring(0, setDesc.indexOf(':'));
+			var setIdx = 0;
+			var setFieldName = legacyDDSupLib.shortenName(setDesc).trim();
+
+			plugin.grouping = true;
+			plugin.name = dropSensorTarget.scope().gimme("PluginName");
+			plugin.sets = [{"fields":[{"name":"dataX","assigned":[{"sourceName":"CSV Data Source","dataSetName":"CSV Data Source","dataSetIdx":0,"fieldName":"FirstField"}],"template":false,"added":false},{"name":"dataY","assigned":[{"sourceName":"CSV Data Source","dataSetName":"CSV Data Source","dataSetIdx":0,"fieldName":"Field2"}],"template":false,"added":false}]}];
+			var addDependent = true;
+			if(droppedSensors.length >= 2) {
+				var found0 = false;
+				var found1 = false;
+				for(var i = 0; i < vizPlugins.length; i++) {
+					var vpWbl = $scope.getWebbleByInstanceId(vizPlugins[i]);
+					var axisNameX = legacyDDSupLib.shortenName(vpWbl.scope().gimme("DataValuesSetFilled")[0]["description"]).trim();
+					var axisNameY = legacyDDSupLib.shortenName(vpWbl.scope().gimme("DataValuesSetFilled")[1]["description"]).trim();
+
+					if(axisNameX == droppedSensors[0] || axisNameY == droppedSensors[0]) {
+						plugin.sets[0].fields[0].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":droppedSensors[0]}];
+						found0 = true;
+					}
+					if(axisNameX == droppedSensors[1] || axisNameY == droppedSensors[1]) {
+						plugin.sets[0].fields[1].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":droppedSensors[1]}];
+						found1 = true;
+					}
+
+					if(found1 && found0) {
+						addDependent = false;
+						break;
+					}
+				}
+			}
+
+			if(addDependent) {
+				plugin.sets[0].fields[0].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":setFieldName}];
+				plugin.sets[0].fields[1].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":legacyDDSupLib.shortenName(dropSensorTarget.scope().gimme("DataValuesSetFilled")[1]["description"]).trim()}];
+			}
+			mapping.plugins.push(plugin);
+		}
+
+		// Plugins dependent on selection
+		for(var i = 0; i < vizPlugins.length; i++) {
+			var vpWbl = $scope.getWebbleByInstanceId(vizPlugins[i]);
+			var setDesc = vpWbl.scope().gimme("DataValuesSetFilled")[0]["description"];
+			var setName = setDesc.substring(0, setDesc.indexOf(':'));
+			var setIdx = 0;
+			var sensorName = "";
+			var setFieldName = legacyDDSupLib.shortenName(setDesc).trim();
+			var axisNameX = legacyDDSupLib.shortenName(vpWbl.scope().gimme("DataValuesSetFilled")[0]["description"]).trim();
+			var axisNameY = legacyDDSupLib.shortenName(vpWbl.scope().gimme("DataValuesSetFilled")[1]["description"]).trim();
+
+			if(plantSelections[axisNameX] == false || plantSelections[axisNameY] == false) {
+				vpWbl.scope().set("GroupColors", clickedColors);
+			} else {
+				vpWbl.scope().set("GroupColors", colors);
+			}
+
+			if(plantSelections[axisNameX] != undefined || plantSelections[axisNameY] != undefined) {
+				var sensorName = (plantSelections[axisNameX] != undefined) ? axisNameX : axisNameY;
+				plugin = {};
+				plugin.grouping = true;
+				plugin.name = vpWbl.scope().gimme("PluginName");
+				plugin.sets = [{"fields":[{"name":"dataX","assigned":[{"sourceName":"CSV Data Source","dataSetName":"CSV Data Source","dataSetIdx":0,"fieldName":"FirstField"}],"template":false,"added":false},{"name":"dataY","assigned":[{"sourceName":"CSV Data Source","dataSetName":"CSV Data Source","dataSetIdx":0,"fieldName":"Field2"}],"template":false,"added":false}]}];
+				plugin.sets[0].fields[0].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":setFieldName}];
+				plugin.sets[0].fields[1].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":sensorName}];
+				mapping.plugins.push(plugin);
+			}
+		}
+
+
+		//Linear Regressions
+		var setIdx = 0;
+		for(var n = 0; n < selectedSensorsTargets.length; n++){
+			var sstWbl = $scope.getWebbleByInstanceId(selectedSensorsTargets[n]);
+			var setDesc = sstWbl.scope().gimme("DataValuesSetFilled")[0]["description"];
+			var setName = setDesc.substring(0, setDesc.indexOf(':'));
+			plugin = {};
+			plugin.grouping = true;
+			plugin.name = sstWbl.scope().gimme("PluginName");
+			plugin.sets = [{"fields":[{"name":"Dependent","assigned":[],"template":false,"added":false},{"name":"Regressor 1","assigned":[],"template":false,"added":false},{"name":"Optional Regressors","assigned":[],"template":true,"added":false}]}];
+			plugin.sets[0].fields[0].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":legacyDDSupLib.shortenName(sstWbl.scope().gimme("DataValuesSetFilled")[0]["description"]).trim()}];
+			var first = true;
+			for(i = 0; i < vizPlugins.length; i++) {
+				var vpWbl = $scope.getWebbleByInstanceId(vizPlugins[i]);
+				var sensorName = legacyDDSupLib.shortenName(vpWbl.scope().gimme("DataValuesSetFilled")[1]["description"]).trim();
+
+				if(!plantSelections.hasOwnProperty(sensorName) || plantSelections[sensorName]) {
+					if(first) {
+						plugin.sets[0].fields[1].assigned = [{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":sensorName}];
+						first = false;
+					}
+					else {
+						plugin.sets[0].fields.push({"name":"Optional Regressors","assigned":[{"sourceName":sourceName, "dataSetName":setName, "dataSetIdx":setIdx, "fieldName":sensorName}],"template":false,"added":true});
+					}
+				}
+			}
+			mapping.plugins.push(plugin);
+		}
+
+		//$log.log(preDebugMsg + "build this mapping: " + JSON.stringify(mapping));
+		$timeout(function(){dashboard.scope().set("Mapping", mapping); dashboard.scope().set("enableSelectAll", true); }, 1);
+	};
+	//===================================================================================
+
+
+	//===================================================================================
+	// Update Dependables List
+	// This method resets and remakes the list of dependable plugins that might be
+	// affected by sensor activation/deactivation.
+	//===================================================================================
+	function updateDependablesList(){
+		vizPlugins = [];
+		var sensors = $scope.gimme("Sensors");
+		var newSSTSlotValue = []
+		var sstLen = 0;
+		for(var i = 0, aw; aw = $scope.getActiveWebbles()[i]; i++){
+			if(aw.scope().theWblMetadata['templateid'] == "DigitalDashboard" && dashboard == undefined){
+				dashboard = aw;
+			}
+
+			if(aw.scope().gimme("PluginType") == "DataSource" && sourceName == ""){
+				sourceName = aw.scope().gimme("PluginName");
+			}
+
+			if(aw.scope().gimme("PluginName") == $scope.gimme("droppedSensorsTarget")){
+				dropSensorTarget = aw;
+			}
+
+			if(aw.scope().theWblMetadata['templateid'] == "DigitalDashboardPluginLinearRegression" || aw.scope().theWblMetadata['templateid'] == "DigitalDashboardPluginLinearRegressionTikhonovRegularization"){
+				var sst = $scope.gimme("selectionSensorsTarget");
+				if(!$.isArray(sst)) {
+					$scope.set("selectionSensorsTarget", [""]);
+					selectedSensorsTargets = [];
+				}
+				else if(sst.length > 0 && sst[0] != "" && selectedSensorsTargets.length == 0){
+					sstLen = sst.length;
+					for(var j = 0; j < sst.length; j++){
+						if(aw.scope().gimme("PluginName") === sst[j]){
+							selectedSensorsTargets.push(aw.scope().getInstanceId());
+							newSSTSlotValue.push(aw.scope().gimme("PluginName"));
+						}
+					}
+				}
+
+			}
+
+			if(aw.scope().gimme("PluginType") == "VisualizationPlugin"){
+				if(dropSensorTarget !== undefined && dropSensorTarget.scope().getInstanceId() !== aw.scope().getInstanceId()){
+					vizPlugins.push(aw.scope().getInstanceId());
+				}
+			}
+		}
+
+		if(newSSTSlotValue.length !== sstLen){
+			$scope.set("selectionSensorsTarget", newSSTSlotValue);
+		}
+
+		$scope.doInternalMappingEnabled = true;
+		$scope.set('SelectionsChanged', false);
+		$scope.set('DroppedSensorsChanged', false);
+	}
+	//===================================================================================
+
+
+	//===================================================================================
 	// Save Selections in Slot
 	// This method saves the user selection inside a slot.
 	//===================================================================================
@@ -509,7 +770,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		internalSelectionsInternallySetTo = result;
 		$scope.set('SelectedSensors', result);
 		$scope.set('SelectionsChanged', true);
-	};
+	}
 	//===================================================================================
 
 
@@ -541,7 +802,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			updateGraphics();
 			saveSelectionsInSlot();
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -553,7 +814,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	function checkSelectionsAfterNewData() {
 		// //$log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		setSelectionsFromSlotValue();
-	};
+	}
 	//===================================================================================
 
 
@@ -565,7 +826,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		$scope.plantName = "";
 		plant = [];
 		sensors = [];
-	};
+	}
 	//===================================================================================
 
 
@@ -595,7 +856,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		updateGraphics();
 		checkSelectionsAfterNewData();
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -606,7 +867,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	function getColForGroup(group) {
 		var cols = ["#A9A9A9", "#7FFF00"];
 		return cols[group];
-	};
+	}
 	//===================================================================================
 
 
@@ -698,7 +959,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			s[7] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, limits.minY, limits.maxY);
 		}
 		// //$log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
-	};
+	}
 	//===================================================================================
 
 
@@ -750,7 +1011,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
     	drawBackground(W, H);
     	drawPlant();
     	drawSensors();
-	};
+	}
 	//===================================================================================
 
 
@@ -765,7 +1026,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		}
 
 		if(colors.hasOwnProperty("skin")) {
-			var drewBack = false
+			var drewBack = false;
 			if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
 				var OK = true;
 
@@ -799,7 +1060,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 				ctx.fillRect(W-1,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -823,7 +1084,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	    			break;
 	    	}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -854,7 +1115,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 		ctx.restore(); // restore to original state
 		ctx.stroke();
-	};
+	}
 	//===================================================================================
 
 
@@ -973,7 +1234,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
     	    ctx.font = fontSize + "px Arial";
     	    ctx.fillText(s, x - textW/2, y - dotSize);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1041,7 +1302,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 
 		var cols = ["#A9A9A9", "#7FFF00"];
     	return cols[group];
-	};
+	}
 	//===================================================================================
 
 
@@ -1067,7 +1328,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			updateGraphics();
 		}
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -1087,7 +1348,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		if(selectionRect !== null) {
 			selectionRect.getContext("2d").clearRect(0,0, selectionRect.width, selectionRect.height);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1100,7 +1361,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			return true;
 		}
 		return false;
-	};
+	}
 	//===================================================================================
 
 
@@ -1129,7 +1390,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	    	}
 		}
 		return best;
-	};
+	}
 	//===================================================================================
 
 

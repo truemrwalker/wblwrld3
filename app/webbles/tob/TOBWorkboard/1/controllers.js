@@ -3250,7 +3250,7 @@ wblwrld3App.controller("workboardWebbleCtrl", function($scope, $log, Slot, Enum)
 //======================================================================================================================
 
 
-wblwrld3App.controller("attachCRFform_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("attachCRFform_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -3269,12 +3269,12 @@ wblwrld3App.controller("attachCRFform_Ctrl", function($scope, $log, $modalInstan
 
     $scope.close = function (result) {
 	if(result == 'cancel'){
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
 	}
 	else if(result == 'submit'){
-	    $modalInstance.close({crfList: $scope.formProps.crfList, eventShadow: $scope.formProps.eventShadow});
+	    $uibModalInstance.close({crfList: $scope.formProps.crfList, eventShadow: $scope.formProps.eventShadow});
 	} else {
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
 	}
     };
     
@@ -3318,7 +3318,7 @@ wblwrld3App.controller("attachCRFform_Ctrl", function($scope, $log, $modalInstan
 //========================================================================================
 
 
-wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -3337,9 +3337,9 @@ wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $modalInstance
 
     $scope.close = function (result) {
 	if(result == 'close'){
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
 	} else {
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
 	}
     };
     //========================================================================================
@@ -3348,7 +3348,7 @@ wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $modalInstance
 
 
 
-wblwrld3App.controller("assignStartAndEndDatesForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("assignStartAndEndDatesForm_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -3367,12 +3367,12 @@ wblwrld3App.controller("assignStartAndEndDatesForm_Ctrl", function($scope, $log,
 
     $scope.close = function (result) {
         if(result == 'cancel'){
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
         }
         else if(result == 'submit'){
-	    $modalInstance.close({qList: $scope.formProps.qList, eventShadow: $scope.formProps.eventShadow});
+	    $uibModalInstance.close({qList: $scope.formProps.qList, eventShadow: $scope.formProps.eventShadow});
         } else {
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
 	}
     };
     
@@ -3392,7 +3392,7 @@ wblwrld3App.controller("assignStartAndEndDatesForm_Ctrl", function($scope, $log,
 
 
 
-wblwrld3App.controller("microEventForm_Ctrl", function ($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("microEventForm_Ctrl", function ($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -3458,12 +3458,12 @@ wblwrld3App.controller("microEventForm_Ctrl", function ($scope, $log, $modalInst
 	//	debugLog("microEventForm.close() called");
 
         if(result == 'cancel'){
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
         }
         else if(result == 'submit'){
-	    $modalInstance.close({microEventList: $scope.formProps.microEventList, eventShadow: $scope.formProps.eventShadow});
+	    $uibModalInstance.close({microEventList: $scope.formProps.microEventList, eventShadow: $scope.formProps.eventShadow});
         } else {
-	    $modalInstance.close(null);
+	    $uibModalInstance.close(null);
 	}
     };
     

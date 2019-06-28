@@ -550,6 +550,10 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 
 
 
+	//===================================================================================
+	// Date to String
+	// This method converts a date to a string
+	//===================================================================================
 	function date2Str(v) {
 		var days = v / (24*3600*1000);
 		if(days < 100) {
@@ -560,6 +564,8 @@ wblwrld3App.controller('hopVizLifeTableWebbleCtrl', function($scope, $log, Slot,
 		}
 		return (days/365).toPrecision(2) + " years";
 	}
+	//===================================================================================
+
 
 
 

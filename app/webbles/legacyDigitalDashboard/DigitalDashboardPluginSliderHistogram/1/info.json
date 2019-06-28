@@ -1,8 +1,0 @@
-{
- "noautogen":false,
- "image":"images/notFound.png",
- "name":"DigitalDashboardPluginSliderHistogram",
- "description":"Visualization component for the old version of the DigitalDashboard. Expects to be connected as a child to the DigitalDashboard Webble. Draws bar charts and can change the selected subset of data periodically using a timer, to loop through different subsets of data automatically.",
- "keywords":"DigitalDashboard,Visualization",
- "author":"legacyDigitalDashboard"
-}

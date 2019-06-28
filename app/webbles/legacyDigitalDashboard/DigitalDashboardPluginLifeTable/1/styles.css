@@ -1,9 +1,10 @@
 /*/=====================================================================================================================
-// Styles for DigitalDashboard for Webble World v3.0 (2013)
+// Styles for Digital Dashboard Plugin Life Table Webble for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================*/
 
-/*/ === BEGIN: Fundamental Classes === /*/
+/*/ === BEGIN: Classes === /*/
 
 .canvasStuffForDigitalDashboardLifeTable {
     color: red;
@@ -23,5 +24,5 @@
     height: 200px;
 }
 
-/*/ === End: Fundamental Classes === /*/
+/*/ === End: Classes === /*/
 

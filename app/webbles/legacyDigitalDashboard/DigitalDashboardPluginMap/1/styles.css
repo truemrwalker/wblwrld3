@@ -1,23 +1,10 @@
 /*/=====================================================================================================================
-// Styles for DigitalDashboard for Webble World v3.0 (2013)
+// Styles for Digital Dashboard Plugin Map Webble for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================*/
 
-/*/ === BEGIN: Fundamental Classes === /*/
-
-.backgroundBox {
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-    font-weight: bold;
-    font-family: Arial, "Comic Sans MS", "Times New Roman", sans-serif;
-    background-color: black;
-    color: red;
-    border-style: solid;
-    border-color: yellow;
-    width: 400px;
-    height: 400px;
-}
+/*/ === BEGIN: Classes === /*/
 
 #mapDrawingArea {
     background-color: lightcoral;
@@ -32,5 +19,5 @@
     height: 100%
 }
 
-/*/ === End: Fundamental Classes === /*/
+/*/ === End: Classes === /*/
 

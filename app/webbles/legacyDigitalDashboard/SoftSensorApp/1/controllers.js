@@ -34,6 +34,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 	var mappingSetIdx = 0;
 	var plantSelections = {};
 	var droppedSensors = [];
+	var plantWbl;
 
 
 
@@ -479,8 +480,7 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 			if(i + 1 < loadedChildren["DigitalDashboardPluginScatterPlots"].length) {
 				var webble = $scope.getWebbleByInstanceId(loadedChildren["DigitalDashboardPluginScatterPlots"][1+i]);
 
-				if(!plantSelections.hasOwnProperty(set.fieldList[inputs[i]].name)
-					|| plantSelections[set.fieldList[inputs[i]].name]) {
+				if(!plantSelections.hasOwnProperty(set.fieldList[inputs[i]].name) || plantSelections[set.fieldList[inputs[i]].name]) {
 					webble.scope().set("GroupColors", colors);
 				} else {
 					webble.scope().set("GroupColors", clickedColors);
@@ -675,6 +675,15 @@ wblwrld3App.controller('softSensorAppWebbleCtrl', function($scope, $log, Slot, E
 		for(var i = 0; i < loadedChildren["SensorSchematicVisualizer"].length; i++) {
 			//$log.log(preDebugMsg + "found a plant visualizer");
 			var plugin = $scope.getWebbleByInstanceId(loadedChildren["SensorSchematicVisualizer"][i]);
+            plantWbl = plugin;
+
+			$timeout(function () { plantWbl.scope().doInternalMappingEnabled = false; });
+			$scope.$watch(function(){ return  plantWbl.scope().doInternalMappingEnabled; }, function(newVal, oldVal) {
+				if(newVal){
+					plantWbl.scope().doInternalMappingEnabled = false;
+				}
+			}, true);
+
 			plugin.scope().set("DrawingArea:width", 250);
 			plugin.scope().set("DrawingArea:height", 350);
 			plugin.scope().set("root:top", 20);

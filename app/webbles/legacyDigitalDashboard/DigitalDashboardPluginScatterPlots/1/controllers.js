@@ -1,5 +1,5 @@
 //======================================================================================================================
-// Controllers for DigitalDashboardPluginScatterPlots for Webble World v3.0 (2013)
+// Controllers for Digital Dashboard Plugin Scatter Plots for Webble World v3.0 (2013)
 // Created By: Jonas Sjobergh
 // Edited By: Micke Kuwahara (truemrwalker)
 //======================================================================================================================
@@ -15,9 +15,6 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 	$scope.stylesToSlots = {
 		DrawingArea: ['width', 'height']
 	};
-
-	$scope.customMenu = [];
-	$scope.customInteractionBalls = [];
 
 	$scope.displayText = "Scatter Plot";
 	var preDebugMsg = "Digital Dashboard Scatter Plot: ";

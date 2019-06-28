@@ -1963,7 +1963,7 @@ wblwrld3App.controller("patientboardWebbleCtrl", function ($scope, $log, Slot, E
 //======================================================================================================================
 
 
-wblwrld3App.controller("listCRFform_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("listCRFform_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -1984,10 +1984,10 @@ wblwrld3App.controller("listCRFform_Ctrl", function($scope, $log, $modalInstance
     $scope.close = function (result) {
 	debugLog("listCRFfor_Ctrl, close() called");
 	if(result == 'close'){
-	    $modalInstance.close({crfs: $scope.formProps.crfs, eventShadow: $scope.formProps.eventShadow});
+	    $uibModalInstance.close({crfs: $scope.formProps.crfs, eventShadow: $scope.formProps.eventShadow});
 	} else {
-	    $modalInstance.close({crfs: $scope.formProps.crfs, eventShadow: $scope.formProps.eventShadow});
-	    // $modalInstance.close(null);
+	    $uibModalInstance.close({crfs: $scope.formProps.crfs, eventShadow: $scope.formProps.eventShadow});
+	    // $uibModalInstance.close(null);
 	}
     };
     
@@ -2075,7 +2075,7 @@ wblwrld3App.controller("listCRFform_Ctrl", function($scope, $log, $modalInstance
 //========================================================================================
 
 
-wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -2096,9 +2096,9 @@ wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $modalInstance
 
     $scope.close = function (result) {
 	if(result == 'close'){
-	    $modalInstance.close({content:$scope.formProps.content, instanceIdx: $scope.formProps.instanceIdx, clickedIdx: $scope.formProps.clickedIdx});
+	    $uibModalInstance.close({content:$scope.formProps.content, instanceIdx: $scope.formProps.instanceIdx, clickedIdx: $scope.formProps.clickedIdx});
 	} else {
-	    $modalInstance.close({content:$scope.formProps.content, instanceIdx: $scope.formProps.instanceIdx, clickedIdx: $scope.formProps.clickedIdx});
+	    $uibModalInstance.close({content:$scope.formProps.content, instanceIdx: $scope.formProps.instanceIdx, clickedIdx: $scope.formProps.clickedIdx});
 	}
     };
     //========================================================================================
@@ -2110,7 +2110,7 @@ wblwrld3App.controller("viewCRFform_Ctrl", function($scope, $log, $modalInstance
 
 
 
-wblwrld3App.controller("microEventForm_Ctrl", function($scope, $log, $modalInstance, Slot, Enum, props, menuItemsFactoryService) {
+wblwrld3App.controller("microEventForm_Ctrl", function($scope, $log, $uibModalInstance, Slot, Enum, props, menuItemsFactoryService) {
     $scope.doDebugLogging = false;
     function debugLog(message) {
 	if($scope.doDebugLogging) {
@@ -2133,10 +2133,10 @@ wblwrld3App.controller("microEventForm_Ctrl", function($scope, $log, $modalInsta
 	debugLog("microEventForm.close() called");
 
 	if(result == 'close'){
-	    $modalInstance.close({microEventList: $scope.formProps.microEventList, eventShadow: $scope.formProps.eventShadow});
+	    $uibModalInstance.close({microEventList: $scope.formProps.microEventList, eventShadow: $scope.formProps.eventShadow});
 	} else {
-	    $modalInstance.close({microEventList: $scope.formProps.microEventList, eventShadow: $scope.formProps.eventShadow});
-	    // $modalInstance.close(null);
+	    $uibModalInstance.close({microEventList: $scope.formProps.microEventList, eventShadow: $scope.formProps.eventShadow});
+	    // $uibModalInstance.close(null);
 	}
     };
     
