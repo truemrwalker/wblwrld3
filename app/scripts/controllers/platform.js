@@ -227,6 +227,12 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // if the webble template currently being loaded requires external libraries outside what Webble World already provides, then those are saved as an array of text-links in this property while loading them
     var wblManifestLibs = [];
     var prevLoadedManifestLibs = [];
+    $scope.isThisLibLoadedAlready = function (libURLToCheck) {
+		return (isExist.valueInArray(prevLoadedManifestLibs, libURLToCheck));
+	}
+	$scope.addThisLibToLoadedAlreadyList = function (libURLToAdd) {
+		prevLoadedManifestLibs.push(libURLToAdd);
+	}
 
     // Current Supported mode level
     var currentExecutionMode_ = Enum.availableOnePicks_ExecutionModes.HighClearanceUser;
@@ -2925,7 +2931,8 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 						if(unqueueUntriggeredHandlersModal) { unqueueUntriggeredHandlersModal.dismiss(); }
 						$log.log('Currently Finished processing events... The platform is all yours.');
 						if(!$scope.isLoggingEnabled){
-							$scope.showQIM(gettext("Sorry for the delay, but now we are done. \n\n Enjoy your stay!"), 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
+							var finalStr = gettext("Sorry for the delay, but now we are done.") + "\n\n" + gettext("Enjoy your stay!");
+							$scope.showQIM(finalStr, 3500, {w: 250, h: 130}, undefined, wwConsts.lightPalette[0].value);
 						}
 					}
 					else{

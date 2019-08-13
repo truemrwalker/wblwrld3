@@ -11,7 +11,7 @@
 wblwrld3App.controller('HoPSupportCarrierCtrl', function($scope, $log, Slot, Enum, $location, $timeout) {
 
     //=== PROPERTIES ====================================================================
-
+	var inPortal;
 
     //=== EVENT HANDLERS ================================================================
 
@@ -25,7 +25,7 @@ wblwrld3App.controller('HoPSupportCarrierCtrl', function($scope, $log, Slot, Enu
 		var url = (window.location != window.parent.location) ? document.referrer : document.location;
 		$log.log("I believe we are on URL: " + url);
 		var urlLower = url.toString().toLowerCase();
-		var inPortal = false;
+		inPortal = false;
 
 		if(urlLower.indexOf("/wiki/") >= 0 || urlLower.indexOf(":7447") >= 0) {
 			inPortal = true;
@@ -42,6 +42,16 @@ wblwrld3App.controller('HoPSupportCarrierCtrl', function($scope, $log, Slot, Enu
 		$scope.set("root:opacity", 0.2);
     };
     //===================================================================================
+
+
+	//===================================================================================
+	// Is in Portal
+	// This method tells if this Webble is loaded inside the Hand on Portal environment
+	//===================================================================================
+	$scope.isInPortal = function () {
+		return inPortal;
+	}
+	//===================================================================================
 
 
 

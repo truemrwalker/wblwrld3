@@ -39,8 +39,10 @@
 	},
 	"devDependencies": {
 		"chokidar": "latest",
-		"grunt": "^1.0.3",
-		"grunt-angular-gettext": "latest"
+		"grunt": "^1.0.4",
+		"grunt-angular-gettext": "^2.4.5",
+		"load-grunt-tasks": "^5.0.0",
+		"time-grunt": "^2.0.0"
 	},
 	"scripts": {
 		"test": "grunt test",

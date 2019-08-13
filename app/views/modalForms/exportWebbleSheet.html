@@ -58,8 +58,8 @@
 		<div class="row">
 			<div class="col-xs-12" style="text-align: right;">
 				<form action="/api/export/webbles" method="post">
-					<button ng-click="close('cancel')" type="reset" class="btn btn-default" style="margin: 0 3px 3px 0;" translate>{{formItems.closeBtnTxt}}</button>
-					<button download="archive.war" ng-click="close('export')" ng-disabled="formItems.exportDisabled" type="submit" name="params" value="{{formItems.exportWebbleData}}" class="btn btn-primary" style="margin-bottom: 3px;" translate>{{formItems.exportBtnTxt}}</button>
+					<button ng-click="close('cancel')" type="reset" class="btn btn-default" style="margin: 0 3px 3px 0;">{{formItems.closeBtnTxt}}</button>
+					<button download="archive.war" ng-click="close('export')" ng-disabled="formItems.exportDisabled" type="submit" name="params" value="{{formItems.exportWebbleData}}" class="btn btn-primary" style="margin-bottom: 3px;">{{formItems.exportBtnTxt}}</button>
 				</form>
 			</div>
 		</div>

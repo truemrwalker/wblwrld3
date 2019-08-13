@@ -1,8 +1,8 @@
 {
- "noautogen":false,
- "image":"images/notFound.png",
- "name":"YoshidaDensityApp",
- "description":"A Webble that loads a few DigitalDashboard components, connects them, and loads some data. Sets up a visualization environment that can show 3D space density data. Old demo application for the Hands-on Portal project.",
- "keywords":"DigitalDashboard,Hands-on Portal,hop,3D,space,density,visualization,coordinated views",
- "author":"legacyDigitalDashboard"
+	"noautogen":false,
+	"image":"images/wbls/digitalDashboardAppYoshidaSpaceDensity.png",
+	"name":"Yoshida Density App",
+	"description":"<h3>The Hands-on Portal Digital Dashboard Space Density Application Webble</h3><p><span style=\"color: #ff0000;\">Old Hands-on Portal application using the old version of the DigitalDashboard.</span></p><p>This Webble app loads a few DigitalDashboard components, connects them, and loads some data. Sets up a visualization environment that can show 3D space density data.</p>",
+	"keywords":"DigitalDashboard,Hands-on Portal,hop,3D,space,density,visualization,coordinated views",
+	"author":"legacyDigitalDashboard"
 }

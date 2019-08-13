@@ -1,8 +1,0 @@
-{
- "noautogen":false,
- "image":"images/notFound.png",
- "name":"YoshidaSupernovaImageDifferencesApp",
- "description":"A Webble that sets up an image manipulation environment. You need to manually load data for it to do anything interesting. A prototype application for the Hands-on Portal.",
- "keywords":"Hands-on Portal,hop,images,image manipulation,supernova",
- "author":"legacyDigitalDashboard"
-}

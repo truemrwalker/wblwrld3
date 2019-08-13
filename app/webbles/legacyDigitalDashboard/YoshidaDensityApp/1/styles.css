@@ -1,23 +1,20 @@
 /*/=====================================================================================================================
-// Styles for [WEBBLE TEMPLATE NAME] for Webble World v3.0 (2013)
-// Created By: [WEBBLE TEMPLATE AUTHOR]
+// Styles  for HandsOnPortal Density App for Webble World v3.0 (2013)
+// Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //====================================================================================================================*/
 
-/*This file can be completely excluded in the final template. But if you have css classes and style settings it is here
-where you preferably put them.*/
+/*/ === BEGIN: Classes === /*/
 
-/*/ === BEGIN: Fundamental Classes === /*/
-
-.softSensorAppWrapper{
-    font-size: 48px;
-    width: 450px;
-    height: 250px;
-    background-color: grey;
-    border: 2px solid black;
-    border-radius:5px;
+.densityAppWrapper{
+	font-size: 48px;
+	width: 450px;
+	height: 250px;
+	background-color: grey;
+	border: 2px solid black;
+	border-radius:5px;
 }
 
-
-/*/ === END: Fundamental Classes === /*/
+/*/ === END: Classes === /*/
 
 /*====================================================================================================================*/

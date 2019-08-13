@@ -346,16 +346,6 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 
 		updateSize();
 		updateGraphics();
-
-		selectionHolderElement = $scope.theView.parent().find('#selectionHolder');
-		if(selectionHolderElement !== null){
-			selectionHolderElement.bind('mousedown', onMouseDown);
-			selectionHolderElement.bind('mousemove', onMouseMove);
-			selectionHolderElement.bind('mouseout', onMouseOut);
-		}
-		else {
-			//$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
-		}
 	};
 	//===================================================================================
 
@@ -419,7 +409,7 @@ wblwrld3App.controller('neuralNetworkActivationVisualizationWebbleCtrl', functio
 	// This method checks the validity of the selection after new data have been added.
 	//===================================================================================
 	function checkSelectionsAfterNewData() {
-		// $log.log(preDebugMsg + "checkSelectionsAfterNewData");		
+		// $log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		return true;
 	};
 	//===================================================================================

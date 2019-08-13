@@ -14,11 +14,11 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
     $scope.stylesToSlots = {
         DrawingArea: ['width', 'height']
     };
-    
+
     var dispText = "Image Set";
     $scope.displayText = "Image Set";
 	var preDebugMsg = "DigitalDashboard Image Set: ";
-    
+
     var idSlotName = "TheIdSlot";
     var internalIdSlotSet = false;
     var oldIdSlotData = [];
@@ -39,7 +39,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
     var mode = "abs";
 	var alreadyAdded = {};
 	var filesToSave = [];
-    
+
 
     //=== EVENT HANDLERS ================================================================
 
@@ -622,6 +622,21 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 
 
 	//===================================================================================
+	// Get Text Width
+	// This returns the width in pixels for a specific text.
+	//===================================================================================
+	function getTextWidth(text) {
+		if(ctx !== null && ctx !== undefined) {
+			ctx.font = fontSize + "px Arial";
+			var metrics = ctx.measureText(text);
+			return metrics.width;
+		}
+		return 0;
+	}
+	//===================================================================================
+
+
+	//===================================================================================
 	// Update View
 	// This method updates view to mirror the current loaded data and webble settings
 	//===================================================================================
@@ -722,11 +737,11 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 
 		for(var name in imageSets) {
 			var hh = 0;
-			var ww = -5 + legacyDDSupLib.getTextWidth(ctx, name, fontSize + "px Arial");
+			var ww = -5 + getTextWidth(name);
 
 			for(var i = 0; i < imageSets[name].v.length; i++) {
 				var im  = imageSets[name].v[i].image;
-				ww += 5 + Math.max(im.width, legacyDDSupLib.getTextWidth(ctx, imageSets[name].v[i].props.join(".")), fontSize + "px Arial");
+				ww += 5 + Math.max(im.width, getTextWidth(imageSets[name].v[i].props.join(".")));
 				hh = Math.max(hh, im.height + fontSize);
 			}
 
@@ -790,7 +805,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 			var hh = 0;
 
 			ctx.fillText(name, w, h + fontSize);
-			w += Math.ceil(legacyDDSupLib.getTextWidth(ctx, name, fontSize + "px Arial") + 5);
+			w += Math.ceil(getTextWidth(name) + 5);
 
 			imageSets[name].x1 = w;
 			imageSets[name].x2 = w;
@@ -812,7 +827,7 @@ wblwrld3App.controller('imageSetWebbleCtrl', function($scope, $log, $timeout, Sl
 				imageSets[name].y2 = Math.max(h + im.height, imageSets[name].y2);
 
 
-				w += 5 + Math.ceil(Math.max(im.width, legacyDDSupLib.getTextWidth(ctx, imageSets[name].v[i].props.join("."), fontSize + "px Arial")));
+				w += 5 + Math.ceil(Math.max(im.width, getTextWidth(imageSets[name].v[i].props.join("."))));
 				hh = Math.ceil(Math.max(hh, im.height + fontSize));
 			}
 

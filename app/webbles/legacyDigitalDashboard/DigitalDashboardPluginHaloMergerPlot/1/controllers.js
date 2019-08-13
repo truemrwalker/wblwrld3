@@ -116,7 +116,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
     $scope.dragNdropRepr = "Nothing to drag.";
     $scope.dragNdropID = "No drag data.";
 
-    
+
 
     //=== EVENT HANDLERS ================================================================
 
@@ -3105,7 +3105,7 @@ wblwrld3App.controller('haloMergerPlotPluginWebbleCtrl', function($scope, $log, 
 							j = Ns[set] + 1; // we have reached a new series of data
 						}
 						else if(hArray[j] == dArray[i]) { // we found the descendant
-							if(xArray[i] === nul || yArray[i] === null || sArray[i] === null || xArray[j] === null || yArray[j] === null || sArray[j] === null) {
+							if(xArray[i] === null || yArray[i] === null || sArray[i] === null || xArray[j] === null || yArray[j] === null || sArray[j] === null) {
 								// nothing to do
 							}
 							else {
