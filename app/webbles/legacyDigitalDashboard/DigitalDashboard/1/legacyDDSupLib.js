@@ -77,7 +77,11 @@ var legacyDDSupLib = {
 			var r = parseInt(color.substr(1,2), 16);
 			var g = parseInt(color.substr(3,2), 16);
 			var b = parseInt(color.substr(5,2), 16);
-			var a = (alpha > 1) ? Math.max(0, Math.min(255, Math.round(alpha * 255))) : alpha;
+			//var a = (alpha > 1) ? Math.max(0, Math.min(255, Math.round(alpha * 255))) : alpha;
+			var a = (alpha <= 1) ? Math.max(0, Math.min(255, Math.round(alpha * 255))) : alpha;
+			//console.log("alpha: " + a);
+			//var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			//console.log("alpha: " + alpha + " --> a: " + a);
 			return [r, g, b, a];
 		}
 		return [0, 0, 0, 255];
@@ -88,7 +92,9 @@ var legacyDDSupLib = {
 			var r = parseInt(color.substr(1,2), 16);
 			var g = parseInt(color.substr(3,2), 16);
 			var b = parseInt(color.substr(5,2), 16);
-			var a = (alpha > 1) ? Math.max(0, Math.min(255, Math.round(alpha * 255))) : alpha;
+			//var a = (alpha > 1) ? Math.max(0, Math.min(255, Math.round(alpha * 255))) : alpha;
+			var a = (alpha <= 1) ? Math.max(0, Math.min(255, Math.round(alpha * 255))) : alpha;
+			//console.log("alpha: " + alpha + " --> a: " + a);
 			return "rgba(" + r + ", " + g + ", " + b + ", " + a + ")";
 		}
 		return color;

@@ -1,5 +1,5 @@
 //======================================================================================================================
-// Controllers for DigDash_SensorPlacementSchematic for Webble World v3.0 (2013)
+// Controllers for DigDash_SensorSchematic for Webble World v3.0 (2013)
 // Created By: Micke Kuwahara (truemrwalker)
 // Based on previous work by: Jonas Sjobergh
 //======================================================================================================================
@@ -16,10 +16,8 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 		DrawingArea: ['width', 'height']
 	};
 
-	$scope.customMenu = [];
-	$scope.customInteractionBalls = [];
-
 	$scope.displayText = "Schematic Visualizer";
+	var preDebugMsg = "Digital Dashboard Schematic Visualizer: ";
 	$scope.SchematicName = "";
 
 	// graphics
@@ -147,7 +145,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 				if(elmnt.length > 0) {
 					hoverText = elmnt[0];
 				} else {
-					debugLog("No hover text!");
+					$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 
@@ -314,7 +312,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 			if(elmnt.length > 0) {
 				hoverText = elmnt[0];
 			} else {
-				debugLog("No hover text!");
+				$log.log(preDebugMsg + "No hover text!");
 			}
 		}
 		if(hoverText !== null) {
@@ -342,7 +340,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 
 			// if(x1 == x2 && y1 == y2) {
 			// 	// selection is too small, disregard
-			// 	// debugLog("ignoring a selection because it is too small");
+			// 	// $log.log(preDebugMsg + "ignoring a selection because it is too small");
 			// } else {
 			// 	newSelection(x1,x2, y1,y2, clickStart.ctrl);
 			// }
@@ -363,23 +361,12 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 		$scope.addPopupMenuItemDisabled('EditCustomInteractionObjects');
 		$scope.addPopupMenuItemDisabled('AddCustomSlots');
 
-		// var ios = $scope.theInteractionObjects;
-		// for(var i = 0, io; i < ios.length; i++){
-		// 	io = ios[i];
-		// 	if(io.scope().getName() == 'Resize'){
-		// 		io.scope().setIsEnabled(false);
-		// 	}
-		// 	if(io.scope().getName() == 'Rotate'){
-		// 		io.scope().setIsEnabled(false);
-		// 	}
-		// }
-
 		var myCanvasElement = $scope.theView.parent().find('#theCanvas');
 		if(myCanvasElement.length > 0) {
 			myCanvas = myCanvasElement[0];
 			ctx = myCanvas.getContext("2d");
 		} else {
-			debugLog("no canvas to draw on!");
+			$log.log(preDebugMsg + "no canvas to draw on!");
 		}
 
 		// internal slots specific to this Webble -----------------------------------------------------------
@@ -519,38 +506,8 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 			selectionHolderElement.bind('mousemove', onMouseMove);
 			selectionHolderElement.bind('mouseout', onMouseOut);
 		} else {
-			debugLog("No selectionHolderElement, could not bind mouse listeners");
+			$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 		}
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Debug Log
-	// This method write debug log messages for this Webble if doDebugLogging is enabled.
-	//===================================================================================
-	function debugLog(message) {
-    	if($scope.doDebugLogging) {
-    		$log.log("SoftSensor Schematic Visualizer: " + message);
-    	}
-    };
-	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA
-	// TODO: Should probably use the built in service version instead
-	// This method converts the hex color value to a RGBA color value.
-	//===================================================================================
-	function hexColorToRGBA(color, alpha) {
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-
-			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		}
-		return color;
 	};
 	//===================================================================================
 
@@ -560,7 +517,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	// This method saves the user selection inside a slot.
 	//===================================================================================
 	function saveSelectionsInSlot() {
-		// debugLog("saveSelectionsInSlot");
+		// $log.log(preDebugMsg + "saveSelectionsInSlot");
 		var result = {};
 		for(var i = 0; i < sensors.length; i++) {
 			result[sensors[i][0]] = sensors[i][sensors[i].length - 1];
@@ -578,7 +535,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	// This method sets the data selections based on the value of the slot value.
 	//===================================================================================
 	function setSelectionsFromSlotValue() {
-		// debugLog("setSelectionsFromSlotValue");
+		// $log.log(preDebugMsg + "setSelectionsFromSlotValue");
 		var slotSelections = $scope.gimme("SelectedSensors");
 		if(typeof slotSelections === 'string') {
 			slotSelections = JSON.parse(slotSelections);
@@ -596,7 +553,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 				}
 			}
 		}
-	
+
 		if(dirty) {
 			updateGraphics();
 			saveSelectionsInSlot();
@@ -611,7 +568,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	// loaded.
 	//===================================================================================
 	function checkSelectionsAfterNewData() {
-		// debugLog("checkSelectionsAfterNewData");
+		// $log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		setSelectionsFromSlotValue();
 	};
 	//===================================================================================
@@ -634,7 +591,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	// This method parse the data given.
 	//===================================================================================
 	function parseData() {
-		// debugLog("parseData");
+		// $log.log(preDebugMsg + "parseData");
 		resetVars();
 		var newSchematic = $scope.gimme("SchematicLayout");
     	if(typeof newSchematic === 'string') {
@@ -675,7 +632,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	// This method updates the size in regard to text and image
 	//===================================================================================
 	function updateSize() {
-		// debugLog("updateSize");
+		// $log.log(preDebugMsg + "updateSize");
 		fontSize = parseInt($scope.gimme("FontSize"));
 		if(fontSize < 5) {
 			fontSize = 5;
@@ -702,7 +659,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to resize!");
+				$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -714,7 +671,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 			if(selectionCanvasElement.length > 0) {
 				selectionCanvas = selectionCanvasElement[0];
 			} else {
-				debugLog("no selectionCanvas to resize!");
+				$log.log(preDebugMsg + "no selectionCanvas to resize!");
 				return;
 			}
 		}
@@ -749,7 +706,16 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
-		// debugLog("updateSize updated selections to: " + JSON.stringify(selections));
+		//$log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
+		for(var sel = 0; sel < selections.length; sel++) {
+			var s = selections[sel];
+			s[4] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, limits.minX, limits.maxX);
+			s[5] = legacyDDSupLib.val2pixelX(s[1], unique, drawW, leftMarg, limits.minX, limits.maxX);
+			s[6] = legacyDDSupLib.val2pixelY(s[2], unique, drawH, topMarg, limits.minY, limits.maxY);
+			s[7] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, limits.minY, limits.maxY);
+		}
+
+		// $log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
 	};
 	//===================================================================================
 
@@ -763,14 +729,14 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	// This method redraws and update the graphics based on current data and settings.
 	//===================================================================================
 	function updateGraphics() {
-    	// debugLog("updateGraphics()");
+    	// $log.log(preDebugMsg + "updateGraphics()");
 
 		if(myCanvas === null) {
 			var myCanvasElement = $scope.theView.parent().find('#theCanvas');
 			if(myCanvasElement.length > 0) {
 				myCanvas = myCanvasElement[0];
 			} else {
-				debugLog("no canvas to draw on!");
+				$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -795,7 +761,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
     	    H = 1;
     	}
 
-		// debugLog("Clear the canvas");
+		// $log.log(preDebugMsg + "Clear the canvas");
 		ctx.clearRect(0,0, W,H);
     	drawW = W - leftMarg - rightMarg;
     	drawH = H - topMarg - bottomMarg * 2 - fontSize;
@@ -862,7 +828,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	function drawSchematic() {
 		for(var i = 0; i < schematic.length; i++) {
 			var item = schematic[i];
-	    
+
 	    	switch (item[0]) {
 	    		case "line":
 	    			drawLine(item);
@@ -987,9 +953,9 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 		}
 
 		var fillOn = getGradColForGroup(0, 0,0,W,H, 0.33);
-		var colOn = hexColorToRGBA(getColorForGroup(0), 0.33);
+		var colOn = legacyDDSupLib.hexColorToRGBA(getColorForGroup(0), 0.33);
 		var fillOff = getGradColForGroup(0, 0,0,W,H, 0.33);
-    	var colOff = hexColorToRGBA(getColorForGroup(0), 0.33);
+    	var colOff = legacyDDSupLib.hexColorToRGBA(getColorForGroup(0), 0.33);
 		var col;
 		var fill;
 
@@ -1012,7 +978,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	    		fill = fillOff;
 	    		col = colOff;
 	    	}
-	    
+
 	    	ctx.beginPath();
 	    	ctx.arc(x, y, dotSize, 0, 2 * Math.PI, false);
 	    	ctx.fillStyle = fill;
@@ -1061,19 +1027,19 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
     	    x2 = W;
     	    y2 = H;
 		}
-	
+
 		var grads = [[{"pos":0, "color":"#EEEEEE"}, {"pos":0.75, "color":"#A9A9A9"}], [{"pos":0, "color":"#E5FFCC"}, {"pos":0.75, "color":"#7FFF00"}]];
-	
+
     	if(x1 != x2 || y1 != y2) {
     		var OK = true;
-	    
+
 	    	try {
 	    		var grd = ctx.createLinearGradient(x1,y1,x2,y2);
 	    		for(var i = 0; i < grads[group].length; i++) {
 	    			var cc = grads[group][i];
 	    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
 	    				if(alpha !== undefined) {
-	    					grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
+	    					grd.addColorStop(cc.pos, legacyDDSupLib.hexColorToRGBA(cc.color, alpha));
 	    				}
 	    				else {
 	    					grd.addColorStop(cc.pos, cc.color);
@@ -1085,7 +1051,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	    	} catch(e) {
 	    		OK = false;
 	    	}
-		
+
     	    if(OK) {
     	    	return grd;
     	    }
@@ -1114,7 +1080,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 			}
 			sensors[i][idx] = true;
 		}
-	
+
 		if(dirty) {
 			updateGraphics();
 		}
@@ -1133,7 +1099,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 			if(selectionRectElement.length > 0) {
 				selectionRect = selectionRectElement[0];
 			} else {
-				debugLog("No selection rectangle!");
+				$log.log(preDebugMsg + "No selection rectangle!");
 			}
 		}
 		if(selectionRect !== null) {
@@ -1164,7 +1130,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 		if(sensors.length <= 0) {
 			return -1;
 		}
-	
+
 		var best = 0;
 		var dx = (x - (leftMarg + sensors[0][1] * drawW));
 		var dy = (y - (topMarg + sensors[0][2] * drawH));

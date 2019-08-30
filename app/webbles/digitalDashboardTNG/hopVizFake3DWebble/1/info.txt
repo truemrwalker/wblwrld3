@@ -1,8 +1,0 @@
-The Hands-on Portal Fake 3D visualization Webble visualizes data in a pseudo-3D visualization.
-
-
-It expects data to be provided by a Hands-on Portal data Webble, for example the hopFileDataWebble.
-
-To start visualizing data, load some data (by for instance dropping a data file from the file system on the hopFileDataWebble) and then drag-and-drop the data field name you want to visualize from the list of data fields displayed by the data Webble and drop it on the area that says "data" when the you drag something over the Fake 3D visualization Webble. 
-
-To change various options, right-click on the Webble and select "Properties".

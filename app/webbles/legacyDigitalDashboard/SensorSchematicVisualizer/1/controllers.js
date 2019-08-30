@@ -797,7 +797,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 				}
 			}
 		}
-	
+
 		if(dirty) {
 			updateGraphics();
 			saveSelectionsInSlot();
@@ -950,7 +950,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
-		// //$log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
+		//$log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
 		for(var sel = 0; sel < selections.length; sel++) {
 			var s = selections[sel];
 			s[4] = legacyDDSupLib.val2pixelX(s[0], unique, drawW, leftMarg, limits.minX, limits.maxX);
@@ -1071,7 +1071,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	function drawPlant() {
 		for(var i = 0; i < plant.length; i++) {
 			var item = plant[i];
-	    
+
 	    	switch (item[0]) {
 	    		case "line":
 	    			drawLine(item);
@@ -1270,12 +1270,12 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
     	    x2 = W;
     	    y2 = H;
 		}
-	
+
 		var grads = [[{"pos":0, "color":"#EEEEEE"}, {"pos":0.75, "color":"#A9A9A9"}], [{"pos":0, "color":"#E5FFCC"}, {"pos":0.75, "color":"#7FFF00"}]];
-	
+
     	if(x1 != x2 || y1 != y2) {
     		var OK = true;
-	    
+
 	    	try {
 	    		var grd = ctx.createLinearGradient(x1,y1,x2,y2);
 	    		for(var i = 0; i < grads[group].length; i++) {
@@ -1294,7 +1294,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 	    	} catch(e) {
 	    		OK = false;
 	    	}
-		
+
     	    if(OK) {
     	    	return grd;
     	    }
@@ -1323,7 +1323,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 			}
 			sensors[i][idx] = true;
 		}
-	
+
 		if(dirty) {
 			updateGraphics();
 		}
@@ -1373,7 +1373,7 @@ wblwrld3App.controller('plantVisualizerPluginWebbleCtrl', function($scope, $log,
 		if(sensors.length <= 0) {
 			return -1;
 		}
-	
+
 		var best = 0;
 		var dx = (x - (leftMarg + sensors[0][1] * drawW));
 		var dy = (y - (topMarg + sensors[0][2] * drawH));

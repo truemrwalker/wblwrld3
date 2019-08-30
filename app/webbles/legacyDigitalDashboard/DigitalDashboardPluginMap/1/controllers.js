@@ -2350,13 +2350,13 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-			var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
+			var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var rgbaText = hexColorToRGBAvec(textColor, 1.0);
 			var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 			var pixels = imData.data;
 		}
 		else {
-			var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
 			var fill0 = legacyDDSupLib.getGradientColorForGroup(0, 0,0,drawW,drawH, zeroTransp, myCanvas, myCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 		}
 
@@ -2431,7 +2431,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 										col = col0;
 									}
 									else {
-										col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 
 									myCtx.save();
@@ -2448,7 +2448,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 										col = rgba0;
 									}
 									else {
-										col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										col = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 
 									if(transparency >= 1 && pass > 0) {
@@ -2468,7 +2468,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 										col = col0;
 									}
 									else {
-										col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 
 									myCtx.save();
@@ -2485,7 +2485,7 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 										col = rgba0;
 									}
 									else {
-										col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										col = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 
 									if(transparency >= 1 && pass > 0) {
@@ -2545,10 +2545,10 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 								}
 								else {
 									if(transparency >= 1) {
-										rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+										rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 									}
 									else {
-										rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 
 									if(transparency >= 1 && pass > 0) {
@@ -2592,10 +2592,10 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 								}
 								else {
 									if(transparency >= 1) {
-										rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+										rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 									}
 									else {
-										rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 
 									if(transparency >= 1 && pass > 0) {
@@ -2655,9 +2655,9 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	// This method converts a heat value and a group value into a color.
 	//===================================================================================
 	function heatAndGroup2color(val, groupId) {
-		var rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
-		var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
-		var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
+		var rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+		var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
+		var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
 		var rest = 1 - val;
 		var f = 0.33;
 		var f1 = 1 - f;
@@ -2694,8 +2694,8 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 	// This method converts a heat value to a color.
 	//===================================================================================
 	function heat2color(val) {
-		var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
-		var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
+		var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), transparency);
+		var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), transparency);
 		var rest = 1 - val;
 		var res = [
 			Math.floor(col1[0] * rest + col2[0] * val),
@@ -2850,8 +2850,8 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 
 		myCtx.clearRect(0,0, myCanvas.width, myCanvas.height);
 
-		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-		var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
+		var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+		var rgbaText = hexColorToRGBAvec(textColor, 1.0);
 		var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 		var pixels = imData.data;
 		var valSpan = (limits.maxVal - limits.minVal);
@@ -3144,6 +3144,41 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 		$scope.fixDroppable();
 		$timeout(function(){initializeMapAPI(); updateSize(); 	/*$log.log(preDebugMsg + "Init timeout function calls updateGraphics");*/ updateGraphics();});
 	};
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
 	//===================================================================================
 
 
