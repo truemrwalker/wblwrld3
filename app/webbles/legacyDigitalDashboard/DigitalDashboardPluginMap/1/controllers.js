@@ -9,7 +9,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, Slot, Enum, dbService) {
+wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, gettext) {
 
 	//=== PROPERTIES ====================================================================
 
