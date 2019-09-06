@@ -1,7 +1,7 @@
 //======================================================================================================================
 // Controllers for Digital Dashboard 3.0 TNG HoP File Data Webble for Webble World v3.0 (2013)
-// // Created By: Jonas Sjobergh
-// // Edited By: Micke Kuwahara (truemrwalker)
+// Created By: Jonas Sjobergh
+// Edited By: Micke Kuwahara (truemrwalker)
 //======================================================================================================================
 
 //=======================================================================================

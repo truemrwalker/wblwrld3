@@ -2345,10 +2345,10 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 			}
 
 			if(colors['selection'].hasOwnProperty('color')) {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+				selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 			}
 			else {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+				selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 			}
 
 			if(colors['selection'].hasOwnProperty('gradient')) {
@@ -2368,7 +2368,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 				var atLeastOneAdded = false;
 				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 					if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 						atLeastOneAdded = true;
 					}
 				}
@@ -3044,7 +3044,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
+			var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
 			var imData = lineCtx.getImageData(0, 0, lineCanvas.width, lineCanvas.height);
 			var pixels = imData.data;
 			var imData0 = ulineCtx.getImageData(0, 0, ulineCanvas.width, ulineCanvas.height);
@@ -3095,10 +3095,10 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 							var groupId = 0;
 
 							if(transparency >= 1) {
-								var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 0.33);
+								var color = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 0.33);
 							}
 							else {
-								var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * 0.33);
+								var color = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * 0.33);
 							}
 
 							if(drawPretty) {
@@ -3130,7 +3130,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 							for(var groupId = 1; groupId < ls.length; groupId++) {
 								if(ls[groupId] > 0) {
 									if(noofGroups > 1) {
-										var thisColor = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * ls[groupId] / noofVotes);
+										var thisColor = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency * ls[groupId] / noofVotes);
 
 										if(first) {
 											first = false;
@@ -3141,7 +3141,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 										}
 									}
 									else {
-										var color = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+										var color = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 									}
 								}
 							}
@@ -3500,6 +3500,42 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 		}
 	}
 	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
+	//===================================================================================
+
 
 
 

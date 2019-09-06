@@ -477,6 +477,40 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 	//===================================================================================
 
 
+	//===================================================================================
+	// Key Down / Key Up
+	// These event handlers manages keyboard press down and key release.
+	//===================================================================================
+	$(window).keydown(function (evt) {
+		if (evt.which === 16) { // shift
+			shiftPressed = true;
+			map.setOptions({
+				draggable: true
+			});
+		}
+		if (evt.which === 17) { // ctrl
+			ctrlPressed = true;
+		}
+		if(evt.which === 224 /*firefox command key*/ || evt.which === 91 /*safari/chrome left command key*/ || evt.which === 93 /*safari/chrome right command key*/) { // opera uses 17, which is covered by the normal code above
+			ctrlPressed = true;
+		}
+	}).keyup(function (evt) {
+		if (evt.which === 16) { // shift
+			shiftPressed = false;
+			map.setOptions({
+				draggable: false
+			});
+		}
+		if (evt.which === 17) { // ctrl
+			ctrlPressed = false;
+		}
+		if(evt.which === 224 /*firefox command key*/ || evt.which === 91 /*safari/chrome left command key*/ || evt.which === 93 /*safari/chrome right command key*/) { // opera uses 17, which is covered by the normal code above
+			ctrlPressed = false;
+		}
+	});
+	//===================================================================================
+
+
 
 	//=== METHODS & FUNCTIONS ===========================================================
 
@@ -775,51 +809,38 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 		updateGraphics();
 		$scope.fixDroppable();
 
-		dbService.getMyAccessKey("www.google.com", "maps").then(
-			function(returningKey) {
-				if(returningKey){
-					var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
-					if(!$scope.isThisLibLoadedAlready(urlPath +  returningKey)){
+		if(!$scope.isThisLibLoadedAlready("https://maps.googleapis.com/maps/api/js")){
+			$scope.addThisLibToLoadedAlreadyList("https://maps.googleapis.com/maps/api/js");
+			dbService.getMyAccessKey("www.google.com", "maps").then(
+				function(returningKey) {
+					if(returningKey){
+						var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
 						$.getScript( urlPath +  returningKey)
 							.always(function( jqxhr, settings, exception ) {
-								$scope.addThisLibToLoadedAlreadyList(urlPath +  returningKey);
-								$timeout(function(){initializeMapAPI(); updateSize(); updateGraphics();});
+								$timeout(function(){initializeMapAPI();});
 							});
 					}
 					else{
-						$timeout(function(){initializeMapAPI(); updateSize(); updateGraphics();});
-					}
-
-				}
-				else{
-					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm (www.google.com) and resource (maps) saved in your user profile. So we loaded a very limited non-api map instead.")}, null);
-					if(!$scope.isThisLibLoadedAlready("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")){
+						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm (www.google.com) and resource (maps) saved in your user profile. So we loaded a very limited non-api map instead.")}, null);
 						$.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")
 							.always(function( jqxhr, settings, exception ) {
-								$scope.addThisLibToLoadedAlreadyList("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN");
-								$timeout(function(){initializeMapAPI(); updateSize(); updateGraphics();});
+								$timeout(function(){initializeMapAPI();});
 							});
 					}
-					else{
-						$timeout(function(){initializeMapAPI(); updateSize(); updateGraphics();});
-					}
-				}
-			},
-			function (err) {
-				$log.log("ERROR: " + err);
-				$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No User and Access Key Found"), content: gettext("This Webble requires a logged in user and a valid Google Map API key to function properly and neither were found, so we loaded a very limited non-api map instead.")}, null);
-				if(!$scope.isThisLibLoadedAlready("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")){
+				},
+				function (err) {
+					$log.log("ERROR: " + err);
+					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No User and Access Key Found"), content: gettext("This Webble requires a logged in user and a valid Google Map API key to function properly and neither were found, so we loaded a very limited non-api map instead.")}, null);
 					$.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")
 						.always(function( jqxhr, settings, exception ) {
-							$scope.addThisLibToLoadedAlreadyList("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN");
-							$timeout(function(){initializeMapAPI(); updateSize(); updateGraphics();});
+							$timeout(function(){initializeMapAPI();});
 						});
 				}
-				else{
-					$timeout(function(){initializeMapAPI(); updateSize(); updateGraphics();});
-				}
-			}
-		);
+			);
+		}
+		else{
+			$timeout(function(){initializeMapAPI();});
+		}
 	};
 	//===================================================================================
 
@@ -2209,6 +2230,13 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 	// This method initilize the map (GoogleMap) API.
 	//===================================================================================
 	function initializeMapAPI () {
+		try {
+			var testGoogleMapsAPIPresence = new google.maps.LatLng(mapCenterLat, mapCenterLon);
+		} catch (e) {
+			$timeout(function(){initializeMapAPI();}, 500);
+			return;
+		}
+
 		$log.log(preDebugMsg + "initializeMapAPI");
 		var currentPlace = new google.maps.LatLng(mapCenterLat, mapCenterLon);
 		var mapOptions = {
@@ -2332,35 +2360,10 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 			}
 			mouseIsDown = false;
 		});
-	}
 
-	$(window).keydown(function (evt) {
-		if (evt.which === 16) { // shift
-			shiftPressed = true;
-			map.setOptions({
-				draggable: true
-			});
-		}
-		if (evt.which === 17) { // ctrl
-			ctrlPressed = true;
-		}
-		if(evt.which === 224 /*firefox command key*/ || evt.which === 91 /*safari/chrome left command key*/ || evt.which === 93 /*safari/chrome right command key*/) { // opera uses 17, which is covered by the normal code above
-			ctrlPressed = true;
-		}
-	}).keyup(function (evt) {
-		if (evt.which === 16) { // shift
-			shiftPressed = false;
-			map.setOptions({
-				draggable: false
-			});
-		}
-		if (evt.which === 17) { // ctrl
-			ctrlPressed = false;
-		}
-		if(evt.which === 224 /*firefox command key*/ || evt.which === 91 /*safari/chrome left command key*/ || evt.which === 93 /*safari/chrome right command key*/) { // opera uses 17, which is covered by the normal code above
-			ctrlPressed = false;
-		}
-	});
+		updateSize();
+		updateGraphics();
+	}
 	//===================================================================================
 
 
@@ -2910,15 +2913,15 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-			var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 			var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 			var imData0 = uCtx.getImageData(0, 0, uCanvas.width, uCanvas.height);
 			var pixels = imData.data;
 			var pixels0 = imData0.data;
 		}
 		else {
-			var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
 			var fill0 = legacyDDSupLib.getGradientColorForGroup(0,0,0,drawW,drawH, zeroTransp, uCanvas, uCtx, useGlobalGradients, $scope.theView.parent().find('#theCanvas'), colorPalette, currentColors);
 		}
 
@@ -2988,11 +2991,11 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 									}
 									else {
 										if(transparency >= 1) {
-											rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+											rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 											drawDotfullalpha(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 										}
 										else {
-											rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+											rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 											drawDot(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 										}
 									}
@@ -3044,11 +3047,11 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 									}
 									else {
 										if(transparency >= 1) {
-											rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+											rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 											drawDotfullalpha(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 										}
 										else {
-											rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+											rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 											drawDot(x1 + offset, y1, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], pixels, myCanvas.width);
 										}
 									}
@@ -3150,7 +3153,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 										col0[3] = temp;
 									}
 									else {
-										col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
+										col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
 										myCtx.save();
 										myCtx.beginPath();
 										myCtx.strokeStyle = col;
@@ -3169,7 +3172,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 										drawLineDDA(pixels0, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], Math.ceil(col[3] * op), uCanvas.width, lw);
 									}
 									else {
-										col = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
+										col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
 										if(col[3] >= 255) {
 											drawLineDDAfullalpha(pixels, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], col[3], myCanvas.width, lw);
 										}
@@ -3199,7 +3202,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 										col0[3] = temp;
 									}
 									else {
-										col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op*transparency);
+										col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op*transparency);
 										myCtx.save();
 										myCtx.beginPath();
 										myCtx.strokeStyle = col;
@@ -3217,7 +3220,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 
 									}
 									else {
-										col = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
+										col = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), op * transparency);
 										if(col[3] >= 255) {
 											drawLineDDAfullalpha(pixels, x1 + offset, y1, x2 + offset, y2, col[0], col[1], col[2], col[3], myCanvas.width, lw);
 										}
@@ -3356,8 +3359,8 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 			zeroTransp *= transparency;
 		}
 		var zeroTranspAlpha = Math.floor(255*zeroTransp);
-		var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-		var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+		var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 		var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 		var pixels = imData.data;
 		var valSpan = (limits.maxVal - limits.minVal);
@@ -3919,8 +3922,8 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 			zeroTransp *= transparency;
 		}
 		var zeroTranspAlpha = Math.floor(255*zeroTransp);
-		var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-		var rgbaText = hexColorToRGBAvec(textColor, 1.0);
+		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+		var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1.0);
 		var imData = myCtx.getImageData(0, 0, myCanvas.width, myCanvas.height);
 		var pixels = imData.data;
 		var latPerPixel = (mapNE.lat() - mapSW.lat()) / myCanvas.height;
@@ -4552,15 +4555,15 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 			var idx = Math.max(0, legacyDDSupLib.binLookup(allValues, val, 0, len));
 
 			if(colorMethod == 1) { // group color + alpha
-				rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), alpha);
+				rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), alpha);
 				for(var c = 0; c < 3; c++) {
 					rgba[c] = Math.floor(rgba[c] * 0.5 + 255 * 0.5 * idx / (len - 1));
 				}
 			}
 			else { // heat map color
 				var prop = idx / (len - 1);
-				var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), alpha);
-				var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), alpha);
+				var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), alpha);
+				var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), alpha);
 				for(var c = 0; c < 3; c++) {
 					rgba[c] = Math.floor(col1[c] * (1 - prop) + col2[c] * prop);
 				}
@@ -4575,14 +4578,14 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 			}
 
 			if(colorMethod == 0) { // group color + alpha
-				rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), alpha);
+				rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), alpha);
 				for(var c = 0; c < 3; c++) {
 					rgba[c] = Math.floor(rgba[c] * 0.5 + 255 * 0.5 * prop);
 				}
 			}
 			else { // heat map colors
-				var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), alpha);
-				var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), alpha);
+				var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), alpha);
+				var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), alpha);
 				for(var c = 0; c < 3; c++) {
 					rgba[c] = Math.floor(col1[c] * (1 - prop) + col2[c] * prop);
 				}
@@ -4612,10 +4615,10 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 					if(cc.length == 9) { // contains alpha
 						var alphaCC = parseInt(cc.substr(7,2), 16);
 						var cc = cc.substr(0,7);
-						rgba = hexColorToRGBAvec(cc, alpha * alphaCC / 255.0);
+						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha * alphaCC / 255.0);
 					}
 					else {
-						rgba = hexColorToRGBAvec(cc, alpha);
+						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha);
 					}
 				}
 				else { // only colors
@@ -4629,17 +4632,17 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 					var cc = colorKey[idx];
 					if(cc.length == 9) { // contains alpha
 						var alphaCC = parseInt(cc.substr(7,2), 16);
-						rgba = hexColorToRGBAvec(cc, alpha * alphaCC / 255.0);
+						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha * alphaCC / 255.0);
 					}
 					else {
-						rgba = hexColorToRGBAvec(cc, alpha);
+						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha);
 					}
 				}
 			}
 		}
 		else if(colorMethod == 6 || colorMethod == 7) { // truncate to levels
 			var prop = 0;
-			var col1 = hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), alpha);
+			var col1 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapLowValueColor"), alpha);
 
 			if(noofLevels > 1) {
 				var span = allValues[allValues.length - 1] - allValues[0];
@@ -4648,7 +4651,7 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 				}
 
 				prop = Math.floor(Math.min(noofLevels - 1, (noofLevels * prop))) / (noofLevels - 1);
-				var col2 = hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), alpha);
+				var col2 = legacyDDSupLib.hexColorToRGBAvec($scope.gimme("HeatMapHighValueColor"), alpha);
 
 				for(var c = 0; c < 3; c++) {
 					rgba[c] = Math.floor(col1[c] * (1 - prop) + col2[c] * prop);
@@ -4697,42 +4700,6 @@ wblwrld3App.controller('hopVizMapWebbleCtrl', function($scope, $log, $timeout, S
 		selections = [];
 	}
 	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA Vector
-	// This method converts a hexadecimal color value to a RGBA vector.
-	//===================================================================================
-	function hexColorToRGBAvec(color, alpha) {
-		var res = [];
-
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-			return [r, g, b, a];
-		}
-		return [0, 0, 0, 255];
-	}
-	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA
-	// This method converts a hexadecimal color value to a RGBA color.
-	//===================================================================================
-	function hexColorToRGBA(color, alpha) {
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		}
-		return color;
-	}
-	//===================================================================================
-
 
 
 	//=== CTRL MAIN CODE ======================================================================

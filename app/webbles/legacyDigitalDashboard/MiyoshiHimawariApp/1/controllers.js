@@ -197,7 +197,8 @@ wblwrld3App.controller('himawariVizAppWebbleCtrl', function($scope, $log, Slot, 
 
 	//===================================================================================
 	// Add Newly Loaded Child
-	// This method adds a specific newly loaded child to
+	// This method adds a specific newly loaded child to the list of webbles being
+	// maintained and manipulated
 	//===================================================================================
 	var addNewlyLoadedChild = function(webbleID, templateId) {
 		// $log.log(preDebugMsg + "addNewlyLoadedChild, " + webbleID + " " + templateId);
