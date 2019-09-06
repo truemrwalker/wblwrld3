@@ -1833,7 +1833,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 				if(xType != 'date') {
 					if(zoomMinX < 0 && zoomMaxX > 0) {
 						var pos = legacyDDSupLib.val2pixelX(0, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
-						var col = legacyDDSupLib.hexColorToRGBA(textColor, 0.5);
+						var col = hexColorToRGBA(textColor, 0.5);
 
 						axesCtx.save();
 
@@ -1853,7 +1853,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 				if(yType != 'date') {
 					if(zoomMinY < 0 && zoomMaxY > 0) {
 						var pos = legacyDDSupLib.val2pixelY(0, unique, drawH, topMarg, zoomMinY, zoomMaxY);
-						var col = legacyDDSupLib.hexColorToRGBA(textColor, 0.5);
+						var col = hexColorToRGBA(textColor, 0.5);
 
 						axesCtx.save();
 
@@ -2051,14 +2051,14 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-			var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, transparency);
+			var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var rgbaText = hexColorToRGBAvec(textColor, transparency);
 
 			var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
 			pixels = imData.data;
 		} else {
-			var col0 = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
-			var colT = legacyDDSupLib.hexColorToRGBA(textColor, transparency);
+			var col0 = hexColorToRGBA(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), zeroTransp);
+			var colT = hexColorToRGBA(textColor, transparency);
 			var fill0 = legacyDDSupLib.getGradientColorForGroup(0,0,0,W,H, zeroTransp, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 		}
 
@@ -2162,7 +2162,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 					var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 
 					if(drawPretty) {
-						var col = legacyDDSupLib.hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+						var col = hexColorToRGBA(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 						var fill = legacyDDSupLib.getGradientColorForGroup(groupId, x-dotSize,y-dotSize,x+dotSize,y+dotSize, transparency, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
 
 						dotCtx.beginPath();
@@ -2173,7 +2173,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 					} else {
-						rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
+						rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), transparency);
 						if(rgba[3] >= 255) {
 							drawDotFullAlpha(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						} else {
@@ -2251,10 +2251,10 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 
 							dotCtx.restore();
 						} else {
-							var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1);
+							var rgbaText = hexColorToRGBAvec(textColor, 1);
 							var rgba = rgbaText;
 							if(groupId != "tot") {
-								rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+								rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 							}
 
 							var startPixelIdx = (y * W + x) * 4;
@@ -2683,9 +2683,9 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 			}
 
 			if(colors['selection'].hasOwnProperty('color')) {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+				selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 			} else {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+				selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 			}
 
 			if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
@@ -2704,7 +2704,7 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 				var atLeastOneAdded = false;
 				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 					if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 						atLeastOneAdded = true;
 					}
 				}
@@ -2944,6 +2944,43 @@ wblwrld3App.controller('scatterPlotPluginWebbleCtrl', function($scope, $log, $ti
 		}
 	}
 	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
+	//===================================================================================
+
+
 
 	//=== CTRL MAIN CODE ======================================================================
 

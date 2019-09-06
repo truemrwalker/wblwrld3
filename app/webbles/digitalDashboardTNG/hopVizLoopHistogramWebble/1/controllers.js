@@ -2056,7 +2056,7 @@ wblwrld3App.controller('loopHistogramPluginWebbleCtrl', function($scope, $log, S
 			if(colors['selection'].hasOwnProperty('border')) {
 				selectionColors.border = colors['selection']['border'];
 				try {
-					var temp = legacyDDSupLib.hexColorToRGBA(selectionColors.border, 0.8);
+					var temp = hexColorToRGBA(selectionColors.border, 0.8);
 					selectionColors.border = temp;
 				} catch(e) {
 					// if it does not work, live with a non-transparent border
@@ -2064,14 +2064,14 @@ wblwrld3App.controller('loopHistogramPluginWebbleCtrl', function($scope, $log, S
 			}
 			else {
 				// selectionColors.border = '#FFA500'; // orange
-				selectionColors.border = legacyDDSupLib.hexColorToRGBA('#FFA500', 0.8);
+				selectionColors.border = hexColorToRGBA('#FFA500', 0.8);
 			}
 
 			if(colors['selection'].hasOwnProperty('color')) {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+				selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 			}
 			else {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+				selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 			}
 
 			if(colors['selection'].hasOwnProperty('gradient')) {
@@ -2090,7 +2090,7 @@ wblwrld3App.controller('loopHistogramPluginWebbleCtrl', function($scope, $log, S
 				var atLeastOneAdded = false;
 				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 					if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 						atLeastOneAdded = true;
 					}
 				}
@@ -2549,6 +2549,22 @@ wblwrld3App.controller('loopHistogramPluginWebbleCtrl', function($scope, $log, S
 			saveSelectionsInSlot();
 		}
 		$timeout(doTheLoop, stepTime);
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
 	}
 	//===================================================================================
 

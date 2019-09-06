@@ -953,9 +953,9 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 		}
 
 		var fillOn = getGradColForGroup(0, 0,0,W,H, 0.33);
-		var colOn = legacyDDSupLib.hexColorToRGBA(getColorForGroup(0), 0.33);
+		var colOn = hexColorToRGBA(getColorForGroup(0), 0.33);
 		var fillOff = getGradColForGroup(0, 0,0,W,H, 0.33);
-    	var colOff = legacyDDSupLib.hexColorToRGBA(getColorForGroup(0), 0.33);
+    	var colOff = hexColorToRGBA(getColorForGroup(0), 0.33);
 		var col;
 		var fill;
 
@@ -1039,7 +1039,7 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	    			var cc = grads[group][i];
 	    			if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
 	    				if(alpha !== undefined) {
-	    					grd.addColorStop(cc.pos, legacyDDSupLib.hexColorToRGBA(cc.color, alpha));
+	    					grd.addColorStop(cc.pos, hexColorToRGBA(cc.color, alpha));
 	    				}
 	    				else {
 	    					grd.addColorStop(cc.pos, cc.color);
@@ -1151,20 +1151,20 @@ wblwrld3App.controller('DigDashVizPlugin_SensorSchematicCtrl', function($scope, 
 	//===================================================================================
 
 
-    //===================================================================================
-    // Webble template Create Custom Webble Definition
-    // If this template wants to store its own private data in the Webble definition it
-    // can create that custom object here and return to the core.
-    // If this function is empty and unused it can safely be deleted.
-    //===================================================================================
-    $scope.coreCall_CreateCustomWblDef = function(){
-        var customWblDefPart = {
-
-        };
-
-        return customWblDefPart;
-    };
-    //===================================================================================
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
+	//===================================================================================
 
 
     //=== CTRL MAIN CODE ======================================================================

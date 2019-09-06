@@ -1941,10 +1941,10 @@ wblwrld3App.controller('lifeTablePluginWebbleCtrl', function($scope, $log, Slot,
 			}
 
 			if(colors['selection'].hasOwnProperty('color')) {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+				selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 			}
 			else {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+				selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 			}
 
 			if(colors['selection'].hasOwnProperty('gradient')) {
@@ -1964,7 +1964,7 @@ wblwrld3App.controller('lifeTablePluginWebbleCtrl', function($scope, $log, Slot,
 				var atLeastOneAdded = false;
 				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 					if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 						atLeastOneAdded = true;
 					}
 				}
@@ -2198,7 +2198,7 @@ wblwrld3App.controller('lifeTablePluginWebbleCtrl', function($scope, $log, Slot,
 
 			var col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, ((typeof $scope.gimme("ColorScheme") === 'string') ? JSON.parse($scope.gimme("ColorScheme")):$scope.gimme("ColorScheme")));
 			if(groupId == "0") {
-				col = legacyDDSupLib.hexColorToRGBA(col, 0.33);
+				col = hexColorToRGBA(col, 0.33);
 			}
 
 			ctx.save();
@@ -2272,7 +2272,7 @@ wblwrld3App.controller('lifeTablePluginWebbleCtrl', function($scope, $log, Slot,
 				ctx.save();
 				ctx.setLineDash([3, 5]);
 				if(groupId != "0") {
-					col = legacyDDSupLib.hexColorToRGBA(col, 0.5);
+					col = hexColorToRGBA(col, 0.5);
 				}
 
 				ctx.strokeStyle = col;
@@ -2302,6 +2302,22 @@ wblwrld3App.controller('lifeTablePluginWebbleCtrl', function($scope, $log, Slot,
 				ctx.restore();
 			}
 		}
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
 	}
 	//===================================================================================
 

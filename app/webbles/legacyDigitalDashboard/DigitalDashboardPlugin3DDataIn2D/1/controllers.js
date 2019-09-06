@@ -21,7 +21,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 	var preDebugMsg = "Digital Dashboard 3D Data in 2D: ";
 
     var dim = [256, 256, 256];
-    
+
     // graphics
     var bgCanvas = null;
     var bgCtx = null;
@@ -62,7 +62,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
     var lastMode = "";
     var lastLevels = -1;
     var lastStyle = "";
-    
+
     // var colorMode = "minmax";
     var colorMode = "histogram";
     var clickStart = null;
@@ -299,8 +299,8 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 					$scope.set("Mode", lastMode);
 				}
 				break;
-		};
-	};
+		}
+	}
 	//===================================================================================
 
 
@@ -841,7 +841,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 	};
 	//===================================================================================
 
-	
+
 	//===================================================================================
 	// Fix Draggable
 	// This method fixes issues with draggable functionality.
@@ -930,7 +930,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			internalSelectionsInternallySetTo = result;
 			$scope.set('InternalSelections', result);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -979,7 +979,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		}
 
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -989,7 +989,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 	//===================================================================================
 	function updateLocalSelections(selectAll) {
 		updateGraphicsHelper(false, true, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1007,7 +1007,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		Ns = [];
 		unique = 0;
 		localSelections = [];
-	};
+	}
 	//===================================================================================
 
 
@@ -1209,7 +1209,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 				selectionCtx.clearRect(0,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1220,7 +1220,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 	//===================================================================================
 	function updateGraphics() {
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1458,7 +1458,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		lastColorMode = colorMode;
 
 		updateDropZones(textColor, 0.3, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1522,8 +1522,8 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 					dropCtx.save();
 					var l = Math.max(0, dropZone.left - fontSize/2);
 					var t = Math.max(0, dropZone.top - fontSize/2);
-					var w = Math.min(W - l, dropZone.right - dropZone.left + fontSize / 2 + dropZone.left - l)
-					var h = Math.min(H - t, dropZone.bottom - dropZone.top + fontSize / 2 + dropZone.top - t )
+					var w = Math.min(W - l, dropZone.right - dropZone.left + fontSize / 2 + dropZone.left - l);
+					var h = Math.min(H - t, dropZone.bottom - dropZone.top + fontSize / 2 + dropZone.top - t );
 					dropCtx.clearRect(l, t, w, h);
 					dropCtx.fillStyle = "rgba(255, 255, 255, 0.75)";
 					dropCtx.fillRect(l, t, w, h);
@@ -1572,7 +1572,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 				}
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1606,7 +1606,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		bgCtx.clearRect(0,0, W,H);
 
 		if(colors.hasOwnProperty("skin")) {
-			var drewBack = false
+			var drewBack = false;
 			if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
 				var OK = true;
 				var grd = bgCtx.createLinearGradient(0,0,W,H);
@@ -1639,7 +1639,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 				bgCtx.fillRect(W-1,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1700,7 +1700,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			}
 			allDragNames = [dragZone];
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1796,14 +1796,14 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 
 		var WW = plotCanvas.width;
 		var HH = plotCanvas.height;
-		var rgbaText = legacyDDSupLib.hexColorToRGBAvec(textColor, 1);
+		var rgbaText = hexColorToRGBAvec(textColor, 1);
 		var imData = plotCtx.getImageData(0, 0, plotCanvas.width, plotCanvas.height);
 		var pixels = imData.data;
 
 		drawFront(WW, HH, rgbaText, imData, pixels, globalSelections, dataSetsToDraw);
 
 		plotCtx.putImageData(imData, 0, 0);
-	};
+	}
 	//===================================================================================
 
 
@@ -2086,7 +2086,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		//$log.log(preDebugMsg + "time:" + (timerV2 - timerV));
 		timerV = timerV2;
 		//$log.log(preDebugMsg + "finished drawing");
-	};
+	}
 	//===================================================================================
 
 
@@ -2235,7 +2235,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 
 		// $log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
 		// $log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
-	};
+	}
 	//===================================================================================
 
 
@@ -2293,7 +2293,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			// $log.log(preDebugMsg + "global selections dirty, redraw");
 			updateGraphicsHelper(false, true, false);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2348,7 +2348,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			updateLocalSelections(false);
 			saveSelectionsInSlot();
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2366,7 +2366,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -2392,10 +2392,10 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			}
 
 			if(colors['selection'].hasOwnProperty('color')) {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+				selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 			}
 			else {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+				selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 			}
 
 			if(colors['selection'].hasOwnProperty('gradient') && selectionCanvas !== null && selectionCanvas.width > 0 && selectionCanvas.height > 0) {
@@ -2415,7 +2415,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 				var atLeastOneAdded = false;
 				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 					if(colors['selection']['gradient'][p].hasOwnProperty('pos') && colors['selection']['gradient'][p].hasOwnProperty('color')) {
-						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 						atLeastOneAdded = true;
 					}
 				}
@@ -2426,7 +2426,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 				selectionColors.grad = selectionColors.color;
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2436,7 +2436,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 	//===================================================================================
 	function drawSelections() {
 		hideSelectionRect();
-	};
+	}
 	//===================================================================================
 
 
@@ -2457,7 +2457,7 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 		if(selectionRect !== null) {
 			selectionRect.getContext("2d").clearRect(0,0, selectionRect.width, selectionRect.height);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2471,12 +2471,48 @@ wblwrld3App.controller('gridDataPluginWebbleCtrl', function($scope, $log, $timeo
 			return true;
 		}
 		return false;
-	};
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return "rgba(" + r + ", " + g + ", " + b + ", " + a + ")";
+		}
+		return color;
+	}
 	//===================================================================================
 
 
 
-    //=== CTRL MAIN CODE ======================================================================
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================

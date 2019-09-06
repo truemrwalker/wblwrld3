@@ -37,11 +37,7 @@ wblwrld3App.controller('densityAppWebbleCtrl', function($scope, $log, Slot, Enum
 		$log.log(preDebugMsg + "onResize called");
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		var dataLeft = 250;
 		var dataTop  = 10;
@@ -213,10 +209,7 @@ wblwrld3App.controller('densityAppWebbleCtrl', function($scope, $log, Slot, Enum
 		}
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		for (var t in loadedChildren) {
 			if (loadedChildren.hasOwnProperty(t)) {

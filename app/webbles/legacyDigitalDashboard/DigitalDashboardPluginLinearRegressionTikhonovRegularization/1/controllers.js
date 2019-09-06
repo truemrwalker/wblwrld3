@@ -273,8 +273,8 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			case "DataValuesSetFilled":
 				parseData();
 				break;
-		};
-	};
+		}
+	}
 	//===================================================================================
 
 
@@ -514,7 +514,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 					break;
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -888,7 +888,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			internalSelectionsInternallySetTo = result;
 			$scope.set('InternalSelections', result);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -951,7 +951,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			}
 		}
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -992,7 +992,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				selectAll();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1009,7 +1009,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -1076,7 +1076,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		} else {
 			// $log.log(preDebugMsg + "local selections had not changed");
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1098,7 +1098,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		NULLs = 0;
 		localSelections = []; // the data to send to the parent
 		linearRegressionRes = [];
-	};
+	}
 	//===================================================================================
 
 
@@ -1408,7 +1408,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				selectionCtx.clearRect(0,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1445,7 +1445,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 
 		var data = {'missingVal':missingVal, 'coordArrays':coordArrays, 'alpha':alpha, 'start':true};
 		backgroundThread.postMessage(data); // start background thread
-	};
+	}
 	//===================================================================================
 
 
@@ -1481,7 +1481,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			backgroundThread.terminate();
 			backgroundThread = null;
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1500,7 +1500,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				linearRegressionMainThread();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1621,7 +1621,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, true, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1694,7 +1694,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		}
 		// $log.log(preDebugMsg + "invert, finished");
 		return res;
-	};
+	}
 	//===================================================================================
 
 
@@ -1704,7 +1704,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 	//===================================================================================
 	function updateGraphics() {
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1827,10 +1827,10 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		lastZoomMinY = zoomMinY;
 		lastZoomMaxY = zoomMaxY;
 		lastDotSize = dotSize;
-	};
+	}
 	//===================================================================================
 
-	
+
 	//===================================================================================
 	// Draw Background
 	// This method draws the background using the specified width and height.
@@ -1860,7 +1860,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		bgCtx.clearRect(0,0, W,H);
 
 		if(colors.hasOwnProperty("skin")) {
-			var drewBack = false
+			var drewBack = false;
 			if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
 				var OK = true;
 				var grd = bgCtx.createLinearGradient(0,0,W,H);
@@ -1892,7 +1892,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				bgCtx.fillRect(W-1,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1990,7 +1990,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				axesCtx.restore();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2051,7 +2051,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		var drawPretty = true;
 		if(unique > quickRenderThreshold) {
 			drawPretty = false;
-			var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
+			var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
 			var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
 			var pixels = imData.data;
 		} else {
@@ -2132,7 +2132,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 					} else {
-						rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+						rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 						drawDotOutline(x, y, dotSize*1.5+8, 6, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 					}
 				}
@@ -2215,7 +2215,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 							dotCtx.strokeStyle = col;
 							dotCtx.stroke();
 						} else {
-							rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+							rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 							drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						}
 					}
@@ -2225,7 +2225,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		if(!drawPretty) {
 			dotCtx.putImageData(imData, 0, 0);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2307,7 +2307,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				}
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2444,7 +2444,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		// update selections
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(bgDirty, dotDirty, axesDirty);
-	};
+	}
 	//===================================================================================
 
 
@@ -2462,7 +2462,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				s[7] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 	//===================================================================================
@@ -2525,7 +2525,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			// $log.log(preDebugMsg + "global selections dirty, redraw");
 			updateGraphicsHelper(false, true, false);
 		}
-	};
+	}
 	//===================================================================================
 
 	// ==============================
@@ -2568,7 +2568,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				saveSelectionsInSlot();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2585,25 +2585,9 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
-
-	//===================================================================================
-	// Hex Color to RGBA
-	// This method converts a hex color value to a RGBA value.
-	// TODO: Could this not be replaced with core service instead
-	//===================================================================================
-	function hexColorToRGBA(color, alpha) {
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		}
-		return color;
-	};
-	//===================================================================================
 
 	//===================================================================================
 	// Parse Selection Colors
@@ -2659,7 +2643,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 				selectionColors.grad = selectionColors.color;
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 	//===================================================================================
@@ -2711,7 +2695,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			selectionCtx.fillRect(x2-1, y1, 1, y2-y1);
 		}
 		hideSelectionRect();
-	};
+	}
 	//===================================================================================
 
 
@@ -2731,7 +2715,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		if(selectionRect !== null) {
 			selectionRect.getContext("2d").clearRect(0,0, selectionRect.width, selectionRect.height);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2744,7 +2728,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			return true;
 		}
 		return false;
-	};
+	}
 	//===================================================================================
 
 
@@ -2768,7 +2752,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		$scope.set("MaxY", zoomMaxY);
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -2795,7 +2779,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 		$scope.set("MaxY", zoomMaxY);
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -2819,7 +2803,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2843,7 +2827,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2867,7 +2851,7 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2891,12 +2875,47 @@ wblwrld3App.controller('linearRegressionTikhonovPluginWebbleCtrl', function($sco
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
-	
 
-    //=== CTRL MAIN CODE ======================================================================
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hex color value to a RGBA value.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
+	//===================================================================================
+
+
+
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================

@@ -38,10 +38,7 @@ wblwrld3App.controller('himawariVizAppWebbleCtrl', function($scope, $log, Slot, 
 		$log.log(preDebugMsg + "onResize called");
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		var vizLeft = 255;
 		var vizTop = 10;
@@ -322,11 +319,7 @@ wblwrld3App.controller('himawariVizAppWebbleCtrl', function($scope, $log, Slot, 
 		datasrc1.scope().paste(dashboard);
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		var vizLeft = 265;
 		var vizTop = 10;

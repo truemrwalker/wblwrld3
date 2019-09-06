@@ -70,7 +70,7 @@ var legacyDDSupLib = {
 		return ss[ss.length - 1];
 	},
 	// This function converts a color to a RGBA Vector
-	hexColorToRGBAvec: function(color, alpha) {
+	internalHexColorToRGBAvec: function(color, alpha) {
 		var res = [];
 
 		if(typeof color === 'string' && color.length == 7) {
@@ -87,7 +87,7 @@ var legacyDDSupLib = {
 		return [0, 0, 0, 255];
 	},
 	// This function converts a color to a RGBA CSS String
-	hexColorToRGBA: function(color, alpha) {
+	internalHexColorToRGBA: function(color, alpha) {
 		if(typeof color === 'string' && color.length == 7) {
 			var r = parseInt(color.substr(1,2), 16);
 			var g = parseInt(color.substr(3,2), 16);
@@ -322,7 +322,7 @@ var legacyDDSupLib = {
 						var cc = groupCols[group].gradient[i];
 						if(cc.hasOwnProperty('pos') && cc.hasOwnProperty('color')) {
 							if(alpha !== undefined) {
-								grd.addColorStop(cc.pos, legacyDDSupLib.hexColorToRGBA(cc.color, alpha));
+								grd.addColorStop(cc.pos, legacyDDSupLib.internalHexColorToRGBA(cc.color, alpha));
 							}
 							else {
 								grd.addColorStop(cc.pos, cc.color);
@@ -527,10 +527,10 @@ var legacyDDSupLib = {
 			var l = colKey.length;
 			var c = Math.max(0, Math.min(l - 1, Math.floor(l * perc)));
 			if(l > 1) {
-				col = legacyDDSupLib.hexColorToRGBAvec(colKey[c], 1);
+				col = legacyDDSupLib.internalHexColorToRGBAvec(colKey[c], 1);
 			}
 			else {
-				col = legacyDDSupLib.hexColorToRGBAvec(colKey[c], perc);
+				col = legacyDDSupLib.internalHexColorToRGBAvec(colKey[c], perc);
 			}
 			return col;
 		}

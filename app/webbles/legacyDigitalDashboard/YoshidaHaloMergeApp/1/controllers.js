@@ -39,10 +39,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 		$log.log(preDebugMsg + "onResize called");
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		var topMarg = 5;
 		var rowMarg = 20;
@@ -358,10 +355,7 @@ wblwrld3App.controller('haloMergeAppWebbleCtrl', function($scope, $log, Slot, En
 		}
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		for (var t in loadedChildren) {
 			if (loadedChildren.hasOwnProperty(t)) {

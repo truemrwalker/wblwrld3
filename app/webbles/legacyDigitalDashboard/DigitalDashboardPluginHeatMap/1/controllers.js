@@ -155,8 +155,8 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
     $scope.dragNdropID = "No drag data.";
     var alreadyLoggedBackgroundCapability = false;
 
-    
-    
+
+
     //=== EVENT HANDLERS ================================================================
 
 	//===================================================================================
@@ -1212,7 +1212,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 
 				X1 = Math.max(heatLimits.min, X1);
 				X2 = Math.min(heatLimits.max, X2);
-				
+
 				var x1 = intensity2pixel(X1);
 				var x2 = intensity2pixel(X2);
 				if(x1 - x2 > 1) {
@@ -1436,7 +1436,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 				if(parentInput[i].hasOwnProperty("name") && parentInput[i].name == 'Vectors') {
 					haveVectors = true;
 					atLeastOneFilled = true;
-					
+
 					dragZoneVecs.name = "Vectors";
 					dropVecs.forParent.vizName = $scope.gimme("PluginName");
 					dragZoneVecs.ID = JSON.stringify(dropVecs.forParent);
@@ -2581,10 +2581,10 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 			}
 
 			if(colors['selection'].hasOwnProperty('color')) {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA(colors['selection']['color'], selectionTransparency);
+				selectionColors.color = hexColorToRGBA(colors['selection']['color'], selectionTransparency);
 			}
 			else {
-				selectionColors.color = legacyDDSupLib.hexColorToRGBA('#FFA500', selectionTransparency); // orange
+				selectionColors.color = hexColorToRGBA('#FFA500', selectionTransparency); // orange
 			}
 
 			if(colors['selection'].hasOwnProperty('gradient')) {
@@ -2605,7 +2605,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 				for(var p = 0; p < colors['selection']['gradient'].length; p++) {
 					if(colors['selection']['gradient'][p].hasOwnProperty('pos')
 						&& colors['selection']['gradient'][p].hasOwnProperty('color')) {
-						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], legacyDDSupLib.hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
+						selectionColors.grad.addColorStop(colors['selection']['gradient'][p]['pos'], hexColorToRGBA(colors['selection']['gradient'][p]['color'], selectionTransparency));
 						atLeastOneAdded = true;
 					}
 				}
@@ -3598,7 +3598,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 
 				var col = legacyDDSupLib.getColorForGroup(groupId, colorPalette, ((typeof $scope.gimme("GroupColors") === 'string') ? JSON.parse($scope.gimme("GroupColors")):$scope.gimme("GroupColors")));
 				if(groupId == "0") {
-					col = legacyDDSupLib.hexColorToRGBA(col, 0.33);
+					col = hexColorToRGBA(col, 0.33);
 				}
 
 				var y1 = row2pixel(rowIdxToOnScreenIdx[r]);
@@ -3758,7 +3758,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 		var drawPretty = true;
 		if(noofRows * noofCols > quickRenderThreshold) {
 			drawPretty = false;
-			var rgbaBorder = legacyDDSupLib.hexColorToRGBAvec(borderColor, 1.0);
+			var rgbaBorder = hexColorToRGBAvec(borderColor, 1.0);
 			var WW = heatmapCanvas.width;
 			var HH = heatmapCanvas.height;
 			var imData = heatmapCtx.getImageData(0, 0, WW, HH);
@@ -3828,7 +3828,7 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 								transp *= 0.5;
 							}
 
-							col = legacyDDSupLib.hexColorToRGBA(col, transp);
+							col = hexColorToRGBA(col, transp);
 						}
 
 						heatmapCtx.fillStyle = col;
@@ -4189,8 +4189,47 @@ wblwrld3App.controller('heatMapPluginWebbleCtrl', function($scope, $log, Slot, E
 	//===================================================================================
 
 
+	//============================================================================
+	//=== Colour Stuff ============================================================
+	//============================================================================
 
-    //=== CTRL MAIN CODE ======================================================================
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hexadecimal color value to a RGBA color.
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
+	//===================================================================================
+
+
+
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================

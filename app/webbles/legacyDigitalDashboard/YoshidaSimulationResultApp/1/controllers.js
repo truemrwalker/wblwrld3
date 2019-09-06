@@ -36,10 +36,7 @@ wblwrld3App.controller('simulationResultsAppWebbleCtrl', function($scope, $log, 
 	function onResize() {
 		$log.log(preDebugMsg + "onResize called");
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		var vizLeft = 265;
 		var vizTop = 10;
@@ -245,10 +242,7 @@ wblwrld3App.controller('simulationResultsAppWebbleCtrl', function($scope, $log, 
 		}
 
 		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-		if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-			windowHeight -= 100;
-		}
+		var windowHeight = $(window).height() - 100;
 
 		for (var t in loadedChildren) {
 			if (loadedChildren.hasOwnProperty(t)) {
@@ -377,10 +371,7 @@ wblwrld3App.controller('simulationResultsAppWebbleCtrl', function($scope, $log, 
 						temp = {"plugins":[{"name":"Parallel Coordinate Holder","grouping":true,"sets":[{"fields":[{"name":"Coordinate 1","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"Model"}],"template":false,"added":false},{"name":"Coordinate 2","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"Time"}],"template":false,"added":false},{"name":"Optional Coordinate","assigned":[],"template":true,"added":false},{"name":"Optional Coordinate","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"Mass"}],"template":false,"added":true},{"name":"Optional Coordinate","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[0]"}],"template":false,"added":true},{"name":"Optional Coordinate","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[1]"}],"template":false,"added":true},{"name":"Optional Coordinate","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[2]"}],"template":false,"added":true},{"name":"Optional Coordinate","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[3]"}],"template":false,"added":true},{"name":"Optional Coordinate","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[4]"}],"template":false,"added":true}]}]},{"name":"Scatter Plot 1","grouping":true,"sets":[{"fields":[{"name":"dataX","assigned":[{"sourceName":"Data: Model Parameters","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"\\omega_b*h^2"}],"template":false,"added":false},{"name":"dataY","assigned":[{"sourceName":"Data: Model Parameters","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"\\omega_c*h^2"}],"template":false,"added":false}]}]},{"name":"Scatter Plot 2","grouping":true,"sets":[{"fields":[{"name":"dataX","assigned":[{"sourceName":"Data: Model Parameters","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"\\Omega_de"}],"template":false,"added":false},{"name":"dataY","assigned":[{"sourceName":"Data: Model Parameters","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"A_s"}],"template":false,"added":false}]}]},{"name":"Scatter Plot 3","grouping":true,"sets":[{"fields":[{"name":"dataX","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[0]"}],"template":false,"added":false},{"name":"dataY","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[1]"}],"template":false,"added":false}]}]},{"name":"Scatter Plot 4","grouping":true,"sets":[{"fields":[{"name":"dataX","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[79]"}],"template":false,"added":false},{"name":"dataY","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"data[80]"}],"template":false,"added":false}]}]},{"name":"Bar chart 1","grouping":true,"sets":[{"fields":[{"name":"data","assigned":[],"template":false,"added":false},{"name":"weights","assigned":[],"template":false,"added":false}]},{"fields":[{"name":"data","assigned":[{"sourceName":"Data: Model Parameters","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"n_s"}],"template":false,"added":false}]}]},{"name":"Bar chart 2","grouping":true,"sets":[{"fields":[{"name":"data","assigned":[],"template":false,"added":false},{"name":"weights","assigned":[],"template":false,"added":false}]},{"fields":[{"name":"data","assigned":[{"sourceName":"Data: Simulation Results","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"Model"},{"sourceName":"Data: Model Parameters","dataSetName":"SMART Data Source: ","dataSetIdx":0,"fieldName":"Model"}],"template":false,"added":false}]}]}]};
 
 						var windowWidth = $(window).width();
-						var windowHeight = $(window).height();
-						if(hopSuppWbl != undefined && hopSuppWbl.scope().isInPortal()) {
-							windowHeight -= 100;
-						}
+						var windowHeight = $(window).height() - 100;
 
 						var vizLeft = 265;
 						var vizW = Math.max(100, Math.floor((windowWidth - vizLeft - 20) / 3));

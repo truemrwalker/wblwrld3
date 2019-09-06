@@ -268,8 +268,8 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			case "DataValuesSetFilled":
 				parseData();
 				break;
-		};
-	};
+		}
+	}
 	//===================================================================================
 
 
@@ -534,7 +534,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 					break;
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -901,7 +901,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			internalSelectionsInternallySetTo = result;
 			$scope.set('InternalSelections', result);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -967,7 +967,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			}
 		}
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -1010,7 +1010,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				selectAll();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1027,7 +1027,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
+	}
 	//===================================================================================
 
 
@@ -1094,7 +1094,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		} else {
 			// $log.log(preDebugMsg + "local selections had not changed");
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1116,7 +1116,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		NULLs = 0;
 		localSelections = []; // the data to send to the parent
 		linearRegressionRes = [];
-	};
+	}
 	//===================================================================================
 
 
@@ -1431,7 +1431,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				selectionCtx.clearRect(0,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1446,7 +1446,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			// already running. kill thread
 	    	backgroundThread.terminate();
 		}
-	
+
 		backgroundThread = new Worker(myPath + '/regression.js');
 
 		backgroundThread.addEventListener('message', function(e) {
@@ -1459,10 +1459,10 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		} else {
 			missingVal = parseFloat(missingVal);
 		}
-	
+
 		var data = {'missingVal':missingVal, 'coordArrays':coordArrays, 'start':true};
 		backgroundThread.postMessage(data); // start background thread
-    };
+	}
 	//===================================================================================
 
 
@@ -1474,7 +1474,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	function linearRegressionFinished(e) {
 		// $log.log(preDebugMsg + "linearRegressionFinished");
 		var data = e.data;
-	
+
 		linearRegressionRes = data.linearRegressionRes;
 		minMinY = coordLimits[0].min;
 		maxMaxY = coordLimits[0].max;
@@ -1504,12 +1504,12 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, true, false);
-	
+
 		if(backgroundThread !== null) {
 			backgroundThread.terminate();
 			backgroundThread = null;
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1528,7 +1528,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				linearRegressionMainThread();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -1585,7 +1585,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	    	linearRegressionRes = [];
 	    	return;
 		}
-	
+
 		// $log.log(preDebugMsg + "linearRegression,  Xty");
 		var Xty = [];
 		for(i = 0; i < X[0].length; i++) {
@@ -1635,7 +1635,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		// $log.log(preDebugMsg + "linearRegression,  finished");
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, true, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1709,7 +1709,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 
 		// $log.log(preDebugMsg + "invert, finished");
 		return res;
-	};
+	}
 	//===================================================================================
 
 
@@ -1719,7 +1719,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 	//===================================================================================
 	function updateGraphics() {
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -1847,7 +1847,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		lastZoomMinY = zoomMinY;
 		lastZoomMaxY = zoomMaxY;
 		lastDotSize = dotSize;
-	};
+	}
 	//===================================================================================
 
 
@@ -1880,7 +1880,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		bgCtx.clearRect(0,0, W,H);
 
 		if(colors.hasOwnProperty("skin")) {
-			var drewBack = false
+			var drewBack = false;
 			if(colors.skin.hasOwnProperty("gradient") && W > 0 && H > 0) {
 				var OK = true;
 
@@ -1914,7 +1914,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				bgCtx.fillRect(W-1,0, W,H);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2016,7 +2016,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				axesCtx.restore();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2038,7 +2038,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		if(dotCtx === null) {
 			dotCtx = dotCanvas.getContext("2d");
 		}
-	
+
 		if(!dotCtx) {
 			//$log.log(preDebugMsg + "no canvas to draw on");
 			return;
@@ -2077,7 +2077,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		var drawPretty = true;
     	if(unique > quickRenderThreshold) {
     		drawPretty = false;
-    		var rgba0 = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
+    		var rgba0 = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(0, colorPalette, currentColors), 0.33);
     		var imData = dotCtx.getImageData(0, 0, dotCanvas.width, dotCanvas.height);
     		var pixels = imData.data;
     	} else {
@@ -2096,7 +2096,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
     	    	if(yArray[i] === null || yArray[i] == missingVal) {
     	    		continue;
     	    	}
-		
+
 				if(i < zoomMinX || i > zoomMaxX || yArray[i] < zoomMinY || yArray[i] > zoomMaxY) {
 					continue; // outside zoomed range
 				}
@@ -2158,7 +2158,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 						dotCtx.strokeStyle = col;
 						dotCtx.stroke();
 		    		} else {
-		    			rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+		    			rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 		    			drawDotOutline(x, y, dotSize*1.5+8, 6, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 		    		}
 				}
@@ -2188,7 +2188,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		    		if(groupId == 0) {
 		    			var x = legacyDDSupLib.val2pixelX(i, unique, drawW, leftMarg, zoomMinX, zoomMaxX);
 		    			var y = legacyDDSupLib.val2pixelY(yArray[i], unique, drawH, topMarg, zoomMinY, zoomMaxY);
-			
+
 						if(drawPretty) {
 							if(!useGlobalGradients) {
 								fill0 = legacyDDSupLib.getGradientColorForGroup(0, x-dotSize,y-dotSize,x+dotSize,y+dotSize, 0.33, dotCanvas, dotCtx, useGlobalGradients, $scope.theView.parent().find('#theBgCanvas'), colorPalette, currentColors);
@@ -2241,7 +2241,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 							dotCtx.strokeStyle = col;
 							dotCtx.stroke();
 						} else {
-							rgba = legacyDDSupLib.hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
+							rgba = hexColorToRGBAvec(legacyDDSupLib.getColorForGroup(groupId, colorPalette, currentColors), 1);
 							drawDot(x, y, dotSize, rgba[3], rgba[0], rgba[1], rgba[2], W, H, pixels);
 						}
 		    		}
@@ -2251,7 +2251,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		if(!drawPretty) {
 			dotCtx.putImageData(imData, 0, 0);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2317,7 +2317,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
         for (var x = -halfDot; x < halfDot + 1; x++) {
         	if (x + xpos >= 0 && x + xpos < W) {
         		var x2 = x * x;
-		
+
 				for (var y = -halfDot; y < halfDot + 1; y++) {
 					if(y + ypos >= 0 && y + ypos < H) {
 						var y2 = y * y;
@@ -2333,7 +2333,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				}
         	}
         }
-	};
+	}
 	//===================================================================================
 
 
@@ -2470,7 +2470,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		// update selections
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(bgDirty, dotDirty, axesDirty);
-	};
+	}
 	//===================================================================================
 
 
@@ -2488,7 +2488,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				s[7] = legacyDDSupLib.val2pixelY(s[3], unique, drawH, topMarg, zoomMinY, zoomMaxY);
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2553,7 +2553,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			// $log.log(preDebugMsg + "global selections dirty, redraw");
 			updateGraphicsHelper(false, true, false);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2597,7 +2597,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				saveSelectionsInSlot();
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2614,24 +2614,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		drawSelections();
 		updateLocalSelections(true);
 		saveSelectionsInSlot();
-	};
-	//===================================================================================
-
-
-	//===================================================================================
-	// Hex Color to RGBA
-	// This method converts a hex color value to a RGBA value.
-	// TODO: Could this not be replaced with core service instead
-	//===================================================================================
-	function hexColorToRGBA(color, alpha) {
-		if(typeof color === 'string' && color.length == 7) {
-			var r = parseInt(color.substr(1,2), 16);
-			var g = parseInt(color.substr(3,2), 16);
-			var b = parseInt(color.substr(5,2), 16);
-			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		}
-		return color;
-	};
+	}
 	//===================================================================================
 
 
@@ -2689,7 +2672,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 				selectionColors.grad = selectionColors.color;
 			}
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2742,7 +2725,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			selectionCtx.fillRect(x2-1, y1, 1, y2-y1);
 		}
 		hideSelectionRect();
-	};
+	}
 	//===================================================================================
 
 
@@ -2762,7 +2745,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		if(selectionRect !== null) {
 			selectionRect.getContext("2d").clearRect(0,0, selectionRect.width, selectionRect.height);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2775,7 +2758,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			return true;
 		}
 		return false;
-	};
+	}
 	//===================================================================================
 
 
@@ -2799,7 +2782,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		$scope.set("MaxY", zoomMaxY);
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -2826,7 +2809,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 		$scope.set("MaxY", zoomMaxY);
 		updateSelectionsWhenZoomingOrResizing();
 		updateGraphicsHelper(false, false, false);
-	};
+	}
 	//===================================================================================
 
 
@@ -2850,7 +2833,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2874,7 +2857,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2898,7 +2881,7 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
 
@@ -2922,10 +2905,48 @@ wblwrld3App.controller('linearRegressionPluginWebbleCtrl', function($scope, $log
 			updateSelectionsWhenZoomingOrResizing();
 			updateGraphicsHelper(false, true, true);
 		}
-	};
+	}
 	//===================================================================================
 
-    //=== CTRL MAIN CODE ======================================================================
+
+	//===================================================================================
+	// Hex Color to RGBA Vector
+	// This method converts a hexadecimal color value to a RGBA vector.
+	//===================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			var a = Math.max(0, Math.min(255, Math.round(alpha * 255)));
+			return [r, g, b, a];
+		}
+		return [0, 0, 0, 255];
+	}
+	//===================================================================================
+
+
+	//===================================================================================
+	// Hex Color to RGBA
+	// This method converts a hex color value to a RGBA value.
+	// TODO: Could this not be replaced with core service instead
+	//===================================================================================
+	function hexColorToRGBA(color, alpha) {
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16);
+			var g = parseInt(color.substr(3,2), 16);
+			var b = parseInt(color.substr(5,2), 16);
+			return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		}
+		return color;
+	}
+	//===================================================================================
+
+
+
+	//=== CTRL MAIN CODE ======================================================================
 
 });
 //=======================================================================================

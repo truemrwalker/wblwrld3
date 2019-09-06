@@ -371,7 +371,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 	}
 	//========================================================================================
 
-	
+
 	//========================================================================================
 	// Redraw On New Data
 	// reacting to changes in other components (new data forcing a redraw)
@@ -2503,7 +2503,7 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		if(colorScheme !== null && colorScheme !== undefined && colorScheme.hasOwnProperty('groups')) {
 			for(var group in colorScheme.groups) {
 				if(colorScheme.groups.hasOwnProperty(group)&& colorScheme.groups[group].hasOwnProperty('color')) {
-					groupColors[group] = legacyDDSupLib.hexColorToRGBAvec(colorScheme.groups[group].color, 1);
+					groupColors[group] = hexColorToRGBAvec(colorScheme.groups[group].color, 1);
 				}
 			}
 		}
@@ -2579,9 +2579,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					if(cc.length == 9) { // contains alpha
 						var alphaCC = parseInt(cc.substr(7,2), 16);
 						var cc = cc.substr(0,7);
-						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alphaCC / 255.0);
+						rgba = hexColorToRGBAvec(cc, alphaCC / 255.0);
 					} else {
-						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha);
+						rgba = hexColorToRGBAvec(cc, alpha);
 					}
 
 				} else { // only colors
@@ -2595,9 +2595,9 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 					var cc = colorKey[idx];
 					if(cc.length == 9) { // contains alpha
 						var alphaCC = parseInt(cc.substr(7,2), 16);
-						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha * alphaCC / 255.0);
+						rgba = hexColorToRGBAvec(cc, alpha * alphaCC / 255.0);
 					} else {
-						rgba = legacyDDSupLib.hexColorToRGBAvec(cc, alpha);
+						rgba = hexColorToRGBAvec(cc, alpha);
 					}
 				}
 			}
@@ -4653,6 +4653,27 @@ wblwrld3App.controller('threeDPlusCtrl', function($scope, $log, $timeout, Slot, 
 		}
 	};
 	//===================================================================================
+
+
+	//========================================================================================
+	// Hex Color To RGBA (Vector)
+	// Converts a color and an alpha value into a RGBA separated array
+	//========================================================================================
+	function hexColorToRGBAvec(color, alpha) {
+		var res = [];
+
+		if(typeof color === 'string' && color.length == 7) {
+			var r = parseInt(color.substr(1,2), 16) / 255;
+			var g = parseInt(color.substr(3,2), 16) / 255;
+			var b = parseInt(color.substr(5,2), 16) / 255;
+			var a = Math.max(0, Math.min(1, alpha));
+			return [r, g, b, a];
+		}
+		return [1, 1, 1, alpha];
+	}
+	//========================================================================================
+
+
 
 	//=== CTRL MAIN CODE ======================================================================
 
