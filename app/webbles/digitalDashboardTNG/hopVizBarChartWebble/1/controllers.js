@@ -1996,7 +1996,7 @@ wblwrld3App.controller('hopVizBarChartWebbleCtrl', function($scope, $log, Slot, 
 	// This method draws the axes.
 	//===================================================================================
 	function drawAxes(W, H) {
-		// $log.log(preDebugMsg +  "drawAxes");
+		$log.log(preDebugMsg +  "drawAxes");
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
 		ctx.fillStyle = textColor;

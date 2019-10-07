@@ -359,19 +359,6 @@ wblwrld3App.controller('hopFileDataWebbleCtrl', function($scope, $log, Slot, Enu
 					var fn = f.name.toLowerCase();
 
 					if(fn.indexOf(".dat") >= 0 || fn.indexOf(".bin") >= 0) {
-						// var reader = new FileReader();
-						// reader.fileList = files;
-						// reader.theFileWhenRetrying = f;
-						// reader.fileName = fn;
-
-						// if(i == lastBinFile) {
-						//     reader.lastFile = true;
-						// } else {
-						//     reader.lastFile = false;
-						// }
-
-						// reader.onload = function(e) { fileReaderOnLoadCallbackBinary(e, reader);};
-
 						if(i == lastBinFile) {
 							var reader = binFileReaderCreator(files, f, fn, true);
 						}
@@ -2717,37 +2704,6 @@ wblwrld3App.controller('hopFileDataWebbleCtrl', function($scope, $log, Slot, Enu
 
 						dataFields.push(fieldInf);
 					}
-
-					// we have "timestamp" data
-					// if(timeFieldIdx >= 0) {
-					// 	var fieldInf = {};
-					// 	fieldInf.name = "idx -> TimeStamp";
-					// 	fieldInf.type = ["number"];
-					// 	fieldInf.size = cubeValuesSize;
-					// 	fieldInf.listen = addListeningViz;
-					// 	fieldInf.val = function(valueIdx) {
-					// 	    var coords = getCidxXYZfromIdx(ff, valueIdx); // TODO, this can be made fast, since the size is fixed
-					// 	    return dataFields[timeFieldIdx].val(coords[0]);
-					// 	};
-
-					// 	var fft = f;
-					// 	var listenerFeatureIdxT = dataFields.length;
-					// 	fieldInf.newSel = addSelHelper(listenerFeatureIdxT);
-					// 	fieldInf.sel = selHelper(listenerFeatureIdxT);
-
-					// 	fieldInf.slaves = [listenerFeatureIdxT];
-					// 	fieldInf.masters = [[listenerFeatureIdxT, null]];
-					// 	for(var fff = ourStartIdx; fff < noofFields; fff++) {
-					// 	    fieldInf.masters.push([fff, transformCellIdxToCubeIdxHelper(f)]); // TODO, this can be made fast, since the size is fixed
-					// 	    dataFields[fff].slaves.push(listenerFeatureIdxT);
-					// 	}
-					// 	for(var fff = 0; fff < masters.length; fff++) {
-					// 	    fieldInf.masters.push([masters[fff][0], masters[fff][1](f)]);
-					// 	    dataFields[masters[fff][0]].slaves.push(listenerFeatureIdxT);
-					// 	}
-
-					// 	dataFields.push(fieldInf);
-					// }
 				}
 
 				first = false;
@@ -2821,7 +2777,6 @@ wblwrld3App.controller('hopFileDataWebbleCtrl', function($scope, $log, Slot, Enu
 		for(var f = 0 ; f < dataFields.length; f++) {
 			fieldName = dataFields[f].name;
 			var info = {"webbleID":myInstanceId, "type":dataFields[f].type, "slotName":"DataAccess", "fieldIdx":f, "sourceName":sourceName, "fieldName":fieldName};
-
 			ls.push({"name":fieldName, "type":dataFields[f].type.join("|"), "noofRows":dataFields[f].size, "id":JSON.stringify(info)});
 		}
 
@@ -3584,6 +3539,7 @@ wblwrld3App.controller('hopFileDataWebbleCtrl', function($scope, $log, Slot, Enu
 										}
 										else {
 											var dateTemp = Date.parse(value);
+
 											if(isNaN(dateTemp)) {
 												var numVal = parseFloat(value);
 												if(!isNaN(numVal) && isFinite(value)) {
@@ -3593,7 +3549,6 @@ wblwrld3App.controller('hopFileDataWebbleCtrl', function($scope, $log, Slot, Enu
 													try {
 														if(value.length == 8) {
 															var today = new Date();
-
 															dateTemp = (new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(value.substr(0,2)), parseInt(value.substr(3,2)), parseInt(value.substr(6,2)))).getTime();
 														}
 														else {

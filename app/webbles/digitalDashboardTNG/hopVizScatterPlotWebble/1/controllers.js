@@ -124,8 +124,8 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This event handler manages all internal slot changes.
 	//===================================================================================
 	function mySlotChange(eventData) {
-		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
-		// $log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
+		//$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName + " = " + JSON.stringify(eventData.slotValue));
+		//$log.log(preDebugMsg + "mySlotChange() " + eventData.slotName);
 		try {
 			switch(eventData.slotName) {
 				case "ClearData":
@@ -323,7 +323,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					break;
 			};
 		} catch(exc) {
-			$log.log(preDebugMsg + "Something went wrong when we tried to react to slot changes");
+			//$log.log(preDebugMsg + "Something went wrong when we tried to react to slot changes");
 			console.dir(exc);
 		}
 	}
@@ -346,7 +346,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					hoverText = elmnt[0];
 				}
 				else {
-					$log.log(preDebugMsg + "No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 
@@ -392,7 +392,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						selectionRect = selectionRectElement[0];
 					}
 					else {
-						$log.log(preDebugMsg + "No selection rectangle!");
+						//$log.log(preDebugMsg + "No selection rectangle!");
 					}
 				}
 				if(selectionRect !== null) {
@@ -513,7 +513,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 
 				if(x1 == x2 && y1 == y2) {
 					// selection is too small, disregard
-					// $log.log(preDebugMsg + "ignoring a selection because it is too small");
+					//$log.log(preDebugMsg + "ignoring a selection because it is too small");
 				}
 				else {
 					newSelection(x1,x2, y1,y2, clickStart.ctrl);
@@ -539,7 +539,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					hoverText = elmnt[0];
 				}
 				else {
-					$log.log(preDebugMsg + "No hover text!");
+					//$log.log(preDebugMsg + "No hover text!");
 				}
 			}
 			if(hoverText !== null) {
@@ -565,7 +565,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 
 				if(x1 == x2 && y1 == y2) {
 					// selection is too small, disregard
-					// $log.log(preDebugMsg + "ignoring a selection because it is too small");
+					//$log.log(preDebugMsg + "ignoring a selection because it is too small");
 				}
 				else {
 					newSelection(x1,x2, y1,y2, clickStart.ctrl);
@@ -584,7 +584,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	function fixedKeypress(event){
 		if(mouseIsOverMe) {
 			var x = event.which || event.keyCode;
-			// $log.log(preDebugMsg + "keyPressed over me: " + x);
+			//$log.log(preDebugMsg + "keyPressed over me: " + x);
 			switch(x) {
 				case 43: // +
 				case 107:
@@ -1029,7 +1029,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 			selectionHolderElement.bind('mouseout', onMouseOut);
 		}
 		else {
-			$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
+			//$log.log(preDebugMsg + "No selectionHolderElement, could not bind mouse listeners");
 		}
 
 		window.addEventListener('keydown', fixedKeypress );
@@ -1084,7 +1084,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					xpos = x;
 					ypos = y;
 
-					// $log.log(preDebugMsg + "Data dropped");
+					//$log.log(preDebugMsg + "Data dropped");
 					for(var d = 0; !ok && d < allDropZones.length; d++) {
 						var dropZone = allDropZones[d];
 
@@ -1200,7 +1200,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method checks the mappings and parse the data.
 	//===================================================================================
 	function checkMappingsAndParseData() {
-		// $log.log(preDebugMsg + "checkMappingsAndParseData");
+		//$log.log(preDebugMsg + "checkMappingsAndParseData");
 		parsingDataNow = true;
 		var somethingChanged = false;
 		var atLeastOneActive = false;
@@ -1244,7 +1244,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 			}
 
 			if(haveX && haveY && lenX != lenY) {
-				$log.log(preDebugMsg + "Data fields have different number of data items, which is not allowed for the Scatter Plot");
+				//$log.log(preDebugMsg + "Data fields have different number of data items, which is not allowed for the Scatter Plot");
 			}
 
 			var canActivate = false;
@@ -1268,7 +1268,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				// start listening to updates
 				for(var i = 0; i < dataMappings[src].map.length; i++) {
 					if(dataMappings[src].map[i].hasOwnProperty("listen") && dataMappings[src].map[i].listen !== null) {
-						// $log.log(preDebugMsg + "Start listening to " + dataMappings[src].map[i].name + " " + dataMappings[src].map[i].srcIdx);
+						//$log.log(preDebugMsg + "Start listening to " + dataMappings[src].map[i].name + " " + dataMappings[src].map[i].srcIdx);
 						dataMappings[src].map[i].listen(myInstanceId, canActivate, redrawOnNewSelections, redrawOnNewData, ls2);
 					}
 				}
@@ -1276,7 +1276,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 			else {
 				// stop listening to updates
 				for(var i = 0; i < dataMappings[src].map.length; i++) {
-					// $log.log(preDebugMsg + "Not active, stop listening to " + dataMappings[src].map[i].name + " " + dataMappings[src].map[i].srcIdx);
+					//$log.log(preDebugMsg + "Not active, stop listening to " + dataMappings[src].map[i].name + " " + dataMappings[src].map[i].srcIdx);
 					dataMappings[src].map[i].listen(myInstanceId, false, null, null, []);
 				}
 			}
@@ -1370,7 +1370,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 							}
 							if(onlyOne) {
 								//  if this was the only field listening to updates, stop listening
-								// $log.log(preDebugMsg + "Last one, stop listening to " + dataMappings[mapSrcIdx].map[i].name);
+								//$log.log(preDebugMsg + "Last one, stop listening to " + dataMappings[mapSrcIdx].map[i].name);
 
 								dataMappings[mapSrcIdx].map[i].listen(myInstanceId, false, null, null, []);
 							}
@@ -1405,7 +1405,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				}
 			}
 			else {
-				$log.log(preDebugMsg + dataSourceInfo.sourceName + " field " + dataSourceInfo.fieldName + " and " + $scope.displayText + " field " + targetField.name + " do not have compatible types.");
+				//$log.log(preDebugMsg + dataSourceInfo.sourceName + " field " + dataSourceInfo.fieldName + " and " + $scope.displayText + " field " + targetField.name + " do not have compatible types.");
 			}
 		} catch(e) {
 			// probably not something for us, ignore this drop
@@ -1419,7 +1419,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method saves the selection into a slot.
 	//===================================================================================
 	function saveSelectionsInSlot() {
-		// $log.log(preDebugMsg + "saveSelectionsInSlot");
+		//$log.log(preDebugMsg + "saveSelectionsInSlot");
 		var result = {};
 		result.selections = [];
 		for(var sel = 0; sel < selections.length; sel++) {
@@ -1437,14 +1437,14 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method sets the selections based on the value in a slot.
 	//===================================================================================
 	function setSelectionsFromSlotValue() {
-		// $log.log(preDebugMsg + "setSelectionsFromSlotValue");
+		//$log.log(preDebugMsg + "setSelectionsFromSlotValue");
 		var slotSelections = $scope.gimme("InternalSelections");
 		if(typeof slotSelections === 'string') {
 			slotSelections = JSON.parse(slotSelections);
 		}
 
 		if(JSON.stringify(slotSelections) == JSON.stringify(internalSelectionsInternallySetTo)) {
-			// $log.log(preDebugMsg + "setSelectionsFromSlotValue got identical value");
+			//$log.log(preDebugMsg + "setSelectionsFromSlotValue got identical value");
 			return;
 		}
 
@@ -1471,7 +1471,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					newSelections.push([X1,X2,Y1,Y2, legacyDDSupLib.val2pixelX(X1, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelX(X2, unique, drawW, leftMarg, zoomMinX, zoomMaxX),legacyDDSupLib.val2pixelY(Y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.val2pixelY(Y1, unique, drawH, topMarg, zoomMinY, zoomMaxY)]); // flip Y-axis
 				}
 
-				// $log.log(preDebugMsg + "new selections: " + JSON.stringify(newSelections));
+				//$log.log(preDebugMsg + "new selections: " + JSON.stringify(newSelections));
 				if(newSelections.length > 0) {
 					selections = newSelections;
 					updateLocalSelections(false);
@@ -1500,7 +1500,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method checks the validity of the selection after new data have been added.
 	//===================================================================================
 	function checkSelectionsAfterNewData() {
-		// $log.log(preDebugMsg + "checkSelectionsAfterNewData");
+		//$log.log(preDebugMsg + "checkSelectionsAfterNewData");
 		var newSelections = [];
 
 		for(var sel = 0; sel < selections.length; sel++) {
@@ -1537,7 +1537,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method updates the local selections to be in phase with global ones.
 	//===================================================================================
 	function updateLocalSelections(selectAll) {
-		// $log.log(preDebugMsg + "updateLocalSelections");
+		//$log.log(preDebugMsg + "updateLocalSelections");
 		var dirty = false;
 		var newnullAsUnselected = $scope.gimme('TreatNullAsUnselected');
 		if(newnullAsUnselected != nullAsUnselected) {
@@ -1578,7 +1578,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 
 				for(var ff = 0; ff < dataMappings[src].map.length; ff++) {
 					if(dataMappings[src].map[ff].hasOwnProperty("listen") && dataMappings[src].map[ff].listen !== null) {
-						// $log.log(preDebugMsg + "Not active (selection), stop listening to " + dataMappings[src].map[ff].name + " " + dataMappings[src].map[ff].srcIdx);
+						//$log.log(preDebugMsg + "Not active (selection), stop listening to " + dataMappings[src].map[ff].name + " " + dataMappings[src].map[ff].srcIdx);
 						dataMappings[src].map[ff].listen(myInstanceId, false, null, null, []);
 					}
 				}
@@ -1604,14 +1604,16 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 			}
 
 			if(xType == 1) {
-				x = x.getTime();
+				//x = x.getTime();
+				x = new Date(x);
 			}
 			else if(xType == 2) {
 				x = Date.parse(x);
 			}
 
 			if(yType == 1) {
-				y = y.getTime();
+				//y = y.getTime();
+				y = new Date(y);
 			}
 			else if(yType == 2) {
 				y = Date.parse(y);
@@ -1659,7 +1661,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method parses the data.
 	//===================================================================================
 	function parseData() {
-		// $log.log(preDebugMsg + "parseData");
+		//$log.log(preDebugMsg + "parseData");
 		parsingDataNow = true;
 		resetVars();
 		var firstNonNullData = true;
@@ -1713,7 +1715,8 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						}
 						else if(x instanceof Date) {
 							xType = 1;
-							x = x.getTime();
+							//x = x.getTime();
+							x = new Date(x);
 						}
 						else if(typeof x == 'string') {
 							xType = 2;
@@ -1722,7 +1725,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						else {
 							dataIsCorrupt = true;
 							var xs = x.toString().substr(0,32);
-							$log.log(preDebugMsg + "Cannot handle value '" + xs + "'");
+							//$log.log(preDebugMsg + "Cannot handle value '" + xs + "'");
 						}
 
 						if(typeof y == 'number') {
@@ -1730,7 +1733,8 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						}
 						else if(y instanceof Date) {
 							yType = 1;
-							y = y.getTime();
+							//y = y.getTime();
+							y = new Date(y);
 						}
 						else if(typeof y == 'string') {
 							yType = 2;
@@ -1739,7 +1743,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						else {
 							dataIsCorrupt = true;
 							var ys = y.toString().substr(0,32);
-							$log.log(preDebugMsg + "Cannot handle value '" + ys + "'");
+							//$log.log(preDebugMsg + "Cannot handle value '" + ys + "'");
 						}
 
 						minXVal = x;
@@ -1759,7 +1763,8 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 							if(xType != 1) {
 								dataIsCorrupt = true;
 							}
-							x = x.getTime();
+							//x = x.getTime();
+							x = new Date(x);
 						}
 						else if(typeof x == 'string') {
 							if(xType != 2) {
@@ -1769,7 +1774,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						}
 						else {
 							dataIsCorrupt = true;
-							$log.log(preDebugMsg + "Cannot handle value '" + x + "'");
+							//$log.log(preDebugMsg + "Cannot handle value '" + x + "'");
 						}
 
 						if(typeof y == 'number') {
@@ -1781,7 +1786,8 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 							if(yType != 1) {
 								dataIsCorrupt = true;
 							}
-							y = y.getTime();
+							//y = y.getTime();
+							y = new Date(y);
 						}
 						else if(typeof y == 'string') {
 							if(yType != 2) {
@@ -1791,7 +1797,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						}
 						else {
 							dataIsCorrupt = true;
-							$log.log(preDebugMsg + "Cannot handle value '" + y + "'");
+							//$log.log(preDebugMsg + "Cannot handle value '" + y + "'");
 						}
 
 						minXVal = Math.min(x, minXVal);
@@ -1910,16 +1916,16 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					}
 				}
 			}
-			// $log.log(preDebugMsg + "parseData limits: " + JSON.stringify(limits));
+			//$log.log(preDebugMsg + "parseData limits: " + JSON.stringify(limits));
 		}
 
 		if(dataIsCorrupt) {
-			$log.log(preDebugMsg + "data is corrupt");
+			//$log.log(preDebugMsg + "data is corrupt");
 
 			for(var src = 0; src < dataMappings.length; src++) {
 				for(var f = 0; f < dataMappings[src].map.length; f++) {
 					if(dataMappings[src].map[f].listen !== null) {
-						// $log.log(preDebugMsg + "Data corrupt, stop listening to " + dataMappings[src].map[f].name + " " + dataMappings[src].map[i].srcIdx);
+						//$log.log(preDebugMsg + "Data corrupt, stop listening to " + dataMappings[src].map[f].name + " " + dataMappings[src].map[i].srcIdx);
 						dataMappings[src].map[f].listen(myInstanceId, false, null, null, []);
 					}
 				}
@@ -1980,7 +1986,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				bgCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2067,7 +2073,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		}
 
 		// Draw
-		// $log.log(preDebugMsg + "Need to redraw: " + redrawBackground + " " + redrawDots + " " + " " + redrawAxes);
+		//$log.log(preDebugMsg + "Need to redraw: " + redrawBackground + " " + redrawDots + " " + " " + redrawAxes);
 		if(true) { // redrawBackground) {
 			// always redraw background, because we do something to the bgCanvas.width, and that resets the canvas.
 			drawBackground(W, H);
@@ -2106,7 +2112,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				bgCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2116,7 +2122,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		}
 
 		if(!bgCtx) {
-			$log.log(preDebugMsg + "no canvas to draw bg on");
+			//$log.log(preDebugMsg + "no canvas to draw bg on");
 			return;
 		}
 
@@ -2165,14 +2171,14 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method update the drop zones, based on mouse movement etc.
 	//===================================================================================
 	function updateDropZones(col, alpha, hover) {
-		// $log.log(preDebugMsg + "update the data drop zone locations");
+		//$log.log(preDebugMsg + "update the data drop zone locations");
 		if(dropCanvas === null) {
 			var myCanvasElement = $scope.theView.parent().find('#theDropCanvas');
 			if(myCanvasElement.length > 0) {
 				dropCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no drop canvas to draw on!");
+				//$log.log(preDebugMsg + "no drop canvas to draw on!");
 				return;
 			}
 		}
@@ -2182,7 +2188,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		}
 
 		if(!dropCtx) {
-			$log.log(preDebugMsg + "no canvas to draw drop zones on");
+			//$log.log(preDebugMsg + "no canvas to draw drop zones on");
 			return;
 		}
 
@@ -2299,7 +2305,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				axesCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2309,7 +2315,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		}
 
 		if(!axesCtx) {
-			$log.log(preDebugMsg + "no canvas to draw axes on");
+			//$log.log(preDebugMsg + "no canvas to draw axes on");
 			return;
 		}
 
@@ -2449,7 +2455,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method updates the size.
 	//===================================================================================
 	function updateSize() {
-		// $log.log(preDebugMsg + "updateSize");
+		//$log.log(preDebugMsg + "updateSize");
 		fontSize = parseInt($scope.gimme("FontSize"));
 		if(fontSize < 5) {
 			fontSize = 5;
@@ -2479,7 +2485,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				bgCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2500,7 +2506,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				dotCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2520,7 +2526,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				undotCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2541,7 +2547,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				axesCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to resize!");
+				//$log.log(preDebugMsg + "no canvas to resize!");
 				return;
 			}
 		}
@@ -2568,7 +2574,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				selectionCanvas = selectionCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no selectionCanvas to resize!");
+				//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 				return;
 			}
 		}
@@ -2603,10 +2609,10 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		drawW = W - leftMarg - rightMarg;
 		drawH = H - topMarg - bottomMarg * 2 - fontSize;
 
-		// $log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
+		//$log.log(preDebugMsg + "updateSize found selections: " + JSON.stringify(selections));
 		updateSelectionsWhenZoomingOrResizing();
 		updateDropZones(textColor, 0.3, false);
-		// $log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
+		//$log.log(preDebugMsg + "updateSize updated selections to: " + JSON.stringify(selections));
 	}
 	//===================================================================================
 
@@ -2616,20 +2622,20 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method handles new selections.
 	//===================================================================================
 	function newSelection(x1,x2, y1,y2, keepOld) {
-		// $log.log(preDebugMsg + "newSelection");
-		// $log.log(preDebugMsg + "newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
+		//$log.log(preDebugMsg + "newSelection");
+		//$log.log(preDebugMsg + "newSelection " + x1 + " " + x2 + " " + y1 + " " + y2 + " " + keepOld);
 		if(unique > 0) {
 			x1 = Math.max(x1, leftMarg);
 			x2 = Math.min(x2, leftMarg + drawW);
 			y1 = Math.max(y1, topMarg);
 			y2 = Math.min(y2, topMarg + drawH);
 			var newSel = [legacyDDSupLib.pixel2valX(x1, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valX(x2, unique, drawW, leftMarg, zoomMinX, zoomMaxX), legacyDDSupLib.pixel2valY(y2, unique, drawH, topMarg, zoomMinY, zoomMaxY), legacyDDSupLib.pixel2valY(y1, unique, drawH, topMarg, zoomMinY, zoomMaxY), x1,x2,y1,y2]; // y1 and y2 need to be switched here, because we flip the y axis
-			// $log.log(preDebugMsg + "newSel: " + JSON.stringify(newSel));
+			//$log.log(preDebugMsg + "newSel: " + JSON.stringify(newSel));
 			var overlap = false;
 			for(var s = 0; s < selections.length; s++) {
 				var sel = selections[s];
 				if(sel[4] == newSel[4] && sel[5] == newSel[5] && sel[6] == newSel[6] && sel[7] == newSel[7]) {
-					// $log.log(preDebugMsg + "Ignoring selection because it overlaps 100% with already existing selection");
+					//$log.log(preDebugMsg + "Ignoring selection because it overlaps 100% with already existing selection");
 					overlap = true;
 					break;
 				}
@@ -2672,7 +2678,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method parses the selection colors.
 	//===================================================================================
 	function parseSelectionColors() {
-		// $log.log(preDebugMsg + "parseSelectionColors");
+		//$log.log(preDebugMsg + "parseSelectionColors");
 		var colors = $scope.gimme("ColorScheme");
 		if(typeof colors === 'string') {
 			colors = JSON.parse(colors);
@@ -2703,7 +2709,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 						selectionCtx = selectionCanvas.getContext("2d");
 					}
 					else {
-						$log.log(preDebugMsg + "no selectionCanvas to resize!");
+						//$log.log(preDebugMsg + "no selectionCanvas to resize!");
 						return;
 					}
 				}
@@ -2739,7 +2745,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				selectionCanvas = selectionCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw selections on!");
+				//$log.log(preDebugMsg + "no canvas to draw selections on!");
 				return;
 			}
 		}
@@ -2789,7 +2795,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				selectionRect = selectionRectElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "No selection rectangle!");
+				//$log.log(preDebugMsg + "No selection rectangle!");
 			}
 		}
 		if(selectionRect !== null) {
@@ -2821,14 +2827,14 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 	// This method draws the scatter plot.
 	//===================================================================================
 	function drawScatterPlot(W, H) {
-		// $log.log(preDebugMsg + "drawScatterPlot");
+		//$log.log(preDebugMsg + "drawScatterPlot");
 		if(dotCanvas === null) {
 			var myCanvasElement = $scope.theView.parent().find('#theDotCanvas');
 			if(myCanvasElement.length > 0) {
 				dotCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2838,7 +2844,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		}
 
 		if(!dotCtx) {
-			$log.log(preDebugMsg + "no canvas to draw on");
+			//$log.log(preDebugMsg + "no canvas to draw on");
 			return;
 		}
 
@@ -2850,7 +2856,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 				undotCanvas = myCanvasElement[0];
 			}
 			else {
-				$log.log(preDebugMsg + "no canvas to draw on!");
+				//$log.log(preDebugMsg + "no canvas to draw on!");
 				return;
 			}
 		}
@@ -2860,7 +2866,7 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 		}
 
 		if(!undotCtx) {
-			$log.log(preDebugMsg + "no canvas to draw unselected data on");
+			//$log.log(preDebugMsg + "no canvas to draw unselected data on");
 			return;
 		}
 
@@ -2909,14 +2915,16 @@ wblwrld3App.controller('hopVizScatterPlotWebbleCtrl', function($scope, $log, Slo
 					}
 
 					if(xType == 1) {
-						x = x.getTime();
+						//x = x.getTime();
+						x = new Date(x);
 					}
 					else if(xType == 2) {
 						x = Date.parse(x);
 					}
 
 					if(yType == 1) {
-						y = y.getTime();
+						//y = y.getTime();
+						y = new Date(y);
 					}
 					else if(yType == 2) {
 						y = Date.parse(y);

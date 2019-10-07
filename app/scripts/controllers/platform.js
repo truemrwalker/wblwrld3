@@ -1282,6 +1282,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     // Open modal for letting user login properly and be authenticated.
     //========================================================================================
     var openAuthPrompt = function(authOfferToRegisterByDefault) {
+		if(($location.search()).np == "true"){
+			return null;
+		}
+
         if (authPrompt != null)
             return authPrompt;
 

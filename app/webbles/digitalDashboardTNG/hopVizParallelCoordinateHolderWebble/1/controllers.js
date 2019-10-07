@@ -875,7 +875,7 @@ wblwrld3App.controller('hopVizParallelCoordinateHolderWebbleCtrl', function($sco
 	function redrawOnNewSelections(seqNo) {
 		if(lastSeenSelectionSeqNo != seqNo) {
 			lastSeenSelectionSeqNo = seqNo;
-			updateGraphicsHelper(false, true, false);
+			updateGraphicsHelper(false, true, true);
 		}
 	}
 	//===================================================================================
