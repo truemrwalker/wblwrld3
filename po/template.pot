@@ -4637,7 +4637,7 @@ msgid "When this is checked the Webble will never display its menu"
 msgstr ""
 
 #: app/views/modalForms/platformLangSheet.html:82
-msgid "When you are finished with a translation of a specific language, please <a style=\"font-weight: bold;\" href=\"mailto:mkuwahara@meme.hokudai.ac.jp?subject=Translation Support Provided\">e-mail</a> the language file ([language id].po) to us and we will integrate it into the Webble World platform as soon as the translation as been validated."
+msgid "When you are finished with a translation of a specific language, please <a style=\"font-weight: bold;\" href=\"mailto:micke.kuwahara@ist.hokudai.ac.jp?subject=Translation Support Provided\">e-mail</a> the language file ([language id].po) to us and we will integrate it into the Webble World platform as soon as the translation as been validated."
 msgstr ""
 
 #: app/scripts/app.js:317

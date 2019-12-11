@@ -1091,6 +1091,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		if($location.path() == '/app'){ displayImportantDevMessage(); }
 
         var pathQuery = $location.search();
+		if(pathQuery.mh === "true"){ //mh = Menu Hide (hides the top menu at load time)
+			$timeout(function(){platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);});
+		}
+
         if(pathQuery.webble && !pathQuery.workspace){
             $timeout(function(){$scope.downloadWebbleDef(pathQuery.webble)});
         }
@@ -5300,7 +5304,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
         }
         else if(sublink == 'support' || (whatKeys.theAltKey && whatKeys.theKey == 'H')){
             if (currentPlatformPotential_ != Enum.availablePlatformPotentials.Slim && currentPlatformPotential_ != Enum.availablePlatformPotentials.Limited) {
-                $window.location = "mailto:mkuwahara@meme.hokudai.ac.jp?subject=Webble World Support Request";
+                $window.location = "mailto:micke.kuwahara@ist.hokudai.ac.jp?subject=Webble World Support Request";
             }
         }
 		else if(sublink == 'community' || (whatKeys.theAltKey && whatKeys.theShiftKey && whatKeys.theKey == 'C')){
@@ -5396,8 +5400,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
-
-	if(($location.search()).np != "true"){
+	if(($location.search()).np != "true"){ //np = Not Personal (do not login, this is for general users only)
 		authService.tryLoginIfSessionActive();
 	}
 
