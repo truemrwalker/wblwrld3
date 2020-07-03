@@ -707,6 +707,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 		else{
 			// IF TABS
 			if($scope.gimme('tabDisplayStyle') == 0){
+				$scope.theInteractionObjects[Enum.availableOnePicks_DefaultInteractionObjects.Resize].scope().setIsEnabled(true);
 				var theBook = $scope.theView.parent().find('#theBook');
 				if(theBook.length > 0){
 					theBook.hide();
@@ -799,6 +800,7 @@ wblwrld3App.controller('TNPCtrl', function($scope, $log, $timeout, Slot, Enum, d
 			}
 			// IF BOOK
 			else if($scope.gimme('tabDisplayStyle') == 1){
+				$scope.theInteractionObjects[Enum.availableOnePicks_DefaultInteractionObjects.Resize].scope().setIsEnabled(false);
 				if(tnpTabs_a != undefined && tnpTabs_a.length > 0){
 					$scope.theView.parent().find('#classicTabsContainer').hide();
 				}
