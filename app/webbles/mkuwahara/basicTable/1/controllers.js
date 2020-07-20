@@ -292,6 +292,38 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
     //===================================================================================
 
 
+	//===================================================================================
+	// Compare Values
+	// Method that compares the table data object array rows by the current sortBy key
+	// ether in ascending or descending order and return the result to the Array Sort
+	// method that used it.
+	//===================================================================================
+	function compareValues(key, order = false) {
+		return function innerSort(a, b) {
+			if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+				// property doesn't exist on either object
+				return 0;
+			}
+
+			const varA = (typeof a[key] === 'string')
+				? a[key].toUpperCase() : a[key];
+			const varB = (typeof b[key] === 'string')
+				? b[key].toUpperCase() : b[key];
+
+			let comparison = 0;
+			if (varA > varB) {
+				comparison = 1;
+			} else if (varA < varB) {
+				comparison = -1;
+			}
+			return (
+				(order === true) ? (comparison * -1) : comparison
+			);
+		};
+	}
+	//===================================================================================
+
+
     //===================================================================================
     // Webble template Menu Item Activity Reaction
     // If this template has its own custom menu items that needs to be taken care of,
@@ -312,7 +344,8 @@ wblwrld3App.controller('tableCtrl', function($scope, $log, Slot, Enum) {
         }
         if(itemName == $scope.customMenu[1].itemId){  //delete row
             var tData = angular.copy($scope.gimme('tableData')) ;
-            tData.tabledata.splice(latestClick.rowIndex, 1);
+			tData.tabledata.sort(compareValues($scope.gimme('rowOrderBy'), $scope.gimme('rowOrderIsReversed')));
+			tData.tabledata.splice(latestClick.rowIndex, 1);
             $scope.set('tableData', tData);
         }
         if(itemName == $scope.customMenu[2].itemId){  //add col
