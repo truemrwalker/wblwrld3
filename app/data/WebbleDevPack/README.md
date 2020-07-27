@@ -1571,6 +1571,60 @@ if($scope.isSystemDoneLoadingWebbles()){
 };
 
 ```
+###_isThisLibLoadedAlready_ ![Method][meth]
+If the webble template currently being loaded requires external libraries outside what Webble World already provides those will not automaticly be checked for duplicates, since they may come from so many different sources. The Webble developer can keep track of that on ones own though, by adding the links used as a text reference in order to prevent duplicate loading of libraries, which would otherwise cause problems if not controlled properly. A specific library, about to be loaded, can then be checked against those saved links with this method. 
+
+####isThisLibLoadedAlready(libURLToCheck)
+
+* **Parameters:**
+    * libURLToCheck (String) an absolute URL string for a specific JavaScript library to be checked against a list of other such URL strings previously saved
+* **Returns:**
+    * (Boolean) True or False whether the library link text has already been added to the list of saved library URLs or not
+
+```JavaScript
+// Check if the Google map api is loaded already (saved as a URL string), and if it is not, add it to the self-managed list of library URLs and download the library in question. 
+if(!$scope.isThisLibLoadedAlready("https://maps.googleapis.com/maps/api/js")){
+	$scope.addThisLibToLoadedAlreadyList("https://maps.googleapis.com/maps/api/js");
+	dbService.getMyAccessKey("www.google.com", "maps").then(
+		function(returningKey) {
+			if(returningKey){
+				var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
+				$.getScript( urlPath +  returningKey)
+				.always(function( jqxhr, settings, exception ) {
+					$timeout(function(){initializeGoogleMap();});
+				});
+			}
+		}
+	);
+}
+```
+###_addThisLibToLoadedAlreadyList_ ![Method][meth]
+If the webble template currently being loaded requires external libraries outside what Webble World already provides those will not automaticly be checked for duplicates, since they may come from so many different sources. The Webble developer can keep track of that on ones own though, by adding the links used as a text reference in order to prevent duplicate loading of libraries, which would otherwise cause problems if not controlled properly. A specific library, about to be loaded, can then be added to the list of maintained URLSs with this method. 
+
+####addThisLibToLoadedAlreadyList(libURLToAdd)
+
+* **Parameters:**
+    * libURLToAdd (String) an absolute URL string for a specific JavaScript library to be added and saved for future checks against.
+* **Returns:**
+    * Nothing
+
+```JavaScript
+// Check if the Google map api is loaded already (saved as a URL string), and if it is not, add it to the self-managed list of library URLs and download the library in question. 
+if(!$scope.isThisLibLoadedAlready("https://maps.googleapis.com/maps/api/js")){
+	$scope.addThisLibToLoadedAlreadyList("https://maps.googleapis.com/maps/api/js");
+	dbService.getMyAccessKey("www.google.com", "maps").then(
+		function(returningKey) {
+			if(returningKey){
+				var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
+				$.getScript( urlPath +  returningKey)
+				.always(function( jqxhr, settings, exception ) {
+					$timeout(function(){initializeGoogleMap();});
+				});
+			}
+		}
+	);
+}
+```
 ###_loadWblFromURL_ ![Method][meth]
 Tries to load a Webble JSON file from a URL provided as a parameter. The callbackmethod if provided will be called when the new Webble is loaded, providing a webble metadata package as a parameter which contains a Webble Pointer, an old instance id and the webble definition json. (Take note though, that it will be for the the most recent Webble loaded (if a compound set of many was requested) and not the compound Webble itself.
 	
