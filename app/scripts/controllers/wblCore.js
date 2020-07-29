@@ -2408,7 +2408,8 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 
                             }
                         }
-                        else if(styleName.search('color') != -1){
+                        else if(styleName.search('color') != -1 || (styleName.search('stroke') != -1 && styleName.length == 6)){
+                        	$log.log(styleName + " and " + styleName.length);
                             if(colorService.rgbStrToHex(newVal).toLowerCase() != whatSlot.getValue()){
                                 if(transDur != undefined && transDur > 0){
                                   if(onGoingTimeOuts[whatSlot.getName()] == undefined){

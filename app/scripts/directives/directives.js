@@ -808,7 +808,7 @@ ww3Directives.directive('webble', function ($log, $compile, $timeout, Enum, Slot
                                         if(element.hasClass('context-menu-disabled')){
                                             element.contextMenu(true);
                                         }
-                                    }                
+                                    }
                                     else {
                                         if(!element.hasClass('context-menu-disabled')){
                                             element.contextMenu(false);
