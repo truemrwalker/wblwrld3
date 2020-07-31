@@ -9,7 +9,7 @@
 // This is the Main controller for this Webble Template
 // NOTE: This file must exist and be an AngularJS Controller declared as seen below.
 //=======================================================================================
-wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, Slot, Enum, dbService, gettext) {
+wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, $location, Slot, Enum, dbService, gettext) {
 
 	//=== PROPERTIES ====================================================================
 
@@ -730,32 +730,40 @@ wblwrld3App.controller('mapPluginWebbleCtrl', function($scope, $log, $timeout, S
 
 		if(!$scope.isThisLibLoadedAlready("https://maps.googleapis.com/maps/api/js")){
 			$scope.addThisLibToLoadedAlreadyList("https://maps.googleapis.com/maps/api/js");
-			dbService.getMyAccessKey("www.google.com", "maps").then(
-				function(returningKey) {
-					if(returningKey){
-						var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
-						$.getScript( urlPath +  returningKey)
-							.always(function( jqxhr, settings, exception ) {
-								$timeout(function(){initializePluginMap();});
-							});
-					}
-					else{
-						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm (www.google.com) and resource (maps) saved in your user profile. So we loaded a very limited non-api map instead.")}, null);
+			if(($location.search()).np != "true"){
+				dbService.getMyAccessKey("www.google.com", "maps").then(
+					function(returningKey) {
+						if(returningKey){
+							var urlPath = "https://maps.googleapis.com/maps/api/js?key=";
+							$.getScript( urlPath +  returningKey)
+								.always(function( jqxhr, settings, exception ) {
+									$timeout(function(){initializePluginMap();});
+								});
+						}
+						else{
+							$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No Access Key Found"), content: gettext("There was no key of the specified realm (www.google.com) and resource (maps) saved in your user profile. So we loaded a very limited non-api map instead.")}, null);
+							$.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")
+								.always(function( jqxhr, settings, exception ) {
+									$timeout(function(){initializePluginMap();});
+								});
+						}
+					},
+					function (err) {
+						$log.log("ERROR: " + err);
+						$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No User and Access Key Found"), content: gettext("This Webble requires a logged in user and a valid Google Map API key to function properly and neither were found, so we loaded a very limited non-api map instead.")}, null);
 						$.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")
 							.always(function( jqxhr, settings, exception ) {
 								$timeout(function(){initializePluginMap();});
 							});
 					}
-				},
-				function (err) {
-					$log.log("ERROR: " + err);
-					$scope.openForm(Enum.aopForms.infoMsg, {title: gettext("No User and Access Key Found"), content: gettext("This Webble requires a logged in user and a valid Google Map API key to function properly and neither were found, so we loaded a very limited non-api map instead.")}, null);
-					$.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")
-						.always(function( jqxhr, settings, exception ) {
-							$timeout(function(){initializePluginMap();});
-						});
-				}
-			);
+				);
+			}
+			else{
+				$.getScript("https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=isNaN")
+					.always(function( jqxhr, settings, exception ) {
+						$timeout(function(){initializeMapAPI();});
+					});
+			}
 		}
 		else{
 			$timeout(function(){initializePluginMap();});
