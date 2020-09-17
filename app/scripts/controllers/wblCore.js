@@ -2973,6 +2973,7 @@ ww3Controllers.controller('webbleCoreCtrl', function ($scope, $uibModal, $log, $
 	$scope.update = function(slotName){
 		if(slotName == theConnectedSlot_ && slotConnDir_.receive && $scope.gimme(theSelectedSlot_) != theParent_.scope().gimme(theConnectedSlot_)){
 			$scope.set(theSelectedSlot_, theParent_.scope().gimme(theConnectedSlot_));
+			$scope.$apply();
 		}
 	};
 	//========================================================================================
