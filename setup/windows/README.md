@@ -24,8 +24,8 @@ to be installed first:
 
 1. https://git-scm.com/download/win
 2. https://nodejs.org/en/download/current/
-	1 Current version of NodeJS seem to have some issues with the Webble World update activities, so instead use a earlier version 6.10.3 
-		1 https://nodejs.org/download/release/v6.10.3/node-v6.10.3-x64.msi
+	1. Current version of NodeJS seem to have some issues with the Webble World update activities, so instead use a earlier version 6.10.3 
+		1. https://nodejs.org/download/release/v6.10.3/node-v6.10.3-x64.msi
 3. https://www.mongodb.com/download-center
 
 Subsequently, to download and save the latest version of Webble World from its 
