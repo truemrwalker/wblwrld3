@@ -10,8 +10,8 @@ and deploys the server using its default "development" configuration values.
 
 1. Install: https://git-scm.com/download/win
 2. Install: https://nodejs.org/en/download/current/	
-	1 Current version of NodeJS seem to have some issues with the Webble World update activities, so instead use a earlier version 6.10.3 
-		1 https://nodejs.org/download/release/v6.10.3/node-v6.10.3-x64.msi
+	1. Current version of NodeJS seem to have some issues with the Webble World update activities, so instead use a earlier version 6.10.3 
+		1. https://nodejs.org/download/release/v6.10.3/node-v6.10.3-x64.msi
 3. Install: https://www.mongodb.com/download-center
 4. Run: ```bootstrap.bat``` once
 5. Run: ```start.bat``` every time you need to run the server and visit https://localhost:7443
