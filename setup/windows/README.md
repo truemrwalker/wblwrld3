@@ -13,8 +13,8 @@ and deploys the server using its default "development" configuration values.
 	1. Current version of NodeJS seem to have some issues with the Webble World update activities, so instead use an earlier version 6.10.3 
 		1. https://nodejs.org/download/release/v6.10.3/node-v6.10.3-x64.msi
 3. Install: https://www.mongodb.com/download-center	
-	1. Current version of MongoDB seem to have some issues with the Webble World update activities, so instead use an earlier version 3.4.24 
-		1. https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.4.24-signed.msi
+	1. Current version of MongoDB seem to have some issues with the Webble World update activities, so instead use an earlier version 4.2.10 
+		1. https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.10-signed.msi
 4. Run: ```bootstrap.bat``` once
 5. Run: ```start.bat``` every time you need to run the server and visit https://localhost:7443
 6. Run: ```update.bat``` every time you need to update the server
@@ -30,7 +30,7 @@ to be installed first:
 		1. https://nodejs.org/download/release/v6.10.3/node-v6.10.3-x64.msi
 3. https://www.mongodb.com/download-center
 	1. Current version of MongoDB seem to have some issues with the Webble World update activities, so instead use an earlier version 3.4.24 
-		1. https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.4.24-signed.msi
+		1. https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.10-signed.msi
 
 Subsequently, to download and save the latest version of Webble World from its 
 [github repository](https://github.com/truemrwalker/wblwrld3) the project's repository has to be
