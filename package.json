@@ -35,7 +35,7 @@
 		"serve-static": "^1.13.2",
 		"socket.io": "latest",
 		"tar-stream": "latest",
-		"tiddlywiki": "latest"
+		"tiddlywiki": "5.1.14"
 	},
 	"devDependencies": {
 		"chokidar": "latest",
