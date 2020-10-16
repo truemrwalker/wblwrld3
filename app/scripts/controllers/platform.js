@@ -1096,7 +1096,7 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 		}
 
 		if(isValidStyleValue('color', pathQuery.bkgc)){ //bkgc = Background Color
-			setPlatformProperties('platformBkgColor', pathQuery.bkgc, false);
+			$timeout(function(){setPlatformProperties('platformBkgColor', pathQuery.bkgc, false);});
 		}
 
         if(pathQuery.webble && !pathQuery.workspace){
