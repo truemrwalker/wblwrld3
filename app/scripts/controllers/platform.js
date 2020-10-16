@@ -1095,6 +1095,10 @@ ww3Controllers.controller('PlatformCtrl', function ($scope, $rootScope, $locatio
 			$timeout(function(){platformSettingsFlags_ = bitflags.off(platformSettingsFlags_, Enum.bitFlags_PlatformConfigs.MainMenuVisibilityEnabled);});
 		}
 
+		if(isValidStyleValue('color', pathQuery.bkgc)){ //bkgc = Background Color
+			setPlatformProperties('platformBkgColor', pathQuery.bkgc, false);
+		}
+
         if(pathQuery.webble && !pathQuery.workspace){
             $timeout(function(){$scope.downloadWebbleDef(pathQuery.webble)});
         }
