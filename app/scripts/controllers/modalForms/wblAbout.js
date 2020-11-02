@@ -205,7 +205,7 @@ ww3Controllers.controller('AboutWebbleSheetCtrl', function ($scope, $uibModalIns
     //******************************************************************************************************************
     //=== CTRL MAIN CODE ===============================================================================================
     //******************************************************************************************************************
-	$scope.formData['socialMediaUrl'] = 'https://192.168.12.186:7443/#app?webble=' + $scope.formData.defid;
+	$scope.formData['socialMediaUrl'] = 'https://www.hrr-cps.jp:7443/#app?webble=' + $scope.formData.defid;
 	$scope.formData['socialMediaModelName'] = 'Cool Webble, ' + $scope.formData.displayname + ', found in Webble World. Check it out!';
 	$scope.formData['rateShow'] = true;
 	$scope.formData.description = valMod.urlifyWithImages($scope.formData.description);

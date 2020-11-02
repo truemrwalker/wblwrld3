@@ -278,7 +278,7 @@
 							$("#ratingInfo").html('<span style="font-size: 16px;">' + (wblData.rating > 0 ? textParts.starRatingTxt[wblData.rating-1] : "Unrated") + ' (' + (wblData.rating).toFixed(2) + ') [' + wblData.rating_count + ' ' +  textParts.rateTxtVoters + ']</span>');
 							$("#displayname2").text(wblData.webble.displayname);
 							$("#defid").text(wblData.webble.defid);
-							$("#description").text(wblData.webble.description);
+							$("#description").html(wblData.webble.description);
 							$("#keywords").text(wblData.webble.keywords);
 							$("#author").text(wblData.webble.author);
 							var allWblTemplates = getAllUniqueTemplatesWithVersion(wblData);
