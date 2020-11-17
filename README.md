@@ -1,6 +1,6 @@
 # Webble World v3.1 (2013)
 
-Created By: Micke Nicander Kuwahara
+Created By: Kousik Snai
 In Colaboration with: G. Georgalis, J. Sjöbergh 
 
 Meme Media R&D Group, Hokkaido University
