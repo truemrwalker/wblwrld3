@@ -14,9 +14,6 @@ THIS PROJECT IS FOR THE WEBBLE WORLD PLATFORM AND CORE SYSTEM ONLY.
 IF YOU JUST WANT TO DEVELOP WEBBLE TEMPLATES THEN VISIT WEBBLE WORLD ONLINE AND USE THE BUILT IN WEBBLE TEMPLATE
 EDITOR. NO NEED TO STAY HERE ANY FURTHER!
 
-Visit Webble World 3 Online at:
-https://webble.nysol.jp/
-
 Webbles are interactive digital objects that resides inside
 Webble World which is a new web-based knowledge media
 architecture, available through an Internet browser, that
