@@ -21,7 +21,7 @@
 		"mime": "latest",
 		"mime-types": "latest",
 		"mkdirp": "latest",
-		"mongoose": "4.8.4",
+		"mongoose": "5.7.7",
 		"nodegit": "latest",
 		"nodemailer": "latest",
 		"nodemailer-smtp-transport": "latest",
